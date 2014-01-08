@@ -1,0 +1,6 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =4
+let g:netrw_dirhist_1='/media/Store/data/downloads'
+let g:netrw_dirhist_2='/home/joncrall/code/ell_desc'
+let g:netrw_dirhist_3='/home/joncrall/code/hotspotter/_frontend'
+let g:netrw_dirhist_4='/home/joncrall/code/hotspotter/hard_names'

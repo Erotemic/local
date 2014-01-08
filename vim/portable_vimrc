@@ -1,0 +1,320 @@
+"============ TOP LEVEL COMMANDS ================"
+" Some of these probably need to be cleaned up
+syntax on
+filetype plugin indent on
+" MISC: win clipboard on linux
+if has("win32") || has("win16")
+else
+    source $VIMRUNTIME/mswin.vim
+endif
+
+" Turn backup off, since most stuff is in SVN, git et.c anyway...
+set ff=unix
+set ffs=unix,dos
+if has("win32") || has("win16")
+    set backupdir=D:/sys/vim_tmp/
+    set undodir=D:/sys/vim_tmp/
+else
+    set backupdir=/media/Store/sys/vim_tmp/
+    set undodir=/media/Store/sys/vim_tmp/
+endif
+set nobackup
+set autochdir
+
+set nomousehide
+set nowb
+set noswapfile
+" Do not open these sort of files
+set wildignore=*.o,*~,*.pyc,*.aux,*.masv,*.bbl,*.bcf,*.blg,*.brf,*.synctex,*.upa,*.upb,*.pdf,*.dvi
+
+
+
+"===========PLUGINS==========="
+" PLUGIN: External non-plugin source files
+source $PORT_SETTINGS/vim/align.vim
+source $PORT_SETTINGS/vim/std_functions.vim
+source $PORT_SETTINGS/vim/font_functions.vim
+source $PORT_SETTINGS/vim/my_functions.vim
+
+"-------------------------
+" PLUGIN: Pathogen
+
+" Add a plugin to this list to disable it
+let g:pathogen_disabled = []
+source $PORT_SETTINGS/vim/vimfiles/autoload/pathogen.vim
+execute pathogen#infect()
+
+"-------------------------
+" PLUGIN: NERDTree 
+"
+func! NERD_TREE_PYTHON_PREFERENCE()
+    let g:NERDTreeIgnore = ['\.o$','\~$','\.pyc$','\.aux$','\.masv$','\.bbl$','\.bcf$','\.blg$','\.brf$','\.synctex$','\.upa$','\.upb$','\.pdf$','\.out$','\.log','\.latexmain','\.bib','\.bat*$','\.bst$','\.png$',"^'$"]
+endfu
+
+func! NERD_TREE_WITH_BAT()
+    let g:NERDTreeIgnore = ['\.o$','\~$','\.pyc$','\.aux$','\.masv$','\.bbl$','\.bcf$','\.blg$','\.brf$','\.synctex$','\.upa$','\.upb$','\.pdf$','\.out$','\.log','\.latexmain','\.bib','\.bst$','\.png$',"^'$"]
+endfu
+
+call NERD_TREE_WITH_BAT()
+
+"-------------------------
+" PLUGIN: JEDI 
+let g:jedi#popup_on_dot = 0
+let g:jedi#show_function_definition = 0
+command! JediShowFuncOn :let g:jedi#show_function_definition = 1
+command! JediShowFuncOff :let g:jedi#show_function_definition = 0
+command! JediDotPopOn :let g:jedi#popup_on_dot = 1
+command! JediDotPopOff :let g:jedi#popup_on_dot = 0
+
+"-------------------------
+" PLUGIN: Supertab
+" python autocomplete for supertab
+au! FileType python set omnifunc=pythoncomplete#Complete
+let g:SuperTabDefaultCompletionType = "context"
+au! FileType python set nosmartindent
+au! FileType python filetype indent on
+au! FileType python set textwidth=80
+
+func! SpellcheckOn()
+    :set spell
+    :setlocal spell spelllang=en_us
+endfu
+
+"-------------------------
+"PLUGIN: Synstastic General
+let g:syntastic_aggregate_errors = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_warning_symbol = 'W>'
+let g:syntastic_error_symbol = '!>'
+let g:syntastic_style_error_symbol = 'S>'
+let g:syntastic_style_warning_symbol = 's>'
+let g:syntastic_always_populate_loc_list = 1
+
+"-------------------------
+" PLUGIN: Syntastic Python
+let g:syntastic_python_checkers=['flake8'] " ignores lines containng # NOQA
+let g:syntastic_python_flake8_args = "--ignore=E201,E221,E222,E241,E271,E272,E501"
+
+"E201 - whitespace after '('
+"E221 - multiple spaces before operator
+"E222 - multiple spaces after operator
+"E241 - multiple spaces after ,
+"E271 - multiple spaces after keyword 
+"E272 - multiple spaces before keyword
+"E301 - expected 1 blank line, found 0
+"E501 - > 79
+"
+"-------------------------
+" PLUGIN: Syntastic C++
+"let g:syntastic_gpp_include_dirs=['$INSTALL_32/OpenCV/include']
+"let g:syntastic_cpp_include_dirs=['C:/Program Files (x86)/OpenCV/include']
+let g:syntastic_cpp_check_header = 0
+let g:syntastic_cpp_no_include_search = 1
+let g:syntastic_cpp_no_default_include_dirs =1
+let g:syntastic_cpp_remove_include_errors = 1
+"let g:syntastic_cpp_include_dirs = ['include', '../include']
+"let g:syntastic_cpp_compiler = 'clang++'
+"let g:syntastic_c_include_dirs = ['include', '../include']
+"let g:syntastic_c_compiler = 'clang'
+
+"-------------------------
+" PLUGIN: Unimpaired
+"https://github.com/tpope/vim-unimpaired
+
+
+" =========== LATEX =========== "
+" LATEX: Functions
+
+" Initialize
+func! LatexInitialize()
+    :set textwidth=80
+    :set spell
+    :setlocal spell spelllang=en_us
+    :call SetFontMonoDyslexic()
+    set wildignore=*.o,*~,*.pyc,*.aux,*.masv,*.bbl,*.bcf,*.blg,*.brf,*.synctex,*.upa,*.upb,*.pdf,*.out,*.log
+    let NERDTreeIgnore = ['\.o$','\~$','\.pyc$','\.aux$','\.masv$','\.bbl$','\.bcf$','\.blg$','\.brf$','\.synctex$','\.upa$','\.upb$','\.pdf$','\.out$','\.log','\.latexmain','\.bib']
+endfu
+
+" Remove open dyslexic
+func! SetLaTeX()
+    let g:Tex_CompileRule_pdf = 'pdflatex -shell-escape --synctex=-1 -src-specials -interaction=nonstopmode $*'
+endfu   
+
+" Set open dyslexic
+func! SetXeTeX()
+    let g:Tex_CompileRule_pdf = 'xelatex -shell-escape -interaction=nonstopmode $*'
+endfu   
+
+" Unsorted Preferences
+set shellslash
+set grepprg=grep\ -nH\ $*
+let g:Tex_SmartKeyDot=0
+let g:tex_flavor='latex'
+let g:Tex_DefaultTargetFormat='pdf'
+let g:Tex_MultipleCompileFormats='pdf'
+let g:Tex_CompileRule_pdf = 'pdflatex -shell-escape --synctex=-1 -src-specials -interaction=nonstopmode $*'
+
+" Cross Platform view rules
+if has("win32") || has("win16")
+    let g:Tex_ViewRule_pdf = 'C:\Program Files (x86)\SumatraPDF\SumatraPDF -reuse-instance -inverse-search "gvim -c \":RemoteOpen +\%l \%f\""'
+else
+    let g:Tex_ViewRule_pdf = 'okular --unique'
+endif
+
+" Use main.tex.mainfile to compile
+let g:Tex_UseMakefile = 1
+
+func! Tex_RunViewLaTeX()
+    call Tex_RunLaTeX()
+    call Tex_ViewLaTeX()
+endfu
+
+
+" Turn of XeLaTeX errors
+set makeprg=texwrapper
+set errorformat=%f:%l:%c:%m
+
+" Turn off LATEX code folding
+:let Tex_FoldedSections=""
+:let Tex_FoldedEnvironments=""
+:let Tex_FoldedMisc=""
+
+au! BufNewFile,BufRead *.tex call LatexInitialize() 
+" Toggle Compile to OpenDyslexic
+command! LATEXCompileRuleLaTeX :call SetLaTeX()
+command! LATEXCompileRuleXeTeX :call SetXeTeX()
+
+" =========== MISC  ==========="
+imap bufloadpy :args *.py
+"-------------------------
+" MISC: win clipboard on linux
+if has("win32") || has("win16")
+else
+    set clipboard=unnamedplus
+endif
+"-------------------------
+command! HexmodeOn :%!xxd
+command! HexmodeOff :%!xxd -r 
+"-------------------------
+
+" ========= VIM PREFERENCES ========= "
+if has("gui_running")
+    colorscheme synic
+endif
+au! SwapExists * let v:swapchoice = 'e'
+set shiftwidth=4
+set tabstop=4
+set expandtab
+set cino={1s
+set autoread
+set lbr " Linebreak on 500 characters
+set tw=500
+set ai "Auto indent
+set si "Smart indent
+
+" Vim: Gray Line Numbering
+:set nu 
+if has("gui_running")
+    :highlight LineNr guifg=#333333
+    " Cross platform fonts
+    if has("win32") || has("win16")
+        :highlight LineNr font='Fixedsys'
+    else
+        :highlight LineNr font='Monospace'
+    endif
+endif
+
+"-------------------------
+
+"Windows symlink problems
+set bkc=yes
+set nobackup 
+set nowritebackup
+
+"-------------------------
+"Filebar
+:set go+=r go+=R go-=l go-=L
+
+"-------------------------
+"Windows start command
+command! S :call OpenWindow()
+command! CMD :ConqueTerm cmd 
+command! CMD2 :ConqueTermTab cmd 
+command! -nargs=1 R :vertical resize <f-args>
+
+"-------------------------
+" Function Remaps
+"map <F1> :call  ToggleWordHighlight()<CR> 
+"Map Ctrl+W (navkey) to Ctrl+(navkey) (for split windows)
+" Remap the leader key from \ to ,
+let mapleader = ","
+nnoremap <Leader>e :lopen <CR>
+nnoremap <Leader>w w :<c-w> <c-w>
+nnoremap <Leader>d :FontDecrease<c-w> <c-w>
+map <c-j> <c-w>j
+map <c-k> <c-w>k
+map <c-l> <c-w>l
+map <c-h> <c-w>h
+map <F1> :call  PEP8PRINT()<CR> 
+map <F2> :call  ToggleAlpha()<CR> 
+map <F3> :call  ToggleFont()<CR> 
+map <F4> :call  OpenWindow()<CR> 
+map <F5> :call  CmdHere()<CR> 
+"vim-latex-suit overwrites f5, give it an alt
+map <F6> :call  CmdHere()<CR>  
+" make semicolon command mode
+nmap ; :
+" Compile Command Remaps
+nnoremap <Leader>p :call Tex_RunViewLaTeX()<CR>
+nmap <C-P> :call Tex_RunViewLaTeX() <CR>
+imap <C-P> :call Tex_RunViewLaTeX() <CR>
+map <F8> :call  Tex_RunViewLaTeX()<CR>  
+
+"-------------------------
+"Make txx file work as cpp files
+autocmd BufNewFile,BufRead *.txx  set ft=cpp
+autocmd BufNewFile,BufRead *.poly set ft=cmake
+autocmd BufNewFile,BufRead *.spec set ft=python
+autocmd BufNewFile,BufRead *.node set ft=cmake
+autocmd BufNewFile,BufRead *.ele  set ft=cmake
+autocmd BufNewFile,BufRead *.ahk, set ft=Autohotkey
+"Read vidtk config files as vidtk config file
+autocmd BufRead,BufNewFile *.conf setfiletype vidtkconf
+" Remove trailing whitespace
+autocmd BufWritePre *.py :%s/\s\+$//e
+autocmd BufWritePre *.c :%s/\s\+$//e
+autocmd BufWritePre *.cxx :%s/\s\+$//e
+autocmd BufWritePre *.cpp :%s/\s\+$//e
+autocmd BufWritePre *.h :%s/\s\+$//e
+autocmd BufWritePre *.hpp :%s/\s\+$//e
+autocmd BufWritePre *.hxx :%s/\s\+$//e
+
+"-------------------------
+"":autocmd CursorMoved * exe printf('match DiffChange /\V\<%s\>/', escape(expand('<cword>'), '/\'))
+:autocmd CursorMoved * call WordHighlightFun()
+
+" Set the default font to mono dyslexic size 11
+:call SetFontMonoDyslexic()
+
+" why wont this work
+set nosmartindent
+highlight Cursor guifg=blue guibg=orange
+
+
+" code folding 
+set nofoldenable
+"set foldmethod=indent
+"set foldnestmax=1
+"set foldlevel=1
+"let g:SimpylFold_docstring_preview = 1
+
+"Autocomplete off
+let g:Tex_SmartKeyDot=0
+
+au InsertLeave * hi Cursor guibg=red
+au InsertEnter * hi Cursor guibg=green
+
+hi StatusLine ctermbg=red ctermfg=green
+hi StatusLine guibg=gray10 guifg=green
+
+" Need to comment "set diffexpr=MyDiff() in windows to get msys-diffutils to work

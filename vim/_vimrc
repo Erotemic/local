@@ -1,0 +1,2 @@
+source $PORT_SETTINGS/vim/clean_vimrc
+source $PORT_SETTINGS/vim/portable_vimrc

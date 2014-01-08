@@ -1,0 +1,91 @@
+:let PATHOGEN_DIR = 'C:/Users/jon.crall/Dropbox/Portable/Settings/vim/vim-pathogen/autoload/{}'
+:let PATHOGEN_BUNDLE_DIR = 'C:/Users/jon.crall/Dropbox/Portable/Settings/vim/plugins/{}'
+
+"Get rid of the stupid Hit any key to close this window...
+"let g:netrw_silent= 1
+"autocmd BufRead,BufNewFile *.oz source $VIMRUNTIME/syntax/oz.vim
+"autocmd BufRead,BufNewFile *.ozg source $VIMRUNTIME/syntax/oz.vim
+" You need the darkroom colorscheme from 
+"http://www.vim.org/scripts/script.php?script_id=2246
+" and you need vimtweak.dll from 
+"http://www.vim.org/scripts/script.php?script_id=687
+""http://vim.1045645.n5.nabble.com/Transparent-background-for-Windows-version-of-gvim-td1191751.html
+
+"if has("autocmd")
+"    augroup tex
+"        autocmd BufRead,BufNewFile *.tex set shiftwidth=2
+"        autocmd BufRead,BufNewFile *.tex set tabstop=2
+"    augroup END
+"endif
+"
+"Python files have 4 spaces
+"if has("autocmd")
+"    augroup py
+"        autocmd BufRead,BufNewFile *.py set shiftwidth=4
+"        autocmd BufRead,BufNewFile *.py set tabstop=4
+"    augroup END
+"endif
+"
+" UNCOMMENT To start of transparent
+" au GUIEnter * call ToggleAlpha()
+"\
+
+
+"set texname=%
+"command R <C-U>s/^/#
+"command M !pdflatex %
+"command L !cmd.exe /c pdflatex %
+"autocmd BufWritePre *.py :%s/\s\+$//e
+"
+"
+"
+"set nocursorline
+"set nolist
+"set nonumber
+
+" Use Unix as the standard file type
+"set ffs=unix,dos,mac
+"set ff=dos
+" Set utf8 as standard encoding and en_US as the standard language
+"set encoding=utf8
+"
+"
+"
+
+
+
+"let NERDTreeIgnore = ['\.o$','\~$','\.pyc$','\.aux$','\.masv$','\.bbl$','\.bcf$','\.blg$','\.brf$','\.synctex$','\.upa$','\.upb$','\.pdf$','\.out$','\.log','\.latexmain','\.bib']
+
+" Wildcard to nerdtree regex:
+" s/\*/\\/g
+" s/,/$','/g
+
+"let g:jedi#use_tabs_not_buffers = 0
+"let g:jedi#popup_select_first = 0
+"let g:jedi#auto_initialization = 0
+"let g:jedi#auto_vim_configuration = 0
+
+"func! PythonInitialize()
+    "set omnifunc=pythoncomplete#Complete
+    "let g:SuperTabDefaultCompletionType = "context"
+    "setl nosmartindent
+    "set textwidth=80
+"endfu
+
+
+    ":hi clear SpellBad
+    ":hi SpellBad cterm=underline,bold ctermfg=red
+
+
+"set iskeyword+=:
+"let g:Tex_MultipleCompileFormats='pdf, aux'
+"let g:Tex_ViewRule_pdf = 'C:\Program Files (x86)\SumatraPDF\SumatraPDF.exe'
+"au! BufWritePost *.tex silent call Tex_RunLaTeX()
+"au! BufWritePost *.tex silent call Tex_ViewLaTeX()
+"
+
+
+    "let g:Tex_ViewRule_pdf = 'evince_dbus.py'
+
+    "let g:Tex_ViewRule_pdf = 'sumatrapdf -reuse-instance -inverse-search "gvim -c \":RemoteOpen +\%l \%f\""'
+    
