@@ -31,17 +31,17 @@ set wildignore=*.o,*~,*.pyc,*.aux,*.masv,*.bbl,*.bcf,*.blg,*.brf,*.synctex,*.upa
 
 "===========PLUGINS==========="
 " PLUGIN: External non-plugin source files
-source $PORT_SETTINGS/vim/align.vim
-source $PORT_SETTINGS/vim/std_functions.vim
-source $PORT_SETTINGS/vim/font_functions.vim
-source $PORT_SETTINGS/vim/my_functions.vim
+source ~/local/vim/align.vim
+source ~/local/vim/std_functions.vim
+source ~/local/vim/font_functions.vim
+source ~/local/vim/my_functions.vim
 
 "-------------------------
 " PLUGIN: Pathogen
 
 " Add a plugin to this list to disable it
 let g:pathogen_disabled = []
-source $PORT_SETTINGS/vim/vimfiles/autoload/pathogen.vim
+source ~/local/vim/vimfiles/autoload/pathogen.vim
 execute pathogen#infect()
 
 "-------------------------
