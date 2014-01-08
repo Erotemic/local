@@ -11,6 +11,7 @@ alias gp='git pull'
 # Navigation
 alias data='cd ~/data'
 alias code='cd ~/code'
+alias loc='cd ~/local'
 alias hs='cd ~/code/hotspotter'
 alias lt='cd ~/latex'
 
