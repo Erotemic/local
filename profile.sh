@@ -9,6 +9,7 @@ alias gcwip='git commit -am "wip"; git push'
 alias gp='git pull'
 
 # Navigation
+alias home='cd ~'
 alias data='cd ~/data'
 alias code='cd ~/code'
 alias loc='cd ~/local'

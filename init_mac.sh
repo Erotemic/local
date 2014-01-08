@@ -8,4 +8,3 @@ sudo enable_vnc_security
 
 # Make link to Jasons data directory
 ln -s /Volumes/External/data/ ~/data
-ln -s ~/local/profile.sh .profile

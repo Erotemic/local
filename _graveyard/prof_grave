@@ -1,0 +1,21 @@
+alias g='gvim -f'
+alias c='chromium-browser'
+
+alias ee='save2setup'
+save2setup()
+{
+    echo $1 >> /home/joncrall/Dropbox/Scripts/setup_linux.sh
+    tail /home/joncrall/Dropbox/Scripts/setup_linux.sh
+}
+
+
+alias aa='~/AdvCompGraphicsS13/hw3/test_hw3.sh'
+
+#lls()
+#{
+#ls -ABg1 *.tex
+#ls -ABg1 *.py
+#ls -ABg1 *.bib
+#ls -ABg1 *.txt
+#}
+
