@@ -1,7 +1,7 @@
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    source mac_profile
+    source ~/local/mac_profile.sh
 else
-    source ubuntu_profile
+    source ~/local/ubuntu_profile.sh
 fi
 
 # Git
