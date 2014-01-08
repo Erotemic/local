@@ -27,8 +27,15 @@ export SITE_PACKAGES=/usr/local/lib/python2.7/dist-packages/
 alias resetftp='/etc/init.d/vsftpd restart'
 alias noip='/usr/local/bin/noip2'
 
+
+alias say='espeak -v en '
+
+
 #alias sumatrapdf='wine "C:\Program Files (x86)\SumatraPDF\SumatraPDF"'
 alias diskutility='palimpsest'
 alias realrm='/bin/rm'
 alias rm='trash-put'
+
+alias viewimage='eog'
+
 
