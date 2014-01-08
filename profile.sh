@@ -17,3 +17,5 @@ alias lt='cd ~/latex'
 
 # ROB
 alias nr='rob grepnr'
+
+alias rrr='source ~/.profile'
