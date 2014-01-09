@@ -86,6 +86,7 @@ commit_profile()
     pushd .
     loc
     git commit -am "profile wip"
+    git push
     popd
 }
 alias upp=update_profile
