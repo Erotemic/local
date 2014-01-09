@@ -7,10 +7,5 @@ install()
     fi
 }
 
-install cmake
 
-# Macports stuff
-if [[ "$OSTYPE" == "darwin"* ]]; then
-install py27-ipython
-sudo port select --set ipython ipython27
-fi
+install cmake
