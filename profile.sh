@@ -73,3 +73,20 @@ alias rsc='rob research_clipboard None 3'
 
 # Reload profile
 alias rrr='source ~/.profile'
+update_profile()
+{
+    pushd .
+    loc
+    git pull
+    rrr
+    popd
+}
+commit_profile()
+{
+    pushd .
+    loc
+    git commit -am "profile wip"
+    popd
+}
+alias upp=update_profile
+alias cop=commit_profile
