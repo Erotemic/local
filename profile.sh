@@ -5,7 +5,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 fi
 
 # Unix aliases
-alias ls='ls --hide="*.pyc"'
+#alias ls='ls --hide="*.pyc"'
 alias pygrep='grep -r --include "*.py"'
 alias clean-python='rm -rf *.pyc'
 alias ll='ls -alF'
