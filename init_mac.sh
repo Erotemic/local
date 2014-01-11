@@ -37,4 +37,4 @@ sudo port install py27-ipython
 sudo port select --set ipython ipython27
 
 sudo pip install pandas
-
+sudo pip install scipy --upgrade
