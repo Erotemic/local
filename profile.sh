@@ -1,7 +1,7 @@
 if [[ "$OSTYPE" == "darwin"* ]]; then
     source ~/local/mac_profile.sh
-#else
-    #source ~/local/ubuntu_profile.sh
+else
+    source ~/local/ubuntu_profile.sh
 fi
 
 # Unix aliases
