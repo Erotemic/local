@@ -14,7 +14,7 @@ export MANPATH=$PORTS_MANPATH:$MANPATH
 export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig
 export PYTHONPATH=$PYTHONPATH:$APPLE_SITE_PACKAGES:$PORTS_SITE_PACKAGES
 
-if [ "$TERM" != "dumb" ]; then
-    export LS_OPTIONS='--color=auto'
-    eval `dircolors ~/local/dir_colors.sh`
-fi
+#if [ "$TERM" != "dumb" ]; then
+    #export LS_OPTIONS='--color=auto'
+    #eval `dircolors ~/local/dir_colors.sh`
+#fi
