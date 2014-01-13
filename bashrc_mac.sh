@@ -1,6 +1,6 @@
 # Apple pre-installed dirs
 export apple_PATH=/usr/local/bin:/usr/local/lib:/usr/local/include
-export apple_SITE_PACKAGES=/usr/local/lib/python2.7/site-packages
+#export apple_SITE_PACKAGES=/Library/Python/2.7/site-packages
 
 # Macports dirs
 export ports_GNU=/opt/local/libexec/gnubin/
@@ -14,7 +14,7 @@ export ports_PYTHON=/opt/local/bin/python
 export PATH=$ports_PATH:$ports_GNU:$apple_PATH:$PATH
 export MANPATH=$ports_MANPATH:$MANPATH
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
-export PYTHONPATH=$ports_SITE_PACKAGES:$apple_SITE_PACKAGES:$PYTHONPATH
+export PYTHONPATH=$ports_SITE_PACKAGES:$PYTHONPATH
 
 #if [ "$TERM" != "dumb" ]; then
     #export LS_OPTIONS='--color=auto'
