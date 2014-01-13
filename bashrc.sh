@@ -5,7 +5,8 @@ else
 fi
 
 # Unix aliases
-alias ls='ls --hide="*.pyc"'
+
+alias ls='ls --color --human-readable --group-directories-first --hide="*.pyc"'
 alias pygrep='grep -r --include "*.py"'
 alias clean-python='rm -rf *.pyc'
 alias ll='ls -alF'
