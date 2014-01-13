@@ -1,3 +1,5 @@
+# Setup initial symbolic links and file permissions
+
 ln -s ~/local/bashrc.sh ~/.bashrc
 ln -s ~/local/profile.sh ~/.profile
 ln -s ~/local/vim/vimfiles ~/.vim
@@ -15,8 +17,3 @@ echo "source ~/local/vim/portable_vimrc" >> ~/.vimrc
 
 sudo chmod 700 ~/.ssh
 sudo chmod 640 ~/.ssh/authorized_keys
-
-
-.bashrc
-
-.bash_profile

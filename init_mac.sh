@@ -27,6 +27,8 @@ fi
 
 enable_vnc_security
 
+# Grab the GNU ls over Mac's default BSD ls
+sudo port install coreutils +with_default_names
 sudo port install tree
 
 sudo port install python27

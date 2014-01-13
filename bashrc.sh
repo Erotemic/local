@@ -63,6 +63,10 @@ alias hs='cd ~/code/hotspotter'
 alias cand='cd ~/latex/crall-candidacy-2013/'
 
 alias vdd='vd ~/data'
+alias ..="cd .."
+alias l='ls $LS_OPTIONS -lAhF'
+alias gits='git status'
+
 
 # ROB
 alias hskill='rob hskill'
