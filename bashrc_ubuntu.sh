@@ -139,7 +139,7 @@ export HOTSPOTTER=~/code/hotspotter
 export hs=$HOTSPOTTER
 export VIMFILES=~/.vim
 export IPYTHONDIR=~/.ipython
-export PATH="$PATH:$PORT_SCRIPTS/linux_scripts/"
+export PATH="$PATH:~/scripts/"
 export PYTHONPATH=$code:$HOTSPOTTER:$PYTHONPATH
 export LATEX='~/latex/'
 
