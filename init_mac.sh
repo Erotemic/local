@@ -203,6 +203,7 @@ port_pyinstall()
 
     # We do need pip. 
     sudo pip install pylru
+    sudo pip install pyinstaller
 
     port select --set cython cython27
     port select --set pyflakes py27-pyflakes

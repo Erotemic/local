@@ -14,7 +14,7 @@ export ports_PYTHON=/opt/local/bin/python
 export PATH=$ports_PATH:$ports_GNU:$apple_PATH:$PATH
 export MANPATH=$ports_MANPATH:$MANPATH
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
-export PYTHONPATH=$ports_SITE_PACKAGES:$PYTHONPATH
+export PYTHONPATH=$ports_SITE_PACKAGES:$PYTHONPATH:~/code
 
 #if [ "$TERM" != "dumb" ]; then
     #export LS_OPTIONS='--color=auto'
