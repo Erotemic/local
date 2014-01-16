@@ -139,9 +139,12 @@ export HOTSPOTTER=~/code/hotspotter
 export hs=$HOTSPOTTER
 export VIMFILES=~/.vim
 export IPYTHONDIR=~/.ipython
-export PATH="$PATH:~/scripts/"
-export PYTHONPATH=$code:$HOTSPOTTER:$PYTHONPATH
 export LATEX='~/latex/'
+
+
+# MY PATH
+export PATH=$PATH:~/scripts/:/usr/local/MATLAB/R2013a/bin
+export PYTHONPATH=$code:$HOTSPOTTER:$PYTHONPATH
 
 #export mothers=/data/work/HSDB_
 export VIEW_CMD=nautilus
