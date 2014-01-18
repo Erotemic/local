@@ -1,0 +1,121 @@
+* Manual move of network drivers
+ 
+* Manual dropbox / chrome download
+
+* Manual download of intel drivers (they are on D:\Installers now)
+
+* Set default program for *.txt to gvim.exe
+
+* manual install of lots of stuff (logged in text file though) 
+
+* hide extensions off
+
+* Change spotify cache location to: E:\Clutter\Spotify 
+* you need to include the \Spotify
+
+
+added python, vim to path
+
+C:\Python27
+C:\Python27\Scripts
+C:\Program Files (x86)\Vim\vim73
+C:\MinGW
+C:\Users\joncrall\Dropbox\Scripts\win_scripts
+Default
+%SystemRoot%\system32
+%SystemRoot%
+%SystemRoot%\System32\Wbem
+%SYSTEMROOT%\System32\WindowsPowerShell\v1.0\
+C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static
+
+added envar
+set PORT_SETTINGS="C:\Users\joncrall\Dropbox\Settings"
+
+Got the intel driver update utility
+(required java)
+From this I downloaded Intel(R) 82579V based Network Controller(OEM)
+
+
+also got INF Update Utility - for Intel® x79 Chipset 
+because the other chipset driver seemed not to work
+
+
+* copied code and latex back to user directory
+
+* Edited the setup vim command so it didnt required env-vars
+
+installed mono dyslexic
+
+
+added envar 
+
+set ROB="C:\Users\joncrall\Dropbox\Code\ROB"
+
+
+Went here: 
+http://www.lfd.uci.edu/~gohlke/pythonlibs/
+
+
+Set .7z file to 7zip
+Set .py file to gvim
+Set .csv file to gvim
+
+
+Moved my old users .ssh folder to ~/.ssh
+had to 
+set HOME=%USERPROFILE%
+
+
+git config --global user.email crallj@rpi.edu
+git config --global user.name joncrall
+
+
+
+installed irfanview
+
+netsftp drive 
+https://www.eldos.com/files/sftpnetdrive2/SftpNetDriveFree.exe
+
+Installed flann (gotta make windows installers for it)
+
+Installed MiteX
+http://miktex.org/download
+
+open office
+
+For homegroup ipv6 problems: 
+http://social.technet.microsoft.com/Forums/windows/en-US/e24b20ba-b1f1-48f0-880b-2288cdd837de/homegroup-get-an-error-of-must-have-ipv6-enabled
+
+ "services.msc" 
+ make sure these are started
+ "Peer Networking Grouping" 
+ PNRP Machine Name Publication Service.
+
+ HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\TCPIP6\Parameters
+
+ Ensure DisabledComponments registry key exists 
+ or change value from 0xff to 0
+
+
+GhostScript
+http://www.ghostscript.com/download/gsdnld.html
+
+
+IrfanView Plugins:
+
+STRIKE THAT 
+USED DIFFERENT INSTEAD
+~~http://tortoisesvn.net/
+
+REM http://www.sliksvn.com/en/download
+http://www.sliksvn.com/pub/Slik-Subversion-1.8.3-x64.msi
+
+Anaconda for python packages
+https://store.continuum.io/cshop/anaconda/
+
+Zotero
+http://download.zotero.org/standalone/4.0.11/Zotero-4.0.11_setup.exe
+
+Install WinFF
+
+http://winff.org/html_new/downloads.html

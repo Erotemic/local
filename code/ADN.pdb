@@ -1,0 +1,70 @@
+HEADER    NONAME 05-Jun-11
+TITLE     Produced by PDBeChem
+COMPND    ADN      
+AUTHOR    EBI-PDBe Generated
+REVDAT   1  05-Jun-11     0
+ATOM      1  O5' ADN     0      -2.224   0.992  -4.318  1.00 20.00           O+0
+ATOM      2  C5' ADN     0      -1.228  -0.026  -4.200  1.00 20.00           C+0
+ATOM      3  C4' ADN     0      -0.217   0.372  -3.123  1.00 20.00           C+0
+ATOM      4  O4' ADN     0      -0.871   0.501  -1.842  1.00 20.00           O+0
+ATOM      5  C3' ADN     0       0.826  -0.748  -2.921  1.00 20.00           C+0
+ATOM      6  O3' ADN     0       2.023  -0.455  -3.645  1.00 20.00           O+0
+ATOM      7  C2' ADN     0       1.097  -0.740  -1.398  1.00 20.00           C+0
+ATOM      8  O2' ADN     0       2.470  -0.444  -1.136  1.00 20.00           O+0
+ATOM      9  C1' ADN     0       0.182   0.382  -0.862  1.00 20.00           C+0
+ATOM     10  N9  ADN     0      -0.372   0.009   0.440  1.00 20.00           N+0
+ATOM     11  C8  ADN     0      -1.525  -0.685   0.657  1.00 20.00           C+0
+ATOM     12  N7  ADN     0      -1.717  -0.841   1.935  1.00 20.00           N+0
+ATOM     13  C5  ADN     0      -0.699  -0.262   2.617  1.00 20.00           C+0
+ATOM     14  C6  ADN     0      -0.383  -0.109   3.978  1.00 20.00           C+0
+ATOM     15  N6  ADN     0      -1.206  -0.632   4.959  1.00 20.00           N+0
+ATOM     16  N1  ADN     0       0.728   0.543   4.300  1.00 20.00           N+0
+ATOM     17  C2  ADN     0       1.520   1.045   3.370  1.00 20.00           C+0
+ATOM     18  N3  ADN     0       1.261   0.932   2.084  1.00 20.00           N+0
+ATOM     19  C4  ADN     0       0.172   0.295   1.667  1.00 20.00           C+0
+ATOM     20 HO5' ADN     0      -2.839   0.702  -5.006  1.00 20.00           H+0
+ATOM     21 H5'1 ADN     0      -0.714  -0.145  -5.154  1.00 20.00           H+0
+ATOM     22 H5'2 ADN     0      -1.702  -0.967  -3.923  1.00 20.00           H+0
+ATOM     23  H4' ADN     0       0.276   1.305  -3.393  1.00 20.00           H+0
+ATOM     24  H3' ADN     0       0.419  -1.710  -3.233  1.00 20.00           H+0
+ATOM     25 HO3' ADN     0       1.780  -0.413  -4.580  1.00 20.00           H+0
+ATOM     26  H2' ADN     0       0.823  -1.698  -0.956  1.00 20.00           H+0
+ATOM     27 HO2' ADN     0       2.992  -1.147  -1.546  1.00 20.00           H+0
+ATOM     28  H1' ADN     0       0.735   1.318  -0.784  1.00 20.00           H+0
+ATOM     29  H8  ADN     0      -2.182  -1.052  -0.116  1.00 20.00           H+0
+ATOM     30 HN61 ADN     0      -0.975  -0.523   5.895  1.00 20.00           H+0
+ATOM     31 HN62 ADN     0      -2.017  -1.104   4.712  1.00 20.00           H+0
+ATOM     32  H2  ADN     0       2.413   1.569   3.676  1.00 20.00           H+0
+CONECT    1    2   20
+CONECT    2    3   21   22    1
+CONECT    3    5    2   23    4
+CONECT    4    9    3
+CONECT    5    7    3   24    6
+CONECT    6    5   25
+CONECT    7    9    5   26    8
+CONECT    8    7   27
+CONECT    9    7   28   10    4
+CONECT   10    9   19   11
+CONECT   11   29   12   10
+CONECT   12   13   11
+CONECT   13   19   14   12
+CONECT   14   13   16   15
+CONECT   15   14   30   31
+CONECT   16   17   14
+CONECT   17   32   16   18
+CONECT   18   17   19
+CONECT   19   13   18   10
+CONECT   20    1
+CONECT   21    2
+CONECT   22    2
+CONECT   23    3
+CONECT   24    5
+CONECT   25    6
+CONECT   26    7
+CONECT   27    8
+CONECT   28    9
+CONECT   29   11
+CONECT   30   15
+CONECT   31   15
+CONECT   32   17
+END

@@ -1,0 +1,53 @@
+http://www.python.org/ftp/python/2.7.5/python-2.7.5.msi
+
+ftp://ftp.vim.org/pub/vim/pc/gvim73_46.exe
+
+https://www.spotify.com/us/download/windows/
+
+http://www.skype.com/en/download-skype/skype-for-windows/downloading/
+
+http://synergy-foss.org/download/win/?v=64
+
+http://winsplit-revolution.com/Soft/WinSplit-Revolution-v11.04.exe
+
+# http://www.mingw.org/wiki/Getting_Started
+# Believe this is the correct thing to start with
+https://sourceforge.net/projects/mingw/files/Installer/mingw-get-inst/
+http://sourceforge.net/projects/mingw/files/MSYS/Base/msys-core/msys-1.0.11/MSYS-1.0.11.exe/download?use_mirror=iweb
+# I downloaded the latest catalog (not stable)
+Installing:
+      mingw-get
+      pkginfo
+      C Compiler
+      C++ Compiler
+      Fortran Compiler
+      MSYS Basic System
+      MinGW Developer Toolkit
+
+Downloading latest repository catalogues
+
+Destination location:
+      C:\MinGW
+
+Installed MSYS-1.0.11.exe to C:\MinGW\msys\1.0 and then did the post install tool. 
+
+
+http://l.autohotkey.net/AutoHotkey_L_Install.exe
+
+http://www.rapidee.com/download/RapidEE_setup.exe
+
+# .net 4
+http://www.microsoft.com/en-us/download/details.aspx?id=17851
+
+http://www.truecrypt.org/downloads
+
+http://get.videolan.org/vlc/2.0.8/win32/vlc-2.0.8-win32.exe
+
+http://www.cmake.org/files/v2.8/cmake-2.8.11.2-win32-x86.exe
+
+https://kjkpub.s3.amazonaws.com/sumatrapdf/rel/SumatraPDF-2.3.2-install.exe
+
+http://downloads.sourceforge.net/sevenzip/7z920-x64.msi
+
+logmein.com
+

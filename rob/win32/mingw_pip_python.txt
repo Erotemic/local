@@ -1,0 +1,51 @@
+>On 12/19/05, Phillip J. Eby <pje at telecommunity.com> wrote:
+> > At 04:59 PM 12/19/2005 +0100, Daniel Glöckner wrote:
+> > FYI, the shortest path to using MinGW with distutils or setuptools is to
+> > run this script and follow its directions:
+> >
+> > http://mail.python.org/pipermail/python-dev/2004-January/041676.html
+> >
+> > Once you've done that, the version of Python you ran it with will use the
+> > MinGW compiler automatically for all building, with no '-cmingw32' 
+> required.
+>
+>Actually, the referenced script just prints instructions on modifying
+>distutils.cfg, it doesn't do it automatically.
+
+That's why I said "run this script and follow its directions".  :)  The 
+script builds libpython2X.a, which is the hard part for most earlier Python 
+versions.
+
+
+>As of Python 2.4, this is no longer needed - libpython24.a is shipped
+>with the standard Python Windows installer (and yes, I mean all
+>versions of Python 2.4 - memo to self, must upgrade home PC...)
+>
+>The distutils.cfg change is still needed if you want to make mingw the
+>default - personally, I just use the command line flag
+>--compiler=mingw32.
+
+This can be abrreviated -cmingw32, of course, but if you use easy_install 
+it's best to update the distutils.cfg, so that it will use that compiler by 
+default.
+
+Of course, if you have a setuptools-based project you can always do this once:
+
+    vd C:\Python27\Lib\distutils
+    gvim C:\Python27\Lib\distutils\cygwinccompiler.py
+
+    python setup.py build -cmingw32 saveopts -g
+
+    python setup.py build -cmingw32 saveopts -g "--include-dirs=C:\Program Files (x86)\GnuWin32\include"
+
+    include_dirs = ['C:\Program Files (x86)\GnuWin32\include']
+
+    
+
+
+This will update distutils.cfg automatically after running the build, to 
+save any options you used on the command line in the (-g) global 
+configuration.  See the "saveopts" command in the setuptools manual for 
+details.  (This is one of several setuptools commands that could probably 
+be non-controversial additions to the official distutils: alias, rotate, 
+saveopts, and setopt.)

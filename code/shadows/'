@@ -1,0 +1,26 @@
+import matplotlib as plt
+from pylab import *
+
+img = imread('test.jpg')
+
+imshow(mean)
+
+# TODO: Refocus light
+(W,H) = img.shape[0:2]
+
+stride_x
+stride_y
+x_percent = .1
+y_percent = .1
+stride = 1
+
+
+u_range = xrange(0, W-patch_w, stride)
+y_range = xrange(0, H-patch_h, stride)
+
+patch_h = round(Y / y_percent)
+
+uv_gen = ((u1, v1) for u1 in u_range for v1 in y_range)
+for u1, v1 in uv_gen:
+    u2, v2 = u1+patch_w, v1+patch_h
+    patch = img[u1:u2, v1:v2]

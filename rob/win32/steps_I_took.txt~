@@ -1,0 +1,49 @@
+* Manual move of network drivers
+ 
+* Manual dropbox / chrome download
+
+* Manual download of intel drivers (they are on D:\Installers now)
+
+* Set default program for *.txt to gvim.exe
+
+* manual install of lots of stuff (logged in text file though) 
+
+* hide extensions off
+
+* Change spotify cache location to: E:\Clutter\Spotify 
+* you need to include the \Spotify
+
+
+added python, vim to path
+
+C:\Python27
+C:\Program Files (x86)\Vim\vim73
+C:\MinGW
+C:\Users\joncrall\Dropbox\Scripts\win_scripts
+Default
+%SystemRoot%\system32
+%SystemRoot%
+%SystemRoot%\System32\Wbem
+%SYSTEMROOT%\System32\WindowsPowerShell\v1.0\
+C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static
+
+added envar
+set PORT_SETTINGS="C:\Users\joncrall\Dropbox\Settings"
+
+Got the intel driver update utility
+(required java)
+From this I downloaded Intel(R) 82579V based Network Controller(OEM)
+
+
+also got INF Update Utility - for Intel® x79 Chipset 
+because the other chipset driver seemed not to work
+
+
+* copied code and latex back to user directory
+
+* Edited the setup vim command so it didnt required env-vars
+
+installed mono dyslexic
+
+
+added envar ROB

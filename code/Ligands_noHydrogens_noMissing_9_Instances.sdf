@@ -1,0 +1,1242 @@
+1EQG_IBP_A_701
+  RCSB PDB10041301083D
+Coordinates from PDB:1EQG:A:701 Model:1 without hydrogens
+ 15 15  0  0  0  0            999 V2000
+   27.4310   30.8740  203.0250   C 0  0  0  0  0  0  0  0  0  0  0  0
+   26.2030   35.7940  198.7640   C 0  0  0  0  0  0  0  0  0  0  0  0
+   26.0080   35.0600  197.4310   C 0  0  0  0  0  0  0  0  0  0  0  0
+   26.4240   35.9590  196.2740   C 0  0  0  0  0  0  0  0  0  0  0  0
+   24.5690   34.6350  197.2440   C 0  0  0  0  0  0  0  0  0  0  0  0
+   27.4180   32.3300  203.4660   C 0  0  0  0  0  0  0  0  0  0  0  0
+   28.7160   32.7010  204.1890   C 0  0  0  0  0  0  0  0  0  0  0  0
+   27.1220   33.2170  202.2330   C 0  0  0  0  0  0  0  0  0  0  0  0
+   25.8230   33.7370  202.0240   C 0  0  0  0  0  0  0  0  0  0  0  0
+   25.5310   34.5610  200.9080   C 0  0  0  0  0  0  0  0  0  0  0  0
+   26.5280   34.8990  199.9550   C 0  0  0  0  0  0  0  0  0  0  0  0
+   27.8220   34.3800  200.1620   C 0  0  0  0  0  0  0  0  0  0  0  0
+   28.1160   33.5540  201.2790   C 0  0  0  0  0  0  0  0  0  0  0  0
+   26.2960   30.2520  203.2070   O 0  0  0  0  0  0  0  0  0  0  0  0
+   28.4160   30.3120  202.5590   O 0  0  0  0  0  0  0  0  0  0  0  0
+  1  6  1  0  0  0  0
+  1 14  1  0  0  0  0
+  1 15  2  0  0  0  0
+  2  3  1  0  0  0  0
+  2 11  1  0  0  0  0
+  3  4  1  0  0  0  0
+  3  5  1  0  0  0  0
+  6  7  1  0  0  0  0
+  6  8  1  0  0  0  0
+  8  9  2  0  0  0  0
+  8 13  1  0  0  0  0
+  9 10  1  0  0  0  0
+ 10 11  2  0  0  0  0
+ 11 12  1  0  0  0  0
+ 12 13  2  0  0  0  0
+A    1
+C1
+A    2
+C2
+A    3
+C3
+A    4
+C4
+A    5
+C5
+A    6
+C6
+A    7
+C7
+A    8
+C8
+A    9
+C9
+A   10
+C10
+A   11
+C11
+A   12
+C12
+A   13
+C13
+A   14
+O1
+A   15
+O2
+M  END
+>  <InstanceId>
+1EQG_IBP_A_701
+
+>  <ChemCompId>
+IBP
+
+>  <PdbId>
+1EQG
+
+>  <ChainId>
+A
+
+>  <ResidueNumber>
+701
+
+>  <InsertionCode>
+
+
+>  <Model>
+1
+
+>  <AltIds>
+
+
+>  <MissingHeavyAtoms>
+0
+
+>  <ObservedFormula>
+C13 O2
+
+>  <Name>
+IBUPROFEN
+
+>  <SystematicName>
+(2S)-2-[4-(2-methylpropyl)phenyl]propanoic acid
+
+>  <Synonyms>
+2-(4-ISOBUTYLPHENYL)PROPIONIC ACID
+
+>  <Type>
+NON-POLYMER
+
+>  <Formula>
+C13 H18 O2
+
+>  <MolecularWeight>
+206.281
+
+>  <ModifiedDate>
+2011-06-04
+
+>  <Parent>
+
+
+>  <OneLetterCode>
+
+
+>  <SubcomponentList>
+
+
+>  <AmbiguousFlag>
+N
+
+>  <InChI>
+InChI=1S/C13H18O2/c1-9(2)8-11-4-6-12(7-5-11)10(3)13(14)15/h4-7,9-10H,8H2,1-3H3,(H,14,15)/t10-/m0/s1
+
+>  <InChIKey>
+HEFNNWSXXWATRW-JTQLQIEISA-N
+
+>  <SMILES>
+CC(C)Cc1ccc(cc1)[C@H](C)C(=O)O
+
+$$$$
+2BXG_IBP_A_2001
+  RCSB PDB10041304173D
+Coordinates from PDB:2BXG:A:2001 Model:1 without hydrogens
+ 15 15  0  0  0  0            999 V2000
+    5.7520    3.0920  -17.2290   C 0  0  0  0  0  0  0  0  0  0  0  0
+   10.9990    2.8540  -13.3440   C 0  0  0  0  0  0  0  0  0  0  0  0
+   10.9330    2.9630  -11.8320   C 0  0  0  0  0  0  0  0  0  0  0  0
+   12.2240    3.5790  -11.3620   C 0  0  0  0  0  0  0  0  0  0  0  0
+   10.7690    1.6020  -11.1860   C 0  0  0  0  0  0  0  0  0  0  0  0
+    5.8310    2.0560  -16.1190   C 0  0  0  0  0  0  0  0  0  0  0  0
+    5.5290    0.7330  -16.6820   C 0  0  0  0  0  0  0  0  0  0  0  0
+    7.1550    2.2880  -15.3930   C 0  0  0  0  0  0  0  0  0  0  0  0
+    7.2290    3.1790  -14.2790   C 0  0  0  0  0  0  0  0  0  0  0  0
+    8.4720    3.3730  -13.6090   C 0  0  0  0  0  0  0  0  0  0  0  0
+    9.6740    2.6720  -14.0420   C 0  0  0  0  0  0  0  0  0  0  0  0
+    9.5790    1.7940  -15.1470   C 0  0  0  0  0  0  0  0  0  0  0  0
+    8.3480    1.6040  -15.8120   C 0  0  0  0  0  0  0  0  0  0  0  0
+    4.5350    3.2280  -17.6870   O 0  0  0  0  0  0  0  0  0  0  0  0
+    6.7110    3.7580  -17.6630   O 0  0  0  0  0  0  0  0  0  0  0  0
+  1  6  1  0  0  0  0
+  1 14  1  0  0  0  0
+  1 15  2  0  0  0  0
+  2  3  1  0  0  0  0
+  2 11  1  0  0  0  0
+  3  4  1  0  0  0  0
+  3  5  1  0  0  0  0
+  6  7  1  0  0  0  0
+  6  8  1  0  0  0  0
+  8  9  2  0  0  0  0
+  8 13  1  0  0  0  0
+  9 10  1  0  0  0  0
+ 10 11  2  0  0  0  0
+ 11 12  1  0  0  0  0
+ 12 13  2  0  0  0  0
+A    1
+C1
+A    2
+C2
+A    3
+C3
+A    4
+C4
+A    5
+C5
+A    6
+C6
+A    7
+C7
+A    8
+C8
+A    9
+C9
+A   10
+C10
+A   11
+C11
+A   12
+C12
+A   13
+C13
+A   14
+O1
+A   15
+O2
+M  END
+>  <InstanceId>
+2BXG_IBP_A_2001
+
+>  <ChemCompId>
+IBP
+
+>  <PdbId>
+2BXG
+
+>  <ChainId>
+A
+
+>  <ResidueNumber>
+2001
+
+>  <InsertionCode>
+
+
+>  <Model>
+1
+
+>  <AltIds>
+
+
+>  <MissingHeavyAtoms>
+0
+
+>  <ObservedFormula>
+C13 O2
+
+>  <Name>
+IBUPROFEN
+
+>  <SystematicName>
+(2S)-2-[4-(2-methylpropyl)phenyl]propanoic acid
+
+>  <Synonyms>
+2-(4-ISOBUTYLPHENYL)PROPIONIC ACID
+
+>  <Type>
+NON-POLYMER
+
+>  <Formula>
+C13 H18 O2
+
+>  <MolecularWeight>
+206.281
+
+>  <ModifiedDate>
+2011-06-04
+
+>  <Parent>
+
+
+>  <OneLetterCode>
+
+
+>  <SubcomponentList>
+
+
+>  <AmbiguousFlag>
+N
+
+>  <InChI>
+InChI=1S/C13H18O2/c1-9(2)8-11-4-6-12(7-5-11)10(3)13(14)15/h4-7,9-10H,8H2,1-3H3,(H,14,15)/t10-/m0/s1
+
+>  <InChIKey>
+HEFNNWSXXWATRW-JTQLQIEISA-N
+
+>  <SMILES>
+CC(C)Cc1ccc(cc1)[C@H](C)C(=O)O
+
+$$$$
+2PWS_IBP_A_3960
+  RCSB PDB10041305573D
+Coordinates from PDB:2PWS:A:3960 Model:1 without hydrogens
+ 15 15  0  0  0  0            999 V2000
+  -24.9610    9.6790   -9.9600   C 0  0  0  0  0  0  0  0  0  0  0  0
+  -19.9360    5.6740   -9.8640   C 0  0  0  0  0  0  0  0  0  0  0  0
+  -19.4760    4.2970   -9.4390   C 0  0  0  0  0  0  0  0  0  0  0  0
+  -19.4630    4.2070   -7.9140   C 0  0  0  0  0  0  0  0  0  0  0  0
+  -20.3170    3.1910  -10.0650   C 0  0  0  0  0  0  0  0  0  0  0  0
+  -24.9170    8.4100  -10.7730   C 0  0  0  0  0  0  0  0  0  0  0  0
+  -24.9500    8.7670  -12.2530   C 0  0  0  0  0  0  0  0  0  0  0  0
+  -23.6810    7.6340  -10.5010   C 0  0  0  0  0  0  0  0  0  0  0  0
+  -23.7080    6.3350   -9.9940   C 0  0  0  0  0  0  0  0  0  0  0  0
+  -22.5170    5.6360   -9.7550   C 0  0  0  0  0  0  0  0  0  0  0  0
+  -21.2960    6.2470  -10.0410   C 0  0  0  0  0  0  0  0  0  0  0  0
+  -21.2870    7.5330  -10.5500   C 0  0  0  0  0  0  0  0  0  0  0  0
+  -22.4610    8.2220  -10.7840   C 0  0  0  0  0  0  0  0  0  0  0  0
+  -25.8800   10.4720  -10.1040   O 0  0  0  0  0  0  0  0  0  0  0  0
+  -24.0800    9.9380   -9.1540   O 0  0  0  0  0  0  0  0  0  0  0  0
+  1  6  1  0  0  0  0
+  1 14  1  0  0  0  0
+  1 15  2  0  0  0  0
+  2  3  1  0  0  0  0
+  2 11  1  0  0  0  0
+  3  4  1  0  0  0  0
+  3  5  1  0  0  0  0
+  6  7  1  0  0  0  0
+  6  8  1  0  0  0  0
+  8  9  2  0  0  0  0
+  8 13  1  0  0  0  0
+  9 10  1  0  0  0  0
+ 10 11  2  0  0  0  0
+ 11 12  1  0  0  0  0
+ 12 13  2  0  0  0  0
+A    1
+C1
+A    2
+C2
+A    3
+C3
+A    4
+C4
+A    5
+C5
+A    6
+C6
+A    7
+C7
+A    8
+C8
+A    9
+C9
+A   10
+C10
+A   11
+C11
+A   12
+C12
+A   13
+C13
+A   14
+O1
+A   15
+O2
+M  END
+>  <InstanceId>
+2PWS_IBP_A_3960
+
+>  <ChemCompId>
+IBP
+
+>  <PdbId>
+2PWS
+
+>  <ChainId>
+A
+
+>  <ResidueNumber>
+3960
+
+>  <InsertionCode>
+
+
+>  <Model>
+1
+
+>  <AltIds>
+
+
+>  <MissingHeavyAtoms>
+0
+
+>  <ObservedFormula>
+C13 O2
+
+>  <Name>
+IBUPROFEN
+
+>  <SystematicName>
+(2S)-2-[4-(2-methylpropyl)phenyl]propanoic acid
+
+>  <Synonyms>
+2-(4-ISOBUTYLPHENYL)PROPIONIC ACID
+
+>  <Type>
+NON-POLYMER
+
+>  <Formula>
+C13 H18 O2
+
+>  <MolecularWeight>
+206.281
+
+>  <ModifiedDate>
+2011-06-04
+
+>  <Parent>
+
+
+>  <OneLetterCode>
+
+
+>  <SubcomponentList>
+
+
+>  <AmbiguousFlag>
+N
+
+>  <InChI>
+InChI=1S/C13H18O2/c1-9(2)8-11-4-6-12(7-5-11)10(3)13(14)15/h4-7,9-10H,8H2,1-3H3,(H,14,15)/t10-/m0/s1
+
+>  <InChIKey>
+HEFNNWSXXWATRW-JTQLQIEISA-N
+
+>  <SMILES>
+CC(C)Cc1ccc(cc1)[C@H](C)C(=O)O
+
+$$$$
+2QZ1_IBP_A_3960
+  RCSB PDB10041306133D
+Coordinates from PDB:2QZ1:A:3960 Model:1 without hydrogens
+ 15 15  0  0  0  0            999 V2000
+   10.6640   19.3460   18.5060   C 0  0  0  0  0  0  0  0  0  0  0  0
+   10.6020   14.4480   14.1100   C 0  0  0  0  0  0  0  0  0  0  0  0
+    9.4380   13.4690   13.9030   C 0  0  0  0  0  0  0  0  0  0  0  0
+    9.3220   12.5060   15.0860   C 0  0  0  0  0  0  0  0  0  0  0  0
+    8.0740   14.1190   13.5940   C 0  0  0  0  0  0  0  0  0  0  0  0
+    9.4840   18.9340   17.6530   C 0  0  0  0  0  0  0  0  0  0  0  0
+    9.0100   20.1460   16.8470   C 0  0  0  0  0  0  0  0  0  0  0  0
+    9.7850   17.7750   16.7580   C 0  0  0  0  0  0  0  0  0  0  0  0
+   10.6160   16.7180   17.1800   C 0  0  0  0  0  0  0  0  0  0  0  0
+   10.8860   15.6410   16.3300   C 0  0  0  0  0  0  0  0  0  0  0  0
+   10.3110   15.6060   15.0500   C 0  0  0  0  0  0  0  0  0  0  0  0
+    9.4890   16.6640   14.6240   C 0  0  0  0  0  0  0  0  0  0  0  0
+    9.2180   17.7320   15.4740   C 0  0  0  0  0  0  0  0  0  0  0  0
+   10.4990   19.4160   19.7450   O 0  0  0  0  0  0  0  0  0  0  0  0
+   11.7650   19.6170   17.9630   O 0  0  0  0  0  0  0  0  0  0  0  0
+  1  6  1  0  0  0  0
+  1 14  1  0  0  0  0
+  1 15  2  0  0  0  0
+  2  3  1  0  0  0  0
+  2 11  1  0  0  0  0
+  3  4  1  0  0  0  0
+  3  5  1  0  0  0  0
+  6  7  1  0  0  0  0
+  6  8  1  0  0  0  0
+  8  9  2  0  0  0  0
+  8 13  1  0  0  0  0
+  9 10  1  0  0  0  0
+ 10 11  2  0  0  0  0
+ 11 12  1  0  0  0  0
+ 12 13  2  0  0  0  0
+A    1
+C1
+A    2
+C2
+A    3
+C3
+A    4
+C4
+A    5
+C5
+A    6
+C6
+A    7
+C7
+A    8
+C8
+A    9
+C9
+A   10
+C10
+A   11
+C11
+A   12
+C12
+A   13
+C13
+A   14
+O1
+A   15
+O2
+M  END
+>  <InstanceId>
+2QZ1_IBP_A_3960
+
+>  <ChemCompId>
+IBP
+
+>  <PdbId>
+2QZ1
+
+>  <ChainId>
+A
+
+>  <ResidueNumber>
+3960
+
+>  <InsertionCode>
+
+
+>  <Model>
+1
+
+>  <AltIds>
+
+
+>  <MissingHeavyAtoms>
+0
+
+>  <ObservedFormula>
+C13 O2
+
+>  <Name>
+IBUPROFEN
+
+>  <SystematicName>
+(2S)-2-[4-(2-methylpropyl)phenyl]propanoic acid
+
+>  <Synonyms>
+2-(4-ISOBUTYLPHENYL)PROPIONIC ACID
+
+>  <Type>
+NON-POLYMER
+
+>  <Formula>
+C13 H18 O2
+
+>  <MolecularWeight>
+206.281
+
+>  <ModifiedDate>
+2011-06-04
+
+>  <Parent>
+
+
+>  <OneLetterCode>
+
+
+>  <SubcomponentList>
+
+
+>  <AmbiguousFlag>
+N
+
+>  <InChI>
+InChI=1S/C13H18O2/c1-9(2)8-11-4-6-12(7-5-11)10(3)13(14)15/h4-7,9-10H,8H2,1-3H3,(H,14,15)/t10-/m0/s1
+
+>  <InChIKey>
+HEFNNWSXXWATRW-JTQLQIEISA-N
+
+>  <SMILES>
+CC(C)Cc1ccc(cc1)[C@H](C)C(=O)O
+
+$$$$
+2WD9_IBP_A_1570
+  RCSB PDB10041306423D
+Coordinates from PDB:2WD9:A:1570 Model:1 without hydrogens
+ 15 15  0  0  0  0            999 V2000
+   14.8740   17.9320   29.3570   C 0  0  0  0  0  0  0  0  0  0  0  0
+   14.0910   18.4940   22.8340   C 0  0  0  0  0  0  0  0  0  0  0  0
+   15.3370   18.1070   22.0280   C 0  0  0  0  0  0  0  0  0  0  0  0
+   16.5890   18.8820   22.4210   C 0  0  0  0  0  0  0  0  0  0  0  0
+   15.0310   18.3180   20.5400   C 0  0  0  0  0  0  0  0  0  0  0  0
+   15.0390   19.1660   28.5000   C 0  0  0  0  0  0  0  0  0  0  0  0
+   16.4470   19.7030   28.6750   C 0  0  0  0  0  0  0  0  0  0  0  0
+   14.7990   18.9260   27.0490   C 0  0  0  0  0  0  0  0  0  0  0  0
+   14.5060   20.0240   26.2660   C 0  0  0  0  0  0  0  0  0  0  0  0
+   14.2730   19.8990   24.9120   C 0  0  0  0  0  0  0  0  0  0  0  0
+   14.3460   18.6480   24.3200   C 0  0  0  0  0  0  0  0  0  0  0  0
+   14.6310   17.5390   25.1020   C 0  0  0  0  0  0  0  0  0  0  0  0
+   14.8540   17.6810   26.4590   C 0  0  0  0  0  0  0  0  0  0  0  0
+   15.9130   17.3650   29.7870   O 0  0  0  0  0  0  0  0  0  0  0  0
+   13.6980   17.5210   29.5880   O 0  0  0  0  0  0  0  0  0  0  0  0
+  1  6  1  0  0  0  0
+  1 14  1  0  0  0  0
+  1 15  2  0  0  0  0
+  2  3  1  0  0  0  0
+  2 11  1  0  0  0  0
+  3  4  1  0  0  0  0
+  3  5  1  0  0  0  0
+  6  7  1  0  0  0  0
+  6  8  1  0  0  0  0
+  8  9  2  0  0  0  0
+  8 13  1  0  0  0  0
+  9 10  1  0  0  0  0
+ 10 11  2  0  0  0  0
+ 11 12  1  0  0  0  0
+ 12 13  2  0  0  0  0
+A    1
+C1
+A    2
+C2
+A    3
+C3
+A    4
+C4
+A    5
+C5
+A    6
+C6
+A    7
+C7
+A    8
+C8
+A    9
+C9
+A   10
+C10
+A   11
+C11
+A   12
+C12
+A   13
+C13
+A   14
+O1
+A   15
+O2
+M  END
+>  <InstanceId>
+2WD9_IBP_A_1570
+
+>  <ChemCompId>
+IBP
+
+>  <PdbId>
+2WD9
+
+>  <ChainId>
+A
+
+>  <ResidueNumber>
+1570
+
+>  <InsertionCode>
+
+
+>  <Model>
+1
+
+>  <AltIds>
+
+
+>  <MissingHeavyAtoms>
+0
+
+>  <ObservedFormula>
+C13 O2
+
+>  <Name>
+IBUPROFEN
+
+>  <SystematicName>
+(2S)-2-[4-(2-methylpropyl)phenyl]propanoic acid
+
+>  <Synonyms>
+2-(4-ISOBUTYLPHENYL)PROPIONIC ACID
+
+>  <Type>
+NON-POLYMER
+
+>  <Formula>
+C13 H18 O2
+
+>  <MolecularWeight>
+206.281
+
+>  <ModifiedDate>
+2011-06-04
+
+>  <Parent>
+
+
+>  <OneLetterCode>
+
+
+>  <SubcomponentList>
+
+
+>  <AmbiguousFlag>
+N
+
+>  <InChI>
+InChI=1S/C13H18O2/c1-9(2)8-11-4-6-12(7-5-11)10(3)13(14)15/h4-7,9-10H,8H2,1-3H3,(H,14,15)/t10-/m0/s1
+
+>  <InChIKey>
+HEFNNWSXXWATRW-JTQLQIEISA-N
+
+>  <SMILES>
+CC(C)Cc1ccc(cc1)[C@H](C)C(=O)O
+
+$$$$
+3FKX_IBP_A_3960
+  RCSB PDB10041309053D
+Coordinates from PDB:3FKX:A:3960 Model:1 without hydrogens
+ 15 15  0  0  0  0            999 V2000
+    7.9620   17.9610   18.2680   C 0  0  0  0  0  0  0  0  0  0  0  0
+   11.3000   14.2760   14.4950   C 0  0  0  0  0  0  0  0  0  0  0  0
+   11.4840   13.3240   13.3050   C 0  0  0  0  0  0  0  0  0  0  0  0
+   10.6090   13.7540   12.1260   C 0  0  0  0  0  0  0  0  0  0  0  0
+   12.9420   13.1080   12.8500   C 0  0  0  0  0  0  0  0  0  0  0  0
+    9.2540   18.6040   17.8130   C 0  0  0  0  0  0  0  0  0  0  0  0
+   10.1650   18.8270   19.0220   C 0  0  0  0  0  0  0  0  0  0  0  0
+    9.7590   17.4890   16.9540   C 0  0  0  0  0  0  0  0  0  0  0  0
+    8.9120   16.8180   16.0500   C 0  0  0  0  0  0  0  0  0  0  0  0
+    9.4020   15.7780   15.2540   C 0  0  0  0  0  0  0  0  0  0  0  0
+   10.7530   15.4110   15.3460   C 0  0  0  0  0  0  0  0  0  0  0  0
+   11.5970   16.0740   16.2540   C 0  0  0  0  0  0  0  0  0  0  0  0
+   11.1080   17.1110   17.0410   C 0  0  0  0  0  0  0  0  0  0  0  0
+    7.6050   18.1330   19.4550   O 0  0  0  0  0  0  0  0  0  0  0  0
+    7.2890   17.2690   17.4620   O 0  0  0  0  0  0  0  0  0  0  0  0
+  1  6  1  0  0  0  0
+  1 14  1  0  0  0  0
+  1 15  2  0  0  0  0
+  2  3  1  0  0  0  0
+  2 11  1  0  0  0  0
+  3  4  1  0  0  0  0
+  3  5  1  0  0  0  0
+  6  7  1  0  0  0  0
+  6  8  1  0  0  0  0
+  8  9  2  0  0  0  0
+  8 13  1  0  0  0  0
+  9 10  1  0  0  0  0
+ 10 11  2  0  0  0  0
+ 11 12  1  0  0  0  0
+ 12 13  2  0  0  0  0
+A    1
+C1
+A    2
+C2
+A    3
+C3
+A    4
+C4
+A    5
+C5
+A    6
+C6
+A    7
+C7
+A    8
+C8
+A    9
+C9
+A   10
+C10
+A   11
+C11
+A   12
+C12
+A   13
+C13
+A   14
+O1
+A   15
+O2
+M  END
+>  <InstanceId>
+3FKX_IBP_A_3960
+
+>  <ChemCompId>
+IBP
+
+>  <PdbId>
+3FKX
+
+>  <ChainId>
+A
+
+>  <ResidueNumber>
+3960
+
+>  <InsertionCode>
+
+
+>  <Model>
+1
+
+>  <AltIds>
+
+
+>  <MissingHeavyAtoms>
+0
+
+>  <ObservedFormula>
+C13 O2
+
+>  <Name>
+IBUPROFEN
+
+>  <SystematicName>
+(2S)-2-[4-(2-methylpropyl)phenyl]propanoic acid
+
+>  <Synonyms>
+2-(4-ISOBUTYLPHENYL)PROPIONIC ACID
+
+>  <Type>
+NON-POLYMER
+
+>  <Formula>
+C13 H18 O2
+
+>  <MolecularWeight>
+206.281
+
+>  <ModifiedDate>
+2011-06-04
+
+>  <Parent>
+
+
+>  <OneLetterCode>
+
+
+>  <SubcomponentList>
+
+
+>  <AmbiguousFlag>
+N
+
+>  <InChI>
+InChI=1S/C13H18O2/c1-9(2)8-11-4-6-12(7-5-11)10(3)13(14)15/h4-7,9-10H,8H2,1-3H3,(H,14,15)/t10-/m0/s1
+
+>  <InChIKey>
+HEFNNWSXXWATRW-JTQLQIEISA-N
+
+>  <SMILES>
+CC(C)Cc1ccc(cc1)[C@H](C)C(=O)O
+
+$$$$
+3HWQ_IBP_A_3960
+  RCSB PDB10041309383D
+Coordinates from PDB:3HWQ:A:3960 Model:1 without hydrogens
+ 15 15  0  0  0  0            999 V2000
+    7.9620   17.9610   18.2680   C 0  0  0  0  0  0  0  0  0  0  0  0
+   11.3000   14.2760   14.4950   C 0  0  0  0  0  0  0  0  0  0  0  0
+   11.4840   13.3240   13.3050   C 0  0  0  0  0  0  0  0  0  0  0  0
+   10.6090   13.7540   12.1260   C 0  0  0  0  0  0  0  0  0  0  0  0
+   12.9420   13.1080   12.8500   C 0  0  0  0  0  0  0  0  0  0  0  0
+    9.2540   18.6040   17.8130   C 0  0  0  0  0  0  0  0  0  0  0  0
+   10.1650   18.8270   19.0220   C 0  0  0  0  0  0  0  0  0  0  0  0
+    9.7590   17.4890   16.9540   C 0  0  0  0  0  0  0  0  0  0  0  0
+    8.9120   16.8180   16.0500   C 0  0  0  0  0  0  0  0  0  0  0  0
+    9.4020   15.7780   15.2540   C 0  0  0  0  0  0  0  0  0  0  0  0
+   10.7530   15.4110   15.3460   C 0  0  0  0  0  0  0  0  0  0  0  0
+   11.5970   16.0740   16.2540   C 0  0  0  0  0  0  0  0  0  0  0  0
+   11.1080   17.1110   17.0410   C 0  0  0  0  0  0  0  0  0  0  0  0
+    7.6050   18.1330   19.4550   O 0  0  0  0  0  0  0  0  0  0  0  0
+    7.2890   17.2690   17.4620   O 0  0  0  0  0  0  0  0  0  0  0  0
+  1  6  1  0  0  0  0
+  1 14  1  0  0  0  0
+  1 15  2  0  0  0  0
+  2  3  1  0  0  0  0
+  2 11  1  0  0  0  0
+  3  4  1  0  0  0  0
+  3  5  1  0  0  0  0
+  6  7  1  0  0  0  0
+  6  8  1  0  0  0  0
+  8  9  2  0  0  0  0
+  8 13  1  0  0  0  0
+  9 10  1  0  0  0  0
+ 10 11  2  0  0  0  0
+ 11 12  1  0  0  0  0
+ 12 13  2  0  0  0  0
+A    1
+C1
+A    2
+C2
+A    3
+C3
+A    4
+C4
+A    5
+C5
+A    6
+C6
+A    7
+C7
+A    8
+C8
+A    9
+C9
+A   10
+C10
+A   11
+C11
+A   12
+C12
+A   13
+C13
+A   14
+O1
+A   15
+O2
+M  END
+>  <InstanceId>
+3HWQ_IBP_A_3960
+
+>  <ChemCompId>
+IBP
+
+>  <PdbId>
+3HWQ
+
+>  <ChainId>
+A
+
+>  <ResidueNumber>
+3960
+
+>  <InsertionCode>
+
+
+>  <Model>
+1
+
+>  <AltIds>
+
+
+>  <MissingHeavyAtoms>
+0
+
+>  <ObservedFormula>
+C13 O2
+
+>  <Name>
+IBUPROFEN
+
+>  <SystematicName>
+(2S)-2-[4-(2-methylpropyl)phenyl]propanoic acid
+
+>  <Synonyms>
+2-(4-ISOBUTYLPHENYL)PROPIONIC ACID
+
+>  <Type>
+NON-POLYMER
+
+>  <Formula>
+C13 H18 O2
+
+>  <MolecularWeight>
+206.281
+
+>  <ModifiedDate>
+2011-06-04
+
+>  <Parent>
+
+
+>  <OneLetterCode>
+
+
+>  <SubcomponentList>
+
+
+>  <AmbiguousFlag>
+N
+
+>  <InChI>
+InChI=1S/C13H18O2/c1-9(2)8-11-4-6-12(7-5-11)10(3)13(14)15/h4-7,9-10H,8H2,1-3H3,(H,14,15)/t10-/m0/s1
+
+>  <InChIKey>
+HEFNNWSXXWATRW-JTQLQIEISA-N
+
+>  <SMILES>
+CC(C)Cc1ccc(cc1)[C@H](C)C(=O)O
+
+$$$$
+3IB2_IBP_A_3960
+  RCSB PDB10041309503D
+Coordinates from PDB:3IB2:A:3960 Model:1 without hydrogens
+ 15 15  0  0  0  0            999 V2000
+    7.9620   17.9610   18.2680   C 0  0  0  0  0  0  0  0  0  0  0  0
+   11.3000   14.2760   14.4950   C 0  0  0  0  0  0  0  0  0  0  0  0
+   11.4840   13.3240   13.3050   C 0  0  0  0  0  0  0  0  0  0  0  0
+   10.6090   13.7540   12.1260   C 0  0  0  0  0  0  0  0  0  0  0  0
+   12.9420   13.1080   12.8500   C 0  0  0  0  0  0  0  0  0  0  0  0
+    9.2540   18.6040   17.8130   C 0  0  0  0  0  0  0  0  0  0  0  0
+   10.1650   18.8270   19.0220   C 0  0  0  0  0  0  0  0  0  0  0  0
+    9.7590   17.4890   16.9540   C 0  0  0  0  0  0  0  0  0  0  0  0
+    8.9120   16.8180   16.0500   C 0  0  0  0  0  0  0  0  0  0  0  0
+    9.4020   15.7780   15.2540   C 0  0  0  0  0  0  0  0  0  0  0  0
+   10.7530   15.4110   15.3460   C 0  0  0  0  0  0  0  0  0  0  0  0
+   11.5970   16.0740   16.2540   C 0  0  0  0  0  0  0  0  0  0  0  0
+   11.1080   17.1110   17.0410   C 0  0  0  0  0  0  0  0  0  0  0  0
+    7.6050   18.1330   19.4550   O 0  0  0  0  0  0  0  0  0  0  0  0
+    7.2890   17.2690   17.4620   O 0  0  0  0  0  0  0  0  0  0  0  0
+  1  6  1  0  0  0  0
+  1 14  1  0  0  0  0
+  1 15  2  0  0  0  0
+  2  3  1  0  0  0  0
+  2 11  1  0  0  0  0
+  3  4  1  0  0  0  0
+  3  5  1  0  0  0  0
+  6  7  1  0  0  0  0
+  6  8  1  0  0  0  0
+  8  9  2  0  0  0  0
+  8 13  1  0  0  0  0
+  9 10  1  0  0  0  0
+ 10 11  2  0  0  0  0
+ 11 12  1  0  0  0  0
+ 12 13  2  0  0  0  0
+A    1
+C1
+A    2
+C2
+A    3
+C3
+A    4
+C4
+A    5
+C5
+A    6
+C6
+A    7
+C7
+A    8
+C8
+A    9
+C9
+A   10
+C10
+A   11
+C11
+A   12
+C12
+A   13
+C13
+A   14
+O1
+A   15
+O2
+M  END
+>  <InstanceId>
+3IB2_IBP_A_3960
+
+>  <ChemCompId>
+IBP
+
+>  <PdbId>
+3IB2
+
+>  <ChainId>
+A
+
+>  <ResidueNumber>
+3960
+
+>  <InsertionCode>
+
+
+>  <Model>
+1
+
+>  <AltIds>
+
+
+>  <MissingHeavyAtoms>
+0
+
+>  <ObservedFormula>
+C13 O2
+
+>  <Name>
+IBUPROFEN
+
+>  <SystematicName>
+(2S)-2-[4-(2-methylpropyl)phenyl]propanoic acid
+
+>  <Synonyms>
+2-(4-ISOBUTYLPHENYL)PROPIONIC ACID
+
+>  <Type>
+NON-POLYMER
+
+>  <Formula>
+C13 H18 O2
+
+>  <MolecularWeight>
+206.281
+
+>  <ModifiedDate>
+2011-06-04
+
+>  <Parent>
+
+
+>  <OneLetterCode>
+
+
+>  <SubcomponentList>
+
+
+>  <AmbiguousFlag>
+N
+
+>  <InChI>
+InChI=1S/C13H18O2/c1-9(2)8-11-4-6-12(7-5-11)10(3)13(14)15/h4-7,9-10H,8H2,1-3H3,(H,14,15)/t10-/m0/s1
+
+>  <InChIKey>
+HEFNNWSXXWATRW-JTQLQIEISA-N
+
+>  <SMILES>
+CC(C)Cc1ccc(cc1)[C@H](C)C(=O)O
+
+$$$$
+3P6H_IBP_A_133
+  RCSB PDB10041311313D
+Coordinates from PDB:3P6H:A:133 Model:1 without hydrogens
+ 15 15  0  0  0  0            999 V2000
+    5.9120    6.1000   15.5330   C 0  0  0  0  0  0  0  0  0  0  0  0
+    4.9980    8.5800   21.6750   C 0  0  0  0  0  0  0  0  0  0  0  0
+    4.9160    7.5190   22.7690   C 0  0  0  0  0  0  0  0  0  0  0  0
+    6.3540    7.2600   23.2290   C 0  0  0  0  0  0  0  0  0  0  0  0
+    4.0460    6.3320   22.2710   C 0  0  0  0  0  0  0  0  0  0  0  0
+    6.9590    6.5410   16.5560   C 0  0  0  0  0  0  0  0  0  0  0  0
+    7.5640    7.8490   16.0440   C 0  0  0  0  0  0  0  0  0  0  0  0
+    6.3830    6.9910   17.8910   C 0  0  0  0  0  0  0  0  0  0  0  0
+    7.2950    7.4870   18.8060   C 0  0  0  0  0  0  0  0  0  0  0  0
+    6.8180    7.9930   20.0070   C 0  0  0  0  0  0  0  0  0  0  0  0
+    5.4660    7.9950   20.3240   C 0  0  0  0  0  0  0  0  0  0  0  0
+    4.5580    7.4930   19.3810   C 0  0  0  0  0  0  0  0  0  0  0  0
+    5.0110    7.0060   18.1570   C 0  0  0  0  0  0  0  0  0  0  0  0
+    5.8280    4.8910   15.3010   O 0  0  0  0  0  0  0  0  0  0  0  0
+    5.1190    6.9490   15.0230   O 0  0  0  0  0  0  0  0  0  0  0  0
+  1  6  1  0  0  0  0
+  1 14  1  0  0  0  0
+  1 15  2  0  0  0  0
+  2  3  1  0  0  0  0
+  2 11  1  0  0  0  0
+  3  4  1  0  0  0  0
+  3  5  1  0  0  0  0
+  6  7  1  0  0  0  0
+  6  8  1  0  0  0  0
+  8  9  2  0  0  0  0
+  8 13  1  0  0  0  0
+  9 10  1  0  0  0  0
+ 10 11  2  0  0  0  0
+ 11 12  1  0  0  0  0
+ 12 13  2  0  0  0  0
+A    1
+C1
+A    2
+C2
+A    3
+C3
+A    4
+C4
+A    5
+C5
+A    6
+C6
+A    7
+C7
+A    8
+C8
+A    9
+C9
+A   10
+C10
+A   11
+C11
+A   12
+C12
+A   13
+C13
+A   14
+O1
+A   15
+O2
+M  END
+>  <InstanceId>
+3P6H_IBP_A_133
+
+>  <ChemCompId>
+IBP
+
+>  <PdbId>
+3P6H
+
+>  <ChainId>
+A
+
+>  <ResidueNumber>
+133
+
+>  <InsertionCode>
+
+
+>  <Model>
+1
+
+>  <AltIds>
+
+
+>  <MissingHeavyAtoms>
+0
+
+>  <ObservedFormula>
+C13 O2
+
+>  <Name>
+IBUPROFEN
+
+>  <SystematicName>
+(2S)-2-[4-(2-methylpropyl)phenyl]propanoic acid
+
+>  <Synonyms>
+2-(4-ISOBUTYLPHENYL)PROPIONIC ACID
+
+>  <Type>
+NON-POLYMER
+
+>  <Formula>
+C13 H18 O2
+
+>  <MolecularWeight>
+206.281
+
+>  <ModifiedDate>
+2011-06-04
+
+>  <Parent>
+
+
+>  <OneLetterCode>
+
+
+>  <SubcomponentList>
+
+
+>  <AmbiguousFlag>
+N
+
+>  <InChI>
+InChI=1S/C13H18O2/c1-9(2)8-11-4-6-12(7-5-11)10(3)13(14)15/h4-7,9-10H,8H2,1-3H3,(H,14,15)/t10-/m0/s1
+
+>  <InChIKey>
+HEFNNWSXXWATRW-JTQLQIEISA-N
+
+>  <SMILES>
+CC(C)Cc1ccc(cc1)[C@H](C)C(=O)O
+
+$$$$

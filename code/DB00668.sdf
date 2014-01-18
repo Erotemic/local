@@ -1,0 +1,107 @@
+668
+  Mrv0541 02231214552D          
+
+ 13 13  0  0  1  0            999 V2000
+    2.8075    1.3654    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
+    2.0930   -1.5222    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
+    3.5220   -2.3472    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
+    4.2365    2.1904    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
+    3.5220    0.9529    0.0000 C   0  0  2  0  0  0  0  0  0  0  0  0
+    3.5220    0.1279    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+    4.2365    1.3654    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+    2.8075   -0.2846    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+    4.2365   -0.2846    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+    2.8075   -1.1096    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+    4.2365   -1.1096    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+    3.5220   -1.5222    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+    4.9509    2.6029    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+  5  1  1  1  0  0  0
+  2 10  1  0  0  0  0
+  3 12  1  0  0  0  0
+  4  7  1  0  0  0  0
+  4 13  1  0  0  0  0
+  5  6  1  0  0  0  0
+  5  7  1  0  0  0  0
+  6  8  2  0  0  0  0
+  6  9  1  0  0  0  0
+  8 10  1  0  0  0  0
+  9 11  2  0  0  0  0
+ 10 12  2  0  0  0  0
+ 11 12  1  0  0  0  0
+M  END
+> <DRUGBANK_ID>
+DB00668
+
+> <DRUG_GROUPS>
+approved
+
+> <GENERIC_NAME>
+Epinephrine
+
+> <SYNONYMS>
+ADR Adrenaline; Adrenalin; Adrenalin Chloride; Adrenalina; Adrenaline; Adrenalinum; D-Adrenaline; D-Epifrin; D-Epinephrine; Epinefrin [Czech]; Epinefrina [INN-Spanish]; Epinephran; Epinephrinum [INN-Latin]; L-Adrenalin; L-Adrenaline; L-Adrenaline Base; L-Epinephine; L-Epinephrine; L-Epirenamine; Levoadrenaline; Levoepinephrine; Racepinefrina [inn-spanish]; Racepinefrine; Racepinefrinum [inn-latin]; Racepinephrine
+
+> <BRANDS>
+Adnephrine; Adrenal; Adrenalin-Medihaler; Adrenamine; Adrenan; Adrenapax; Adrenasol; Adrenatrate; Adrenine; Adrenodis; Adrenohorma; Adrenor; Adrenosan; Adrenutol; Adrin; Adrine; ADROP; Aktamin; Ana-Guard; Antiasthmatique; Asmatane Mist; Asthma Meter Mist; Asthma-Nefrin; Asthmahaler Mist; Asthmanefrin; Astmahalin; Astminhal; Balmadren; Bernarenin; Biorenine; Bosmin; Brevirenin; Bronkaid; Bronkaid Mist; Bronkaid Suspension Mist; Chelafrin; Citanest Forte; Corisol; Drenamist; Duranest; Dylephrin; Epi EZ Pen Jr; Epifrin; Epiglaufrin; Epipen; Epipen Auto-Injector; Epipen EZ Pen; Epipen Jr.; Epipen Jr. Auto-Injector; Epirenamine; Epirenan; Epirenin; Epitrate; Eppy; Esphygmogenina; Exadrin; Glaucon; Glaucosan; Glauposine; Glycirenan; Haemostasin; Haemostatin; Hektalin; Hemisine; Hemostasin; Hemostatin; Hypernephrin; Hyporenin; Intranefrin; Iontocaine; IOP; Isoptoepinal; Kidoline; Levonor; Levorenen; Levorenin; Levorenine; Lidocaton; Lyophrin; Medihaler-Epi; Metanephrin; Micronefrin; Mucidrina; Myosthenine; Mytrate; Nephridine; Nieraline; Paranephrin; Primatene Mist; Renagladin; Renaglandin; Renaglandulin; Renaleptine; Renalina; Renoform; Renostypricin; Renostypticin; Renostyptin; Scurenaline; Septocaine; Simplene; Sindrenina; Soladren; Sphygmogenin; Stryptirenal; Styptirenal; Supracapsulin; Supradin; Supranefran; Supranephrane; Supranephrine; Supranol; Suprarenaline; Suprarenin; Suprel; Surenine; Surrenine; Sus-Phrine; Susphrine; Sympathin E; Sympathin I; Takamina; Takamine; Tokamina; Tolansin; Tolax; Tolcil; Tolhart; Tonogen; Twinject; Vaponefrin; Vasoconstrictine; Vasodrine; Vasoton; Vasotonin
+
+> <CHEMICAL_FORMULA>
+C9H13NO3
+
+> <MOLECULAR_WEIGHT>
+183.2044
+
+> <EXACT_MASS>
+183.089543287
+
+> <IUPAC_NAME>
+4-[(1R)-1-hydroxy-2-(methylamino)ethyl]benzene-1,2-diol
+
+> <INCHI_IDENTIFIER>
+InChI=1S/C9H13NO3/c1-10-5-9(13)6-2-3-7(11)8(12)4-6/h2-4,9-13H,5H2,1H3/t9-/m0/s1
+
+> <INCHI_KEY>
+InChIKey=UCTWMZQNUQWSLP-VIFPVBQESA-N
+
+> <SMILES>
+CNC[C@H](O)C1=CC(O)=C(O)C=C1
+
+> <JCHEM_ACCEPTOR_COUNT>
+4
+
+> <JCHEM_DONOR_COUNT>
+4
+
+> <JCHEM_ACIDIC_PKA>
+9.69
+
+> <JCHEM_BASIC_PKA>
+8.91
+
+> <JCHEM_PHYSIOLOGICAL_CHARGE>
+1
+
+> <ALOGPS_LOGP>
+-0.82
+
+> <JCHEM_LOGP>
+-0.43
+
+> <ALOGPS_LOGS>
+-0.99
+
+> <JCHEM_POLARIZABILITY>
+19.04
+
+> <JCHEM_POLAR_SURFACE_AREA>
+72.72
+
+> <JCHEM_REFRACTIVITY>
+49.23
+
+> <JCHEM_ROTATABLE_BOND_COUNT>
+3
+
+> <ALOGPS_SOLUBILITY>
+1.86e+01 g/l
+
+$$$$
