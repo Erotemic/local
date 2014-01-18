@@ -159,17 +159,17 @@ class ROB_Directories:
 
         d.DESKTOP   = d.HOME + '/Desktop'
 
-        d.PORT_CODE     = d.CLOUD + '/Code'
+        d.PORT_CODE     = d.LOCAL + '/code'
         d.PORT_APPS     = d.CLOUD + '/Apps'
         d.PORT_SCRIPTS  = d.CLOUD + '/Scripts'
         d.PORT_INSTALL  = d.CLOUD + '/Installers'
         d.PORT_SETTINGS = d.CLOUD + '/Settings'
         d.PORT_NOTES    = d.CLOUD + '/Notes'
         d.PORT_LATEX    = d.CLOUD + '/Latex'
-        d.pvimrc        = d.PORT_SETTINGS + 'vim/portable_vimrc'
+        d.pvimrc        = d.LOCAL + '/vim/portable_vimrc'
         d.AHK_SCRIPTS  = d.PORT_SCRIPTS + '/ahk_scripts'
 
-        d.ROB          = d.PORT_CODE + '/ROB'
+        d.ROB          = d.LOCAL + '/rob'
         d.HOTSPOTTER   = d.CODE + '/hotspotter'
         d.HS           = d.HOTSPOTTER
         #d.CRALL_QUALS  = d.LATEX + 'crall-quals-2013'

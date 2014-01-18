@@ -61,6 +61,7 @@ sudo port install py27-ipython
 sudo port select --set ipython ipython27
 
 sudo pip install pandas
+<<<<<<< Updated upstream
 sudo pip install scipy --upgrade
 
 
@@ -241,3 +242,7 @@ echo backend      : qt4agg >> ~/.matplotlib/matplotlibrc
 
 sudo port selfupdate
 sudo port upgrade outdated
+=======
+sudo pip install pyinstaller
+sudo port install py27-scipy
+>>>>>>> Stashed changes

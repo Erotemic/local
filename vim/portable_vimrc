@@ -199,6 +199,7 @@ command! HexmodeOff :%!xxd -r
 
 " ========= VIM PREFERENCES ========= "
 if has("gui_running")
+    "colorscheme murphy
     colorscheme synic
 endif
 au! SwapExists * let v:swapchoice = 'e'
@@ -326,3 +327,5 @@ noremap <space> za
 noremap <S-Space> zM
 "Map Ctrl+Space to open all folds
 noremap <C-Space> zR
+"
+" :s/\( *\):/:\1/gc
