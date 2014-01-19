@@ -40,6 +40,7 @@ sudo port install gcc46 +gfortran
 sudo port install apple-gcc42
 
 sudo port install tree
+sudo port install htop
 
 sudo port install freetype
 sudo port install zlib
@@ -47,6 +48,7 @@ sudo port install zlib
 # Libpng
 sudo port install libpng
 
+# Install the correct python
 sudo port install python27
 sudo port select python python27 @2.7.6
 sudo port install python_select  
@@ -55,6 +57,10 @@ python_select python27
 #sudo port install qt4-mac-devel
 sudo port install qt4-mac
 #sudo port install py27-pyqt4
+
+# Install pip-2.7 and make a symlink to pip
+sudo port install py27-pip
+sudo ln -s /opt/local/bin/pip-2.7 /opt/local/bin/pip
 
 # Python packages we cant get from pip
 sudo port install py27-ipython
