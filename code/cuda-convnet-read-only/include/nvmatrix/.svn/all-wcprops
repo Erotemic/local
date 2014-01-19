@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/555/trunk/include/nvmatrix
+END
+nvmatrix_operators.cuh
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/404/trunk/include/nvmatrix/nvmatrix_operators.cuh
+END
+nvmatrix.cuh
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/555/trunk/include/nvmatrix/nvmatrix.cuh
+END
+nvmatrix_kernels.cuh
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/550/trunk/include/nvmatrix/nvmatrix_kernels.cuh
+END

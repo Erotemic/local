@@ -1,0 +1,89 @@
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/87/trunk/OpenSURFcpp/src
+END
+surf.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/87/trunk/OpenSURFcpp/src/surf.cpp
+END
+utils.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/80/trunk/OpenSURFcpp/src/utils.cpp
+END
+responselayer.h
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/84/trunk/OpenSURFcpp/src/responselayer.h
+END
+ipoint.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/80/trunk/OpenSURFcpp/src/ipoint.cpp
+END
+kmeans.h
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/80/trunk/OpenSURFcpp/src/kmeans.h
+END
+main.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/80/trunk/OpenSURFcpp/src/main.cpp
+END
+surf.h
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/80/trunk/OpenSURFcpp/src/surf.h
+END
+integral.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/80/trunk/OpenSURFcpp/src/integral.cpp
+END
+utils.h
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/80/trunk/OpenSURFcpp/src/utils.h
+END
+ipoint.h
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/80/trunk/OpenSURFcpp/src/ipoint.h
+END
+fasthessian.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/88/trunk/OpenSURFcpp/src/fasthessian.cpp
+END
+integral.h
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/80/trunk/OpenSURFcpp/src/integral.h
+END
+surflib.h
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/80/trunk/OpenSURFcpp/src/surflib.h
+END
+fasthessian.h
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/80/trunk/OpenSURFcpp/src/fasthessian.h
+END

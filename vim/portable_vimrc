@@ -199,6 +199,7 @@ command! HexmodeOff :%!xxd -r
 
 " ========= VIM PREFERENCES ========= "
 if has("gui_running")
+    "colorscheme murphy
     colorscheme synic
 endif
 au! SwapExists * let v:swapchoice = 'e'
@@ -301,13 +302,6 @@ set nosmartindent
 highlight Cursor guifg=blue guibg=orange
 
 
-" code folding 
-set nofoldenable
-"set foldmethod=indent
-"set foldnestmax=1
-"set foldlevel=1
-"let g:SimpylFold_docstring_preview = 1
-
 "Autocomplete off
 let g:Tex_SmartKeyDot=0
 
@@ -318,3 +312,20 @@ hi StatusLine ctermbg=red ctermfg=green
 hi StatusLine guibg=gray10 guifg=green
 
 " Need to comment "set diffexpr=MyDiff() in windows to get msys-diffutils to work
+
+" code folding 
+"set nofoldenable
+set foldmethod=indent
+"set foldnestmax=1
+"set foldlevel=1
+"let g:SimpylFold_docstring_preview = 1
+
+
+"Map space to toggle current fold
+noremap <space> za
+"Map Shift+Space to close all folds
+noremap <S-Space> zM
+"Map Ctrl+Space to open all folds
+noremap <C-Space> zR
+"
+" :s/\( *\):/:\1/gc

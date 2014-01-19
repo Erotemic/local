@@ -1,0 +1,40 @@
+
+C:\Users\joncrall\Dropbox\Scripts\ahk_scripts>python "C:\Users\joncrall\Dropbox\Code\ROB\run_rob.py" write_research A decision to reject the null hypothesis means that an effect is significant. For a " "" "one-sample test, an effectis the difference between a sample mean and the " "" "population mean stated in the null hypothesis. In Example 8.2, we found a " "" "significant effect, meaning that the sample mean, M= 585, was significantly larger " "" "than the value stated in the null hypothesis, m =558. Hypothesis testing identifies " "" "whether an effect exists in a population. When a sample mean is likely to occur if " "" "the null hypothesis were true (p, we decide that an effect doesn't exist in a " "" "population; the effect is insignificant. When a sample mean is unlikely to occur if " "" "the null hypothesis were true (p, we decide that an effect does exist in a " "" "population; the effect is significant. Hypothesis testing does not, however, inform " "" "us of how big the effect is 
+
+
+
+__________________________________
+
+                     __________
+                   |== ======|+
+                   ||  ;|  ;||/
+                    =========/
+                        ||$
+                      Z<$$$$$,
+                   MMMMMMMNMO~R
+                MMM  MMMMMMMMM~R
+              MMM         |:| MM
+            MMMMF     /MMMMMMMM9
+            NMM   /MMMMMR |:|  8
+                  MMMMM   |:|  9
+                          |:| 6
+                      /MMMMMMMM
+                  MMMMMMMMMMMMMMM
+                 MMMM.MMM. .M.MMMM
+                MMMMMMM.M..MMMMMMM
+                    MMMMMMMMMMMM
+
+____  ____  ___      _ ____    ____ _  _ _    _ _  _ ____
+|__/  |  |  |__]     | [__     |  | |\ | |    | |\ | |___
+|  \. |__| .|__] .   | ___]    |__| | \| |___ | | \| |___
+__________________________________
+WRITING RESEARCH
+,"A decision to reject the null hypothesis means that an effect is significant. For a   one­sample test, an effectis the difference between a sample mean and the   population mean stated in the null hypothesis. In Example 8.2, we found a   significant effect, meaning that the sample mean, M= 585, was significantly larger   than the value stated in the null hypothesis, m =558. Hypothesis testing identifies   whether an effect exists in a population. When a sample mean is likely to occur if   the null hypothesis were true (p, we decide that an effect doesn’t exist in a   population; the effect is insignificant. When a sample mean is unlikely to occur if   the null hypothesis were true (p, we decide that an effect does exist in a   population; the effect is significant. Hypothesis testing does not, however, inform   us of how big the effect is"
+R.O.B. is executing: 
+    print write_research(r,"A decision to reject the null hypothesis means that an effect is significant. For a   one­sample test, an effectis the difference between a sample mean and the   population mean stated in the null hypothesis. In Example 8.2, we found a   significant effect, meaning that the sample mean, M= 585, was significantly larger   than the value stated in the null hypothesis, m =558. Hypothesis testing identifies   whether an effect exists in a population. When a sample mean is likely to occur if   the null hypothesis were true (p, we decide that an effect doesn’t exist in a   population; the effect is insignificant. When a sample mean is unlikely to occur if   the null hypothesis were true (p, we decide that an effect does exist in a   population; the effect is significant. Hypothesis testing does not, however, inform   us of how big the effect is" )
+__________________________________
+None
+
+
+R.O.B. signing off
+================

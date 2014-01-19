@@ -123,15 +123,10 @@ export platform=linux2
 export CLOUD=~/Dropbox
 export code=~/code
 export latex=~/latex
-export PORT_SCRIPTS=~/Dropbox/Scripts
-export PORT_CODE=~/Dropbox/Code
-export PORT_APPS=~/Dropbox/Apps
-export PORT_SETTINGS=~/Dropbox/Settings
-export PORT_LATEX=~/Dropbox/Latex
-export pvimrc=$PORT_SETTINGS/vim/portable_vimrc
-export prob_interface=$PORT_CODE/ROB/rob_interface.py
-export prob=$PORT_CODE/ROB/rob_interface.py
-export prob_dir=$PORT_CODE/ROB
+export pvimrc=~/local/vim/portable_vimrc
+export prob_interface=~/local/rob/ROB/rob_interface.py
+export prob=~/local/rob/rob_interface.py
+export prob_dir=~/local/rob
 
 export PYQTDESIGNERPATH=/home/joncrall/Dropbox/Settings/PyQt4/plugins/designer/python
 
@@ -158,7 +153,7 @@ vd ()
 }
 
 #alias rob='python $PORT_CODE/Rob/for f in *.png; do ffmpeg -i "$f" "${f%.png}.jpg"; done'
-alias rob='python $PORT_CODE/ROB/run_rob.py'
+alias rob='python ~/local/rob/run_rob.py'
 alias rls='rob ls'
 alias er='gvim $prob'
 alias ebrc='gvim ~/.bashrc'

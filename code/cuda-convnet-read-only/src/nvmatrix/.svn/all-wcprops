@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/556/trunk/src/nvmatrix
+END
+nvmatrix.cu
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/556/trunk/src/nvmatrix/nvmatrix.cu
+END
+nvmatrix_kernels.cu
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/304/trunk/src/nvmatrix/nvmatrix_kernels.cu
+END
