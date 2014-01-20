@@ -167,7 +167,7 @@ class ROB_Directories:
         d.PORT_NOTES    = d.CLOUD + '/Notes'
         d.PORT_LATEX    = d.CLOUD + '/Latex'
         d.pvimrc        = d.LOCAL + '/vim/portable_vimrc'
-        d.AHK_SCRIPTS  = d.PORT_SCRIPTS + '/ahk_scripts'
+        d.AHK_SCRIPTS   = d.LOCAL + '/ahk_scripts'
 
         d.ROB          = d.LOCAL + '/rob'
         d.HOTSPOTTER   = d.CODE + '/hotspotter'
