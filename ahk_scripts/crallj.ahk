@@ -1,7 +1,13 @@
 EnvGet ahk_scripts, AHK_SCRIPTS
-SetWorkingDir, %ahk_scripts%
+;msgbox  %ahk_scripts%
+SendMode Input
+SetWorkingDir %ahk_scripts%
+return
+#NoEnv 
+#SingleInstance force
 
-#include middle_click.ahk
+#include C:\Users\joncrall\local\ahk_scripts\middle_click.ahk
+;#include middle_click.ahk
 ;#include crallj_funcs.ahk
 ;#include ctrl_h.ahk
 

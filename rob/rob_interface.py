@@ -446,6 +446,7 @@ def fix_path(r):
 
 
 def create_shortcut(r, what, where=''):
+    # TODO Move to windows helpers
     print('\n\n+---- Creating Shortcut ----')
     print('What = %s\n Where=%s' % (what, where))
     run_in    = ''
