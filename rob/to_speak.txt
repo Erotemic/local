@@ -1,1 +1,8 @@
-This tutorial introduces logistic regression using Theano and stochastic  gradient descent.    Logistic regression is a probabilistic, linear classifier. It is parametrized  by a weight matrix :math:`W` and a bias vector :math:`b`. Classification is  done by projecting data points onto a set of hyperplanes, the distance to  which is used to determine a class membership probability.  
+The ability to scale up to many thousands of images per day in a small
+area and identify thousands of different animals implies that image
+analysis be automated as much as possible.  Therefore, the development
+and implementation of image analysis / computer vision algorithms is a
+large focus of our IBEIS development.  The rapid improvements in the
+literature, together with substantial redundancy of image, both in
+individual encounters and over many repeated sightings, make this
+substantial automation possible.

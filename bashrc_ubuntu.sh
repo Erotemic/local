@@ -98,16 +98,6 @@ fi
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 
-# Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
-
-
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
-
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
@@ -117,6 +107,7 @@ fi
 
 #sudo ssh-agent ~/.ssh/id_rsa
 
+# TODO: Let ROB handle these
 # some more ls aliases
 export name=Hyrule
 export platform=linux2
@@ -135,7 +126,7 @@ export hs=$HOTSPOTTER
 export VIMFILES=~/.vim
 export IPYTHONDIR=~/.ipython
 export LATEX='~/latex/'
-
+export SITE_PACKAGES=/usr/local/lib/python2.7/dist-packages/
 
 # MY PATH
 export PATH=$PATH:~/scripts/:/usr/local/MATLAB/R2013a/bin
@@ -152,32 +143,12 @@ vd ()
     fi
 }
 
-#alias rob='python $PORT_CODE/Rob/for f in *.png; do ffmpeg -i "$f" "${f%.png}.jpg"; done'
-alias rob='python ~/local/rob/run_rob.py'
-alias rls='rob ls'
-alias er='gvim $prob'
-alias ebrc='gvim ~/.bashrc'
-alias sbrc='source ~/.bashrc' # Refresh
-
-#ipython --pdb -c "%run report_results2.py --BOW --no-print-checks"
-
-#x - extract
-#v - verbose output (lists all files as they are extracted)
-#j - deal with bzipped file
-#f - read from a file, rather than a tape device
-
-alias ic='python investigate_chip.py'
-alias icG='python investigate_chip.py --db GZ'
-alias icM='python investigate_chip.py --db MOTHERS'
-
-alias todo='gvim ~/Dropbox/Notes/TODO.txt'
-
-
 #http://stackoverflow.com/questions/7031126/switching-between-gcc-and-clang-llvm-using-cmake
 #export CC=/usr/local/bin/clang
 #export CXX=/usr/local/bin/clang++
 #alias cmake="cmake -DCMAKE_USER_MAKE_RULES_OVERRIDE=~/local/ClangOverrides.txt -D_CMAKE_TOOLCHAIN_PREFIX=llvm-"
  
+# Windows-like commands
 alias explorer=nautilus
 alias start=nautilus
 alias cmd=bash
@@ -189,20 +160,16 @@ gvim_ubuntu_hack()
     /usr/bin/gvim -f $@ 2> /dev/null &
 }
 
-export SITE_PACKAGES=/usr/local/lib/python2.7/dist-packages/
 
 alias resetftp='/etc/init.d/vsftpd restart'
 alias noip='/usr/local/bin/noip2'
 
-
 alias say='espeak -v en '
-
 
 #alias sumatrapdf='wine "C:\Program Files (x86)\SumatraPDF\SumatraPDF"'
 alias diskutility='palimpsest'
 alias realrm='/bin/rm'
 alias rm='trash-put'
-
 alias viewimage='eog'
 
 source ~/scripts/install_llvm.sh

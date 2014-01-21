@@ -1,11 +1,22 @@
-# Update the locate commannd
-sudo updatedb
 
-# For opencv
-sudo apt-get install openexr
+update_locate()
+{
+    # Update the locate commannd
+    sudo updatedb
+}
 
-# use clang
-sudo update-alternatives --config c++
+install_packages()
+{
+    # For opencv
+    sudo apt-get install openexr
+}
+
+#config_clang()
+#{
+    ## INCOMPLETE
+    ## use clang
+    #sudo update-alternatives --config c++
+#}
 
 install_clang()
 {
@@ -27,4 +38,11 @@ install_gcc()
 install_python()
 {
     sudo pip install pillow
+}
+
+install_gdrive()
+{
+    sudo add-apt-repository ppa:alessandro-strada/ppa
+    sudo apt-get update
+    sudo apt-get install google-drive-ocamlfuse
 }
