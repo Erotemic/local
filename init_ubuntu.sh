@@ -1,7 +1,11 @@
 
 make_ubuntu_symlinks()
 {
-
+    ln -s ~/local/scripts/ubuntu_scripts ~/scripts
+    # For Hyrule
+    ln -s /media/SSD_Extra ~/SSD_Extra
+    ln -s /media/Store ~/Store
+    ln -s /media/Store/data ~/data
 }
 
 update_locate()
