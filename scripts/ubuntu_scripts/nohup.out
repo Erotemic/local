@@ -1,0 +1,2 @@
+"sni-qt/2604" WARN  11:48:21.408 void StatusNotifierItemFactory::connectToSnw() Invalid interface to SNW_SERVICE 
+"sni-qt/2658" WARN  11:48:49.784 void StatusNotifierItemFactory::connectToSnw() Invalid interface to SNW_SERVICE 

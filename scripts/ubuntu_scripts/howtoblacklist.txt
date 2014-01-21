@@ -1,0 +1,27 @@
+sudo stop lightdm
+
+sudo vim /etc/modprobe.d/nvidia-graphics-drivers.conf
+
+
+blacklist nouveau
+blacklist lbm-nouveau
+blacklist nvidia-173
+blacklist nvidia-96
+blacklist nvidia-current
+blacklist nvidia-173-updates
+blacklist nvidia-96-updates
+
+
+alias nvidia nvidia_current_updates
+alias nouveau off
+alias lbm-nouveau off
+
+# add this line to /etc/default/grub
+GRUB_CMDLINE_LINUX_DEFUALT=line
+
+# run after modifications
+sudo update-grub 
+
+
+# Purge initramfs of nouveau
+sudo update-initramfs -u

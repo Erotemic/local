@@ -1,4 +1,9 @@
 
+make_ubuntu_symlinks()
+{
+
+}
+
 update_locate()
 {
     # Update the locate commannd

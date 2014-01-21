@@ -7,6 +7,7 @@ enable_vnc_security()
 {
     sudo /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart -activate -configure -access -on -clientopts -setvnclegacy -vnclegacy yes -clientopts -setvncpw -vncpw mypasswd -restart -agent -privs -all
 }
+
 reinstall_python()
 {
     sudo port -n upgrade --force python27
@@ -24,61 +25,63 @@ scp_hotspotter_db()
     scp ~/data/work/_hsdb/chip_table.csv  $DST:data/work/_hsdb/chip_table.csv
 }
 
-if [["Parham's Mac Mini Server" == $(scutil --get ComputerName)]]; then
-    # Make link to Jasons data directory
-    ln -s /Volumes/External/data/ ~/data
-    # Move a small database
-fi
+make_dirs()
+{
+    if [["Parham's Mac Mini Server" == $(scutil --get ComputerName)]]; then
+        # Make link to Jasons data directory
+        ln -s /Volumes/External/data/ ~/data
+        # Move a small database
+    fi
+}
 
-enable_vnc_security
+install_packages()
+{
+    # Grab the GNU ls over Mac's default BSD ls
+    sudo port install coreutils +with_default_names
+    sudo port install g95
+    sudo port install gcc45 +gfortran 
+    sudo port install gcc46 +gfortran
+    sudo port install apple-gcc42
 
-# Grab the GNU ls over Mac's default BSD ls
-sudo port install coreutils +with_default_names
-sudo port install g95
-sudo port install gcc45 +gfortran 
-sudo port install gcc46 +gfortran
-sudo port install apple-gcc42
+    sudo port install tree
+    sudo port install htop
 
-sudo port install tree
-sudo port install htop
+    sudo port install freetype
+    sudo port install zlib
 
-sudo port install freetype
-sudo port install zlib
+    # Libpng
+    sudo port install libpng
 
-# Libpng
-sudo port install libpng
+    # Install the correct python
+    sudo port install python27
+    sudo port select python python27 @2.7.6
+    sudo port install python_select  
+    python_select python27 
 
-# Install the correct python
-sudo port install python27
-sudo port select python python27 @2.7.6
-sudo port install python_select  
-python_select python27 
+    #sudo port install qt4-mac-devel
+    sudo port install qt4-mac
+    #sudo port install py27-pyqt4
 
-#sudo port install qt4-mac-devel
-sudo port install qt4-mac
-#sudo port install py27-pyqt4
+    # Install pip-2.7 and make a symlink to pip
+    sudo port install py27-pip
+    sudo ln -s /opt/local/bin/pip-2.7 /opt/local/bin/pip
 
-# Install pip-2.7 and make a symlink to pip
-sudo port install py27-pip
-sudo ln -s /opt/local/bin/pip-2.7 /opt/local/bin/pip
+    # Python packages we cant get from pip
+    sudo port install py27-ipython
+    sudo port select --set ipython ipython27
 
-# Python packages we cant get from pip
-sudo port install py27-ipython
-sudo port select --set ipython ipython27
-
-sudo pip install pandas
-<<<<<<< Updated upstream
-sudo pip install scipy --upgrade
+    sudo pip install pandas
+    sudo pip install scipy --upgrade
 
 
-sudo port installed | grep python
+    sudo port installed | grep python
+}
 
 reinstall()
 {
     sudo port uninstall -f $1
     sudo port install $1
 }
-reinstall py27-pip
 
 clean_port_installed()
 {
@@ -169,8 +172,6 @@ port_pyinstall()
     sudo port install py27-$1
 }
 
-# Find nondependent ports
-port echo leaves
 
 port_pyinstall()
 {
@@ -215,7 +216,7 @@ port_pyinstall()
     port select --set cython cython27
     port select --set pyflakes py27-pyflakes
     port select --set pep8 pep827
-    
+
 
     # ports does not have
     #port_pyinstall line-profiler
@@ -230,25 +231,28 @@ port_pyinstall()
 }
 
 
-mkdir ~/.matplotlib
-echo backend      : qt4agg >> ~/.matplotlib/matplotlibrc
-#pip_install scipy
-#pip_install SIP
-#llvmpy
-#numba
-#sudo pip install matplotlib
-#sudo pip install python-qt
-#flann
-#opencv-python
-#scikit-image
-#scikit-learn
-#runsnakerun
-# quaremap
+idkfunc()
+{
+    # Find nondependent ports
+    port echo leaves
 
+    mkdir ~/.matplotlib
+    echo backend      : qt4agg >> ~/.matplotlib/matplotlibrc
+    #pip_install scipy
+    #pip_install SIP
+    #llvmpy
+    #numba
+    #sudo pip install matplotlib
+    #sudo pip install python-qt
+    #flann
+    #opencv-python
+    #scikit-image
+    #scikit-learn
+    #runsnakerun
+    # quaremap
 
-sudo port selfupdate
-sudo port upgrade outdated
-=======
-sudo pip install pyinstaller
-sudo port install py27-scipy
->>>>>>> Stashed changes
+    sudo port selfupdate
+    sudo port upgrade outdated
+    sudo pip install pyinstaller
+    sudo port install py27-scipy
+}
