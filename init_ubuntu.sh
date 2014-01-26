@@ -1,11 +1,31 @@
-# Update the locate commannd
-sudo updatedb
 
-# For opencv
-sudo apt-get install openexr
+make_ubuntu_symlinks()
+{
+    ln -s ~/local/scripts/ubuntu_scripts ~/scripts
+    # For Hyrule
+    ln -s /media/SSD_Extra ~/SSD_Extra
+    ln -s /media/Store ~/Store
+    ln -s /media/Store/data ~/data
+}
 
-# use clang
-sudo update-alternatives --config c++
+update_locate()
+{
+    # Update the locate commannd
+    sudo updatedb
+}
+
+install_packages()
+{
+    # For opencv
+    sudo apt-get install openexr
+}
+
+#config_clang()
+#{
+    ## INCOMPLETE
+    ## use clang
+    #sudo update-alternatives --config c++
+#}
 
 install_clang()
 {
@@ -27,4 +47,11 @@ install_gcc()
 install_python()
 {
     sudo pip install pillow
+}
+
+install_gdrive()
+{
+    sudo add-apt-repository ppa:alessandro-strada/ppa
+    sudo apt-get update
+    sudo apt-get install google-drive-ocamlfuse
 }

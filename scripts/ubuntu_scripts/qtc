@@ -1,0 +1,2 @@
+#!/bin/bash
+ipython qtconsole --colors=Linux --autocall 2 --pylab=qt
