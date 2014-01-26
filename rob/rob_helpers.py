@@ -15,6 +15,9 @@ def find_files(directory, pattern):
 
 def random_pick(some_list, probabilities):
     import random
+    random.seed()
+    #random.seed([x])
+    print('\n'.join(map(str, probabilities)))
     norm = sum(probabilities)
     x = random.uniform(0, norm)
     cumulative_probability = 0.0

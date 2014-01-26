@@ -59,7 +59,10 @@ def play_playlist(r, playlist=None):
     subprocess.Popen(arg_list)
 
 
-def night_video(r):
+def v(r):
+    video(r)
+
+def get_night_videos(r):
     night_videos = [
         r.d.TV + '/Futurama',
         r.d.TV + '/Dr Horrible',
@@ -67,17 +70,35 @@ def night_video(r):
         r.d.TV + '/Adventure Time',
         r.d.TV + '/Dragonball Z',
     ]
+    return night_videos
+
+def get_morning_videos(r):
+    morning_videos = [
+        r.d.TV + '/Bill Nye the Science Guy',
+    ]
+    return morning_videos
+
+def video(r):
+    videos = (get_night_videos(r) +
+              get_morning_videos(r))
+    random_video(r, video_paths=videos)
+
+
+def night_video(r):
+    night_videos = get_night_videos(r)
     random_video(r, video_paths=night_videos)
 
 
 def random_video(r, video_paths=None):
     from glob import glob
     import subprocess
+    import numpy as np
 
     if video_paths == None:
         video_paths = [r.d.TV + '/Bill Nye the Science Guy']
 
-    video_weights = [.5, .5]
+    video_weights = np.ones(len(video_paths))
+    video_weights /= len(video_paths)
 
     files   = []
     weights = []
@@ -90,10 +111,11 @@ def random_video(r, video_paths=None):
             video_files.extend(glob(glob_str))
         if video_files is not None:
             files.extend( video_files )
-            weights.extend( [video_weights[count]]*len(video_files) )
+            new_weights = [video_weights[count]] * len(video_files)
+            weights.extend(new_weights)
         count = count + 1
 
-    randInt = random_pick(range(0,len(files)), weights) #random.randint(0,len(files));
+    randInt = random_pick(range(0, len(files)), weights) #random.randint(0,len(files));
     rand_vid_file =  files[randInt]
 
     vlc_cmd = r.f.vlc_exe
