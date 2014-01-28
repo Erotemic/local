@@ -6,4 +6,4 @@ else
     source ~/local/bashrc_ubuntu.sh
 fi
 
-source alias_rc.sh
+source ~/local/alias_rc.sh
