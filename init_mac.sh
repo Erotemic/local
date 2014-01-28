@@ -54,8 +54,8 @@ install_packages()
 
     # Install the correct python
     sudo port install python27
-    sudo port select python python27 @2.7.6
     sudo port install python_select  
+    sudo port select python python27 @2.7.6
     python_select python27 
 
     #sudo port install qt4-mac-devel
