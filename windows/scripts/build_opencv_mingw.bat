@@ -1,0 +1,38 @@
+:: helper variables
+set INSTALL32=C:\Program Files (x86)
+set CODE=%USERPROFILE%\code
+set OPENCV_INSTALL="%INSTALL32%\OpenCV"
+set CMAKE_EXE="%INSTALL32%\CMake 2.8\bin\cmake.exe"
+set CMAKE_GUI_EXE="%INSTALL32%\CMake 2.8\bin\cmake-gui.exe"
+set OPENCV_SRC=%CODE%\opencv
+set OPENCV_BUILD=%CODE%\opencv\build
+
+echo %OPENCV_INSTALL%
+echo %CMAKE_EXE%
+echo %OPENCV_BUILD%
+echo %OPENCV_SRC%
+
+mkdir %OPENCV_BUILD%
+cd %OPENCV_BUILD%
+
+:: OpenCV settings on windows
+%CMAKE_EXE% ^
+-G "MSYS Makefiles" ^
+-DCMAKE_INSTALL_PREFIX=%OPENCV_INSTALL% ^
+-DCMAKE_C_FLAGS=-m32 ^
+-DCMAKE_CXX_FLAGS=-m32 ^
+-DENABLE_SSE=OFF ^
+-DENABLE_SSE2=OFF ^
+-DENABLE_SSE3=OFF ^
+-DENABLE_SSE41=OFF ^
+-DENABLE_SSE42=OFF ^
+-DENABLE_SSEE3=OFF ^
+-DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O2 -g -DNDEBUGS" ^
+-DCMAKE_C_FLAGS_RELWITHDEBINFO="-O2 -g -DNDEBUGS" ^
+-DCMAKE_CXX_FLAGS_RELEASE="-O2 -DNDEBUGS" ^
+-DCMAKE_C_FLAGS_RELEASE="-O2 -DNDEBUGS" ^
+%OPENCV_SRC%
+
+:: make command that doesn't freeze on mingw
+mingw32-make -j7 "MAKE=mingw32-make -j3" -f CMakeFiles\Makefile2 all
+

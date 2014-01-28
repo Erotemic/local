@@ -1,0 +1,1 @@
+nircmd cdrom close S

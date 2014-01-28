@@ -7,7 +7,7 @@ import internal.win_registry as registry
 import internal.new_win_reg as registry2
 
 from regrep import grep_registry
-# rob was nice 
+# rob was nice
 # hax has spice
 
 commands_of_interest = '''
@@ -98,7 +98,7 @@ def EnumWindowTest():
     toplist = []
     winlist = []
     def enum_callback(hwnd, results):
-        winlist.append((hwnd, win32gui.GetWindowText(hwnd))) 
+        winlist.append((hwnd, win32gui.GetWindowText(hwnd)))
     win32gui.EnumWindows(enum_callback, toplist)
     return winlist
 
@@ -124,9 +124,11 @@ def add_env_vars(r, envvar_list):
             registry2.set_user_env(name, rob_val)
         else:
             print(' * COM: '+name+' '+rob_val+' '+win_val)
-            ans = raw_input('Conflict continue? ')
-            if ans == 'y':
-                registry2.set_root_env(name, rob_val)
+            #ans == 'y'
+            if rob_val != win_val:
+                ans = raw_input('Conflict continue? ')
+                if ans == 'y':
+                    registry2.set_root_env(name, rob_val)
     registry2.refresh()
 
 def default_assisted(r):
@@ -195,7 +197,7 @@ def set_volume(r, percent):
 
 def monitor(r, monitor_state):
     nircmd(r, 'monitor '+monitor_state)
-    
+
 def nircmd(r, command ):
     #r.f.nircmd_exe + '
     rob_helpers.call('nircmd '+ command )
@@ -242,7 +244,7 @@ def save_power_settings_pref(r):
     rob_helpers.call(r'POWERCFG -EXPORT "%PORT_SETTINGS%\WinPowerDir"\ '+guid_str)
 
 if __name__ == "__main__":
-         import sys 
+         import sys
          print "Evaling "+sys.argv[1]
          exec sys.argv[1]
 
@@ -278,7 +280,7 @@ def test_devmgr():
     dm2_subkeys = registry.get_subkeys(dm2)
     dvmgr = {}
     for (dm, subkey_list) in iter(((dm1, dm1_subkeys), (dm2, dm2_subkeys))):
-        for skey in  subkey_list: 
+        for skey in  subkey_list:
             key = dm+'\\'+skey
             key_subkeys = registry.get_subkeys(key)
             for _kskey in key_subkeys:
@@ -291,7 +293,7 @@ def test_devmgr():
             _class = registry.get_key_value(key, 'Class')
             class_desc = registry.get_key_value(key, 'ClassDesc')
             defaults = registry.get_key_value(key, '(Default)')
-            dvmgr[key] = (_class, defaults, class_desc) 
+            dvmgr[key] = (_class, defaults, class_desc)
 
     def multifind(str, to_find):
         fmt_str = repr(str).lower()
@@ -310,7 +312,7 @@ def test_devmgr():
         if not (any(in_find) or any(in_multifind)): continue
         #print '%r, %r' % (in_find, in_multifind)
         print(key+' = '+repr(val))
-        if tkey == key: 
+        if tkey == key:
             print('^^^ PRESONUS HERE ^^^')
 
 

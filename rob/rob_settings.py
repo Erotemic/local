@@ -1,6 +1,7 @@
 from sys         import platform as os_type
 from platform    import node     as comp_name
 from rob_helpers import *  # NOQA
+from os.path import exists
 import rob_helpers as robh
 
 # Add shortcuts for Prog Files 64 <-> 32
@@ -10,28 +11,28 @@ import rob_helpers as robh
 
 
 def get_PATH(r):
+    #ROOT  + '/gnuwin32/bin'
+    #ROOT  + '/gnuwin32/lib'
+    #ROOT  + '/gnuwin32/include'
+    #INSTALL64 + '/SlikSvn/bin'
     if sys.platform == 'win32':
         path_str = """
         AHK_SCRIPTS
         PORT_APPS
         WIN_SCRIPTS
         PYTHON
-        PYTHON+'/Scripts'
+        PYTHON + '/Scripts'
         MSYS
         MSYS  + '/bin'
         MSYS  + '/lib'
         MINGW + '/bin'
         MINGW + '/lib'
-        ROOT  + '/gnuwin32/bin'
-        ROOT  + '/gnuwin32/lib'
-        ROOT  + '/gnuwin32/include'
         INSTALL32 + '/CMake 2.8/bin'
         INSTALL32 + '/MiKTeX 2.9/miktex/bin'
         INSTALL32 + '/OpenCV/bin'
         INSTALL32 + '/OpenCV/x86/mingw/bin/'
         INSTALL32 + '/OpenCV/include'
         INSTALL32 + '/gs/gs9.07/bin'
-        INSTALL64 + '/SlikSvn/bin'
         INSTALL64 + '/7-Zip'
         INSTALL32 + '/7-Zip'
         VIM_BIN
@@ -47,7 +48,11 @@ def get_PATH(r):
         path = pstr2.strip()
         if len(path) > 0:
             #path_vars_list.append(r.d.__dict__[path])
-            exec('path_vars_list.append(os.path.normpath(r.d.%s))' % path)
+            dpath = eval('os.path.normpath(r.d.%s)' % path)
+            if exists(dpath):
+                path_vars_list.append(dpath)
+            else:
+                print('[rob] does not exist: %r' % dpath)
     return path_vars_list
 
 
@@ -161,7 +166,7 @@ class ROB_Directories:
 
         d.PORT_CODE     = d.LOCAL + '/code'
         d.PORT_APPS     = d.CLOUD + '/Apps'
-        d.PORT_SCRIPTS  = d.CLOUD + '/Scripts'
+        #d.PORT_SCRIPTS  = d.CLOUD + '/Scripts'
         d.PORT_INSTALL  = d.CLOUD + '/Installers'
         d.PORT_SETTINGS = d.CLOUD + '/Settings'
         d.PORT_NOTES    = d.CLOUD + '/Notes'
@@ -202,7 +207,7 @@ class ROB_Directories:
 
             d.STARTUP    = d.HOME + '/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup'
             d.TOOLBAR      = d.HOME + '/toolbar'
-            d.WIN_SCRIPTS  = d.PORT_SCRIPTS + '/win_scripts'
+            d.WIN_SCRIPTS  = d.LOCAL + '/windows/scripts'
 
             d.GIT_BIN      = d.LOCAL + '/git/bin'
             d.GIT_CMD      = d.LOCAL + '/git/cmd'

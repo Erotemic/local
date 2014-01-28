@@ -1,0 +1,15 @@
+\section{Top Vision Conferences}
+
+CVPR - Computer Vision and Pattern Recognition
+ICCV - International Conference on Computer Vision
+ECCV - European Conference on Computer Vision
+BMVC - British Machine Vision Conference
+WACV - Workshop on Applications of Computer Vision
+
+Top Journals
+
+IJCV - International Journal of Computer Vision
+TMI - IEEE Transactions on Medical Imaging
+CVGIP - Graphical Models /graphical Models and Image Processing /computer Vision, Graphics, and Image Processing
+CVIU - Computer Vision and Image Understanding
+IVC - Image and Vision Computing

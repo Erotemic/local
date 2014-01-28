@@ -1,0 +1,16 @@
+@echo off
+rm "'"
+rm *.aux
+rm *.bbl
+rm *.brf 
+rm *.log 
+rm *.bak 
+rm *.blg 
+rm *.tips 
+rm *.upa 
+rm *.upb 
+rm *.out 
+rm *.synctex
+rm main.pdf
+rm main.dvi
+@echo on
