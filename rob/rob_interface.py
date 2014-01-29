@@ -170,7 +170,7 @@ def pykill(r, scriptname, needbash=True):
 
 
 def hskill(r):
-    pykill(r, 'experiments')
+    pykill(r, '<defunct>')
 
 
 def kill(r, procname):
