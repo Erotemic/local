@@ -46,25 +46,34 @@ update_ports()
 
 install_gcc49()
 {
-    # DEACTIVATE GCC 4.8
-    sudo port deactivate gcc48
-    sudo port -f deactivate libgcc 
     # GCC 4.9
-    sudo port -f deactivate libgcc 
+    sudo port deactivate libgcc 
     sudo port install gcc49
     sudo port select --set gcc mp-gcc49 
 }
 
-
-install_gcc48()
+remote_gcc()
 {
+    # DEACTIVATE GCC 4.8
+    sudo port deactivate gcc48
+    sudo port deactivate libgcc 
     # DEACTIVATE GCC 4.9
     sudo port deactivate gcc49
     sudo port deactivate libgcc-devel
+}
+
+install_gcc48()
+{
     # GCC 4.8.2
     sudo port install libgcc
     sudo port install gcc48
     sudo port select --set gcc mp-gcc48
+}
+
+revert_clang()
+{
+    sudo port deactivate gcc48
+    sudo port -f deactivate libgcc 
 }
 
 install_gcc()
