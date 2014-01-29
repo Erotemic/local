@@ -65,6 +65,7 @@ alias loc='cd ~/local'
 alias lt='cd ~/latex'
 alias scr='cd ~/scripts'
 # Special navigation
+alias cv='cd ~/code/opencv'
 alias hs='cd ~/code/hotspotter'
 alias hshs='cd ~/code/hotspotter/hotspotter'
 alias hshsviz='cd ~/code/hotspotter/hsviz'
