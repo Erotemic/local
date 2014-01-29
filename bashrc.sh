@@ -7,3 +7,4 @@ else
 fi
 
 source ~/local/alias_rc.sh
+source ~/local/git_helpers.sh
