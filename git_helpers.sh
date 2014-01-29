@@ -1,9 +1,9 @@
-git-recover()
+gg-recover()
 {
     git checkout $(git rev-list -n 1 HEAD -- "$1")^ -- "$1"
 }
 
-git-mystats()
+gg-stats()
 {
     echo ""
     echo "************"
@@ -55,7 +55,7 @@ git-mystats()
     echo "************"
 }
 
-git-mypull()
+gg-pull()
 {
     cd ~/latex/crall-lab-notebook
     git pull
@@ -86,7 +86,7 @@ git-mypull()
     git pull
 }
 
-git-mypush()
+gg-push()
 {
     cd ~/latex/crall-lab-notebook
     git push
