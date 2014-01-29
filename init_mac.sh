@@ -34,12 +34,19 @@ make_dirs()
     fi
 }
 
+port_opencv()
+{
+    sudo port install ffmpeg
+    sudo port install opencv +python27
+}
+
 update_ports()
 {
     sudo port selfupdate
     sudo port upgrade outdated
     # Python packages we cant get from pip
     #sudo port installed | grep python
+    sudo port installed | grep gcc
     # Find nondependent ports
     #port echo leaves
 }
@@ -54,6 +61,7 @@ install_gcc49()
 
 remote_gcc()
 {
+    sudo port select --set gcc none
     # DEACTIVATE GCC 4.8
     sudo port deactivate gcc48
     sudo port deactivate libgcc 
