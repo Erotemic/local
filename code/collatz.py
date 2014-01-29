@@ -1,1 +1,17 @@
-while int(__import__('sys').argv[1]) != 1 and not all([__import__('sys').stdout.write(str(int(__import__('sys').argv[1]))+' -> '), __import__('sys').stdout.write(str(int(__import__('sys').argv[1])/2 if int(__import__('sys').argv[1]) % 2 == 0 else 3*int(__import__('sys').argv[1])+1)+'\n'), __import__('sys').stdout.flush()]): __import__('sys').argv[1] = int(__import__('sys').argv[1])/2 if int(__import__('sys').argv[1]) % 2 == 0 else 3*int(__import__('sys').argv[1])+1 # this is a syntatically valid python script. Usage: python collatz.py [n]. Outputs 1
+import itertools, sys
+
+lambda n: sys.write( itertools.takewhile(lambda n: n != 1, itertools.imap(lambda n_ptr: n_ptr[0] = n_ptr[0]/2.0 if n_ptr[0]%2 == 0 else 3*n_ptr[0]+1, [n])))
+
+collatz = lambda n_ptr: 
+    
+n_ptr[0] = n_ptr[0]/2.0 if n_ptr[0]%2 == 0 else 3*n_ptr[0]+1
+
+lambda n: map(lambda n_ptr: n_ptr[0]/2.0 if n_ptr[0]%2 == 0 else 3*n_ptr[0]+1, [])
+              
+              while(collatz([n]) != 1)
+
+def docollatz(n):
+    yield n
+    Xraise StopIteration
+
+sys.

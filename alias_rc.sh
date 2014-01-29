@@ -66,6 +66,11 @@ alias lt='cd ~/latex'
 alias scr='cd ~/scripts'
 # Special navigation
 alias hs='cd ~/code/hotspotter'
+alias hshs='cd ~/code/hotspotter/hotspotter'
+alias hshsviz='cd ~/code/hotspotter/hsviz'
+alias hshscom='cd ~/code/hotspotter/hscom'
+alias hshsgui='cd ~/code/hotspotter/hsgui'
+alias lnote='cd ~/latex/crall-lab-notebook'
 alias hes='cd ~/code/hesaff'
 alias cand='cd ~/latex/crall-candidacy-2013/'
 

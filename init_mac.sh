@@ -34,54 +34,140 @@ make_dirs()
     fi
 }
 
-install_packages()
+update_ports()
+{
+    sudo port selfupdate
+    sudo port upgrade outdated
+    # Python packages we cant get from pip
+    #sudo port installed | grep python
+    # Find nondependent ports
+    #port echo leaves
+}
+
+install_gcc49()
+{
+    # DEACTIVATE GCC 4.8
+    sudo port deactivate gcc48
+    sudo port -f deactivate libgcc 
+    # GCC 4.9
+    sudo port -f deactivate libgcc 
+    sudo port install gcc49
+    sudo port select --set gcc mp-gcc49 
+}
+
+
+install_gcc48()
+{
+    # DEACTIVATE GCC 4.9
+    sudo port deactivate gcc49
+    sudo port deactivate libgcc-devel
+    # GCC 4.8.2
+    sudo port install libgcc
+    sudo port install gcc48
+    sudo port select --set gcc mp-gcc48
+}
+
+install_gcc()
 {
     # Grab the GNU ls over Mac's default BSD ls
     sudo port install coreutils +with_default_names
+
+    sudo port install gcc_select
+    sudo port select --list gcc
+
+    # need to restart bash I guess.
+    #--list gcc
     sudo port install g95
     sudo port install gcc45 +gfortran 
     sudo port install gcc46 +gfortran
     sudo port install apple-gcc42
 
+    # Reload bash to get things working more or less
+    source ~/.profile
+}
+
+install_libs()
+{
     sudo port install tree
     sudo port install htop
-
     sudo port install freetype
     sudo port install zlib
-
     # Libpng
     sudo port install libpng
+    # Qt
+    #sudo port install qt4-mac-devel
+    sudo port install qt4-mac
+}
 
+port_pyinstall()
+{
     # Install the correct python
     sudo port install python27
     sudo port install python_select  
+    sudo python_select python27 
     sudo port select python python27 @2.7.6
-    python_select python27 
 
-    #sudo port install qt4-mac-devel
-    sudo port install qt4-mac
-    #sudo port install py27-pyqt4
+    sudo port install py27-setuptools
 
-    # Install pip-2.7 and make a symlink to pip
     sudo port install py27-pip
-    sudo ln -s /opt/local/bin/pip-2.7 /opt/local/bin/pip
+    port select --set pip pip27
+    #sudo ln -s /opt/local/bin/pip-2.7 /opt/local/bin/pip
+    #sudo port install py27-distribute Obsolete
+    sudo port install py27-Pygments
+    sudo port install py27-six
 
-    # Python packages we cant get from pip
+    sudo port install py27-openpyxl
+    sudo port install py27-flake8
+    sudo port install py27-pep8
+    sudo port install py27-pyflakes
+    sudo port install py27-pylint
+    sudo port install py27-Cython
+
+    sudo port install py27-numpy
+    sudo port install py27-parsing
+    sudo port install py27-dateutil
+    sudo port install py27-readline
+
+    sudo port install py27-sip
+    sudo port install py27-pyqt4
+    #sudo port install py27-pyqt4-devel 
+    sudo port install py27-matplotlib +qt +tkinter
+
+    sudo port install py27-zmq
+    sudo port install py27-pyzmq
+    sudo port install py27-Pillow  # PIL
+    sudo port install py27-scipy
     sudo port install py27-ipython
+    # Installs a lot of things. Install pandas last
+    sudo port install py27-pandas
+    #sudo port install py27-numba
+
+    # We do need pip. 
+    sudo pip install pylru
+    sudo pip install pyinstaller
+
     sudo port select --set ipython ipython27
+    port select --set cython cython27
+    port select --set pyflakes py27-pyflakes
+    port select --set pep8 pep827
 
-    sudo pip install pandas
-    sudo pip install scipy --upgrade
+    # Put the qt4agg backend in matploblib
+    mkdir ~/.matplotlib
+    echo backend      : qt4agg >> ~/.matplotlib/matplotlibrc
 
-
-    sudo port installed | grep python
+    #pip_install scipy
+    #pip_install SIP
+    #llvmpy
+    #numba
+    #sudo pip install matplotlib
+    #sudo pip install python-qt
+    #flann
+    #opencv-python
+    #scikit-image
+    #scikit-learn
+    #runsnakerun
 }
 
-reinstall()
-{
-    sudo port uninstall -f $1
-    sudo port install $1
-}
 
 clean_port_installed()
 {
@@ -113,146 +199,4 @@ clean_port_installed()
     sudo port uninstall py27-parsing
     sudo port uninstall py27-setuptools 
     sudo port uninstall ipython_select
-}
-
-
-fix_pip()
-{
-    sudo port uninstall py27-pip
-    sudo port uninstall py27-numpy
-    sudo port uninstall py27-scipy
-    sudo port uninstall py27-nose
-    sudo port uninstall py27-modulegraph
-    sudo port uninstall py27-pyobjc
-    sudo port uninstall py27-setuptools
-    sudo port install py27-pip
-}
-
-pip_install()
-{
-    sudo pip install $1 --upgrade
-    #sudo pip uninstall $1
-}
-
-pip_Unstall()
-{
-    sudo pip uninstall $1 -y
-}
-
-
-purge_pip()
-{
-    pip_Unstall Pygments
-    pip_Unstall argparse
-    pip_Unstall openpyxl
-    pip_Unstall parse
-    pip_Unstall psutil
-    pip_Unstall pyglet
-    pip_Unstall pyparsing
-    pip_Unstall pyreadline
-    pip_Unstall Cython
-    pip_Unstall line-profiler
-    pip_Unstall flake8
-    pip_Unstall pep8
-    pip_Unstall pyflakes
-    pip_Unstall pylint
-    pip_Unstall pylru
-    pip_Unstall pyinstaller
-    pip_Unstall multiprocessing
-
-    pip_Unstall pandas
-    pip_Unstall pyzmq
-    pip_Unstall Pillow  # PIL
-    pip_Unstall ipython
-}
-
-
-port_pyinstall()
-{
-    sudo port install py27-$1
-}
-
-
-port_pyinstall()
-{
-    sudo port install py27-setuptools
-    sudo port install py27-pip
-    port select --set pip pip27
-    #sudo port install py27-distribute Obsolete
-    sudo port install py27-Pygments
-    sudo port install py27-six
-
-    sudo port install py27-openpyxl
-    sudo port install py27-flake8
-    sudo port install py27-pep8
-    sudo port install py27-pyflakes
-    sudo port install py27-pylint
-    sudo port install py27-Cython
-
-    sudo port install py27-numpy
-    sudo port install py27-parsing
-    sudo port install py27-dateutil
-    sudo port install py27-readline
-
-    sudo port install py27-sip
-    sudo port install py27-pyqt4
-    #sudo port install py27-pyqt4-devel 
-    sudo port install py27-matplotlib +qt +tkinter
-
-    sudo port install py27-zmq
-    sudo port install py27-pyzmq
-    sudo port install py27-Pillow  # PIL
-    sudo port install py27-scipy
-    sudo port install py27-ipython
-    # Installs a lot of things. Install pandas last
-    sudo port install py27-pandas
-
-    #sudo port install py27-numba
-
-    # We do need pip. 
-    sudo pip install pylru
-    sudo pip install pyinstaller
-
-    port select --set cython cython27
-    port select --set pyflakes py27-pyflakes
-    port select --set pep8 pep827
-
-
-    # ports does not have
-    #port_pyinstall line-profiler
-    #port_pyinstall argparse
-    #port_pyinstall psutil
-    #port_pyinstall pyglet
-    #port_pyinstall pyparsing
-    #port_pyinstall pylru
-    #port_pyinstall pyinstaller
-    #port_pyinstall multiprocessing
-    #port_pyinstall parse
-}
-
-
-idkfunc()
-{
-    # Find nondependent ports
-    port echo leaves
-
-    mkdir ~/.matplotlib
-    echo backend      : qt4agg >> ~/.matplotlib/matplotlibrc
-    #pip_install scipy
-    #pip_install SIP
-    #llvmpy
-    #numba
-    #sudo pip install matplotlib
-    #sudo pip install python-qt
-    #flann
-    #opencv-python
-    #scikit-image
-    #scikit-learn
-    #runsnakerun
-    # quaremap
-
-    sudo port selfupdate
-    sudo port upgrade outdated
-    sudo pip install pyinstaller
-    sudo port install py27-scipy
 }
