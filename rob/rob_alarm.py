@@ -4,10 +4,10 @@ def watch_rand_vid(r):
     'Function that gets called during wakeup'
     (playlist, vid_name) = get_random_playlist(r)
     first_item = playlist[0]
-    show_name2 = os.path.split(first_item)[0].replace('E:','').replace('\\',' ').replace(':','').replace('TV','')
+    show_name2 = os.path.split(first_item)[0].replace(r'D:\sys\e','').replace('E:','').replace('\\',' ').replace(':','').replace('TV','')
     print("vidname: %r " % (first_item,))
     speak(r, 'How about some '+show_name2, -3)
-    play_playlist(r,playlist)
+    play_playlist(r, playlist)
 
 def monitor(r, monitor_state='off'):
     robos.monitor(r, monitor_state)
@@ -19,13 +19,27 @@ def get_random_playlist(r):
     import random
     vid_files = []
     #TVDIRS = [r.d.TV, 'E:\\Documentaries']
-    TVDIRS = [r.d.TV+'\\Scrubs',
-              r.d.TV+'\\Bob Ross',
-              r.d.TV+'\\Flight of the Conchords',
-              r.d.TV+'\\Bill Nye The Science Guy',
-              r.d.TV+'\\Monty Pythons Flying Circus']
+    TVDIRS = [
+        #r.d.TV + '\\Scrubs',
+        #r.d.TV + '\\Bob Ross',
+        r.d.TV + '\\Flight of the Conchords',
+        r.d.TV + '\\Bill Nye The Science Guy',
+        r.d.TV + '\\Monty Pythons Flying Circus'
+    ]
+
+    # Enforce existence
+    TVDIRS2 = []
+    from os.path import exists
     for tv_dir in TVDIRS:
-        for vid_format in ['*.avi','*.mkv', '*.wmv', '*.mp4']:
+        if exists(tv_dir):
+            TVDIRS2 += [tv_dir]
+    TVDIRS = TVDIRS2
+
+    print(TVDIRS)
+    print(r.d.TV)
+
+    for tv_dir in TVDIRS:
+        for vid_format in ['*.avi', '*.mkv', '*.wmv', '*.mp4']:
             vid_files.extend( [slash_fix(f) for f in  find_files(tv_dir, vid_format) ] )
     #vid_weights = [1./len(vid_files)]*len(vid_files)
     #random_pick(vid_files, vid_weights)
@@ -55,8 +69,14 @@ def play_playlist(r, playlist=None):
         (playlist, nm) = get_random_playlist(r)
     print 'PLAYLIST: \n'+'\n'.join(playlist)+'\n\n'
     vlc_cmd = r.f.vlc_exe
-    arg_list = [vlc_cmd] + playlist
+    playlist = ['"' + vid + '"' for vid in playlist]
+    arg_list = '"' + vlc_cmd + '" ' + ' '.join(playlist)
+    #arg_list = [vlc_cmd] + playlist
+    print(arg_list)
+
     subprocess.Popen(arg_list)
+
+    #C:\Program Files (x86)\VideoLAN\VLC\vlc.exe "D:\sys\e\TV\Monty Pythons Flying Circus\Monty Pythons flying circus - Season 2\mpfc 14 - Face The Press.avi"
 
 
 def v(r):
@@ -249,13 +269,15 @@ def s(r, num_cycles=5, monitoroff='False'):
     num_cycles = int(num_cycles)
     from datetime import timedelta
     minutes_to_fall_asleep = 14
-    if num_cycles == 0:
-        minutes_to_fall_asleep = .02
+    if num_cycles == -1:
+        num_cycles = 0
+        minutes_to_fall_asleep = 1
     sleep_for = timedelta(hours=1.5*num_cycles, minutes=minutes_to_fall_asleep)
     now_time = datetime.now()
     at = now_time+sleep_for
     time_str = '%.2d:%.2d' % (at.hour, at.minute)
     date_str = '%.2d/%.2d/%.4d' % (at.month, at.day, at.year)
+    date_str = '%.4d/%.2d/%.2d' % (at.year, at.month, at.day)
     print("It takes %r minutes to fall asleep " % minutes_to_fall_asleep)
     print("ITS IS NOW:   "+str(now_time))
     print("ALARM SET FOR "+str(at))

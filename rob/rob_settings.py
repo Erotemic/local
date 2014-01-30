@@ -150,6 +150,7 @@ class ROB_Directories:
         d.MEDIA       =  media_map[os_type]
         if comp_name() == 'BakerStreet':  # uses this now
             d.USERNAME = 'jon.crall'
+            d.MEDIA   =  'D:\sys\e'
 
         d.INSTALLERS  = d.STORE + '/Installers'
         d.DATADIR     = d.STORE + '/data'
