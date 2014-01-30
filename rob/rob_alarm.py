@@ -17,6 +17,7 @@ def set_volume(r, percent):
 
 def get_random_playlist(r):
     import random
+    random.seed()
     vid_files = []
     #TVDIRS = [r.d.TV, 'E:\\Documentaries']
     TVDIRS = [
@@ -78,10 +79,6 @@ def play_playlist(r, playlist=None):
 
     #C:\Program Files (x86)\VideoLAN\VLC\vlc.exe "D:\sys\e\TV\Monty Pythons Flying Circus\Monty Pythons flying circus - Season 2\mpfc 14 - Face The Press.avi"
 
-
-def v(r):
-    video(r)
-
 def get_night_videos(r):
     night_videos = [
         r.d.TV + '/Futurama',
@@ -103,11 +100,12 @@ def video(r):
               get_morning_videos(r))
     random_video(r, video_paths=videos)
 
+def v(r):
+    video(r)
 
 def night_video(r):
     night_videos = get_night_videos(r)
     random_video(r, video_paths=night_videos)
-
 
 def random_video(r, video_paths=None):
     from glob import glob
@@ -238,7 +236,6 @@ def wake_up(r, WAKE_UP_MODE=0):
         random_video(r, [show_dir])
     else:
         watch_rand_vid(r)
-
 
 def WAKE_UP_MODE1(r):
         '''
