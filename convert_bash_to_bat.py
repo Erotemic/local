@@ -2,9 +2,9 @@
 The idea of this file is to parse bash scripts and
 convert them into their windows equivelant
 '''
-from os.path import expanduser, join
+from os.path import expanduser, join, normpath
 from pyparsing import Suppress, delimitedList, Word, alphas, alphanums, LineEnd, ZeroOrMore, OneOrMore
-from hotspotter import helpers
+#from hscom import helpers
 
 
 LBRACE, RBRACE, LPAREN, RPAREN, LBRACK, RBRACK, SEMI = map(Suppress, '{}()[];')
@@ -43,9 +43,10 @@ for tplt in funcDefn.searchString(bash_text):
 
 
 # Write out in bat format
-bat_dir = '~/local/windows/auto_scripts'
+bat_dir = normpath(expanduser('~/local/windows/auto_scripts'))
 bat_comment = ':: '
-timestamp = helpers.get_timestamp()
+#timestamp = helpers.get_timestamp()
+timestamp = 'NA'
 for func_name, statements in func_dict.iteritems():
     bat_fname = join(bat_dir, func_name + '.bat')
     bat_body = '\n'.join(statements)
@@ -57,5 +58,8 @@ for func_name, statements in func_dict.iteritems():
         bat_body
     ]
     bat_text = '\n'.join(bat_list)
+    bat_text = bat_text.replace(' ~/', ' %USERPROFILE%/')
     print('')
     print(bat_text)
+    with open(bat_fname, 'w') as file_:
+        file_.write(bat_text)
