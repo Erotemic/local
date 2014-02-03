@@ -118,3 +118,5 @@ commit_profile()
 alias upp=update_profile
 alias cop=commit_profile
 
+
+alias vimhs='gvim -S ~/vim_hotspotter_session.vim'

@@ -1,3 +1,9 @@
+command! SAVESESSION :mksession ~/mysession.vim
+command! LOADSESSION :mksession ~/mysession.vim
+
+command! SAVEHSSESSION :mksession ~/vim_hotspotter_session.vim
+command! LOADHSSESSION :source ~/vim_hotspotter_session.vim
+
 func! WordHighlightFun()
     if !exists("g:togwordhighlight") 
         let g:togwordhighlight=0
