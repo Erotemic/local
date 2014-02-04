@@ -8,6 +8,13 @@ enable_vnc_security()
     sudo /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart -activate -configure -access -on -clientopts -setvnclegacy -vnclegacy yes -clientopts -setvncpw -vncpw mypasswd -restart -agent -privs -all
 }
 
+allow_nonmac_apps()
+{
+    sudo spctl --add --label "HotSpotter" /Applications/HotSpotter.app
+    sudo spctl --enable --label "HotSpotter"
+    sudo spctl --list
+}
+
 reinstall_python()
 {
     sudo port -n upgrade --force python27

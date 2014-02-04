@@ -198,9 +198,9 @@ fu! PEP8PRINT()
     let m_spaces='\( *\)'
     let m_anys='\(.*\)'
     let m_endl=' *$'
-    :execute '%s/'.m_spaces.'print '.m_anys.m_endl.'/\1print(\2)'
+    :execute 's/'.m_spaces.'print '.m_anys.m_endl.'/\1print(\2)'
 endfu
-command! PEP8PRINT :call PEP8PRINT()<CR>
+command! -range PEP8PRINT <line1>,<line2>call PEP8PRINT()<CR>
 
 fu! PEP8COMMASPACE()
     " Finds commas without a space or left paren right after
@@ -209,13 +209,23 @@ fu! PEP8COMMASPACE()
 endfu
 command! PEP8COMMASPACE :call PEP8COMMASPACE()<CR>
 
-"fu! PEP8TWOSPACECOMMENT()
-    "" Finds commas without a space or left paren right after
+fu! PEP8ALIGNDICT()
+    " Aligns colon to the left
+    :execute 's/\( *\):/:\1'
+endfu
+command! -range PEP8ALIGNDICT <line1>,<line2>call PEP8ALIGNDICT()<CR>
+
+fu! PEP8TWOSPACECOMMENT()
+    " Finds commas without a space or left paren right after
     "let m_spaces='\( *\)'
     "let m_twonotspace='[^ #][^ #]\)'
     "let m_notquotehash='[^'."'".'#]'
     ":execute '%s/'.m_twonotspace.'#'.m_notquotehash.'*/\1  # \2, \1/gc'
-"endfu
+    :execute '%s/\([^ ]\) \(#[^#]*$\)/\1  \2/gc'
+    :execute '%s/\([^ ]\)\(#[^#]*$\)/\1  \2/gc'
+    :execute '%s/\([^ ]\)#\([^ ][^#]*$\)/\1  # \2/gc'
+endfu
+command! PEP8TWOSPACECOMMENT :call PEP8COMMASPACE()<CR>
 
 " Mappings
 "nnoremap <Leader>r :call FUNC_RELOAD_VIMRC()<CR>

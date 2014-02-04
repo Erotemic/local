@@ -97,6 +97,12 @@ alias ic='python investigate_chip.py'
 alias icG='python investigate_chip.py --db GZ'
 alias icM='python investigate_chip.py --db MOTHERS'
 
+hyhspull()
+{
+    ssh joncrall@hyrule.cs.rpi.edu 'cd ~/code/hotspotter; gcwip'
+
+}
+
 # Reload profile
 alias rrr='source ~/.profile'
 update_profile()
