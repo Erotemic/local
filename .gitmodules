@@ -9,4 +9,8 @@
 	url = https://github.com/scrooloose/syntastic.git
 [submodule "vim/vimfiles/bundle/vim-unimpaired"]
 	path = vim/vimfiles/bundle/vim-unimpaired
-	url = https://github.com/tpope/vim-unimpaired.git
+    url = https://github.com/tpope/vim-unimpaired.git
+[submodule "vim/vimfiles/bundle/vim-startify"]
+	path = vim/vimfiles/bundle/vim-startify
+    url = https://github.com/mhinz/vim-startify.git
+
