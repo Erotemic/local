@@ -99,8 +99,15 @@ alias icM='python investigate_chip.py --db MOTHERS'
 
 hyhspull()
 {
-    ssh joncrall@hyrule.cs.rpi.edu 'cd ~/code/hotspotter; gcwip'
-
+    echo "Pushing from Hyrule"
+    #Outer quote = " (This marks the beginning and end of the string)
+    #Inner quote = \" (Escaped as to not flag "beginning/end of string")
+    #Third-tier quote = ' (Literal quote)
+    #Fourth-tier quote = \' (Literal quote that will be generated as an escaped outer quote)
+    ssh -t cralljp@linux.cs.rpi.edu "ssh -t joncrall@hyrule.cs.rpi.edu \"cd ~/code/hotspotter; git commit -am 'hyhs wip'; git push\""
+    
+    echo "Pulling from Local"
+    git pull
 }
 
 # Reload profile
