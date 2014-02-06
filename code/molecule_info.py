@@ -7,6 +7,8 @@ def rrr():
 #----------------------
 # Classes of molecules
 #----------------------
+class POLYPHENOL(object):
+    pass
 
 
 class GLYCOSYLAMINE(object):
@@ -226,3 +228,77 @@ class melatonin():
     protects = 'nuclear and mitocondrial DNA'
     feels = ['sleepy']
     involved_in = ['memory']
+
+
+
+# OTHER:
+
+class theaflavin(POLYPHENOL):
+    '''
+    antioxidant
+    antioxidant polyphenols
+    formed from the condensation of flavan-3-ols in tea leaves during the enzymatic oxidation (fermentation) of black tea
+    is a type of thearbigin
+    potent anti-HIV-1 replication
+
+    '''
+
+
+# A Phenol (carbonic acid) is an aromatic compound
+# Phenols can be used to build complicated organic molecules
+# these are called PolyPhenols
+
+
+# tannin is a polyphenolic compound is an astringent (shrinks / constricts body
+# tissues) Calamine Lotion and Witch Hazel are astringents
+#
+
+
+# Witch Hazel:
+# contains phenolics / tannins
+# gallic acid, catechnins, flavonols
+# carvacrol, eugenol, hexenol
+# choline, saponins
+
+# Flavonols are a class of flavonoids
+# contributes to flower color
+
+# Flavanoid are secondary plant metabolites.
+# (Refered to as Vitamin P in 1930-1950)
+# All are ketone-containing compounds
+# Produce plant pigmentation and color
+# Block UV light
+# Blueberries have anthocyanidins
+# Black tea has flavan-3-ols
+
+# An essential oil (volitile / ethereal oils) is a concentrated hyrdophobic
+# liquid containing volatile aroma compounds.
+
+
+# Vitamin D:
+# Cholecalciferol and ergocalciferol
+# fat solubile
+# enhances intestinal absorbtion of calcium, iron, magnesium, phosphate, and
+# zinc.
+# Acts as hormone in the blood. Regulates Calcium and Phosphate in blood
+# Promots healthy growing and bone remodeling
+# Neuromusculare and immune effects
+
+
+# Vitamin A
+# Unsaturated organic compounds
+# retionol, retinal, retionic acid, beta-carotene (and other carotenoids)
+# Very liphobic (unable to disolve in fats)
+
+
+# An antioxidant is a molecule that inhibits the oxidation of
+# other molecules. Antioxidants are oxidized preferably over
+# other substances.
+
+# Oxidation is the giving of electrons to (yanking of protons / hyrdogens away)
+# from a substance
+
+#types of antioxidants, such as glutathione, vitamin C, vitamin A, and vitamin E as well as enzymes such as catalase, superoxide dismutase and various peroxidases
+
+# overoxidation can destroy cells
+# causes neurodegenerative diseases.

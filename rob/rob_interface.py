@@ -208,6 +208,10 @@ def grepre(r, *tofind_list):
     rob_nav._grep(r, tofind_list, recursive=False, regex=True)
 
 
+def sedr(r, regexpr, repl, force=False):
+    sed(r, regexpr, repl, force=force, recursive=True)
+
+
 def sed(r, regexpr, repl, force=False, recursive=False):
     force = True if force == 'True' else force
     include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h']
