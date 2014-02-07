@@ -55,3 +55,11 @@ install_gdrive()
     sudo apt-get update
     sudo apt-get install google-drive-ocamlfuse
 }
+
+install_dark_theme()
+{
+    sudo add-apt-repository ppa:noobslab/themes
+    sudo apt-get update
+    sudo apt-get install mediterranean-theme
+}
+

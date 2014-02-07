@@ -1,6 +1,10 @@
 # Setup initial symbolic links and file permissions
 git submodule init
 git submodule update
+cd ~/local/vim/vimfiles/bundle/jedi-vim
+git submodule init
+git submodule update
+
 
 ln -s ~/local/bashrc.sh ~/.bashrc
 ln -s ~/local/profile.sh ~/.profile
