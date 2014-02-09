@@ -14,7 +14,8 @@ endfu
 " Setting Font Functions
 fu! SetFontMonoDyslexic()
     if has("win32") || has("win16")
-        set gfn=Mono\ Dyslexic:h11
+        "set gfn=Mono\ Dyslexic:h11
+        set gfn=Mono\ Dyslexic:h10
     else
         set guifont=MonoDyslexic
     endif

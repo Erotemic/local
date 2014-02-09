@@ -283,6 +283,26 @@ def s(r, num_cycles=5, monitoroff='False'):
     if monitoroff != 'False':
         monitor(r, 'off')
 
+def win32_chronjob(r, task_run, task_name, schedule='ONCE', modifier=None):
+    supress_confirmation = True
+    #task_run = "rob.bat wake_up"
+    SCHEDULE_OPTS = ['MINUTE', 'HOURLY', 'DAILY', 'WEEKLY', 'MONTHLY', 'ONCE',
+                     'ONSTART', 'ONLOGON', 'ONIDLE']
+    cmd  = ['schtasks', '/Create',
+            '/SC', schedule,
+            '/TN', task_name,
+            '/TR', task_run]
+    if schedule in ['ONCE']:
+        cmd += ['/ST', start_time]
+        cmd += ['/SD', start_date]
+    if modifier is not None:
+        cmd += ['/MO', str(modifier)]
+    if supress_confirmation is not None:
+        cmd += ['/F']
+    cmdstr = ' '.join(cmd)
+    print(cmdstr)
+    os.system(cmdstr)
+
 def set_alarm(r, alarm_time=None, time_fix=True, alarm_name='ROB_ALARM_TASK_0'):
     import webbrowser
     from datetime import date, timedelta

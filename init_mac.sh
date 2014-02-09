@@ -41,12 +41,6 @@ make_dirs()
     fi
 }
 
-port_opencv()
-{
-    sudo port install ffmpeg
-    sudo port install opencv +python27
-}
-
 update_ports()
 {
     sudo port selfupdate
@@ -121,6 +115,12 @@ install_libs()
     # Qt
     #sudo port install qt4-mac-devel
     sudo port install qt4-mac
+}
+
+port_opencv()
+{
+    sudo port install ffmpeg
+    sudo port install opencv +python27
 }
 
 port_pyinstall()
