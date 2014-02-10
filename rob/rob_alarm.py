@@ -1,5 +1,6 @@
 from rob_interface import *
 
+
 def watch_rand_vid(r):
     'Function that gets called during wakeup'
     (playlist, vid_name) = get_random_playlist(r)
@@ -9,11 +10,14 @@ def watch_rand_vid(r):
     speak(r, 'How about some '+show_name2, -3)
     play_playlist(r, playlist)
 
+
 def monitor(r, monitor_state='off'):
     robos.monitor(r, monitor_state)
 
+
 def set_volume(r, percent):
     robos.set_volume(r, percent)
+
 
 def get_random_playlist(r):
     import random
@@ -65,6 +69,7 @@ def get_random_playlist(r):
     print('---')
     return (playlist, show_name)
 
+
 def play_playlist(r, playlist=None):
     if playlist is None:
         (playlist, nm) = get_random_playlist(r)
@@ -79,6 +84,7 @@ def play_playlist(r, playlist=None):
 
     #C:\Program Files (x86)\VideoLAN\VLC\vlc.exe "D:\sys\e\TV\Monty Pythons Flying Circus\Monty Pythons flying circus - Season 2\mpfc 14 - Face The Press.avi"
 
+
 def get_night_videos(r):
     night_videos = [
         r.d.TV + '/Futurama',
@@ -89,23 +95,28 @@ def get_night_videos(r):
     ]
     return night_videos
 
+
 def get_morning_videos(r):
     morning_videos = [
         r.d.TV + '/Bill Nye the Science Guy',
     ]
     return morning_videos
 
+
 def video(r):
     videos = (get_night_videos(r) +
               get_morning_videos(r))
     random_video(r, video_paths=videos)
 
+
 def v(r):
     video(r)
+
 
 def night_video(r):
     night_videos = get_night_videos(r)
     random_video(r, video_paths=night_videos)
+
 
 def random_video(r, video_paths=None):
     from glob import glob
@@ -140,6 +151,7 @@ def random_video(r, video_paths=None):
     arg_list = [vlc_cmd, rand_vid_file];
     subprocess.Popen(arg_list)
 
+
 def get_readable_time(r):
     week_strs = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     month_strs = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
@@ -163,6 +175,7 @@ def get_readable_time(r):
     year  = str(t.year)
     weekday = week_strs[week_int]
     return (year, month, day, weekday, hour, minu, ampm)
+
 
 def wake_up(r, WAKE_UP_MODE=0):
     if type(WAKE_UP_MODE) == type(''):
@@ -237,6 +250,7 @@ def wake_up(r, WAKE_UP_MODE=0):
     else:
         watch_rand_vid(r)
 
+
 def WAKE_UP_MODE1(r):
         '''
         You are dreaming.
@@ -253,35 +267,39 @@ def WAKE_UP_MODE1(r):
 
         There is good news, and there is bad news.'''
 
+
 def sc(r, rate=-5):
     to_speak = robos.get_clipboard()
     robos.speak(r, to_speak, rate)
 
+
 def speak(r, to_speak, rate=-5):
-    print 'alarm> Speaking at rate '+str(rate)+': '+to_speak
+    print 'alarm> Speaking at rate ' + str(rate) + ': ' + to_speak
     robos.speak(r, to_speak, rate)
 
+
 def s(r, num_cycles=5, monitoroff='False'):
-    alarm_name='ROB_ALARM_TASK_0'
+    alarm_name = 'ROB_ALARM_TASK_0'
     num_cycles = int(num_cycles)
     from datetime import timedelta
     minutes_to_fall_asleep = 14
     if num_cycles == -1:
         num_cycles = 0
         minutes_to_fall_asleep = 1
-    sleep_for = timedelta(hours=1.5*num_cycles, minutes=minutes_to_fall_asleep)
+    sleep_for = timedelta(hours=1.5 * num_cycles, minutes=minutes_to_fall_asleep)
     now_time = datetime.now()
-    at = now_time+sleep_for
+    at = now_time + sleep_for
     time_str = '%.2d:%.2d' % (at.hour, at.minute)
-    date_str = '%.2d/%.2d/%.4d' % (at.month, at.day, at.year)
-    date_str = '%.4d/%.2d/%.2d' % (at.year, at.month, at.day)
+    #date_str = '%.2d/%.2d/%.4d' % (at.month, at.day, at.year)  # this is default
+    date_str = '%.4d/%.2d/%.2d' % (at.year, at.month, at.day)  # this is correct
     print("It takes %r minutes to fall asleep " % minutes_to_fall_asleep)
-    print("ITS IS NOW:   "+str(now_time))
-    print("ALARM SET FOR "+str(at))
-    cmd  = 'schtasks /Create /SC ONCE /TN ' + alarm_name + ' /TR "rob.bat wake_up"  /ST '+time_str+' /SD '+ date_str +' /F'
+    print("ITS IS NOW:   " + str(now_time))
+    print("ALARM SET FOR " + str(at))
+    cmd  = 'schtasks /Create /SC ONCE /TN ' + alarm_name + ' /TR "rob.bat wake_up"  /ST ' + time_str + ' /SD ' + date_str + ' /F'
     os.system(cmd)
     if monitoroff != 'False':
         monitor(r, 'off')
+
 
 def win32_chronjob(r, task_run, task_name, schedule='ONCE', modifier=None):
     supress_confirmation = True
@@ -303,6 +321,7 @@ def win32_chronjob(r, task_run, task_name, schedule='ONCE', modifier=None):
     print(cmdstr)
     os.system(cmdstr)
 
+
 def set_alarm(r, alarm_time=None, time_fix=True, alarm_name='ROB_ALARM_TASK_0'):
     import webbrowser
     from datetime import date, timedelta
@@ -313,19 +332,19 @@ def set_alarm(r, alarm_time=None, time_fix=True, alarm_name='ROB_ALARM_TASK_0'):
     day = today.day
     month = today.month
     year = today.year
-    if today.hour > 12 and time_fix==True:
+    if today.hour > 12 and time_fix is True:
         day = tomorrow.day
         month = tomorrow.month
         year = tomorrow.year
     date_str = '%.2d/%.2d/%.4d' % (month, day, year)
-    print 'TODAY IS: '+str(today)
-    print 'TOMORROW IS: '+str(tomorrow)
-    print 'ALARM IS SETTING FOR: '+date_str
-    if alarm_time == None:
+    print 'TODAY IS: ' + str(today)
+    print 'TOMORROW IS: ' + str(tomorrow)
+    print 'ALARM IS SETTING FOR: ' + date_str
+    if alarm_time is None:
         webbrowser.open_new('http://sleepyti.me/')
         hour = '%.2d' % int(raw_input(   'Enter the alarm hours HH (00-23)'))
         minu = '%.2d' % int(raw_input('Enter the alarm minutres MM (00-59)'))
-        alarm_time = hour+':'+minu
-    cmd  = 'schtasks /Create /SC ONCE /TN ' + alarm_name + ' /TR "rob.bat wake_up"  /ST '+alarm_time+' /SD '+ date_str +' /F'
+        alarm_time = hour + ':' + minu
+    cmd  = 'schtasks /Create /SC ONCE /TN ' + alarm_name + ' /TR "rob.bat wake_up"  /ST ' + alarm_time + ' /SD ' + date_str + ' /F'
     print(cmd)
     os.system(cmd)
