@@ -1,9 +1,4 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =7
-let g:netrw_dirhist_1='/media/Store/data/downloads'
-let g:netrw_dirhist_2='/home/joncrall/code/ell_desc'
-let g:netrw_dirhist_3='/home/joncrall/code/hotspotter/_frontend'
-let g:netrw_dirhist_4='/home/joncrall/code/hotspotter/hard_names'
-let g:netrw_dirhist_5='/usr/local/lib/python2.7/dist-packages/IPython/utils'
-let g:netrw_dirhist_6='/home/joncrall/local/ubuntu'
-let g:netrw_dirhist_7='/home/joncrall/code/hotspotter/hsviz'
+let g:netrw_dirhist_cnt =2
+let g:netrw_dirhist_1='/home/joncrall/code/hotspotter/hstpl/extern_feat'
+let g:netrw_dirhist_2='/home/joncrall/code/flann/src/python/pyflann'

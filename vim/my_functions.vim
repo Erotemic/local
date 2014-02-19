@@ -232,8 +232,6 @@ command! PEP8TWOSPACECOMMENT :call PEP8COMMASPACE()<CR>
 nnoremap <Leader>f :call FUNC_SELPAPER()<CR>
 nnoremap <Leader>q :call UnderscoresToCamelCase()<CR>
 
-nnoremap <Leader>r zR<CR>
-
 command! REPLPARENBRACE :call FUNC_REPL_PAREN_BRACE()<CR>
 command! REPLnormal :call FUNC_REPL_PAREN_BRACE('normal')<CR>
 command! REPLprobibility :call FUNC_REPL_PAREN_BRACE('Pr')<CR>

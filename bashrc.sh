@@ -1,4 +1,5 @@
 #!/bin/sh
+export QT_ACCESSIBILITY=0
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
     source ~/local/bashrc_mac.sh

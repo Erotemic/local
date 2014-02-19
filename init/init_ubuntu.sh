@@ -18,6 +18,8 @@ install_packages()
 {
     # For opencv
     sudo apt-get install openexr
+    # For Lempisky Random Forsest Show
+    sudo apt-get install libgtk2.0-dev
 }
 
 #config_clang()

@@ -17,7 +17,7 @@ fu! SetFontMonoDyslexic()
         "set gfn=Mono\ Dyslexic:h11
         set gfn=Mono\ Dyslexic:h10
     else
-        set guifont=MonoDyslexic
+        set guifont=MonoDyslexic\ 9.4
     endif
 endfu
 

@@ -12,6 +12,9 @@ alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
 alias utarbz2='tar jxf'
+alias unzip-tar-gz='tar xvzf '
+alias unzip-tar-bz='tar xvjf '
+alias unzip-tar='tar xvf '
 #ipython --pdb -c "%run report_results2.py --BOW --no-print-checks"
 
 #x - extract

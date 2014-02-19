@@ -327,5 +327,9 @@ noremap <space> za
 noremap <S-Space> zM
 "Map Ctrl+Space to open all folds
 noremap <C-Space> zR
+
+noremap <Leader>r zR<CR>
+noremap <Leader>r zR<CR>
+
 "
 " :s/\( *\):/:\1/gc

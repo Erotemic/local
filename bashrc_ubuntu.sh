@@ -128,9 +128,13 @@ export IPYTHONDIR=~/.ipython
 export LATEX='~/latex/'
 export SITE_PACKAGES=/usr/local/lib/python2.7/dist-packages/
 
+export CC=gcc
+export CXX=g++
+
 # MY PATH
 export PATH=$PATH:~/scripts/:/usr/local/MATLAB/R2013a/bin
 export PYTHONPATH=$code:$HOTSPOTTER:$PYTHONPATH
+export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgocnfig:/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
 
 #export mothers=/data/work/HSDB_
 export VIEW_CMD=nautilus

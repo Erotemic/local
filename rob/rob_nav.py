@@ -71,6 +71,8 @@ def __regex_grepfile(fpath, regexpr):
 def _grep(r, tofind_list, recursive=True, case_insensitive=True, regex=False):
     include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c',
                         '*.h', '*.txt']
+
+    exclude_dirs = ['_graveyard', '_broken', '_scripts']
     # ensure list input
     if isinstance(include_patterns, str):
         include_patterns = [include_patterns]
@@ -79,6 +81,8 @@ def _grep(r, tofind_list, recursive=True, case_insensitive=True, regex=False):
     found_files = []
     # Walk through each directory recursively
     for root, dname_list, fname_list in os.walk(dpath):
+        if split(root)[1] in exclude_dirs:
+            continue
         for name in fname_list:
             # For the filesnames which match the patterns
             if any([fnmatch.fnmatch(name, pat) for pat in include_patterns]):

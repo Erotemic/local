@@ -1,3 +1,6 @@
+cd ~/local/vim/vimfiles/bundle
+git clone https://github.com/koron/minimap-vim.git
+
 # Setup initial symbolic links and file permissions
 git submodule init
 git submodule update
