@@ -22,6 +22,7 @@ def get_PATH(r):
         WIN_SCRIPTS
         LOCAL + '/windows/auto_scripts'
         LOCAL + '/windows/scripts'
+        LOCAL + '/scripts/windows'
         PYTHON
         PYTHON + '/Scripts'
         MSYS

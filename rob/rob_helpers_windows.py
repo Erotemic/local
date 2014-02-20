@@ -326,6 +326,7 @@ def test_devmgr():
     #print get_env_var('DEVMGR_SHOW_NONPRESENT_DEVICES')
     #print devmgr_key
 
+
 def get_clipboard():
     # Requires pywin32
     import win32clipboard

@@ -22,3 +22,6 @@ rob sed "import HotSpotterAPI" "from hotspotter import HotSpotterAPI" True
 rob sed "import vizualizations as viz" "from hsviz import viz" True
 rob sed "import draw_func2 as df2" "from hsviz import draw_func2 as df2" True
 rob sed "import interaction" "from hsviz import interact" True
+
+
+rob sed "^from hscom import helpers$" "from hscom import helpers\nfrom hscom import helpers as util" True True

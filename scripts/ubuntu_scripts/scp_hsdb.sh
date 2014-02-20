@@ -12,9 +12,9 @@ scp_hotspotter_database()
     echo "Copy images"
     scp -r $src/images $remote:$dst/images
     echo "Copy tables"
-    scp $src/_hsdb/image_table.csv $remote:$dst/_hsdb/
-    scp $src/_hsdb/name_table.csv  $remote:$dst/_hsdb/
-    scp $src/_hsdb/chip_table.csv  $remote:$dst/_hsdb/
+    echo scp $src/_hsdb/image_table.csv $remote:$dst/_hsdb/
+    echo scp $src/_hsdb/name_table.csv  $remote:$dst/_hsdb/
+    echo scp $src/_hsdb/chip_table.csv  $remote:$dst/_hsdb/
 }
 
 #export dbname='NAUT_Dan'

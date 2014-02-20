@@ -1,5 +1,6 @@
 import os
 from rob_helpers import *  # NOQA
+import rob_helpers
 from datetime import datetime  # NOQA
 import urllib  # NOQA
 if sys.platform == 'win32':
@@ -204,8 +205,12 @@ def grepc(r, *tofind_list):
     rob_nav._grep(r, tofind_list, case_insensitive=False)
 
 
-def grepre(r, *tofind_list):
-    rob_nav._grep(r, tofind_list, recursive=False, regex=True)
+def grepre(r, regexpr, recursive=True):
+    grepr(r, regexpr, repl, recursive=recursive)
+
+
+def grepr(r, regexpr, recursive=True):
+    rob_nav._grep(r, [regexpr], recursive=recursive, regex=True)
 
 
 def sedr(r, regexpr, repl, force=False):
@@ -213,7 +218,9 @@ def sedr(r, regexpr, repl, force=False):
 
 
 def sed(r, regexpr, repl, force=False, recursive=False):
-    force = True if force == 'True' else force
+    import rob_util as rutil
+    force = rutil.cast(force, bool)
+    recursive = rutil.cast(recursive, bool)
     include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h']
     dpath = os.getcwd()
     print('sed-ing ' + dpath)
@@ -223,7 +230,7 @@ def sed(r, regexpr, repl, force=False, recursive=False):
     if r'\>' in regexpr or r'\<' in regexpr:
         print('Remember \\b is a word boundary')
     # Walk through each directory recursively
-    for fpath in rob_nav._matching_fnames(dpath, include_patterns, recursive=False):
+    for fpath in rob_nav._matching_fnames(dpath, include_patterns, recursive=recursive):
         changed_lines = rob_nav.__regex_sedfile(fpath, regexpr, repl, force)  # NOQA
 
 
@@ -281,6 +288,37 @@ def research_clipboard(r, start_line_str=None, rate='3', sentence_mode=True, ope
     to_speak = robos.get_clipboard()
     write_research(r, to_speak)
     research(r, start_line_str='0', rate=rate, sentence_mode=True, open_file=False)
+
+
+def print_clipboard(r):
+    clipboard = robos.get_clipboard()
+    print(clipboard)
+
+
+def sync_clipboard_to(r, remote):
+    send_clipboard_to(r, remote)
+    #DISPLAY=:10.0 xsel
+    #remote_cmd = 'DISPLAY=:10.0 xsel --clipboard < ~/clipboard.txt'
+    #send_command(r, remote, remote_cmd)
+
+
+def dump_clipboard(r, clipboard_fname):
+    clipboard = robos.get_clipboard()
+    with open(clipboard_fname, 'w') as file_:
+        file_.write(clipboard)
+
+
+def send_clipboard_to(r, remote):
+    clipboard_fname = 'clipboard.txt'
+    dump_clipboard(r, clipboard_fname)
+    rob_helpers.scp_push(remote, clipboard_fname)
+
+
+def send_command(r, remote, remote_cmd):
+    args = ['ssh', '-X', remote, '"' + remote_cmd + '"']
+    cmdstr = ' '.join(args)
+    print(cmdstr)
+    rob_helpers.call(cmdstr)
 
 
 def write_research(r, to_write, rate=-5):

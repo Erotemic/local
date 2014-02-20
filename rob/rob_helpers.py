@@ -1,4 +1,5 @@
 import os
+from os.path import split
 import subprocess
 from subprocess import PIPE
 import sys
@@ -43,6 +44,23 @@ class DynStruct:
         return [attr for attr in dir(self) if not callable(attr) and not attr.startswith("__")]
 
 
+def scp_push(remote, src, dst=None):
+    if dst is None:
+        dst = split(src)[1]
+    scp(src, remote + ':' + dst)
+
+
+def scp_pull(remote, src, dst=None):
+    if dst is None:
+        dst = split(src)[1]
+    scp(remote + ':' + src, dst)
+
+
+def scp(src, dst):
+    call(['scp', src, dst])
+
+
+
 def call(cmdstr):
     import shlex
     if isinstance(cmdstr, str):
@@ -50,6 +68,7 @@ def call(cmdstr):
     else:
         args = cmdstr
     print("rob.call>Popen(%r))" % args)
+    print(' '.join(args))
     out = ''
     err = ''
     try:
@@ -61,6 +80,10 @@ def call(cmdstr):
     print ' * out = %r' % out
     print ' * err = %r' % err
     return (out, err)
+
+
+def escape(string, char):
+    return string.replace(char, '\\' + char)
 
 
 def unique(in_list):

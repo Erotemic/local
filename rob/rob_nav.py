@@ -4,6 +4,9 @@ import os
 import fnmatch
 import re
 from rob_interface import robos
+import rob_util as rutil
+
+HS_EXCLUDE = ['_graveyard', '_broken', '_scripts']
 
 
 def find_in_list(str_, tofind_list, agg_fn=all, case_insensitive=True):
@@ -69,34 +72,43 @@ def __regex_grepfile(fpath, regexpr):
 
 
 def _grep(r, tofind_list, recursive=True, case_insensitive=True, regex=False):
-    include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c',
-                        '*.h', '*.txt']
-
-    exclude_dirs = ['_graveyard', '_broken', '_scripts']
+    include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h', '*.txt']
+    exclude_dirs = HS_EXCLUDE
     # ensure list input
     if isinstance(include_patterns, str):
         include_patterns = [include_patterns]
     dpath = os.getcwd()
-    print('Greping %r for %r' % (dpath, tofind_list))
+    recursive = rutil.cast(recursive, bool)
+    recursive_stat_str = ['flat', 'recursive'][recursive]
+    print('Greping (%s) %r for %r' % (recursive_stat_str, dpath, tofind_list))
     found_files = []
     # Walk through each directory recursively
-    for root, dname_list, fname_list in os.walk(dpath):
-        if split(root)[1] in exclude_dirs:
-            continue
-        for name in fname_list:
-            # For the filesnames which match the patterns
-            if any([fnmatch.fnmatch(name, pat) for pat in include_patterns]):
-                # Inspect the file
-                fpath = join(root, name)
-                if regex:
-                    regexpr = tofind_list[0]
-                    ret = __regex_grepfile(fpath, regexpr)
-                else:
-                    ret = __grepfile(fpath, tofind_list, case_insensitive)
-                if not ret is None:
-                    found_files.append(ret)
-        if not recursive:
-            break
+    for fpath in _matching_fnames(dpath, include_patterns, exclude_dirs, recursive=recursive):
+        if regex:
+            regexpr = tofind_list[0]
+            ret = __regex_grepfile(fpath, regexpr)
+        else:
+            ret = __grepfile(fpath, tofind_list, case_insensitive)
+        if not ret is None:
+            found_files.append(ret)
+
+    #for root, dname_list, fname_list in os.walk(dpath):
+        #if split(root)[1] in exclude_dirs:
+            #continue
+        #for name in fname_list:
+            ## For the filesnames which match the patterns
+            #if any([fnmatch.fnmatch(name, pat) for pat in include_patterns]):
+                ## Inspect the file
+                #fpath = join(root, name)
+                #if regex:
+                    #regexpr = tofind_list[0]
+                    #ret = __regex_grepfile(fpath, regexpr)
+                #else:
+                    #ret = __grepfile(fpath, tofind_list, case_insensitive)
+                #if not ret is None:
+                    #found_files.append(ret)
+        #if not recursive:
+            #break
     print('====================')
     print('====================')
     print('\n'.join(found_files))
@@ -129,9 +141,14 @@ def ls(r):
         print(path)
 
 
-def _matching_fnames(dpath, include_patterns, recursive=True):
+def _matching_fnames(dpath, include_patterns, exclude_dirs=None, recursive=True):
+    recursive = rutil.cast(recursive, bool)
+    if exclude_dirs is None:
+        exclude_dirs = HS_EXCLUDE
     #fname_list = []
     for root, dname_list, fname_list in os.walk(dpath):
+        if split(root)[1] in exclude_dirs:
+            continue
         for name in fname_list:
             # For the filesnames which match the patterns
             if any([fnmatch.fnmatch(name, pat) for pat in include_patterns]):
