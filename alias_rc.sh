@@ -136,3 +136,18 @@ alias cop=commit_profile
 
 
 alias vimhs='gvim -S ~/vim_hotspotter_session.vim'
+
+
+cls()
+{
+    for i in {1..100}
+    do
+        echo ""
+    done
+}
+
+
+read_clip()
+{
+    xsel --clipboard < ~/clipboard.txt
+}
