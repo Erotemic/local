@@ -38,6 +38,7 @@ def get_PATH(r):
         INSTALL32 + '/gs/gs9.07/bin'
         INSTALL64 + '/7-Zip'
         INSTALL32 + '/7-Zip'
+        INSTALL32 + '/Graphviz2.36/bin'
         VIM_BIN
         GIT_BIN
         GIT_CMD

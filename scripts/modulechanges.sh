@@ -25,3 +25,12 @@ rob sed "import interaction" "from hsviz import interact" True
 
 
 rob sed "^from hscom import helpers$" "from hscom import helpers\nfrom hscom import helpers as util" True True
+
+set realrun=True
+rob sed "\\bqdat\\b" "qreq" %realrun% True
+
+rob sed "\\bQueryData\\b" "QueryRequest" %realrun% True
+
+
+from hotspotter import DataStructures as ds
+import hotspotter.DatStruct as ds
