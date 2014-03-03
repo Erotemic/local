@@ -22,13 +22,13 @@ set GVIM_EXE="ftp://ftp.vim.org/pub/vim/pc/gvim74.exe"
 :: Install Python 
 wget "http://www.python.org/ftp/python/2.7.6/python-2.7.6.msi"
 wget "http://www.python.org/ftp/python/2.7.6/python-2.7.6.msi.asc"
-set PYMD5=ac54e14f7ba180253b9bae6635d822ea
-
-if "%PYMD5%" == "C:\Program Files\GtkSharp\2.12\" (echo yes)
+set PYMD5=ac54e14f7ba180253b9bae6635d822ea *python-2.7.6.msi
 
 md5sum python-2.7.6.msi > tmppymd5
 set /p PYMD5_VAL= < tmppymd5
 del tmppymd5
+
+if "%PYMD5%" NEQ "%PYMD5_VAL%" (goto :end)
 
 gpg --keyserver keys.gnupg.net
 gpg --recv-keys 7D9DC8D2 :: martin v lowis's key
@@ -87,3 +87,9 @@ set AHK_URL="http://l.autohotkey.net/AutoHotkey_L_Install.exe"
 :: StarCraft2
 :: GnuWin32?
 :: Github?
+
+:exit_success
+echo "SUCCESS"
+
+:exit_fail
+echo "FAILURE!"
