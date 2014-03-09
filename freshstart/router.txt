@@ -1,0 +1,4 @@
+I reset to factory default
+I generated a random MAC address
+Entered a new password based from my cabin
+
