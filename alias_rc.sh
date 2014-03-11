@@ -70,6 +70,7 @@ alias scr='cd ~/scripts'
 # Special navigation
 alias cv='cd ~/code/opencv'
 alias hs='cd ~/code/hotspotter'
+alias work='cd ~/data/work'
 alias hshs='cd ~/code/hotspotter/hotspotter'
 alias hshsviz='cd ~/code/hotspotter/hsviz'
 alias hshscom='cd ~/code/hotspotter/hscom'

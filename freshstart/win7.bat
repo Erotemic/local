@@ -13,7 +13,6 @@ set PATH=%APP_PATH%;%PATH%
 :: http://gnuwin32.sourceforge.net/packages/wget.htm
 set WGET=%APP_PATH%\wget.exe
 
-
 :: Install GVIM
 set GVIM_EXE="ftp://ftp.vim.org/pub/vim/pc/gvim74.exe"
 
@@ -33,14 +32,6 @@ if "%PYMD5%" NEQ "%PYMD5_VAL%" (goto :end)
 gpg --keyserver keys.gnupg.net
 gpg --recv-keys 7D9DC8D2 :: martin v lowis's key
 
-:: -----BEGIN PGP SIGNATURE-----
-:: Version: GnuPG v2.0.14 (MingW32)
-
-:: iEYEABECAAYFAlJ/0PoACgkQavBT8H2dyNKXVACbBkw9kPevZWyo9232MRlNZ8z1
-:: 9/IAn0Weq/jnKXpxb0kcPaKZvgq5ALH2
-:: =nGuj
-:: -----END PGP SIGNATURE-----
-
 :: Install GIT
 
 :: Install 7zip
@@ -56,37 +47,34 @@ set AHK_URL="http://l.autohotkey.net/AutoHotkey_L_Install.exe"
 
 :: Install Windows Updates
 
-:: FileZilla
-
-:: WinSplit Revolution
-
-:: Install Spotify
-::
-:: Install RapidEE
-::
-:: Install Cisco VPN
-::
-::
 :: Install Other:
-:: Sumatra
-:: VLC
-:: Audacity
-:: PS
-:: GhostScript
+:: FileZilla
+:: WinSplit Revolution
+:: Spotify
+:: RapidEE
+:: Cisco VPN
 :: Microsoft Security Essentials
+:: Flux
+:: VLC
+:: Sumatra
+:: Dropbox
 :: Zotero
 :: Dia
-:: Dropbox
-:: Flux
 :: Inno Setup 5
-:: LibreOffice
-:: MiTeX 2.9
+::
 :: PeerBlock
 :: Reaper
-:: Skype
+:: Audacity
+:: LibreOffice
+:: PS
+:: 
+:: MiTeX 2.9
+:: GhostScript
+::
 :: StarCraft2
 :: GnuWin32?
 :: Github?
+:: Skype?
 
 :exit_success
 echo "SUCCESS"
