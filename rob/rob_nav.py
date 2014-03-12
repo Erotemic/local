@@ -6,7 +6,8 @@ import re
 from rob_interface import robos
 import rob_util as rutil
 
-HS_EXCLUDE = ['_graveyard', '_broken', '_scripts']
+HS_EXCLUDE = ['_graveyard', '_broken', 'CompilerIdCXX', 'CompilerIdC', 'build', 'src']
+__DEBUG__ = True
 
 
 def find_in_list(str_, tofind_list, agg_fn=all, case_insensitive=True):
@@ -71,6 +72,24 @@ def __regex_grepfile(fpath, regexpr):
     return None
 
 
+def extend_regex(regexpr):
+    regex_map = {
+        r'\<': r'\b(?=\w)',
+        r'\>': r'\b(?!\w)',
+        ('UNSAFE', r'\x08'): r'\b',
+    }
+    for key, repl in regex_map.iteritems():
+        if isinstance(key, tuple):
+            search = key[1]
+        else:
+            search = key
+        if regexpr.find(search) != -1:
+            if isinstance(key, tuple):
+                print('WARNING! Unsafe regex with: %r' % (key,))
+            regexpr = regexpr.replace(search, repl)
+    return regexpr
+
+
 def _sed(r, regexpr, repl, force=False, recursive=False, dpath_list=None):
     force = rutil.cast(force, bool)
     recursive = rutil.cast(recursive, bool)
@@ -82,20 +101,13 @@ def _sed(r, regexpr, repl, force=False, recursive=False, dpath_list=None):
     print(' * replacement        : %r' % (repl,))
     print(' * recursive: %r' % (recursive,))
     print(' * force: %r' % (force,))
-    if r'\>' in regexpr or r'\<' in regexpr or '<' in regexpr or '>' in regexpr:
-        print('Remember \\b is a word boundary')
-        print('subsituting for you for you')
-        regexpr = regexpr.replace('\\<', '\\b').replace('\\>', '\\b')
-        print(' * regular expression : %r' % (regexpr,))
+    regexpr = extend_regex(regexpr)
     if '\x08' in regexpr:
         print('Remember \\x08 != \\b')
         print('subsituting for you for you')
         regexpr = regexpr.replace('\x08', '\\b')
         print(' * regular expression : %r' % (regexpr,))
 
-
-    print(' * regular expression : %r' % (regexpr,))
-    return
     # Walk through each directory recursively
     for fpath in _matching_fnames(dpath_list, include_patterns, recursive=recursive):
         __regex_sedfile(fpath, regexpr, repl, force)
@@ -116,7 +128,9 @@ def _grep(r, tofind_list, recursive=True, case_insensitive=True, regex=False, dp
     # Walk through each directory recursively
     for fpath in _matching_fnames(dpath_list, include_patterns, exclude_dirs, recursive=recursive):
         if regex:
-            regexpr = tofind_list[0]
+            if len(tofind_list) > 1:
+                print('WARNING IN ROB NAV 133')
+            regexpr = extend_regex(tofind_list[0])
             ret = __regex_grepfile(fpath, regexpr)
         else:
             ret = __grepfile(fpath, tofind_list, case_insensitive)
@@ -178,6 +192,8 @@ def _matching_fnames(dpath_list, include_patterns, exclude_dirs=None, recursive=
     recursive = rutil.cast(recursive, bool)
     if exclude_dirs is None:
         exclude_dirs = HS_EXCLUDE
+    if __DEBUG__:
+        print('Excluding: %r' % (exclude_dirs,))
     #fname_list = []
     for dpath in dpath_list:
         for root, dname_list, fname_list in os.walk(dpath):

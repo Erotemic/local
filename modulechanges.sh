@@ -34,3 +34,12 @@ rob sed "\\bQueryData\\b" "QueryRequest" %realrun% True
 
 from hotspotter import DataStructures as ds
 import hotspotter.DatStruct as ds
+
+
+
+rob sp '\<_as\>' "_iv11s"
+rob sp '\<_bs\>' "_iv12s"
+rob sp '\<_cs\>' "_iv21s"
+rob sp '\<_ds\>' "_iv22s"
+
+rob gp '\<acd\('

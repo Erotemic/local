@@ -200,8 +200,8 @@ def project_dpaths():
 
 
 # Grep my projects
-def gp(r, tofind_str):
-    rob_nav._grep(r, [tofind_str], recursive=True, dpath_list=project_dpaths())
+def gp(r, regexp):
+    rob_nav._grep(r, [regexp], recursive=True, dpath_list=project_dpaths(), regex=True)
 
 
 # Sed my projects
@@ -219,10 +219,6 @@ def grepnr(r, *tofind_list):
 
 def grepc(r, *tofind_list):
     rob_nav._grep(r, tofind_list, case_insensitive=False)
-
-
-def grepre(r, regexpr, recursive=True):
-    grepr(r, regexpr, repl, recursive=recursive)
 
 
 def grepr(r, regexpr, recursive=True):
