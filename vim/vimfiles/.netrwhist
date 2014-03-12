@@ -1,7 +1,8 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =5
+let g:netrw_dirhist_cnt =6
 let g:netrw_dirhist_1='/home/joncrall/code/hotspotter/hstpl/extern_feat'
 let g:netrw_dirhist_2='/home/joncrall/code/flann/src/python/pyflann'
 let g:netrw_dirhist_3='/home/joncrall/code/hotspotter/_tests'
 let g:netrw_dirhist_4='/usr/share/gnome-session/sessions'
 let g:netrw_dirhist_5='/home/joncrall/code/hesaff/tests'
+let g:netrw_dirhist_6='/home/joncrall/code/hesaff/src'

@@ -4,11 +4,19 @@ command! LOADSESSION :mksession ~/mysession.vim
 command! SAVEHSSESSION :mksession ~/vim_hotspotter_session.vim
 command! LOADHSSESSION :source ~/vim_hotspotter_session.vim
 
+
+fu! FUNC_ECHOVAR(varname)
+    :let varstr=a:varname
+    :exec 'let g:foo = &'.varstr
+    :echo varstr.' = '.g:foo
+endfu
+command! -nargs=1 ECHOVAR :call FUNC_ECHOVAR(<f-args>)
+
+
 func! WordHighlightFun()
     if !exists("g:togwordhighlight") 
         let g:togwordhighlight=0
-    end
-    if (g:togwordhighlight)     
+    elseif (g:togwordhighlight)     
         exe printf('match DiffChange /\V\<%s\>/', escape(expand('<cword>'), '/\'))
     endif
 endfu

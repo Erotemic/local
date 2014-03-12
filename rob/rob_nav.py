@@ -71,19 +71,50 @@ def __regex_grepfile(fpath, regexpr):
     return None
 
 
-def _grep(r, tofind_list, recursive=True, case_insensitive=True, regex=False):
+def _sed(r, regexpr, repl, force=False, recursive=False, dpath_list=None):
+    force = rutil.cast(force, bool)
+    recursive = rutil.cast(recursive, bool)
+    include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h']
+    if dpath_list is None:
+        dpath_list = [os.getcwd()]
+    print('sed-ing %r' % (dpath_list,))
+    print(' * regular expression : %r' % (regexpr,))
+    print(' * replacement        : %r' % (repl,))
+    print(' * recursive: %r' % (recursive,))
+    print(' * force: %r' % (force,))
+    if r'\>' in regexpr or r'\<' in regexpr or '<' in regexpr or '>' in regexpr:
+        print('Remember \\b is a word boundary')
+        print('subsituting for you for you')
+        regexpr = regexpr.replace('\\<', '\\b').replace('\\>', '\\b')
+        print(' * regular expression : %r' % (regexpr,))
+    if '\x08' in regexpr:
+        print('Remember \\x08 != \\b')
+        print('subsituting for you for you')
+        regexpr = regexpr.replace('\x08', '\\b')
+        print(' * regular expression : %r' % (regexpr,))
+
+
+    print(' * regular expression : %r' % (regexpr,))
+    return
+    # Walk through each directory recursively
+    for fpath in _matching_fnames(dpath_list, include_patterns, recursive=recursive):
+        __regex_sedfile(fpath, regexpr, repl, force)
+
+
+def _grep(r, tofind_list, recursive=True, case_insensitive=True, regex=False, dpath_list=None):
     include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h', '*.txt']
     exclude_dirs = HS_EXCLUDE
     # ensure list input
     if isinstance(include_patterns, str):
         include_patterns = [include_patterns]
-    dpath = os.getcwd()
+    if dpath_list is None:
+        dpath_list = [os.getcwd()]
     recursive = rutil.cast(recursive, bool)
     recursive_stat_str = ['flat', 'recursive'][recursive]
-    print('Greping (%s) %r for %r' % (recursive_stat_str, dpath, tofind_list))
+    print('Greping (%s) %r for %r' % (recursive_stat_str, dpath_list, tofind_list))
     found_files = []
     # Walk through each directory recursively
-    for fpath in _matching_fnames(dpath, include_patterns, exclude_dirs, recursive=recursive):
+    for fpath in _matching_fnames(dpath_list, include_patterns, exclude_dirs, recursive=recursive):
         if regex:
             regexpr = tofind_list[0]
             ret = __regex_grepfile(fpath, regexpr)
@@ -141,21 +172,24 @@ def ls(r):
         print(path)
 
 
-def _matching_fnames(dpath, include_patterns, exclude_dirs=None, recursive=True):
+def _matching_fnames(dpath_list, include_patterns, exclude_dirs=None, recursive=True):
+    if isinstance(dpath_list, (str)):
+        dpath_list = [dpath_list]
     recursive = rutil.cast(recursive, bool)
     if exclude_dirs is None:
         exclude_dirs = HS_EXCLUDE
     #fname_list = []
-    for root, dname_list, fname_list in os.walk(dpath):
-        if split(root)[1] in exclude_dirs:
-            continue
-        for name in fname_list:
-            # For the filesnames which match the patterns
-            if any([fnmatch.fnmatch(name, pat) for pat in include_patterns]):
-                yield join(root, name)
-                #fname_list.append((root, name))
-        if not recursive:
-            break
+    for dpath in dpath_list:
+        for root, dname_list, fname_list in os.walk(dpath):
+            if split(root)[1] in exclude_dirs:
+                continue
+            for name in fname_list:
+                # For the filesnames which match the patterns
+                if any([fnmatch.fnmatch(name, pat) for pat in include_patterns]):
+                    yield join(root, name)
+                    #fname_list.append((root, name))
+            if not recursive:
+                break
     #return fname_list
 
 

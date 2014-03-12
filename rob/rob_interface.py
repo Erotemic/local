@@ -14,6 +14,8 @@ from os.path import normpath, realpath, join, split, isdir, isfile, exists, dirn
 from rob_alarm import *  # NOQA
 from rob_nav import *  # NOQA
 import rob_nav
+#
+from os.path import expanduser
 
 
 def focus(r, window_name):
@@ -193,6 +195,20 @@ def kill(r, procname):
             os.kill(pid, signal.SIGKILL)'''
 
 
+def project_dpaths():
+    return map(expanduser, ['~/code/hotspotter', '~/code/hesaff'])
+
+
+# Grep my projects
+def gp(r, tofind_str):
+    rob_nav._grep(r, [tofind_str], recursive=True, dpath_list=project_dpaths())
+
+
+# Sed my projects
+def sp(r, regexpr, repl, force=False):
+    rob_nav._sed(r, regexpr, repl, force=force, recursive=True, dpath_list=project_dpaths())
+
+
 def grep(r, *tofind_list):
     rob_nav._grep(r, tofind_list, recursive=True)
 
@@ -218,20 +234,7 @@ def sedr(r, regexpr, repl, force=False):
 
 
 def sed(r, regexpr, repl, force=False, recursive=False):
-    import rob_util as rutil
-    force = rutil.cast(force, bool)
-    recursive = rutil.cast(recursive, bool)
-    include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h']
-    dpath = os.getcwd()
-    print('sed-ing ' + dpath)
-    print(' * regular expression : %r' % (regexpr,))
-    print(' * replacement        : %r' % (repl,))
-    print(' * recursive = %r ' % (recursive,))
-    if r'\>' in regexpr or r'\<' in regexpr:
-        print('Remember \\b is a word boundary')
-    # Walk through each directory recursively
-    for fpath in rob_nav._matching_fnames(dpath, include_patterns, recursive=recursive):
-        changed_lines = rob_nav.__regex_sedfile(fpath, regexpr, repl, force)  # NOQA
+    rob_nav._sed(r, regexpr, repl, force, recursive)
 
 
 def search(r, *tofind_list):

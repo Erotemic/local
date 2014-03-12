@@ -210,8 +210,6 @@ set cino={1s
 set autoread
 set lbr " Linebreak on 500 characters
 set tw=500
-set ai "Auto indent
-set si "Smart indent
 
 " Vim: Gray Line Numbering
 :set nu 
@@ -273,40 +271,73 @@ map <F8> :call  Tex_RunViewLaTeX()<CR>
 
 "-------------------------
 "Make txx file work as cpp files
-autocmd BufNewFile,BufRead *.txx  set ft=cpp
-autocmd BufNewFile,BufRead *.poly set ft=cmake
-autocmd BufNewFile,BufRead *.spec set ft=python
-autocmd BufNewFile,BufRead *.node set ft=cmake
-autocmd BufNewFile,BufRead *.ele  set ft=cmake
-autocmd BufNewFile,BufRead *.ahk, set ft=Autohotkey
+au! BufNewFile,BufRead *.txx  set ft=cpp
+au! BufNewFile,BufRead *.poly set ft=cmake
+au! BufNewFile,BufRead *.spec set ft=python
+au! BufNewFile,BufRead *.node set ft=cmake
+au! BufNewFile,BufRead *.ele  set ft=cmake
+au! BufNewFile,BufRead *.ahk, set ft=Autohotkey
 "Read vidtk config files as vidtk config file
-autocmd BufRead,BufNewFile *.conf setfiletype vidtkconf
+au! BufRead,BufNewFile *.conf setfiletype vidtkconf
 " Remove trailing whitespace
-autocmd BufWritePre *.py :%s/\s\+$//e
-autocmd BufWritePre *.c :%s/\s\+$//e
-autocmd BufWritePre *.cxx :%s/\s\+$//e
-autocmd BufWritePre *.cpp :%s/\s\+$//e
-autocmd BufWritePre *.h :%s/\s\+$//e
-autocmd BufWritePre *.hpp :%s/\s\+$//e
-autocmd BufWritePre *.hxx :%s/\s\+$//e
+au! BufWritePre *.py :%s/\s\+$//e
+au! BufWritePre *.c :%s/\s\+$//e
+au! BufWritePre *.cxx :%s/\s\+$//e
+au! BufWritePre *.cpp :%s/\s\+$//e
+au! BufWritePre *.h :%s/\s\+$//e
+au! BufWritePre *.hpp :%s/\s\+$//e
+au! BufWritePre *.hxx :%s/\s\+$//e
+
+" Default
+"set foldmethod=indent
+
+" Python indenting and folding
+au! FileType python set foldmethod=indent
+au! FileType python set nosmartindent
+
+" C++ indenting and folding
+au! FileType cpp set cino=i-s
+au! FileType cpp set cinkeys=0{,0},0),:,!^F,o,O,e
+au! FileType cpp set cinkeys-=0#
+au! FileType cpp set smartindent
+au! FileType cpp set foldmethod=syntax
+
+
+"au! BufNewFile,BufRead *.py, *.pyx setlocal foldmethod=indent
+"au! BufNewFile,BufRead *.py, *.pyx setlocal nosmartindent
+"au! BufNewFile,BufRead *.c, *.cxx, *.cpp, *.h, *.hpp, *.hxx setlocal cino=i-s
+"au! BufNewFile,BufRead *.c, *.cxx, *.cpp, *.h, *.hpp, *.hxx setlocal cinkeys-=0#
+"au! BufNewFile,BufRead *.c, *.cxx, *.cpp, *.h, *.hpp, *.hxx setlocal foldmethod=syntax
+
+
+func! MYINFO()
+    :ECHOVAR cino
+    :ECHOVAR cinkeys
+    :ECHOVAR foldmethod
+    :ECHOVAR filetype
+    :ECHOVAR smartindent
+endfu
+command! MYINFOCMD call MYINFO() <C-R>
+
+":call AUTOCMD_CPP('set cino=i-s')
+":call AUTOCMD_CPP('set cinkeys=0{,0},0),:,!^F,o,O,e')
+":call AUTOCMD_CPP('set cinkeys-=0#')
 
 "-------------------------
-"":autocmd CursorMoved * exe printf('match DiffChange /\V\<%s\>/', escape(expand('<cword>'), '/\'))
-:autocmd CursorMoved * call WordHighlightFun()
+"":au! CursorMoved * exe printf('match DiffChange /\V\<%s\>/', escape(expand('<cword>'), '/\'))
+au! CursorMoved * call WordHighlightFun()
 
 " Set the default font to mono dyslexic size 11
 :call SetFontMonoDyslexic()
 
 " why wont this work
-set nosmartindent
 highlight Cursor guifg=blue guibg=orange
-
 
 "Autocomplete off
 let g:Tex_SmartKeyDot=0
 
-au InsertLeave * hi Cursor guibg=red
-au InsertEnter * hi Cursor guibg=green
+au! InsertLeave * hi Cursor guibg=red
+au! InsertEnter * hi Cursor guibg=green
 
 hi StatusLine ctermbg=red ctermfg=green
 hi StatusLine guibg=gray10 guifg=green
@@ -315,11 +346,11 @@ hi StatusLine guibg=gray10 guifg=green
 
 " code folding 
 "set nofoldenable
-set foldmethod=indent
+"set ai "Auto indent
+"set si "Smart indent
 "set foldnestmax=1
 "set foldlevel=1
 "let g:SimpylFold_docstring_preview = 1
-
 
 "Map space to toggle current fold
 noremap <space> za
@@ -331,5 +362,4 @@ noremap <C-Space> zR
 noremap <Leader>r zR<CR>
 noremap <Leader>r zR<CR>
 
-"
 " :s/\( *\):/:\1/gc
