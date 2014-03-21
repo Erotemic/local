@@ -36,6 +36,7 @@ from hotspotter import DataStructures as ds
 import hotspotter.DatStruct as ds
 
 
+<<<<<<< HEAD
 # Make the mapping from old incorrect names to new correct ones 
 # for keypoint shapes
 
@@ -71,3 +72,36 @@ rob sp '\<det_acd\>' 'det_ltri'
 rob sp '\<inv_ltri\>' 'det_ltri'
 
 rob sp '\<from hotspotter\>' 'from hsapi' True
+=======
+rob sp '\<_as\>' "_iv11s"
+rob sp '\<_bs\>' "_iv12s"
+rob sp '\<_cs\>' "_iv21s"
+rob sp '\<_ds\>' "_iv22s"
+
+rob gp '\<acd\('
+
+git mv hscom/params.py hsdev/params.py
+git mv hscom/argparse2.py hsdev/argparse2.py
+
+set realrun=True
+rob sed "from hscom import params" "from hsdev import params" %realrun% True
+rob sed "from hscom import argparse2" "from hsdev import argparse2" %realrun% True
+
+
+git mv hscom/helpers.py hscom/util.py
+rob sed "import helpers as util" "import util" False True
+rob sed "\\bhelpers\\b" util False True
+
+
+cd _graveyard
+7z a oldhotspotter.zip oldhotspotter
+
+
+
+git mv hsdev/dev_api.py hsdev/dev_augmenter.py
+rob sed dev_api dev_augmenter True True
+
+
+git mv hsdev/test_api.py hsdev/main_api.py
+rob sed test_api main_api True True
+>>>>>>> c351996c5d11c65e1d8c09e40c21eda324219d58
