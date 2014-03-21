@@ -36,10 +36,38 @@ from hotspotter import DataStructures as ds
 import hotspotter.DatStruct as ds
 
 
+# Make the mapping from old incorrect names to new correct ones 
+# for keypoint shapes
 
-rob sp '\<_as\>' "_iv11s"
-rob sp '\<_bs\>' "_iv12s"
-rob sp '\<_cs\>' "_iv21s"
-rob sp '\<_ds\>' "_iv22s"
+export realrun=False
 
-rob gp '\<acd\('
+rob sp '\<_as\>' "_iv11s" $realrun
+rob sp '\<_bs\>' "_iv12s" $realrun
+rob sp '\<_cs\>' "_iv21s" $realrun
+rob sp '\<_ds\>' "_iv22s" $realrun
+
+rob sp '\<acd\>\(' "get_iVs(" $realrun
+
+rob sp '\<scaled_acds\>\(' "scale_iVs(" $realrun
+rob sp '\<scaled_xys\>\(' "scale_xys(" $realrun
+
+rob sp '\<get_aff_list\>\(' "get_iV_aff2Ds(" $realrun
+
+rob sp '\<aff_list_noori\>' "iV_aff2Ds" $realrun
+rob sp '\<aff_list\>' "iVR_aff2Ds" $realrun
+
+
+export realrun=False
+
+rob sp '\<iV' 'invV' True
+rob sp '_iV' '_invV' True
+
+
+rob sp '_acds\>' '_invVs' True
+
+rob sp '\<acd' 'ltri' False
+rob sp '_acd\>' '_ltri' True
+rob sp '\<det_acd\>' 'det_ltri'
+rob sp '\<inv_ltri\>' 'det_ltri'
+
+rob sp '\<from hotspotter\>' 'from hsapi' True

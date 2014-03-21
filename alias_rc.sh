@@ -70,6 +70,11 @@ alias scr='cd ~/scripts'
 # Special navigation
 alias cv='cd ~/code/opencv'
 alias hs='cd ~/code/hotspotter'
+alias ib='cd ~/code/ibeis/'
+alias ibi='cd ~/code/ibeis/ibeis'
+alias ibc='cd ~/code/ibeis/ibeis/control'
+alias ibv='cd ~/code/ibeis/ibeis/view'
+alias ibm='cd ~/code/ibeis/ibeis/model'
 alias work='cd ~/data/work'
 alias hshs='cd ~/code/hotspotter/hotspotter'
 alias hshsviz='cd ~/code/hotspotter/hsviz'
@@ -100,6 +105,19 @@ alias todo='gvim ~/Dropbox/Notes/TODO.txt'
 alias ic='python investigate_chip.py'
 alias icG='python investigate_chip.py --db GZ'
 alias icM='python investigate_chip.py --db MOTHERS'
+
+# Edit Project
+ep()
+{
+    #gvim
+    wmctrl -a GVIM
+    wmctrl -r GVIM -b "remove,maximized_vert,maximized_horz,fullscreen"
+    wmctrl -r GVIM -e 0,1921,1,1220,1920
+    wmctrl -r GVIM -b "add,maximized_vert,maximized_horz"
+    #wmctrl -r ":ACTIVE:" -e 0,1920,0,100,100
+    #wmctrl -r ":ACTIVE:" -b "remove,maximized_vert"
+    #wmctrl -r ":ACTIVE:" -t 1  # move to desktop 1
+}
 
 hyhspull()
 {

@@ -10,12 +10,98 @@ else:
     pass
 import re
 #import webbrowser
-from os.path import normpath, realpath, join, split, isdir, isfile, exists, dirname  # NOQA
+from os.path import (normpath, realpath, join, split, isdir, exists,
+                     dirname, splitext)  # NOQA
 from rob_alarm import *  # NOQA
 from rob_nav import *  # NOQA
 import rob_nav
 #
 from os.path import expanduser
+
+
+def print_module_funcs(r):
+    print('print_module_funcs')
+    dpath_list = [os.getcwd()]
+    include_patterns = ['*.py']
+
+    def get_function_names(text, prefix='def '):
+        preflen = len(prefix)
+        line_list = text.split('\n')
+        func_lines = [line for line in line_list if line.find(prefix) == 0]
+        func_lines = [line[preflen:line.find('(')] for line in func_lines]
+        return func_lines
+
+    print('dpath_list = %r' % (dpath_list,))
+    print('include_patterns = %r' % (include_patterns,))
+
+    for fpath in rob_nav._matching_fnames(dpath_list, include_patterns, recursive=False):
+        modname = splitext(split(fpath)[1])[0]
+        with open(fpath) as file_:
+            text = file_.read()
+            func_list = get_function_names(text, 'def ')
+            class_list = get_function_names(text, 'class ')
+            modclass_str = ', \n  '.join(func_list + class_list)
+            importstr = 'from .' + modname + ' import (' + modclass_str + ')'
+            print(importstr)
+            print('')
+
+
+
+
+
+def batch_move(r, search, repl, force=False):
+    '''
+    This function has not yet been successfully implemented.
+    Its a start though.
+    '''
+    import parse
+    force = rutil.cast(force, bool)
+    # rob batch_move '\(*\)util.py' 'util_\1.py'
+    print('Batch Move')
+    print('force = %r' % force)
+    print('search = %r' % search)
+    print('repl = %r' % repl)
+    dpath_list = [os.getcwd()]
+    spec_open = ['\\(', '\(']
+    spec_close = ['\\)', '\)']
+    special_repl_strs = ['\1', '\\1']
+    print('special_repl_strs = %r' % special_repl_strs)
+    print('special_search_strs = %r' % ((spec_open, spec_close,),))
+
+    search_pat = search
+    for spec in spec_open + spec_close:
+        search_pat = search_pat.replace(spec, '')
+    print('search_pat=%r' % search_pat)
+
+    parse_str = search
+    for spec in spec_open:
+        parse_str = parse_str.replace(spec, '{')
+    for spec in spec_close:
+        parse_str = parse_str.replace(spec, '}')
+    parse_str = parse_str.replace('{*}', '{}')
+    print('parse_str = %r' % parse_str)
+
+    include_patterns = [search_pat]
+    import shutil
+
+    for fpath in rob_nav._matching_fnames(dpath_list, include_patterns, recursive=False):
+        dpath, fname = split(fpath)
+        name, ext = splitext(fname)
+        # Hard coded parsing
+        parsed = parse.parse(parse_str, fname)
+        repl1 = parsed[0]
+        #print(fname)
+        newfname = 'util_' + repl1 + ext
+        newfpath = join(dpath, newfname)
+        print('move')
+        print(fpath)
+        print(newfpath)
+        if force is True:
+            shutil.move(fpath, newfpath)
+            print('real run')
+        else:
+            print('dry run')
+        pass
 
 
 def focus(r, window_name):
