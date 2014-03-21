@@ -191,9 +191,14 @@ def _matching_fnames(dpath_list, include_patterns, exclude_dirs=None, recursive=
         dpath_list = [dpath_list]
     recursive = rutil.cast(recursive, bool)
     if exclude_dirs is None:
+<<<<<<< Updated upstream
         exclude_dirs = HS_EXCLUDE
     if __DEBUG__:
         print('Excluding: %r' % (exclude_dirs,))
+=======
+        #exclude_dirs = HS_EXCLUDE
+        exclude_dirs = []
+>>>>>>> Stashed changes
     #fname_list = []
     for dpath in dpath_list:
         for root, dname_list, fname_list in os.walk(dpath):
