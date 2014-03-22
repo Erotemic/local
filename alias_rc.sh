@@ -85,8 +85,8 @@ alias hes='cd ~/code/hesaff'
 alias cand='cd ~/latex/crall-candidacy-2013/'
 
 alias vdd='vd ~/data'
-alias ..="cd .."
-alias l='ls $LS_OPTIONS -lAhF'
+#alias ..="cd .."
+#alias l='ls $LS_OPTIONS -lAhF'
 alias gits='git status'
 
 
@@ -102,9 +102,6 @@ alias er='gvim $prob'
 alias ebrc='gvim ~/local/bashrc.sh'
 alias sbrc='source ~/local/bashrc.sh' # Refresh
 alias todo='gvim ~/Dropbox/Notes/TODO.txt'
-alias ic='python investigate_chip.py'
-alias icG='python investigate_chip.py --db GZ'
-alias icM='python investigate_chip.py --db MOTHERS'
 
 # Edit Project
 ep()

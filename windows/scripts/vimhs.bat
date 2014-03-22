@@ -1,0 +1,1 @@
+gvim -S %USERPROFILE%/vim_hotspotter_session.vim

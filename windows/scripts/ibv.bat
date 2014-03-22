@@ -1,0 +1,1 @@
+cd %USERPROFILE%/code/ibeis/ibeis/view
