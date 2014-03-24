@@ -34,13 +34,14 @@ def get_PATH(r):
         INSTALL32 + '/MiKTeX 2.9/miktex/bin'
         INSTALL32 + '/OpenCV/bin'
         INSTALL32 + '/OpenCV/x86/mingw/bin/'
+        INSTALL32 + '/OpenCV/x86/mingw/lib/'
         INSTALL32 + '/OpenCV/include'
         INSTALL32 + '/gs/gs9.07/bin'
         INSTALL64 + '/7-Zip'
         INSTALL32 + '/7-Zip'
         INSTALL32 + '/Graphviz2.36/bin'
         VIM_BIN
-        GIT_BIN
+        GIT_BIN_
         GIT_CMD
         LOCALPATH
         """
@@ -76,8 +77,8 @@ def get_pip_packages():
 
 class ROB_Files:
     def __init__(f, d):
-        if sys.platform == 'win32':
-            f.calc_exe    = d.SYSTEM32    + '/calc.exe'
+        #if sys.platform == 'win32':
+            #f.calc_exe    = d.SYSTEM32    + '/calc.exe'
 
         #f.console_exe = d.PORT_APPS   + '/Console2/Console.exe'
         #f.rap_ee_exe  = d.PORT_APPS   + '/RapidEnvirornmentEditor/RapidEE.exe'
@@ -192,9 +193,10 @@ class ROB_Directories:
         if sys.platform == 'win32':
             d.INSTALL32 = d.ROOT + '/Program Files (x86)'
             d.INSTALL64 = d.ROOT + '/Program Files'
-            d.WINDOWS   = d.ROOT + '/Windows'
 
-            d.SYSTEM32   = d.WINDOWS + '/system32'
+            # WHY DID I EVER SET THESE?!
+            #d.WINDOWS   = d.ROOT + '/Windows'
+            #d.SYSTEM32   = d.WINDOWS + '/system32'
 
             d.VIM_BIN    = d.INSTALL32  + '/Vim/vim74'
             #d.VIM        = d.INSTALL32  + '/Vim'
@@ -214,7 +216,7 @@ class ROB_Directories:
             d.TOOLBAR      = d.HOME + '/toolbar'
             d.WIN_SCRIPTS  = d.LOCAL + '/windows/scripts'
 
-            d.GIT_BIN      = d.LOCAL + '/git/bin'
+            d.GIT_BIN_     = d.LOCAL + '/git/bin'
             d.GIT_CMD      = d.LOCAL + '/git/cmd'
             d.LOCALPATH    = d.LOCAL + '/PATH'
 
@@ -226,10 +228,13 @@ class ROB_Directories:
             d.PYTHON_SCRIPTS  = d.PYTHON + '/Scripts'
             d.PYTHON_SITE_PACKAGES = d.PYTHON + '/Lib/site-packages'
 
-            #d.PYTHON_PATH = [d.PYTHON,
-                             #d.PYTHON_SITE_PACKAGES,
-                             #d.CODE,
-                             #d.HOTSPOTTER,
+            d.PYTHONPATH = os.pathsep.join([
+                d.PYTHON,
+                d.PYTHON_SITE_PACKAGES,
+                d.CODE,
+                d.PORT_CODE,
+                d.HOTSPOTTER])
+                             #,
                              #d.PORT_CODE]
 
         #elif os_type == 'linux2':

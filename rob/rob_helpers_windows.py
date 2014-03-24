@@ -1,10 +1,13 @@
 from datetime import timedelta, datetime
-import win32con
-import win32gui
+try:
+    import win32con
+    import win32gui
+    import internal.win_registry as registry
+    import internal.new_win_reg as registry2
+except Exception as ex:
+    print('win32con is not fully functional')
 import rob_helpers
 import os
-import internal.win_registry as registry
-import internal.new_win_reg as registry2
 
 from regrep import grep_registry
 # rob was nice

@@ -1,2 +1,2 @@
 C:
-cd %HS%
+cd %USERPROFILE%\code\hotspotter

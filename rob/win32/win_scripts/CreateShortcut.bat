@@ -11,7 +11,8 @@ goto :endpart
 
 
 :two_args
-set WIN_SCRIPTS=%ROB%\win32\win_scripts
+set LOCAL=%USERPROFILE%\local
+set WIN_SCRIPTS=%LOCAL%\rob\win32\win_scripts
 set SRC_PATH=%1
 set DST_PATH=%2\%~n1.lnk
 echo ""

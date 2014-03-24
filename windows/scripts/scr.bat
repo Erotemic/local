@@ -1,1 +1,1 @@
-cd /D %LOCAL%\windows\scripts
+cd /D %USERPROFILE%\local\windows\scripts

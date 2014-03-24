@@ -1,1 +1,1 @@
-cd %HOME%\local
+cd %USERPROFILE%\local
