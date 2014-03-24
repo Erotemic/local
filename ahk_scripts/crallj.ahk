@@ -148,7 +148,8 @@ NumPadHome::  ; Numpad-7
 ;--------------------- 
 ; 8 - HotSpotter directory
 NumpadUp::    ; Numpad-8
-    EnvGet dpath, HOTSPOTTER
+    EnvGet home, USERPROFILE
+    dpath = %home%\code\hotspotter
     FocusDPath(dpath)
     return
 ;--------------------- 
@@ -413,7 +414,8 @@ Open(arg)
     }
     else if (arg = "qtc")
     {
-        EnvGet envvar, HOTSPOTTER
+        EnvGet home, USERPROFILE
+        envar = %home%\code\ibeis
         SetWorkingDir, %envvar%
         Run, qtc.bat
     }
@@ -423,21 +425,22 @@ Open(arg)
     }
     else if (arg = "vim")
     {
-        EnvGet start_dir, HOTSPOTTER
-        ;EnvGet start_dir, CRALL_QUALS
+        EnvGet home, USERPROFILE
+        start_dir = %home%\code\ibeis
         GVIM(start_dir)
     }
     else if (arg = "todo")
     {
-        EnvGet clouddir, CLOUD
-        crall_todo = %clouddir%\Notes\TODO.txt
-        crall_havedone = %clouddir%\Notes\HAVEDONE.txt
+        ; EnvGet clouddir, CLOUD
+        EnvGet home, USERPROFILE
+        crall_todo = %home%\Dropbox\Notes\TODO.txt
+        crall_havedone = %home%\Dropbox\Notes\HAVEDONE.txt
         GVIMFocus(crall_todo, crall_havedone)
     }    
     else if (arg = "personal")
     {
-        EnvGet clouddir, CLOUD
-        crall_personal = %clouddir%\Notes\Personal\notes.txt
+        EnvGet home, USERPROFILE
+        crall_personal = %home%\Dropbox\Notes\Personal\notes.txt
         GVIMFocus(crall_personal)
     }
     return
