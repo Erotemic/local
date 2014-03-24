@@ -28,7 +28,6 @@ megahertz_list_special = [97.7, 102.7, 106.5]
 wavelengths_list_special = map(megahertz_to_wavelength, megahertz_list_special)
 
 
-
 plt.plot(megahertz_list, wavelengths_list, 'r-')
 plt.plot(megahertz_list_special, wavelengths_list_special, 'ro')
 ax = plt.gca()
