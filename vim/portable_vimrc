@@ -27,7 +27,21 @@ set noswapfile
 " Do not open these sort of files
 set wildignore=*.o,*~,*.pyc,*.aux,*.masv,*.bbl,*.bcf,*.blg,*.brf,*.synctex,*.upa,*.upb,*.pdf,*.dvi
 
+set wildmode=longest,list,full
+set wildmenu
 
+" =========== MISC  ==========="
+imap bufloadpy :args *.py
+"-------------------------
+" MISC: win clipboard on linux
+if has("win32") || has("win16")
+else
+    set clipboard=unnamedplus
+endif
+"-------------------------
+command! HexmodeOn :%!xxd
+command! HexmodeOff :%!xxd -r 
+"-------------------------
 
 "===========PLUGINS==========="
 " PLUGIN: External non-plugin source files
@@ -177,19 +191,6 @@ set errorformat=%f:%l:%c:%m
 " Toggle Compile to OpenDyslexic
 command! LATEXCompileRuleLaTeX :call SetLaTeX()
 command! LATEXCompileRuleXeTeX :call SetXeTeX()
-
-" =========== MISC  ==========="
-imap bufloadpy :args *.py
-"-------------------------
-" MISC: win clipboard on linux
-if has("win32") || has("win16")
-else
-    set clipboard=unnamedplus
-endif
-"-------------------------
-command! HexmodeOn :%!xxd
-command! HexmodeOff :%!xxd -r 
-"-------------------------
 
 " ========= VIM PREFERENCES ========= "
 if has("gui_running")

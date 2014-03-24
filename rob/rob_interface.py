@@ -46,9 +46,6 @@ def print_module_funcs(r):
             print('')
 
 
-
-
-
 def batch_move(r, search, repl, force=False):
     '''
     This function has not yet been successfully implemented.
@@ -282,7 +279,7 @@ def kill(r, procname):
 
 
 def project_dpaths():
-    return map(expanduser, ['~/code/hotspotter', '~/code/hesaff'])
+    return map(expanduser, ['~/code/hotspotter', '~/code/hesaff', '~/code/ibeis'])
 
 
 # Grep my projects
