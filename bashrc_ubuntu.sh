@@ -121,8 +121,6 @@ export prob_dir=~/local/rob
 
 export PYQTDESIGNERPATH=/home/joncrall/Dropbox/Settings/PyQt4/plugins/designer/python
 
-export HOTSPOTTER=~/code/hotspotter
-export hs=$HOTSPOTTER
 export VIMFILES=~/.vim
 export IPYTHONDIR=~/.ipython
 export LATEX='~/latex/'
@@ -133,7 +131,7 @@ export CXX=g++
 
 # MY PATH
 export PATH=$PATH:~/scripts/:/usr/local/MATLAB/R2013a/bin
-export PYTHONPATH=$code:$code/ibeis:$PYTHONPATH
+export PYTHONPATH=$code/ibeis:$PYTHONPATH
 export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgocnfig:/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
 
 #export mothers=/data/work/HSDB_
