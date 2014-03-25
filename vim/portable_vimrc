@@ -366,4 +366,5 @@ noremap <Leader>j :NERDTreeToggle<CR>
 noremap <Leader>f :NERDTreeFromBookmark 
 "noremap <Leader>r zR<CR>
 
+set hlsearch
 " :s/\( *\):/:\1/gc

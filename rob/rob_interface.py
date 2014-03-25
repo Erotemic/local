@@ -3,11 +3,7 @@ from rob_helpers import *  # NOQA
 import rob_helpers
 from datetime import datetime  # NOQA
 import urllib  # NOQA
-if sys.platform == 'win32':
-    import rob_helpers_windows as robos
-else:
-    import rob_linux_helpers as robos
-    pass
+import robos
 import re
 #import webbrowser
 from os.path import (normpath, realpath, join, split, isdir, exists,
@@ -16,6 +12,7 @@ from rob_alarm import *  # NOQA
 from rob_nav import *  # NOQA
 import rob_nav
 #
+import textwrap  # NOQA
 from os.path import expanduser
 
 
@@ -181,7 +178,7 @@ def update_path(r):
     pathvar_list = r.path_vars_list
     for pathvar in pathvar_list:
         print(pathvar)
-    robos.add_path_vars(pathvar_list)
+    #robos.add_path_vars(pathvar_list)
     print('Send, #r newpath {enter}')
 
 
@@ -511,6 +508,105 @@ def print_env(r):
     #print_path(r)
     #for varval in r.env_vars_list:
         #print(varval[0]+' = '+varval[1])
+
+
+def get_regstr(regtype, var, val):
+    regtype_map = {
+        'REG_EXPAND_SZ': 'hex(2):',
+        'REG_DWORD': None,
+        'REG_BINARY': None,
+        'REG_MULTI_SZ': None,
+        'REG_SZ': '',
+    }
+    # It is not a good idea to write these variables...
+    EXCLUDE = ['USERPROFILE', 'USERNAME', 'SYSTEM32']
+    if var in EXCLUDE:
+        return ''
+    def quotes(str_):
+        return '"' + str_.replace('"', r'\"') + '"'
+    sanatized_var = quotes(var)
+    if regtype == 'REG_EXPAND_SZ':
+        # Weird encoding
+        #bin_ = binascii.hexlify(hex_)
+        #val_ = ','.join([''.join(hex2) for hex2 in hex2zip])
+        #import binascii  # NOQA
+        x = val
+        ascii_ = x.encode("ascii")
+        hex_ = ascii_.encode("hex")
+        hex_ = x.encode("hex")
+        hex2zip = zip(hex_[0::2], hex_[1::2])
+        spacezip = [('0', '0')] * len(hex2zip)
+        hex3zip = zip(hex2zip, spacezip)
+        sanatized_val = ','.join([''.join(hex2) + ',' + ''.join(space) for hex2, space in hex3zip])
+    else:
+        sanatized_val = quotes(val)
+    comment = '; ' + var + '=' + val
+    regstr = sanatized_var + '=' + regtype_map[regtype] + sanatized_val
+    return comment + '\n' + regstr
+
+
+def write_regfile(fpath, key, varval_list, rtype):
+    # Input: list of (var, val) tuples
+    # key to put varval list in
+    # fpath - path to write .reg file
+    # rtype - type of registry variables
+    envtxt_list = ['Windows Registry Editor Version 5.00',
+                   '',
+                   key]
+    print('\n'.join(map(repr, varval_list)))
+    varval_list = filter(lambda x: isinstance(x, tuple), varval_list)
+    vartxt_list = [get_regstr(rtype, var, val) for (var, val) in varval_list]
+    envtxt_list.extend(vartxt_list)
+    with open(fpath, 'wb') as file_:
+        file_.write('\n'.join(envtxt_list))
+
+
+def write_env(r):
+    rtype = 'REG_SZ'
+    rtype = 'REG_EXPAND_SZ'
+    write_dir = join(r.d.HOME, 'Sync/win7/registry')
+    envtxt_fpath = normpath(join(write_dir, 'UPDATE_ENVARS.reg'))
+    key = '[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment]'
+    write_regfile(envtxt_fpath, key, r.env_vars_list, rtype)
+    rob_helpers.view_directory(write_dir)
+
+import itertools
+
+
+def unique_ordered(list1, list2, *args):
+    seen_ = set([])
+    unique_list = []
+    for item in itertools.chain(list1, list2, *args):
+        if item in seen_:
+            continue
+        seen_.add(item)
+        unique_list.append(item)
+    return unique_list
+
+
+def write_path(r):
+    write_dir = join(r.d.HOME, 'Sync/win7/registry')
+    path_fpath = normpath(join(write_dir, 'UPDATE_PATH.reg'))
+    key = '[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment]'
+    rtype = 'REG_EXPAND_SZ'
+    pathsep = os.path.pathsep
+    win_pathlist = os.environ['PATH'].split(os.path.pathsep)
+    rob_pathlist = map(normpath, r.path_vars_list)
+    new_path_list = unique_ordered(win_pathlist, rob_pathlist)
+    print('\n'.join(new_path_list))
+    pathtxt = pathsep.join(new_path_list)
+    varval_list = [('Path', pathtxt)]
+    write_regfile(path_fpath, key, varval_list, rtype)
+    rob_helpers.view_directory(write_dir)
+
+
+def update(r):
+    upenv(r)
+
+
+def upenv(r):
+    write_env(r)
+    write_path(r)
 
 
 def pref_env(r):

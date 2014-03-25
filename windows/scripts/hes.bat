@@ -1,1 +1,2 @@
-cd %CODE%\hesaff
+C:
+cd %USERPROFILE%\code\hesaff

@@ -13,3 +13,9 @@ auto_*
 /vim/vimfiles/bundle_disabled/*
 clipboard.txt
 rob/to_speak.txt
+
+vim/vimfiles/bundle/GoldenView.Vim/
+vim/vimfiles/bundle/_vimrc
+vim/vimfiles/bundle/jedi-vim/
+vim/vimfiles/bundle/nerdtree/
+vim/vimfiles/bundle/syntastic/

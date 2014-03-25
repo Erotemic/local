@@ -142,3 +142,13 @@ def ens(in_str, quote="'", valid=None):
     else:
         in_str = fix(in_str)
     return in_str
+
+
+def view_directory(dname=None):
+    'view directory'
+    print('[cplat] view_directory(%r) ' % dname)
+    dname = os.getcwd() if dname is None else dname
+    open_prog = {'win32': 'explorer.exe',
+                 'linux2': 'nautilus',
+                 'darwin': 'open'}[sys.platform]
+    os.system(open_prog + ' ' + os.path.normpath(dname))

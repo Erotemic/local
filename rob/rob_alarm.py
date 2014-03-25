@@ -1,4 +1,5 @@
 from rob_interface import *
+import robos
 
 
 def watch_rand_vid(r):
@@ -7,7 +8,7 @@ def watch_rand_vid(r):
     first_item = playlist[0]
     show_name2 = os.path.split(first_item)[0].replace(r'D:\sys\e','').replace('E:','').replace('\\',' ').replace(':','').replace('TV','')
     print("vidname: %r " % (first_item,))
-    speak(r, 'How about some '+show_name2, -3)
+    robos.speak(r, 'How about some '+show_name2, -3)
     play_playlist(r, playlist)
 
 
@@ -236,7 +237,7 @@ def wake_up(r, WAKE_UP_MODE=0):
         import numpy as np
         percent_through = (float(i)/float(len(text_lines)))
         rate_of_speach = rate_of_speach_base + (8 * np.sqrt(percent_through))
-        speak(r, line, rate_of_speach)
+        robos.speak(r, line, rate_of_speach)
 
 
     OLD_VID = False
@@ -245,7 +246,7 @@ def wake_up(r, WAKE_UP_MODE=0):
         selection = 3
         show_name = selectables[selection]
         show_dir  = r.f.alarm_videos[show_name]
-        speak(r, 'How about some '+show_name2, -2)
+        robos.speak(r, 'How about some '+show_name2, -2)
         random_video(r, [show_dir])
     else:
         watch_rand_vid(r)
@@ -290,8 +291,8 @@ def s(r, num_cycles=5, monitoroff='False'):
     now_time = datetime.now()
     at = now_time + sleep_for
     time_str = '%.2d:%.2d' % (at.hour, at.minute)
-    #date_str = '%.2d/%.2d/%.4d' % (at.month, at.day, at.year)  # this is default
-    date_str = '%.4d/%.2d/%.2d' % (at.year, at.month, at.day)  # this is correct
+    #date_str = '%.4d/%.2d/%.2d' % (at.year, at.month, at.day)  # this is correct
+    date_str = '%.2d/%.2d/%.4d' % (at.month, at.day, at.year)  # this is default
     print("It takes %r minutes to fall asleep " % minutes_to_fall_asleep)
     print("ITS IS NOW:   " + str(now_time))
     print("ALARM SET FOR " + str(at))
