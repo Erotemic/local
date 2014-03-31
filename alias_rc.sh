@@ -102,6 +102,7 @@ alias er='gvim $prob'
 alias ebrc='gvim ~/local/bashrc.sh'
 alias sbrc='source ~/local/bashrc.sh' # Refresh
 alias todo='gvim ~/Dropbox/Notes/TODO.txt'
+alias edutool='gvim ~/code/ibeis/utool'
 
 # Edit Project
 ep()

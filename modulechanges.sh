@@ -36,7 +36,6 @@ from hotspotter import DataStructures as ds
 import hotspotter.DatStruct as ds
 
 
-<<<<<<< HEAD
 # Make the mapping from old incorrect names to new correct ones 
 # for keypoint shapes
 
@@ -72,7 +71,6 @@ rob sp '\<det_acd\>' 'det_ltri'
 rob sp '\<inv_ltri\>' 'det_ltri'
 
 rob sp '\<from hotspotter\>' 'from hsapi' True
-=======
 rob sp '\<_as\>' "_iv11s"
 rob sp '\<_bs\>' "_iv12s"
 rob sp '\<_cs\>' "_iv21s"
@@ -104,4 +102,22 @@ rob sed dev_api dev_augmenter True True
 
 git mv hsdev/test_api.py hsdev/main_api.py
 rob sed test_api main_api True True
->>>>>>> c351996c5d11c65e1d8c09e40c21eda324219d58
+
+
+
+
+rob sed "from hsdev import params" "from ibeis.dev import params"
+
+rob sed "from hscom import utool" "import utool"
+
+rob sed "from hsapi" "from ibeis.model.jon_recognition"
+
+rob sed "from hscom import fileio as io" ""
+
+
+rob sed "from hscom import tools" ""
+
+rob sed "profile, rrr" "rrr, profile" True
+
+
+rob sed "ibs.gid2_cids" "ibs.get_cids_in_gids"
