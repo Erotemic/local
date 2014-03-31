@@ -17,3 +17,5 @@ sudo chown root /usr/local/share/fonts/truetype/*.ttf
 ls -al /usr/local/share/fonts
 
 sudo fc-cache
+
+sudo cp ~joncrall/Dropbox/Installers/Fonts/*.ttf /usr/local/share/fonts/truetype
