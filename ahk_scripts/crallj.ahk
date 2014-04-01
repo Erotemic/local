@@ -101,6 +101,7 @@ NumpadLeft::  ; Numpad-4
     return
 #v:: ; Win+'V'
 ^;:: ; Ctrl+';'
+!':: ; Alt+"'"
     Focus("vim")
     return
 ;---------------------
@@ -110,9 +111,10 @@ NumpadLeft::  ; Numpad-4
 ;  5 - Terminal Open and Focus
 NumpadClear:: ; NumPad-5
 #c::   ; Win+'C'
-^!;::  ; Ctrl + Shift + ';'
+!;::   ; Alt + ';'
     Focus("cmd")
     return
+^!;::   ; Ctrl + Alt + ';'
 ^!t::  ; Ctrl + Alt + t
 ^NumpadClear:: ; NumPad-5
     Open("cmd")
@@ -124,6 +126,7 @@ NumpadClear:: ; NumPad-5
 ;  6 - Chrome 
 NumpadRight:: ; Numpad-6
 ^/::          ; Ctrl + / 
+!/::          ; Alt + / 
     Focus("chrome")
     return
 ^NumpadRight:: ; Numpad-6
