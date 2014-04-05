@@ -276,7 +276,12 @@ def kill(r, procname):
 
 
 def project_dpaths():
-    return map(expanduser, ['~/code/hotspotter', '~/code/hesaff', '~/code/ibeis'])
+    project_list = [
+        #'~/code/hotspotter',
+        '~/code/hesaff',
+        '~/code/ibeis'
+    ]
+    return map(expanduser, project_list)
 
 
 # Grep my projects
