@@ -94,33 +94,6 @@ command! CMD :ConqueTerm cmd
 command! CMD2 :ConqueTermTab cmd 
 command! -nargs=1 R :vertical resize <f-args>
 
-"-------------------------
-" Function Remaps
-"map <F1> :call  ToggleWordHighlight()<CR> 
-"Map Ctrl+W (navkey) to Ctrl+(navkey) (for split windows)
-" Remap the leader key from \ to ,
-let mapleader = ","
-nnoremap <Leader>e :lopen <CR>
-nnoremap <Leader>w w :<c-w> <c-w>
-nnoremap <Leader>d :FontDecrease<c-w> <c-w>
-map <c-j> <c-w>j
-map <c-k> <c-w>k
-map <c-l> <c-w>l
-map <c-h> <c-w>h
-map <F1> :call  PEP8PRINT()<CR> 
-map <F2> :call  ToggleAlpha()<CR> 
-map <F3> :call  ToggleFont()<CR> 
-map <F4> :call  OpenWindow()<CR> 
-map <F5> :call  CmdHere()<CR> 
-"vim-latex-suit overwrites f5, give it an alt
-map <F6> :call  CmdHere()<CR>  
-" make semicolon command mode
-nmap ; :
-" Compile Command Remaps
-nnoremap <Leader>p :call Tex_RunViewLaTeX()<CR>
-nmap <C-P> :call Tex_RunViewLaTeX() <CR>
-imap <C-P> :call Tex_RunViewLaTeX() <CR>
-map <F8> :call  Tex_RunViewLaTeX()<CR>  
 
 "-------------------------
 "Make txx file work as cpp files
@@ -204,6 +177,10 @@ au InsertEnter * hi Cursor guibg=green
 hi StatusLine ctermbg=red ctermfg=green
 hi StatusLine guibg=gray10 guifg=green
 
+set hlsearch
+" :s/\( *\):/:\1/gc
+:set guitablabel=%N/\ %t
+
 " Need to comment "set diffexpr=MyDiff() in windows to get msys-diffutils to work
 
 " code folding 
@@ -214,6 +191,29 @@ hi StatusLine guibg=gray10 guifg=green
 "set foldlevel=1
 "let g:SimpylFold_docstring_preview = 1
 
+"-------------------------
+" Function Remaps
+"map <F1> :call  ToggleWordHighlight()<CR> 
+"Map Ctrl+W (navkey) to Ctrl+(navkey) (for split windows)
+" Remap the leader key from \ to ,
+map <c-j> <c-w>j
+map <c-k> <c-w>k
+map <c-l> <c-w>l
+map <c-h> <c-w>h
+map <F1> :call PEP8PRINT()<CR> 
+map <F2> :call ToggleAlpha()<CR> 
+map <F3> :call ToggleFont()<CR> 
+map <F4> :call OpenWindow()<CR> 
+map <F5> :call CmdHere()<CR> 
+"vim-latex-suit overwrites f5, give it an alt
+map <F6> :call  CmdHere()<CR>  
+" make semicolon command mode
+nmap ; :
+" Compile Command Remaps
+nnoremap <Leader>p :call Tex_RunViewLaTeX()<CR>
+nmap <C-P> :call Tex_RunViewLaTeX() <CR>
+imap <C-P> :call Tex_RunViewLaTeX() <CR>
+map <F8> :call  Tex_RunViewLaTeX()<CR>  
 "Map space to toggle current fold
 noremap <space> za
 "Map Shift+Space to close all folds
@@ -221,12 +221,27 @@ noremap <S-Space> zM
 "Map Ctrl+Space to open all folds
 noremap <C-Space> zR
 
-noremap <Leader>z zR
-noremap <Leader>m zM
+let mapleader = ","
+nnoremap <Leader>e :lopen <CR>
+nnoremap <Leader>w w :<c-w> <c-w>
+noremap <Leader>w <C-w>w
+nnoremap <Leader>d :FontDecrease<c-w> <c-w>
+noremap <Leader>r zR<CR>
 noremap <Leader>j :NERDTreeToggle<CR>
 noremap <Leader>f :NERDTreeFromBookmark 
-noremap <Leader>w <C-w>w
+"noremap <Leader>j gT 
+"noremap <Leader>k gt 
 "noremap <Leader>r zR<CR>
+"
 
-set hlsearch
-" :s/\( *\):/:\1/gc
+noremap <M-1> 1gt
+noremap <M-2> 2gt
+noremap <M-3> 3gt
+noremap <M-4> 4gt
+noremap <M-5> 5gt
+noremap <M-6> 6gt
+noremap <M-7> 7gt
+noremap <M-8> 8gt
+noremap <M-9> 9gt
+noremap <M-0> 10gt
+

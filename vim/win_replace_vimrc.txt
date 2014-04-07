@@ -1,3 +1,2 @@
 source C:\Program Files (x86)\Vim\clean_vimrc
-source C:\Users\joncrall\Dropbox\Settings\vim\portable_vimrc
-
+source $USERPROFILE\local\vim\portable_vimrc
