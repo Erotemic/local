@@ -131,7 +131,7 @@ export CXX=g++
 
 # MY PATH
 export PATH=$PATH:~/scripts/:/usr/local/MATLAB/R2013a/bin
-export PYTHONPATH=$code/ibeis:$PYTHONPATH
+export PYTHONPATH=$PYTHONPATH
 export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgocnfig:/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
 
 #export mothers=/data/work/HSDB_

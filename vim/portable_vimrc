@@ -221,7 +221,8 @@ noremap <S-Space> zM
 "Map Ctrl+Space to open all folds
 noremap <C-Space> zR
 
-noremap <Leader>r zR<CR>
+noremap <Leader>z zR
+noremap <Leader>m zM
 noremap <Leader>j :NERDTreeToggle<CR>
 noremap <Leader>f :NERDTreeFromBookmark 
 noremap <Leader>w <C-w>w

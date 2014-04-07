@@ -68,6 +68,7 @@ else
   au! BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
 endif
 endfunction
+command! TextWidthLineOn call FUNC_TextWidthLineOn()
 
 
 fu! FUNC_BadCapsSearch()
@@ -246,5 +247,4 @@ command! REPLprobibility :call FUNC_REPL_PAREN_BRACE('Pr')<CR>
 command! TextWidthMarkerOn call FUNC_TextWidthMarkerOn()
 " Textwidth command
 command! TextWidth80 set textwidth=80
-command! TextWidthLineOn call FUNC_TextWidthLineOn()
 command! MAKEBRAKEQUATIONS :call FUNC_MAKE_BRAK_EQUATIONS()<CR>
