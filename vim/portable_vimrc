@@ -4,6 +4,7 @@ syntax on
 filetype plugin indent on
 " MISC: win clipboard on linux
 if has("win32") || has("win16")
+    behave mswin
 else
     source $VIMRUNTIME/mswin.vim
 endif
@@ -131,6 +132,8 @@ highlight Cursor guifg=blue guibg=orange
 "Autocomplete off
 let g:Tex_SmartKeyDot=0
 
+" au autocommand
+
 au FileType python set omnifunc=pythoncomplete#Complete
 au FileType python set nosmartindent
 au FileType python filetype indent on
@@ -150,6 +153,8 @@ au BufNewFile,BufRead *.ahk, set ft=Autohotkey
 "Read vidtk config files as vidtk config file
 au BufRead,BufNewFile *.conf setfiletype vidtkconf
 " Remove trailing whitespace
+"au BufWritePre *.py :%s/\t/    /g
+au! BufWritePre *.py :%s/\s\+$//e
 au BufWritePre *.py :%s/\s\+$//e
 au BufWritePre *.c :%s/\s\+$//e
 au BufWritePre *.cxx :%s/\s\+$//e
