@@ -1,12 +1,17 @@
-:: cd %1
-:: @echo off
-NirCMD exec hide ipython qtconsole ^
---autocall 2 ^
---colors=Linux ^
---pylab=qt ^
---ConsoleWidget.font_size=9 ^
---ConsoleWidget.font_family="Mono Dyslexic" 
+@echo off
+nircmd.exe exec hide ^
+ ipython qtconsole ^
+ --colors=Linux ^
+ --pylab=qt ^
+ --matplotlib qt4 ^
+ --ConsoleWidget.font_size=9 ^
+ --ConsoleWidget.font_family="Mono Dyslexic" ^
+ --autocall 2
 
+
+:: cd %1
+:: NirCMD exec hide ipython qtconsole ^
 ::^
-:b: --profile default 
-:: @echo on
+:: :b: --profile default 
+:: --profile default 
+@echo on
