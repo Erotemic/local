@@ -121,3 +121,14 @@ rob sed "profile, rrr" "rrr, profile" True
 
 
 rob sed "ibs.gid2_cids" "ibs.get_cids_in_gids"
+
+
+
+rob sed "from __future__ import division, print_function" "from __future__ import absolute_import, division, print_function" True True
+
+rob sed "from __future__ import print_function, division" "from __future__ import absolute_import, division, print_function" True True
+
+
+
+rob sed "jon_recognition" "hots" True True
+git mv ibeis/model/jon_recognition/ ibeis/model/hots

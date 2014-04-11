@@ -65,14 +65,28 @@ list_gnome3_extensions()
  rm ~/.gnome2/Vim
 
 
+ get_gtk_themes(){
+     gconftool-2 -g /desktop/gnome/interface/gtk_theme
+     gconftool-2 -g /desktop/gnome/interface/icon_theme
+     gconftool-2 -g /apps/metacity/general/theme
+ }
+
 
  gtk_activate_slider_problem()
  {              
+    ubuntu-mono-dark
+    Ambiance
+    MediterraneanDark
+
      # Injects a line into a theme file
      chmod +x ~/local/scripts/inject_line.py
-     export GTK_RC_FNAME="/usr/share/themes/MediterraneanDark/gtk-2.0/gtkrc"
+     export GTK_THEME_DIR=/usr/share/themes
+     export GTK_RC=gtk-2.0/gtkrc
+     export GTK_RC_FNAME="$GTK_THEME_DIR/MediterraneanDark/$GTK_RC"
      export INSERT="$(echo -e "\tGtkRange\t\t\t\t::activate-slider\t\t= 1")"
      export PATTERN="GtkRange"
      sudo cp $GTK_RC_FNAME "$GTK_RC_FNAME.backup.$(date +"%s")"
      sudo ~/local/scripts/inject_line.py $PATTERN "$INSERT" $GTK_RC_FNAME
+
+     #sudo grep --include *gtkrc -i -R -e 'GtkScrollbar.*::.*activate-slider.*=.*FALSE' *
  }

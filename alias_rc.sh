@@ -35,6 +35,7 @@ clean_latex()
     rm main.pdf
     rm main.dvi
 }
+alias ipy='ipython'
 alias pyl='pylint --disable=C'
 alias pyf='pyflakes'
 alias lls='ls -I *.aux -I *.bbl -I *.blg -I *.out -I *.log -I *.synctex'
