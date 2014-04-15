@@ -295,4 +295,5 @@ noremap <leader>tp :tabe $pvimrc<CR>
 "inoremap ) 0
 "inoremap _ -
 
-imap ii <Esc>
+:imap ` <Esc>
+:imap <S-Space> <Esc>

@@ -1,6 +1,8 @@
 cd ~/local/vim/vimfiles/bundle
 #cd %USERPROFILE%/local/vim/vimfiles/bundle
 
+git clone https://github.com/tpope/vim-fugitive.git
+
 git clone https://github.com/zhaocai/GoldenView.Vim.git
 git clone https://github.com/terryma/vim-multiple-cursors.git
 git clone https://github.com/bling/vim-airline.git
