@@ -57,9 +57,11 @@ let g:syntastic_always_populate_loc_list = 1
 "-------------------------
 " PLUGIN: Syntastic Python
 let g:syntastic_python_checkers=['flake8'] " ignores lines containng # NOQA
-let g:syntastic_python_flake8_args = "--ignore=E201,E221,E222,E241,E271,E272,E301,E501"
+let g:syntastic_python_flake8_args = "--ignore=E201,E202,E203,E221,E222,E241,E271,E272,E301,E501"
 
 "E201 - whitespace after '('
+"E202 - whitespace before ']'
+"E203 - whitespace before ','
 "E221 - multiple spaces before operator
 "E222 - multiple spaces after operator
 "E241 - multiple spaces after ,
@@ -67,6 +69,7 @@ let g:syntastic_python_flake8_args = "--ignore=E201,E221,E222,E241,E271,E272,E30
 "E272 - multiple spaces before keyword
 "E301 - expected 1 blank line, found 0
 "E501 - > 79
+"
 "
 "-------------------------
 " PLUGIN: Syntastic C++

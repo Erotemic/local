@@ -262,34 +262,37 @@ noremap <Leader>rrr :source $pvimrc<CR>
 noremap <leader>tu :tabe ~/code/ibeis/utool/__init__.py<cr>
 noremap <leader>tc :tabe ~/code/ibeis/ibeis/control/IBEISControl.py<CR>
 noremap <leader>ti :tabe ~/code/ibeis/ibeis/view/interact/__init__.py<CR>
-noremap <leader>tv :tabe ~/code/ibeis/ibeis/view/viz/__init__.py<CR>
+noremap <leader>tz :tabe ~/code/ibeis/ibeis/view/viz/__init__.py<CR>
+noremap <leader>tv :tabe ~/code/ibeis/vtool<CR>
 noremap <leader>tt :tabe ~/code/ibeis/tests<CR>
 noremap <leader>tm :tabe ~/code/ibeis/ibeis/dev/main_api.py<CR>
 noremap <leader>th :tabe ~/code/ibeis/ibeis/model/hots<CR>
 noremap <leader>td :tabe ~/code/ibeis/drawtool/draw_func2.py<CR>
 noremap <leader>tp :tabe $pvimrc<CR>
 
-" map each number to its shift-key character
-inoremap 1 !
-inoremap 2 @
-inoremap 3 #
-inoremap 4 $
-inoremap 5 %
-inoremap 6 ^
-inoremap 7 &
-inoremap 8 *
-inoremap 9 (
-inoremap 0 )
-inoremap - _
-" and then the opposite
-inoremap ! 1
-inoremap @ 2
-inoremap # 3
-inoremap $ 4
-inoremap % 5
-inoremap ^ 6
-inoremap & 7
-inoremap * 8
-inoremap ( 9
-inoremap ) 0
-inoremap _ -
+"map each number to its shift-key character
+"inoremap 1 !
+"inoremap 2 @
+"inoremap 3 #
+"inoremap 4 $
+"inoremap 5 %
+"inoremap 6 ^
+"inoremap 7 &
+"inoremap 8 *
+"inoremap 9 (
+"inoremap 0 )
+"inoremap - _
+ "and then the opposite
+"inoremap ! 1
+"inoremap @ 2
+"inoremap # 3
+"inoremap $ 4
+"inoremap % 5
+"inoremap ^ 6
+"inoremap & 7
+"inoremap * 8
+"inoremap ( 9
+"inoremap ) 0
+"inoremap _ -
+
+imap ii <Esc>
