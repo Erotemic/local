@@ -132,3 +132,6 @@ rob sed "from __future__ import print_function, division" "from __future__ impor
 
 rob sed "jon_recognition" "hots" True True
 git mv ibeis/model/jon_recognition/ ibeis/model/hots
+
+
+rob sp "drawtool" "plottool"
