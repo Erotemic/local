@@ -135,3 +135,6 @@ git mv ibeis/model/jon_recognition/ ibeis/model/hots
 
 
 rob sp "drawtool" "plottool"
+
+
+rob sp ibeis.view ibeis
