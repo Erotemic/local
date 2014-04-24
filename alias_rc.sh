@@ -101,6 +101,7 @@ alias rob='python ~/local/rob/run_rob.py'
 alias rls='rob ls'
 alias er='gvim $prob'
 alias ebrc='gvim ~/local/bashrc.sh'
+alias emc='gvim ~/local/modulechanges.sh'
 alias sbrc='source ~/local/bashrc.sh' # Refresh
 alias todo='gvim ~/Dropbox/Notes/TODO.txt'
 alias edutool='gvim ~/code/ibeis/utool'

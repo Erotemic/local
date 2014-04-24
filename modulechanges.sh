@@ -138,3 +138,6 @@ rob sp "drawtool" "plottool"
 
 
 rob sp ibeis.view ibeis
+
+
+git mv ~/code/ibeis/ibeis/control/IBEIS_SCHEMA.py ~/code/ibeis/ibeis/control/DB_SCHEMA.py
