@@ -1,310 +1,72 @@
-"============ TOP LEVEL COMMANDS ================"
-" Some of these probably need to be cleaned up
-syntax on
-filetype plugin indent on
-" MISC: win clipboard on linux
-if has("win32") || has("win16")
-    behave mswin
-else
-    source $VIMRUNTIME/mswin.vim
-endif
+"===========PLUGINS==========="
+" PLUGIN: Pathogen
+" Add a plugin to this list to disable it
+let g:pathogen_disabled = []
+source ~/local/vim/vimfiles/autoload/pathogen.vim
+execute pathogen#infect()
 
-" Turn backup off, since most stuff is in SVN, git et.c anyway...
-set ff=unix
-set ffs=unix,dos
-if has("win32") || has("win16")
-    set backupdir=D:/sys/vim_tmp/
-    set undodir=D:/sys/vim_tmp/
-else
-    set backupdir=/media/Store/sys/vim_tmp/
-    set undodir=/media/Store/sys/vim_tmp/
-endif
-set nobackup
-set autochdir
+" PLUGIN: External non-plugin source files
+source ~/local/vim/rc/align.vim
+source ~/local/vim/rc/font_functions.vim
+source ~/local/vim/rc/commands.vim
 
-set nomousehide
-set nowb
-set noswapfile
-" Do not open these sort of files
-set wildignore=*.o,*~,*.pyc,*.aux,*.masv,*.bbl,*.bcf,*.blg,*.brf,*.synctex,*.upa,*.upb,*.pdf,*.dvi
-
-set wildmode=longest,list,full
-set wildmenu
-
-" =========== MISC  ==========="
-imap bufloadpy :args *.py
-"-------------------------
-" MISC: win clipboard on linux
-if has("win32") || has("win16")
-else
-    set clipboard=unnamedplus
-endif
-"-------------------------
-command! HexmodeOn :%!xxd
-command! HexmodeOff :%!xxd -r 
-"-------------------------
-
-set shellslash
-set grepprg=grep\ -nH\ $*
-
-" PLUGINS
-source ~/local/vim/plugin_prefs.vim
-
-" Unsorted Preferences
-
-" ========= VIM PREFERENCES ========= "
-if has("gui_running")
-    "colorscheme murphy
-    colorscheme synic
-endif
-set shiftwidth=4
-set tabstop=4
-set expandtab
-set cino={1s
-set autoread
-set lbr " Linebreak on 500 characters
-set tw=500
-
-" Vim: Gray Line Numbering
-:set nu 
-if has("gui_running")
-    :highlight LineNr guifg=#333333
-    " Cross platform fonts
-    if has("win32") || has("win16")
-        :highlight LineNr font='Fixedsys'
-    else
-        :highlight LineNr font='Monospace'
-    endif
-endif
-
-"-------------------------
-
-"Windows symlink problems
-set bkc=yes
-set nobackup 
-set nowritebackup
-
-"-------------------------
-"Filebar
-:set go+=r go+=R go-=l go-=L
-
-"-------------------------
-"Windows start command
-command! S :call OpenWindow()
-command! CMD :ConqueTerm cmd 
-command! CMD2 :ConqueTermTab cmd 
-command! -nargs=1 R :vertical resize <f-args>
+"===========Settings==========="
+source ~/local/vim/rc_settings/plugin_settings.vim
+source ~/local/vim/rc_settings/gui_settings.vim
+source ~/local/vim/rc_settings/behavior_settings.vim
+source ~/local/vim/rc_settings/autocommand_settings.vim
+source ~/local/vim/rc_settings/remap_settings.vim
 
 
-"-------------------------
-"Make txx file work as cpp files
+" Trial / project / temporary vimrc commands
+" If they are good put them into a settings file
 
-
-"au! BufNewFile,BufRead *.py, *.pyx setlocal foldmethod=indent
-"au! BufNewFile,BufRead *.py, *.pyx setlocal nosmartindent
-"au! BufNewFile,BufRead *.c, *.cxx, *.cpp, *.h, *.hpp, *.hxx setlocal cino=i-s
-"au! BufNewFile,BufRead *.c, *.cxx, *.cpp, *.h, *.hpp, *.hxx setlocal cinkeys-=0#
-"au! BufNewFile,BufRead *.c, *.cxx, *.cpp, *.h, *.hpp, *.hxx setlocal foldmethod=syntax
-
-
-func! MYINFO()
-    :ECHOVAR cino
-    :ECHOVAR cinkeys
-    :ECHOVAR foldmethod
-    :ECHOVAR filetype
-    :ECHOVAR smartindent
+"___________________
+" Quick File Access:
+"___________________
+func! QUICK_OPEN(...)
+    let key = a:1
+    let fname = a:2
+    :exec 'noremap <leader>t'.key.' :tabe '.fname.'<CR>'
+    :exec 'noremap <leader>s'.key.' :vsplit '.fname.'<CR>'
+    :exec 'noremap <leader>i'.key.' :split '.fname.'<CR>'
 endfu
-command! MYINFOCMD call MYINFO() <C-R>
+" vimrc
+:call QUICK_OPEN('t,', '$pvimrc')
 
-":call AUTOCMD_CPP('set cino=i-s')
-":call AUTOCMD_CPP('set cinkeys=0{,0},0),:,!^F,o,O,e')
-":call AUTOCMD_CPP('set cinkeys-=0#')
+"___________________
+" utool
+:call QUICK_OPEN('u', '~/code/ibeis/utool/__init__.py')
 
-"-------------------------
-"":au! CursorMoved * exe printf('match DiffChange /\V\<%s\>/', escape(expand('<cword>'), '/\'))
+"___________________
+" vtool
+:call QUICK_OPEN('v', '~/code/ibeis/vtool/__init__.py')
 
-" Set the default font to mono dyslexic size 11
-:call SetFontMonoDyslexic()
+"___________________
+" plottool
+:call QUICK_OPEN('p', '~/code/ibeis/plottool/__init__.py')
 
-" why wont this work
-highlight Cursor guifg=blue guibg=orange
-
-"Autocomplete off
-let g:Tex_SmartKeyDot=0
-
-" au autocommand
-
-au FileType python set omnifunc=pythoncomplete#Complete
-au FileType python set nosmartindent
-au FileType python filetype indent on
-au FileType python set textwidth=80
-au FileType python set foldmethod=indent
-au FileType python set foldnestmax=2
-
-au BufNewFile,BufRead *.tex call LatexInitialize() 
-au SwapExists * let v:swapchoice = 'e'
-
-au BufNewFile,BufRead *.txx  set ft=cpp
-au BufNewFile,BufRead *.poly set ft=cmake
-au BufNewFile,BufRead *.spec set ft=python
-au BufNewFile,BufRead *.node set ft=cmake
-au BufNewFile,BufRead *.ele  set ft=cmake
-au BufNewFile,BufRead *.ahk, set ft=Autohotkey
-"Read vidtk config files as vidtk config file
-au BufRead,BufNewFile *.conf setfiletype vidtkconf
-" Remove trailing whitespace
-"au BufWritePre *.py :%s/\t/    /g
-au! BufWritePre *.py :%s/\s\+$//e
-au BufWritePre *.py :%s/\s\+$//e
-au BufWritePre *.c :%s/\s\+$//e
-au BufWritePre *.cxx :%s/\s\+$//e
-au BufWritePre *.cpp :%s/\s\+$//e
-au BufWritePre *.h :%s/\s\+$//e
-au BufWritePre *.hpp :%s/\s\+$//e
-au BufWritePre *.hxx :%s/\s\+$//e
-
-" Default
-"set foldmethod=indent
-
-" Python indenting and folding
-
-" C++ indenting and folding
-au FileType cpp set cino=i-s
-au FileType cpp set cinkeys=0{,0},0),:,!^F,o,O,e
-au FileType cpp set cinkeys-=0#
-au FileType cpp set smartindent
-au FileType cpp set foldmethod=syntax
-
-au CursorMoved * call WordHighlightFun()
-au InsertLeave * hi Cursor guibg=red
-au InsertEnter * hi Cursor guibg=green
-
-hi StatusLine ctermbg=red ctermfg=green
-hi StatusLine guibg=gray10 guifg=green
-
-set hlsearch
-" :s/\( *\):/:\1/gc
-:set guitablabel=%N/\ %t
-
-" Need to comment "set diffexpr=MyDiff() in windows to get msys-diffutils to work
-
-" code folding 
-"set nofoldenable
-"set ai "Auto indent
-"set si "Smart indent
-"set foldnestmax=1
-"set foldlevel=1
-"let g:SimpylFold_docstring_preview = 1
-
-"-------------------------
-" Function Remaps
-"map <F1> :call  ToggleWordHighlight()<CR> 
-"Map Ctrl+W (navkey) to Ctrl+(navkey) (for split windows)
-" Remap the leader key from \ to ,
-map <c-j> <c-w>j
-map <c-k> <c-w>k
-map <c-l> <c-w>l
-map <c-h> <c-w>h
-map <F1> :call PEP8PRINT()<CR> 
-map <F2> :call ToggleAlpha()<CR> 
-map <F3> :call ToggleFont()<CR> 
-map <F4> :call OpenWindow()<CR> 
-map <F5> :call CmdHere()<CR> 
-"vim-latex-suit overwrites f5, give it an alt
-map <F6> :call  CmdHere()<CR>  
-" make semicolon command mode
-nmap ; :
-" Compile Command Remaps
-nnoremap <Leader>p :call Tex_RunViewLaTeX()<CR>
-nmap <C-P> :call Tex_RunViewLaTeX() <CR>
-imap <C-P> :call Tex_RunViewLaTeX() <CR>
-map <F8> :call  Tex_RunViewLaTeX()<CR>  
-"Map space to toggle current fold
-noremap <space> za
-"Map Shift+Space to close all folds
-"noremap <S-Space> zM
-"Map Ctrl+Space to open all folds
-"noremap <C-Space> zR
-
-let mapleader = ","
-nnoremap <Leader>e :lopen <CR>
-nnoremap <Leader>w w :<c-w> <c-w>
-noremap <Leader>w <C-w>w
-nnoremap <Leader>d :FontDecrease<c-w> <c-w>
-noremap <Leader>r zR<CR>
-noremap <Leader>j :NERDTreeToggle<CR>
-noremap <Leader>f :NERDTreeFromBookmark 
-noremap <Leader>, gt
-noremap <Leader>< gT
-"noremap <Leader>j gT 
-"noremap <Leader>k gt 
-"noremap <Leader>r zR<CR>
-"
-
-set hlsearch
-" :s/\( *\):/:\1/gc
-
-
-:set guitablabel=%N/\ %t\ %M
-
-noremap <M-1> 1gt
-noremap <M-2> 2gt
-noremap <M-3> 3gt
-noremap <M-4> 4gt
-noremap <M-5> 5gt
-noremap <M-6> 6gt
-noremap <M-7> 7gt
-noremap <M-8> 8gt
-noremap <M-9> 9gt
-noremap <M-0> 10gt
-noremap <Leader>1 1gt
-noremap <Leader>2 2gt
-noremap <Leader>3 3gt
-noremap <Leader>4 4gt
-noremap <Leader>5 5gt
-noremap <Leader>6 6gt
-noremap <Leader>7 7gt
-noremap <Leader>8 8gt
-noremap <Leader>9 9gt
-noremap <Leader>rrr :source $pvimrc<CR>
-noremap <leader>tr :tabe ~/code/ibeis/dev.py<cr>
-noremap <leader>tu :tabe ~/code/ibeis/utool/__init__.py<cr>
-noremap <leader>tc :tabe ~/code/ibeis/ibeis/control/IBEISControl.py<CR>
-noremap <leader>ti :tabe ~/code/ibeis/ibeis/viz/interact/__init__.py<CR>
-noremap <leader>tz :tabe ~/code/ibeis/ibeis/viz/__init__.py<CR>
-noremap <leader>tg :tabe ~/code/ibeis/ibeis/gui/guiback.py<CR>
-noremap <leader>tf :tabe ~/code/ibeis/ibeis/dev/ibsfuncs.py<CR>
-noremap <leader>tv :tabe ~/code/ibeis/vtool<CR>
-noremap <leader>tt :tabe ~/code/ibeis/ibeis/tests<CR>
-noremap <leader>tm :tabe ~/code/ibeis/ibeis/main_module.py<CR>
-noremap <leader>th :tabe ~/code/ibeis/ibeis/model/hots<CR>
-noremap <leader>td :tabe ~/code/ibeis/plottool/draw_func2.py<CR>
-noremap <leader>tp :tabe $pvimrc<CR>
-
-"map each number to its shift-key character
-"inoremap 1 !
-"inoremap 2 @
-"inoremap 3 #
-"inoremap 4 $
-"inoremap 5 %
-"inoremap 6 ^
-"inoremap 7 &
-"inoremap 8 *
-"inoremap 9 (
-"inoremap 0 )
-"inoremap - _
- "and then the opposite
-"inoremap ! 1
-"inoremap @ 2
-"inoremap # 3
-"inoremap $ 4
-"inoremap % 5
-"inoremap ^ 6
-"inoremap & 7
-"inoremap * 8
-"inoremap ( 9
-"inoremap ) 0
-"inoremap _ -
-
-:imap ` <Esc>
-":imap <S-Space> <Esc>
+"___________________
+" ibeis
+"noremap <leader>td :tabe ~/code/ibeis/dev.py<cr>
+:call QUICK_OPEN('d', '~/code/ibeis/dev.py')
+" ibeis main
+:call QUICK_OPEN('m', '~/code/ibeis/ibeis/main_module.py')
+" ibeis control
+:call QUICK_OPEN('c', '~/code/ibeis/ibeis/control/IBEISControl.py')
+" ibeis devel
+:call QUICK_OPEN('f', '~/code/ibeis/ibeis/dev/ibsfuncs.py')
+:call QUICK_OPEN('e', '~/code/ibeis/ibeis/dev/experiment_configs.py')
+" ibeis injest
+:call QUICK_OPEN('j', '~/code/ibeis/ibeis/injest/__init__.py')
+" ibeis gui
+:call QUICK_OPEN('g', '~/code/ibeis/ibeis/gui/guiback.py')
+" ibeis tests
+:call QUICK_OPEN('t', '~/code/ibeis/ibeis/tests')
+" ibeis/model
+:call QUICK_OPEN('n', ' ~/code/ibeis/ibeis/model/Config.py')
+" ibeis/model/hotspotter
+:call QUICK_OPEN('h', '~/code/ibeis/ibeis/model/hots/__init__.py')
+" ibeis viz
+:call QUICK_OPEN('z', '~/code/ibeis/ibeis/viz/__init__.py')
+:call QUICK_OPEN('i', '~/code/ibeis/ibeis/viz/interact/__init__.py')

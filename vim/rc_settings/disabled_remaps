@@ -1,0 +1,10 @@
+
+func! MYINFO()
+    :ECHOVAR cino
+    :ECHOVAR cinkeys
+    :ECHOVAR foldmethod
+    :ECHOVAR filetype
+    :ECHOVAR smartindent
+endfu
+command! MYINFOCMD call MYINFO() <C-R>
+

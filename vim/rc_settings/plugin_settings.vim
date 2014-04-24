@@ -1,18 +1,3 @@
-"===========PLUGINS==========="
-" PLUGIN: External non-plugin source files
-source ~/local/vim/align.vim
-source ~/local/vim/std_functions.vim
-source ~/local/vim/font_functions.vim
-source ~/local/vim/my_functions.vim
-
-"-------------------------
-" PLUGIN: Pathogen
-
-" Add a plugin to this list to disable it
-let g:pathogen_disabled = []
-source ~/local/vim/vimfiles/autoload/pathogen.vim
-execute pathogen#infect()
-
 "-------------------------
 " PLUGIN: NERDTree 
 "
@@ -133,7 +118,6 @@ func! Tex_RunViewLaTeX()
     call Tex_ViewLaTeX()
 endfu
 
-
 " Turn of XeLaTeX errors
 set makeprg=texwrapper
 set errorformat=%f:%l:%c:%m
@@ -146,3 +130,6 @@ set errorformat=%f:%l:%c:%m
 " Toggle Compile to OpenDyslexic
 command! LATEXCompileRuleLaTeX :call SetLaTeX()
 command! LATEXCompileRuleXeTeX :call SetXeTeX()
+
+"Autocomplete off
+let g:Tex_SmartKeyDot=0

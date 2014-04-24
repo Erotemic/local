@@ -428,9 +428,11 @@ Open(arg)
     }
     else if (arg = "vim")
     {
-        EnvGet home, USERPROFILE
-        start_dir = %home%\code\ibeis
-        GVIM(start_dir)
+        ; EnvGet home, USERPROFILE
+        ; start_dir = %home%\code\ibeis
+        ; GVIM(start_dir)
+        EnvGet vim_bin, VIM_BIN
+        Run, "%vim_bin%\gvim.exe"
     }
     else if (arg = "todo")
     {

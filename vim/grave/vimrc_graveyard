@@ -89,3 +89,47 @@
 
     "let g:Tex_ViewRule_pdf = 'sumatrapdf -reuse-instance -inverse-search "gvim -c \":RemoteOpen +\%l \%f\""'
     
+
+
+
+
+"-------------------------
+"Make txx file work as cpp files
+
+
+"au! BufNewFile,BufRead *.py, *.pyx setlocal foldmethod=indent
+"au! BufNewFile,BufRead *.py, *.pyx setlocal nosmartindent
+"au! BufNewFile,BufRead *.c, *.cxx, *.cpp, *.h, *.hpp, *.hxx setlocal cino=i-s
+"au! BufNewFile,BufRead *.c, *.cxx, *.cpp, *.h, *.hpp, *.hxx setlocal cinkeys-=0#
+"au! BufNewFile,BufRead *.c, *.cxx, *.cpp, *.h, *.hpp, *.hxx setlocal foldmethod=syntax
+
+
+":call AUTOCMD_CPP('set cino=i-s')
+":call AUTOCMD_CPP('set cinkeys=0{,0},0),:,!^F,o,O,e')
+":call AUTOCMD_CPP('set cinkeys-=0#')
+
+"-------------------------
+"":au! CursorMoved * exe printf('match DiffChange /\V\<%s\>/', escape(expand('<cword>'), '/\'))
+
+    
+" Need to comment "set diffexpr=MyDiff() in windows to get msys-diffutils to work
+
+" code folding 
+"set nofoldenable
+"set ai "Auto indent
+"set si "Smart indent
+"set foldnestmax=1
+"set foldlevel=1
+"let g:SimpylFold_docstring_preview = 1
+
+
+
+" Default
+"set foldmethod=indent
+"
+"
+
+" Mappings
+"nnoremap <Leader>r :call FUNC_RELOAD_VIMRC()<CR>
+"nnoremap <Leader>f :call FUNC_SELPAPER()<CR>
+"nnoremap <Leader>q :call UnderscoresToCamelCase()<CR>
