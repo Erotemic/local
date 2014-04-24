@@ -1,9 +1,4 @@
 " ========= Functions ========= "
-source ~/local/vim/rc/custom_misc_functions.vim
-source ~/local/vim/rc/custom_tex_functions.vim
-source ~/local/vim/rc/custom_py_functions.vim
-
-
 command! TextWidthMarkerOn call FUNC_TextWidthMarkerOn()
 " Textwidth command
 command! TextWidth80 set textwidth=80

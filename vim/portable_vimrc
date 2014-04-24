@@ -7,7 +7,11 @@ execute pathogen#infect()
 
 " PLUGIN: External non-plugin source files
 source ~/local/vim/rc/align.vim
-source ~/local/vim/rc/font_functions.vim
+source ~/local/vim/rc/custom_font_functions.vim
+source ~/local/vim/rc/custom_misc_functions.vim
+source ~/local/vim/rc/custom_pep8_functions.vim
+source ~/local/vim/rc/custom_py_functions.vim
+source ~/local/vim/rc/custom_tex_functions.vim
 source ~/local/vim/rc/commands.vim
 
 "===========Settings==========="
@@ -24,49 +28,24 @@ source ~/local/vim/rc_settings/remap_settings.vim
 "___________________
 " Quick File Access:
 "___________________
-func! QUICK_OPEN(...)
-    let key = a:1
-    let fname = a:2
-    :exec 'noremap <leader>t'.key.' :tabe '.fname.'<CR>'
-    :exec 'noremap <leader>s'.key.' :vsplit '.fname.'<CR>'
-    :exec 'noremap <leader>i'.key.' :split '.fname.'<CR>'
-endfu
 " vimrc
-:call QUICK_OPEN('t,', '$pvimrc')
-
+:call QUICKOPEN_leader_tsi(',', '$pvimrc')
 "___________________
-" utool
-:call QUICK_OPEN('u', '~/code/ibeis/utool/__init__.py')
-
+" TOOLS
+:call QUICKOPEN_leader_tsi('u', '~/code/ibeis/utool/__init__.py')
+:call QUICKOPEN_leader_tsi('v', '~/code/ibeis/vtool/__init__.py')
+:call QUICKOPEN_leader_tsi('p', '~/code/ibeis/plottool/__init__.py')
 "___________________
-" vtool
-:call QUICK_OPEN('v', '~/code/ibeis/vtool/__init__.py')
-
-"___________________
-" plottool
-:call QUICK_OPEN('p', '~/code/ibeis/plottool/__init__.py')
-
-"___________________
-" ibeis
-"noremap <leader>td :tabe ~/code/ibeis/dev.py<cr>
-:call QUICK_OPEN('d', '~/code/ibeis/dev.py')
-" ibeis main
-:call QUICK_OPEN('m', '~/code/ibeis/ibeis/main_module.py')
-" ibeis control
-:call QUICK_OPEN('c', '~/code/ibeis/ibeis/control/IBEISControl.py')
-" ibeis devel
-:call QUICK_OPEN('f', '~/code/ibeis/ibeis/dev/ibsfuncs.py')
-:call QUICK_OPEN('e', '~/code/ibeis/ibeis/dev/experiment_configs.py')
-" ibeis injest
-:call QUICK_OPEN('j', '~/code/ibeis/ibeis/injest/__init__.py')
-" ibeis gui
-:call QUICK_OPEN('g', '~/code/ibeis/ibeis/gui/guiback.py')
-" ibeis tests
-:call QUICK_OPEN('t', '~/code/ibeis/ibeis/tests')
-" ibeis/model
-:call QUICK_OPEN('n', ' ~/code/ibeis/ibeis/model/Config.py')
-" ibeis/model/hotspotter
-:call QUICK_OPEN('h', '~/code/ibeis/ibeis/model/hots/__init__.py')
-" ibeis viz
-:call QUICK_OPEN('z', '~/code/ibeis/ibeis/viz/__init__.py')
-:call QUICK_OPEN('i', '~/code/ibeis/ibeis/viz/interact/__init__.py')
+" IBEIS
+:call QUICKOPEN_leader_tsi('d', '~/code/ibeis/dev.py')
+:call QUICKOPEN_leader_tsi('m', '~/code/ibeis/ibeis/main_module.py')
+:call QUICKOPEN_leader_tsi('c', '~/code/ibeis/ibeis/control/IBEISControl.py')
+:call QUICKOPEN_leader_tsi('f', '~/code/ibeis/ibeis/dev/ibsfuncs.py')
+:call QUICKOPEN_leader_tsi('e', '~/code/ibeis/ibeis/dev/experiment_configs.py')
+:call QUICKOPEN_leader_tsi('j', '~/code/ibeis/ibeis/injest/__init__.py')
+:call QUICKOPEN_leader_tsi('g', '~/code/ibeis/ibeis/gui/guiback.py')
+:call QUICKOPEN_leader_tsi('t', '~/code/ibeis/ibeis/tests')
+:call QUICKOPEN_leader_tsi('n', ' ~/code/ibeis/ibeis/model/Config.py')
+:call QUICKOPEN_leader_tsi('h', '~/code/ibeis/ibeis/model/hots/__init__.py')
+:call QUICKOPEN_leader_tsi('z', '~/code/ibeis/ibeis/viz/__init__.py')
+:call QUICKOPEN_leader_tsi('i', '~/code/ibeis/ibeis/viz/interact/__init__.py')

@@ -56,7 +56,6 @@ nnoremap <Leader>d :FontDecrease<c-w> <c-w>
 "nnoremap <Leader>w w :<c-w> <c-w>
 noremap <Leader>w <C-w>w
 noremap <Leader>, <C-w>w
-noremap <Leader>r zR<CR>
 noremap <Leader>j :NERDTreeToggle<CR>
 
 "noremap <Leader>r zR<CR>
@@ -65,6 +64,9 @@ noremap <Leader>j :NERDTreeToggle<CR>
 " Folds: 
 " Map space to toggle current fold
 noremap <space> za  
+noremap <Leader>z zR
+noremap <Leader>a zA
+noremap <Leader>m zM
 
 " Tabs: 
 " change next/prev tab
