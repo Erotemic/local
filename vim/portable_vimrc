@@ -10,6 +10,7 @@ source ~/local/vim/rc/align.vim
 source ~/local/vim/rc/custom_font_functions.vim
 source ~/local/vim/rc/custom_misc_functions.vim
 source ~/local/vim/rc/custom_pep8_functions.vim
+source ~/local/vim/rc/custom_regex_functions.vim
 source ~/local/vim/rc/custom_py_functions.vim
 source ~/local/vim/rc/custom_tex_functions.vim
 source ~/local/vim/rc/commands.vim
@@ -29,23 +30,25 @@ source ~/local/vim/rc_settings/remap_settings.vim
 " Quick File Access:
 "___________________
 " vimrc
-:call QUICKOPEN_leader_tsi(',', '$pvimrc')
+:call QUICKOPEN_leader_tsio('q', '~/local/vim/portable_vimrc')
+:call QUICKOPEN_leader_tsio('r', '~/local/vim/rc/custom_regex_commands.vim')
 "___________________
 " TOOLS
-:call QUICKOPEN_leader_tsi('u', '~/code/ibeis/utool/__init__.py')
-:call QUICKOPEN_leader_tsi('v', '~/code/ibeis/vtool/__init__.py')
-:call QUICKOPEN_leader_tsi('p', '~/code/ibeis/plottool/__init__.py')
+:call QUICKOPEN_leader_tsio('u', '~/code/ibeis/utool/__init__.py')
+:call QUICKOPEN_leader_tsio('v', '~/code/ibeis/vtool/__init__.py')
+:call QUICKOPEN_leader_tsio('p', '~/code/ibeis/plottool/__init__.py')
 "___________________
 " IBEIS
-:call QUICKOPEN_leader_tsi('d', '~/code/ibeis/dev.py')
-:call QUICKOPEN_leader_tsi('m', '~/code/ibeis/ibeis/main_module.py')
-:call QUICKOPEN_leader_tsi('c', '~/code/ibeis/ibeis/control/IBEISControl.py')
-:call QUICKOPEN_leader_tsi('f', '~/code/ibeis/ibeis/dev/ibsfuncs.py')
-:call QUICKOPEN_leader_tsi('e', '~/code/ibeis/ibeis/dev/experiment_configs.py')
-:call QUICKOPEN_leader_tsi('j', '~/code/ibeis/ibeis/injest/__init__.py')
-:call QUICKOPEN_leader_tsi('g', '~/code/ibeis/ibeis/gui/guiback.py')
-:call QUICKOPEN_leader_tsi('t', '~/code/ibeis/ibeis/tests')
-:call QUICKOPEN_leader_tsi('n', ' ~/code/ibeis/ibeis/model/Config.py')
-:call QUICKOPEN_leader_tsi('h', '~/code/ibeis/ibeis/model/hots/__init__.py')
-:call QUICKOPEN_leader_tsi('z', '~/code/ibeis/ibeis/viz/__init__.py')
-:call QUICKOPEN_leader_tsi('i', '~/code/ibeis/ibeis/viz/interact/__init__.py')
+:call QUICKOPEN_leader_tsio('d', '~/code/ibeis/dev.py')
+:call QUICKOPEN_leader_tsio('m', '~/code/ibeis/ibeis/main_module.py')
+:call QUICKOPEN_leader_tsio('c', '~/code/ibeis/ibeis/control/IBEISControl.py')
+:call QUICKOPEN_leader_tsio('f', '~/code/ibeis/ibeis/dev/ibsfuncs.py')
+:call QUICKOPEN_leader_tsio('e', '~/code/ibeis/ibeis/dev/experiment_harness.py')
+:call QUICKOPEN_leader_tsio('j', '~/code/ibeis/ibeis/injest/injest_hsdb.py')
+:call QUICKOPEN_leader_tsio('g', '~/code/ibeis/ibeis/gui/guiback.py')
+:call QUICKOPEN_leader_tsio('t', '~/code/ibeis/ibeis/tests')
+:call QUICKOPEN_leader_tsio('n', '~/code/ibeis/ibeis/model/Config.py')
+:call QUICKOPEN_leader_tsio('o', '~/code/ibeis/ibeis/model/preproc/preproc_image.py')
+:call QUICKOPEN_leader_tsio('h', '~/code/ibeis/ibeis/model/hots/match_chips3.py')
+:call QUICKOPEN_leader_tsio('z', '~/code/ibeis/ibeis/viz/viz_chip.py')
+:call QUICKOPEN_leader_tsio('x', '~/code/ibeis/ibeis/viz/interact/interact_qres.py')

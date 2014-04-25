@@ -57,6 +57,7 @@ nnoremap <Leader>d :FontDecrease<c-w> <c-w>
 noremap <Leader>w <C-w>w
 noremap <Leader>, <C-w>w
 noremap <Leader>j :NERDTreeToggle<CR>
+noremap <Leader>J :NERDTree<CR>
 
 "noremap <Leader>r zR<CR>
 "
@@ -93,3 +94,7 @@ noremap <Leader>6 6gt
 noremap <Leader>7 7gt
 noremap <Leader>8 8gt
 noremap <Leader>9 9gt
+
+
+" Search and replace under cursor
+:noremap <Leader>s :%s/\<<C-r><C-w>\>/

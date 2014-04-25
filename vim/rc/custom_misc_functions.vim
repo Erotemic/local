@@ -102,7 +102,7 @@ endfu
 command! MYINFOCMD call MYINFO() <C-R>
 
 
-func! QUICKOPEN_leader_tsi(...)
+func! QUICKOPEN_leader_tsio(...)
     " Maps <leader>t<key> to tab open a filename
     " Maps <leader>s<key> to vsplit open a filename
     " Maps <leader>i<key> to split open a filename
@@ -111,4 +111,5 @@ func! QUICKOPEN_leader_tsi(...)
     :exec 'noremap <leader>t'.key.' :tabe '.fname.'<CR>'
     :exec 'noremap <leader>s'.key.' :vsplit '.fname.'<CR>'
     :exec 'noremap <leader>i'.key.' :split '.fname.'<CR>'
+    :exec 'noremap <leader>o'.key.' :e '.fname.'<CR>'
 endfu

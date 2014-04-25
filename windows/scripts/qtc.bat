@@ -1,4 +1,6 @@
 :: @echo off
+cd %USERPROFILE%\code\ibeis
+
 nircmd.exe exec hide ^
  ipython qtconsole ^
  --colors=Linux ^
