@@ -31,12 +31,16 @@ source ~/local/vim/rc_settings/remap_settings.vim
 "___________________
 " vimrc
 :call QUICKOPEN_leader_tsio('q', '~/local/vim/portable_vimrc')
+:call QUICKOPEN_leader_tsio(',', '~/local/vim/portable_vimrc')
 :call QUICKOPEN_leader_tsio('r', '~/local/vim/rc/custom_regex_commands.vim')
 "___________________
 " TOOLS
 :call QUICKOPEN_leader_tsio('u', '~/code/ibeis/utool/__init__.py')
 :call QUICKOPEN_leader_tsio('v', '~/code/ibeis/vtool/__init__.py')
 :call QUICKOPEN_leader_tsio('p', '~/code/ibeis/plottool/__init__.py')
+"___________________
+" HESAFF
+:call QUICKOPEN_leader_tsio('a', '~/code/hesaff/pyhesaff/_pyhesaff.py')
 "___________________
 " IBEIS
 :call QUICKOPEN_leader_tsio('d', '~/code/ibeis/dev.py')

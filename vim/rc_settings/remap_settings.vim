@@ -27,8 +27,7 @@ map <c-h> <c-w>h
 " Open file under cursor
 
 " In split window
-map <Leader>gi :wincmd f<CR>
-" In vsplit-split window
+map <Leader>gi :wincmd f<CR> " In vsplit-split window
 map <Leader>gs :vertical wincmd f<CR>
 
 " Function Keys
@@ -46,11 +45,6 @@ nmap <C-P> :call Tex_RunViewLaTeX() <CR>
 imap <C-P> :call Tex_RunViewLaTeX() <CR>
 
 nnoremap <Leader>d :FontDecrease<c-w> <c-w>
-
-"Map Shift+Space to close all folds
-"noremap <S-Space> zM
-"Map Ctrl+Space to open all folds
-"noremap <C-Space> zR
 
 " Move in split windows
 "nnoremap <Leader>w w :<c-w> <c-w>
@@ -98,3 +92,6 @@ noremap <Leader>9 9gt
 
 " Search and replace under cursor
 :noremap <Leader>s :%s/\<<C-r><C-w>\>/
+
+" goto next syntastic error 
+:noremap <Leader>e :Errors<CR>
