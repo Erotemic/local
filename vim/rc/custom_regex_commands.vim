@@ -114,3 +114,6 @@ s/
 /gc
 
 %s/\<allorg\>\.\(\<[A-Za-z_][0-9A-Za-z_]*\>\)\(  *\)=\( *\<[A-Za-z_][0-9A-Za-z_]*\>\)/'\1'\2:\3,/gc
+
+
+%s/\(^     *\)printDBG/\1#OFF printDBG/gc
