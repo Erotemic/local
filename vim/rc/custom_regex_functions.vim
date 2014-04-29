@@ -24,3 +24,22 @@ endfunc
 
 "Align var:WORD
 command! -range APPEND <line1>,<line2>call FUNC_APEND()<CR>
+
+
+func! FUNC_IBS_REPL()
+    " Replace hs with ibs
+    :%s/\<hs\>/ibs/g
+    :%s/\<qcxs\>/qrids/g
+    :%s/\<qcx\>/qrid/g
+    :%s/\<qcx_list\>/qrid_list/g
+    :%s/\<cx_list\>/rid_list/g
+    :%s/\<cx\>/rid/g
+    :%s/\<cxs\>/rids/g
+    :%s/\<res\>/qres/g
+    :%s/\<qcx2_res\>/qrid2_qres/g
+    :%s/\<res2_/qres2_/g
+    :%s/_cxs\>/_rids/g
+    :%s/_cx\>/_rid/g
+endfunc
+
+

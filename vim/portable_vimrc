@@ -54,5 +54,5 @@ source ~/local/vim/rc_settings/remap_settings.vim
 :call QUICKOPEN_leader_tsio('n', '~/code/ibeis/ibeis/model/Config.py')
 :call QUICKOPEN_leader_tsio('o', '~/code/ibeis/ibeis/model/preproc/preproc_image.py')
 :call QUICKOPEN_leader_tsio('h', '~/code/ibeis/ibeis/model/hots/match_chips3.py')
-:call QUICKOPEN_leader_tsio('z', '~/code/ibeis/ibeis/viz/viz_chip.py')
+:call QUICKOPEN_leader_tsio('z', '~/code/ibeis/ibeis/viz/viz_qres.py')
 :call QUICKOPEN_leader_tsio('x', '~/code/ibeis/ibeis/viz/interact/interact_qres.py')
