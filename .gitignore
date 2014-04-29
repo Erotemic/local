@@ -19,5 +19,6 @@ vim/vimfiles/bundle/_vimrc
 vim/vimfiles/bundle/jedi-vim/
 vim/vimfiles/bundle/nerdtree/
 vim/vimfiles/bundle/syntastic/
+vim/vimfiles/.netrwhist
 
 vim/vimfiles/.netrwhist
