@@ -298,6 +298,10 @@ def grep(r, *tofind_list):
     rob_nav._grep(r, tofind_list, recursive=True)
 
 
+def invgrep(r, *tofind_list):
+    rob_nav._grep(r, tofind_list, recursive=True, invert=True)
+
+
 def grepnr(r, *tofind_list):
     rob_nav._grep(r, tofind_list, recursive=False)
 

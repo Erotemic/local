@@ -22,7 +22,7 @@ def find_in_list(str_, tofind_list, agg_fn=all, case_insensitive=True):
 # TODO: this grep stuff can be written nicer
 
 
-def __grepfile(fpath, tofind_list, case_insensitive=True):
+def __grepfile(fpath, tofind_list, case_insensitive=True, verbose=False):
     with open(fpath, 'r') as file:
         lines = file.readlines()
         found = []
@@ -32,21 +32,23 @@ def __grepfile(fpath, tofind_list, case_insensitive=True):
                 found.append((lx, line))
         # Print the results (if any)
         if len(found) > 0:
-            print('----------------------')
             ret = 'Found %d line(s) in %r: ' % (len(found), fpath)
-            print(ret)
+            if verbose:
+                print('----------------------')
+                print(ret)
             name = split(fpath)[1]
             max_line = len(lines)
             ndigits = str(len(str(max_line)))
             fmt_str = '%s : %' + ndigits + 'd |%s'
             for (lx, line) in iter(found):
                 line = line.replace('\n', '')
-                print(fmt_str % (name, lx, line))
+                if verbose:
+                    print(fmt_str % (name, lx, line))
             return ret
     return None
 
 
-def __regex_grepfile(fpath, regexpr):
+def __regex_grepfile(fpath, regexpr, verbose=True):
     with open(fpath, 'r') as file:
         lines = file.readlines()
         found = []
@@ -57,17 +59,19 @@ def __regex_grepfile(fpath, regexpr):
                 found.append((lx, line))
         # Print the results (if any)
         if len(found) > 0:
-            print('----------------------')
             rel_fpath = relpath(fpath, os.getcwd())
             ret = 'Found %d line(s) in %r: ' % (len(found), rel_fpath)
-            print(ret)
+            if verbose:
+                print('----------------------')
+                print(ret)
             name = split(fpath)[1]
             max_line = len(lines)
             ndigits = str(len(str(max_line)))
             fmt_str = '%s : %' + ndigits + 'd |%s'
             for (lx, line) in iter(found):
                 line = line.replace('\n', '')
-                print(fmt_str % (name, lx, line))
+                if verbose:
+                    print(fmt_str % (name, lx, line))
             return ret
     return None
 
@@ -113,7 +117,8 @@ def _sed(r, regexpr, repl, force=False, recursive=False, dpath_list=None):
         __regex_sedfile(fpath, regexpr, repl, force)
 
 
-def _grep(r, tofind_list, recursive=True, case_insensitive=True, regex=False, dpath_list=None):
+def _grep(r, tofind_list, recursive=True, case_insensitive=True, regex=False,
+          dpath_list=None, invert=False):
     include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h']  # , '*.txt']
     exclude_dirs = HS_EXCLUDE
     # ensure list input
@@ -126,34 +131,21 @@ def _grep(r, tofind_list, recursive=True, case_insensitive=True, regex=False, dp
     print('Greping (%s) %r for %r' % (recursive_stat_str, dpath_list, tofind_list))
     found_files = []
     # Walk through each directory recursively
-    for fpath in _matching_fnames(dpath_list, include_patterns, exclude_dirs, recursive=recursive):
+    for fpath in _matching_fnames(dpath_list, include_patterns, exclude_dirs,
+                                  recursive=recursive):
         if regex:
             if len(tofind_list) > 1:
                 print('WARNING IN ROB NAV 133')
             regexpr = extend_regex(tofind_list[0])
-            ret = __regex_grepfile(fpath, regexpr)
+            ret = __regex_grepfile(fpath, regexpr, verbose=not invert)
         else:
-            ret = __grepfile(fpath, tofind_list, case_insensitive)
-        if not ret is None:
-            found_files.append(ret)
+            ret = __grepfile(fpath, tofind_list, case_insensitive,
+                             verbose=not invert)
+        if ret is None and invert:
+            found_files.append(fpath)  # regular matching
+        elif ret is not None and not invert:
+            found_files.append(ret)  # inverse matching
 
-    #for root, dname_list, fname_list in os.walk(dpath):
-        #if split(root)[1] in exclude_dirs:
-            #continue
-        #for name in fname_list:
-            ## For the filesnames which match the patterns
-            #if any([fnmatch.fnmatch(name, pat) for pat in include_patterns]):
-                ## Inspect the file
-                #fpath = join(root, name)
-                #if regex:
-                    #regexpr = tofind_list[0]
-                    #ret = __regex_grepfile(fpath, regexpr)
-                #else:
-                    #ret = __grepfile(fpath, tofind_list, case_insensitive)
-                #if not ret is None:
-                    #found_files.append(ret)
-        #if not recursive:
-            #break
     print('====================')
     print('====================')
     print('\n'.join(found_files))
