@@ -43,3 +43,50 @@ func! FUNC_IBS_REPL()
 endfunc
 
 
+func! FUNC_GUI_CLEANUP()
+python << endpython
+import vim
+
+indentation = '^  *'
+alpha_    = '[A-Za-z_]' #  alphabet and underscore
+alphanum_ = '[0-9A-Za-z_]' # alphanumerics and underscore
+var = '\\<[' + alpha_ + alphanum_ + '*\\>'
+
+def group(regex):
+    return '\\(' + regex + '\\)'
+
+def bref(num):
+    return '\\' + str(num)
+
+def resub(regex, repl, modifiers='gc'):
+    vim.command('%s/' + regex + '/' + repl + '/' + modifiers)
+
+# Comments / Removes explicit new actions
+regex = group(indentation) + group('ui\\.action' + alphanum_ + '* = ') + group('.*newAction')
+repl_comment = bref(1) + '#' + bref(2) + '\r' + bref(1) + bref(3)
+repl_remove = bref(1) + bref(3)
+comment_newaction_def = (regex, repl_comment)
+remove_newaction_def  = (regex, repl_remove)
+
+# Call specified regexes
+resub(*remove_newaction_def)
+
+endpython
+endfunc
+command! GUICLEANUP call FUNC_GUI_CLEANUP()<CR>
+
+
+func! FUNC_CLEAN_WHITESPACE()
+    :%s/ *$//g
+endfunc
+
+
+func! <SID>StripTrailingWhitespaces()
+    "http://stackoverflow.com/questions/356126/how-can-you-automatically-remove-trailing-whitespace-in-vim
+    let l = line(".")
+    let c = col(".")
+    %s/\s\+$//e
+    call cursor(l, c)
+endfun
+
+autocmd FileType c,cpp,java,php,ruby,python autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()

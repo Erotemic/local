@@ -50,7 +50,6 @@ fu! FUNC_ECHOVAR(varname)
     :exec 'let g:foo = &'.varstr
     :echo varstr.' = '.g:foo
 endfu
-command! -nargs=1 ECHOVAR :call FUNC_ECHOVAR(<f-args>)
 
 
 func! WordHighlightFun()
@@ -83,7 +82,6 @@ else
   au! BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
 endif
 endfunction
-command! TextWidthLineOn call FUNC_TextWidthLineOn()
 
 "perl -pi -e 's/[[:^ascii:]]//g' wiki_scale_list.py
 
@@ -99,7 +97,6 @@ func! MYINFO()
     :ECHOVAR filetype
     :ECHOVAR smartindent
 endfu
-command! MYINFOCMD call MYINFO() <C-R>
 
 
 func! QUICKOPEN_leader_tsio(...)
@@ -112,4 +109,14 @@ func! QUICKOPEN_leader_tsio(...)
     :exec 'noremap <leader>s'.key.' :vsplit '.fname.'<CR>'
     :exec 'noremap <leader>i'.key.' :split '.fname.'<CR>'
     :exec 'noremap <leader>o'.key.' :e '.fname.'<CR>'
+endfu
+
+
+
+func! PrintPlugins()
+    " where was an option set
+    :scriptnames " list all plugins, _vimrcs loaded (super)
+    :verbose set history? " reveals value of history and where set
+    :function " list functions
+    :func SearchCompl " List particular function
 endfu

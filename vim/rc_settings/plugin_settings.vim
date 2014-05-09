@@ -2,11 +2,11 @@
 " PLUGIN: NERDTree 
 "
 func! NERD_TREE_PYTHON_PREFERENCE()
-    let g:NERDTreeIgnore = ['\.o$','\~$','\.pyc$','\.aux$','\.masv$','\.bbl$','\.bcf$','\.blg$','\.brf$','\.synctex$','\.upa$','\.upb$','\.pdf$','\.out$','\.log','\.latexmain','\.bib','\.bat*$','\.bst$','\.png$',"^'$"]
+    let g:NERDTreeIgnore = ['\.o$', '\~$', '\.pyc$', '\.pyo$', '\.aux$', '\.masv$', '\.bbl$', '\.bcf$', '\.blg$', '\.brf$', '\.synctex$', '\.upa$', '\.upb$', '\.pdf$', '\.out$', '\.log', '\.latexmain', '\.bib', '\.bat*$', '\.bst$', '\.png$', "^'$", '\.shelf', 'README.md', 'LICENSE']
 endfu
 
 func! NERD_TREE_WITH_BAT()
-    let g:NERDTreeIgnore = ['\.o$','\~$','\.pyc$','\.aux$','\.masv$','\.bbl$','\.bcf$','\.blg$','\.brf$','\.synctex$','\.upa$','\.upb$','\.pdf$','\.out$','\.log','\.latexmain','\.bib','\.bst$','\.png$',"^'$"]
+    let g:NERDTreeIgnore = ['\.o$', '\~$', '\.pyc$', '\.pyo$', '\.aux$', '\.masv$', '\.bbl$', '\.bcf$', '\.blg$', '\.brf$', '\.synctex$', '\.upa$', '\.upb$', '\.pdf$', '\.out$', '\.log', '\.latexmain', '\.bib', '\.bst$', '\.png$', "^'$", '\.shelf', 'README.md', 'LICENSE']
 endfu
 
 call NERD_TREE_WITH_BAT()
@@ -42,18 +42,30 @@ let g:syntastic_always_populate_loc_list = 1
 "-------------------------
 " PLUGIN: Syntastic Python
 let g:syntastic_python_checkers=['flake8'] " ignores lines containng # NOQA
-let g:syntastic_python_flake8_args = "--ignore=E201,E202,E203,E221,E222,E241,E271,E272,E301,E501"
 
-"E201 - whitespace after '('
-"E202 - whitespace before ']'
-"E203 - whitespace before ','
-"E221 - multiple spaces before operator
-"E222 - multiple spaces after operator
-"E241 - multiple spaces after ,
-"E271 - multiple spaces after keyword 
-"E272 - multiple spaces before keyword
-"E301 - expected 1 blank line, found 0
-"E501 - > 79
+" SCRIPTING VIM IN PYTHON 
+" http://orestis.gr/blog/2008/08/10/scripting-vim-with-python/
+
+python << endpython
+import vim
+flake8_errors = [
+    'E127', # continuation line over-indented for visual indent
+    'E201', # whitespace after '('
+    'E202', # whitespace before ']'
+    'E203', # whitespace before ', '
+    'E221', # multiple spaces before operator
+    'E222', # multiple spaces after operator
+    'E241', # multiple spaces after ,
+    'E265', # block comment should start with "# "
+    'E271', # multiple spaces after keyword 
+    'E272', # multiple spaces before keyword
+    'E301', # expected 1 blank line, found 0
+    'E501', # > 79
+] 
+flake8_ignore = '--ignore=' + ','.join(flake8_errors)
+vim.command('let g:syntastic_python_flake8_args = "%s"' % flake8_ignore)
+endpython
+
 "
 "
 "-------------------------
@@ -83,8 +95,8 @@ func! LatexInitialize()
     :set spell
     :setlocal spell spelllang=en_us
     :call SetFontMonoDyslexic()
-    set wildignore=*.o,*~,*.pyc,*.aux,*.masv,*.bbl,*.bcf,*.blg,*.brf,*.synctex,*.upa,*.upb,*.pdf,*.out,*.log
-    let NERDTreeIgnore = ['\.o$','\~$','\.pyc$','\.aux$','\.masv$','\.bbl$','\.bcf$','\.blg$','\.brf$','\.synctex$','\.upa$','\.upb$','\.pdf$','\.out$','\.log','\.latexmain','\.bib']
+    set wildignore=*.o, *~, *.pyc, *.pyo, *.aux, *.masv, *.bbl, *.bcf, *.blg, *.brf, *.synctex, *.upa, *.upb, *.pdf, *.out, *.log
+    let NERDTreeIgnore = ['\.o$', '\~$', '\.pyc$',  '\.pyo$', '\.aux$', '\.masv$', '\.bbl$', '\.bcf$', '\.blg$', '\.brf$', '\.synctex$', '\.upa$', '\.upb$', '\.pdf$', '\.out$', '\.log', '\.latexmain', '\.bib', '\.shelf', 'README.md', 'LICENSE']
 endfu
 
 " Remove open dyslexic

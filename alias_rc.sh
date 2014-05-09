@@ -5,9 +5,10 @@
 
 # Unix aliases
 
-alias ls='ls --color --human-readable --group-directories-first --hide="*.pyc"'
+alias pytree='tree -P "*.py" --dirsfirst'
+alias ls='ls --color --human-readable --group-directories-first --hide="*.pyc" --hide="*.pyo"'
 alias pygrep='grep -r --include "*.py"'
-alias clean_python='rm -rf *.pyc'
+alias clean_python='rm -rf *.pyc && rm -rf *.pyo'
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'

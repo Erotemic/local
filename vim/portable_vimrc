@@ -55,7 +55,7 @@ source ~/local/vim/rc_settings/remap_settings.vim
 
 :call QUICKOPEN_leader_tsio('h', '~/code/ibeis/ibeis/model/hots/match_chips3.py')
 
-:call QUICKOPEN_leader_tsio('e', '~/code/ibeis/ibeis/dev/experiment_harness.py')
+:call QUICKOPEN_leader_tsio('e', '~/code/ibeis/ibeis/dev/experiment_printres.py')
 
 :call QUICKOPEN_leader_tsio('1', '~/code/ibeis/ibeis/dev/results.py')
 

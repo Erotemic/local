@@ -7,6 +7,8 @@ else
     source ~/local/bashrc_ubuntu.sh
 fi
 
+#export OMP_NUM_THREADS=7
+
 source ~/local/alias_rc.sh
 source ~/local/git_helpers.sh
 

@@ -95,3 +95,4 @@ noremap <Leader>9 9gt
 
 " goto next syntastic error 
 :noremap <Leader>e :Errors<CR>
+:noremap <C-T> :NERDTree<CR>
