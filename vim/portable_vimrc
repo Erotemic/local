@@ -57,7 +57,9 @@ source ~/local/vim/rc_settings/remap_settings.vim
 
 :call QUICKOPEN_leader_tsio('e', '~/code/ibeis/ibeis/dev/experiment_printres.py')
 
-:call QUICKOPEN_leader_tsio('1', '~/code/ibeis/ibeis/dev/results.py')
+:call QUICKOPEN_leader_tsio('1', '~/code/ibeis/ibeis/dev/all_imports.py')
+:call QUICKOPEN_leader_tsio('2', '~/code/ibeis/ibeis/dev/params.py')
+:call QUICKOPEN_leader_tsio('0', '~/code/ibeis/_scripts/_timeits')
 
 :call QUICKOPEN_leader_tsio('o', '~/code/ibeis/ibeis/model/preproc/preproc_image.py')
 :call QUICKOPEN_leader_tsio('j', '~/code/ibeis/ibeis/injest/injest_hsdb.py')
