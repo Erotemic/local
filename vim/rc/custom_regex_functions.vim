@@ -43,14 +43,18 @@ func! FUNC_IBS_REPL()
 endfunc
 
 
-func! FUNC_GUI_CLEANUP()
+func! FUNC_CUSTOM_CLEANUP()
 python << endpython
 import vim
 
 indentation = '^  *'
 alpha_    = '[A-Za-z_]' #  alphabet and underscore
 alphanum_ = '[0-9A-Za-z_]' # alphanumerics and underscore
+alphanumdot_ = '[0-9A-Za-z_.]' # alphanumerics and underscore
 var = '\\<[' + alpha_ + alphanum_ + '*\\>'
+chainedvar = '\\<[' + alpha_ + alphanumdot_ + '*\\>'
+
+simplestr = r"'[^']*'"
 
 def group(regex):
     return '\\(' + regex + '\\)'
@@ -58,7 +62,8 @@ def group(regex):
 def bref(num):
     return '\\' + str(num)
 
-def resub(regex, repl, modifiers='gc'):
+def resub(regex, repl, modifiers='gce'):
+    print(regex)
     vim.command('%s/' + regex + '/' + repl + '/' + modifiers)
 
 # Comments / Removes explicit new actions
@@ -69,11 +74,25 @@ comment_newaction_def = (regex, repl_comment)
 remove_newaction_def  = (regex, repl_remove)
 
 # Call specified regexes
-resub(*remove_newaction_def)
+# resub(*remove_newaction_def)
+
+
+# Fix not <word> is
+fix_notis_regex = ' \\<not\\> ' + group(chainedvar) + ' is '
+repl = ' ' + bref(1) + ' is not '
+resub(fix_notis_regex, repl)
+
+
+fix_notin_regex1 = ' \\<not\\> ' + group(chainedvar) + ' in '
+fix_notin_regex2 = ' \\<not\\> ' + group(simplestr)  + ' in '
+repl = ' ' + bref(1) + ' not in '
+resub(fix_notin_regex1, repl)
+resub(fix_notin_regex2, repl)
+
 
 endpython
 endfunc
-command! GUICLEANUP call FUNC_GUI_CLEANUP()<CR>
+command! CUSTOMCLEANUP call FUNC_CUSTOM_CLEANUP()<CR>
 
 
 func! FUNC_CLEAN_WHITESPACE()
