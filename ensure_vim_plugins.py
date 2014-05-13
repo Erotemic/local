@@ -34,6 +34,7 @@ __REPO_URLS__ = [
     'https://github.com/mhinz/vim-startify.git',
     'https://github.com/scrooloose/nerdtree.git',
     'https://github.com/scrooloose/syntastic.git',
+    'https://github.com/scrooloose/nerdcommenter.git'
     'https://github.com/terryma/vim-multiple-cursors.git',
     'https://github.com/tpope/vim-repeat.git',
     'https://github.com/tpope/vim-surround.git',

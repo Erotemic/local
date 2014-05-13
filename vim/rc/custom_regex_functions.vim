@@ -76,6 +76,7 @@ remove_newaction_def  = (regex, repl_remove)
 # Call specified regexes
 # resub(*remove_newaction_def)
 
+# Cleans up common flake8 errors
 
 # Fix not <word> is
 fix_notis_regex = ' \\<not\\> ' + group(chainedvar) + ' is '
@@ -89,6 +90,21 @@ repl = ' ' + bref(1) + ' not in '
 resub(fix_notin_regex1, repl)
 resub(fix_notin_regex2, repl)
 
+
+# Fix PEP8 eq / ne None
+resub(' *== *None', ' is None')
+resub(' *!= *None', ' is not None')
+
+
+# Pep8 spaces between operators
+def ensurespaces(op):
+    repl = ' ' + op + ' '
+    resub('\\>' + op + '\\<', repl)
+    resub(group('[\\])"]') + op + '\\<', bref(1) + repl)
+
+ensurespaces('==')
+ensurespaces('!=')
+ensurespaces('%')
 
 endpython
 endfunc

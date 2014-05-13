@@ -96,3 +96,6 @@ noremap <Leader>9 9gt
 " goto next syntastic error 
 :noremap <Leader>e :SyntasticCheck<CR> :Errors<CR>
 :noremap <C-T> :NERDTree<CR>
+
+:noremap <Leader><F1> :normal i =%r' % (,)<ESC>hh
+:noremap <Leader>. :NERDTree<CR>
