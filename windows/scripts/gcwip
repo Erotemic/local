@@ -1,2 +1,1 @@
-git commit -am "wip"
-git push origin
+git commit -am "wip" && git push
