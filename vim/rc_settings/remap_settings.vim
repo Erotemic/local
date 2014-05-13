@@ -94,5 +94,5 @@ noremap <Leader>9 9gt
 :noremap <Leader>s :%s/\<<C-r><C-w>\>/
 
 " goto next syntastic error 
-:noremap <Leader>e :Errors<CR>
+:noremap <Leader>e :SyntasticCheck<CR> :Errors<CR>
 :noremap <C-T> :NERDTree<CR>

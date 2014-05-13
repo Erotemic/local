@@ -61,6 +61,7 @@ flake8_errors = [
     'E272', # multiple spaces before keyword
     'E301', # expected 1 blank line, found 0
     'E501', # > 79
+    'W602', # Old reraise syntax
 ] 
 flake8_ignore = '--ignore=' + ','.join(flake8_errors)
 vim.command('let g:syntastic_python_flake8_args = "%s"' % flake8_ignore)
