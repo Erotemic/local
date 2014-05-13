@@ -6,6 +6,6 @@ time ./OpenMPTest.exe
 
 gcc -o OpenMPTest2 main_testomp.c -fopenmp -lgomp -lpthreadgce2
 
-gcc -o OpenMPTest2 main_testomp.c -fopenmp -lgomp -libpthreadgc
+gcc -o OpenMPTest2 main_testomp.c -libpthreadgc
 
 time ./OpenMPTest2.exe

@@ -3,7 +3,7 @@ import sys
 import platform
 import signal
 import rob_settings
-import rob_interface
+import rob_interface  # NOQA
 from rob_interface import *  # NOQA
 
 
