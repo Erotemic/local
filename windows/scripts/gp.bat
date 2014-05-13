@@ -1,1 +1,1 @@
-git pull 
+    git clone git@hyrule.cs.rpi.edu:%%1

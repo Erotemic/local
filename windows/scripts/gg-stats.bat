@@ -1,0 +1,1 @@
+    python %USERPROFILE%/local/pygit_helpers.py "git status"

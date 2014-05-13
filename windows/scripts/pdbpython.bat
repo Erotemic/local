@@ -1,0 +1,1 @@
+    ipython --pdb -c "\"%run %%@\""
