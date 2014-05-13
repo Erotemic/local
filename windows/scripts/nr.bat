@@ -1,1 +1,1 @@
-rob grepnr %*
+rob grepnr

@@ -103,11 +103,14 @@ def parse_bash_script(fpath):
 
 
 def translate_cmd_bash_to_batch(command):
-    #print('translate command: %r' % (command,))
+    #print('+ convert: %r' % (command,))
+    # Translate home directory
     command = re.sub('~', '%USERPROFILE%', command)
+    # Translate variable names
     command = re.sub(r'\$([a-zA-Z_]*)', r'%\1%', command)
     # Replace single with double quotes
     command = command.replace('\'', '"')
+    #print('L --> : %r' % (command,))
     return command
 
 
@@ -115,21 +118,27 @@ def translate_rc(rc_fpath):
     print('Translating: rc_fpath=%r' % rc_fpath)
     parse_tree_root = parse_bash_script(rc_fpath)
     #print('\n'.join(map(str, parse_tree_root)))
-    invalid_commands = ['..', 'lls', 'wget', 'l', 'ls', 'rrr', 'upp', 'cop']
+    invalid_commands = ['..', 'lls', 'wget', 'l', 'ls', 'rrr', 'upp',
+                        'cop', 'src', 'rob']
     for tup in parse_tree_root:
         type_ = tup[0]
         # Convert parsed aliases
         if type_ in ['alias']:
             alias_name = tup[1]
+            #print('ALIAS name=%r' % alias_name)
             alias_cmd = tup[2]
             bat_fpath = normpath(join(winscript_dir, alias_name + '.bat'))
             if alias_name in invalid_commands:
-                print('invalid command: %s' % alias_name)
+                #print('invalid command: %s' % alias_name)
                 continue
+                pass
             if exists(bat_fpath):
                 #print('already have: %s' % bat_fpath)
                 continue
+                pass
             batcommand = translate_cmd_bash_to_batch(alias_cmd)
+            # append all arguments to end of alias
+            batcommand += ' %*'
             print(bat_fpath)
             with open(bat_fpath, 'w') as file_:
                 file_.write(batcommand)
@@ -140,11 +149,11 @@ def translate_rc(rc_fpath):
             func_cmds = tup[2]
             bat_fpath = normpath(join(winscript_dir, func_name + '.bat'))
             if func_name in invalid_commands:
-                print('invalid command: %s' % func_name)
+                #print('invalid command: %s' % func_name)
                 continue
             if exists(bat_fpath):
                 #print('already have: %s' % bat_fpath)
-                #continue
+                continue
                 pass
             batcommand = '\n'.join(
                 [translate_cmd_bash_to_batch(cmdtup[1])

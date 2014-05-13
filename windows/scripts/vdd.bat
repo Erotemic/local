@@ -1,1 +1,1 @@
-explorer D:\data\work
+vd %USERPROFILE%/data

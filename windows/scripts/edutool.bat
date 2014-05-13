@@ -1,5 +1,1 @@
-    pushd .
-    loc
-    git commit -am "profile wip"
-    git push
-    popd
+gvim %USERPROFILE%/code/ibeis/utool

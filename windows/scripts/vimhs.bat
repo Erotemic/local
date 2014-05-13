@@ -1,1 +1,1 @@
-    xsel --clipboard < %USERPROFILE%/clipboard.txt
+gvim -S %USERPROFILE%/vim_hotspotter_session.vim

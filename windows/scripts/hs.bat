@@ -1,2 +1,1 @@
-C:
-cd %USERPROFILE%\code\hotspotter
+cd %USERPROFILE%/code/ibeis/ibeis/model/hots

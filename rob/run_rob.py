@@ -62,6 +62,7 @@ def process_args(r, argv):
 
 def main():
     r = ROB()
+    print('Run main: %r: ' % (sys.argv,))
     if len(sys.argv) > 1:
         ARG_SEP = ';'
         #Arguemnts are broken up with semicolons

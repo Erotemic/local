@@ -1,10 +1,1 @@
-    rm *.aux
-    rm *.bbl
-    rm *.brf 
-    rm *.log 
-    rm *.bak 
-    rm *.blg 
-    rm *.tips 
-    rm *.synctex
-    rm main.pdf
-    rm main.dvi
+tar xvf

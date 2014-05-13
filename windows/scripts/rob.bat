@@ -1,1 +1,1 @@
-python "%USERPROFILE%\local\rob\run_rob.py" %*
+python %USERPROFILE%\local\rob\run_rob.py %*
