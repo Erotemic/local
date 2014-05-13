@@ -7,7 +7,7 @@ int main(int argc, char **argv)
     long i;
 
 #pragma omp parallel for reduction(+: result)
-    for (i = 0; i < 10000000; i++) {
+    for (i = 0; i < 100000000; i++) {
         result++;
     }
     printf("%li\n", result);

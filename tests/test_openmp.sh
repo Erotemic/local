@@ -1,11 +1,11 @@
-gcc -o OpenMPTest main_testomp.c
+#alias timecmd=time
 
-chmod +x OpenMPTest.exe
+gcc -o OpenMPTest1.exe main_testomp2.c
+chmod +x OpenMPTest1.exe
+timecmd OpenMPTest1.exe
+gcc -o OpenMPTest2.exe main_testomp2.c -fopenmp 
+timecmd OpenMPTest2.exe
+#-lgomp -lpthreadgce2
+#gcc -o OpenMPTest2 main_testomp.c -libpthreadgc
 
-time ./OpenMPTest.exe
-
-gcc -o OpenMPTest2 main_testomp.c -fopenmp -lgomp -lpthreadgce2
-
-gcc -o OpenMPTest2 main_testomp.c -libpthreadgc
-
-time ./OpenMPTest2.exe
+gcc -static -static-libgcc -static-libstdc++ -o OpenMPTest2.exe main_testomp2.c -fopenmp 
