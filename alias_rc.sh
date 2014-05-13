@@ -67,6 +67,7 @@ alias home='cd ~'
 alias data='cd ~/data'
 alias code='cd ~/code'
 alias loc='cd ~/local'
+alias lc='cd ~/local'
 alias lt='cd ~/latex'
 alias scr='cd ~/scripts'
 # Special navigation
