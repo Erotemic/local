@@ -21,6 +21,7 @@ vim/vimfiles/bundle/nerdtree/
 vim/vimfiles/bundle/syntastic/
 vim/vimfiles/bundle/vim-repeat/
 vim/vimfiles/bundle/vim-surround/
+vim/vimfiles/bundle/*
 vim/vimfiles/.netrwhist
 
 vim/vimfiles/.netrwhist

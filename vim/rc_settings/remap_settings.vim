@@ -91,7 +91,9 @@ noremap <Leader>9 9gt
 
 
 " Search and replace under cursor
-:noremap <Leader>s :%s/\<<C-r><C-w>\>/
+":noremap <Leader>s :%s/\<<C-r><C-w>\>/
+" Add ss which does the same thing but is specific
+:noremap <Leader>ss :%s/\<<C-r><C-w>\>/
 
 " goto next syntastic error 
 :noremap <Leader>e :SyntasticCheck<CR> :Errors<CR>

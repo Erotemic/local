@@ -1,6 +1,6 @@
 " sensible.vim - Defaults everyone can agree on
 " Maintainer:   Tim Pope <http://tpo.pe/>
-" Version:      1.0
+" Version:      1.1
 
 if exists('g:loaded_sensible') || &compatible
   finish
@@ -20,14 +20,13 @@ endif
 set autoindent
 set backspace=indent,eol,start
 set complete-=i
-set showmatch
 set smarttab
 
 set nrformats-=octal
 set shiftround
 
 set ttimeout
-set ttimeoutlen=50
+set ttimeoutlen=100
 
 set incsearch
 " Use <C-L> to clear the highlighting of :set hlsearch.
@@ -40,49 +39,43 @@ set ruler
 set showcmd
 set wildmenu
 
-set scrolloff=1
-set sidescrolloff=5
+if !&scrolloff
+  set scrolloff=1
+endif
+if !&sidescrolloff
+  set sidescrolloff=5
+endif
 set display+=lastline
+
+if &encoding ==# 'latin1' && has('gui_running')
+  set encoding=utf-8
+endif
 
 if &listchars ==# 'eol:$'
   set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
-  if &termencoding ==# 'utf-8' || &encoding ==# 'utf-8'
-    let &listchars = "tab:\u21e5 ,trail:\u2423,extends:\u21c9,precedes:\u21c7,nbsp:\u26ad"
-  endif
+endif
+
+if &shell =~# 'fish$'
+  set shell=/bin/bash
 endif
 
 set autoread
-set autowrite
 set fileformats+=mac
 
 if &history < 1000
   set history=1000
 endif
-set viminfo^=!
-
-let s:dir = has('win32') ? '~/Application Data/Vim' : has('mac') ? '~/Library/Vim' : '~/.local/share/vim'
-if isdirectory(expand(s:dir))
-  if &directory =~# '^\.,'
-    let &directory = expand(s:dir) . '/swap//,' . &directory
-  endif
-  if &backupdir =~# '^\.,'
-    let &backupdir = expand(s:dir) . '/backup//,' . &backupdir
-  endif
-  if exists('+undodir') && &undodir =~# '^\.\%(,\|$\)'
-    let &undodir = expand(s:dir) . '/undo//,' . &undodir
-  endif
+if &tabpagemax < 50
+  set tabpagemax=50
 endif
-if exists('+undofile')
-  set undofile
+if !empty(&viminfo)
+  set viminfo^=!
 endif
+set sessionoptions-=options
 
 " Allow color schemes to do bright colors without forcing bold.
 if &t_Co == 8 && $TERM !~# '^linux'
   set t_Co=16
-endif
-
-if !exists('g:netrw_list_hide')
-  let g:netrw_list_hide = '^\.,\~$,^tags$'
 endif
 
 " Load matchit.vim, but only if the user hasn't installed a newer version.
@@ -90,7 +83,6 @@ if !exists('g:loaded_matchit') && findfile('plugin/matchit.vim', &rtp) ==# ''
   runtime! macros/matchit.vim
 endif
 
-" Make Y consistent with C and D.  See :help Y.
-nnoremap Y y$
+inoremap <C-U> <C-G>u<C-U>
 
 " vim:set ft=vim et sw=2:

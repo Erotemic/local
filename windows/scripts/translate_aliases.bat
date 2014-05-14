@@ -1,0 +1,1 @@
+python %USERPROFILE%/local/windows/translate_windows_aliases.py

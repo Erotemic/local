@@ -28,9 +28,11 @@ func! ToggleAlpha()
     endif 
     if has("win32") || has("win16")
         if (g:togalpha) 
-            call libcallnr("~/local/vim/rc/vimtweak.dll", "SetAlpha", 220) 
+            :TweakAlpha 220
+            "call libcallnr("~/local/vim/rc/vimtweak.dll", "SetAlpha", 220) 
         else 
-            call libcallnr("~/local/vim/rc/vimtweak.dll", "SetAlpha", 255) 
+            :TweakAlpha 255
+            "call libcallnr("~/local/vim/rc/vimtweak.dll", "SetAlpha", 255) 
         endif 
     endif
 endfu 

@@ -1,0 +1,1 @@
+gvim %USERPROFILE%/local/modulechanges.sh

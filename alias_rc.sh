@@ -68,6 +68,8 @@ alias data='cd ~/data'
 alias code='cd ~/code'
 alias loc='cd ~/local'
 alias lc='cd ~/local'
+alias vf='cd ~/local/vim/vimfiles'
+alias vfb='cd ~/local/vim/vimfiles/bundle'
 alias lt='cd ~/latex'
 alias scr='cd ~/scripts'
 # Special navigation
