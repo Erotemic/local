@@ -84,6 +84,8 @@ alias pydist='cd ~/code/pyrf/'
 
 alias ut='cd ~/code/utool'
 alias vt='cd ~/code/vtool'
+alias gt='cd ~/code/guitool'
+alias pt='cd ~/code/plottool'
 alias ibi='cd ~/code/ibeis/ibeis'
 alias ibc='cd ~/code/ibeis/ibeis/control'
 alias ibv='cd ~/code/ibeis/ibeis/view'

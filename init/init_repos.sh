@@ -8,6 +8,8 @@ git clone git@github.com:Erotemic/utool.git
 git clone git@github.com:Erotemic/vtool.git
 git clone git@github.com:Erotemic/ibeis.git
 git clone git@github.com:Erotemic/flann.git
+git clone git@github.com:Erotemic/guitool.git
+git clone git@github.com:Erotemic/plottool.git
 git clone git@github.com:Erotemic/hesaff.git
 git clone git@github.com:Erotemic/opencv.git
 

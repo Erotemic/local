@@ -129,11 +129,11 @@ def translate_rc(rc_fpath):
             alias_cmd = tup[2]
             bat_fpath = normpath(join(winscript_dir, alias_name + '.bat'))
             if alias_name in invalid_commands:
-                #print('invalid command: %s' % alias_name)
+                print('invalid command: %s' % alias_name)
                 continue
                 pass
             if exists(bat_fpath):
-                #print('already have: %s' % bat_fpath)
+                print('already have: %s' % bat_fpath)
                 continue
                 pass
             batcommand = translate_cmd_bash_to_batch(alias_cmd)

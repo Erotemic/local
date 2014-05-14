@@ -5,7 +5,7 @@ import os
 from os.path import expanduser, exists, join, realpath, isdir, normpath, split
 
 DO_PULL = '--pull' in sys.argv
-QUICK = ('--quick' in sys.argv or '--nopull' in sys.argv
+QUICK = ('--quick' in sys.argv or '--nopull' in sys.argv)
 
 
 __HAVE_SUBMODULES__ = [

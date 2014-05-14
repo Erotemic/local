@@ -10,6 +10,10 @@ __REPOS__ = map(expanduser, [
     #'~/latex/crall-candidacy-2013',
     '~/local',
     '~/code/hesaff',
+    '~/code/guitool',
+    '~/code/plottool',
+    '~/code/utool',
+    '~/code/vtool',
     '~/code/ibeis',
     '~/code/pyrf',
 ])
