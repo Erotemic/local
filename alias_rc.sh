@@ -78,6 +78,12 @@ alias cv='cd ~/code/opencv'
 alias hs='cd ~/code/ibeis/ibeis/model/hots'
 alias ib='cd ~/code/ibeis/'
 alias rf='cd ~/code/pyrf/'
+
+
+alias pydist='cd ~/code/pyrf/'
+
+alias ut='cd ~/code/utool'
+alias vt='cd ~/code/vtool'
 alias ibi='cd ~/code/ibeis/ibeis'
 alias ibc='cd ~/code/ibeis/ibeis/control'
 alias ibv='cd ~/code/ibeis/ibeis/view'

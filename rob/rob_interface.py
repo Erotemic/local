@@ -279,7 +279,9 @@ def project_dpaths():
     project_list = [
         #'~/code/hotspotter',
         '~/code/hesaff',
-        '~/code/ibeis'
+        '~/code/ibeis',
+        '~/code/vtool',
+        '~/code/utool',
     ]
     return map(expanduser, project_list)
 

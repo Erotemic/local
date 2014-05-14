@@ -35,8 +35,8 @@ source ~/local/vim/rc_settings/remap_settings.vim
 :call QUICKOPEN_leader_tsio('r', '~/local/vim/rc/custom_regex_commands.vim')
 "___________________
 " TOOLS
-:call QUICKOPEN_leader_tsio('u', '~/code/ibeis/utool/__init__.py')
-:call QUICKOPEN_leader_tsio('v', '~/code/ibeis/vtool/__init__.py')
+:call QUICKOPEN_leader_tsio('u', '~/code/utool/utool/__init__.py')
+:call QUICKOPEN_leader_tsio('v', '~/code/vtool/vtool/__init__.py')
 :call QUICKOPEN_leader_tsio('p', '~/code/ibeis/plottool/__init__.py')
 "___________________
 " HESAFF

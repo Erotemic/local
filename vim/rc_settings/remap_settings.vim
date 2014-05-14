@@ -101,3 +101,8 @@ noremap <Leader>9 9gt
 
 :noremap <Leader><F1> :normal i =%r' % (,)<ESC>hh
 :noremap <Leader>. :NERDTree<CR>
+
+
+" RESIZE VSPLIT
+:noremap <Leader>+ :30winc ><CR>
+:noremap <Leader>- :30winc <<CR>
