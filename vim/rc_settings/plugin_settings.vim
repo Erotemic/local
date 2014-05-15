@@ -1,12 +1,34 @@
 "-------------------------
 " PLUGIN: NERDTree 
 "
-func! NERD_TREE_PYTHON_PREFERENCE()
-    let g:NERDTreeIgnore = ['\.o$', '\~$', '\.pyc$', '\.pyo$', '\.aux$', '\.masv$', '\.bbl$', '\.bcf$', '\.blg$', '\.brf$', '\.synctex$', '\.upa$', '\.upb$', '\.pdf$', '\.out$', '\.log', '\.latexmain', '\.bib', '\.bat*$', '\.bst$', '\.png$', "^'$", '\.shelf', 'README.md', 'LICENSE']
-endfu
+
 
 func! NERD_TREE_WITH_BAT()
-    let g:NERDTreeIgnore = ['\.o$', '\~$', '\.pyc$', '\.pyo$', '\.aux$', '\.masv$', '\.bbl$', '\.bcf$', '\.blg$', '\.brf$', '\.synctex$', '\.upa$', '\.upb$', '\.pdf$', '\.out$', '\.log', '\.latexmain', '\.bib', '\.bst$', '\.png$', "^'$", '\.shelf', 'README.md', 'LICENSE']
+python << endpython
+import vim
+# Define ignored suffixes
+ignore_pysuffix  = ['.pyo', '.pyc', '.shelf']
+ignore_texsuffix = ['.aux', '.masv', '.bbl', '.bst', '.bcf', '.blg', '.brf',
+                    '.synctex', '.upa', '.upb', '.pdf', '.out', '.log',
+                    '.latexmain', '.bib']
+ignore_imgsuffix = ['.png']
+ignore_suffixes = ignore_pysuffix + ignore_texsuffix + ignore_imgsuffix
+
+# Define ignored files
+ignore_files = [
+#'README.md', 
+'LICENCE',
+"'", '~',]
+
+# Convert files and suffixes to regexes
+ignore_suffix_regexes = [suffix.replace('.', '\\.') + '$' for suffix in ignore_suffixes]
+ignore_file_regexes   = ['^' + fname + '$' for fname in ignore_files]
+ignore_regexes = ignore_suffix_regexes + ignore_file_regexes
+
+# build nerdtreeignore command
+nerdtree_ignore = '[%s]' % (', '.join(['"%s"' % str(regex) for regex in ignore_regexes]))
+vim.command('let g:NERDTreeIgnore = %s' % nerdtree_ignore)
+endpython
 endfu
 
 call NERD_TREE_WITH_BAT()

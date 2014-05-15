@@ -119,7 +119,8 @@ def _sed(r, regexpr, repl, force=False, recursive=False, dpath_list=None):
 
 def _grep(r, tofind_list, recursive=True, case_insensitive=True, regex=False,
           dpath_list=None, invert=False):
-    include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h']  # , '*.txt']
+    include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c',
+                        '*.h', '*.vim']  # , '*.txt']
     exclude_dirs = HS_EXCLUDE
     # ensure list input
     if isinstance(include_patterns, str):
