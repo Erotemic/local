@@ -1,77 +1,38 @@
 #!/usr/bin/env python
 from __future__ import absolute_import, division, print_function
-from os.path import expanduser, exists, normpath, realpath
-import os
 import sys
-
-code_dir = expanduser('~/code')
-
-DO_PULL = '--pull' in sys.argv
-QUICK = ('--quick' in sys.argv or '--nopull' in sys.argv)
+import util_git
 
 
-repo_urls = [
-    'https://github.com/Erotemic/utool.git',
-    'https://github.com/Erotemic/guitool.git',
-    'https://github.com/Erotemic/plottool.git',
-    'https://github.com/Erotemic/vtool.git',
-    'https://github.com/Erotemic/hesaff.git',
-    'https://github.com/Erotemic/ibeis.git',
-]
+PULL    = '--pull' in sys.argv
+DEVELOP = '--develop' in sys.argv
+CHECK   = '--nocheck' not in sys.argv
 
 
-def truepath(path):
-    return normpath(realpath(expanduser(path)))
+# Get IBEIS git repository URLS and their local path
+ibeis_repo_urls = util_git.IBEIS_REPOS_URLS
+ibeis_repo_dirs = util_git.get_repo_dirs(ibeis_repo_urls, util_git.CODE_DIR)
 
 
-def unixpath(path):
-    return truepath(path).replace('\\', '/')
+def checkout_ibeis_repos():
+    """ Checkout IBEIS repos out if they don't exist """
+    util_git.checkout_repos(ibeis_repo_urls, ibeis_repo_dirs)
 
 
-def cd(dir_):
-    dir_ = truepath(dir_)
-    print('> cd ' + dir_)
-    os.chdir(dir_)
+def pull_ibeis_repos():
+    """ Pull IBEIS repos """
+    util_git.pull_repos(ibeis_repo_dirs)
 
 
-def cmd(command):
-    print('> ' + command)
-    os.system(command)
+def setup_develop_ibeis_repos():
+    """ Install with setuptools using the develop flag """
+    util_git.setup_develop_repos(ibeis_repo_dirs)
 
 
-IS_OWNER = True
-if IS_OWNER:
-    repo_urls = [repo.replace('.com/', '.com:').replace('https://', 'git@') for repo in repo_urls]
-
-
-def get_repo_dir(repo_url):
-    """ Break url into a dirname """
-    slashpos = repo_url.rfind('/')
-    colonpos = repo_url.rfind(':')
-    if slashpos != -1 and slashpos > colonpos:
-        pos = slashpos
-    else:
-        pos = colonpos
-    repodir = repo_url[pos + 1:].replace('.git', '')
-    return repodir
-
-
-repo_dirs = map(get_repo_dir, repo_urls)
-
-# Navigate to code dir
-cd(code_dir)
-
-# Check out any repo you dont have
-for repodir, repourl in zip(repo_dirs, repo_urls):
-    print('Checking: ' + repodir)
-    if not exists(repodir):
-        cmd('git clone ' + repourl)
-
-if not QUICK:
-    # Updating repos is a bit slower
-    for repodir in repo_dirs:
-        print('Updating: ' + repodir)
-        cd(repodir)
-        #cmd('git pull')
-        cmd('python setup.py develop')
-        cd(code_dir)
+if __name__ == '__main__':
+    if CHECK:
+        checkout_ibeis_repos()
+    if PULL:
+        pull_ibeis_repos()
+    if DEVELOP:
+        setup_develop_ibeis_repos()

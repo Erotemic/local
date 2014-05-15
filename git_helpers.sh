@@ -5,17 +5,17 @@ gg-recover()
 
 gg-stats()
 {
-    python ~/local/pygit_helpers.py 'git status'
+    python ~/local/util_git.py 'git status'
 }
 
 gg-pull()
 {
-    python ~/local/pygit_helpers.py 'git pull'
+    python ~/local/util_git.py 'git pull'
 }
 
 gg-push()
 {
-    python ~/local/pygit_helpers.py 'git push'
+    python ~/local/util_git.py 'git push'
 }
 
 alias ggs=gg-stats
