@@ -37,7 +37,7 @@ source ~/local/vim/rc_settings/remap_settings.vim
 " TOOLS
 :call QUICKOPEN_leader_tsio('u', '~/code/utool/utool/__init__.py')
 :call QUICKOPEN_leader_tsio('v', '~/code/vtool/vtool/__init__.py')
-:call QUICKOPEN_leader_tsio('p', '~/code/ibeis/plottool/__init__.py')
+:call QUICKOPEN_leader_tsio('p', '~/code/plottool/plottool/__init__.py')
 "___________________
 " HESAFF
 :call QUICKOPEN_leader_tsio('a', '~/code/hesaff/pyhesaff/_pyhesaff.py')
