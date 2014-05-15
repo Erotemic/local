@@ -40,4 +40,3 @@ au FileType cpp set foldmethod=syntax
 au CursorMoved * call WordHighlightFun()
 au InsertLeave * hi Cursor guibg=red
 au InsertEnter * hi Cursor guibg=green
-
