@@ -1,1 +1,1 @@
-cd %USERPROFILE%/code/hotspotter/hotspotter
+cd %USERPROFILE%/code/hotspotter/hotspotter %*

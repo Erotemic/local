@@ -1,1 +1,1 @@
-gvim %USERPROFILE%/code/ibeis/utool
+gvim %USERPROFILE%/code/ibeis/utool %*

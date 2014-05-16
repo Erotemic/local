@@ -1,6 +1,10 @@
 from __future__ import absolute_import, division, print_function
 from os.path import join, expanduser, exists, normpath
 import re
+import sys
+
+VERBOSE = '--verbose' in sys.argv
+FORCE = '--force' in sys.argv
 
 
 #import sys
@@ -125,17 +129,22 @@ def translate_rc(rc_fpath):
         # Convert parsed aliases
         if type_ in ['alias']:
             alias_name = tup[1]
-            #print('ALIAS name=%r' % alias_name)
+            if VERBOSE:
+                print('ALIAS name=%r' % alias_name)
             alias_cmd = tup[2]
             bat_fpath = normpath(join(winscript_dir, alias_name + '.bat'))
             if alias_name in invalid_commands:
-                print('invalid command: %s' % alias_name)
+                if VERBOSE:
+                    print('   ...invalid')
+                #print('invalid command: %s' % alias_name)
                 continue
                 pass
-            if exists(bat_fpath):
-                print('already have: %s' % bat_fpath)
+            if exists(bat_fpath) and not FORCE:
+                if VERBOSE:
+                    print('   ...up to date')
                 continue
                 pass
+            print('   ...TRANSLATING')
             batcommand = translate_cmd_bash_to_batch(alias_cmd)
             # append all arguments to end of alias
             batcommand += ' %*'
@@ -146,15 +155,20 @@ def translate_rc(rc_fpath):
         # Convert parsed functions
         elif type_ in ['func']:
             func_name = tup[1]
+            if VERBOSE:
+                print('FUNC name=%r' % func_name)
             func_cmds = tup[2]
             bat_fpath = normpath(join(winscript_dir, func_name + '.bat'))
             if func_name in invalid_commands:
-                #print('invalid command: %s' % func_name)
+                if VERBOSE:
+                    print('   ...invalid func')
                 continue
-            if exists(bat_fpath):
-                #print('already have: %s' % bat_fpath)
+            if exists(bat_fpath) and not FORCE:
+                if VERBOSE:
+                    print('   ...up to date func')
                 continue
                 pass
+            print('   ...TRANSLATING')
             batcommand = '\n'.join(
                 [translate_cmd_bash_to_batch(cmdtup[1])
                  for cmdtup in func_cmds]

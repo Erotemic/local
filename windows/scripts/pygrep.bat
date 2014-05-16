@@ -1,1 +1,1 @@
-grep -r --include "*.py"
+grep -r --include "*.py" %*

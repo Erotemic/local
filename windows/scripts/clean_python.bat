@@ -1,1 +1,1 @@
-rm -rf *.pyc && rm -rf *.pyo
+rm -rf *.pyc && rm -rf *.pyo %*

@@ -1,1 +1,1 @@
-rob hskill
+rob hskill %*

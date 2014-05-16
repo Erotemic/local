@@ -1,1 +1,1 @@
-source %USERPROFILE%/local/bashrc.sh" # Refresh
+source %USERPROFILE%/local/bashrc.sh" # Refresh %*

@@ -1,1 +1,1 @@
-cd %USERPROFILE%/code/opencv
+cd %USERPROFILE%/code/opencv %*

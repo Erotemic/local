@@ -1,1 +1,1 @@
-cd %USERPROFILE%\local\vim\vimfiles
+cd %USERPROFILE%/local/vim/vimfiles %*

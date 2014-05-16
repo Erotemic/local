@@ -1,1 +1,1 @@
-git commit -am "wip" && git push
+git commit -am "wip" && git push %*

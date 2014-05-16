@@ -44,7 +44,8 @@ def gitcmd(repo, command):
 def gg_command(command):
     """ Runs a command on all of your PROJECT_REPOS """
     for repo in PROJECT_REPOS:
-        gitcmd(repo, command)
+        if exists(repo):
+            gitcmd(repo, command)
 
 
 def get_repo_dname(repo_url):

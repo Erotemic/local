@@ -1,1 +1,1 @@
-gvim %USERPROFILE%/Dropbox/Notes/TODO.txt
+gvim %USERPROFILE%/Dropbox/Notes/TODO.txt %*

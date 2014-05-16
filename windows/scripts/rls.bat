@@ -1,1 +1,1 @@
-rob ls
+rob ls %*

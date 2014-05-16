@@ -1,1 +1,1 @@
-tar jxf
+tar jxf %*

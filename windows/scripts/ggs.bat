@@ -1,1 +1,1 @@
-gg-stats
+gg-stats %*

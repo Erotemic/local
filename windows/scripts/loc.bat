@@ -1,1 +1,1 @@
-cd %USERPROFILE%/local
+cd %USERPROFILE%/local %*

@@ -1,1 +1,1 @@
-ls -alF
+ls -alF %*

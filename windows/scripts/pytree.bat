@@ -1,1 +1,1 @@
-tree -P "*.py" --dirsfirst
+tree -P "*.py" --dirsfirst %*

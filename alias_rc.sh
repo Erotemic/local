@@ -56,7 +56,7 @@ alias png2jpg='for f in *.png; do ffmpeg -i "$f" "${f%.png}.jpg"; done'
 
 
 # Git
-alias gcwip='git commit -am "wip"; git push'
+alias gcwip='git commit -am "wip" && git push'
 alias gp='git pull'
 hyrule_get(){
     git clone git@hyrule.cs.rpi.edu:$1

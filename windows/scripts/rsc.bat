@@ -1,1 +1,1 @@
-rob research_clipboard None 3
+rob research_clipboard None 3 %*

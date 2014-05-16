@@ -1,1 +1,1 @@
-wget --mirror --no-parent
+wget --mirror --no-parent %*

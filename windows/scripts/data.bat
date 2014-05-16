@@ -1,1 +1,1 @@
-cd %USERPROFILE%/data
+cd %USERPROFILE%/data %*

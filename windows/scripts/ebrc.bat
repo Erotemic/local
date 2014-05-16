@@ -1,1 +1,1 @@
-gvim %USERPROFILE%/local/bashrc.sh
+gvim %USERPROFILE%/local/bashrc.sh %*

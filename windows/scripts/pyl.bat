@@ -1,1 +1,1 @@
-pylint --disable=C
+pylint --disable=C %*

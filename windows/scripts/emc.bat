@@ -1,1 +1,1 @@
-gvim %USERPROFILE%/local/modulechanges.sh
+gvim %USERPROFILE%/local/modulechanges.sh %*

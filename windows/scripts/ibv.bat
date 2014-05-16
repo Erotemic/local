@@ -1,1 +1,1 @@
-cd %USERPROFILE%/code/ibeis/ibeis/view
+cd %USERPROFILE%/code/ibeis/ibeis/view %*

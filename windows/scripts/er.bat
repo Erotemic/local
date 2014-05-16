@@ -1,1 +1,1 @@
-gvim %prob%
+gvim %prob% %*

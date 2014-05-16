@@ -1,1 +1,1 @@
-pyflakes
+pyflakes %*

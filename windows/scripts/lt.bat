@@ -1,1 +1,1 @@
-cd %USERPROFILE%/latex
+cd %USERPROFILE%/latex %*

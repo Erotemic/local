@@ -1,1 +1,1 @@
-cd %USERPROFILE%/latex/crall-candidacy-2013/
+cd %USERPROFILE%/latex/crall-candidacy-2013/ %*

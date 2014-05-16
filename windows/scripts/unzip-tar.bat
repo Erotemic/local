@@ -1,1 +1,1 @@
-tar xvf
+tar xvf %*

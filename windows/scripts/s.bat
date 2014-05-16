@@ -1,1 +1,1 @@
-git status
+git status %*

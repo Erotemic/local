@@ -1,1 +1,1 @@
-vd %USERPROFILE%/data
+vd %USERPROFILE%/data %*
