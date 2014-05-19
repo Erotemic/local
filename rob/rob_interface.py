@@ -282,6 +282,8 @@ def project_dpaths():
         '~/code/ibeis',
         '~/code/vtool',
         '~/code/utool',
+        '~/code/guitool',
+        '~/code/plottool',
     ]
     return map(expanduser, project_list)
 

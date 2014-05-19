@@ -59,15 +59,15 @@ set tw=500
 
 " Vim: Gray Line Numbering
 :set nu 
-if has("gui_running")
-    :highlight LineNr guifg=#333333
-    " Cross platform fonts
-    if has("win32") || has("win16")
-        :highlight LineNr font='Fixedsys'
-    else
-        :highlight LineNr font='Monospace'
-    endif
-endif
+"if has("gui_running")
+    ":highlight LineNr guifg=#333333
+    "" Cross platform fonts
+    "if has("win32") || has("win16")
+        ":highlight LineNr font='Fixedsys'
+    "else
+        ":highlight LineNr font='Monospace'
+    "endif
+"endif
 
 "-------------------------
 

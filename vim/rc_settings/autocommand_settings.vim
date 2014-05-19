@@ -1,5 +1,10 @@
 " au autocommand
 
+" UNDOO ALL AUTOCOMMANDS
+"au!
+
+
+" Define python autocommands
 au FileType python set omnifunc=pythoncomplete#Complete
 au FileType python set nosmartindent
 au FileType python filetype indent on
@@ -40,3 +45,7 @@ au FileType cpp set foldmethod=syntax
 au CursorMoved * call WordHighlightFun()
 au InsertLeave * hi Cursor guibg=red
 au InsertEnter * hi Cursor guibg=green
+
+
+" Use shell syntax for markdown files
+au BufNewFile,BufRead *.md set ft=sh
