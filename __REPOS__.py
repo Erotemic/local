@@ -81,7 +81,7 @@ def fix_repo_url(repo_url, in_type='https', out_type='ssh'):
     }
     for old, new in izip(format_dict[in_type], format_dict[out_type]):
         repo_url = repo_url.replace(old, new)
-        return repo_url
+    return repo_url
 
 
 def get_computer_name():
@@ -92,6 +92,7 @@ COMPUTER_NAME  = get_computer_name()
 # Check to see if you are on one of Jons Computers
 #
 IS_OWNER = COMPUTER_NAME in ['BakerStreet', 'Hyrule', 'Ooo']
+
 if IS_OWNER:
     IBEIS_REPOS_URLS = [fix_repo_url(repo, 'https', 'ssh')
                          for repo in IBEIS_REPOS_URLS]
