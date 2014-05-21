@@ -59,6 +59,7 @@ source ~/local/vim/rc_settings/remap_settings.vim
 
 :call QUICKOPEN_leader_tsio('1', '~/code/ibeis/ibeis/dev/all_imports.py')
 :call QUICKOPEN_leader_tsio('2', '~/code/ibeis/ibeis/dev/params.py')
+:call QUICKOPEN_leader_tsio('3', '~/code/guitool/guitool/guitool_tables.py')
 :call QUICKOPEN_leader_tsio('5', '~/local/bashrc.sh')
 :call QUICKOPEN_leader_tsio('0', '~/code/ibeis/_scripts/_timeits')
 

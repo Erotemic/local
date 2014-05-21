@@ -123,7 +123,7 @@ def translate_rc(rc_fpath):
     parse_tree_root = parse_bash_script(rc_fpath)
     #print('\n'.join(map(str, parse_tree_root)))
     invalid_commands = ['..', 'lls', 'wget', 'l', 'ls', 'rrr', 'upp',
-                        'cop', 'src', 'rob']
+                        'cop', 'src', 'rob', 'scr']
     for tup in parse_tree_root:
         type_ = tup[0]
         # Convert parsed aliases

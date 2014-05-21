@@ -4,6 +4,7 @@ cd %USERPROFILE%\code\ibeis
 nircmd.exe exec hide ^
  ipython qtconsole ^
  --colors=Linux ^
+ --pylab=qt ^
  --ConsoleWidget.font_size=9 ^
  --ConsoleWidget.font_family="Mono Dyslexic" 
 
