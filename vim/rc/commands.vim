@@ -17,3 +17,22 @@ command! LOADSESSION :mksession ~/mysession.vim
 
 command! SAVEHSSESSION :mksession ~/vim_hotspotter_session.vim
 command! LOADHSSESSION :source ~/vim_hotspotter_session.vim
+
+
+" Website showing commands to list env settings
+"http://vim.wikia.com/wiki/Displaying_the_current_Vim_environment
+" Show global variables
+":let          - all variables
+":let FooBar   - variable FooBar
+":let g:       - global variables
+":let v:       - Vim variables
+
+" Dump all settings to file
+":mkv vim-settings-dump.vim
+"
+"
+"THis is how to actually do it
+":redir @a " Redirect into buffer a
+"< DO COMMAND> 
+"redir NED
+""ap

@@ -2,6 +2,7 @@
 from __future__ import absolute_import, division, print_function
 import sys
 import util_git
+import __REPOS__
 
 
 PULL    = '--pull' in sys.argv
@@ -10,7 +11,7 @@ CHECK   = '--nocheck' not in sys.argv
 
 
 # Get IBEIS git repository URLS and their local path
-ibeis_repo_urls = util_git.IBEIS_REPOS_URLS
+ibeis_repo_urls = __REPOS__.CODE_REPOS
 ibeis_repo_dirs = util_git.get_repo_dirs(ibeis_repo_urls, util_git.CODE_DIR)
 
 

@@ -2,8 +2,10 @@ from __future__ import absolute_import, division, print_function
 import sys
 import os
 from itertools import izip
-from os.path import expanduser, normpath, realpath, exists, join, dirname, split, isdir
+from os.path import exists, join, dirname, split, isdir
 import __REPOS__
+import meta_util_git as mu  # NOQA
+from meta_util_git import get_repo_dirs, get_repo_dname  # NOQA
 
 PROJECT_REPOS    = __REPOS__.PROJECT_REPOS
 IBEIS_REPOS_URLS = __REPOS__.IBEIS_REPOS_URLS
@@ -13,30 +15,13 @@ BUNDLE_DPATH     = __REPOS__.BUNDLE_DPATH
 VIM_REPOS_WITH_SUBMODULES = __REPOS__.VIM_REPOS_WITH_SUBMODULES
 
 
-def truepath(path):
-    return normpath(realpath(expanduser(path)))
-
-
-def unixpath(path):
-    return truepath(path).replace('\\', '/')
-
-
-def cd(dir_):
-    dir_ = truepath(dir_)
-    print('> cd ' + dir_)
-    os.chdir(dir_)
-
-
-def cmd(command):
-    print('> ' + command)
-    os.system(command)
-
-
 def gitcmd(repo, command):
     print()
     print("************")
     print(repo)
     os.chdir(repo)
+    if command.find('git') != 0:
+        command = 'git ' + command
     os.system(command)
     print("************")
 
@@ -48,57 +33,40 @@ def gg_command(command):
             gitcmd(repo, command)
 
 
-def get_repo_dname(repo_url):
-    """ Break url into a dirname """
-    slashpos = repo_url.rfind('/')
-    colonpos = repo_url.rfind(':')
-    if slashpos != -1 and slashpos > colonpos:
-        pos = slashpos
-    else:
-        pos = colonpos
-    repodir = repo_url[pos + 1:].replace('.git', '')
-    return repodir
-
-
-def get_repo_dirs(repo_urls, checkout_dir):
-    repo_dirs = [join(checkout_dir, get_repo_dname(url)) for url in repo_urls]
-    return repo_dirs
-
-
 def checkout_repos(repo_urls, repo_dirs=None, checkout_dir=None):
     """ Checkout every repo in repo_urls into checkout_dir """
     # Check out any repo you dont have
     if checkout_dir is not None:
-        repo_dirs = get_repo_dirs(checkout_dir)
+        repo_dirs = mu.get_repo_dirs(checkout_dir)
     assert repo_dirs is not None, 'specify checkout dir or repo_dirs'
     for repodir, repourl in izip(repo_dirs, repo_urls):
         print('[git] checkexist: ' + repodir)
         if not exists(repodir):
-            cd(dirname(repodir))
-            cmd('git clone ' + repourl)
+            mu.cd(dirname(repodir))
+            mu.cmd('git clone ' + repourl)
 
 
 def setup_develop_repos(repo_dirs):
     """ Run python installs """
     for repodir in repo_dirs:
         print('Installing: ' + repodir)
-        cd(repodir)
+        mu.cd(repodir)
         assert exists('setup.py'), 'cannot setup a nonpython repo'
-        cmd('python setup.py develop')
+        mu.cmd('python setup.py develop')
 
 
 def pull_repos(repo_dirs, repos_with_submodules=[]):
     for repodir in repo_dirs:
         print('Pulling: ' + repodir)
-        cd(repodir)
+        mu.cd(repodir)
         assert exists('.git'), 'cannot pull a nongit repo'
-        cmd('git pull')
+        mu.cmd('git pull')
         reponame = split(repodir)[1]
         if reponame in repos_with_submodules or\
            repodir in repos_with_submodules:
             repos_with_submodules
-            cmd('git submodule init')
-            cmd('git submodule update')
+            mu.cmd('git submodule init')
+            mu.cmd('git submodule update')
 
 
 def is_gitrepo(repo_dir):
@@ -108,6 +76,6 @@ def is_gitrepo(repo_dir):
 
 if __name__ == '__main__':
     locals_ = locals()
-    command = sys.argv[1]
+    command = ' '.join(sys.argv[1:])
     # Apply command to all repos
     gg_command(command)

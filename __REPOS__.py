@@ -1,52 +1,49 @@
 from __future__ import absolute_import, division, print_function
-from os.path import expanduser
-from itertools import izip
-from os.path import normpath, realpath
-import platform
+import meta_util_git as mu
 
-
-def truepath(path):
-    return normpath(realpath(expanduser(path)))
-
-
-def unixpath(path):
-    return truepath(path).replace('\\', '/')
-
+mu.set_userid('Erotemic', ['Hyrule', 'BakerStreet', 'Ooo'])
 
 # USER DEFINITIONS
-CODE_DIR = unixpath('~/code')
-BUNDLE_DPATH = unixpath('~/local/vim/vimfiles/bundle')
+HOME_DIR = mu.unixpath('~')
+CODE_DIR = mu.unixpath('~/code')
+LATEX_DIR = mu.unixpath('~/latex')
+BUNDLE_DPATH = mu.unixpath('~/local/vim/vimfiles/bundle')
 
 
-# Local project repositories
-PROJECT_REPOS = map(unixpath, [
-    '~/local',
-    '~/code/opencv',
-    '~/code/flann',
-    '~/code/utool',
-    '~/code/hesaff',
-    '~/code/vtool',
-    '~/code/guitool',
-    '~/code/plottool',
-    '~/code/ibeis',
-    '~/code/pyrf',
-    '~/latex/crall-lab-notebook',
-    '~/latex/crall-candidacy-2013',
-])
+LOCAL_URLS, LOCAL_REPOS = mu.repo_list([
+    'git@hyrule.cs.rpi.edu.com:local.git',
+], HOME_DIR)
+
+
+LATEX_REPOS_URLS, LATEX_REPOS = mu.repo_list([
+    'https://hyrule.cs.rpi.edu.com:crall-lab-notebook.git',
+    'https://hyrule.cs.rpi.edu.com:crall-candidacy-2013.git',
+
+], LATEX_DIR)
 
 
 # Non local project repos
-IBEIS_REPOS_URLS = [
+IBEIS_REPOS_URLS, IBEIS_REPOS = mu.repo_list([
     'https://github.com/Erotemic/utool.git',
     'https://github.com/Erotemic/guitool.git',
     'https://github.com/Erotemic/plottool.git',
     'https://github.com/Erotemic/vtool.git',
     'https://github.com/Erotemic/hesaff.git',
     'https://github.com/Erotemic/ibeis.git',
-]
+    'https://github.com/bluemellophone/pyrf.git',
+], CODE_DIR)
 
 
-VIM_REPO_URLS = [
+TPL_REPOS_URLS, TPL_REPOS = mu.repo_list([
+    'https://github.com/Erotemic/opencv',
+    'https://github.com/Erotemic/flann',
+], CODE_DIR)
+
+CODE_REPO_URLS = IBEIS_REPOS_URLS + TPL_REPOS_URLS
+CODE_REPOS = IBEIS_REPOS + TPL_REPOS
+
+
+VIM_REPO_URLS, VIM_REPOS = mu.repo_list([
     'https://github.com/dbarsam/vim-vimtweak.git',
     'https://github.com/bling/vim-airline.git',
     'https://github.com/davidhalter/jedi-vim.git',
@@ -65,7 +62,7 @@ VIM_REPO_URLS = [
     'https://github.com/vim-scripts/highlight.vim.git',
     #'https://github.com/koron/minimap-vim.git',
     #'https://github.com/zhaocai/GoldenView.Vim.git',
-]
+], BUNDLE_DPATH)
 
 VIM_REPOS_WITH_SUBMODULES = [
     'jedi-vim',
@@ -73,26 +70,5 @@ VIM_REPOS_WITH_SUBMODULES = [
 ]
 
 
-def fix_repo_url(repo_url, in_type='https', out_type='ssh'):
-    """ Changes the repo_url format """
-    format_dict = {
-        'https': ('.com/', 'https://'),
-        'ssh':   ('.com:', 'git@'),
-    }
-    for old, new in izip(format_dict[in_type], format_dict[out_type]):
-        repo_url = repo_url.replace(old, new)
-    return repo_url
-
-
-def get_computer_name():
-    return platform.node()
-
-COMPUTER_NAME  = get_computer_name()
-
-# Check to see if you are on one of Jons Computers
-#
-IS_OWNER = COMPUTER_NAME in ['BakerStreet', 'Hyrule', 'Ooo']
-
-if IS_OWNER:
-    IBEIS_REPOS_URLS = [fix_repo_url(repo, 'https', 'ssh')
-                         for repo in IBEIS_REPOS_URLS]
+# Local project repositories
+PROJECT_REPOS = LOCAL_REPOS + CODE_REPOS + LATEX_REPOS

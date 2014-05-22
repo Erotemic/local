@@ -58,5 +58,3 @@ function! AdjustFontSize(amount)
         echoerr "This only works in a gui"
     endif
 endfunction
-
-

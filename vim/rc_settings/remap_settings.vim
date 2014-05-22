@@ -106,3 +106,7 @@ noremap <Leader>9 9gt
 " RESIZE VSPLIT
 :noremap <Leader>+ :30winc ><CR>
 :noremap <Leader>- :30winc <<CR>
+
+
+"Surround word with quotes
+:noremap <Leader>qw ciw'<C-r>"'<Esc>

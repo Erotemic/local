@@ -193,7 +193,6 @@ command! LATEXCompileRuleXeTeX :call SetXeTeX()
 "Autocomplete off
 let g:Tex_SmartKeyDot=0
 
-
 " VimTweak
 let g:vimtweak_focus_transparency=0
 let s:ft=0

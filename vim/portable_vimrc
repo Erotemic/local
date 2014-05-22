@@ -39,11 +39,10 @@ source ~/local/vim/rc_settings/remap_settings.vim
 :call QUICKOPEN_leader_tsio('v', '~/code/vtool/vtool/__init__.py')
 :call QUICKOPEN_leader_tsio('p', '~/code/plottool/plottool/__init__.py')
 "___________________
-" HESAFF
-:call QUICKOPEN_leader_tsio('a', '~/code/hesaff/pyhesaff/_pyhesaff.py')
 "___________________
 " IBEIS
 " Often used
+:call QUICKOPEN_leader_tsio('a', '~/code/ibeis/ibeis/dev/all_imports.py')
 :call QUICKOPEN_leader_tsio('d', '~/code/ibeis/dev.py')
 :call QUICKOPEN_leader_tsio('c', '~/code/ibeis/ibeis/control/IBEISControl.py')
 :call QUICKOPEN_leader_tsio('t', '~/code/ibeis/ibeis/tests')
@@ -57,10 +56,13 @@ source ~/local/vim/rc_settings/remap_settings.vim
 
 :call QUICKOPEN_leader_tsio('e', '~/code/ibeis/ibeis/dev/experiment_printres.py')
 
-:call QUICKOPEN_leader_tsio('1', '~/code/ibeis/ibeis/dev/all_imports.py')
+:call QUICKOPEN_leader_tsio('1', '~/code/hesaff/pyhesaff/_pyhesaff.py')
 :call QUICKOPEN_leader_tsio('2', '~/code/ibeis/ibeis/dev/params.py')
 :call QUICKOPEN_leader_tsio('3', '~/code/guitool/guitool/guitool_tables.py')
+:call QUICKOPEN_leader_tsio('4', '~/code/ibeis/ibeis/dev/results_organizer.py')
 :call QUICKOPEN_leader_tsio('5', '~/local/bashrc.sh')
+:call QUICKOPEN_leader_tsio('6', '~/code/pyrf')
+:call QUICKOPEN_leader_tsio('8', '~/code/flann/src/python/pyflann/flann_ctypes.py')
 :call QUICKOPEN_leader_tsio('0', '~/code/ibeis/_scripts/_timeits')
 
 :call QUICKOPEN_leader_tsio('o', '~/code/ibeis/ibeis/model/preproc/preproc_image.py')

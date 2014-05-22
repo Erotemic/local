@@ -151,9 +151,14 @@ NumPadHome::  ; Numpad-7
 ;--------------------- 
 ; 8 - HotSpotter directory
 NumpadUp::    ; Numpad-8
-    EnvGet home, USERPROFILE
-    dpath = %home%\code\hotspotter
-    FocusDPath(dpath)
+    ;EnvGet home, USERPROFILE
+    ;dpath = %home%\code\hotspotter
+    ;FocusDPath(dpath)
+    Focus("qtc")
+    Sleep 50
+    Send, ^v
+    Sleep 50
+    Send, {Enter}
     return
 ;--------------------- 
 
