@@ -7,6 +7,7 @@ import platform
 
 USER_ID = None
 IS_USER = False
+PERMITTED_REPOS = []
 
 format_dict = {
     'https': ('.com/', 'https://'),
@@ -35,10 +36,14 @@ def get_repo_dname(repo_url):
     return repodir
 
 
-def set_userid(userid, owned_computers):
+def set_userid(userid=None,
+               owned_computers={},
+               permitted_repos=[]):
     # Check to see if you are on one of Jons Computers
     global IS_USER
     global USER_ID
+    global PERMITTED_REPOS
+    PERMITTED_REPOS = permitted_repos
     USER_ID = userid
     IS_USER = get_computer_name() in owned_computers
 
@@ -64,20 +69,26 @@ def fix_repo_url(repo_url, in_type='https', out_type='ssh', format_dict=format_d
     return repo_url
 
 
+def ensure_ssh_url(repo_url):
+    return fix_repo_url(repo_url, in_type='https', out_type='ssh')
+
+
 def repo_list(repo_urls, checkout_dir):
     repo_dirs = get_repo_dirs(repo_urls, checkout_dir)
     repo_dirs = map(unixpath, repo_dirs)
     return repo_urls, repo_dirs
 
 
-def userid_in(path):
-    return IS_USER is not None and path.find(USER_ID) != -1
+def can_push(repo_url):
+    owned_repo = USER_ID is not None and repo_url.find(USER_ID) != -1
+    has_permit = get_repo_dname(repo_url) in PERMITTED_REPOS
+    return  owned_repo or has_permit
 
 
 def url_list(repo_urls):
     if IS_USER:
-        repo_urls = [path if userid_in(path) else fix_repo_url(path, 'https', 'ssh')
-                     for path in repo_urls]
+        repo_urls = [ensure_ssh_url(url) if can_push(url) else url
+                     for url in repo_urls]
     return map(unixpath, repo_urls)
 
 
