@@ -4,9 +4,9 @@ import meta_util_git as mu
 mu.set_userid('Erotemic', ['Hyrule', 'BakerStreet', 'Ooo'])
 
 # USER DEFINITIONS
-HOME_DIR = mu.unixpath('~')
-CODE_DIR = mu.unixpath('~/code')
-LATEX_DIR = mu.unixpath('~/latex')
+HOME_DIR     = mu.unixpath('~')
+CODE_DIR     = mu.unixpath('~/code')
+LATEX_DIR    = mu.unixpath('~/latex')
 BUNDLE_DPATH = mu.unixpath('~/local/vim/vimfiles/bundle')
 
 

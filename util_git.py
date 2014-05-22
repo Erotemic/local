@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from __future__ import absolute_import, division, print_function
 import sys
 import os
@@ -75,7 +76,6 @@ def is_gitrepo(repo_dir):
 
 
 if __name__ == '__main__':
-    locals_ = locals()
     command = ' '.join(sys.argv[1:])
     # Apply command to all repos
     gg_command(command)
