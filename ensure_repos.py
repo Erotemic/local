@@ -11,8 +11,8 @@ CHECK   = '--nocheck' not in sys.argv
 
 
 # Get IBEIS git repository URLS and their local path
-ibeis_repo_urls = __REPOS__.CODE_REPOS
-ibeis_repo_dirs = util_git.get_repo_dirs(ibeis_repo_urls, util_git.CODE_DIR)
+ibeis_repo_urls = __REPOS__.CODE_REPO_URLS
+ibeis_repo_dirs = __REPOS__.CODE_REPOS
 
 
 def checkout_ibeis_repos():
