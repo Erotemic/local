@@ -21,7 +21,7 @@ def gitcmd(repo, command):
     print("************")
     print(repo)
     os.chdir(repo)
-    if command.find('git') != 0:
+    if command.find('git') != 0 and command != 'gcwip':
         command = 'git ' + command
     os.system(command)
     print("************")
