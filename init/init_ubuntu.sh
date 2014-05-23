@@ -20,6 +20,28 @@ install_packages()
     sudo apt-get install openexr
     # For Lempisky Random Forsest Show
     sudo apt-get install libgtk2.0-dev
+    sudo apt-get install deluge
+}
+
+
+install_virtualbox_additions()
+{
+    sudo apt-get update
+    sudo apt-get install dkms build-essential linux-headers-generic
+    
+    sudo apt-get install build-essential linux-headers-$(uname -r)
+    sudo apt-get install virtualbox-ose-guest-x11
+
+
+    # setup virtualbox for ssh
+    VBoxManage modifyvm virtual-ubuntu --natpf1 "ssh,tcp,,3022,,22"
+    
+}
+
+virtual_init()
+{
+    # init on the virtual machine
+    openssh-server
 }
 
 #config_clang()

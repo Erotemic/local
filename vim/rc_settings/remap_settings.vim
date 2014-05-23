@@ -110,3 +110,7 @@ noremap <Leader>9 9gt
 
 "Surround word with quotes
 :noremap <Leader>qw ciw'<C-r>"'<Esc>
+
+
+" Macro for surround word with quotes
+let @q=',qw'
