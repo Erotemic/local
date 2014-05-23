@@ -78,6 +78,7 @@ alias cv='cd ~/code/opencv'
 alias hs='cd ~/code/ibeis/ibeis/model/hots'
 alias ib='cd ~/code/ibeis/'
 alias rf='cd ~/code/pyrf/'
+alias dt='cd ~/code/detecttools/'
 
 
 alias pydist='cd ~/code/pyrf/'

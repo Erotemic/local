@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, print_function
 import sys
 import os
 from os.path import join
-from util_git import cd
+from meta_util_git import cd
 import util_git
 
 PULL = '--pull' in sys.argv
