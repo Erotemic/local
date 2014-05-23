@@ -8,6 +8,11 @@ make_ubuntu_symlinks()
     ln -s /media/Store/data ~/data
 }
 
+donot_lock_screen()
+{
+    gsettings set org.gnome.desktop.lockdown disable-lock-screen 'true'
+}
+
 update_locate()
 {
     # Update the locate commannd
@@ -35,6 +40,8 @@ install_virtualbox_additions()
 
     # setup virtualbox for ssh
     VBoxManage modifyvm virtual-ubuntu --natpf1 "ssh,tcp,,3022,,22"
+    # To ssh to virtualserv
+    #ssh -p 3022 user@127.0.0.1
     
 }
 
@@ -42,6 +49,7 @@ virtual_init()
 {
     # init on the virtual machine
     openssh-server
+
 }
 
 #config_clang()
