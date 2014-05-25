@@ -113,8 +113,6 @@ func! QUICKOPEN_leader_tsio(...)
     :exec 'noremap <leader>o'.key.' :e '.fname.'<CR>'
 endfu
 
-
-
 func! PrintPlugins()
     " where was an option set
     :scriptnames " list all plugins, _vimrcs loaded (super)

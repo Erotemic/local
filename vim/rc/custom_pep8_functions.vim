@@ -47,8 +47,23 @@ fu! PEP8PRINT()
     "Changes all 2.7 prints to v3'
     let m_spaces='\( *\)'
     let m_anys='\(.*\)'
-    let m_endl=' *$'
-    :execute 's/'.m_spaces.'print '.m_anys.m_endl.'/\1print(\2)'
+    let m_endl=' *$,
+    :execute 'silent :execute"s/'.m_spaces.'print '.m_anys.m_endl.'/\1print(\2)"'
 endfu
+
 command! -range PEP8PRINT <line1>,<line2>call PEP8PRINT()<CR>
 
+fu! PEP8PRINT2()
+python << endpython
+import sys
+from os.path import expanduser
+sys.path.append(expanduser('~/local/vim/rc'))
+import pyvim_regex as pyvx
+from pyvim_regex import group, bref, endl, indentation
+regex = group(indentation) + 'print ' + group('.*') + endl
+repl  = bref(1) + 'print(' + bref(2) + ')'
+pyvx.resub(regex, repl)
+endpython
+endfu
+            
+command! PEP8PRINT2 call PEP8PRINT2()<CR>
