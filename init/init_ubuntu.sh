@@ -28,9 +28,18 @@ install_packages()
     sudo apt-get install deluge
 }
 
+virtualbox_guest_postinstall()
+{
+    git config --global user.name joncrall
+    git config --global user.email crallj@rpi.edu
+    git config --global push.default simple
+}
+
 
 install_virtualbox_additions()
 {
+    sudo apt-get install virtualbox-guest-additions-iso
+    
     sudo apt-get update
     sudo apt-get install dkms build-essential linux-headers-generic
     
