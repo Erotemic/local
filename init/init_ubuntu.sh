@@ -30,9 +30,18 @@ install_packages()
 
 virtualbox_guest_postinstall()
 {
+
+    sudo apt-get install dkms 
+    sudo apt-get update
+    sudo apt-get upgrade
+    # Mount VBoxGuestAdditions_4.3.8.iso and do autorun
+    sudo apt-get install git -y
+
     git config --global user.name joncrall
     git config --global user.email crallj@rpi.edu
-    git config --global push.default simple
+    git config --global push.default current
+
+    gsettings set org.gnome.desktop.lockdown disable-lock-screen 'true'
 }
 
 
