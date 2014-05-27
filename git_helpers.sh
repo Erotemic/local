@@ -19,4 +19,5 @@ gg-push()
 }
 
 alias ggs=gg-stats
+alias ggp=gg-pull
 alias gs=gg-stats
