@@ -71,7 +71,7 @@ source ~/local/vim/rc_settings/remap_settings.vim
 :call QUICKOPEN_leader_tsio('g', '~/code/ibeis/ibeis/gui/guiback.py')
 
 
-
+""""""""""""""""""""""""""""""""""
 func! OpenSetups()
 python << endpython
 import vim
@@ -104,3 +104,21 @@ endfu
 noremap <Leader><F1> :call OpenSetups()<CR>
 noremap <Leader>qt :tabclose<CR>
 map <C-F4> <Esc>:tabclose<CR>
+
+""""""""""""""""""""""""""""""""""
+
+func! MagicPython()
+    "https://dev.launchpad.net/UltimateVimPythonSetup
+    let python_highlight_all = 1
+    set smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
+    python << EOF
+import os
+import sys
+import vim
+for p in sys.path:
+    if os.path.isdir(p):
+        vim.command(r"set path+=%s" % (p.replace(" ", r"\ ")))
+EOF
+endfu
+
+call MagicPython()
