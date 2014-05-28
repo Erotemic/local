@@ -83,4 +83,4 @@ hi StatusLine guibg=gray10 guifg=green
 highlight Cursor guifg=blue guibg=orange
 
 " Set the default font to mono dyslexic size 11
-:call SetFontMonoDyslexic()
+:call SetMyFont()

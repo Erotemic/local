@@ -5,11 +5,15 @@ func! ToggleFont()
         let g:togfont = 1 - g:togfont 
     endif 
     if (g:togfont)
-        :call SetFontMonoDyslexic()
+        :call SetMyFont()
     else 
         :call SetFontDefault()
     endif 
 endfu 
+
+fu! SetMyFont()
+    call SetFontLucidia()
+endfu
 
 " Setting Font Functions
 fu! SetFontMonoDyslexic()
@@ -19,6 +23,12 @@ fu! SetFontMonoDyslexic()
     else
         set guifont=MonoDyslexic\ 9.4
     endif
+endfu
+
+
+" Setting Font Functions
+fu! SetFontLucidia()
+    set gfn=Lucida_Console:h10
 endfu
 
 fu! SetFontDefault()

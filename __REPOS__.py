@@ -63,6 +63,7 @@ VIM_REPO_URLS, VIM_REPOS = repo_list([
     'https://github.com/vim-scripts/Conque-Shell.git',
     'https://github.com/vim-scripts/csv.vim.git',
     'https://github.com/vim-scripts/highlight.vim.git',
+    'https://github.com/vim-scripts/grep.vim.git',
     #'https://github.com/koron/minimap-vim.git',
     #'https://github.com/zhaocai/GoldenView.Vim.git',
 ], BUNDLE_DPATH)
