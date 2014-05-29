@@ -44,11 +44,13 @@ endif
 set shellslash
 set grepprg=grep\ -nH\ $*
 
-
+" Good Colorschemes
 if has("gui_running")
-    "colorscheme murphy
     colorscheme synic
+else
+    colorscheme murphy
 endif
+
 set shiftwidth=4
 set tabstop=4
 set expandtab
@@ -57,17 +59,17 @@ set autoread
 set lbr " Linebreak on 500 characters
 set tw=500
 
-" Vim: Gray Line Numbering
+" Gray Line Numbering
 :set nu 
-"if has("gui_running")
-    ":highlight LineNr guifg=#333333
+if has("gui_running")
+    :highlight LineNr guifg=#333333
     "" Cross platform fonts
     "if has("win32") || has("win16")
         ":highlight LineNr font='Fixedsys'
     "else
         ":highlight LineNr font='Monospace'
     "endif
-"endif
+endif
 
 "-------------------------
 

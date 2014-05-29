@@ -114,3 +114,15 @@ noremap <Leader>9 9gt
 
 " Macro for surround word with quotes
 let @q=',qw'
+
+
+" K goes to the help for the object under the cursor. 
+" This is anoying. Kill the behavior
+:noremap K k
+
+" custom command for opening setupfiles
+noremap <Leader><F1> :call OpenSetups()<CR>
+
+" Close a tab
+noremap <Leader>qt :tabclose<CR>
+map <C-F4> <Esc>:tabclose<CR>

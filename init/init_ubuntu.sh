@@ -113,3 +113,23 @@ install_dark_theme()
     sudo apt-get install mediterranean-theme
 }
 
+
+other_fonts()
+{
+    # http://zevv.nl/play/code/zevv-peep/
+    # NEEP
+    apt-get install xfonts-jmk
+    rm /etc/fonts/conf.d/70-no-bitmaps.conf
+    fc-cache -f -v
+
+    # Enable bitmap fonts
+    cd /etc/fonts/conf.d/
+    sudo rm /etc/fonts/conf.d/10* && sudo rm -rf 70-no-bitmaps.conf && sudo ln -s ../conf.avail/70-yes-bitmaps.conf .
+    sudo dpkg-reconfigure fontconfig
+
+    wget http://zevv.nl/play/code/zevv-peep/zevv-peep-iso8859-15-08x16.bdf
+    sudo cp zevv-peep-iso8859-15-08x16.bdf /usr/share/fonts/X11/misc
+    xset +fp /usr/share/fonts/X11/misc
+    
+
+}

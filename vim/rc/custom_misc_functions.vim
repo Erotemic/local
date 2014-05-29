@@ -120,3 +120,50 @@ func! PrintPlugins()
     :function " list functions
     :func SearchCompl " List particular function
 endfu
+
+
+""""""""""""""""""""""""""""""""""
+func! OpenSetups()
+python << endpython
+import vim
+from os.path import expanduser
+setup_files = [
+'~/code/ibeis/setup.py',
+'~/code/utool/setup.py',
+'~/code/vtool/setup.py',
+'~/code/hesaff/setup.py',
+'~/code/detecttools/setup.py',
+'~/code/pyrf/setup.py',
+'~/code/guitool/setup.py',
+'~/code/plottool/setup.py',
+]
+
+vim.command(":exec ':tabe %s'" % expanduser(setup_files[0]))
+vim.command(":set nofoldenable")
+vim.command(":exec ':vsplit %s'" % expanduser(setup_files[1]))
+vim.command(":set nofoldenable")
+for ix in xrange(2, 5):
+    vim.command(":exec ':split %s'" % expanduser(setup_files[ix]))
+    vim.command(":set nofoldenable")
+vim.command(":exec ':wincmd l'")
+for ix in xrange(5, 8):
+    vim.command(":exec ':split %s'" % expanduser(setup_files[ix]))
+    vim.command(":set nofoldenable")
+endpython
+endfu
+
+""""""""""""""""""""""""""""""""""
+
+func! MagicPython()
+    "https://dev.launchpad.net/UltimateVimPythonSetup
+    let python_highlight_all = 1
+    set smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
+    python << EOF
+import os
+import sys
+import vim
+for p in sys.path:
+    if os.path.isdir(p):
+        vim.command(r"set path+=%s" % (p.replace(" ", r"\ ")))
+EOF
+endfu

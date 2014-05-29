@@ -48,4 +48,5 @@ au InsertEnter * hi Cursor guibg=green
 
 
 " Use shell syntax for markdown files
-au BufNewFile,BufRead *.md set ft=sh
+"au BufNewFile,BufRead *.md set ft=sh
+au BufNewFile,BufRead *.md set ft=markdown

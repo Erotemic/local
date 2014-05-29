@@ -5,37 +5,44 @@ func! ToggleFont()
         let g:togfont = 1 - g:togfont 
     endif 
     if (g:togfont)
-        :call SetMyFont()
+        :call SetFontDyslexic()
     else 
-        :call SetFontDefault()
+        :call SetFontClean()
     endif 
 endfu 
 
 fu! SetMyFont()
-    call SetFontLucidia()
+    call SetFontDyslexic()
+    "call SetFontClean()
 endfu
 
 " Setting Font Functions
-fu! SetFontMonoDyslexic()
+fu! SetFontDyslexic()
     if has("win32") || has("win16")
         "set gfn=Mono\ Dyslexic:h11
         set gfn=Mono\ Dyslexic:h10
     else
-        set guifont=MonoDyslexic\ 9.4
+        set gfn=MonoDyslexic\ 9.4
     endif
 endfu
 
 
 " Setting Font Functions
-fu! SetFontLucidia()
-    set gfn=Lucida_Console:h10
+fu! SetFontClean()
+    if has("win32") || has("win16")
+        set gfn=Lucida_Console:h10
+    else
+        "set gfn=Ubuntu\ Mono\ 9
+        "set gfn=Neep\ Alt\ Medium\ Semi-Condensed\ 11
+        set gfn=Neep\ 11
+    endif
 endfu
 
 fu! SetFontDefault()
     if has("win32") || has("win16")
         set gfn=Fixedsys:h9
     else
-        set guifont=Monospace
+        set gfn=Monospace
     endif
 endfu
 
@@ -57,12 +64,12 @@ function! AdjustFontSize(amount)
     let min_sz = 6
     let max_sz = 16
     if has("gui_running")
-        let oldfont = substitute(&guifont, font_pattern, '\1', '')
-        let cursize = substitute(&guifont, font_pattern, '\2', '')
+        let oldfont = substitute(&gfn, font_pattern, '\1', '')
+        let cursize = substitute(&gfn, font_pattern, '\2', '')
         let newsize = cursize + a:amount
         if (newsize >= min_sz) && (newsize <= max_sz)
             let newfont = oldfont . ':h' . newsize
-            let &guifont = newfont
+            let &gfn = newfont
         endif
     else
         echoerr "This only works in a gui"

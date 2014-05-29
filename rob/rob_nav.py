@@ -192,6 +192,12 @@ def _matching_fnames(dpath_list, include_patterns, exclude_dirs=None, recursive=
     #fname_list = []
     for dpath in dpath_list:
         for root, dname_list, fname_list in os.walk(dpath):
+            # Look at all subdirs
+            subdirs = relpath(root, dpath).split('/')
+            greater_exclude_dirs = ['lib.linux-x86_64-2.7']
+            if any([dir_ in greater_exclude_dirs for dir_ in subdirs]):
+                continue
+            # Look at one subdir
             if split(root)[1] in exclude_dirs:
                 continue
             for name in fname_list:

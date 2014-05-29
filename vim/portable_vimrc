@@ -32,7 +32,6 @@ source ~/local/vim/rc_settings/remap_settings.vim
 " vimrc
 :call QUICKOPEN_leader_tsio('b', '~/local/bashrc.sh')
 :call QUICKOPEN_leader_tsio(',', '~/local/vim/portable_vimrc')
-:call QUICKOPEN_leader_tsio('r', '~/local/vim/rc/custom_regex_commands.vim')
 "___________________
 " TOOLS
 :call QUICKOPEN_leader_tsio('u', '~/code/utool/utool/__init__.py')
@@ -53,6 +52,7 @@ source ~/local/vim/rc_settings/remap_settings.vim
 :call QUICKOPEN_leader_tsio('x', '~/code/ibeis/ibeis/viz/interact/interact_qres.py')
 
 :call QUICKOPEN_leader_tsio('h', '~/code/ibeis/ibeis/model/hots/match_chips3.py')
+:call QUICKOPEN_leader_tsio('r', '~/code/ibeis/ibeis/model/detect/randomforest.py')
 
 :call QUICKOPEN_leader_tsio('e', '~/code/ibeis/ibeis/dev/experiment_printres.py')
 
@@ -61,6 +61,7 @@ source ~/local/vim/rc_settings/remap_settings.vim
 :call QUICKOPEN_leader_tsio('3', '~/code/guitool/guitool/guitool_tables.py')
 :call QUICKOPEN_leader_tsio('4', '~/code/ibeis/ibeis/dev/results_organizer.py')
 :call QUICKOPEN_leader_tsio('5', '~/local/bashrc.sh')
+:call QUICKOPEN_leader_tsio('l', '~/local/init')
 :call QUICKOPEN_leader_tsio('6', '~/code/pyrf')
 :call QUICKOPEN_leader_tsio('8', '~/code/flann/src/python/pyflann/flann_ctypes.py')
 :call QUICKOPEN_leader_tsio('0', '~/code/ibeis/_scripts/_timeits')
@@ -69,56 +70,5 @@ source ~/local/vim/rc_settings/remap_settings.vim
 :call QUICKOPEN_leader_tsio('j', '~/code/ibeis/ibeis/injest/injest_hsdb.py')
 :call QUICKOPEN_leader_tsio('n', '~/code/ibeis/ibeis/model/Config.py')
 :call QUICKOPEN_leader_tsio('g', '~/code/ibeis/ibeis/gui/guiback.py')
-
-
-""""""""""""""""""""""""""""""""""
-func! OpenSetups()
-python << endpython
-import vim
-from os.path import expanduser
-setup_files = [
-'~/code/ibeis/setup.py',
-'~/code/utool/setup.py',
-'~/code/vtool/setup.py',
-'~/code/hesaff/setup.py',
-'~/code/detecttools/setup.py',
-'~/code/pyrf/setup.py',
-'~/code/guitool/setup.py',
-'~/code/plottool/setup.py',
-]
-
-vim.command(":exec ':tabe %s'" % expanduser(setup_files[0]))
-vim.command(":set nofoldenable")
-vim.command(":exec ':vsplit %s'" % expanduser(setup_files[1]))
-vim.command(":set nofoldenable")
-for ix in xrange(2, 5):
-    vim.command(":exec ':split %s'" % expanduser(setup_files[ix]))
-    vim.command(":set nofoldenable")
-vim.command(":exec ':wincmd l'")
-for ix in xrange(5, 8):
-    vim.command(":exec ':split %s'" % expanduser(setup_files[ix]))
-    vim.command(":set nofoldenable")
-endpython
-endfu
-
-noremap <Leader><F1> :call OpenSetups()<CR>
-noremap <Leader>qt :tabclose<CR>
-map <C-F4> <Esc>:tabclose<CR>
-
-""""""""""""""""""""""""""""""""""
-
-func! MagicPython()
-    "https://dev.launchpad.net/UltimateVimPythonSetup
-    let python_highlight_all = 1
-    set smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
-    python << EOF
-import os
-import sys
-import vim
-for p in sys.path:
-    if os.path.isdir(p):
-        vim.command(r"set path+=%s" % (p.replace(" ", r"\ ")))
-EOF
-endfu
 
 call MagicPython()
