@@ -106,6 +106,13 @@ ensurespaces('==')
 ensurespaces('!=')
 ensurespaces('%')
 
+
+# Fix quotes
+notdoublequote = '[^"]'
+fix_quotes_regex1 = group(notdoublequote) + '"' + group(notdoublequote)
+fix_quotes_repl1 = bref(1) + '\'' + bref(2)
+resub(fix_quotes_regex1, fix_quotes_repl1)
+
 endpython
 endfunc
 command! CUSTOMCLEANUP call FUNC_CUSTOM_CLEANUP()<CR>

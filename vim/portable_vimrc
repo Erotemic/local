@@ -71,4 +71,4 @@ source ~/local/vim/rc_settings/remap_settings.vim
 :call QUICKOPEN_leader_tsio('n', '~/code/ibeis/ibeis/model/Config.py')
 :call QUICKOPEN_leader_tsio('g', '~/code/ibeis/ibeis/gui/guiback.py')
 
-call MagicPython()
+"call MagicPython()
