@@ -8,9 +8,6 @@ cd /mnt
 useradd joncrall
 passwd joncrall
 
-yup install vim
-
-
 # Add user to suoders file
 visudo
 echo "joncrall ALL=(ALL) ALL" >> /etc/sudoers
@@ -23,7 +20,18 @@ BOOTPROTO=dhcp
 ONBOOT=yes
 NM_CONTROLLED=no
 
+# These commands will ensure that
 export GLOBAL_ifcfg_eth0=/etc/sysconfig/network-scripts/ifcfg-eth0
+echo $GLOBAL_ifcfg_eth0.backup
+cat $GLOBAL_ifcfg_eth0
+cat $GLOBAL_ifcfg_eth0 > ifcfg-eth0.backup
+sudo sed -i s/ONBOOT=no/ONBOOT=yes/ $GLOBAL_ifcfg_eth0 
+sudo sed -i s/NM_CONTROLLED=yes/NM_CONTROLLED=no/ $GLOBAL_ifcfg_eth0
+
+sudo yum install vim
 
 
-sed s/ONBOOT=no/ONBOOT=yes/ /etc/sysconfig/network-scripts/ifcfg-eth0
+sudo yum install git
+git config --global user.name joncrall
+git config --global user.email crallj@rpi.edu
+git config --global push.default current
