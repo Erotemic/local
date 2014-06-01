@@ -27,3 +27,5 @@ vim/vimfiles/.netrwhist
 vim/vimfiles/.netrwhist
 
 '
+
+tests/*.exe

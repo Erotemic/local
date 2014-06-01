@@ -35,3 +35,13 @@ sudo yum install git
 git config --global user.name joncrall
 git config --global user.email crallj@rpi.edu
 git config --global push.default current
+
+sudo yum install bash-completion
+
+# OR do this if bash-completion doesnt install through yum
+mkdir ~/tmp
+cd tmp
+wget http://pkgs.repoforge.org/bash-completion/bash-completion-20060301-1.el6.rf.noarch.rpm
+rpm -ivh bash-completion-20060301-1.el6.rf.noarch.rpm
+ bash-completion-20060301-1.noarch.rpm
+. /etc/bash_completion
