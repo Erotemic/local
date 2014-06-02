@@ -14,9 +14,6 @@ export PYTHONPATH=/home/joncall/code/utool:$PYTHONPATH
 source ~/local/alias_rc.sh
 source ~/local/git_helpers.sh
 
-alias makeinit='~/code/utool/utool/util_scripts/make_init.py'
-
-
 update_pip_dists()
 {
     sudo pip install pyinstaller --upgrade

@@ -44,6 +44,7 @@ source ~/local/vim/rc_settings/remap_settings.vim
 :call QUICKOPEN_leader_tsio('a', '~/code/ibeis/ibeis/dev/all_imports.py')
 :call QUICKOPEN_leader_tsio('d', '~/code/ibeis/dev.py')
 :call QUICKOPEN_leader_tsio('c', '~/code/ibeis/ibeis/control/IBEISControl.py')
+":call QUICKOPEN_leader_tsio('s', '~/code/ibeis/ibeis/control/SQLDatabaseControl.py')
 :call QUICKOPEN_leader_tsio('t', '~/code/ibeis/ibeis/tests')
 :call QUICKOPEN_leader_tsio('f', '~/code/ibeis/ibeis/dev/ibsfuncs.py')
 :call QUICKOPEN_leader_tsio('m', '~/code/ibeis/ibeis/main_module.py')
