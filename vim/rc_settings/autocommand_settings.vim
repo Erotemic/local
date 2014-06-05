@@ -5,12 +5,12 @@
 
 
 " Define python autocommands
-au FileType python set omnifunc=pythoncomplete#Complete
+"au FileType python set omnifunc=pythoncomplete#Complete
 au FileType python set nosmartindent
 au FileType python filetype indent on
 au FileType python set textwidth=80
 au FileType python set foldmethod=indent
-au FileType python set foldnestmax=2
+"au FileType python set foldnestmax=2
 "au BufNewFile,BufRead *.py :%s/\t/    /g
 
 au BufNewFile,BufRead *.tex call LatexInitialize() 
@@ -40,7 +40,7 @@ au FileType cpp set cino=i-s
 au FileType cpp set cinkeys=0{,0},0),:,!^F,o,O,e
 au FileType cpp set cinkeys-=0#
 au FileType cpp set smartindent
-au FileType cpp set foldmethod=syntax
+"au FileType cpp set foldmethod=syntax
 
 au CursorMoved * call WordHighlightFun()
 au InsertLeave * hi Cursor guibg=red
@@ -49,4 +49,16 @@ au InsertEnter * hi Cursor guibg=green
 
 " Use shell syntax for markdown files
 "au BufNewFile,BufRead *.md set ft=sh
-au BufNewFile,BufRead *.md set ft=markdown
+"au BufNewFile,BufRead *.md set ft=markdown
+"
+"
+
+func! <SID>StripTrailingWhitespaces()
+    "http://stackoverflow.com/questions/356126/how-can-you-automatically-remove-trailing-whitespace-in-vim
+    let l = line(".")
+    let c = col(".")
+    %s/\s\+$//e
+    call cursor(l, c)
+endfun
+
+autocmd FileType c,cpp,java,php,ruby,python autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()

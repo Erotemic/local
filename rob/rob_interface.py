@@ -715,3 +715,12 @@ def send(r, keys, pause=.05):
     pause = float(pause)
     SendKeys.SendKeys(keys, pause=pause, with_spaces=False, with_tabs=True,
                       with_newlines=False, turn_off_numlock=True)
+
+
+def find_in_path(r, pattern):
+    from itertools import izip
+    PATH = os.environ['PATH'].split(os.pathsep)
+    fpaths_list = [os.listdir(dpath) for dpath in PATH]
+    for dpath, fpaths_list in izip(PATH, fpaths_list):
+        for x in fnmatch.filter(fpaths_list, 'msvcr90.dll'):
+            print('Found %r in %r' % (x, dpath))

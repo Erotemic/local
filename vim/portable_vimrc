@@ -1,9 +1,14 @@
 "===========PLUGINS==========="
 " PLUGIN: Pathogen
-" Add a plugin to this list to disable it
-let g:pathogen_disabled = []
+" Pathogen is the first thing to run
+"filetype off
+let g:pathogen_disabled = []  " Add a plugin to this list to disable it
 source ~/local/vim/vimfiles/autoload/pathogen.vim
 execute pathogen#infect()
+call pathogen#helptags()
+"call pathogen#infect()
+filetype plugin indent on
+syntax on
 
 " PLUGIN: External non-plugin source files
 source ~/local/vim/rc/align.vim
@@ -17,6 +22,8 @@ source ~/local/vim/rc/commands.vim
 
 "===========Settings==========="
 source ~/local/vim/rc_settings/plugin_settings.vim
+source ~/local/vim/rc_settings/plugins_python.vim
+source ~/local/vim/rc_settings/plugins_latex.vim
 source ~/local/vim/rc_settings/gui_settings.vim
 source ~/local/vim/rc_settings/behavior_settings.vim
 source ~/local/vim/rc_settings/autocommand_settings.vim
@@ -30,46 +37,47 @@ source ~/local/vim/rc_settings/remap_settings.vim
 " Quick File Access:
 "___________________
 " vimrc
-:call QUICKOPEN_leader_tsio('b', '~/local/bashrc.sh')
-:call QUICKOPEN_leader_tsio(',', '~/local/vim/portable_vimrc')
+:call QUICKOPEN_leader_tvio('b', '~/local/bashrc.sh')
+:call QUICKOPEN_leader_tvio(',', '~/local/vim/portable_vimrc')
 "___________________
 " TOOLS
-:call QUICKOPEN_leader_tsio('u', '~/code/utool/utool/__init__.py')
-:call QUICKOPEN_leader_tsio('v', '~/code/vtool/vtool/__init__.py')
-:call QUICKOPEN_leader_tsio('p', '~/code/plottool/plottool/__init__.py')
+:call QUICKOPEN_leader_tvio('u', '~/code/utool/utool/__init__.py')
+:call QUICKOPEN_leader_tvio('v', '~/code/vtool/vtool/__init__.py')
+:call QUICKOPEN_leader_tvio('p', '~/code/plottool/plottool/__init__.py')
 "___________________
 "___________________
 " IBEIS
 " Often used
-:call QUICKOPEN_leader_tsio('a', '~/code/ibeis/ibeis/dev/all_imports.py')
-:call QUICKOPEN_leader_tsio('d', '~/code/ibeis/dev.py')
-:call QUICKOPEN_leader_tsio('c', '~/code/ibeis/ibeis/control/IBEISControl.py')
-":call QUICKOPEN_leader_tsio('s', '~/code/ibeis/ibeis/control/SQLDatabaseControl.py')
-:call QUICKOPEN_leader_tsio('t', '~/code/ibeis/ibeis/tests')
-:call QUICKOPEN_leader_tsio('f', '~/code/ibeis/ibeis/dev/ibsfuncs.py')
-:call QUICKOPEN_leader_tsio('m', '~/code/ibeis/ibeis/main_module.py')
+:call QUICKOPEN_leader_tvio('a', '~/code/ibeis/ibeis/dev/all_imports.py')
+:call QUICKOPEN_leader_tvio('d', '~/code/ibeis/dev.py')
+:call QUICKOPEN_leader_tvio('c', '~/code/ibeis/ibeis/control/IBEISControl.py')
+":call QUICKOPEN_leader_tvio('s', '~/code/ibeis/ibeis/control/SQLDatabaseControl.py')
+:call QUICKOPEN_leader_tvio('t', '~/code/ibeis/ibeis/tests')
+:call QUICKOPEN_leader_tvio('f', '~/code/ibeis/ibeis/dev/ibsfuncs.py')
+:call QUICKOPEN_leader_tvio('m', '~/code/ibeis/ibeis/main_module.py')
 
-:call QUICKOPEN_leader_tsio('z', '~/code/ibeis/ibeis/viz/viz_qres.py')
-:call QUICKOPEN_leader_tsio('x', '~/code/ibeis/ibeis/viz/interact/interact_qres.py')
+:call QUICKOPEN_leader_tvio('z', '~/code/ibeis/ibeis/viz/viz_qres.py')
+:call QUICKOPEN_leader_tvio('x', '~/code/ibeis/ibeis/viz/interact/interact_qres.py')
 
-:call QUICKOPEN_leader_tsio('h', '~/code/ibeis/ibeis/model/hots/match_chips3.py')
-:call QUICKOPEN_leader_tsio('r', '~/code/ibeis/ibeis/model/detect/randomforest.py')
+:call QUICKOPEN_leader_tvio('h', '~/code/ibeis/ibeis/model/hots/match_chips3.py')
+:call QUICKOPEN_leader_tvio('r', '~/code/ibeis/ibeis/model/detect/randomforest.py')
 
-:call QUICKOPEN_leader_tsio('e', '~/code/ibeis/ibeis/dev/experiment_printres.py')
+:call QUICKOPEN_leader_tvio('e', '~/code/ibeis/ibeis/dev/experiment_printres.py')
 
-:call QUICKOPEN_leader_tsio('1', '~/code/hesaff/pyhesaff/_pyhesaff.py')
-:call QUICKOPEN_leader_tsio('2', '~/code/ibeis/ibeis/dev/params.py')
-:call QUICKOPEN_leader_tsio('3', '~/code/guitool/guitool/guitool_components.py')
-:call QUICKOPEN_leader_tsio('4', '~/code/ibeis/ibeis/dev/results_organizer.py')
-:call QUICKOPEN_leader_tsio('5', '~/local/bashrc.sh')
-:call QUICKOPEN_leader_tsio('l', '~/local/init')
-:call QUICKOPEN_leader_tsio('6', '~/code/pyrf')
-:call QUICKOPEN_leader_tsio('8', '~/code/flann/src/python/pyflann/flann_ctypes.py')
-:call QUICKOPEN_leader_tsio('0', '~/code/ibeis/_scripts/_timeits')
+:call QUICKOPEN_leader_tvio('1', '~/code/hesaff/pyhesaff/_pyhesaff.py')
+:call QUICKOPEN_leader_tvio('2', '~/code/ibeis/ibeis/dev/params.py')
+:call QUICKOPEN_leader_tvio('3', '~/code/guitool/guitool/guitool_components.py')
+:call QUICKOPEN_leader_tvio('4', '~/code/ibeis/ibeis/dev/results_organizer.py')
+:call QUICKOPEN_leader_tvio('5', '~/local/bashrc.sh')
+:call QUICKOPEN_leader_tvio('l', '~/local/init')
+:call QUICKOPEN_leader_tvio('6', '~/code/pyrf')
+:call QUICKOPEN_leader_tvio('8', '~/code/flann/src/python/pyflann/flann_ctypes.py')
+:call QUICKOPEN_leader_tvio('0', '~/code/ibeis/_scripts/_timeits')
 
-:call QUICKOPEN_leader_tsio('o', '~/code/ibeis/ibeis/model/preproc/preproc_image.py')
-:call QUICKOPEN_leader_tsio('j', '~/code/ibeis/ibeis/injest/injest_hsdb.py')
-:call QUICKOPEN_leader_tsio('n', '~/code/ibeis/ibeis/model/Config.py')
-:call QUICKOPEN_leader_tsio('g', '~/code/ibeis/ibeis/gui/guiback.py')
+:call QUICKOPEN_leader_tvio('o', '~/code/ibeis/ibeis/model/preproc/preproc_image.py')
+:call QUICKOPEN_leader_tvio('j', '~/code/ibeis/ibeis/injest/injest_hsdb.py')
+:call QUICKOPEN_leader_tvio('n', '~/code/ibeis/ibeis/model/Config.py')
+:call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/guiback.py')
+:call QUICKOPEN_leader_tvio('_', '$VIMRUNTIME/../_vimrc')
 
 "call MagicPython()

@@ -121,14 +121,3 @@ command! CUSTOMCLEANUP call FUNC_CUSTOM_CLEANUP()<CR>
 func! FUNC_CLEAN_WHITESPACE()
     :%s/ *$//g
 endfunc
-
-
-func! <SID>StripTrailingWhitespaces()
-    "http://stackoverflow.com/questions/356126/how-can-you-automatically-remove-trailing-whitespace-in-vim
-    let l = line(".")
-    let c = col(".")
-    %s/\s\+$//e
-    call cursor(l, c)
-endfun
-
-autocmd FileType c,cpp,java,php,ruby,python autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()

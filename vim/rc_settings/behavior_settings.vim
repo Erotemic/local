@@ -23,17 +23,6 @@ else
     set backupdir=/media/Store/sys/vim_tmp/
     set undodir=/media/Store/sys/vim_tmp/
 endif
-set nobackup
-set autochdir
-
-set nomousehide
-set nowb
-set noswapfile
-" Do not open these sort of files
-set wildignore=*.o,*~,*.pyc,*.aux,*.masv,*.bbl,*.bcf,*.blg,*.brf,*.synctex,*.upa,*.upb,*.pdf,*.dvi
-
-set wildmode=longest,list,full
-set wildmenu
 
 " MISC: win clipboard on linux
 if has("win32") || has("win16")
@@ -41,23 +30,12 @@ else
     set clipboard=unnamedplus
 endif
 
-set shellslash
-set grepprg=grep\ -nH\ $*
-
 " Good Colorschemes
 if has("gui_running")
     colorscheme synic
 else
     colorscheme murphy
 endif
-
-set shiftwidth=4
-set tabstop=4
-set expandtab
-set cino={1s
-set autoread
-set lbr " Linebreak on 500 characters
-set tw=500
 
 " Gray Line Numbering
 :set nu 
@@ -72,6 +50,28 @@ if has("gui_running")
 endif
 
 "-------------------------
+set nobackup
+set autochdir
+
+set nomousehide
+set nowb
+set noswapfile
+" Do not open these sort of files
+set wildignore=*.o,*~,*.pyc,*.aux,*.masv,*.bbl,*.bcf,*.blg,*.brf,*.synctex,*.upa,*.upb,*.pdf,*.dvi
+
+set wildmode=longest,list,full
+set wildmenu
+
+set shellslash
+set grepprg=grep\ -nH\ $*
+
+set shiftwidth=4
+set tabstop=4
+set expandtab
+set cino={1s
+set autoread
+set lbr " Linebreak on 500 characters
+set tw=500
 
 "Windows symlink problems
 set bkc=yes

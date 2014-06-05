@@ -64,15 +64,23 @@ VIM_REPO_URLS, VIM_REPOS = repo_list([
     'https://github.com/vim-scripts/csv.vim.git',
     'https://github.com/vim-scripts/highlight.vim.git',
     'https://github.com/vim-scripts/grep.vim.git',
+    #'https://github.com/klen/python-mode.git'
+    #'https://github.com/Valloric/YouCompleteMe.git',
     #'https://github.com/koron/minimap-vim.git',
     #'https://github.com/zhaocai/GoldenView.Vim.git',
 ], BUNDLE_DPATH)
 
 VIM_REPOS_WITH_SUBMODULES = [
-    'jedi-vim',
+    'jedi-vim',  # jedi, python setup.py build develop
     'syntastic',
+    #'YouCompleteMe'  #git submodule update --init --recursive
 ]
 
+# mkdir ycm_build
+# cd ycm_build
+# set CMAKE_C_COMPILER=gcc
+# cmake -G "MinGW Makefiles" ../third_party/ycmd/cpp
+# make ycm_support_libs
 
 # Local project repositories
 #PROJECT_REPOS = LATEX_REPOS + LOCAL_REPOS + CODE_REPOS
