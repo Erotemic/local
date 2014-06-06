@@ -54,34 +54,36 @@ import sys
 import Levenshtein  # Edit distance algorithm
 from operator import itemgetter
 request = vim.eval('fontid')
-known_fonts = [
+win32_fonts = [
     r'Mono\ Dyslexic:h10',
-    r'Inconsolata:h10',
+    #r'Inconsolata:h10',
     r'Inconsolata:h11',
-    r'Source_Code_Pro:h11:cANSI',
-    r'peep:h11:cOEM',
+    #r'Source_Code_Pro:h11:cANSI',
+    #r'peep:h11:cOEM',
     r'monofur:h11',
+    #r'Consolas',
+    #r'Liberation Mono',
+    #r'Lucida_Console:h10',
+    #r'Fixedsys',
+    #r'Courier:h10:cANSI',
+    #r'Courier New',
+    #r'DejaVu Sans Mono',
 ]
-win32_only = [
-    r'Consolas',
-    r'Liberation Mono',
-    r'Lucida_Console:h10',
-    r'Fixedsys',
-    r'Courier:h10:cANSI',
-    r'Courier New',
-    r'DejaVu Sans Mono',
-]
-linux_only = [
+linux_fonts = [
+    r'MonoDyslexic\ 9.4',
     r'Neep\ 11',
+    r'monofur\ 11',
+    r'White\ Rabbit\ 11',
+    r'Courier\ New\ 11',
+    r'Nimbus\ Mono\ L\ 11', 
 ]
 if sys.platform.startswith('win32'):
-    #known_fonts += win32_only
-    pass
+    known_fonts = win32_fonts
 else:
-    known_fonts += linux_only
+    known_fonts = linux_fonts
 
 def vimprint(message):
-    vim.command(':silent !echo %r' % message)
+    vim.command(':silent !echom %r' % message)
     #vim.command(':echom %r' % message)
 
 vimprint('request=%r %r' % (type(request), request))
@@ -105,6 +107,7 @@ vimprint('index=%r fontstr=%r' % (fontindex, fontstr))
 vimprint('numfonts=%r' % (len(known_fonts)))
 vim.command('set gfn=' + fontstr)
 endpython
+:ECHOVAR gfn
 endfu
 
 

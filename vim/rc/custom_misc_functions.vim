@@ -47,13 +47,6 @@ func! BeginAlpha()
 endfu 
 
 
-fu! FUNC_ECHOVAR(varname)
-    :let varstr=a:varname
-    :exec 'let g:foo = &'.varstr
-    :echo varstr.' = '.g:foo
-endfu
-
-
 func! WordHighlightFun()
     if !exists("g:togwordhighlight") 
         let g:togwordhighlight=0
@@ -92,14 +85,8 @@ fu! FUNC_REPLACE_BACKSLASH()
 endfu
 
 
-func! MYINFO()
-    :ECHOVAR cino
-    :ECHOVAR cinkeys
-    :ECHOVAR foldmethod
-    :ECHOVAR filetype
-    :ECHOVAR smartindent
-endfu
-
+""""""""""""""""""""""""""""""""""
+" NAVIGATION
 
 func! QUICKOPEN_leader_tvio(...)
     " Maps <leader>t<key> to tab open a filename
@@ -113,16 +100,7 @@ func! QUICKOPEN_leader_tvio(...)
     :exec 'noremap <leader>o'.key.' :e '.fname.'<CR>'
 endfu
 
-func! PrintPlugins()
-    " where was an option set
-    :scriptnames " list all plugins, _vimrcs loaded (super)
-    :verbose set history? " reveals value of history and where set
-    :function " list functions
-    :func SearchCompl " List particular function
-endfu
 
-
-""""""""""""""""""""""""""""""""""
 func! OpenSetups()
 python << endpython
 import vim
@@ -167,3 +145,40 @@ for p in sys.path:
         vim.command(r"set path+=%s" % (p.replace(" ", r"\ ")))
 EOF
 endfu
+
+
+"""""""""""""
+" VIM INFO
+
+func! PrintPlugins()
+    " where was an option set
+    :scriptnames " list all plugins, _vimrcs loaded (super)
+    :verbose set history? " reveals value of history and where set
+    :function " list functions
+    :func SearchCompl " List particular function
+endfu
+
+func! DumpMappings()
+    :redir! > vim_maps_dump.txt
+    :map
+    :map!
+    :redir END
+endfu
+
+
+fu! FUNC_ECHOVAR(varname)
+    :let varstr=a:varname
+    :exec 'let g:foo = &'.varstr
+    :echo varstr.' = '.g:foo
+endfu
+command! -nargs=1 ECHOVAR :call FUNC_ECHOVAR(<f-args>)
+
+
+func! MYINFO()
+    :ECHOVAR cino
+    :ECHOVAR cinkeys
+    :ECHOVAR foldmethod
+    :ECHOVAR filetype
+    :ECHOVAR smartindent
+endfu
+command! MYINFOCMD call MYINFO() <C-R>

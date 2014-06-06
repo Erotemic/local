@@ -1,6 +1,6 @@
 "-------------------------
 " Function Remaps
-"map <F1> :call  ToggleWordHighlight()<CR> 
+"map <F1> :call  ToggleWordHighlight()<CR>
 "Map Ctrl+W (navkey) to Ctrl+(navkey) (for split windows)
 
 " Remap LEADER from \ to ,
@@ -34,15 +34,15 @@ map <leader>gi :wincmd f<CR> " In vsplit-split window
 map <leader>gs :vertical wincmd f<CR>
 
 " Function Keys
-map <F1> :call PEP8PRINT()<CR> 
-map <F2> :call ToggleAlpha()<CR> 
-map <F3> :call ToggleFont()<CR> 
-map <F4> :call OpenWindow()<CR> 
-map <F5> :call CmdHere()<CR> 
+map <F1> :call PEP8PRINT()<CR>
+map <F2> :call ToggleAlpha()<CR>
+map <F3> :call ToggleFont()<CR>
+map <F4> :call OpenWindow()<CR>
+map <F5> :call CmdHere()<CR>
 "vim-latex-suit overwrites f5, give it an alt
-map <F6> :call  CmdHere()<CR>  
+map <F6> :call  CmdHere()<CR>
 " Compile Command Remaps
-map <F8> :call  Tex_RunViewLaTeX()<CR>  
+map <F8> :call  Tex_RunViewLaTeX()<CR>
 nnoremap <leader>p :call Tex_RunViewLaTeX()<CR>
 nmap <C-P> :call Tex_RunViewLaTeX() <CR>
 imap <C-P> :call Tex_RunViewLaTeX() <CR>
@@ -59,14 +59,14 @@ noremap <leader>J :NERDTree<CR>
 "noremap <leader>r zR<CR>
 "
 
-" Folds: 
+" Folds:
 " Map space to toggle current fold
-noremap <space> za  
+noremap <space> za
 noremap <leader>z zR
 noremap <leader>a zA
 noremap <leader>m zM
 
-" Tabs: 
+" Tabs:
 " change next/prev tab
 noremap <leader><Tab> gt
 noremap <leader>` gT
@@ -98,7 +98,7 @@ noremap <leader>9 9gt
 " Add ss which does the same thing but is specific
 :noremap <leader>ss :%s/\<<C-r><C-w>\>/
 
-" goto next syntastic error 
+" goto next syntastic error
 :noremap <leader>e :SyntasticCheck<CR> :Errors<CR>
 :noremap <C-T> :NERDTree<CR>
 
@@ -124,9 +124,9 @@ func! FIXQT_DOC()
 :s/ * Qt::\([^0-9]*\)\([0-9]\)/\2: '\1' #/gc
 endfu
 
-" K goes to the help for the object under the cursor. 
+" K goes to the help for the object under the cursor.
 " This is anoying. Kill the behavior
-" Or learn how to use it? 
+" Or learn how to use it?
 " :noremap K k
 
 " custom command for opening setupfiles

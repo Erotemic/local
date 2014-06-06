@@ -8,8 +8,6 @@ command! TextWidthLineOn call FUNC_TextWidthLineOn()
 command! HexmodeOn :%!xxd
 command! HexmodeOff :%!xxd -r 
 "-------------------------
-command! MYINFOCMD call MYINFO() <C-R>
-command! -nargs=1 ECHOVAR :call FUNC_ECHOVAR(<f-args>)
 
 command! Bufloadpy :args *.py
 command! SAVESESSION :mksession ~/mysession.vim
