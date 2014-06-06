@@ -1,20 +1,121 @@
 func! ToggleFont() 
     if !exists("g:togfont") 
         let g:togfont=1
-    else 
-        let g:togfont = 1 - g:togfont 
-    endif 
-    if (g:togfont)
-        :call SetFontDyslexic()
-    else 
-        :call SetFontClean()
-    endif 
+    endif
+    python << endpython
+import vim
+togfont = int(vim.eval('g:togfont'))
+togfont += 1
+vim.command('let g:togfont=%r' % togfont)
+endpython
+    
+    "else 
+    "    let g:togfont = 1 - g:togfont 
+    "endif 
+    "else
+        "let g:togfont = 1 + g:togfont
+    "endif
+    "if (g:togfont)
+    "    :call SetFontDyslexic()
+    "else 
+    "    :call SetFontClean()
+    "endif 
+    
+    call SetFuzzyFont(g:togfont)
 endfu 
 
+
 fu! SetMyFont()
-    call SetFontDyslexic()
+    call SetFuzzyFont("monodyslexic")
+    "call SetFontDyslexic()
     "call SetFontClean()
 endfu
+
+
+" Setting Font Functions
+fu! SetFontClean()
+    if has("win32") || has("win16")
+        call SetFuzzyFont("monofur")
+        "call SetFuzzyFont("lucida console")
+        "call SetFuzzyFont("Inconsolata")
+    else
+        "set gfn=Ubuntu\ Mono\ 9
+        "set gfn=Neep\ Alt\ Medium\ Semi-Condensed\ 11
+        set gfn=Neep\ 11
+    endif
+endfu
+
+
+fu! SetFuzzyFont(fontid)
+    let fontid=a:fontid
+python << endpython
+import vim
+import sys
+import Levenshtein  # Edit distance algorithm
+from operator import itemgetter
+request = vim.eval('fontid')
+known_fonts = [
+    r'Mono\ Dyslexic:h10',
+    r'Inconsolata:h10',
+    r'Inconsolata:h11',
+    r'Source_Code_Pro:h11:cANSI',
+    r'peep:h11:cOEM',
+    r'monofur:h11',
+]
+win32_only = [
+    r'Consolas',
+    r'Liberation Mono',
+    r'Lucida_Console:h10',
+    r'Fixedsys',
+    r'Courier:h10:cANSI',
+    r'Courier New',
+    r'DejaVu Sans Mono',
+]
+linux_only = [
+    r'Neep\ 11',
+]
+if sys.platform.startswith('win32'):
+    #known_fonts += win32_only
+    pass
+else:
+    known_fonts += linux_only
+
+def vimprint(message):
+    vim.command(':silent !echo %r' % message)
+    #vim.command(':echom %r' % message)
+
+vimprint('request=%r %r' % (type(request), request))
+
+int_str = map(str, range(0, 9))
+is_integer_str = all([_ in int_str for _ in request])
+    
+if isinstance(request, (str)) and not is_integer_str:
+    # Calcualate edit distance to each known font
+    known_dists = [Levenshtein.distance(known.lower(), request.lower()) for known in known_fonts]
+
+    # Pick the minimum distance
+    min_index = min(enumerate(known_dists), key=itemgetter(1))[0]
+    fontindex = min_index
+else:
+    fontindex = int(request) % len(known_fonts)
+
+fontstr = known_fonts[fontindex]
+# Set as current font
+vimprint('index=%r fontstr=%r' % (fontindex, fontstr))
+vimprint('numfonts=%r' % (len(known_fonts)))
+vim.command('set gfn=' + fontstr)
+endpython
+endfu
+
+
+
+" Multiple arguments
+func! QUICKOPEN_leader_tvio(...)
+    let key = a:1
+    let fname = a:2
+endfu
+" 
+
 
 " Setting Font Functions
 fu! SetFontDyslexic()
@@ -23,18 +124,6 @@ fu! SetFontDyslexic()
         set gfn=Mono\ Dyslexic:h10
     else
         set gfn=MonoDyslexic\ 9.4
-    endif
-endfu
-
-
-" Setting Font Functions
-fu! SetFontClean()
-    if has("win32") || has("win16")
-        set gfn=Lucida_Console:h10
-    else
-        "set gfn=Ubuntu\ Mono\ 9
-        "set gfn=Neep\ Alt\ Medium\ Semi-Condensed\ 11
-        set gfn=Neep\ 11
     endif
 endfu
 

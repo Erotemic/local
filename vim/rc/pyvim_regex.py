@@ -55,3 +55,30 @@ def ensurespaces(op):
     repl = ' ' + op + ' '
     resub('\\>' + op + '\\<', repl)
     resub(group('[\\])"]') + op + '\\<', bref(1) + repl)
+
+
+
+def closest_known():
+    import Levenshtein
+    from operator import itemgetter
+    request = 'monodyslexic'
+    known_fonts = [
+        r'Mono\ Dyslexic:h10',
+        r'Consolas',
+        r'Courier',
+        r'Courier New',
+        r'DejaVu Sans Mono',
+        r'Fixedsys',
+        r'Liberation Mono',
+        r'Lucida Console',
+        r'Inconsolata',
+        r'monofur:h11',
+        r'Source_Code_Pro:h11:cANSI',
+        r'peep:h11:cOEM',
+    ]
+    # Calcualate edit distance to each known font
+    known_dists = [Levenshtein.distance(known.lower(), request.lower()) for known in known_fonts]
+
+    # Pick the minimum distance
+    min_index = min(enumerate(known_dists), key=itemgetter(1))[0]
+    fontstr = known_fonts[min_index]

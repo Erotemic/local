@@ -1,14 +1,32 @@
 " ========= VIM PREFERENCES ========= "
 
 " Some of these probably need to be cleaned up
-syntax on
-filetype plugin indent on
-" MISC: win clipboard on linux
-if has("win32") || has("win16")
-    behave mswin
-else
-    source $VIMRUNTIME/mswin.vim
+set hlsearch
+
+" Use Vim settings, rather than Vi settings (much better!).
+" This must be first, because it changes other options as a side effect.
+"set nocompatible
+
+" allow backspacing over everything in insert mode
+set backspace=indent,eol,start
+
+if !exists(":DiffOrig")
+  command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
+		  \ | wincmd p | diffthis
 endif
+
+" In many terminal emulators the mouse works just fine, thus enable it.
+if has('mouse')
+  set mouse=a
+endif
+
+" MISC: win clipboard on linux
+"if has("win32") || has("win16")
+"    behave mswin
+"endif
+"else
+"    source $VIMRUNTIME/mswin.vim
+"endif
 
 " " Turn backup off, since most stuff is in SVN, git et.c anyway...
 set ff=unix
@@ -72,10 +90,13 @@ set cino={1s
 set autoread
 set lbr " Linebreak on 500 characters
 set tw=500
+set history=5000  " keep 5000 lines of command line history
+set ruler
+set showcmd	
+set incsearch
 
 "Windows symlink problems
 set bkc=yes
-set nobackup 
 set nowritebackup
 
 hi StatusLine ctermbg=red ctermfg=green

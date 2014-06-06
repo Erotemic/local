@@ -81,6 +81,12 @@ alias rf='cd ~/code/pyrf/'
 alias gi='cd ~/code/pygist/'
 alias dt='cd ~/code/detecttools/'
 
+#python -c "import site; print(site.getusersitepackages())"
+#python -c "import site; print(site.getsitepackages())"
+
+#alias pysite='cd $(python -c "import site; print(site.getsitepackages()[0]))"'
+#alias vrc='cd $(python -c "import site; print(site.getsitepackages()[0]))"'
+
 
 alias pydist='cd ~/code/pyrf/'
 

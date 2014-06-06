@@ -1,6 +1,6 @@
 "-------------------------
 " PLUGIN: PYMODE
-let g:pymode_rope = 0
+"let g:pymode_rope = 0
 " Python-mode
 " Activate rope
 " Keys:
@@ -14,37 +14,37 @@ let g:pymode_rope = 0
 " ]]            Jump on next class or function (normal, visual, operator modes)
 " [M            Jump on previous class or method (normal, visual, operator modes)
 " ]M            Jump on next class or method (normal, visual, operator modes)
-let g:pymode_rope = 1
+"let g:pymode_rope = 1
 
-" Documentation
-let g:pymode_doc = 1
-let g:pymode_doc_key = 'K'
+"" Documentation
+"let g:pymode_doc = 1
+"let g:pymode_doc_key = 'K'
 
-"Linting
-let g:pymode_lint = 1
-let g:pymode_lint_checker = "pyflakes,pep8"
-" Auto check on save
-let g:pymode_lint_write = 0
+""Linting
+"let g:pymode_lint = 1
+"let g:pymode_lint_checker = "pyflakes,pep8"
+"" Auto check on save
+"let g:pymode_lint_write = 0
 
-" Support virtualenv
-let g:pymode_virtualenv = 1
+"" Support virtualenv
+"let g:pymode_virtualenv = 1
 
-" Enable breakpoints plugin
-let g:pymode_breakpoint = 1
-let g:pymode_breakpoint_key = '<leader>b'
+"" Enable breakpoints plugin
+"let g:pymode_breakpoint = 1
+"let g:pymode_breakpoint_key = '<leader>b'
 
-" syntax highlighting
-let g:pymode_syntax = 1
-let g:pymode_syntax_all = 1
-let g:pymode_syntax_indent_errors = g:pymode_syntax_all
-let g:pymode_syntax_space_errors = g:pymode_syntax_all
+"" syntax highlighting
+"let g:pymode_syntax = 1
+"let g:pymode_syntax_all = 1
+"let g:pymode_syntax_indent_errors = g:pymode_syntax_all
+"let g:pymode_syntax_space_errors = g:pymode_syntax_all
 
-" Don't autofold code
-let g:pymode_folding = 0
+"" Don't autofold code
+"let g:pymode_folding = 0
 
 "-------------------------
 " PLUGIN: JEDI 
-let g:jedi#popup_on_dot = 0
+let g:jedi#popup_on_dot = 1
 let g:jedi#show_call_signatures = 0
 command! JediShowFuncOn :let g:jedi#show_call_signatures = 1
 command! JediShowFuncOff :let g:jedi#show_call_signatures2= 0

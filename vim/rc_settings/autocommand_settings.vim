@@ -9,7 +9,7 @@
 au FileType python set nosmartindent
 au FileType python filetype indent on
 au FileType python set textwidth=80
-au FileType python set foldmethod=indent
+"au FileType python set foldmethod=indent
 "au FileType python set foldnestmax=2
 "au BufNewFile,BufRead *.py :%s/\t/    /g
 

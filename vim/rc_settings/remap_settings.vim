@@ -137,3 +137,11 @@ noremap <leader>qt :tabclose<CR>
 map <C-F4> <Esc>:tabclose<CR>
 
 map <c-`> <c-o>
+
+
+" Don't use Ex mode, use Q for formatting
+map Q gq
+
+" CTRL-U in insert mode deletes a lot.  Use CTRL-G u to first break undo,
+" so that you can undo CTRL-U after inserting a line break.
+inoremap <C-U> <C-G>u<C-U>
