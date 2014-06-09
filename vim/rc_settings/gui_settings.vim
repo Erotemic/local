@@ -5,7 +5,7 @@
 :set go+=m  " MENUBAR
 :set go+=g  " gray menu items
 :set go-=a  " autoselect
-:set go-=r go-=R  " RIGHT_VERT_SCROLL
+:set go+=r go+=R  " RIGHT_VERT_SCROLL
 :set go-=l go-=L  " LEFT_VERT_SCROLL
 :set go-=b go-=B  " BOT_VERT_SCROLL 
 :set go+=e  " GUI_TABS

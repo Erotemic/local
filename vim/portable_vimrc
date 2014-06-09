@@ -83,3 +83,5 @@ source ~/local/vim/rc_settings/remap_settings.vim
 :call QUICKOPEN_leader_tvio('_', '$VIMRUNTIME/../_vimrc')
 
 "call MagicPython()
+"
+:set guioptions+=r  "remove right-hand scroll bar

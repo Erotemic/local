@@ -3,9 +3,12 @@
 "map <F1> :call  ToggleWordHighlight()<CR>
 "Map Ctrl+W (navkey) to Ctrl+(navkey) (for split windows)
 
-" Remap LEADER from \ to ,
+
+"useful funcs for leaderkeys
+source ~/local/vim/rc_settings/remap_funcs.vim
+
+" Remap LEADER from \<CR> to ,
 let mapleader = ","
-":nmap \ ,
 " Remap COLOn colon to semicolon (in normal and visual mode)
 nmap ; :
 vmap ; :
@@ -35,7 +38,10 @@ map <leader>gs :vertical wincmd f<CR>
 
 " Function Keys
 map <F1> :call PEP8PRINT()<CR>
-map <F2> :call ToggleAlpha()<CR>
+" Map f2 in both normal and interactive mode
+map <F2> :call ToggleNumberLineInvert()<CR>
+imap <F2> <ESC>:call ToggleNumberLineInvert()<CR>a
+"
 map <F3> :call ToggleFont()<CR>
 map <F4> :call OpenWindow()<CR>
 map <F5> :call CmdHere()<CR>
@@ -43,6 +49,7 @@ map <F5> :call CmdHere()<CR>
 map <F6> :call  CmdHere()<CR>
 " Compile Command Remaps
 map <F8> :call  Tex_RunViewLaTeX()<CR>
+map <F12> :call ToggleAlpha()<CR>
 nnoremap <leader>p :call Tex_RunViewLaTeX()<CR>
 nmap <C-P> :call Tex_RunViewLaTeX() <CR>
 imap <C-P> :call Tex_RunViewLaTeX() <CR>
@@ -108,7 +115,9 @@ noremap <leader>9 9gt
 
 " RESIZE VSPLIT
 :noremap <leader>+ :30winc ><CR>
-:noremap <leader>- :30winc <<CR>
+:noremap <leader>_ :30winc <<CR>
+:noremap <leader>= :FontIncrease<CR>
+:noremap <leader>- :FontDecrease<CR>
 
 
 "Surround word with quotes
@@ -145,3 +154,20 @@ map Q gq
 " CTRL-U in insert mode deletes a lot.  Use CTRL-G u to first break undo,
 " so that you can undo CTRL-U after inserting a line break.
 inoremap <C-U> <C-G>u<C-U>
+
+" Remap execute macro from @ to \
+:nmap \ @
+
+" Define Macros
+let @q=',qw'
+let @1='40j'
+let @2='40k'
+
+" This is one special character which means escape
+" I got this by typing Ctrl+Q<ESC> 
+" 
+" 
+
+let@s='iself.'
+
+nmap <leader>u :call ToggleNumberLineInvert()<CR>

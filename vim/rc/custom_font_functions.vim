@@ -8,55 +8,19 @@ togfont = int(vim.eval('g:togfont'))
 togfont += 1
 vim.command('let g:togfont=%r' % togfont)
 endpython
-    
-    "else 
-    "    let g:togfont = 1 - g:togfont 
-    "endif 
-    "else
-        "let g:togfont = 1 + g:togfont
-    "endif
-    "if (g:togfont)
-    "    :call SetFontDyslexic()
-    "else 
-    "    :call SetFontClean()
-    "endif 
-    
     call SetFuzzyFont(g:togfont)
 endfu 
 
-
-fu! SetMyFont()
-    call SetFuzzyFont("monodyslexic")
-    "call SetFontDyslexic()
-    "call SetFontClean()
-endfu
-
-
-" Setting Font Functions
-fu! SetFontClean()
-    if has("win32") || has("win16")
-        call SetFuzzyFont("monofur")
-        "call SetFuzzyFont("lucida console")
-        "call SetFuzzyFont("Inconsolata")
-    else
-        "set gfn=Ubuntu\ Mono\ 9
-        "set gfn=Neep\ Alt\ Medium\ Semi-Condensed\ 11
-        set gfn=Neep\ 11
-    endif
-endfu
-
-
 fu! SetFuzzyFont(fontid)
-    let fontid=a:fontid
 python << endpython
 import vim
 import sys
 import Levenshtein  # Edit distance algorithm
 from operator import itemgetter
-request = vim.eval('fontid')
+request = vim.eval('a:fontid')
 win32_fonts = [
     r'Mono\ Dyslexic:h10',
-    #r'Inconsolata:h10',
+    r'Inconsolata:h10',
     r'Inconsolata:h11',
     #r'Source_Code_Pro:h11:cANSI',
     #r'peep:h11:cOEM',
@@ -76,6 +40,8 @@ linux_fonts = [
     r'White\ Rabbit\ 11',
     r'Courier\ New\ 11',
     r'Nimbus\ Mono\ L\ 11', 
+    #r'Ubuntu\ Mono\ 9',
+    #r'Neep\ Alt\ Medium\ Semi-Condensed\ 11'
 ]
 if sys.platform.startswith('win32'):
     known_fonts = win32_fonts
@@ -83,8 +49,9 @@ else:
     known_fonts = linux_fonts
 
 def vimprint(message):
-    vim.command(':silent !echom %r' % message)
+    #vim.command(':silent !echom %r' % message)
     #vim.command(':echom %r' % message)
+    pass
 
 vimprint('request=%r %r' % (type(request), request))
 
@@ -107,23 +74,29 @@ vimprint('index=%r fontstr=%r' % (fontindex, fontstr))
 vimprint('numfonts=%r' % (len(known_fonts)))
 vim.command('set gfn=' + fontstr)
 endpython
-:ECHOVAR gfn
 endfu
 
 
-
-" Multiple arguments
-func! QUICKOPEN_leader_tvio(...)
-    let key = a:1
-    let fname = a:2
+fu! SetMyFont()
+    call SetFuzzyFont("monodyslexic")
+    "call SetFontDyslexic()
+    "call SetFontClean()
 endfu
-" 
+
+
+" Setting Font Functions
+fu! SetFontClean()
+    if has("win32") || has("win16")
+        call SetFuzzyFont("Inconsolata")
+    else
+        set gfn=Neep\ 11
+    endif
+endfu
 
 
 " Setting Font Functions
 fu! SetFontDyslexic()
     if has("win32") || has("win16")
-        "set gfn=Mono\ Dyslexic:h11
         set gfn=Mono\ Dyslexic:h10
     else
         set gfn=MonoDyslexic\ 9.4

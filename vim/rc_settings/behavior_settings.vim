@@ -105,5 +105,9 @@ hi StatusLine guibg=gray10 guifg=green
 " why wont this work
 highlight Cursor guifg=blue guibg=orange
 
-" Set the default font to mono dyslexic size 11
-:call SetMyFont()
+
+" Set the font to one I like if it hasn't been done already
+" Dont change it if I've already got one I like
+if !exists("g:togfont") 
+    :call ToggleFont()
+endif
