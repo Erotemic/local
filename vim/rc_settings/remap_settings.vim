@@ -167,7 +167,9 @@ let @2='40k'
 " I got this by typing Ctrl+Q<ESC> 
 " 
 " 
+"
 
 let@s='iself.'
+let@e=':Align ='
 
 nmap <leader>u :call ToggleNumberLineInvert()<CR>

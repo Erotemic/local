@@ -58,8 +58,8 @@ source ~/local/vim/rc_settings/remap_settings.vim
 :call QUICKOPEN_leader_tvio('f', '~/code/ibeis/ibeis/dev/ibsfuncs.py')
 :call QUICKOPEN_leader_tvio('m', '~/code/ibeis/ibeis/main_module.py')
 
-:call QUICKOPEN_leader_tvio('z', '~/code/ibeis/ibeis/viz/viz_qres.py')
-:call QUICKOPEN_leader_tvio('x', '~/code/ibeis/ibeis/viz/interact/interact_qres.py')
+:call QUICKOPEN_leader_tvio('z', '~/code/ibeis/ibeis/viz/viz_matches.py')
+:call QUICKOPEN_leader_tvio('x', '~/code/ibeis/ibeis/viz/interact/interact_qres2.py')
 
 :call QUICKOPEN_leader_tvio('h', '~/code/ibeis/ibeis/model/hots/match_chips3.py')
 :call QUICKOPEN_leader_tvio('r', '~/code/ibeis/ibeis/model/detect/randomforest.py')
