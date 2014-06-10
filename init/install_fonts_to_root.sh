@@ -18,4 +18,4 @@ ls -al /usr/local/share/fonts
 
 sudo fc-cache
 
-sudo cp ~joncrall/Dropbox/Installers/Fonts/*.ttf /usr/local/share/fonts/truetype
+sudo cp ~/Dropbox/Installers/Fonts/*.ttf /usr/local/share/fonts/truetype

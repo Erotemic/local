@@ -41,8 +41,10 @@ map <F1> :call PEP8PRINT()<CR>
 " Map f2 in both normal and interactive mode
 map <F2> :call ToggleNumberLineInvert()<CR>
 imap <F2> <ESC>:call ToggleNumberLineInvert()<CR>a
-"
-map <F3> :call ToggleFont()<CR>
+
+"command :ECHOGFN :call Echo
+"http://vim.1045645.n5.nabble.com/How-to-map-two-commands-on-one-key-td1162164.html
+map <F3> :call ToggleFont() <Bar> redraw <Bar> call FUNC_ECHOVAR("gfn")<CR>
 map <F4> :call OpenWindow()<CR>
 map <F5> :call CmdHere()<CR>
 "vim-latex-suit overwrites f5, give it an alt
