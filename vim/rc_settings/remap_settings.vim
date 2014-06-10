@@ -15,7 +15,8 @@ vmap ; :
 " Remap ESCAPE key to?  ":imap ` <Esc>
 
 " Hotkey: <leader>rrr Reload the vimrc
-noremap <leader>rrr :source ~/local/vim/portable_vimrc<CR>
+"noremap <leader>rrr :source ~/local/vim/portable_vimrc<CR>
+noremap <leader>r :source ~/local/vim/portable_vimrc<CR>
 noremap <leader>R :source ~/local/vim/portable_vimrc<CR>
 
 " Window navication

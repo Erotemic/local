@@ -13,7 +13,7 @@ endfu
 
 fu! SetFuzzyFont(fontid)
 python << endpython
-def run_py_fuzzyfont():
+def pyrun_fuzzyfont():
     import vim
     import sys
     import Levenshtein  # Edit distance algorithm
@@ -36,18 +36,21 @@ def run_py_fuzzyfont():
     ]
     linux_fonts = [
         r'MonoDyslexic\ 9.4',
-        #r'MonoDyslexic\ 10',
         r'Inconsolata\ Medium\ 11',
         r'Inconsolata\ Medium\ 9',
-        #r'Inconsolata\ Medium\ 10',
         r'Neep\ 11',
         r'monofur\ 11',
         r'White\ Rabbit\ 10',
-        #r'Courier\ New\ 11',
-        #r'Nimbus\ Mono\ L\ 11', 
-        #r'Ubuntu\ Mono\ 9',
-        #r'Neep\ Alt\ Medium\ Semi-Condensed\ 11'
     ]
+    linux_extended = [
+        r'MonoDyslexic\ 10',
+        r'Inconsolata\ Medium\ 10',
+        r'Courier\ New\ 11',
+        r'Nimbus\ Mono\ L\ 11', 
+        r'Ubuntu\ Mono\ 9',
+        r'Neep\ Alt\ Medium\ Semi-Condensed\ 11'
+        ]
+    #linux_fonts = sorted(linux_fonts + linux_extended)
     if sys.platform.startswith('win32'):
         known_fonts = win32_fonts
     else:
@@ -78,7 +81,7 @@ def run_py_fuzzyfont():
     vimprint('index=%r fontstr=%r' % (fontindex, fontstr))
     vimprint('numfonts=%r' % (len(known_fonts)))
     vim.command('set gfn=' + fontstr)
-run_py_fuzzyfont()
+pyrun_fuzzyfont()
 endpython
 endfu
 
@@ -101,19 +104,53 @@ command! FontIncrease call FontIncrease()
 
 " NEW QUICK INCREASE FONT STUFF
 function! AdjustFontSize(amount)
+let oldgfn=&gfn
+python << endpython
+def pyrun_adjust_size():
+    import vim
+    import sys
+    def vimprint(message):
+        vim.command(':silent !echom %r' % message)
+        #vim.command(':echom %r' % message)
+        pass
+    amount = int(vim.eval('a:amount'))
+    vimprint(amount)
+    gfn = vim.eval('oldgfn')
+    if sys.platform.startswith('win32'):
+        #font_name, font_size, extra = 
+        pass
+    else:
+        sepx = gfn.rfind(' ')
+        if sepx == -1:
+            font_size = 10
+            font_name = gfn
+            sep = r'\ '
+        else:
+            font_size = float(gfn[sepx + 1:])
+            font_name = gfn[:sepx]
+            sep = r'\ '
+        vimprint(font_name)
+        vimprint(gfn)
+        vimprint(sepx)
+        new_size = int(min(max(font_size + amount, 6), 16))
+        new_gfn = font_name + sep + str(new_size)
+    vimprint(new_gfn)
+    vim.command('set gfn=' + new_gfn)
+pyrun_adjust_size()
+endpython
     "                     part1       part2      part3
-    let font_pattern = '^\(.*\):h\([0-9][0-9]*\)\(.*$\)'
-    let min_sz = 6
-    let max_sz = 16
-    if has("gui_running")
-        let oldfont = substitute(&gfn, font_pattern, '\1', '')
-        let cursize = substitute(&gfn, font_pattern, '\2', '')
-        let newsize = cursize + a:amount
-        if (newsize >= min_sz) && (newsize <= max_sz)
-            let newfont = oldfont . ':h' . newsize
-            let &gfn = newfont
-        endif
-    else
-        echoerr "This only works in a gui"
-    endif
+    "let font_pattern = '^\(.*\):h\([0-9][0-9]*\)\(.*$\)'
+    "let min_sz = 6
+    "let max_sz = 16
+    "if has("gui_running")
+    "    let oldfont = substitute(&gfn, font_pattern, '\1', '')
+    "    let cursize = substitute(&gfn, font_pattern, '\2', '')
+    "    let newsize = cursize + a:amount
+    "    if (newsize >= min_sz) && (newsize <= max_sz)
+    "        let newfont = oldfont . ':h' . newsize
+    "        let &gfn = newfont
+    "    endif
+    "else
+    "    echoerr "This only works in a gui"
+    "endif
 endfunction
