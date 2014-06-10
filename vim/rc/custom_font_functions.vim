@@ -1,14 +1,14 @@
 func! ToggleFont() 
     if !exists("g:togfont") 
-        let g:togfont=1
+        let g:togfont=0
     endif
     python << endpython
 import vim
 togfont = int(vim.eval('g:togfont'))
-togfont += 1
-vim.command('let g:togfont=%r' % togfont)
+vim.command('call SetFuzzyFont(%r)' % togfont)
+vim.command('let g:togfont=%r' % (togfont + 1))
 endpython
-    call SetFuzzyFont(g:togfont)
+    
 endfu 
 
 fu! SetFuzzyFont(fontid)
