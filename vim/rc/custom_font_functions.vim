@@ -121,19 +121,24 @@ def pyrun_adjust_size():
         pass
     else:
         sepx = gfn.rfind(' ')
-        if sepx == -1:
+        if sepx > -1:
+            font_name = gfn[:sepx]
+            font_size = float(gfn[sepx + 1:])
+        else:
             font_size = 10
             font_name = gfn
-            sep = r'\ '
-        else:
-            font_size = float(gfn[sepx + 1:])
-            font_name = gfn[:sepx]
-            sep = r'\ '
-        vimprint(font_name)
-        vimprint(gfn)
-        vimprint(sepx)
+        vimprint('font_name1 = %r' % font_name)
+        font_name = font_name.replace('\\ ', ' ')
+        if not font_name.endswith(' '):
+            font_name = font_name + ' '
+        vimprint('font_name2 = %r' % font_name)
+        vimprint('gfn = %r' % gfn)
+        vimprint('sepx = %r' % sepx)
         new_size = int(min(max(font_size + amount, 6), 16))
-        new_gfn = font_name + sep + str(new_size)
+        new_gfn = font_name + str(new_size)
+        new_gfn = new_gfn.replace(' ', r'\ ')
+        vimprint('new_size = %r' % new_size)
+        vimprint('new_gfn = %r' % new_gfn)
     vimprint(new_gfn)
     vim.command('set gfn=' + new_gfn)
 pyrun_adjust_size()
