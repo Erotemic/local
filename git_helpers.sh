@@ -18,6 +18,12 @@ gg-push()
     python ~/local/util_git.py 'git push'
 }
 
+gg-cmd()
+{
+    python ~/local/util_git.py $@
+}
+
 alias ggs=gg-stats
 alias ggp=gg-pull
 alias gs=gg-stats
+alias ggcmd=gg-cmd
