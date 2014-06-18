@@ -189,6 +189,11 @@ ln -s /data/ibeis/work ~/work
 
 # Clone IBEIS
 cd code
+git clone https://github.com/Erotemic/utool.git
+sudo python2.7 setup.py develop
+cd utool
+
 git clone https://github.com/Erotemic/ibeis.git
 
 cd ~/code/ibeis
+python2.7 super_setup.py --build --develop
