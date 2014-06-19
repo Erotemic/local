@@ -11,6 +11,8 @@ echo "alias home='cd ~'" >> ~/.bashrc
 echo "alias data='cd ~/data'" >> ~/.bashrc
 echo "alias code='cd ~/code'" >> ~/.bashrc
 echo "alias ib='cd ~/code/ibeis/'" >> ~/.bashrc
+echo "alias s='git status'" >> ~/.bashrc
+
 echo "export WORKON_HOME=~/Envs" >> ~/.bashrc
 rrr
 
@@ -30,8 +32,9 @@ sudo yum install -y openssl
 sudo yum install -y readline-devel
 sudo yum install -y tk-devel
 sudo yum install -y ncurses-devel ncurses
-sudo yum install -y qt4
-sudo yum install -y qt4-devel
+sudo yum groupinstall 'Development Tools' -y
+#sudo yum install -y qt4
+#sudo yum install -y qt4-devel
 
 sudo yum upgrade -y wget
 sudo yum upgrade -y openssl
@@ -40,8 +43,19 @@ sudo yum upgrade -y openssl-devel
 # symlink qmake to bin
 sudo ln -s /usr/bin/qmake-qt4 /usr/bin/qmake
 
+# We actually need to build cmake from source
+#sudo yum install -y cmake
+sudo yum remove -y cmake
+
+cd ~/tmp
+export CMAKE_SNAPSHOT=cmake-3.0.0
+wget http://www.cmake.org/files/v3.0/$CMAKE_SNAPSHOT.tar.gz
+gunzip $CMAKE_SNAPSHOT.tar.gz && tar -xvf $CMAKE_SNAPSHOT.tar
+cd ~/tmp/$CMAKE_SNAPSHOT
+./bootstrap
+gmake && sudo make install
+
 # Other prereqs
-sudo yum install -y cmake
 sudo yum install -y ffmpeg-devel
 sudo yum install -y libpng-devel
 sudo yum install -y libjpeg-devel
@@ -120,26 +134,6 @@ python27 configure-ng.py --qmake /usr/bin/qmake-qt4 --static --no-designer-plugi
 make -j9
 sudo make install
 
-#purge_sip()
-#{
-#    find /bin -name '*sip*'
-#    find /lib -name '*sip*'
-#    find /usr/local -name '*sip*'
-#    find $PYENV_ROOT -name '*sip*'
-#    rm /usr/local/bin/sip
-#    rm /usr/local/include/python2.7/sip.h
-#    rm /usr/local/lib/python2.7/site-packages/sip.so
-#    rm /usr/local/lib/python2.7/site-packages/sipdistutils.py
-#    rm /usr/local/lib/python2.7/site-packages/sipconfig.py
-#    rm /usr/local/lib/python2.7/site-packages/sipconfig.pyc
-#    rm /home/jonathan/Envs/ibeis27/lib/python2.7/site-packages/sipdistutils.py
-#    rm /home/jonathan/Envs/ibeis27/lib/python2.7/site-packages/libsip.a
-#    rm /home/jonathan/Envs/ibeis27/lib/python2.7/site-packages/sipconfig.py
-#    rm /home/jonathan/Envs/ibeis27/lib/python2.7/site-packages/sip.so
-#    rm /home/jonathan/Envs/ibeis27/bin/sip
-#    rm /home/jonathan/Envs/ibeis27/python2.7/sip.h
-#}
-
 # Setup a virtual environment to download all the IBEIS packages
 sudo pip2.7 install virtualenv
 # Virtual Env wrapper
@@ -197,3 +191,10 @@ git clone https://github.com/Erotemic/ibeis.git
 
 cd ~/code/ibeis
 python2.7 super_setup.py --build --develop
+
+
+##
+
+git config --global user.name "jon crall"
+git config --global user.email "crallj@rpi.edu"
+git config --global user.email "erotemic@gmail.com"
