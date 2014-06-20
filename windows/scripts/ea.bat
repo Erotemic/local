@@ -1,0 +1,1 @@
+gvim %USERPROFILE%/local/alias_rc.sh %*
