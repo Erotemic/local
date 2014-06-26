@@ -1,7 +1,19 @@
 func! FUNC_Remap(lhs, rhs)
-    :echom 'inoremap '.a:lhs.' '.a:rhs
+    " Function which remaps keys in all modes
+    "
+    ":echom 'inoremap '.a:lhs.' '.a:rhs
+    "http://vim.wikia.com/wiki/Mapping_keys_in_Vim_-_Tutorial_(Part_1)
+    "--------------
+    " Normal Mode
     :exec 'noremap '.a:lhs.' '.a:rhs
+    " Insert and Replace Mode
     :exec 'inoremap '.a:lhs.' '.a:rhs
+    " Visual and Select Mode
+    :exec 'vnoremap '.a:lhs.' '.a:rhs
+    " Command Line Mode
+    ":exec 'cnoremap '.a:lhs.' '.a:rhs
+    " Operator Pending Mode
+    :exec 'onoremap '.a:lhs.' '.a:rhs
 endfu
 
 

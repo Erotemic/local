@@ -54,10 +54,10 @@ source ~/local/vim/rc_settings/remap_settings.vim
 :call QUICKOPEN_leader_tvio('d', '~/code/ibeis/dev.py')
 :call QUICKOPEN_leader_tvio('e', '~/code/ibeis/ibeis/dev/experiment_printres.py')
 :call QUICKOPEN_leader_tvio('f', '~/code/ibeis/ibeis/dev/ibsfuncs.py')
-:call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/guiback.py')
+:call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/inspect_gui.py')
 :call QUICKOPEN_leader_tvio('h', '~/code/ibeis/ibeis/model/hots/match_chips3.py')
 "i
-:call QUICKOPEN_leader_tvio('j', '~/code/ibeis/ibeis/ingest/ingest_hsdb.py')
+:call QUICKOPEN_leader_tvio('j', '~/code/ibeis/ibeis/ingest/ingest_database.py')
 "k
 :call QUICKOPEN_leader_tvio('l', '~/local/init')
 :call QUICKOPEN_leader_tvio('m', '~/code/ibeis/ibeis/main_module.py')
@@ -71,7 +71,7 @@ source ~/local/vim/rc_settings/remap_settings.vim
 :call QUICKOPEN_leader_tvio('u', '~/code/utool/utool/__init__.py')
 :call QUICKOPEN_leader_tvio('v', '~/code/vtool/vtool/__init__.py')
 "w
-:call QUICKOPEN_leader_tvio('x', '~/code/ibeis/ibeis/viz/interact/interact_qres2.py')
+:call QUICKOPEN_leader_tvio('x', '~/code/ibeis/ibeis/viz/interact/interact_name.py')
 "y
 :call QUICKOPEN_leader_tvio('z', '~/code/ibeis/ibeis/viz/viz_matches.py')
 

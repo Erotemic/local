@@ -1,11 +1,33 @@
 
 make_ubuntu_symlinks()
 {
+    stty echo
     ln -s ~/local/scripts/ubuntu_scripts ~/scripts
     # For Hyrule
     ln -s /media/SSD_Extra ~/SSD_Extra
     ln -s /media/Store ~/Store
     ln -s /media/Store/data ~/data
+}
+
+make_python_aliases()
+{
+    export PYEXE=/usr/bin/python2.7
+    # Command to get version
+    #export PYEXE_ALT1_VERSION=$($PYTHON_BIN -c "import platform; print(platform.python_version()[0:3])")
+    #export PYEXE_ALT2_VERSION=$($PYTHON_BIN -c "import platform; print(platform.python_version()[0:3]).replace('.', '')")
+    #echo "PYEXE=$PYEXE"
+    #echo "PYEXE_ALT1_VERSION=$PYEXE_ALT1_VERSION"
+    #echo "PYEXE_ALT2_VERSION=$PYEXE_ALT2_VERSION"
+    #2>&1 >/dev/null | echo | sed s/Python //g
+    ## symlink for pip
+    #sudo ln -s $PYEXE /usr/local/bin/python$PYEXE_ALT1_VERSION
+    #sudo ln -s $PYEXE /usr/local/bin/python$PYEXE_ALT2_VERSION
+    #sudo ln -s $PYEXE /usr/bin/python$PYEXE_ALT1_VERSION
+    #sudo ln -s $PYEXE /usr/bin/python$PYEXE_ALT2_VERSION
+
+    # Ubuntu tends to do things right
+    sudo ln -s /usr/local/bin/pip2.7 /usr/local/bin/pip27
+    sudo ln -s /usr/bin/python2.7 /usr/bin/python27
 }
 
 donot_lock_screen()

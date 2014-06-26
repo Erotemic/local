@@ -118,3 +118,7 @@ s/
 
 %s/\(^     *\)printDBG/\1#OFF printDBG/gc
 
+
+
+%s/ibs.get_image_props(/ibs.db.get('images', /gc
+%s/ibs.get_\([a-z]*\)_props(/ibs.db.get('\1s', /gc

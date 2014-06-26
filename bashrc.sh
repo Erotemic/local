@@ -1,5 +1,6 @@
 #!/bin/sh
 export QT_ACCESSIBILITY=0
+export NCPUS=$(grep -c ^processor /proc/cpuinfo)
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
     source ~/local/bashrc_mac.sh
