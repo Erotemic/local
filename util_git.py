@@ -6,7 +6,7 @@ from itertools import izip
 from os.path import exists, join, dirname, split, isdir
 import __REPOS__
 import meta_util_git as mu  # NOQA
-from meta_util_git import get_repo_dirs, get_repo_dname  # NOQA
+from meta_util_git import get_repo_dirs, get_repo_dname, unixpath  # NOQA
 
 PROJECT_REPOS    = __REPOS__.PROJECT_REPOS
 IBEIS_REPOS_URLS = __REPOS__.IBEIS_REPOS_URLS

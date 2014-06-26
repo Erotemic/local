@@ -44,3 +44,8 @@ if len(__NOT_GIT_REPOS__) > 0:
         ['mkdir ' + clutterdir] +
         ['mv ' + util_git.unixpath(dir_) + ' ' + clutterdir for dir_ in __NOT_GIT_REPOS__])
     print('\n'.join(suggested_cmds))
+
+
+# TODO:
+# jedi git submodule init
+# jedi git submodule update

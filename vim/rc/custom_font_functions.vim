@@ -5,7 +5,12 @@ func! ToggleFont()
     python << endpython
 import vim
 togfont = int(vim.eval('g:togfont'))
-vim.command('call SetFuzzyFont(%r)' % togfont)
+try:
+    vim.command('call SetFuzzyFont(%r)' % togfont)
+except Exception as ex:
+    msg = "error in togglefont(%r): %r %s" % (togfont, type(ex), str(ex),)
+    vim.command(':echom %r' % (msg,))
+    pass
 vim.command('let g:togfont=%r' % (togfont + 1))
 endpython
 ":ECHOVAR gfn
@@ -16,10 +21,10 @@ python << endpython
 def pyrun_fuzzyfont():
     import vim
     import sys
-    import Levenshtein  # Edit distance algorithm
     from operator import itemgetter
     request = vim.eval('a:fontid')
     win32_fonts = [
+        r'Mono_Dyslexic:h10:cANSI',
         r'Mono\ Dyslexic:h10',
         r'Inconsolata:h10',
         r'Inconsolata:h11',
@@ -34,6 +39,9 @@ def pyrun_fuzzyfont():
         #r'Courier New',
         #r'DejaVu Sans Mono',
     ]
+    win32_alts = {
+        'monodyslexic': [r'Mono_Dyslexic:h10:cANSI']
+    }
     linux_fonts = [
         r'MonoDyslexic\ 9.4',
         r'Inconsolata\ Medium\ 11',
@@ -57,7 +65,7 @@ def pyrun_fuzzyfont():
         known_fonts = linux_fonts
 
     def vimprint(message):
-        vim.command(':silent !echom %r' % message)
+        # this doesnt even work #vim.command(':silent !echom %r' % message)
         #vim.command(':echom %r' % message)
         pass
 
@@ -68,6 +76,10 @@ def pyrun_fuzzyfont():
         
     if isinstance(request, (str)) and not is_integer_str:
         # Calcualate edit distance to each known font
+        try:
+            import Levenshtein  # Edit distance algorithm
+        except ImportError as ex:
+            vim.command(":echom 'error no python module Levenshtein'")
         known_dists = [Levenshtein.distance(known.lower(), request.lower()) for known in known_fonts]
 
         # Pick the minimum distance
