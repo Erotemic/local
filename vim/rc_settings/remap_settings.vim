@@ -13,7 +13,9 @@ let mapleader = ","
 nmap ; :
 vmap ; :
 " Remap ESCAPE key to?  ":imap ` <Esc>
-
+"noremap <Del> <Esc>
+"noremap <Home> <Esc>
+:imap <Del> <Esc>
 " Hotkey: <leader>rrr Reload the vimrc
 "noremap <leader>rrr :source ~/local/vim/portable_vimrc<CR>
 noremap <leader>r :source ~/local/vim/portable_vimrc<CR>
@@ -176,3 +178,6 @@ let@s='iself.'
 let@e=':Align ='
 
 nmap <leader>u :call ToggleNumberLineInvert()<CR>
+
+
+

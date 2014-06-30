@@ -141,3 +141,12 @@ rob sp ibeis.view ibeis
 
 
 git mv ~/code/ibeis/ibeis/control/IBEIS_SCHEMA.py ~/code/ibeis/ibeis/control/DB_SCHEMA.py
+
+
+rob sp get_roi_relationship_ids get_roi_alrids
+
+rob sp get_roi_filtered_relationship_ids get_roi_filtered_alrids
+
+rob sp get_relationship_labelids get_alr_labelids
+
+rob sp get_encounter_eids get_encounter_eids_from_text
