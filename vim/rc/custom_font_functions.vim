@@ -25,9 +25,9 @@ def pyrun_fuzzyfont():
     request = vim.eval('a:fontid')
     win32_fonts = [
         r'Mono_Dyslexic:h10:cANSI',
-        r'Mono\ Dyslexic:h10',
+        #r'Mono\ Dyslexic:h10',
         r'Inconsolata:h10',
-        r'Inconsolata:h11',
+        #r'Inconsolata:h11',
         r'monofur:h11',
         #r'Source_Code_Pro:h11:cANSI',
         #r'peep:h11:cOEM',
@@ -122,17 +122,27 @@ def pyrun_adjust_size():
     import vim
     import sys
     def vimprint(message):
-        vim.command(':silent !echom %r' % message)
+        #vim.command(':silent !echom %r' % message)
         #vim.command(':echom %r' % message)
         pass
     amount = int(vim.eval('a:amount'))
     vimprint(amount)
     gfn = vim.eval('oldgfn')
-    if sys.platform.startswith('win32'):
+    WIN32 = sys.platform.startswith('win32')
+    if WIN32:
+        # HACKY HACKY HACK
         #font_name, font_size, extra = 
+        sepx = gfn.rfind(':h')
+        sepx2 = gfn.rfind(':cANSI')
+        font_name = gfn[:sepx] + ':h'
+        font_size = float(gfn[sepx + 2:sepx2])
+        font_suff = gfn[sepx2:] if sepx2 != -1 else ''
         pass
     else:
+        # Find the position that seprates the font name 
+        # from the font size
         sepx = gfn.rfind(' ')
+        font_suff = ''  # no suffix on linux
         if sepx > -1:
             font_name = gfn[:sepx]
             font_size = float(gfn[sepx + 1:])
@@ -143,14 +153,14 @@ def pyrun_adjust_size():
         font_name = font_name.replace('\\ ', ' ')
         if not font_name.endswith(' '):
             font_name = font_name + ' '
-        vimprint('font_name2 = %r' % font_name)
-        vimprint('gfn = %r' % gfn)
-        vimprint('sepx = %r' % sepx)
-        new_size = int(min(max(font_size + amount, 6), 16))
-        new_gfn = font_name + str(new_size)
-        new_gfn = new_gfn.replace(' ', r'\ ')
-        vimprint('new_size = %r' % new_size)
-        vimprint('new_gfn = %r' % new_gfn)
+    vimprint('font_name = %r' % font_name)
+    vimprint('gfn = %r' % gfn)
+    vimprint('sepx = %r' % sepx)
+    new_size = int(min(max(font_size + amount, 6), 16))
+    new_gfn = font_name + str(new_size) + font_suff
+    new_gfn = new_gfn.replace(' ', r'\ ')
+    vimprint('new_size = %r' % new_size)
+    vimprint('new_gfn = %r' % new_gfn)
     vimprint(new_gfn)
     vim.command('set gfn=' + new_gfn)
 pyrun_adjust_size()
