@@ -171,10 +171,10 @@ def fixpath2(r):
 
 
 def update_path(r):
-    '''
+    """
     this is the right command August31
     newpath.bat will do everything
-    '''
+    """
     pathvar_list = r.path_vars_list
     for pathvar in pathvar_list:
         print(pathvar)

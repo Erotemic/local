@@ -174,3 +174,22 @@ rob sp rid aid
 ib
 rob sedr LABEL ANNOTLABEL True
 rob sedr label annotlabel True
+rob sp annotlabel propannot
+rob sp ANNOTLABEL PROPANNOT 
+
+rob sedr annotlabel annotlbl
+rob sedr ANNOTLABEL ANNOTLBL 
+
+
+rob sedr annotlblid annotlbl_rowid
+rob sedr annotlblid annotlbl_rowid
+
+rob sedr set_annotation_from_key set_annotlbl_values_from_aid True
+
+rob sedr key_rowid annotkey_rowid False
+
+rob sedr KEY_TABLE LBLTYPE_TABLE True
+rob sedr key_rowid lbltype_rowid True
+rob sedr key_table lbltype_table True
+rob sedr key_default lbltype_default True
+rob sedr key_text lbltype_text True
