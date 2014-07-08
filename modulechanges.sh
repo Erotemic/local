@@ -152,4 +152,25 @@ rob sp get_relationship_labelids get_alr_labelids
 rob sp get_encounter_eids get_encounter_eids_from_text
 
 
+rob sp roidist bboxdist
+
 rob sp roi annotion
+
+rob sp ROI ANNOTATION
+
+rob sp _rid _aid
+
+rob sp qrid qaid
+
+rob sp drid daid
+
+rob sp gtrid gtaid
+
+rob sp \\brid aid
+
+rob sp rid aid
+
+
+ib
+rob sedr LABEL ANNOTLABEL True
+rob sedr label annotlabel True
