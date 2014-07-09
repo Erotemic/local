@@ -193,3 +193,8 @@ rob sedr key_rowid lbltype_rowid True
 rob sedr key_table lbltype_table True
 rob sedr key_default lbltype_default True
 rob sedr key_text lbltype_text True
+
+rob sp set_annotation set_annot True
+rob sp get_annotation get_annot True
+rob sp delete_annotation delete_annot True
+rob sp add_annotation add_annot True
