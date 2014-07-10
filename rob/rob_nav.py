@@ -49,14 +49,20 @@ def __grepfile(fpath, tofind_list, case_insensitive=True, verbose=False):
 
 
 def __regex_grepfile(fpath, regexpr, verbose=True):
+    ret = None
     with open(fpath, 'r') as file:
         lines = file.readlines()
-        found = []
+        #found = []
+        found_lines = []
+        found_lxs = []
         # Search each line for the desired regexpr
         for lx, line in enumerate(lines):
             match_object = re.search(regexpr, line)
-            if not match_object is None:
-                found.append((lx, line))
+            if match_object is not None:
+                found_lines.append(line)
+                found_lxs.append(lx)
+                #found.append((lx, line))
+        found = zip(found_lxs, found_lines)
         # Print the results (if any)
         if len(found) > 0:
             rel_fpath = relpath(fpath, os.getcwd())
@@ -72,8 +78,7 @@ def __regex_grepfile(fpath, regexpr, verbose=True):
                 line = line.replace('\n', '')
                 if verbose:
                     print(fmt_str % (name, lx, line))
-            return ret
-    return None
+    return ret
 
 
 def extend_regex(regexpr):
@@ -131,7 +136,8 @@ def _grep(r, tofind_list, recursive=True, case_insensitive=True, regex=False,
     recursive = rutil.cast(recursive, bool)
     recursive_stat_str = ['flat', 'recursive'][recursive]
     print('Greping (%s) %r for %r' % (recursive_stat_str, dpath_list, tofind_list))
-    found_files = []
+    found_filestrs = []
+    found_fpaths = []
     # Walk through each directory recursively
     for fpath in _matching_fnames(dpath_list, include_patterns, exclude_dirs,
                                   recursive=recursive):
@@ -144,14 +150,19 @@ def _grep(r, tofind_list, recursive=True, case_insensitive=True, regex=False,
             ret = __grepfile(fpath, tofind_list, case_insensitive,
                              verbose=not invert)
         if ret is None and invert:
-            found_files.append(fpath)  # regular matching
+            found_filestrs.append(fpath)  # regular matching
         elif ret is not None and not invert:
-            found_files.append(ret)  # inverse matching
+            found_filestrs.append(ret)  # inverse matching
+        if ret is not None:
+            found_fpaths.append(fpath)
 
     print('====================')
     print('====================')
-    print('\n'.join(found_files))
-    return found_files
+    print('\n'.join(found_filestrs))
+
+    print('')
+    print('gvim -o ' + ' '.join(found_fpaths))
+    return found_filestrs
 
 
 def fnmatch_any(path, exclude_list):
