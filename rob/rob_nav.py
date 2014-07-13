@@ -100,7 +100,7 @@ def extend_regex(regexpr):
 
 
 def _sed(r, regexpr, repl, force=False, recursive=False, dpath_list=None):
-    _grep(r, [repl], dpath_list=dpath_list, recursive=recursive)
+    #_grep(r, [repl], dpath_list=dpath_list, recursive=recursive)
     force = rutil.cast(force, bool)
     recursive = rutil.cast(recursive, bool)
     include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h']

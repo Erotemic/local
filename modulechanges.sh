@@ -202,3 +202,9 @@ rob sp add_annotation add_annot True
 
 rob sp aif reviewed
 revieweds reviewed
+
+rob sp set_annot_from_value set_annot_relationship_from_value
+rob sp set_annot_from_value set_annot_label_from_value
+rob sp set_annot_from_value set_annot_lblannot_from_value
+rob sp set_annot_from_lblannot_rowid set_annot_lblannot_from_rowid
+

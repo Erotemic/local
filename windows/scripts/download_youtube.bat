@@ -19,3 +19,12 @@ youtube http://www.youtube.com/watch?v=0RRVV4Diomg
 
 youtube-dl --match-title "The 4 Most Irreplaceable Places" YouTube.com
 
+https://www.youtube.com/playlist?list=PL8dPuuaLjXtOeEc9ME62zTfqc0h6Pe8vb
+youtube-dl.exe --playlist-start 1 --playlist-end 28 https://www.youtube.com/watch?v=MSYw502dJNY&list=PL8dPuuaLjXtOeEc9ME62zTfqc0h6Pe8vb
+
+youtube-dl.exe -citk --playlist-start 1 --playlist-end 28 https://www.youtube.com/playlist?list=PL8dPuuaLjXtOeEc9ME62zTfqc0h6Pe8vb
+
+
+youtube-dl.exe -citk https://www.youtube.com/watch?v=ugqu10JV7dk
+youtube-dl.exe -citk https://www.youtube.com/watch?v=RR2sX8tFGsI
+youtube-dl.exe -citk https://www.youtube.com/watch?v=QjXJLVINsSA
