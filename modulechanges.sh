@@ -209,4 +209,4 @@ rob sp set_annot_from_value set_annot_lblannot_from_value
 rob sp set_annot_from_lblannot_rowid set_annot_lblannot_from_rowid
 
 
-rob sp "\'--no-assert\' in sys.argv or \'--noassert\' in sys.argv" "not (\'--no-assert\' in sys.argv or \'--noassert\' in sys.argv)" 
+rob sp "\'--no-assert\' in sys.argv or \'--noassert\' in sys.argv" "not (\'--no-assert\' in sys.argv)" 
