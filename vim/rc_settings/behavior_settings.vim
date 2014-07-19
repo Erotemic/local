@@ -38,8 +38,10 @@ if has("win32") || has("win16")
     set undodir=D:/sys/vim_tmp/
 else
     " LINUX COMMANDS
-    set backupdir=/media/Store/sys/vim_tmp/
-    set undodir=/media/Store/sys/vim_tmp/
+    "set backupdir=/media/Store/sys/vim_tmp/
+    "set undodir=/media/Store/sys/vim_tmp/
+    set backupdir=~/.vim_tmp/
+    "set undodir=~/.vim_tmp/
 endif
 
 " MISC: win clipboard on linux

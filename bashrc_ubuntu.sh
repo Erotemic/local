@@ -174,4 +174,4 @@ alias realrm='/bin/rm'
 alias rm='trash-put'
 alias viewimage='eog'
 
-source ~/scripts/install_llvm.sh
+#source ~/scripts/install_llvm.sh
