@@ -1,7 +1,4 @@
-ln -s ~/local/bashrc.sh ~/.bashrc
-ln -s ~/local/profile.sh ~/.profile
-# Different on windows
-ln -s ~/local/vim/vimfiles ~/.vim
+source init_bashrc_symlinks.sh
 
 git config --global user.name joncrall
 git config --global user.email crallj@rpi.edu

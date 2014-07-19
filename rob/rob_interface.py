@@ -179,7 +179,8 @@ def update_path(r):
     for pathvar in pathvar_list:
         print(pathvar)
     #robos.add_path_vars(pathvar_list)
-    print('Send, #r newpath {enter}')
+    print('\n\nSend, #r newpath {enter}')
+    print('Please run newpath.bat')
 
 
 def update_env(r):

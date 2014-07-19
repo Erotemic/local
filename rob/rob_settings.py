@@ -20,6 +20,7 @@ def get_PATH(r):
         AHK_SCRIPTS
         PORT_APPS
         WIN_SCRIPTS
+        HOME  + '/code/utool/util_scripts'
         LOCAL + '/windows/auto_scripts'
         LOCAL + '/windows/scripts'
         LOCAL + '/scripts/windows'
