@@ -31,3 +31,5 @@ vim/vimfiles/.netrwhist
 tests/*.exe
 
 youtube-dl.exe
+
+vim/vimfiles/vimfiles
