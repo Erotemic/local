@@ -640,6 +640,27 @@ def setup_global():
     pass
 
 
+def fix_youtube_names_ccl(r):
+    import utool
+    cwd = os.getcwd()
+    fpath_list = utool.glob(cwd, '*.mp4')
+    for fpath in fpath_list:
+        #print(fpath)
+        from os.path import split
+        dpath, fname = split(fpath)
+        found = utool.regex_search(r'Crash Course .*-', fname)
+        if found is not None:
+            found = found.replace('English', '').replace('-', ' - ')
+            new_fpath = join(dpath, found + fname.replace(found, ''))
+            print(new_fpath)
+            import shutil
+            shutil.move(fpath, new_fpath)
+        #start = re.search(
+        #print(fpath[start.pos:start.endpos])
+        #break
+
+
+
 def fix_path(r):
     """ Removes duplicates from the path Variable """
     PATH_SEP = os.path.pathsep
