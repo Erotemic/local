@@ -170,6 +170,31 @@ def fnmatch_any(path, exclude_list):
                 for exclude in exclude_list])
 
 
+def ls2(r):
+    exclude_list = ['*.pyc', '.*']
+    cwd = os.getcwd()
+    to_list_files = []
+    to_list_dirs  = []
+    for root, path_list, dir_list in os.walk(cwd):
+        for path in path_list:
+            if root.find('.git') > 0 or root.find('.git') > 0:
+                continue
+            print(join(root, path))
+            if not fnmatch_any(path, exclude_list):
+                if isdir(path):
+                    to_list_dirs += [path]
+                if isfile(path):
+                    to_list_files += [path]
+
+    sort_fn = lambda x: x.lower()
+    to_list_dirs.sort(key=sort_fn)
+    to_list_files.sort(key=sort_fn)
+
+    to_list = to_list_dirs + ['-------'] + to_list_files
+    for path in iter(to_list):
+        print(path)
+
+
 def ls(r):
     exclude_list = ['*.pyc', '.*']
     cwd = os.getcwd()
