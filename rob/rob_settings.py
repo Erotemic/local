@@ -67,7 +67,8 @@ def get_ENVVARS(r):
     r.env_vars_list = []
     for var in r.d.__dict__.keys():
         _tupstr = "('%s', r.d.%s)" % (var, var)
-        exec 'r.env_vars_list.append(%s)' % _tupstr
+        #exec 'r.env_vars_list.append(%s)' % _tupstr
+        exec('r.env_vars_list.append(%s)' % _tupstr)
     return r.env_vars_list
 
 
@@ -133,10 +134,10 @@ class ROB_Files:
 class ROB_Directories:
     def __init__(d):
         # Cross platform names
-        root_map  = {'win32': 'C:',     'linux2': ''}  # /'s are never last
-        store_map = {'win32': 'D:',     'linux2': '/media/Store'}
-        media_map = {'win32': 'E:',     'linux2': '/media/Media'}
-        home_map  = {'win32': '/Users', 'linux2': '/home'}
+        root_map  = {'win32': 'C:',     'linux2': '', 'linux': ''}  # /'s are never last
+        store_map = {'win32': 'D:',     'linux2': '/media/Store', 'linux': '/media/Store'}
+        media_map = {'win32': 'E:',     'linux2': '/media/Media', 'linux': '/media/Store'}
+        home_map  = {'win32': '/Users', 'linux2': '/home', 'linux': '/home'}
 
         #d.CC='gcc'
         #d.CFLAGS = 'O2'
@@ -205,8 +206,8 @@ class ROB_Directories:
             #d.VIMRUNTIME = d.INSTALL32  + '/Vim/vim74'
 
             #if comp_name() == 'BakerStreet':
-                #d.VS2010_VC        = d.INSTALL32  + '/Microsoft Visual Studio 10.0/VC'
-                #d.VS90COMMONTOOLS  = d.INSTALL32  + '/Microsoft Visual Studio 10.0/VC'
+            #    d.VS2010_VC        = d.INSTALL32  + '/Microsoft Visual Studio 10.0/VC'
+            #    d.VS90COMMONTOOLS  = d.INSTALL32  + '/Microsoft Visual Studio 10.0/VC'
             #VS110COMNTOOLS
             #VS100COMNTOOLS
             # Need to run this command so python can find things SET VS90COMNTOOLS=%VS100COMNTOOLS% for vs2010
@@ -252,7 +253,7 @@ class ROB_Directories:
 
     def print_members(d):
         for mem in d.__dict__.keys():
-            print mem + ' = ' + d.__dict__[mem]
+            print(mem + ' = ' + d.__dict__[mem])
 
 
 def WINDOWS_DEFAULT_VAR_DICT(d):

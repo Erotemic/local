@@ -74,7 +74,7 @@ def get_random_playlist(r):
 def play_playlist(r, playlist=None):
     if playlist is None:
         (playlist, nm) = get_random_playlist(r)
-    print 'PLAYLIST: \n'+'\n'.join(playlist)+'\n\n'
+    print('PLAYLIST: \n'+'\n'.join(playlist)+'\n\n')
     vlc_cmd = r.f.vlc_exe
     playlist = ['"' + vid + '"' for vid in playlist]
     arg_list = '"' + vlc_cmd + '" ' + ' '.join(playlist)
@@ -275,7 +275,7 @@ def sc(r, rate=-5):
 
 
 def speak(r, to_speak, rate=-5):
-    print 'alarm> Speaking at rate ' + str(rate) + ': ' + to_speak
+    print('alarm> Speaking at rate ' + str(rate) + ': ' + to_speak)
     robos.speak(r, to_speak, rate)
 
 
@@ -338,9 +338,9 @@ def set_alarm(r, alarm_time=None, time_fix=True, alarm_name='ROB_ALARM_TASK_0'):
         month = tomorrow.month
         year = tomorrow.year
     date_str = '%.2d/%.2d/%.4d' % (month, day, year)
-    print 'TODAY IS: ' + str(today)
-    print 'TOMORROW IS: ' + str(tomorrow)
-    print 'ALARM IS SETTING FOR: ' + date_str
+    print('TODAY IS: ' + str(today))
+    print('TOMORROW IS: ' + str(tomorrow))
+    print('ALARM IS SETTING FOR: ' + date_str)
     if alarm_time is None:
         webbrowser.open_new('http://sleepyti.me/')
         hour = '%.2d' % int(raw_input(   'Enter the alarm hours HH (00-23)'))

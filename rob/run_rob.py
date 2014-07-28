@@ -36,9 +36,9 @@ def process_args(r, argv):
         else:
             args = argv[1:]
             if cmd_name == 'write_research':
-                print "WRITING RESEARCH"
+                print("WRITING RESEARCH")
                 arg_str = ',"' + (' '.join(args)).replace('"', '').replace('\'', '') + '"'
-                print arg_str
+                print(arg_str)
             elif cmd_name == 'speak':
                 rate_of_speach = -5
                 if is_string_int(args[-1]):
@@ -107,7 +107,7 @@ ____  ____  ___      _ ____    ____ _  _ _    _ _  _ ____
 __________________________________"""
 
     def signal_handler(signal, frame):
-            print 'Rob caught Ctrl+C'
+            print('Rob caught Ctrl+C')
             sys.exit(0)
     signal.signal(signal.SIGINT, signal_handler)
 

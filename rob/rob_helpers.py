@@ -77,8 +77,8 @@ def call(cmdstr):
         return_code = proc.returncode  # NOQA
     except Exception:
         pass
-    print ' * out = %r' % out
-    print ' * err = %r' % err
+    print(' * out = %r' % out)
+    print(' * err = %r' % err)
     return (out, err)
 
 
@@ -104,7 +104,7 @@ def dircheck(dname):
 
 def phonetic(str_in):
     phenome_map = {'A': 'AE', 'M': 'EM', 'O': 'Oh', 'P': 'Pee', ' ': ' '}
-    return ''.join(map(lambda (x): phenome_map[x], str_in))
+    return ''.join(map(lambda x: phenome_map[x], str_in))
 
 
 def keyboard(banner=None):
@@ -117,7 +117,7 @@ def keyboard(banner=None):
         raise None
     except:
         frame = sys.exc_info()[2].tb_frame.f_back
-    print "# Use quit() to exit :) Happy debugging!"
+    print("# Use quit() to exit :) Happy debugging!")
     # evaluate commands in current namespace
     namespace = frame.f_globals.copy()
     namespace.update(frame.f_locals)
