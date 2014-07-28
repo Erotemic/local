@@ -445,7 +445,8 @@ Open(arg)
         EnvGet home, USERPROFILE
         crall_todo = %home%\Dropbox\Notes\TODO.txt
         crall_havedone = %home%\Dropbox\Notes\HAVEDONE.txt
-        GVIMFocus(crall_todo, crall_havedone)
+        ;GVIMFocus(crall_todo, crall_havedone)
+        GVIMFocus(crall_todo)
     }    
     else if (arg = "personal")
     {

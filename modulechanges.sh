@@ -216,3 +216,7 @@ rob sp get_rowid_from_uuid get_rowid_from_superkey True
 :%s/\(^  *\)\(id_iter = .* in \)\([a-z_]*\))/\1#\2\3)\r\1id_iter = \3/
 
 rob sp get_annot_lblannot_rowids get_annot_lblannot_rowids_oftype
+
+
+git mv ibeis\model\hots\QueryResult.py ibeis\model\hots\hots_query_result.py
+git mv ibeis\model\hots\QueryRequest.py ibeis\model\hots\hots_query_request.py
