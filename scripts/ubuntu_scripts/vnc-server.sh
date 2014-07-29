@@ -1,5 +1,5 @@
 #!/bin/sh
-export REMOTE_ADDRESS=longerdog.com
+export SERVER_ADDRESS=41.215.76.14
 
 PORTNUM=5902
 vncdisconnect()
@@ -8,7 +8,7 @@ vncdisconnect()
 }
 vncconnect()
 {
-ssh -t -C -N -f -i ~/.ssh/id_rsa joncrall@$REMOTE_ADDRESS -L $PORTNUM:localhost:5900
+ssh -t -C -N -f -i ~/.ssh/id_rsa joncrall@$SERVER_ADDRESS -L $PORTNUM:localhost:5900
 }
 
 #vncconnect
@@ -17,3 +17,4 @@ ssh -t -C -N -f -i ~/.ssh/id_rsa joncrall@$REMOTE_ADDRESS -L $PORTNUM:localhost:
 vncconnect
 remmina
 #vinagre --vnc-scale localhost:5902
+

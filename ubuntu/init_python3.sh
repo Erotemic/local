@@ -99,15 +99,13 @@ python -c "from PyQt5.QtCore import Qt; print('[test] SUCCESS import Qt: %r' % Q
 # SOURCE BUILD: PyQt4
 cd ~/tmp
 # Use snapshot instead
-#export PYQT4_SNAPSHOT=PyQt-x11-gpl-4.11.tar.gz
-http://www.riverbankcomputing.co.uk/static/Downloads/PyQt4/.tar.gz
-export PYQT4_URL=http://www.riverbankcomputing.co.uk/static/Downloads/PyQt4
+export PYQT4_URL=http://www.riverbankcomputing.co.uk/static/Downloads/PyQt4/
 export PYQT4_SNAPSHOT=PyQt-x11-gpl-4.11.2-snapshot-2c3f3d227e9b
 wget $PYQT4_URL/$PYQT4_SNAPSHOT.tar.gz
 gunzip $PYQT4_SNAPSHOT.tar.gz && tar -xvf $PYQT4_SNAPSHOT.tar
 mv $PYQT4_SNAPSHOT ~/srcdistro
 cd ~/srcdistro/$PYQT4_SNAPSHOT
-python configure-ng.py --qmake=/usr/local/qt/bin/qmake --no-designer-plugin --confirm-license
+python configure-ng.py --qmake=/usr/bin/qmake --no-designer-plugin --confirm-license
 make -j$NCPUS && sudo make install
 python -c "import PyQt4; print('[test] SUCCESS import PyQt4: %r' % PyQt4)"
 python -c "from PyQt4 import QtGui; print('[test] SUCCESS import QtGui: %r' % QtGui)"
@@ -125,3 +123,12 @@ pip install functools32
 #pip install package-name
 
 #deactivate
+
+
+# Shit I forgot opencv
+python -c "import utool"
+python -c "import vtool"
+python -c "import plottool"
+python -c "import guitool"
+
+python setup.py
