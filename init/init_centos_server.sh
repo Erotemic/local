@@ -212,6 +212,7 @@ sudo pip27 install six
 sudo pip27 install dateutils
 sudo pip27 install pyreadline
 sudo pip27 install pyparsing
+sudo pip27 install Cython
 sudo pip27 install Pillow
 sudo pip27 install numpy
 sudo pip27 install numpy --upgrade
