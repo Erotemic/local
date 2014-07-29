@@ -1,6 +1,7 @@
 #from rob_interface import *
 from os.path import split, relpath, join, isdir, isfile
 import os
+import six
 import fnmatch
 import re
 from rob_interface import robos
@@ -62,7 +63,7 @@ def __regex_grepfile(fpath, regexpr, verbose=True):
                 found_lines.append(line)
                 found_lxs.append(lx)
                 #found.append((lx, line))
-        found = zip(found_lxs, found_lines)
+        found = list(zip(found_lxs, found_lines))
         # Print the results (if any)
         if len(found) > 0:
             rel_fpath = relpath(fpath, os.getcwd())
@@ -87,7 +88,7 @@ def extend_regex(regexpr):
         r'\>': r'\b(?!\w)',
         ('UNSAFE', r'\x08'): r'\b',
     }
-    for key, repl in regex_map.iteritems():
+    for key, repl in six.iteritems(regex_map):
         if isinstance(key, tuple):
             search = key[1]
         else:

@@ -122,3 +122,8 @@ s/
 
 %s/ibs.get_image_props(/ibs.db.get('images', /gc
 %s/ibs.get_\([a-z]*\)_props(/ibs.db.get('\1s', /gc
+
+
+%s/\([a-zA-Z0-9_.]\+\).iteritems()/six.iteritems(\1)/gc
+%s/\([a-zA-Z0-9_.]\+\).iterkeys()/six.iterkeys(\1)/gc
+%s/\([a-zA-Z0-9_.]\+\).itervalues()/six.itervalues(\1)/gc

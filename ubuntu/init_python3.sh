@@ -86,10 +86,32 @@ gunzip $PYQT5_SNAPSHOT.tar.gz && tar -xvf $PYQT5_SNAPSHOT.tar
 mv $PYQT5_SNAPSHOT ~/srcdistro
 cd ~/srcdistro/$PYQT5_SNAPSHOT
 #python configure-ng.py --qmake=/usr/local/qt/bin/qmake --no-designer-plugin --confirm-license --target-py-version=3.4
+python configure.py --qmake=/usr/local/Qt-5.3.1/bin/qmake --no-designer-plugin --confirm-license 
 make -j$NCPUS && sudo make install
 python -c "import PyQt5; print('[test] SUCCESS import PyQt5: %r' % PyQt5)"
 python -c "from PyQt5 import QtGui; print('[test] SUCCESS import QtGui: %r' % QtGui)"
 python -c "from PyQt5 import QtCore; print('[test] SUCCESS import QtCore: %r' % QtCore)"
+python -c "from PyQt5.QtCore import Qt; print('[test] SUCCESS import Qt: %r' % Qt)"
+#====================
+
+
+#====================
+# SOURCE BUILD: PyQt4
+cd ~/tmp
+# Use snapshot instead
+#export PYQT4_SNAPSHOT=PyQt-x11-gpl-4.11.tar.gz
+http://www.riverbankcomputing.co.uk/static/Downloads/PyQt4/.tar.gz
+export PYQT4_URL=http://www.riverbankcomputing.co.uk/static/Downloads/PyQt4
+export PYQT4_SNAPSHOT=PyQt-x11-gpl-4.11.2-snapshot-2c3f3d227e9b
+wget $PYQT4_URL/$PYQT4_SNAPSHOT.tar.gz
+gunzip $PYQT4_SNAPSHOT.tar.gz && tar -xvf $PYQT4_SNAPSHOT.tar
+mv $PYQT4_SNAPSHOT ~/srcdistro
+cd ~/srcdistro/$PYQT4_SNAPSHOT
+python configure-ng.py --qmake=/usr/local/qt/bin/qmake --no-designer-plugin --confirm-license
+make -j$NCPUS && sudo make install
+python -c "import PyQt4; print('[test] SUCCESS import PyQt4: %r' % PyQt4)"
+python -c "from PyQt4 import QtGui; print('[test] SUCCESS import QtGui: %r' % QtGui)"
+python -c "from PyQt4 import QtCore; print('[test] SUCCESS import QtCore: %r' % QtCore)"
 python -c "from PyQt4.QtCore import Qt; print('[test] SUCCESS import Qt: %r' % Qt)"
 #====================
 
