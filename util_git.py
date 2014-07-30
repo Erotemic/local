@@ -2,7 +2,7 @@
 from __future__ import absolute_import, division, print_function
 import sys
 import os
-from itertools import izip
+from six.moves import zip
 from os.path import exists, join, dirname, split, isdir
 import __REPOS__
 import meta_util_git as mu  # NOQA
@@ -40,7 +40,7 @@ def checkout_repos(repo_urls, repo_dirs=None, checkout_dir=None):
     if checkout_dir is not None:
         repo_dirs = mu.get_repo_dirs(checkout_dir)
     assert repo_dirs is not None, 'specify checkout dir or repo_dirs'
-    for repodir, repourl in izip(repo_dirs, repo_urls):
+    for repodir, repourl in zip(repo_dirs, repo_urls):
         print('[git] checkexist: ' + repodir)
         if not exists(repodir):
             mu.cd(dirname(repodir))

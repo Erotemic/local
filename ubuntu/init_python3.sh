@@ -1,11 +1,19 @@
+sudo apt-get install libreadline-dev 
+sudo apt-get install libssl-dev
+sudo apt-get install libsqlite3-dev
+
+export NCPUS=$(grep -c ^processor /proc/cpuinfo)
+
+#=====================
+# SOURCE: BUILD PYTHON
 cd ~/code
 git clone https://github.com/python/cpython.git
+cd ~/code/cpython
 git checkout 3.4
 ./configure --prefix=/usr/local --enable-shared LDFLAGS="-Wl,-rpath /usr/local/lib"
-make 
+make -j$NCPUS
 make test
 sudo make altinstall
-
 
 virtualenv -p /usr/local/bin/python3.4 ~/py3env
 source ~/py3env/bin/activate

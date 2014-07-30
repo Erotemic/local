@@ -5,6 +5,8 @@
 
 # Unix aliases
 
+alias activate_py3env='source ~/py3env/bin/activate'
+
 alias pytree='tree -P "*.py" --dirsfirst'
 alias ls='ls --color --human-readable --group-directories-first --hide="*.pyc" --hide="*.pyo"'
 alias pygrep='grep -r --include "*.py"'
@@ -75,6 +77,7 @@ alias scr='cd ~/scripts'
 # Special navigation
 alias s='git status'
 alias cv='cd ~/code/opencv'
+alias cv='cd ~/code/opencv3'
 alias hs='cd ~/code/ibeis/ibeis/model/hots'
 alias ib='cd ~/code/ibeis/'
 alias rf='cd ~/code/pyrf/'
