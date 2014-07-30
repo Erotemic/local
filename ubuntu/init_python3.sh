@@ -13,6 +13,7 @@ source ~/py3env/bin/activate
 
 pip install setuptools
 pip install Pygments
+pip install Sphinx
 pip install six
 pip install dateutils
 pip install pyreadline
