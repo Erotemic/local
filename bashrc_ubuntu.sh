@@ -130,7 +130,8 @@ export CC=gcc
 export CXX=g++
 
 # MY PATH
-export PATH=$PATH:~/scripts/:/usr/local/MATLAB/R2013a/bin
+#export PATH=$PATH:~/scripts/:/usr/local/MATLAB/R2013a/bin
+export PATH=~/bin:$PATH:~/scripts/
 export PYTHONPATH=$PYTHONPATH
 export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgocnfig:/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
 

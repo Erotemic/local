@@ -56,7 +56,8 @@ source ~/local/vim/rc_settings/remap_settings.vim
 :call QUICKOPEN_leader_tvio('d', '~/code/ibeis/dev.py')
 :call QUICKOPEN_leader_tvio('e', '~/code/ibeis/ibeis/dev/experiment_printres.py')
 :call QUICKOPEN_leader_tvio('f', '~/code/ibeis/ibeis/dev/ibsfuncs.py')
-:call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/inspect_gui.py')
+:call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/newgui.py')
+":call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/inspect_gui.py')
 :call QUICKOPEN_leader_tvio('h', '~/code/ibeis/ibeis/model/hots/match_chips3.py')
 "i
 :call QUICKOPEN_leader_tvio('j', '~/code/ibeis/ibeis/ingest/ingest_database.py')
