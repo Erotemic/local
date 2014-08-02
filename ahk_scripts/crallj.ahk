@@ -411,8 +411,8 @@ Open(arg)
     }
     else if (arg = "cmd" )
     {
-        ;EnvGet envvar, HOME
-        EnvGet envvar, hs
+        EnvGet envvar, home
+        ;EnvGet envvar, hs
         startdir := get_cwd_or_env(envvar)
         Run,  "cmd" /k cd /D "%startdir%"
     }
