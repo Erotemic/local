@@ -180,4 +180,5 @@ let@e=':Align ='
 nmap <leader>u :call ToggleNumberLineInvert()<CR>
 
 
-
+" TODO: http://stackoverflow.com/questions/3638542/any-way-to-delete-in-vim-without-overwriting-your-last-yank
+"noremap d "_d

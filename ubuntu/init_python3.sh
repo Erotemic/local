@@ -4,12 +4,40 @@ sudo apt-get install libsqlite3-dev
 
 export NCPUS=$(grep -c ^processor /proc/cpuinfo)
 
+-I/usr/include/python2.7 -I/usr/include/python2.7 
+-fno-strict-aliasing 
+-DNDEBUG
+-g 
+-fwrapv
+-O2
+-Wall 
+-Wstrict-prototypes
+-g
+-fstack-protector 
+--param=ssp-buffer-size=4 
+-Wformat
+-Wformat-security
+-Werror=format-security
+
+joncrall@Hyrule:~/code/cpython/Modules/_ctypes$ python3.4m-config --cflags
+
+-I/usr/local/include/python3.4m -I/usr/local/include/python3.4m
+-Wno-unused-result
+-Werror=declaration-after-statement  
+-DNDEBUG 
+-g 
+-fwrapv 
+-O3 
+-Wall
+-Wstrict-prototypes
+
 #=====================
 # SOURCE: BUILD PYTHON
 cd ~/code
 git clone https://github.com/python/cpython.git
 cd ~/code/cpython
 git checkout 3.4
+export CFLAGS="-fno-strict-aliasing -fstack-protector --param=ssp-buffer-size=4 -Wformat -Wformat-security -Werror=format-security -O2"
 ./configure --prefix=/usr/local --enable-shared LDFLAGS="-Wl,-rpath /usr/local/lib"
 make -j$NCPUS
 make test
