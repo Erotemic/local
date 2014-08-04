@@ -4,32 +4,46 @@ sudo apt-get install libsqlite3-dev
 
 export NCPUS=$(grep -c ^processor /proc/cpuinfo)
 
+# What python 2.7 installed with 
+#python2.7-config --cflags
 -I/usr/include/python2.7 -I/usr/include/python2.7 
--fno-strict-aliasing 
--DNDEBUG
--g 
--fwrapv
--O2
--Wall 
--Wstrict-prototypes
--g
--fstack-protector 
---param=ssp-buffer-size=4 
--Wformat
--Wformat-security
+-fno-strict-aliasing -DNDEBUG -g -fwrapv -O2 -Wall -Wstrict-prototypes -g -fstack-protector 
+--param=ssp-buffer-size=4 -Wformat -Wformat-security -Werror=format-security
+#
+#python2.7-config --libs
+-lpthread -ldl -lutil -lm -lpython2.7
+#joncrall@Hyrule:~/code/ibeis$ python2.7-config --ldflags
+-L/usr/lib/python2.7/config -lpthread -ldl -lutil -lm -lpython2.7 -Xlinker -export-dynamic -Wl,-O1 -Wl,-Bsymbolic-functions
+
+# What python 3.2 installed with 
+python3.2-config --cflags
+-I/usr/include/python3.2mu -I/usr/include/python3.2mu
+-DNDEBUG-g -fwrapv -O2 -Wall
+-Wstrict-prototypes -g -fstack-protector
+--param=ssp-buffer-size=4 -Wformat -Wformat-security
 -Werror=format-security
 
-joncrall@Hyrule:~/code/cpython/Modules/_ctypes$ python3.4m-config --cflags
 
+# What I had with default 3.4
+joncrall@Hyrule:~/code/cpython/Modules/_ctypes$ python3.4m-config --cflags
 -I/usr/local/include/python3.4m -I/usr/local/include/python3.4m
--Wno-unused-result
--Werror=declaration-after-statement  
--DNDEBUG 
--g 
--fwrapv 
--O3 
--Wall
--Wstrict-prototypes
+-Wno-unused-result -Werror=declaration-after-statement  -DNDEBUG -g -fwrapv 
+-O3 -Wall -Wstrict-prototypes
+
+
+# What is python*m? 
+#http://stackoverflow.com/questions/16675865/difference-between-python3-and-python3m-executibles
+#via PEP 3149.
+#Regarding the m flag specifically, this is what Pymalloc is:
+#Pymalloc, a specialized object allocator written by Vladimir Marangozov, was a feature added to Python 2.1. Pymalloc is intended to be faster than the system malloc() and to have less memory overhead for allocation patterns typical of Python programs. The allocator uses C's malloc() function to get large pools of memory and then fulfills smaller memory requests from these pools.
+
+# TODO: Purge python 3.2, and python 3.4 from system and reinstall
+
+sudo updatedb
+locate --existing --basename --regexp \\bpython3.2\\b$
+locate --existing --regexp \\bpython3.2\\b$
+locate --existing --basename --regexp \\bpython3 | grep .git
+
 
 #=====================
 # SOURCE: BUILD PYTHON
@@ -37,8 +51,10 @@ cd ~/code
 git clone https://github.com/python/cpython.git
 cd ~/code/cpython
 git checkout 3.4
+# Configure cflags
 export CFLAGS="-fno-strict-aliasing -fstack-protector --param=ssp-buffer-size=4 -Wformat -Wformat-security -Werror=format-security -O2"
 ./configure --prefix=/usr/local --enable-shared LDFLAGS="-Wl,-rpath /usr/local/lib"
+
 make -j$NCPUS
 make test
 sudo make altinstall
