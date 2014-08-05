@@ -8,7 +8,8 @@ nircmd.exe exec hide ^
  --ConsoleWidget.font_size=9 ^
  --ConsoleWidget.font_family="Mono Dyslexic" 
 
-
+:: --gui=qt
+:: --editor=gvim
  :: --matplotlib qt4 ^
  :: --pylab=qt ^
 :: cd %1

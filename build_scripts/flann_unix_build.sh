@@ -29,3 +29,6 @@ export NCPUS=$(grep -c ^processor /proc/cpuinfo)
 make -j$NCPUS || { echo "FAILED MAKE" ; exit 1; }
 
 make install || { echo "FAILED MAKE INSTALL" ; exit 1; }
+
+
+python -c "import pyflann; print(pyflann)"
