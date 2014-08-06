@@ -121,3 +121,11 @@ command! CUSTOMCLEANUP call FUNC_CUSTOM_CLEANUP()<CR>
 func! FUNC_CLEAN_WHITESPACE()
     :%s/ *$//g
 endfunc
+
+
+func! FIX_PRINT_QUOTE()
+    " changes print("") to print('')
+    :g/^ *print("/s/") *$/')/gc
+    :%s/\(^ *\)print("/\1print('/gc
+    :g/^ *print('[^[]/s/print('/print('[@tag]/gc
+endfunc
