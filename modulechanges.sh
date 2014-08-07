@@ -220,3 +220,16 @@ rob sp get_annot_lblannot_rowids get_annot_lblannot_rowids_oftype
 
 git mv ibeis\model\hots\QueryResult.py ibeis\model\hots\hots_query_result.py
 git mv ibeis\model\hots\QueryRequest.py ibeis\model\hots\hots_query_request.py
+
+ib
+git mv ibeis/dev/ibsfuncs.py ibeis/ibsfuncs.py
+git mv ibeis/dev/all_imports.py ibeis/all_imports.py
+
+rob sp "from ibeis\\.dev import ibsfuncs" "from ibeis import ibsfuncs" 
+rob sp "ibeis\\.dev\\.ibsfuncs" "ibeis.ibsfuncs"
+rob sp "ibeis/dev/ibsfuncs" "ibeis/ibsfuncs"
+
+
+rob sp "from ibeis\\.dev import all_imports" "from ibeis import all_imports" 
+rob sp "ibeis\\.dev\\.all_imports" "ibeis.all_imports"
+rob sp "ibeis/dev/all_imports" "ibeis/all_imports"
