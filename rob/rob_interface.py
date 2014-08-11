@@ -5,6 +5,12 @@ from datetime import datetime  # NOQA
 import urllib  # NOQA
 import robos
 import re
+from itertools import izip
+import itertools
+import parse
+from os.path import split
+import shutil
+import psutil
 #import webbrowser
 from os.path import (normpath, realpath, join, split, isdir, exists,
                      dirname, splitext)  # NOQA
@@ -48,7 +54,6 @@ def batch_move(r, search, repl, force=False):
     This function has not yet been successfully implemented.
     Its a start though.
     '''
-    import parse
     force = rutil.cast(force, bool)
     # rob batch_move '\(*\)util.py' 'util_\1.py'
     print('Batch Move')
@@ -76,7 +81,6 @@ def batch_move(r, search, repl, force=False):
     print('parse_str = %r' % parse_str)
 
     include_patterns = [search_pat]
-    import shutil
 
     for fpath in rob_nav._matching_fnames(dpath_list, include_patterns, recursive=False):
         dpath, fname = split(fpath)
@@ -116,7 +120,6 @@ def fix_sid(r, keep_ext=None):
 
 
 def texinit(r):
-    import shutil
     print('Initializing latex directory')
 
     cralldef_fname    = join(r.d.PORT_LATEX, 'CrallDef.tex')
@@ -192,7 +195,6 @@ def update_env(r):
 
 # https://code.google.com/p/psutil/
 def ps(r, flags=None):
-    import psutil
     for pid in psutil.get_pid_list():
         proc = psutil.Process(pid)
         if not flags is None and \
@@ -231,7 +233,6 @@ def printproc_(proc):
 
 
 def pykill(r, scriptname, needbash=True):
-    import psutil
     needbash = bool(needbash)
     print(needbash)
     script_fname = '%s.py' % scriptname
@@ -258,7 +259,6 @@ def hskill(r):
 
 
 def kill(r, procname):
-    import psutil
     for proc in psutil.process_iter():
         if procname in proc.name:
             print(' killing: ')
@@ -472,7 +472,7 @@ def research(r, start_line_str=None, rate='3', sentence_mode=True, open_file=Fal
 
 
 def info(r):
-    'Provides interface help'
+    """ Provides interface help """
     import rob_interface
     print("===================\n")
     help(rob_interface)
@@ -584,29 +584,29 @@ def write_env(r):
     write_regfile(envtxt_fpath, key, r.env_vars_list, rtype)
     rob_helpers.view_directory(write_dir)
 
-import itertools
 
-
-def unique_ordered(list1, list2, *args):
-    seen_ = set([])
-    unique_list = []
-    for item in itertools.chain(list1, list2, *args):
-        if item in seen_:
-            continue
-        seen_.add(item)
-        unique_list.append(item)
-    return unique_list
+#def unique_ordered(list1, list2, *args):
+#    seen_ = set([])
+#    unique_list = []
+#    for item in itertools.chain(list1, list2, *args):
+#        if item in seen_:
+#            continue
+#        seen_.add(item)
+#        unique_list.append(item)
+#    return unique_list
 
 
 def write_path(r):
+    import utool
     write_dir = join(r.d.HOME, 'Sync/win7/registry')
     path_fpath = normpath(join(write_dir, 'UPDATE_PATH.reg'))
     key = '[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment]'
     rtype = 'REG_EXPAND_SZ'
     pathsep = os.path.pathsep
-    win_pathlist = os.environ['PATH'].split(os.path.pathsep)
-    rob_pathlist = map(normpath, r.path_vars_list)
-    new_path_list = unique_ordered(win_pathlist, rob_pathlist)
+    win_pathlist = list(os.environ['PATH'].split(os.path.pathsep))
+    rob_pathlist = list(map(normpath, r.path_vars_list))
+    new_path_list = utool.unique_ordered(win_pathlist + rob_pathlist)
+    #new_path_list = unique_ordered(win_pathlist, rob_pathlist)
     print('\n'.join(new_path_list))
     pathtxt = pathsep.join(new_path_list)
     varval_list = [('Path', pathtxt)]
@@ -624,7 +624,7 @@ def upenv(r):
 
 
 def pref_env(r):
-    'Function that sets Envirornment Preferences'
+    """ Function that sets Envirornment Preferences """
     for (envvar, envval) in r.env_vars_list:
         print(envvar + '=' + envval)
         #robos.set_env_var(envvar, envval)
@@ -646,19 +646,16 @@ def fix_youtube_names_ccl(r):
     fpath_list = utool.glob(cwd, '*.mp4')
     for fpath in fpath_list:
         #print(fpath)
-        from os.path import split
         dpath, fname = split(fpath)
         found = utool.regex_search(r'Crash Course .*-', fname)
         if found is not None:
             found = found.replace('English', '').replace('-', ' - ')
             new_fpath = join(dpath, found + fname.replace(found, ''))
             print(new_fpath)
-            import shutil
             shutil.move(fpath, new_fpath)
         #start = re.search(
         #print(fpath[start.pos:start.endpos])
         #break
-
 
 
 def fix_path(r):
@@ -740,7 +737,6 @@ def send(r, keys, pause=.05):
 
 
 def find_in_path(r, pattern):
-    from itertools import izip
     PATH = os.environ['PATH'].split(os.pathsep)
     fpaths_list = [os.listdir(dpath) for dpath in PATH]
     for dpath, fpaths_list in izip(PATH, fpaths_list):
