@@ -113,3 +113,9 @@ highlight Cursor guifg=blue guibg=orange
 if !exists("g:togfont") 
     :exec "call ToggleFont()"
 endif
+
+:exec 'inoremap ; :'
+:exec 'inoremap : ;'
+
+:exec 'inoremap _ -'
+:exec 'inoremap - _'

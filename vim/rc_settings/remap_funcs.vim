@@ -17,10 +17,25 @@ func! FUNC_Remap(lhs, rhs)
 endfu
 
 
+func! FUNC_Remap2(lhs, rhs)
+    " Function which remaps keys in all modes
+    "
+    :echom 'inoremap '.a:lhs.' '.a:rhs
+    "http://vim.wikia.com/wiki/Mapping_keys_in_Vim_-_Tutorial_(Part_1)
+    ":exec 'noremap '.a:lhs.' '.a:rhs
+    :exec 'inoremap '.a:lhs.' '.a:rhs
+    ":exec 'vnoremap '.a:lhs.' '.a:rhs
+    :exec 'onoremap '.a:lhs.' '.a:rhs
+endfu
+
+
 command! -nargs=* CMDREMAP call FUNC_Remap(<f-args>)
+command! -nargs=* CMDREMAP2 call FUNC_Remap2(<f-args>)
+
 
 func! NumberLineInvert()
     "map each number to its shift-key character
+    :CMDREMAP2 : ;
     :CMDREMAP 1 !
     :CMDREMAP 2 @
     :CMDREMAP 3 #
@@ -33,6 +48,7 @@ func! NumberLineInvert()
     :CMDREMAP 0 )
     :CMDREMAP - _
     " and then the opposite
+    :CMDREMAP2 ; :
     :CMDREMAP ! 1
     :CMDREMAP @ 2
     :CMDREMAP # 3
@@ -49,6 +65,10 @@ endfu
 
 func! NumberLineRevert()
     "map each number to its shift-key character
+    ":exec 'inoremap : :'
+    ":exec 'inoremap ; ;'
+    :CMDREMAP2 : :
+    :CMDREMAP2 ; ;
     :CMDREMAP ! !
     :CMDREMAP @ @
     :CMDREMAP # #

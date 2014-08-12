@@ -7,11 +7,14 @@
 "useful funcs for leaderkeys
 source ~/local/vim/rc_settings/remap_funcs.vim
 
+:CMDREMAP2 : ;
+:CMDREMAP2 ; :
+
 " Remap LEADER from \<CR> to ,
 let mapleader = ","
 " Remap COLOn colon to semicolon (in normal and visual mode)
-nmap ; :
-vmap ; :
+noremap ; :
+vnoremap ; :
 " Remap ESCAPE key to?  ":imap ` <Esc>
 "noremap <Del> <Esc>
 "noremap <Home> <Esc>
