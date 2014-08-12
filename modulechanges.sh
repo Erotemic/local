@@ -222,14 +222,21 @@ git mv ibeis\model\hots\QueryResult.py ibeis\model\hots\hots_query_result.py
 git mv ibeis\model\hots\QueryRequest.py ibeis\model\hots\hots_query_request.py
 
 ib
-git mv ibeis/dev/ibsfuncs.py ibeis/ibsfuncs.py
-git mv ibeis/dev/all_imports.py ibeis/all_imports.py
 
+git mv ibeis/dev/ibsfuncs.py ibeis/ibsfuncs.py
 rob sp "from ibeis\\.dev import ibsfuncs" "from ibeis import ibsfuncs" 
 rob sp "ibeis\\.dev\\.ibsfuncs" "ibeis.ibsfuncs"
 rob sp "ibeis/dev/ibsfuncs" "ibeis/ibsfuncs"
 
 
+git mv ibeis/dev/all_imports.py ibeis/all_imports.py
 rob sp "from ibeis\\.dev import all_imports" "from ibeis import all_imports" 
 rob sp "ibeis\\.dev\\.all_imports" "ibeis.all_imports"
 rob sp "ibeis/dev/all_imports" "ibeis/all_imports"
+
+
+git mv ibeis/dev/params.py ibeis/params.py
+rob sp "from ibeis\\.dev import params" "from ibeis import params" 
+rob sp "from \\. import params" "from ibeis import params" 
+rob sp "ibeis\\.dev\\.params" "ibeis.params"
+rob sp "ibeis/dev/params" "ibeis/params"

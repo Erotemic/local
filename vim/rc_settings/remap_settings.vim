@@ -5,10 +5,7 @@
 
 
 "useful funcs for leaderkeys
-source ~/local/vim/rc_settings/remap_funcs.vim
-
-:CMDREMAP2 : ;
-:CMDREMAP2 ; :
+:CMDSWAP2 : ;
 
 " Remap LEADER from \<CR> to ,
 let mapleader = ","
@@ -23,6 +20,10 @@ vnoremap ; :
 "noremap <leader>rrr :source ~/local/vim/portable_vimrc<CR>
 noremap <leader>r :source ~/local/vim/portable_vimrc<CR>
 noremap <leader>R :source ~/local/vim/portable_vimrc<CR>
+
+
+" Remap Alt+q to escape
+inoremap <silent><A-q> <ESC>
 
 " Window navication
 " Alt + jklh

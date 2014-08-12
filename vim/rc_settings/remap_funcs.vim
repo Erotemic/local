@@ -15,51 +15,87 @@ func! FUNC_Remap(lhs, rhs)
     " Operator Pending Mode
     :exec 'onoremap '.a:lhs.' '.a:rhs
 endfu
-
-
-func! FUNC_Remap2(lhs, rhs)
-    " Function which remaps keys in all modes
-    "
-    :echom 'inoremap '.a:lhs.' '.a:rhs
-    "http://vim.wikia.com/wiki/Mapping_keys_in_Vim_-_Tutorial_(Part_1)
-    ":exec 'noremap '.a:lhs.' '.a:rhs
-    :exec 'inoremap '.a:lhs.' '.a:rhs
-    ":exec 'vnoremap '.a:lhs.' '.a:rhs
-    :exec 'onoremap '.a:lhs.' '.a:rhs
-endfu
-
-
 command! -nargs=* CMDREMAP call FUNC_Remap(<f-args>)
-command! -nargs=* CMDREMAP2 call FUNC_Remap2(<f-args>)
+
+
+func! FUNC_Swap(lhs, rhs)
+    " Normal Mode
+    :exec 'noremap '.a:lhs.' '.a:rhs
+    :exec 'noremap '.a:rhs.' '.a:lhs
+    " Insert and Replace Mode
+    :exec 'inoremap '.a:lhs.' '.a:rhs
+    :exec 'inoremap '.a:rhs.' '.a:lhs
+    " Visual and Select Mode
+    :exec 'vnoremap '.a:lhs.' '.a:rhs
+    :exec 'vnoremap '.a:rhs.' '.a:lhs
+    " Operator Pending Mode
+    :exec 'onoremap '.a:lhs.' '.a:rhs
+    :exec 'onoremap '.a:rhs.' '.a:lhs
+endfu
+command! -nargs=* CMDSWAP call FUNC_Swap(<f-args>)
+
+
+func! FUNC_Unswap(lhs, rhs)
+    " Normal Mode
+    :exec 'noremap '.a:rhs.' '.a:rhs
+    :exec 'noremap '.a:lhs.' '.a:lhs
+    " Insert and Replace Mode
+    :exec 'inoremap '.a:rhs.' '.a:rhs
+    :exec 'inoremap '.a:lhs.' '.a:lhs
+    " Visual and Select Mode
+    :exec 'vnoremap '.a:rhs.' '.a:rhs
+    :exec 'vnoremap '.a:lhs.' '.a:lhs
+    " Operator Pending Mode
+    :exec 'onoremap '.a:rhs.' '.a:rhs
+    :exec 'onoremap '.a:lhs.' '.a:lhs
+endfu
+command! -nargs=* CMDUNSWAP call FUNC_Unswap(<f-args>)
+
+
+func! FUNC_Swap2(lhs, rhs)
+    " Function which remaps keys in all modes
+    ":exec 'noremap '.a:lhs.' '.a:rhs
+    :exec 'imap '.a:lhs.' '.a:rhs
+    :exec 'imap '.a:rhs.' '.a:lhs
+    ":exec 'vnoremap '.a:lhs.' '.a:rhs
+    ":exec 'vnoremap '.a:rhs.' '.a:lhs
+    ":exec 'onoremap '.a:lhs.' '.a:rhs
+    ":exec 'onoremap '.a:rhs.' '.a:lhs
+endfu
+command! -nargs=* CMDSWAP2 call FUNC_Swap2(<f-args>)
+
+func! FUNC_Unswap2(lhs, rhs)
+    " Normal Mode
+    ":exec 'noremap '.a:rhs.' '.a:rhs
+    ":exec 'noremap '.a:lhs.' '.a:lhs
+    " Insert and Replace Mode
+    :exec 'imap '.a:rhs.' '.a:rhs
+    :exec 'imap '.a:lhs.' '.a:lhs
+    " Visual and Select Mode
+    ":exec 'vnoremap '.a:rhs.' '.a:rhs
+    ":exec 'vnoremap '.a:lhs.' '.a:lhs
+    " Operator Pending Mode
+    ":exec 'onoremap '.a:rhs.' '.a:rhs
+    ":exec 'onoremap '.a:lhs.' '.a:lhs
+endfu
+command! -nargs=* CMDUNSWAP2 call FUNC_Unswap2(<f-args>)
 
 
 func! NumberLineInvert()
     "map each number to its shift-key character
-    :CMDREMAP2 : ;
-    :CMDREMAP 1 !
-    :CMDREMAP 2 @
-    :CMDREMAP 3 #
-    :CMDREMAP 4 $
-    :CMDREMAP 5 %
-    :CMDREMAP 6 ^
-    :CMDREMAP 7 &
-    :CMDREMAP 8 *
-    :CMDREMAP 9 (
-    :CMDREMAP 0 )
-    :CMDREMAP - _
+    :CMDSWAP2 : ;
+    :CMDSWAP 1 !
+    :CMDSWAP 2 @
+    :CMDSWAP 3 #
+    :CMDSWAP 4 $
+    :CMDSWAP 5 %
+    :CMDSWAP 6 ^
+    :CMDSWAP 7 &
+    :CMDSWAP 8 *
+    :CMDSWAP 9 (
+    :CMDSWAP 0 )
+    :CMDSWAP - _
     " and then the opposite
-    :CMDREMAP2 ; :
-    :CMDREMAP ! 1
-    :CMDREMAP @ 2
-    :CMDREMAP # 3
-    :CMDREMAP $ 4
-    :CMDREMAP % 5
-    :CMDREMAP ^ 6
-    :CMDREMAP & 7
-    :CMDREMAP * 8
-    :CMDREMAP ( 9
-    :CMDREMAP ) 0
-    :CMDREMAP _ -
 endfu
 
 
@@ -67,31 +103,18 @@ func! NumberLineRevert()
     "map each number to its shift-key character
     ":exec 'inoremap : :'
     ":exec 'inoremap ; ;'
-    :CMDREMAP2 : :
-    :CMDREMAP2 ; ;
-    :CMDREMAP ! !
-    :CMDREMAP @ @
-    :CMDREMAP # #
-    :CMDREMAP $ $
-    :CMDREMAP % %
-    :CMDREMAP ^ ^
-    :CMDREMAP & &
-    :CMDREMAP * *
-    :CMDREMAP ( (
-    :CMDREMAP ) )
-    :CMDREMAP _ _
-    " and then the opposite
-    :CMDREMAP 1 1
-    :CMDREMAP 2 2
-    :CMDREMAP 3 3
-    :CMDREMAP 4 4
-    :CMDREMAP 5 5
-    :CMDREMAP 6 6
-    :CMDREMAP 7 7
-    :CMDREMAP 8 8
-    :CMDREMAP 9 9
-    :CMDREMAP 0 0
-    :CMDREMAP - -
+    :CMDUNSWAP2 : ;
+    :CMDUNSWAP 1 !
+    :CMDUNSWAP 2 @
+    :CMDUNSWAP 3 #
+    :CMDUNSWAP 4 $
+    :CMDUNSWAP 5 %
+    :CMDUNSWAP 6 ^
+    :CMDUNSWAP 7 &
+    :CMDUNSWAP 8 *
+    :CMDUNSWAP 9 (
+    :CMDUNSWAP 0 )
+    :CMDUNSWAP - _
 endfu
 
 

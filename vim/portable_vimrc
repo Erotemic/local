@@ -29,6 +29,7 @@ source ~/local/vim/rc_settings/plugins_latex.vim
 source ~/local/vim/rc_settings/gui_settings.vim
 source ~/local/vim/rc_settings/behavior_settings.vim
 source ~/local/vim/rc_settings/autocommand_settings.vim
+source ~/local/vim/rc_settings/remap_funcs.vim
 source ~/local/vim/rc_settings/remap_settings.vim
 
 
