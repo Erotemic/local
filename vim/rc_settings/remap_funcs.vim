@@ -55,8 +55,8 @@ command! -nargs=* CMDUNSWAP call FUNC_Unswap(<f-args>)
 func! FUNC_Swap2(lhs, rhs)
     " Function which remaps keys in all modes
     ":exec 'noremap '.a:lhs.' '.a:rhs
-    :exec 'imap '.a:lhs.' '.a:rhs
-    :exec 'imap '.a:rhs.' '.a:lhs
+    :exec 'inoremap '.a:lhs.' '.a:rhs
+    :exec 'inoremap '.a:rhs.' '.a:lhs
     ":exec 'vnoremap '.a:lhs.' '.a:rhs
     ":exec 'vnoremap '.a:rhs.' '.a:lhs
     ":exec 'onoremap '.a:lhs.' '.a:rhs
@@ -69,8 +69,8 @@ func! FUNC_Unswap2(lhs, rhs)
     ":exec 'noremap '.a:rhs.' '.a:rhs
     ":exec 'noremap '.a:lhs.' '.a:lhs
     " Insert and Replace Mode
-    :exec 'imap '.a:rhs.' '.a:rhs
-    :exec 'imap '.a:lhs.' '.a:lhs
+    :exec 'inoremap '.a:rhs.' '.a:rhs
+    :exec 'inoremap '.a:lhs.' '.a:lhs
     " Visual and Select Mode
     ":exec 'vnoremap '.a:rhs.' '.a:rhs
     ":exec 'vnoremap '.a:lhs.' '.a:lhs

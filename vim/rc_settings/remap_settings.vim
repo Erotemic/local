@@ -15,7 +15,10 @@ vnoremap ; :
 " Remap ESCAPE key to?  ":imap ` <Esc>
 "noremap <Del> <Esc>
 "noremap <Home> <Esc>
-:imap <Del> <Esc>
+":imap <Del> <Esc>
+"
+
+
 " Hotkey: <leader>rrr Reload the vimrc
 "noremap <leader>rrr :source ~/local/vim/portable_vimrc<CR>
 noremap <leader>r :source ~/local/vim/portable_vimrc<CR>
@@ -24,6 +27,8 @@ noremap <leader>R :source ~/local/vim/portable_vimrc<CR>
 
 " Remap Alt+q to escape
 inoremap <silent><A-q> <ESC>
+" Remap Alt+p to paste
+inoremap <silent><A-p> <C-p>
 
 " Window navication
 " Alt + jklh
