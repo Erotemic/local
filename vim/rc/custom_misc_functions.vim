@@ -106,15 +106,15 @@ python << endpython
 import vim
 from os.path import expanduser
 setup_files = [
-'~/code/ibeis/setup.py',
-'~/code/utool/setup.py',
-'~/code/vtool/setup.py',
-'~/code/hesaff/setup.py',
-'~/code/detecttools/setup.py',
-'~/code/pyrf/setup.py',
-'~/code/guitool/setup.py',
-'~/code/plottool/setup.py',
-]
+        '~/code/ibeis/setup.py',
+        '~/code/utool/setup.py',
+        '~/code/vtool/setup.py',
+        '~/code/hesaff/setup.py',
+        '~/code/detecttools/setup.py',
+        '~/code/pyrf/setup.py',
+        '~/code/guitool/setup.py',
+        '~/code/plottool/setup.py',
+    ]
 
 vim.command(":exec ':tabe %s'" % expanduser(setup_files[0]))
 vim.command(":set nofoldenable")
@@ -182,3 +182,23 @@ func! MYINFO()
     :ECHOVAR smartindent
 endfu
 command! MYINFOCMD call MYINFO() <C-R>
+
+
+
+" ========= Functions ========= "
+"command! TextWidthMarkerOn call FUNC_TextWidthMarkerOn()
+" Textwidth command
+"command! TextWidth80 set textwidth=80
+command! TextWidthLineOn call FUNC_TextWidthLineOn()
+
+"-------------------------
+command! HexmodeOn :%!xxd
+command! HexmodeOff :%!xxd -r 
+"-------------------------
+
+command! Bufloadpy :args *.py
+command! SAVESESSION :mksession ~/mysession.vim
+command! LOADSESSION :mksession ~/mysession.vim
+
+command! SAVEHSSESSION :mksession ~/vim_hotspotter_session.vim
+command! LOADHSSESSION :source ~/vim_hotspotter_session.vim

@@ -3,87 +3,82 @@ func! FUNC_Remap(lhs, rhs)
     "
     ":echom 'inoremap '.a:lhs.' '.a:rhs
     "http://vim.wikia.com/wiki/Mapping_keys_in_Vim_-_Tutorial_(Part_1)
+    "  CHAR	MODE	~
+    " <Space>	Normal, Visual, Select and Operator-pending
+	"n	Normal
+	"v	Visual and Select
+	"s	Select
+	"x	Visual
+	"o	Operator-pending
+	"!	Insert and Command-line
+	"i	Insert
+	"l	":lmap" mappings for Insert, Command-line and Lang-Arg
+	"c	Command-line
     "--------------
     " Normal Mode
     :exec 'noremap '.a:lhs.' '.a:rhs
-    " Insert and Replace Mode
-    :exec 'inoremap '.a:lhs.' '.a:rhs
     " Visual and Select Mode
     :exec 'vnoremap '.a:lhs.' '.a:rhs
-    " Command Line Mode
-    ":exec 'cnoremap '.a:lhs.' '.a:rhs
+    " Display select mode map
+    :exec 'snoremap '.a:lhs.' '.a:rhs
+    " Display visual mode maps
+    :exec 'xnoremap '.a:lhs.' '.a:rhs
     " Operator Pending Mode
     :exec 'onoremap '.a:lhs.' '.a:rhs
+    " Insert and Replace Mode
+    :exec 'inoremap '.a:lhs.' '.a:rhs
+    " Language Mode
+    :exec 'lnoremap '.a:lhs.' '.a:rhs
+    " Command Line Mode
+    :exec 'cnoremap '.a:lhs.' '.a:rhs
+    " Make r<lhs> do the right thing
+    :exec 'noremap r'.a:lhs.' r'.a:rhs
 endfu
 command! -nargs=* CMDREMAP call FUNC_Remap(<f-args>)
 
 
 func! FUNC_Swap(lhs, rhs)
-    " Normal Mode
-    :exec 'noremap '.a:lhs.' '.a:rhs
-    :exec 'noremap '.a:rhs.' '.a:lhs
-    " Insert and Replace Mode
-    :exec 'inoremap '.a:lhs.' '.a:rhs
-    :exec 'inoremap '.a:rhs.' '.a:lhs
-    " Visual and Select Mode
-    :exec 'vnoremap '.a:lhs.' '.a:rhs
-    :exec 'vnoremap '.a:rhs.' '.a:lhs
-    " Operator Pending Mode
-    :exec 'onoremap '.a:lhs.' '.a:rhs
-    :exec 'onoremap '.a:rhs.' '.a:lhs
+    :call FUNC_Remap(a:lhs, a:rhs)
+    :call FUNC_Remap(a:rhs, a:lhs)
 endfu
 command! -nargs=* CMDSWAP call FUNC_Swap(<f-args>)
 
 
 func! FUNC_Unswap(lhs, rhs)
-    " Normal Mode
-    :exec 'noremap '.a:rhs.' '.a:rhs
-    :exec 'noremap '.a:lhs.' '.a:lhs
-    " Insert and Replace Mode
-    :exec 'inoremap '.a:rhs.' '.a:rhs
-    :exec 'inoremap '.a:lhs.' '.a:lhs
-    " Visual and Select Mode
-    :exec 'vnoremap '.a:rhs.' '.a:rhs
-    :exec 'vnoremap '.a:lhs.' '.a:lhs
-    " Operator Pending Mode
-    :exec 'onoremap '.a:rhs.' '.a:rhs
-    :exec 'onoremap '.a:lhs.' '.a:lhs
+    :call FUNC_Remap(a:lhs, a:lhs)
+    :call FUNC_Remap(a:rhs, a:rhs)
 endfu
 command! -nargs=* CMDUNSWAP call FUNC_Unswap(<f-args>)
 
 
-func! FUNC_Swap2(lhs, rhs)
-    " Function which remaps keys in all modes
+func! FUNC_Remap2(lhs, rhs)
+    " Function which remaps keys in interactive modes
     ":exec 'noremap '.a:lhs.' '.a:rhs
     :exec 'inoremap '.a:lhs.' '.a:rhs
-    :exec 'inoremap '.a:rhs.' '.a:lhs
     ":exec 'vnoremap '.a:lhs.' '.a:rhs
     ":exec 'vnoremap '.a:rhs.' '.a:lhs
     ":exec 'onoremap '.a:lhs.' '.a:rhs
     ":exec 'onoremap '.a:rhs.' '.a:lhs
 endfu
+command! -nargs=* CMDREMAP2 call FUNC_Remap2(<f-args>)
+
+func! FUNC_Swap2(lhs, rhs)
+    :call FUNC_Remap2(a:lhs, a:rhs)
+    :call FUNC_Remap2(a:rhs, a:lhs)
+endfu
 command! -nargs=* CMDSWAP2 call FUNC_Swap2(<f-args>)
 
+
 func! FUNC_Unswap2(lhs, rhs)
-    " Normal Mode
-    ":exec 'noremap '.a:rhs.' '.a:rhs
-    ":exec 'noremap '.a:lhs.' '.a:lhs
-    " Insert and Replace Mode
-    :exec 'inoremap '.a:rhs.' '.a:rhs
-    :exec 'inoremap '.a:lhs.' '.a:lhs
-    " Visual and Select Mode
-    ":exec 'vnoremap '.a:rhs.' '.a:rhs
-    ":exec 'vnoremap '.a:lhs.' '.a:lhs
-    " Operator Pending Mode
-    ":exec 'onoremap '.a:rhs.' '.a:rhs
-    ":exec 'onoremap '.a:lhs.' '.a:lhs
+    :call FUNC_Remap2(a:lhs, a:lhs)
+    :call FUNC_Remap2(a:rhs, a:rhs)
 endfu
 command! -nargs=* CMDUNSWAP2 call FUNC_Unswap2(<f-args>)
 
 
 func! NumberLineInvert()
     "map each number to its shift-key character
-    :CMDSWAP2 : ;
+    ":CMDSWAP2 : ;
     :CMDSWAP 1 !
     :CMDSWAP 2 @
     :CMDSWAP 3 #
@@ -101,9 +96,7 @@ endfu
 
 func! NumberLineRevert()
     "map each number to its shift-key character
-    ":exec 'inoremap : :'
-    ":exec 'inoremap ; ;'
-    :CMDUNSWAP2 : ;
+    ":CMDUNSWAP2 : ;
     :CMDUNSWAP 1 !
     :CMDUNSWAP 2 @
     :CMDUNSWAP 3 #

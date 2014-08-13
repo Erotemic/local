@@ -1,51 +1,28 @@
 " ========= VIM PREFERENCES ========= "
 
-" Some of these probably need to be cleaned up
-set hlsearch
-
-" Use Vim settings, rather than Vi settings (much better!).
-" This must be first, because it changes other options as a side effect.
-"set nocompatible
-
 " allow backspacing over everything in insert mode
 set backspace=indent,eol,start
-
-if !exists(":DiffOrig")
-  command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
-		  \ | wincmd p | diffthis
-endif
 
 " In many terminal emulators the mouse works just fine, thus enable it.
 if has('mouse')
   set mouse=a
 endif
 
-" MISC: win clipboard on linux
-"if has("win32") || has("win16")
-"    behave mswin
-"endif
-"else
-"    source $VIMRUNTIME/mswin.vim
-"endif
 
-" " Turn backup off, since most stuff is in SVN, git et.c anyway...
 set ff=unix
 set ffs=unix,dos
+
+" Set backup directory
 if has("win32") || has("win16")
-    " WINDOWS COMMANDS
-    "set guioptions+=b guioptions-=e guioptions-=L guioptions? guioptions=grtb
     set backupdir=D:/sys/vim_tmp/
     set undodir=D:/sys/vim_tmp/
 else
-    " LINUX COMMANDS
-    "set backupdir=/media/Store/sys/vim_tmp/
-    "set undodir=/media/Store/sys/vim_tmp/
     set backupdir=~/.vim_tmp/
-    "set undodir=~/.vim_tmp/
 endif
 
 " MISC: win clipboard on linux
 if has("win32") || has("win16")
+    " pass
 else
     set clipboard=unnamedplus
 endif
@@ -61,12 +38,6 @@ endif
 :set nu 
 if has("gui_running")
     :highlight LineNr guifg=#333333
-    "" Cross platform fonts
-    "if has("win32") || has("win16")
-        ":highlight LineNr font='Fixedsys'
-    "else
-        ":highlight LineNr font='Monospace'
-    "endif
 endif
 
 "-------------------------
@@ -96,6 +67,7 @@ set history=5000  " keep 5000 lines of command line history
 set ruler
 set showcmd	
 set incsearch
+set hlsearch
 
 "Windows symlink problems
 set bkc=yes
@@ -114,8 +86,40 @@ if !exists("g:togfont")
     :exec "call ToggleFont()"
 endif
 
-:exec 'inoremap ; :'
-:exec 'inoremap : ;'
 
-:exec 'inoremap _ -'
-:exec 'inoremap - _'
+
+
+
+"---------
+" clean these up
+"
+
+if !exists(":DiffOrig")
+  command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
+		  \ | wincmd p | diffthis
+endif
+
+
+" MISC: win clipboard on linux
+"if has("win32") || has("win16")
+"    behave mswin
+"endif
+"else
+"    source $VIMRUNTIME/mswin.vim
+"endif
+"
+"
+"
+" Gray Line Numbering
+":set nu 
+"if has("gui_running")
+    ":highlight LineNr guifg=#333333
+    """ Cross platform fonts
+    ""if has("win32") || has("win16")
+        "":highlight LineNr font='Fixedsys'
+    ""else
+        "":highlight LineNr font='Monospace'
+    ""endif
+"endif
+
+"

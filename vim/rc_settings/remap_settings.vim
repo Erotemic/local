@@ -5,13 +5,20 @@
 
 
 "useful funcs for leaderkeys
-:CMDSWAP2 : ;
+:CMDSWAP : ;
+:CMDSWAP - _
+:CMDSWAP 0 )
+:CMDSWAP 9 (
+
+":exec 'inoremap ; :'
+":exec 'inoremap : ;'
+
+":exec 'inoremap _ -'
+":exec 'inoremap - _'
 
 " Remap LEADER from \<CR> to ,
 let mapleader = ","
 " Remap COLOn colon to semicolon (in normal and visual mode)
-noremap ; :
-vnoremap ; :
 " Remap ESCAPE key to?  ":imap ` <Esc>
 "noremap <Del> <Esc>
 "noremap <Home> <Esc>
@@ -45,7 +52,8 @@ map <c-h> <c-w>h
 " Open file under cursor
 
 " In split window
-map <leader>gi :wincmd f<CR> " In vsplit-split window
+" In vsplit-split window
+map <leader>gi :wincmd f<CR> 
 map <leader>gs :vertical wincmd f<CR>
 
 " Function Keys
@@ -177,16 +185,18 @@ let @q=',qw'
 let @1='40j'
 let @2='40k'
 
+" write a self. in normal mode
+let@s='iself.'
+let@e=':Align ='
+
 " This is one special character which means escape
 " I got this by typing Ctrl+Q<ESC> 
 " 
 " 
 "
 
-let@s='iself.'
-let@e=':Align ='
 
-nmap <leader>u :call ToggleNumberLineInvert()<CR>
+"nmap <leader>u :call ToggleNumberLineInvert()<CR>
 
 
 " TODO: http://stackoverflow.com/questions/3638542/any-way-to-delete-in-vim-without-overwriting-your-last-yank
