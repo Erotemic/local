@@ -5,26 +5,43 @@
 
 
 "useful funcs for leaderkeys
+" Remap COLOn colon to semicolon (in normal and visual mode)
 :CMDSWAP : ;
 :CMDSWAP - _
-:CMDSWAP 0 )
 :CMDSWAP 9 (
+:CMDSWAP 0 )
+:CMDSWAP 3 #
 
-":exec 'inoremap ; :'
-":exec 'inoremap : ;'
-
-":exec 'inoremap _ -'
-":exec 'inoremap - _'
-
-" Remap LEADER from \<CR> to ,
+" Remap LEADER to ,
 let mapleader = ","
-" Remap COLOn colon to semicolon (in normal and visual mode)
 " Remap ESCAPE key to?  ":imap ` <Esc>
 "noremap <Del> <Esc>
 "noremap <Home> <Esc>
 ":imap <Del> <Esc>
-"
 
+
+
+" Function Keys
+"map <F1> :call PEP8PRINT()<CR>
+"remap F1 to search for word under cursor
+:imap <F1> <ESC>*a
+:nmap <F1> *
+:noremap <leader><F1> :normal i =%r' % (,)<ESC>hh
+" custom command for opening setupfiles
+:noremap <leader><F1> :call OpenSetups()<CR>
+" Map f2 in both normal and interactive mode
+:map <F2> :call ToggleNumberLineInvert()<CR>
+:imap <F2> <ESC>:call ToggleNumberLineInvert()<CR>a
+
+"command :ECHOGFN :call Echo
+"http://vim.1045645.n5.nabble.com/How-to-map-two-commands-on-one-key-td1162164.html
+:map <F3> :call ToggleFont() <Bar> redraw <Bar> call FUNC_ECHOVAR("gfn")<CR>
+:map <F4> :call OpenWindow()<CR>
+:map <F5> :call CmdHere()<CR>
+"vim-latex-suit overwrites f5, give it an alt
+:map <F6> :call  CmdHere()<CR>
+:map <F8> :call  Tex_RunViewLaTeX()<CR>
+:map <F12> :call ToggleAlpha()<CR>
 
 " Hotkey: <leader>rrr Reload the vimrc
 "noremap <leader>rrr :source ~/local/vim/portable_vimrc<CR>
@@ -56,22 +73,6 @@ map <c-h> <c-w>h
 map <leader>gi :wincmd f<CR> 
 map <leader>gs :vertical wincmd f<CR>
 
-" Function Keys
-map <F1> :call PEP8PRINT()<CR>
-" Map f2 in both normal and interactive mode
-map <F2> :call ToggleNumberLineInvert()<CR>
-imap <F2> <ESC>:call ToggleNumberLineInvert()<CR>a
-
-"command :ECHOGFN :call Echo
-"http://vim.1045645.n5.nabble.com/How-to-map-two-commands-on-one-key-td1162164.html
-map <F3> :call ToggleFont() <Bar> redraw <Bar> call FUNC_ECHOVAR("gfn")<CR>
-map <F4> :call OpenWindow()<CR>
-map <F5> :call CmdHere()<CR>
-"vim-latex-suit overwrites f5, give it an alt
-map <F6> :call  CmdHere()<CR>
-" Compile Command Remaps
-map <F8> :call  Tex_RunViewLaTeX()<CR>
-map <F12> :call ToggleAlpha()<CR>
 nnoremap <leader>p :call Tex_RunViewLaTeX()<CR>
 nmap <C-P> :call Tex_RunViewLaTeX() <CR>
 imap <C-P> :call Tex_RunViewLaTeX() <CR>
@@ -131,7 +132,6 @@ noremap <leader>9 9gt
 :noremap <leader>e :SyntasticCheck<CR> :Errors<CR>
 :noremap <C-T> :NERDTree<CR>
 
-:noremap <leader><F1> :normal i =%r' % (,)<ESC>hh
 :noremap <leader>. :NERDTree<CR>
 
 
@@ -159,9 +159,6 @@ endfu
 " This is anoying. Kill the behavior
 " Or learn how to use it?
 " :noremap K k
-
-" custom command for opening setupfiles
-noremap <leader><F1> :call OpenSetups()<CR>
 
 " Close a tab
 noremap <leader>qt :tabclose<CR>
