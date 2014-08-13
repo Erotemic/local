@@ -33,6 +33,7 @@ func! FUNC_Remap(lhs, rhs)
     :exec 'cnoremap '.a:lhs.' '.a:rhs
     " Make r<lhs> do the right thing
     :exec 'noremap r'.a:lhs.' r'.a:rhs
+    :exec 'noremap f'.a:lhs.' r'.a:rhs
 endfu
 command! -nargs=* CMDREMAP call FUNC_Remap(<f-args>)
 

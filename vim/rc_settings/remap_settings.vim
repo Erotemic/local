@@ -11,6 +11,7 @@
 :CMDSWAP 9 (
 :CMDSWAP 0 )
 :CMDSWAP 3 #
+:CMDSWAP 5 %
 
 " Remap LEADER to ,
 let mapleader = ","
