@@ -50,7 +50,6 @@ sudo mkfs.ext4 -v -m .1 -b 4096 -E stride=32,stripe-width=64 /dev/sdd1
 sudo mkfs.ext4 -v -m .1 -b 4096 -E stride=32,stripe-width=64 /dev/sde1 
 
 
-
 # make sure you have RAID module in the linux kernel
 sudo modprobe raid456
 cat /proc/mdstat
@@ -72,15 +71,18 @@ sudo mdadm --assemble /dev/md0
 # Stop RAID
 sudo mdadm --stop /dev/md0
 
-sudo mkdir /media/raid
+# Format the RAID
 sudo mkfs.ext4 -v -m .1 -b 4096 -E stride=32,stripe-width=64 /dev/md0 
+
+# Mount the RAID (dont forget to modify fstab)
+sudo mkdir /media/raid
 sudo chown joncrall:joncrall /media/raid
 sudo mount /dev/md0 /media/raid
+echo "/dev/md0    /media/raid       ext4  defaults     1  2" >> /etc/fstab
 
 # Stop Rebuild
 sudo /usr/share/mdadm/checkarray -xa
-
-# 
+# Reconfigure initramfs
 sudo update-initramfs -u
 
 # DEBUG
@@ -89,3 +91,9 @@ sudo mdadm --examine /dev/sdd
 sudo mdadm --examine /dev/sde
 
 sudo mdadm --detail /dev/md127 
+
+# INFORMATION
+sudo mdadm --detail --scan 
+sudo mdadm --query --detail /dev/md0
+sudo mdadm --detail /dev/md0 
+cat /proc/mdstat

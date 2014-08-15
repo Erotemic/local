@@ -130,6 +130,36 @@ for ix in xrange(5, 8):
 endpython
 endfu
 
+
+func! OpenGitIgnores()
+python << endpython
+import vim
+from os.path import expanduser
+setup_files = [
+        '~/code/ibeis/.gitignore',
+        '~/code/utool/.gitignore',
+        '~/code/vtool/.gitignore',
+        '~/code/hesaff/.gitignore',
+        '~/code/detecttools/.gitignore',
+        '~/code/pyrf/.gitignore',
+        '~/code/guitool/.gitignore',
+        '~/code/plottool/.gitignore',
+    ]
+
+vim.command(":exec ':tabe %s'" % expanduser(setup_files[0]))
+vim.command(":set nofoldenable")
+vim.command(":exec ':vsplit %s'" % expanduser(setup_files[1]))
+vim.command(":set nofoldenable")
+for ix in xrange(2, 5):
+    vim.command(":exec ':split %s'" % expanduser(setup_files[ix]))
+    vim.command(":set nofoldenable")
+vim.command(":exec ':wincmd l'")
+for ix in xrange(5, 8):
+    vim.command(":exec ':split %s'" % expanduser(setup_files[ix]))
+    vim.command(":set nofoldenable")
+endpython
+endfu
+
 """"""""""""""""""""""""""""""""""
 
 func! MagicPython()
