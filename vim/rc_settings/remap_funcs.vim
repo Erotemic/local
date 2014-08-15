@@ -38,6 +38,36 @@ endfu
 command! -nargs=* CMDREMAP call FUNC_Remap(<f-args>)
 
 
+func! FUNC_Unmap(lhs, rhs)
+    ":CMDREMAP(a:lhs, a:lhs)
+    ":CMDREMAP(a:rhs, a:rhs)
+    :silent! exec 'nunmap '.a:lhs
+    :silent! exec 'vunmap '.a:lhs
+    :silent! exec 'sunmap '.a:lhs
+    :silent! exec 'xunmap '.a:lhs
+    :silent! exec 'ounmap '.a:lhs
+    :silent! exec 'iunmap '.a:lhs
+    :silent! exec 'lunmap '.a:lhs
+    :silent! exec 'cunmap '.a:lhs
+    " Make r<lhs> do the right thing
+    :silent! exec 'unmap r'.a:lhs
+    :silent! exec 'unmap f'.a:lhs
+    " unmap other side
+    :silent! exec 'nunmap '.a:rhs
+    :silent! exec 'vunmap '.a:rhs
+    :silent! exec 'sunmap '.a:rhs
+    :silent! exec 'xunmap '.a:rhs
+    :silent! exec 'ounmap '.a:rhs
+    :silent! exec 'iunmap '.a:rhs
+    :silent! exec 'lunmap '.a:rhs
+    :silent! exec 'cunmap '.a:rhs
+    " Make r<rhs> do the right thing
+    :silent! exec 'unmap r'.a:rhs
+    :silent! exec 'unmap f'.a:rhs
+endfu
+command! -nargs=* CMDUNMAP call FUNC_Unmap(<f-args>)
+
+
 func! FUNC_Swap(lhs, rhs)
     :call FUNC_Remap(a:lhs, a:rhs)
     :call FUNC_Remap(a:rhs, a:lhs)

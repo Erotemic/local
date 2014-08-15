@@ -6,12 +6,21 @@
 
 "useful funcs for leaderkeys
 " Remap COLOn colon to semicolon (in normal and visual mode)
+
+
+:CMDUNMAP - _
+:CMDUNMAP 9 (
+:CMDUNMAP 0 )
+:CMDUNMAP 3 #
+:CMDUNMAP 5 %
+
 :CMDSWAP : ;
 :CMDSWAP - _
 :CMDSWAP 9 (
 :CMDSWAP 0 )
-:CMDSWAP 3 #
-:CMDSWAP 5 %
+":CMDSWAP 3 #
+":CMDSWAP 5 %
+
 
 " Remap LEADER to ,
 let mapleader = ","
