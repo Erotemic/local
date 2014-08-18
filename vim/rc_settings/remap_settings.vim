@@ -21,9 +21,10 @@
 ":CMDSWAP 3 #
 ":CMDSWAP 5 %
 
-
-" Remap LEADER to ,
+" Map to several leaderkeys with the main being ","
 let mapleader = ","
+:nmap \ ,
+
 " Remap ESCAPE key to?  ":imap ` <Esc>
 "noremap <Del> <Esc>
 "noremap <Home> <Esc>
@@ -32,24 +33,40 @@ let mapleader = ","
 
 
 " Function Keys
-"map <F1> :call PEP8PRINT()<CR>
+"
+" === F1 ===
 "remap F1 to search for word under cursor
-:imap <F1> <ESC>*a
-:nmap <F1> *
-:noremap <leader><F1> :normal i =%r' % (,)<ESC>hh
+:inoremap <F1> <ESC>*a
+:noremap  <F1> *
 " custom command for opening setupfiles
-:noremap <leader><F1> :call OpenSetups()<CR>
-" Map f2 in both normal and interactive mode
-:map <F2> :call ToggleNumberLineInvert()<CR>
-:imap <F2> <ESC>:call ToggleNumberLineInvert()<CR>a
+:noremap  <leader><F1> :call OpenSetups()<CR>
 
-"command :ECHOGFN :call Echo
+" === F2 ===
+" Map in both normal and interactive mode
+" paseting form clibpard is "+p or "*p
+:noremap <F2> "+p
+:inoremap <F2> <ESC>"+pa
+
+:noremap <leader><F2> "+y
+:inoremap <leader><F2> <ESC>"+ya
+
+" === F3 ===
+:noremap <F3> "+y
+:inoremap <F3> <ESC>"+ya
+":map <F3> :call ToggleNumberLineInvert()<CR>
+":imap <F3> <ESC>:call ToggleNumberLineInvert()<CR>a
+
+" === F4 ===
 "http://vim.1045645.n5.nabble.com/How-to-map-two-commands-on-one-key-td1162164.html
-:map <F3> :call ToggleFont() <Bar> redraw <Bar> call FUNC_ECHOVAR("gfn")<CR>
-:map <F4> :call OpenWindow()<CR>
-:map <F5> :call CmdHere()<CR>
+:map <F4> :call ToggleFont() <Bar> redraw <Bar> call FUNC_ECHOVAR("gfn")<CR>
+:map <C-F4> <Esc>:tabclose<CR>
+
+" === F5, 6, 7
+:map <F5> :call OpenWindow()<CR>
+:map <F6> :call CmdHere()<CR>
+:map <F7> :call CmdHere()<CR>
+
 "vim-latex-suit overwrites f5, give it an alt
-:map <F6> :call  CmdHere()<CR>
 :map <F8> :call  Tex_RunViewLaTeX()<CR>
 :map <F12> :call ToggleAlpha()<CR>
 
@@ -172,7 +189,6 @@ endfu
 
 " Close a tab
 noremap <leader>qt :tabclose<CR>
-map <C-F4> <Esc>:tabclose<CR>
 
 map <c-`> <c-o>
 
@@ -185,7 +201,7 @@ map Q gq
 inoremap <C-U> <C-G>u<C-U>
 
 " Remap execute macro from @ to \
-:nmap \ @
+:nmap <leader>2 @
 
 " Define Macros
 let @q=',qw'
@@ -208,3 +224,4 @@ let@e=':Align ='
 
 " TODO: http://stackoverflow.com/questions/3638542/any-way-to-delete-in-vim-without-overwriting-your-last-yank
 "noremap d "_d
+":noremap <leader><F1> :normal i =%r' % (,)<ESC>hh

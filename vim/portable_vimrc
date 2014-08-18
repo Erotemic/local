@@ -50,6 +50,8 @@ source ~/local/vim/rc_settings/remap_settings.vim
 :call QUICKOPEN_leader_tvio('7', '~/local/vim/rc/custom_font_functions.vim')
 :call QUICKOPEN_leader_tvio('6', '~/code/pyrf')
 :call QUICKOPEN_leader_tvio('8', '~/code/flann/src/python/pyflann/flann_ctypes.py')
+:call QUICKOPEN_leader_tvio('(', '~/code/utool/cyth/cyth_script')
+
 :call QUICKOPEN_leader_tvio('0', '~/local/vim/rc/custom_regex_commands.vim')
 :call QUICKOPEN_leader_tvio('_', '$VIMRUNTIME/../_vimrc')
 :call QUICKOPEN_leader_tvio('a', '~/code/ibeis/ibeis/all_imports.py')

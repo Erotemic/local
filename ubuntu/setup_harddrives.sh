@@ -97,3 +97,6 @@ sudo mdadm --detail --scan
 sudo mdadm --query --detail /dev/md0
 sudo mdadm --detail /dev/md0 
 cat /proc/mdstat
+
+ln -s /raid /media/raid 
+cp -r /data/* .
