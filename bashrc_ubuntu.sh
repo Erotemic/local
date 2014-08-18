@@ -135,6 +135,10 @@ export PATH=~/bin:$PATH:~/scripts/
 export PYTHONPATH=$PYTHONPATH
 export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgocnfig:/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
 
+# Append CUDA to path
+export PATH=/usr/local/cuda-6.0/bin:$PATH
+export LD_LIBRARY_PATH=/usr/local/cuda-6.0/lib64:$LD_LIBRARY_PATH
+
 #export mothers=/data/work/HSDB_
 export VIEW_CMD=nautilus
 vd ()
