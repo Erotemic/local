@@ -8,8 +8,8 @@ else
     source ~/local/bashrc_ubuntu.sh
 fi
 
-export PYTHONPATH=/home/joncall/code/utool:$PYTHONPATH
 export QT_API=pyqt
+export PYTHONPATH=/home/joncall/code/utool:$PYTHONPATH
 
 #export OMP_NUM_THREADS=7
 

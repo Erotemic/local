@@ -1,2 +1,17 @@
 #!/bin/bash
-ipython qtconsole --colors=Linux --autocall 2 --pylab=qt
+#ipython qtconsole --colors=Linux --autocall 2 --pylab=qt
+
+export QT_API=pyqt 
+ipython qtconsole --colors=Linux --gui=qt --matplotlib=qt --pylab=qt  
+#ipython qtconsole --colors=Linux --pylab=qt
+#ipython qtconsole --colors=Linux
+
+#nircmd.exe exec hide ^
+# ipython qtconsole ^
+# --colors=Linux ^
+# --pylab=qt4 ^
+# --matplotlib qt4 ^
+# --gui=qt4 ^
+# --ConsoleWidget.font_size=9 ^
+# --ConsoleWidget.font_family="Mono Dyslexic" 
+
