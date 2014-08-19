@@ -3,7 +3,7 @@ set encoding=utf8
 " PLUGIN: Pathogen
 " Pathogen is the first thing to run
 "filetype off
-let g:pathogen_disabled = []  " Add a plugin to this list to disable it
+let g:pathogen_disabled = ['supertab', 'highlight.vim']  " Add a plugin to this list to disable it
 source ~/local/vim/vimfiles/autoload/pathogen.vim
 execute pathogen#infect()
 call pathogen#helptags()

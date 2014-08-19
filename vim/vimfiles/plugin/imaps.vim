@@ -485,18 +485,18 @@ vmap <silent> <Plug>IMAP_JumpBack          <C-\><C-N>`<i<c-r>=IMAP_Jumpfunc('b',
 "       provided. It is assumed that if the user will create such mappings
 "       hself if e so desires.
 if !hasmapto('<Plug>IMAP_JumpForward', 'i')
-    imap <C-J> <Plug>IMAP_JumpForward
+    "imap <C-J> <Plug>IMAP_JumpForward
 endif
 if !hasmapto('<Plug>IMAP_JumpForward', 'n')
-    nmap <C-J> <Plug>IMAP_JumpForward
+    "nmap <C-J> <Plug>IMAP_JumpForward
 endif
 if exists('g:Imap_StickyPlaceHolders') && g:Imap_StickyPlaceHolders
 	if !hasmapto('<Plug>IMAP_JumpForward', 'v')
-		vmap <C-J> <Plug>IMAP_JumpForward
+		"vmap <C-J> <Plug>IMAP_JumpForward
 	endif
 else
 	if !hasmapto('<Plug>IMAP_DeleteAndJumpForward', 'v')
-		vmap <C-J> <Plug>IMAP_DeleteAndJumpForward
+		"vmap <C-J> <Plug>IMAP_DeleteAndJumpForward
 	endif
 endif
 " }}}
