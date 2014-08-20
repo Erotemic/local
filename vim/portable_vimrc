@@ -3,7 +3,7 @@ set encoding=utf8
 " PLUGIN: Pathogen
 " Pathogen is the first thing to run
 "filetype off
-let g:pathogen_disabled = ['supertab', 'highlight.vim']  " Add a plugin to this list to disable it
+let g:pathogen_disabled = ['highlight.vim']  " Add a plugin to this list to disable it
 source ~/local/vim/vimfiles/autoload/pathogen.vim
 execute pathogen#infect()
 call pathogen#helptags()
@@ -50,7 +50,7 @@ source ~/local/vim/rc_settings/remap_settings.vim
 :call QUICKOPEN_leader_tvio('7', '~/local/vim/rc/custom_font_functions.vim')
 :call QUICKOPEN_leader_tvio('6', '~/code/pyrf')
 :call QUICKOPEN_leader_tvio('8', '~/code/flann/src/python/pyflann/flann_ctypes.py')
-:call QUICKOPEN_leader_tvio('(', '~/code/utool/cyth/cyth_script')
+:call QUICKOPEN_leader_tvio('y', '~/code/cyth/cyth/cyth_script.py')
 
 :call QUICKOPEN_leader_tvio('0', '~/local/vim/rc/custom_regex_commands.vim')
 :call QUICKOPEN_leader_tvio('_', '$VIMRUNTIME/../_vimrc')

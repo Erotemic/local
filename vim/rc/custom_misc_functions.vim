@@ -101,11 +101,25 @@ func! QUICKOPEN_leader_tvio(...)
 endfu
 
 
+func! EnsureCustomPyModPath()
+python << endpython
+import sys
+from os.path import expanduser
+path = expanduser('~/local/vim/rc')
+if path not in sys.path:
+    sys.path.append(path)
+endpython
+endfu
+
+call EnsureCustomPyModPath()
+
+
 func! OpenSetups()
+"pyfile pyvim_funcs.py
 python << endpython
 import vim
-from os.path import expanduser
-setup_files = [
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+fpath_list = [
         '~/code/ibeis/setup.py',
         '~/code/utool/setup.py',
         '~/code/vtool/setup.py',
@@ -115,18 +129,20 @@ setup_files = [
         '~/code/guitool/setup.py',
         '~/code/plottool/setup.py',
     ]
+pyvim_funcs.open_fpath_list(fpath_list)
 
-vim.command(":exec ':tabe %s'" % expanduser(setup_files[0]))
-vim.command(":set nofoldenable")
-vim.command(":exec ':vsplit %s'" % expanduser(setup_files[1]))
-vim.command(":set nofoldenable")
-for ix in xrange(2, 5):
-    vim.command(":exec ':split %s'" % expanduser(setup_files[ix]))
-    vim.command(":set nofoldenable")
-vim.command(":exec ':wincmd l'")
-for ix in xrange(5, 8):
-    vim.command(":exec ':split %s'" % expanduser(setup_files[ix]))
-    vim.command(":set nofoldenable")
+#from os.path import expanduser
+#vim.command(":exec ':tabe %s'" % expanduser(fpath_list[0]))
+#vim.command(":set nofoldenable")
+#vim.command(":exec ':vsplit %s'" % expanduser(fpath_list[1]))
+#vim.command(":set nofoldenable")
+#for ix in xrange(2, 5):
+#    vim.command(":exec ':split %s'" % expanduser(fpath_list[ix]))
+#    vim.command(":set nofoldenable")
+#vim.command(":exec ':wincmd l'")
+#for ix in xrange(5, 8):
+#    vim.command(":exec ':split %s'" % expanduser(fpath_list[ix]))
+#    vim.command(":set nofoldenable")
 endpython
 endfu
 
@@ -134,7 +150,7 @@ endfu
 func! OpenGitIgnores()
 python << endpython
 import vim
-from os.path import expanduser
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 setup_files = [
         '~/code/ibeis/.gitignore',
         '~/code/utool/.gitignore',
@@ -145,20 +161,69 @@ setup_files = [
         '~/code/guitool/.gitignore',
         '~/code/plottool/.gitignore',
     ]
+pyvim_funcs.open_fpath_list(fpath_list)
 
-vim.command(":exec ':tabe %s'" % expanduser(setup_files[0]))
-vim.command(":set nofoldenable")
-vim.command(":exec ':vsplit %s'" % expanduser(setup_files[1]))
-vim.command(":set nofoldenable")
-for ix in xrange(2, 5):
-    vim.command(":exec ':split %s'" % expanduser(setup_files[ix]))
-    vim.command(":set nofoldenable")
-vim.command(":exec ':wincmd l'")
-for ix in xrange(5, 8):
-    vim.command(":exec ':split %s'" % expanduser(setup_files[ix]))
-    vim.command(":set nofoldenable")
+#from os.path import expanduser
+#vim.command(":exec ':tabe %s'" % expanduser(setup_files[0]))
+#vim.command(":set nofoldenable")
+#vim.command(":exec ':vsplit %s'" % expanduser(setup_files[1]))
+#vim.command(":set nofoldenable")
+#for ix in xrange(2, 5):
+#    vim.command(":exec ':split %s'" % expanduser(setup_files[ix]))
+#    vim.command(":set nofoldenable")
+#vim.command(":exec ':wincmd l'")
+#for ix in xrange(5, 8):
+#    vim.command(":exec ':split %s'" % expanduser(setup_files[ix]))
+#    vim.command(":set nofoldenable")
 endpython
 endfu
+
+
+func! TabOpenDev()
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+fpath_list = [
+        '~/code/ibeis/README.md',
+        '~/code/ibeis/dev.py',
+        '~/code/ibeis/ibeis/control/IBEISControl.py',
+    ]
+pyvim_funcs.open_fpath_list(fpath_list, 3)
+endpython
+endfu
+command! TABOPENDEV call TabOpenDev()
+
+
+func! TabOpenPipeline()
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+fpath_list = [
+        '~/code/ibeis/ibeis/model/hots/query_request.py',
+        '~/code/ibeis/ibeis/model/hots/neighbor_index.py',
+        '~/code/ibeis/ibeis/model/hots/pipeline.py',
+        '~/code/ibeis/ibeis/model/hots/match_chips4.py',
+    ]
+pyvim_funcs.open_fpath_list(fpath_list, 3)
+endpython
+endfu
+command! TABOPENPIPELINE call TabOpenPipeline()
+
+
+func! TabOpenVimRC()
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+fpath_list = [
+        '~/local/vim/portable_vimrc',
+        '~/local/vim/rc/custom_misc_functions.vim',
+        '~/local/vim/rc/pyvim_funcs.py',
+        '~/local/vim/rc_settings/remap_settings.vim',
+    ]
+pyvim_funcs.open_fpath_list(fpath_list, 3)
+endpython
+endfu
+command! TABOPENVIMRC call TabOpenVimRC()
 
 """"""""""""""""""""""""""""""""""
 
