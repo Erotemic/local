@@ -227,6 +227,20 @@ command! TABOPENVIMRC call TabOpenVimRC()
 
 """"""""""""""""""""""""""""""""""
 
+
+func! TabOpenCyth()
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+fpath_list = [
+        '~/code/cyth/cyth/cyth_pragmas.py',
+        '~/code/vtool/vtool/keypoint.py',
+    ]
+pyvim_funcs.open_fpath_list(fpath_list, 3)
+endpython
+endfu
+command! TABOPENCYTH call TabOpenCyth()
+
 func! MagicPython()
     "https://dev.launchpad.net/UltimateVimPythonSetup
     let python_highlight_all = 1
