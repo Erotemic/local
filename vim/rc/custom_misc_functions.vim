@@ -191,7 +191,7 @@ fpath_list = [
 pyvim_funcs.open_fpath_list(fpath_list, 3)
 endpython
 endfu
-command! TABOPENDEV call TabOpenDev()
+command! Todev call TabOpenDev()
 
 
 func! TabOpenPipeline()
@@ -207,7 +207,7 @@ fpath_list = [
 pyvim_funcs.open_fpath_list(fpath_list, 3)
 endpython
 endfu
-command! TABOPENPIPELINE call TabOpenPipeline()
+command! Topipeline call TabOpenPipeline()
 
 
 func! TabOpenVimRC()
@@ -223,7 +223,7 @@ fpath_list = [
 pyvim_funcs.open_fpath_list(fpath_list, 3)
 endpython
 endfu
-command! TABOPENVIMRC call TabOpenVimRC()
+command! Tovimrc call TabOpenVimRC()
 
 """"""""""""""""""""""""""""""""""
 
@@ -235,11 +235,12 @@ import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 fpath_list = [
         '~/code/cyth/cyth/cyth_pragmas.py',
         '~/code/vtool/vtool/keypoint.py',
+        '~/code/vtool/vtool/spatial_verification.py',
     ]
 pyvim_funcs.open_fpath_list(fpath_list, 3)
 endpython
 endfu
-command! TABOPENCYTH call TabOpenCyth()
+command! Tocyth call TabOpenCyth()
 
 func! MagicPython()
     "https://dev.launchpad.net/UltimateVimPythonSetup
