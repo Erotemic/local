@@ -1,2 +1,2 @@
-source $USERPROFILE\local\vim\clean_vimrc
+"source $USERPROFILE\local\vim\clean_vimrc
 source $USERPROFILE\local\vim\portable_vimrc
