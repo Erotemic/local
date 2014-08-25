@@ -200,46 +200,47 @@ return
 
 ;--------------------- 
 ; Remap - Escape
-^Space:: ; Control+Escape
-   send, {Esc}
-   return
+
+;^Space:: ; Control+Escape
+   ;send, {Esc}
+   ;return
 ;--------------------- 
 
 
 ;=====================
 ; Alt + h / j / k / l
 ; Emulates Vim Movement
-!h::
-    send, {Left}
-    return
-!j::
-    send, {Down}
-    return
-!k::
-    send, {Up}
-    return
-!l::
-    send, {Right}
-    return
+;!h::
+    ;send, {Left}
+    ;return
+;!j::
+    ;send, {Down}
+    ;return
+;!k::
+    ;send, {Up}
+    ;return
+;!l::
+    ;send, {Right}
+    ;return
 ;=====================
 ; WindowsKey + h / j / k / l
 ; Emulates Vim Movement
-#h::
-    send, #{Left}
-    return
-#j::
-    send, #{Down}
-    return
-#k::
-    send, #{Up}
-    return
-#l::
-    send, #{Right}
-    return
+;#h::
+    ;send, #{Left}
+    ;return
+;#j::
+    ;send, #{Down}
+    ;return
+;#k::
+    ;send, #{Up}
+    ;return
+;#l::
+    ;send, #{Right}
+    ;return
 ;---------------------    
-#ScrollLock::
-    Run, % "rundll32.exe user32.dll,LockWorkStation"
-    return
+;#ScrollLock::
+;    Run, % "rundll32.exe user32.dll,LockWorkStation"
+;    return
 ;---------------------    
 ^q:: ; Ctrl+Q
     IfWinActive ahk_class ConsoleWindowClass 
@@ -259,17 +260,17 @@ return
     Open("ControlPanel")
     return
 ;---------------------
-#a:: ; Win+A
-    ClipTemp := Clipboard
-    Send ^c
-    Run, http://alternativeto.net
-    Clipboard := ClipTemp
-    return
+;#a:: ; Win+A
+    ;ClipTemp := Clipboard
+    ;Send ^c
+    ;Run, http://alternativeto.net
+    ;Clipboard := ClipTemp
+    ;return
 ;---------------------
-#q:: ; Win+Q
-    EnvGet port_apps, PORT_APPS
-    Run, "%port_apps%\\procexp.exe"
-    return
+;#q:: ; Win+Q
+    ;EnvGet port_apps, PORT_APPS
+    ;Run, "%port_apps%\\procexp.exe"
+    ;return
 ;--------------------
 #s:: ; Win+S
     ClipTemp := Clipboard
@@ -278,12 +279,12 @@ return
     Clipboard := ClipTemp
     return
 ;---------------------
-#g:: ; Win+G
-    ClipTemp := Clipboard
-    Send ^c
-    Run, http://www.google.com/search?q=%Clipboard%
-    Clipboard := ClipTemp
-    return
+;#g:: ; Win+G
+    ;ClipTemp := Clipboard
+    ;Send ^c
+    ;Run, http://www.google.com/search?q=%Clipboard%
+    ;Clipboard := ClipTemp
+    ;return
 ;---------------------
 #e:: ; Win+E
     ; Opens My Computer
@@ -297,39 +298,39 @@ return
 
 ;=====================
 ; FUNCTION KEYS
-#NumpadIns:: 
-    MsgBox, "hi"
-    Send {#R}
-    return
-f9:: 
-    EnvGet rob, ROB
-    rob_win = "%rob%\rob_settings.py"
-    GVIMFocus(rob_win)
-    return
-f10:: 
-    EnvGet rob, ROB
-    rob_win = "%rob%\rob_interface.py"
-    GVIMFocus(rob_win)
-    return
-;---------------------
-f11::
-    EnvGet local, LOCAL
-    port_vimrc  = %local%\vim\portable_vimrc
-    GVIMReopen(port_vimrc)
-    return
-;---------------------
-f12:: 
-    EnvGet ahk_scripts, AHK_SCRIPTS
-    crall_ahk = "%ahk_scripts%\crallj.ahk"
-    GVIMFocus(crall_ahk)
-    return
-;---------------------
-^NumpadIns:: ; Control+NumPad-0
-^f12:: 
-    EnvGet ahk_scripts, AHK_SCRIPTS
-    ahk_scripts = "%ahk_scripts%\crallj.ahk"
-    Reload %crall_ahk%
-    return
+;#NumpadIns:: 
+    ;MsgBox, "hi"
+    ;Send {#R}
+    ;return
+;f9:: 
+    ;EnvGet rob, ROB
+    ;rob_win = "%rob%\rob_settings.py"
+    ;GVIMFocus(rob_win)
+    ;return
+;f10:: 
+    ;EnvGet rob, ROB
+    ;rob_win = "%rob%\rob_interface.py"
+    ;GVIMFocus(rob_win)
+    ;return
+;;---------------------
+;f11::
+    ;EnvGet local, LOCAL
+    ;port_vimrc  = %local%\vim\portable_vimrc
+    ;GVIMReopen(port_vimrc)
+    ;return
+;;---------------------
+;f12:: 
+    ;EnvGet ahk_scripts, AHK_SCRIPTS
+    ;crall_ahk = "%ahk_scripts%\crallj.ahk"
+    ;GVIMFocus(crall_ahk)
+    ;return
+;;---------------------
+;^NumpadIns:: ; Control+NumPad-0
+;^f12:: 
+    ;EnvGet ahk_scripts, AHK_SCRIPTS
+    ;ahk_scripts = "%ahk_scripts%\crallj.ahk"
+    ;Reload %crall_ahk%
+    ;return
 ;---------------------
 ; WINDOWS KEY + H TOGGLES HIDDEN FILES
 #IfWinActive ahk_class CabinetWClass
@@ -564,34 +565,42 @@ GVIMReopen(file)
 
 ;----------------------------------------
 ; Hold Caps Lock to Scroll with Trackball
-CoordMode, Mouse, Screen
 
-*CapsLock:: 
-    MouseGetPos, xposinit, yposinit
-    xposlast := xposinit
-    yposlast := yposinit
 
-    ;SystemCursor("Off")
 
-    SetTimer, ButtonHold, 10
-    KeyWait, CapsLock
-    SetTimer, ButtonHold, off
 
-    MouseMove, xposinit, yposinit, 0
-    ;SystemCursor("On")
+;CoordMode, Mouse, Screen
 
-    Return
+;*CapsLock:: 
+    ;MouseGetPos, xposinit, yposinit
+    ;xposlast := xposinit
+    ;yposlast := yposinit
 
-    ButtonHold:
-        MouseGetPos, xpos, ypos
+    ;;SystemCursor("Off")
 
-        if (ypos > yposlast) {
-            MouseClick, WheelDown
-        } else if (ypos < yposlast) {
-            MouseClick, WheelUp
-        }
+    ;SetTimer, ButtonHold, 10
+    ;KeyWait, CapsLock
+    ;SetTimer, ButtonHold, off
 
-        MouseMove, xposlast, yposlast, 0
+    ;MouseMove, xposinit, yposinit, 0
+    ;;SystemCursor("On")
+
+    ;Return
+
+    ;ButtonHold:
+        ;MouseGetPos, xpos, ypos
+
+        ;if (ypos > yposlast) {
+            ;MouseClick, WheelDown
+        ;} else if (ypos < yposlast) {
+            ;MouseClick, WheelUp
+        ;}
+
+        ;MouseMove, xposlast, yposlast, 0
+
+
+
+
 ;*RButton:: 
 ;    MouseGetPos, xposinit, yposinit
 ;    xposlast := xposinit

@@ -60,14 +60,13 @@ source ~/local/vim/rc_settings/remap_settings.vim
 :call QUICKOPEN_leader_tvio('b', '~/local/bashrc.sh')
 :call QUICKOPEN_leader_tvio('c', '~/code/ibeis/ibeis/control/IBEISControl.py')
 :call QUICKOPEN_leader_tvio('d', '~/code/ibeis/dev.py')
-":call QUICKOPEN_leader_tvio('e', '~/code/ibeis/ibeis/dev/experiment_printres.py')
-:call QUICKOPEN_leader_tvio('e', '~/code/ibeis/ibeis/export/export_subset.py')
+:call QUICKOPEN_leader_tvio('e', '~/code/ibeis/ibeis/dev/experiment_harness.py')
+":call QUICKOPEN_leader_tvio('e', '~/code/ibeis/ibeis/export/export_subset.py')
 :call QUICKOPEN_leader_tvio('f', '~/code/ibeis/ibeis/ibsfuncs.py')
 :call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/newgui.py')
 ":call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/inspect_gui.py')
 :call QUICKOPEN_leader_tvio('h', '~/code/ibeis/ibeis/model/hots/match_chips4.py')
 :call QUICKOPEN_leader_tvio('i', '~/code/ibeis/ibeis/model/hots/hots_nn_index.py')
-"i
 :call QUICKOPEN_leader_tvio('j', '~/code/ibeis/ibeis/ingest/ingest_database.py')
 "k
 :call QUICKOPEN_leader_tvio('l', '~/latex/crall-lab-notebook/main.tex')

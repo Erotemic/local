@@ -1,6 +1,6 @@
 
 " Open OS window
-function! OpenWindow()
+function! ViewDirectory()
     if has("win32") || has("win16")
         silent !explorer .
     else
@@ -130,19 +130,6 @@ fpath_list = [
         '~/code/plottool/setup.py',
     ]
 pyvim_funcs.open_fpath_list(fpath_list)
-
-#from os.path import expanduser
-#vim.command(":exec ':tabe %s'" % expanduser(fpath_list[0]))
-#vim.command(":set nofoldenable")
-#vim.command(":exec ':vsplit %s'" % expanduser(fpath_list[1]))
-#vim.command(":set nofoldenable")
-#for ix in xrange(2, 5):
-#    vim.command(":exec ':split %s'" % expanduser(fpath_list[ix]))
-#    vim.command(":set nofoldenable")
-#vim.command(":exec ':wincmd l'")
-#for ix in xrange(5, 8):
-#    vim.command(":exec ':split %s'" % expanduser(fpath_list[ix]))
-#    vim.command(":set nofoldenable")
 endpython
 endfu
 
@@ -162,19 +149,6 @@ setup_files = [
         '~/code/plottool/.gitignore',
     ]
 pyvim_funcs.open_fpath_list(fpath_list)
-
-#from os.path import expanduser
-#vim.command(":exec ':tabe %s'" % expanduser(setup_files[0]))
-#vim.command(":set nofoldenable")
-#vim.command(":exec ':vsplit %s'" % expanduser(setup_files[1]))
-#vim.command(":set nofoldenable")
-#for ix in xrange(2, 5):
-#    vim.command(":exec ':split %s'" % expanduser(setup_files[ix]))
-#    vim.command(":set nofoldenable")
-#vim.command(":exec ':wincmd l'")
-#for ix in xrange(5, 8):
-#    vim.command(":exec ':split %s'" % expanduser(setup_files[ix]))
-#    vim.command(":set nofoldenable")
 endpython
 endfu
 
@@ -216,9 +190,9 @@ import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 fpath_list = [
         '~/local/vim/portable_vimrc',
-        '~/local/vim/rc/custom_misc_functions.vim',
-        '~/local/vim/rc/pyvim_funcs.py',
         '~/local/vim/rc_settings/remap_settings.vim',
+        '~/local/vim/rc/custom_misc_functions.vim',
+        #'~/local/vim/rc/pyvim_funcs.py',
     ]
 pyvim_funcs.open_fpath_list(fpath_list, 3)
 endpython
@@ -246,13 +220,45 @@ func! MagicPython()
     "https://dev.launchpad.net/UltimateVimPythonSetup
     let python_highlight_all = 1
     set smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
-    python << EOF
+python << EOF
 import os
 import sys
 import vim
 for p in sys.path:
     if os.path.isdir(p):
         vim.command(r"set path+=%s" % (p.replace(" ", r"\ ")))
+EOF
+endfu 
+
+func! AuOnReadPatterns(aucmdstr, ...)
+python << EOF
+import vim
+ix = 0
+while True:
+    try:
+        pattern = vim.eval('a:%d' % ix)
+        cmdfmt = ":exec au BufNewFile,BufRead {pattern} {aucmdstr}"
+        cmd = cmdfmt.format(pattern=pattern, aucmdstr=aucmdstr)
+        vim.command(cmd)
+    except Exception:
+            break
+    ix += 1
+EOF
+endfu
+
+func! AuPreWritePatterns(aucmdstr, ...)
+python << EOF
+import vim
+ix = 0
+while True:
+    try:
+        pattern = vim.eval('a:%d' % ix)
+        cmdfmt = ":exec au BufNewFile,BufRead {pattern} {aucmdstr}"
+        cmd = cmdfmt.format(pattern=pattern, aucmdstr=aucmdstr)
+        vim.command(cmd)
+    except Exception:
+            break
+    ix += 1
 EOF
 endfu
 
@@ -307,8 +313,8 @@ command! HexmodeOff :%!xxd -r
 "-------------------------
 
 command! Bufloadpy :args *.py
-command! SAVESESSION :mksession ~/mysession.vim
-command! LOADSESSION :mksession ~/mysession.vim
+"command! SAVESESSION :mksession ~/mysession.vim
+"command! LOADSESSION :mksession ~/mysession.vim
 
-command! SAVEHSSESSION :mksession ~/vim_hotspotter_session.vim
-command! LOADHSSESSION :source ~/vim_hotspotter_session.vim
+"command! SAVEHSSESSION :mksession ~/vim_hotspotter_session.vim
+"command! LOADHSSESSION :source ~/vim_hotspotter_session.vim

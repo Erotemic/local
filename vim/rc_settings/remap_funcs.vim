@@ -1,3 +1,33 @@
+func! FUNC_Unmap(lhs, rhs)
+    ":CMDREMAP(a:lhs, a:lhs)
+    ":CMDREMAP(a:rhs, a:rhs)
+    :silent! exec 'nunmap '.a:lhs
+    :silent! exec 'vunmap '.a:lhs
+    :silent! exec 'sunmap '.a:lhs
+    :silent! exec 'xunmap '.a:lhs
+    :silent! exec 'ounmap '.a:lhs
+    :silent! exec 'iunmap '.a:lhs
+    :silent! exec 'lunmap '.a:lhs
+    :silent! exec 'cunmap '.a:lhs
+    " Make r<lhs> do the right thing
+    :silent! exec 'unmap r'.a:lhs
+    :silent! exec 'unmap f'.a:lhs
+    " unmap other side
+    :silent! exec 'nunmap '.a:rhs
+    :silent! exec 'vunmap '.a:rhs
+    :silent! exec 'sunmap '.a:rhs
+    :silent! exec 'xunmap '.a:rhs
+    :silent! exec 'ounmap '.a:rhs
+    :silent! exec 'iunmap '.a:rhs
+    :silent! exec 'lunmap '.a:rhs
+    :silent! exec 'cunmap '.a:rhs
+    " Make r<rhs> do the right thing
+    :silent! exec 'unmap r'.a:rhs
+    :silent! exec 'unmap f'.a:rhs
+endfu
+command! -nargs=* CMDUNMAP call FUNC_Unmap(<f-args>)
+
+
 func! FUNC_Remap(lhs, rhs)
     " Function which remaps keys in all modes
     "
@@ -38,36 +68,6 @@ endfu
 command! -nargs=* CMDREMAP call FUNC_Remap(<f-args>)
 
 
-func! FUNC_Unmap(lhs, rhs)
-    ":CMDREMAP(a:lhs, a:lhs)
-    ":CMDREMAP(a:rhs, a:rhs)
-    :silent! exec 'nunmap '.a:lhs
-    :silent! exec 'vunmap '.a:lhs
-    :silent! exec 'sunmap '.a:lhs
-    :silent! exec 'xunmap '.a:lhs
-    :silent! exec 'ounmap '.a:lhs
-    :silent! exec 'iunmap '.a:lhs
-    :silent! exec 'lunmap '.a:lhs
-    :silent! exec 'cunmap '.a:lhs
-    " Make r<lhs> do the right thing
-    :silent! exec 'unmap r'.a:lhs
-    :silent! exec 'unmap f'.a:lhs
-    " unmap other side
-    :silent! exec 'nunmap '.a:rhs
-    :silent! exec 'vunmap '.a:rhs
-    :silent! exec 'sunmap '.a:rhs
-    :silent! exec 'xunmap '.a:rhs
-    :silent! exec 'ounmap '.a:rhs
-    :silent! exec 'iunmap '.a:rhs
-    :silent! exec 'lunmap '.a:rhs
-    :silent! exec 'cunmap '.a:rhs
-    " Make r<rhs> do the right thing
-    :silent! exec 'unmap r'.a:rhs
-    :silent! exec 'unmap f'.a:rhs
-endfu
-command! -nargs=* CMDUNMAP call FUNC_Unmap(<f-args>)
-
-
 func! FUNC_Swap(lhs, rhs)
     :call FUNC_Remap(a:lhs, a:rhs)
     :call FUNC_Remap(a:rhs, a:lhs)
@@ -81,30 +81,50 @@ func! FUNC_Unswap(lhs, rhs)
 endfu
 command! -nargs=* CMDUNSWAP call FUNC_Unswap(<f-args>)
 
+" ----------------------------------------------------
 
-func! FUNC_Remap2(lhs, rhs)
+func! FUNC_IRemap(lhs, rhs)
     " Function which remaps keys in interactive modes
-    ":exec 'noremap '.a:lhs.' '.a:rhs
     :exec 'inoremap '.a:lhs.' '.a:rhs
-    ":exec 'vnoremap '.a:lhs.' '.a:rhs
-    ":exec 'vnoremap '.a:rhs.' '.a:lhs
-    ":exec 'onoremap '.a:lhs.' '.a:rhs
-    ":exec 'onoremap '.a:rhs.' '.a:lhs
 endfu
-command! -nargs=* CMDREMAP2 call FUNC_Remap2(<f-args>)
+command! -nargs=* CMDIREMAP call FUNC_IRemap(<f-args>)
 
-func! FUNC_Swap2(lhs, rhs)
-    :call FUNC_Remap2(a:lhs, a:rhs)
-    :call FUNC_Remap2(a:rhs, a:lhs)
+func! FUNC_ISwap(lhs, rhs)
+    :call FUNC_IRemap(a:lhs, a:rhs)
+    :call FUNC_IRemap(a:rhs, a:lhs)
 endfu
-command! -nargs=* CMDSWAP2 call FUNC_Swap2(<f-args>)
+command! -nargs=* CMDISWAP call FUNC_ISwap(<f-args>)
 
 
-func! FUNC_Unswap2(lhs, rhs)
-    :call FUNC_Remap2(a:lhs, a:lhs)
-    :call FUNC_Remap2(a:rhs, a:rhs)
+func! FUNC_IUnswap(lhs, rhs)
+    :call FUNC_IRemap(a:lhs, a:lhs)
+    :call FUNC_IRemap(a:rhs, a:rhs)
 endfu
-command! -nargs=* CMDUNSWAP2 call FUNC_Unswap2(<f-args>)
+command! -nargs=* CMDIUNSWAP call FUNC_IUnswap(<f-args>)
+
+" ----------------------------------------------------
+
+func! FUNC_NoRemap(lhs, rhs)
+    " Function which remaps keys in interactive modes
+    :exec 'noremap '.a:lhs.' '.a:rhs
+endfu
+command! -nargs=* CMDNOREMAP call FUNC_NoRemap(<f-args>)
+
+func! FUNC_NoSwap(lhs, rhs)
+    :call FUNC_NoRemap(a:lhs, a:rhs)
+    :call FUNC_NoRemap(a:rhs, a:lhs)
+endfu
+command! -nargs=* CMDNOSWAP call FUNC_NoSwap(<f-args>)
+
+
+func! FUNC_NoUnswap(lhs, rhs)
+    :call FUNC_NoRemap(a:lhs, a:lhs)
+    :call FUNC_NoRemap(a:rhs, a:rhs)
+endfu
+command! -nargs=* CMDNOUNSWAP call FUNC_NoUnswap(<f-args>)
+
+
+" ----------------------------------------------------
 
 
 func! NumberLineInvert()
@@ -142,6 +162,33 @@ func! NumberLineRevert()
 endfu
 
 
+func! PythonInvert()
+    "map each number to its shift-key character
+    ":CMDSWAP : ;
+    :CMDSWAP 9 (
+    :CMDSWAP 0 )
+    :CMDSWAP - _
+    " and then the opposite
+endfu
+
+
+func! PythonRevert()
+    "map each number to its shift-key character
+    ":CMDUNSWAP : ;
+    :CMDUNSWAP 9 (
+    :CMDUNSWAP 0 )
+    :CMDUNSWAP - _
+endfu  
+
+func! TeckInvert()
+    noremap ' /
+endfu
+
+func! TeckRevert()
+    nunmap '
+endfu
+
+
 func! ToggleNumberLineInvert()
     if !exists("g:toginvnum") 
         let g:toginvnum=1
@@ -156,4 +203,9 @@ func! ToggleNumberLineInvert()
         ":echom "REVERT"
         call NumberLineRevert()
     endif
+endfu
+
+func! FKeyFuncMap(key, func)
+    :exec 'noremap '. a:key .'  '. a:func
+    :exec 'inoremap '. a:key .' <ESC>'. a:func .'a'
 endfu

@@ -6,13 +6,13 @@ import urllib  # NOQA
 import robos
 import re
 from itertools import izip
-import itertools
+#import itertools
 import parse
 from os.path import split
 import shutil
 import psutil
 #import webbrowser
-from os.path import (normpath, realpath, join, split, isdir, exists,
+from os.path import (normpath, realpath, join, isdir, exists,
                      dirname, splitext)  # NOQA
 from rob_alarm import *  # NOQA
 from rob_nav import *  # NOQA

@@ -8,22 +8,18 @@
 " Remap COLOn colon to semicolon (in normal and visual mode)
 
 
-:CMDUNMAP - _
-:CMDUNMAP 9 (
-:CMDUNMAP 0 )
-:CMDUNMAP 3 #
-:CMDUNMAP 5 %
+:noremap <F9> <s-v>
+:noremap <F10> <s-v>
 
-:CMDSWAP : ;
-:CMDSWAP - _
-:CMDSWAP 9 (
-:CMDSWAP 0 )
-":CMDSWAP 3 #
-":CMDSWAP 5 %
+":call PythonInvert()
+":call TeckInvert()
+CMDSWAP : ;
 
 " Map to several leaderkeys with the main being ","
 let mapleader = ","
-:nmap \ ,
+:noremap \ ,
+":noremap y "+y
+"CMDUNMAP y y
 
 " Remap ESCAPE key to?  ":imap ` <Esc>
 "noremap <Del> <Esc>
@@ -35,40 +31,31 @@ let mapleader = ","
 " Function Keys
 "
 " === F1 ===
+" Search
 "remap F1 to search for word under cursor
-:inoremap <F1> <ESC>*a
-:noremap  <F1> *
+:call FKeyFuncMap('<F1>', '*')
 " custom command for opening setupfiles
 :noremap  <leader><F1> :call OpenSetups()<CR>
 
 " === F2 ===
-" Map in both normal and interactive mode
-" paseting form clibpard is "+p or "*p
-:noremap <F2> "+p
-:inoremap <F2> <ESC>"+pa
-
-:noremap <leader><F2> "+y
-:inoremap <leader><F2> <ESC>"+ya
+:call FKeyFuncMap('<F2>', ':call PythonRevert()<CR>')
+:call FKeyFuncMap('<c-F2>', ':call PythonInvert()<CR>')
 
 " === F3 ===
-:noremap <F3> "+y
-:inoremap <F3> <ESC>"+ya
-":map <F3> :call ToggleNumberLineInvert()<CR>
-":imap <F3> <ESC>:call ToggleNumberLineInvert()<CR>a
-
+:call FKeyFuncMap('<F3>', ':call NumberLineRevert()<CR>')
+:call FKeyFuncMap('<c-F3>', ':call NumberLineInvert()<CR>')
 " === F4 ===
 "http://vim.1045645.n5.nabble.com/How-to-map-two-commands-on-one-key-td1162164.html
-:map <F4> :call ToggleFont() <Bar> redraw <Bar> call FUNC_ECHOVAR("gfn")<CR>
-:map <C-F4> <Esc>:tabclose<CR>
+:noremap <F4> :call ToggleFont() <Bar> redraw <Bar> call FUNC_ECHOVAR("gfn")<CR>
+:noremap <C-F4> <Esc>:tabclose<CR>
 
 " === F5, 6, 7
-:map <F5> :call OpenWindow()<CR>
-:map <F6> :call CmdHere()<CR>
-:map <F7> :call CmdHere()<CR>
+:noremap <F5> :call ViewDirectory()<CR>
+:noremap <F6> :call CmdHere()<CR>
 
 "vim-latex-suit overwrites f5, give it an alt
-:map <F8> :call  Tex_RunViewLaTeX()<CR>
-:map <F12> :call ToggleAlpha()<CR>
+:noremap <F8> :call Tex_RunViewLaTeX()<CR>
+:noremap <F12> :call ToggleAlpha()<CR>
 
 " Hotkey: <leader>rrr Reload the vimrc
 "noremap <leader>rrr :source ~/local/vim/portable_vimrc<CR>
@@ -97,8 +84,8 @@ map <c-h> <c-w>h
 
 " In split window
 " In vsplit-split window
-map <leader>gi :wincmd f<CR> 
-map <leader>gs :vertical wincmd f<CR>
+noremap <leader>gi :wincmd f<CR> 
+noremap <leader>gs :vertical wincmd f<CR>
 
 nnoremap <leader>p :call Tex_RunViewLaTeX()<CR>
 nmap <C-P> :call Tex_RunViewLaTeX() <CR>
@@ -225,3 +212,14 @@ let@e=':Align ='
 " TODO: http://stackoverflow.com/questions/3638542/any-way-to-delete-in-vim-without-overwriting-your-last-yank
 "noremap d "_d
 ":noremap <leader><F1> :normal i =%r' % (,)<ESC>hh
+" Copy
+":noremap <F3> "+y
+":inoremap <F3> <ESC>"+ya
+" Paste
+" Map in both normal and interactive mode
+" paseting form clibpard is "+p or "*p
+":noremap <F2> "+p
+":inoremap <F2> <ESC>"+pa
+
+":noremap <leader><F2> "+y
+":inoremap <leader><F2> <ESC>"+ya

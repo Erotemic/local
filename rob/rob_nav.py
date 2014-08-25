@@ -12,8 +12,9 @@ HS_EXCLUDE = ['_graveyard',
               'CompilerIdCXX',
               'CompilerIdC',
               'build',
+              'old',
               #'src',
-             ]
+              ]
 __DEBUG__ = True
 
 
