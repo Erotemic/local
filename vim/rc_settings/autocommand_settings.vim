@@ -12,16 +12,17 @@ au FileType python set textwidth=80
 au FileType python set foldmethod=indent
 "au FileType python set foldmethod=syntax
 au FileType python set foldnestmax=2
+au FileType python call PythonInvert()
 "au BufNewFile,BufRead *.py :%s/\t/    /g
 
 "au BufNewFile,BufRead *.tex call LatexInitialize() 
 au SwapExists * let v:swapchoice = 'e'
 
-:call AuOnReadPatterns("set ft=cpp", "*.txx")
-:call AuOnReadPatterns("set ft=cmake", "*.poly", "*.node", ".ele")
-:call AuOnReadPatterns("set ft=cython", "*.pyx", ".pxd")
-:call AuOnReadPatterns("set ft=Autohotkey", "*.ahk")
-":call AuCmdPatterns("set ft=vidtkconf", "*.conf")
+:call AuOnReadPatterns('set ft=cpp', '*.txx')
+:call AuOnReadPatterns('set ft=cmake', '*.poly', '*.node', '.ele')
+:call AuOnReadPatterns('set ft=cython', '*.pyx', '.pxd')
+:call AuOnReadPatterns('set ft=Autohotkey', '*.ahk')
+":call AuCmdPatterns('set ft=vidtkconf', '*.conf')
 
 "au BufNewFile,BufRead *.txx  set ft=cpp
 "au BufNewFile,BufRead *.poly set ft=cmake
@@ -36,15 +37,16 @@ au SwapExists * let v:swapchoice = 'e'
 " Remove trailing whitespace
 "au BufWritePre *.py :%s/\t/    /g
 " e supresses errors  if  nonthing is found
-":call AuPreWritePatterns(":%s/\s\+$//e", "*.py", "*.c", "*.cxx", "*.cpp", "*.h", "*.hpp", "*.hxx")
-au! BufWritePre *.py :%s/\s\+$//e
+":call AuPreWritePatterns(':%s/\s\+$//e', '*.py', '*.c', '*.cxx', '*.cpp', '*.h', '*.hpp', '*.hxx')
+:call AuPreWritePatterns(':%s/  *$//e', '*.py', '*.c', '*.cxx', '*.cpp', '*.h', '*.hpp', '*.hxx')
+"au! BufWritePre *.py :%s/\s\+$//e
 au BufWritePre *.py :%s/\s\+$//e
-au BufWritePre *.c :%s/\s\+$//e
-au BufWritePre *.cxx :%s/\s\+$//e
-au BufWritePre *.cpp :%s/\s\+$//e
-au BufWritePre *.h :%s/\s\+$//e
-au BufWritePre *.hpp :%s/\s\+$//e
-au BufWritePre *.hxx :%s/\s\+$//e
+"au BufWritePre *.c :%s/\s\+$//e
+"au BufWritePre *.cxx :%s/\s\+$//e
+"au BufWritePre *.cpp :%s/\s\+$//e
+"au BufWritePre *.h :%s/\s\+$//e
+"au BufWritePre *.hpp :%s/\s\+$//e
+"au BufWritePre *.hxx :%s/\s\+$//e
 
 " C++ indenting and folding
 au FileType cpp set cino=i-s
@@ -63,13 +65,5 @@ au FileType cpp set smartindent
 "au BufNewFile,BufRead *.md set ft=markdown
 "
 "
-
-func! <SID>StripTrailingWhitespaces()
-    "http://stackoverflow.com/questions/356126/how-can-you-automatically-remove-trailing-whitespace-in-vim
-    let l = line(".")
-    let c = col(".")
-    %s/\s\+$//e
-    call cursor(l, c)
-endfun
 
 "autocmd FileType c,cpp,java,php,ruby,python autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()

@@ -1,3 +1,15 @@
+func! SpellcheckOn()
+    :set spell
+    :setlocal spell spelllang=en_us
+endfu
+
+func! <SID>StripTrailingWhitespaces()
+    "http://stackoverflow.com/questions/356126/how-can-you-automatically-remove-trailing-whitespace-in-vim
+    let l = line(".")
+    let c = col(".")
+    %s/\s\+$//e
+    call cursor(l, c)
+endfun
 
 " Open OS window
 function! ViewDirectory()
@@ -241,7 +253,7 @@ while True:
         cmd = cmdfmt.format(pattern=pattern, aucmdstr=aucmdstr)
         vim.command(cmd)
     except Exception:
-            break
+        break
     ix += 1
 EOF
 endfu
@@ -253,11 +265,11 @@ ix = 0
 while True:
     try:
         pattern = vim.eval('a:%d' % ix)
-        cmdfmt = ":exec au BufNewFile,BufRead {pattern} {aucmdstr}"
+        cmdfmt = ":exec au BufWritePre {pattern} {aucmdstr}"
         cmd = cmdfmt.format(pattern=pattern, aucmdstr=aucmdstr)
         vim.command(cmd)
     except Exception:
-            break
+        break
     ix += 1
 EOF
 endfu

@@ -55,10 +55,6 @@ command! JediDotPopOff :let g:jedi#popup_on_dot = 0
 " PLUGIN: Supertab
 " python autocomplete for supertab
 let g:SuperTabDefaultCompletionType = "context"
-func! SpellcheckOn()
-    :set spell
-    :setlocal spell spelllang=en_us
-endfu
 
 "-------------------------
 "PLUGIN: Synstastic General
