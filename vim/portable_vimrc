@@ -105,7 +105,7 @@ source ~/local/vim/rc_settings/autocommand_settings.vim
 :call QUICKOPEN_leader_tvio('p', '~/code/plottool/plottool/__init__.py')
 "q
 :call QUICKOPEN_leader_tvio('r', '~/code/ibeis/ibeis/model/detect/randomforest.py')
-":call QUICKOPEN_leader_tvio('s', '~/code/ibeis/ibeis/control/SQLDatabaseControl.py')
+:call QUICKOPEN_leader_tvio('s', '~/code/ibeis/ibeis/control/SQLDatabaseControl.py')
 :call QUICKOPEN_leader_tvio('t', '~/code/ibeis/ibeis/tests')
 :call QUICKOPEN_leader_tvio('u', '~/code/utool/utool/__init__.py')
 :call QUICKOPEN_leader_tvio('v', '~/code/vtool/vtool/__init__.py')
