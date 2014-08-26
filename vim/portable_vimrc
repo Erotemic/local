@@ -5,7 +5,36 @@ set encoding=utf8
 " PLUGIN: Pathogen
 " Pathogen is the first thing to run
 "filetype off
-let g:pathogen_disabled = ['highlight.vim']  " Add a plugin to this list to disable it
+
+python << endpython
+import vim
+enabled = [
+    'csv.vim',
+    'grep.vim',
+    'jedi-vim',
+    'nerdcommenter',
+    'nerdtree',
+    'supertab',
+    'syntastic',
+    'vim-repeat',
+    'vim-startify',
+    'vim-startify',
+] 
+
+# Add a plugin to this list to disable it 
+disabled = [
+    'Conque-Shell',
+    'highlight.vim',
+    'vim-airline',
+    'vim-multiple-cursors',
+    'vim-sensible',
+    'vim-surround',
+    'vim-unimpaired',
+    'vim-vimtweak',
+]
+vim.command('let g:pathogen_disabled = ' + repr(disabled))
+endpython
+
 source ~/local/vim/vimfiles/autoload/pathogen.vim
 execute pathogen#infect()
 call pathogen#helptags()
