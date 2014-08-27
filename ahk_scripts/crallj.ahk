@@ -569,34 +569,34 @@ GVIMReopen(file)
 
 
 
-;CoordMode, Mouse, Screen
+CoordMode, Mouse, Screen
 
-;*CapsLock:: 
-    ;MouseGetPos, xposinit, yposinit
-    ;xposlast := xposinit
-    ;yposlast := yposinit
+*CapsLock:: 
+    MouseGetPos, xposinit, yposinit
+    xposlast := xposinit
+    yposlast := yposinit
 
-    ;;SystemCursor("Off")
+    ;SystemCursor("Off")
 
-    ;SetTimer, ButtonHold, 10
-    ;KeyWait, CapsLock
-    ;SetTimer, ButtonHold, off
+    SetTimer, ButtonHold, 10
+    KeyWait, CapsLock
+    SetTimer, ButtonHold, off
 
-    ;MouseMove, xposinit, yposinit, 0
-    ;;SystemCursor("On")
+    MouseMove, xposinit, yposinit, 0
+    ;SystemCursor("On")
 
-    ;Return
+    Return
 
-    ;ButtonHold:
-        ;MouseGetPos, xpos, ypos
+    ButtonHold:
+        MouseGetPos, xpos, ypos
 
-        ;if (ypos > yposlast) {
-            ;MouseClick, WheelDown
-        ;} else if (ypos < yposlast) {
-            ;MouseClick, WheelUp
-        ;}
+        if (ypos > yposlast) {
+            MouseClick, WheelDown
+        } else if (ypos < yposlast) {
+            MouseClick, WheelUp
+        }
 
-        ;MouseMove, xposlast, yposlast, 0
+        MouseMove, xposlast, yposlast, 0
 
 
 
