@@ -89,12 +89,13 @@ alias dt='cd $CODE_DIR/detecttools/'
 #python -c "import site; print(site.getusersitepackages())"
 #python -c "import site; print(site.getsitepackages())"
 
-#alias pysite='cd $(python -c "import site; print(site.getsitepackages()[0]))"'
+alias pysite='cd $(python -c "import site; print(site.getsitepackages()[0])")'
 #alias vrc='cd $(python -c "import site; print(site.getsitepackages()[0]))"'
 
 
 alias pydist='cd $CODE_DIR/pyrf/'
 
+alias ya='cd $CODE_DIR/yael'
 alias ut='cd $CODE_DIR/utool'
 alias vt='cd $CODE_DIR/vtool'
 alias gt='cd $CODE_DIR/guitool'
