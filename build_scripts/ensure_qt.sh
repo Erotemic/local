@@ -40,9 +40,11 @@ sudo yum install libXt-devel -y
 
 
 cd ~/tmp
-# Download the Qt Source Code
 export QT_SOURCE_SNAPSHOT=qt-everywhere-opensource-src-4.8.6
+# Download the Qt Source Code
 wget http://download.qt-project.org/official_releases/qt/4.8/4.8.6/$QT_SOURCE_SNAPSHOT.tar.gz
+
+grabzippedurl.py http://download.qt-project.org/official_releases/qt/4.8/4.8.6/$QT_SOURCE_SNAPSHOT.tar.gz
 gunzip $QT_SOURCE_SNAPSHOT.tar.gz && tar -xvf $QT_SOURCE_SNAPSHOT.tar
 cd $QT_SOURCE_SNAPSHOT
 # Configure

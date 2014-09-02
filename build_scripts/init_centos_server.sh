@@ -164,6 +164,7 @@ export SIP_URL=http://sourceforge.net/projects/pyqt/files/sip/sip-4.16
 export SIP_SNAPSHOT=sip-4.16
 cd ~/tmp
 wget $SIP_URL/$SIP_SNAPSHOT.tar.gz
+grabzippedurl.py $SIP_URL/$SIP_SNAPSHOT.tar.gz
 gunzip $SIP_SNAPSHOT.tar.gz && tar -xvf $SIP_SNAPSHOT.tar
 mv $SIP_SNAPSHOT ~/srcdistro
 cd ~/srcdistro/$SIP_SNAPSHOT
