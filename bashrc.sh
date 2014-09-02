@@ -10,7 +10,13 @@ fi
 
 export QT_API=pyqt
 export PYTHONPATH=/home/joncall/code/utool:$PYTHONPATH
-export CODE_DIR=~/code
+
+
+if [[ "$(hostname)" == "ibeis.cs.uic.edu"  ]]; then 
+    export CODE_DIR=/opt/ibeis
+else
+    export CODE_DIR=~/code
+fi
 
 #export OMP_NUM_THREADS=7
 
