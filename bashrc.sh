@@ -10,6 +10,7 @@ fi
 
 export QT_API=pyqt
 export PYTHONPATH=/home/joncall/code/utool:$PYTHONPATH
+export CODE_DIR=~/code
 
 #export OMP_NUM_THREADS=7
 

@@ -67,7 +67,6 @@ hyrule_get(){
 # General navigation
 alias home='cd ~'
 alias data='cd ~/data'
-alias code='cd ~/code'
 alias loc='cd ~/local'
 alias lc='cd ~/local'
 alias vf='cd ~/local/vim/vimfiles'
@@ -76,15 +75,16 @@ alias lt='cd ~/latex'
 alias scr='cd ~/scripts'
 # Special navigation
 alias s='git status'
-alias cv='cd ~/code/opencv'
-alias fl='cd ~/code/flann/'
-#alias cv='cd ~/code/opencv3'
-alias hs='cd ~/code/ibeis/ibeis/model/hots'
-alias ib='cd ~/code/ibeis/'
-alias cy='cd ~/code/cyth/'
-alias rf='cd ~/code/pyrf/'
-alias gi='cd ~/code/pygist/'
-alias dt='cd ~/code/detecttools/'
+alias code='cd $CODE_DIR'
+alias cv='cd $CODE_DIR/opencv'
+alias fl='cd $CODE_DIR/flann/'
+#alias cv='cd $CODE_DIR/opencv3'
+alias hs='cd $CODE_DIR/ibeis/ibeis/model/hots'
+alias ib='cd $CODE_DIR/ibeis/'
+alias cy='cd $CODE_DIR/cyth/'
+alias rf='cd $CODE_DIR/pyrf/'
+alias gi='cd $CODE_DIR/pygist/'
+alias dt='cd $CODE_DIR/detecttools/'
 
 #python -c "import site; print(site.getusersitepackages())"
 #python -c "import site; print(site.getsitepackages())"
@@ -93,24 +93,24 @@ alias dt='cd ~/code/detecttools/'
 #alias vrc='cd $(python -c "import site; print(site.getsitepackages()[0]))"'
 
 
-alias pydist='cd ~/code/pyrf/'
+alias pydist='cd $CODE_DIR/pyrf/'
 
-alias ut='cd ~/code/utool'
-alias vt='cd ~/code/vtool'
-alias gt='cd ~/code/guitool'
-alias pt='cd ~/code/plottool'
-alias ibi='cd ~/code/ibeis/ibeis'
-alias ibc='cd ~/code/ibeis/ibeis/control'
-alias ibv='cd ~/code/ibeis/ibeis/view'
-alias ibm='cd ~/code/ibeis/ibeis/model'
-alias ibg='cd ~/code/ibeis/ibeis/gui'
+alias ut='cd $CODE_DIR/utool'
+alias vt='cd $CODE_DIR/vtool'
+alias gt='cd $CODE_DIR/guitool'
+alias pt='cd $CODE_DIR/plottool'
+alias ibi='cd $CODE_DIR/ibeis/ibeis'
+alias ibc='cd $CODE_DIR/ibeis/ibeis/control'
+alias ibv='cd $CODE_DIR/ibeis/ibeis/view'
+alias ibm='cd $CODE_DIR/ibeis/ibeis/model'
+alias ibg='cd $CODE_DIR/ibeis/ibeis/gui'
+alias hshs='cd $CODE_DIR/hotspotter/hotspotter'
+alias hshsviz='cd $CODE_DIR/hotspotter/hsviz'
+alias hshscom='cd $CODE_DIR/hotspotter/hscom'
+alias hshsgui='cd $CODE_DIR/hotspotter/hsgui'
+alias hes='cd $CODE_DIR/hesaff'
 alias work='cd ~/work'
-alias hshs='cd ~/code/hotspotter/hotspotter'
-alias hshsviz='cd ~/code/hotspotter/hsviz'
-alias hshscom='cd ~/code/hotspotter/hscom'
-alias hshsgui='cd ~/code/hotspotter/hsgui'
 alias lnote='cd ~/latex/crall-lab-notebook'
-alias hes='cd ~/code/hesaff'
 alias cand='cd ~/latex/crall-candidacy-2013/'
 
 alias vdd='vd ~/data'
@@ -134,7 +134,6 @@ alias ea='gvim ~/local/alias_rc.sh'
 alias emc='gvim ~/local/modulechanges.sh'
 alias sbrc='source ~/local/bashrc.sh' # Refresh
 alias todo='gvim ~/Dropbox/Notes/TODO.txt'
-alias edutool='gvim ~/code/ibeis/utool'
 
 # Edit Project
 ep()
@@ -156,7 +155,7 @@ hyhspull()
     #Inner quote = \" (Escaped as to not flag "beginning/end of string")
     #Third-tier quote = ' (Literal quote)
     #Fourth-tier quote = \' (Literal quote that will be generated as an escaped outer quote)
-    ssh -t cralljp@linux.cs.rpi.edu "ssh -t joncrall@hyrule.cs.rpi.edu \"cd ~/code/hotspotter; git commit -am 'hyhs wip'; git push\""
+    ssh -t cralljp@linux.cs.rpi.edu "ssh -t joncrall@hyrule.cs.rpi.edu \"cd $CODE_DIR/hotspotter; git commit -am 'hyhs wip'; git push\""
     
     echo "Pulling from Local"
     git pull

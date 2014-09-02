@@ -1,5 +1,5 @@
 from __future__ import absolute_import, division, print_function
-from meta_util_git import set_userid, unixpath, repo_list
+from meta_util_git1 import set_userid, unixpath, repo_list
 
 set_userid(userid='Erotemic',
            owned_computers=['Hyrule', 'BakerStreet', 'Ooo'],
