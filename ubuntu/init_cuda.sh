@@ -93,3 +93,41 @@ remove_cuda()
     sudo rm -r /opt/cuda
 }
 
+makecudarc()
+{
+python -c 'import theano; print theano.config'
+
+THEANO_FLAGS='floatX=float32,device=gpu0,nvcc.fastmath=True'
+
+
+echo "____________"
+THEANO_FLAGS='device=cpu' python gpu.py
+echo "____________"
+THEANO_FLAGS='device=gpu' python gpu.py
+echo "____________"
+
+sh -c 'cat > ~/.theanorc << EOF
+[cuda]
+root = /usr/local/cuda
+[global]
+device = gpu
+floatX = float32
+EOF'
+
+#http://deeplearning.net/software/theano/library/config.html
+cat ~/.theanorc
+
+
+
+sh -c 'cat > ~/.theanorc << EOF
+[cuda]
+root = /usr/local/cuda
+[global]
+device = gpu
+floatX = float64
+force_device=True
+allow_gc=False
+print_active_device=True
+EOF'
+
+}
