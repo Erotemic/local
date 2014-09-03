@@ -1,1 +1,1 @@
-    python %USERPROFILE%/local/util_git.py "git status"
+    python %USERPROFILE%/local/util_git1.py "git status"
