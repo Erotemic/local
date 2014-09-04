@@ -318,12 +318,14 @@ return
     ;port_vimrc  = %local%\vim\portable_vimrc
     ;GVIMReopen(port_vimrc)
     ;return
-;;---------------------
-;f12:: 
+;---------------------
+f12:: 
     ;EnvGet ahk_scripts, AHK_SCRIPTS
     ;crall_ahk = "%ahk_scripts%\crallj.ahk"
-    ;GVIMFocus(crall_ahk)
-    ;return
+    EnvGet local, LOCAL
+    dragonflymain  = %local%\speech\dragonfly-main.py
+    GVIMFocus(dragonflymain)
+    return
 ;;---------------------
 ;^NumpadIns:: ; Control+NumPad-0
 ;^f12:: 
