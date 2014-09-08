@@ -150,7 +150,7 @@ func! OpenGitIgnores()
 python << endpython
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-setup_files = [
+fpath_list = [
         '~/code/ibeis/.gitignore',
         '~/code/utool/.gitignore',
         '~/code/vtool/.gitignore',
