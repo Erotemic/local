@@ -31,6 +31,7 @@ def get_PATH(r):
         MSYS  + '/lib'
         MINGW + '/bin'
         MINGW + '/lib'
+        INSTALL64 + 'SlikSvn/bin'
         INSTALL32 + '/CMake 2.8/bin'
         INSTALL32 + '/MiKTeX 2.9/miktex/bin'
         INSTALL32 + '/OpenCV/bin'
@@ -163,7 +164,9 @@ class ROB_Directories:
 
         d.HOME       = d.ROOT + home_map[os_type] + '/' + d.USERNAME
         d.LOCAL      = d.HOME + '/local'
+        d.LOCAL_DIR  = d.HOME + '/local'
         d.CODE       = d.HOME + '/code'
+        d.CODE_DIR   = d.HOME + '/code'
         d.LATEX      = d.HOME + '/latex'
         d.CLOUD      = d.HOME + '/Dropbox'
 

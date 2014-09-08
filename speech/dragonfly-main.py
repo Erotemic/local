@@ -18,10 +18,9 @@ directory it's in and loads any ``*.py`` it finds.
 import time
 import os.path
 import pythoncom
+from os.path import join, dirname
 
 import dragonfly.log as log_
-from dragonfly.engines.engine import get_sapi5_engine
-engine = get_sapi5_engine()
 
 
 #---------------------------------------------------------------------------
@@ -99,7 +98,7 @@ class CommandModuleDirectory(object):
     def _get_valid_paths(self):
         valid_paths = []
         for filename in os.listdir(self._path):
-            path = os.path.abspath(os.path.join(self._path, filename))
+            path = os.path.abspath(join(self._path, filename))
             if not os.path.isfile(path):
                 continue
             if not os.path.splitext(path)[1] == ".py":
@@ -114,19 +113,33 @@ class CommandModuleDirectory(object):
 #---------------------------------------------------------------------------
 # Main event driving loop.
 
-try:
-    path = os.path.dirname(__file__)
-except NameError:
-    # The "__file__" name is not always available, for example
-    #  when this module is run from PythonWin.  In this case we
-    #  simply use the current working directory.
-    path = os.path.dirname(os.getcwd())
-    __file__ = os.path.join(path, "dragonfly-main.py")
 
-directory = CommandModuleDirectory(path, excludes=[__file__])
-directory.load()
+if __name__ == '__main__':
+    from dragonfly.engines.engine import get_sapi5_engine
+    engine = get_sapi5_engine()
 
-engine.speak('beginning loop!')
-while 1:
-    pythoncom.PumpWaitingMessages()
-    time.sleep(.1)
+    try:
+        path = dirname(__file__)
+    except NameError:
+        # The "__file__" name is not always available, for example
+        #  when this module is run from PythonWin.  In this case we
+        #  simply use the current working directory.
+        path = dirname(os.getcwd())
+        __file__ = join(path, "dragonfly-main.py")
+
+    custom_fnames = [
+        '_common.py',
+        '_crall_dragonfly.py',
+        '_python_templates.py',
+        '_python.py',
+        '_vimedit.py',
+    ]
+    custom_fpaths = [join(path, fname) for fname in custom_fnames]
+    excludes = [__file__] + custom_fpaths
+
+    directory = CommandModuleDirectory(path, excludes=excludes)
+    directory.load()
+    #engine.speak('beginning loop!')
+    while 1:
+        pythoncom.PumpWaitingMessages()
+        time.sleep(.1)

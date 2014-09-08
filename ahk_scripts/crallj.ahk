@@ -33,12 +33,12 @@ return
 
 ;---------------------
 ;  1 - Todo, Notes 
-NumpadEnd:: ; NumPad-1
-    Open("todo")
-    return
-^NumpadEnd:: ; NumPad-1
-    Open("personal")
-    return
+;NumpadEnd:: ; NumPad-1
+    ;Open("todo")
+    ;return
+;^NumpadEnd:: ; NumPad-1
+    ;Open("personal")
+    ;return
 ;---------------------
     
 ;--------------   
@@ -82,9 +82,9 @@ NumpadDown:: ; NumPad-2
 
 ;--------------  
 ;  3 - Qt Console
-NumpadPgDn:: ; NumPad-3
-    Focus("Calculator")
-    return
+;NumpadPgDn:: ; NumPad-3
+    ;Focus("Calculator")
+    ;return
 ^NumpadPgDn:: ; Ctrl+Numpad-3
     Open("qtc")
     return 
@@ -296,43 +296,56 @@ return
     return
 ;---------------------
 
-;=====================
-; FUNCTION KEYS
 ;#NumpadIns:: 
     ;MsgBox, "hi"
     ;Send {#R}
     ;return
-;f9:: 
-    ;EnvGet rob, ROB
-    ;rob_win = "%rob%\rob_settings.py"
-    ;GVIMFocus(rob_win)
-    ;return
-;f10:: 
-    ;EnvGet rob, ROB
-    ;rob_win = "%rob%\rob_interface.py"
-    ;GVIMFocus(rob_win)
-    ;return
-;;---------------------
-;f11::
-    ;EnvGet local, LOCAL
-    ;port_vimrc  = %local%\vim\portable_vimrc
-    ;GVIMReopen(port_vimrc)
-    ;return
+
+;=====================
+; FUNCTION KEYS
+;=====================
+f7::
+    EnvGet local, LOCAL
+    dfscript  = %local%/speech/startdf.bat
+    Run, %dfscript%
+    return
+;---------------------
+f8::
+    EnvGet local, LOCAL
+    port_vimrc  = %local%\vim\portable_vimrc
+    GVIMReopen(port_vimrc)
+    return
+;---------------------
+f9:: 
+    EnvGet rob, ROB
+    rob_win = "%rob%\rob_settings.py"
+    GVIMFocus(rob_win)
+    return
+;---------------------
+f10:: 
+    EnvGet rob, ROB
+    rob_win = "%rob%\rob_interface.py"
+    GVIMFocus(rob_win)
+    return
+;---------------------
+f11:: 
+    EnvGet local, LOCAL
+    dragonflymain  = %local%\speech\commands.py
+    GVIMFocus(dragonflymain)
+    return
 ;---------------------
 f12:: 
-    ;EnvGet ahk_scripts, AHK_SCRIPTS
-    ;crall_ahk = "%ahk_scripts%\crallj.ahk"
-    EnvGet local, LOCAL
-    dragonflymain  = %local%\speech\dragonfly-main.py
-    GVIMFocus(dragonflymain)
+    EnvGet ahk_scripts, AHK_SCRIPTS
+    crall_ahk = "%ahk_scripts%\crallj.ahk"
+    GVIMFocus(crall_ahk)
     return
 ;;---------------------
 ;^NumpadIns:: ; Control+NumPad-0
-;^f12:: 
-    ;EnvGet ahk_scripts, AHK_SCRIPTS
-    ;ahk_scripts = "%ahk_scripts%\crallj.ahk"
-    ;Reload %crall_ahk%
-    ;return
+^f12:: 
+    EnvGet ahk_scripts, AHK_SCRIPTS
+    ahk_scripts = "%ahk_scripts%\crallj.ahk"
+    Reload %crall_ahk%
+    return
 ;---------------------
 ; WINDOWS KEY + H TOGGLES HIDDEN FILES
 #IfWinActive ahk_class CabinetWClass
@@ -365,8 +378,7 @@ f12::
 #IfWinActive
 
 ;---------------------
-; Helper Functions
-; Current Working Directory Functions
+; Current Working Directory funcs
 get_cwd()
 {
     ; Gets the CWD as the explorer window you are in. 

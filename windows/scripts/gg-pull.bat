@@ -1,1 +1,1 @@
-    python %USERPROFILE%/local/util_git.py "git pull"
+    python %USERPROFILE%/local/util_git1.py "git pull"

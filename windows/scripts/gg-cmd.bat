@@ -1,1 +1,1 @@
-python %USERPROFILE%/local/util_git.py %%@
+python %USERPROFILE%/local/util_git1.py %%@
