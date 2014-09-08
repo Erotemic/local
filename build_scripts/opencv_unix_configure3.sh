@@ -109,7 +109,8 @@ else
     #export PYTHON_INCLUDE_DIR=$($PYEXE -c "from distutils.sysconfig import
     #get_python_lib; print(get_python_inc())")
     export PYTHON_EXECUTABLE=$($PYEXE -c "import sys; print(sys.executable)")
-    export PYTHON_LIBRARY=$(get_py_config_var 'LIBDIR')/$(get_py_config_var 'LDLIBRARY')
+    #export PYTHON_LIBRARY=$(get_py_config_var 'LIBDIR')/$(get_py_config_var 'LDLIBRARY')
+    export PYTHON_LIBRARY=$(get_py_config_var 'LIBDIR')/$(get_py_config_var 'MULTIARCH')/$(get_py_config_var 'LDLIBRARY')
     export PYTHON_INCLUDE_DIR=$(get_py_config_var 'INCLUDEPY')
     export PYTHON_PACKAGES_PATH=$($PYEXE -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
     export PYTHON_NUMPY_INCLUDE_DIR=$(python -c "import numpy; print(numpy.get_include())")
