@@ -9,10 +9,18 @@ from _vimedit import vim_mapping
 #  here.  Instead change the *config file* called '_multiedit.txt'.
 
 # Spoken-form    ->    ->    ->     Action object
+
+my_vocab = [
+    'cache',
+    'dir',
+]
+
+
 words = {
     'vim': fly.Text('vim'),
     'G. vim': fly.Text('gvim'),
     'pandas': fly.Text('pandas'),
+    'notebook': fly.Text('notebook'),
     #'esc | ask': fly.Text('esc'),
 }
 

@@ -132,7 +132,7 @@ if __name__ == '__main__':
         '_crall_dragonfly.py',
         '_python_templates.py',
         '_python.py',
-        '_vimedit.py',
+        #'_vimedit.py',
     ]
     custom_fpaths = [join(path, fname) for fname in custom_fnames]
     excludes = [__file__] + custom_fpaths

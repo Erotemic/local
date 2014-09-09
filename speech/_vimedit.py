@@ -73,7 +73,8 @@ vim_other = {
 repel = '(repl | rebel | replace)'
 
 vim_leader = {
-    'comment'           : fly.Text(',c '),
+    'comment'        : fly.Text(',c '),
+    'nerd'           : fly.Text(',j'),
     repel + ' here'  : esc + fly.Text(',ss'),
 }
 
@@ -92,6 +93,8 @@ vim_mapping = {
     'change word'       : esc + fly.Text('cw'),
     'delete word'       : esc + fly.Text('dw'),
     'unfold'            : esc + fly.Text('zR'),
+    'fold all'          : esc + fly.Text('zM'),
+    'fold one'          : esc + fly.Text('zm'),
     'visual'            : fly.Key('V'),
     'ask'               : fly.Key('escape'),
     'search <text>'     : esc + fly.Text('/%(text)s'),
@@ -108,3 +111,4 @@ vim_mapping.update(vim_commands)
 
 
 vim_context = fly.AppContext(executable="gvim")
+
