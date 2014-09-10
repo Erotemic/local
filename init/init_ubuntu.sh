@@ -1,7 +1,20 @@
 
 install_aptgetters()
 {
-sudo apt-get install pgpgpg
+    # privacy
+    sudo apt-get install pgpgpg
+    # android phone camera reader mtpfs
+    sudo apt-get install mtp-tools mtpfs
+    # software center gmpt
+
+    # Google PPA
+    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+    sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+    sudo apt-get update
+
+    sudo apt-get install google-chrome-stable
+    sudo apt-get install libtiff5
+    sudo apt-get install libtiff5-dev
 }
 make_ubuntu_symlinks()
 {
@@ -157,5 +170,52 @@ other_fonts()
     sudo cp zevv-peep-iso8859-15-08x16.bdf /usr/share/fonts/X11/misc
     xset +fp /usr/share/fonts/X11/misc
     
+
+}
+  
+
+purge_opencv()
+{
+sudo rm -rf /usr/local/lib/libopencv*
+sudo rm -rf /usr/local/bin/opencv*
+sudo rm -rf /usr/local/include/opencv
+sudo rm -rf /usr/local/include/opencv2
+sudo rm -rf /usr/local/share/OpenCV
+}
+ 
+purge_pil()
+{
+sudo rm -rf /usr/lib/python2.7/dist-packages/PIL
+sudo rm -rf /usr/lib/pyshared/python2.7/PIL
+sudo rm -rf /usr/share/pyshared/PIL
+sudo rm -rf /usr/lib/python2.7/dist-packages/PIL/
+sudo rm -rf /usr/lib/python2.7/dist-packages/PIL
+sudo rm -rf /usr/lib/python2.7/dist-packages/PIL.pth
+}    
+
+purge_sqlite3()
+{
+sudo find /usr/lib -iname '*sqlite3*' 
+sudo find /usr/include -iname '*sqlite3*'
+
+sudo find / -iname '*sqlite3*'
+
+
+sudo ldconfig -p | grep sqlite3
+
+ls -il /usr/local/lib/libsqlite3.so.0 && ls -il /usr/local/lib/libsqlite3.so &&
+    ls -il /usr/lib/i386-linux-gnu/libsqlite3.so.0 && ls -il /usr/lib/i386-linux-gnu/libsqlite3.so
+
+
+sudo mv /usr/local/lib/libsqlite3.so ~/tmp/.bad_sqlitelib
+sudo rm /usr/local/include/sqlite3ext.h
+sudo rm /usr/local/include/sqlite3.h
+sudo rm /usr/local/bin/sqlite3
+sudo rm /usr/local/lib/libsqlite3.so.0.8.6
+sudo rm /usr/local/lib/libsqlite3.la
+sudo rm /usr/local/lib/libsqlite3.so.0
+sudo rm /usr/local/lib/libsqlite3.a
+
+sqlite3 --version
 
 }

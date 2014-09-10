@@ -1,3 +1,11 @@
+# Places where gnome extensions go
+ls /home/.local/share/gnome-shell/extensions 
+ls ~/.local/share/gnome-shell/extensions 
+ls /usr/share/gnome-shell/extensions
+
+# Version number
+gnome-session --version
+
 # http://www.webupd8.org/2012/10/how-to-get-complete-gnome-3-desktop-in.html
 
 sudo apt-get install ubuntu-gnome-desktop ubuntu-gnome-default-settings
