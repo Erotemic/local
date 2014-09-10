@@ -1,4 +1,8 @@
 
+install_aptgetters()
+{
+sudo apt-get install pgpgpg
+}
 make_ubuntu_symlinks()
 {
     stty echo
