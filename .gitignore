@@ -1,19 +1,14 @@
-git/
+'
 PATH/
-PortableGit-1.8.4-preview20130916.7z
-secret/
-PortableGit*
-ca-bundle.crt
-certdata.txt
-opengl
 *.pyc
 rob\to_speak.txt
 *~
-auto_*
+#auto_*
 /vim/vimfiles/bundle_disabled/*
 clipboard.txt
 rob/to_speak.txt
 
+vim/vimfiles/vimfiles
 vim/vimfiles/bundle/GoldenView.Vim/
 vim/vimfiles/bundle/_vimrc
 vim/vimfiles/bundle/jedi-vim/
@@ -23,13 +18,5 @@ vim/vimfiles/bundle/vim-repeat/
 vim/vimfiles/bundle/vim-surround/
 vim/vimfiles/bundle/*
 vim/vimfiles/.netrwhist
-
-vim/vimfiles/.netrwhist
-
-'
-
-tests/*.exe
-
+misc/tests/*.exe
 youtube-dl.exe
-
-vim/vimfiles/vimfiles

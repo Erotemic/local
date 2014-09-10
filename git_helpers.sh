@@ -5,22 +5,22 @@ gg-recover()
 
 gg-stats()
 {
-    python ~/local/util_git1.py 'git status'
+    python ~/local/init/util_git1.py 'git status'
 }
 
 gg-pull()
 {
-    python ~/local/util_git1.py 'git pull'
+    python ~/local/init/util_git1.py 'git pull'
 }
 
 gg-push()
 {
-    python ~/local/util_git1.py 'git push'
+    python ~/local/init/util_git1.py 'git push'
 }
 
 gg-cmd()
 {
-    python ~/local/util_git1.py $@
+    python ~/local/init/util_git1.py $@
 }
 
 alias ggs=gg-stats
