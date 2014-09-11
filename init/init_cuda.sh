@@ -53,11 +53,13 @@ oldcudastuff(){
 
 # Download
 cd ~/tmp
-wget http://developer.download.nvidia.com/compute/cuda/4_2/rel/toolkit/cudatoolkit_4.2.9_linux_64_ubuntu11.04.run
-wget http://developer.download.nvidia.com/compute/cuda/4_2/rel/sdk/gpucomputingsdk_4.2.9_linux.run
+http://developer.download.nvidia.com/compute/cuda/6_5/rel/installers/cuda_6.5.14_linux_64.run
+chmod +x cuda_*
+#wget http://developer.download.nvidia.com/compute/cuda/4_2/rel/toolkit/cudatoolkit_4.2.9_linux_64_ubuntu11.04.run
+#wget http://developer.download.nvidia.com/compute/cuda/4_2/rel/sdk/gpucomputingsdk_4.2.9_linux.run
 
 # Install 
-cd ~/tmp
+cd ~/Downloads
 chmod +x cudatoolkit_4.2.9_linux_*
 sudo ./cudatoolkit_4.2.9_linux_*
 
@@ -80,8 +82,8 @@ optirun ~/NVIDIA_GPU_Computing_SDK/C/bin/linux/release/./fluidsGL
 cleanup()
 {
     cd ~/Desktop
-rm cudatoolkit_4.2.9_linux_*
-rm gpucomputingsdk_4.2.9_linux.run
+    rm cudatoolkit_4.2.9_linux_*
+    rm gpucomputingsdk_4.2.9_linux.run
 }
 
 remove_cuda()

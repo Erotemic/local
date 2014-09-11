@@ -53,11 +53,6 @@ recover_backup()
     rm -rf  ~/.ssh/.ssh
 }
  
-permit_gitrepo()
-{ 
-    sed -i 's/https:\/\/github.com\/Erotemic/git@github.com:Erotemic/' .git/config
-}
- 
 init_git()
 {
     git config --global user.name joncrall
