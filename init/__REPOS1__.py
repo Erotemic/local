@@ -48,27 +48,28 @@ LATEX_REPOS_URLS, LATEX_REPOS = repo_list([
 
 
 VIM_REPO_URLS, VIM_REPOS = repo_list([
-    'https://github.com/dbarsam/vim-vimtweak.git',
-    'https://github.com/bling/vim-airline.git',
-    'https://github.com/davidhalter/jedi-vim.git',
+    #'https://github.com/dbarsam/vim-vimtweak.git',
+    #'https://github.com/bling/vim-airline.git',
+    #'https://github.com/davidhalter/jedi-vim.git',
     'https://github.com/ervandew/supertab.git',
     'https://github.com/mhinz/vim-startify.git',
     'https://github.com/scrooloose/nerdcommenter.git',
     'https://github.com/scrooloose/nerdtree.git',
     'https://github.com/scrooloose/syntastic.git',
-    'https://github.com/terryma/vim-multiple-cursors.git',
-    'https://github.com/tpope/vim-repeat.git',
-    'https://github.com/tpope/vim-sensible.git',
-    'https://github.com/tpope/vim-surround.git',
-    'https://github.com/tpope/vim-unimpaired.git',
-    'https://github.com/vim-scripts/Conque-Shell.git',
-    'https://github.com/vim-scripts/csv.vim.git',
-    'https://github.com/vim-scripts/highlight.vim.git',
-    'https://github.com/vim-scripts/grep.vim.git',
-    #'https://github.com/klen/python-mode.git'
-    #'https://github.com/Valloric/YouCompleteMe.git',
-    #'https://github.com/koron/minimap-vim.git',
-    #'https://github.com/zhaocai/GoldenView.Vim.git',
+    #'https://github.com/terryma/vim-multiple-cursors.git',
+    #'https://github.com/tpope/vim-repeat.git',
+    #'https://github.com/tpope/vim-sensible.git',
+    #'https://github.com/tpope/vim-surround.git',
+    #'https://github.com/tpope/vim-unimpaired.git',
+    #'https://github.com/vim-scripts/Conque-Shell.git',
+    #'https://github.com/vim-scripts/csv.vim.git',
+    #'https://github.com/vim-scripts/highlight.vim.git',
+    #'https://github.com/vim-scripts/grep.vim.git',
+
+    ###'https://github.com/klen/python-mode.git'
+    ###'https://github.com/Valloric/YouCompleteMe.git',
+    ###'https://github.com/koron/minimap-vim.git',
+    ###'https://github.com/zhaocai/GoldenView.Vim.git',
 ], BUNDLE_DPATH)
 
 VIM_REPOS_WITH_SUBMODULES = [

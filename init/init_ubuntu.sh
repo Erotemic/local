@@ -63,7 +63,7 @@ install_packages()
     # For opencv
     sudo apt-get install openexr
     # For Lempisky Random Forsest Show
-    sudo apt-get install libgtk2.0-dev
+    #sudo apt-get install libgtk2.0-dev
     sudo apt-get install deluge
 }
 
@@ -169,8 +169,6 @@ other_fonts()
     wget http://zevv.nl/play/code/zevv-peep/zevv-peep-iso8859-15-08x16.bdf
     sudo cp zevv-peep-iso8859-15-08x16.bdf /usr/share/fonts/X11/misc
     xset +fp /usr/share/fonts/X11/misc
-    
-
 }
   
 
