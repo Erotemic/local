@@ -55,8 +55,16 @@ recover_backup()
  
 permit_gitrepo()
 { 
-    sed -i 's/https:\/\/github.com\/Erotemic/git@github.com:Erotemic' .git/config
+    sed -i 's/https:\/\/github.com\/Erotemic/git@github.com:Erotemic/' .git/config
 }
+ 
+init_git()
+{
+    git config --global user.name joncrall
+    git config --global user.email crallj@rpi.edu
+    git config --global push.default current
+}
+ 
 
 bashrc_symlinks()
 source ~/local/vim/init_vim.sh

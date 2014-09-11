@@ -27,5 +27,9 @@ function! MyDiff()
    else
      let cmd = $VIMRUNTIME . '\diff'
  endfu
+else
+    " Do it anyway!
+    source $VIMRUNTIME/mswin.vim
+    behave mswin
 endif
 
