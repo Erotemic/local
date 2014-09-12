@@ -15,9 +15,15 @@
 
 #export INSTALL_NVIDIA=/home/joncrall/Drivers/NVIDIA-Linux-x86_64-319.32.run
 #export INSTALL_NVIDIA=/home/joncrall/Drivers/NVIDIA-Linux-x86_64-331.20.run
+
 mkdir ~/Drivers
 mv ~/Downloads/NVIDIA-Linux* ~/Drivers
-export INSTALL_NVIDIA=~/Drivers/NVIDIA-Linux-x86_64-340.32.run
 ls -al ~/Drivers
+
+export INSTALL_NVIDIA=~/Drivers/NVIDIA-Linux-x86_64-340.32.run
 chmod +x $INSTALL_NVIDIA
+sudo stop gdm
+# Doesnt actually seem echo correctly
+sudo cat /etc/modprobe.d/blacklist.conf
+sudo echo "blacklist nouveau" >> /etc/modprobe.d/blacklist.conf
 sudo $INSTALL_NVIDIA
