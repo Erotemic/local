@@ -240,3 +240,12 @@ rob sp "from ibeis\\.dev import params" "from ibeis import params"
 rob sp "from \\. import params" "from ibeis import params" 
 rob sp "ibeis\\.dev\\.params" "ibeis.params"
 rob sp "ibeis/dev/params" "ibeis/params"
+
+
+git mv smk.py ibeis/model/hots
+git mv smk_core.py ibeis/model/hots
+git mv smk_index.py ibeis/model/hots
+git mv smk_debug.py ibeis/model/hots
+
+rob sp "from smk" "from ibeis.model.hots.smk"
+rob sp "import smk" "from ibeis.model.hots import smk"
