@@ -159,7 +159,21 @@ setup_fstab()
     sudo fdisk -l | grep -e '^/dev/sd'
     # Write store to fstab
     sudo sh -c 'echo "/dev/sdc1                                  /media/Store      ntfs  nls=iso8859-1,uid=1000,windows_names,hide_hid_files,0  0  0" >> /etc/fstab'
+    sudo ln -s /media/raid /raid  
+    ln -s ~/local/scripts/ubuntu_scripts ~/scripts
+    # For Hyrule
+    ln -s /media/Store ~/Store
+    ln -s /media/raid/work ~/work
     
+    
+
+    
+}
+
+other()
+{
+    # monitors
+    # http://askubuntu.com/questions/450767/multi-display-issue-with-ubuntu-gnome-14-04
 }
 
 create_users()
