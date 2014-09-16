@@ -3,10 +3,6 @@ sudo apt-get install git -y
 git clone https://github.com/Erotemic/local.git
 cd local/init 
 
-mkdir ~/tmp
-mkdir ~/code
-git clone https://github.com/Erotemic/ibeis.git
-
 
 customize_sudoers()
 { 
@@ -23,6 +19,16 @@ customize_sudoers()
     #sudo cat /etc/sudoers 
 } 
 
+setup_homefolder()
+{ 
+mkdir ~/tmp
+mkdir ~/code
+cd ~
+git clone https://github.com/Erotemic/local.git
+cd ~/code
+git clone https://github.com/Erotemic/ibeis.git
+
+}
 
 bashrc_symlinks()
 { 
