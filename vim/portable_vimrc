@@ -77,7 +77,7 @@ source ~/local/vim/rc_settings/autocommand_settings.vim
 ":call QUICKOPEN_leader_tvio('3', '~/code/guitool/guitool/guitool_components.py')
 :call QUICKOPEN_leader_tvio('3', '~/code/guitool/guitool/api_item_model.py')
 ":call QUICKOPEN_leader_tvio('4', '~/code/ibeis/ibeis/dev/results_organizer.py')
-:call QUICKOPEN_leader_tvio('4', '~/local/init/freshstart_ubuntu.sh')
+:call QUICKOPEN_leader_tvio('4', '~/local/init/ubuntu_core_packages.sh')
 :call QUICKOPEN_leader_tvio('5', '~/local/bashrc.sh')
 :call QUICKOPEN_leader_tvio('7', '~/local/vim/rc/custom_font_functions.vim')
 :call QUICKOPEN_leader_tvio('6', '~/code/pyrf')

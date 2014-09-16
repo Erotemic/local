@@ -50,8 +50,10 @@ sudo fc-cache
 
 recover_backup()
 {
-    export BACKUPHOME="/media/joncrall/Seagate Backup Plus Drive/sep14bak/home/joncrall"
-    cd "$BACKUPHOME/.ssh"
+    export BACKUPLOCAL="/media/joncrall/HADES/local"
+    cd "$BACKUPLOCAL"
+    export BACKUPHOME="/media/joncrall/Seagate Backup Plus Drive/sep14bak/home"
+    cd "$BACKUPHOME/joncrall/.ssh"
     # Recover ssh keys
     mkdir ~/.ssh
     cp -r * ~/.ssh
@@ -60,8 +62,15 @@ recover_backup()
     #cp -r "$BACKUPHOME/.ssh" .
     #mv .ssh/* .
     #rm -rf  ~/.ssh/.ssh
-    export BACKUPLOCAL="/media/joncrall/HADES/local"
-    cd "$BACKUPLOCAL"
+    #
+    # Restore user home directories
+    export BACKUPHOME="/media/joncrall/Seagate Backup Plus Drive/sep14bak/home"
+    cd $BACKUPHOME/hendrik
+    sudo cp -r * "/home/hendrik/" 
+    #
+    # Restore fstab
+    export BACKUPETC="/media/joncrall/Seagate Backup Plus Drive/sep14bak/etc"
+    cd "$BACKUPETC"
 }
  
 init_git()
@@ -104,6 +113,77 @@ setup_ibeis()
     ./super_setup.py --build --develop
 }
 
+setup_sshd()
+{  
+    # This is Hyrule Specific
+
+    # small change to default sshd_config
+    sudo sed -i 's/#AuthorizedKeysFile\t%h\/.ssh\/authorized_keys/AuthorizedKeysFile\t%h\/.ssh\/authorized_keys/' /etc/ssh/sshd_config
+    sudo sed -i 's/#Banner \/etc\/issue.net/Banner \/etc\/issue.net/' /etc/ssh/sshd_config
+    sudo restart ssh
+    cat /etc/issue.net 
+    sudo sh -c 'cat >> /etc/issue.net << EOL
+    
+           #  
+          ###  
+         #####  
+        #######  
+       #       #  
+      ###     ###  
+     #####   #####  
+    ####### #######  
+EOL'
+    # Cheeck to see if its running
+    ps -A | grep sshd
+
+    cat /etc/network/interfaces
+    sudo sh -c 'cat >> /etc/network/interfaces << EOL
+auto eth0
+iface eth0 inet static 
+    address 128.213.17.14
+    network 128.213.17.0
+    netmask 255.255.255.0
+    gateway 128.213.17.1
+    broadcast 128.213.17.255
+    dns-nameservers 128.113.26.77 128.113.28.67
+    dns-search cs.rpi.edu
+EOL'
+    cat /etc/network/interfaces
+    
+}
+
+
+setup_fstab()
+{
+    # Info
+    sudo fdisk -l | grep -e '^/dev/sd'
+    # Write store to fstab
+    sudo sh -c 'echo "/dev/sdc1                                  /media/Store      ntfs  nls=iso8859-1,uid=1000,windows_names,hide_hid_files,0  0  0" >> /etc/fstab'
+    
+}
+
+create_users()
+{
+    # Grant sudoers
+    #sudo visudo
+    sudo adduser jason
+    sudo adduser hendrik
+    sudo adduser zack
+    # Add group
+    sudo groupadd rpi
+    sudo usermod -a -G rpi jason
+    sudo usermod -a -G rpi joncrall
+    sudo usermod -a -G rpi hendrik
+    sudo usermod -a -G rpi zack
+    # Delete user
+    #sudo deluser --remove-home newuser
+    #sudo chown -R joncrall:rpi *
+    #umask 002 work
+    #chgrp rpi work
+    #chmod g+s work
+}
+
+
 customize_sudoers()  
 setup_homefolder()
 bashrc_symlinks()
@@ -111,3 +191,4 @@ mkdir ~/local/vim/vimfiles/bundle
 source ~/local/vim/init_vim.sh
 python ~/local/init/ensure_vim_plugins.py
 bashrc_symlinks()
+

@@ -1,3 +1,21 @@
+# Tutorials
+#http://feeding.cloud.geek.nz/posts/setting-up-raid-on-existing/
+
+#=================
+# Install prereqs
+#-----------------
+# for guuid partition tables
+sudo apt-get install gdisk -y
+# raid managment tool
+sudo apt-get install mdadm -y
+sudo apt-get install rsync
+sudo apt-get install initramfs-tools
+#=================
+
+    
+#=================
+# Info
+#-----------------
 # list hard drives
 sudo fdisk -l
 ls -a /dev/ | grep "sd"
@@ -10,6 +28,7 @@ ls -a /dev/ | grep "md"
 sudo fdisk -l | grep -e '^Disk /dev/sd'
 
 cat /etc/fstab | grep -Ev '^#'
+#=================
 
 
 # edit hdd configs
@@ -18,7 +37,6 @@ sudo gvim /etc/fstab
 sudo fdisk /dev/sdb
 
 # MAKE GUID PARTITION TABLES
-sudo apt-get install gdisk
 
 sudo man sgdisk
 
@@ -54,8 +72,6 @@ sudo mkfs.ext4 -v -m .1 -b 4096 -E stride=32,stripe-width=64 /dev/sde1
 sudo modprobe raid456
 cat /proc/mdstat
 
-# raid managment tool
-sudo apt-get install mdadm
 # Create RAID 5
 sudo mdadm --create --verbose /dev/md0 --level=5 --raid-devices=3  /dev/sdb1 /dev/sdd1 /dev/sde1
 sudo mdadm --detail --scan 

@@ -8,7 +8,7 @@ sudo adduser $NEW_USERNAME
 
 
 # Delete user
-#deluser --remove-home newuser
+#sudo deluser --remove-home newuser
 
 # Ad group
 sudo groupadd rpi

@@ -23,3 +23,7 @@ sudo apt-get install google-chrome-stable -y
 # Dropbox 
 cd ~/tmp && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
 .dropbox-dist/dropboxd
+
+
+sudo apt-get install gparted -y
+sudo apt-get install openssh-server
