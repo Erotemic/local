@@ -1,6 +1,12 @@
 # Install Correct Driver
 # apt-get install nvidia-current
 
+# Try this aptget repo
+sudo add-apt-repository ppa:xorg-edgers/ppa -y
+sudo apt-get update
+sudo apt-get install nvidia-3
+
+
 # Remember you have to stop the xserver before you do anything else
 
 # ctrl+alt+f1
