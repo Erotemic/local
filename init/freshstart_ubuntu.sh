@@ -45,12 +45,17 @@ sudo fc-cache
 recover_backup()
 {
     export BACKUPHOME="/media/joncrall/Seagate Backup Plus Drive/sep14bak/home/joncrall"
+    cd "$BACKUPHOME/.ssh"
     # Recover ssh keys
     mkdir ~/.ssh
+    cp -r * ~/.ssh
     cd ~/.ssh
-    cp -r "$BACKUPHOME/.ssh" .
-    mv .ssh/* .
-    rm -rf  ~/.ssh/.ssh
+    #cd ~/.ssh
+    #cp -r "$BACKUPHOME/.ssh" .
+    #mv .ssh/* .
+    #rm -rf  ~/.ssh/.ssh
+    export BACKUPLOCAL="/media/joncrall/HADES/local"
+    cd "$BACKUPLOCAL"
 }
  
 init_git()

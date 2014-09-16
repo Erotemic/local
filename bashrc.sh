@@ -28,7 +28,7 @@ update_pip_dists()
     sudo pip install pyinstaller --upgrade
 }
  
-#permit_gitrepo()
-#{ 
-#    sed -i 's/https:\/\/github.com\/Erotemic/git@github.com:Erotemic/' .git/config
-#}
+permit_erotemic_gitrepo()
+{ 
+    sed -i 's/https:\/\/github.com\/Erotemic/git@github.com:Erotemic/' .git/config
+}
