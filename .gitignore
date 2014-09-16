@@ -8,15 +8,16 @@ rob\to_speak.txt
 clipboard.txt
 rob/to_speak.txt
 
-vim/vimfiles/vimfiles
-vim/vimfiles/bundle/GoldenView.Vim/
-vim/vimfiles/bundle/_vimrc
-vim/vimfiles/bundle/jedi-vim/
-vim/vimfiles/bundle/nerdtree/
-vim/vimfiles/bundle/syntastic/
-vim/vimfiles/bundle/vim-repeat/
-vim/vimfiles/bundle/vim-surround/
-vim/vimfiles/bundle/*
+vim/vimfiles/bundle
+#vim/vimfiles/vimfiles
+#vim/vimfiles/bundle/GoldenView.Vim/
+#vim/vimfiles/bundle/_vimrc
+#vim/vimfiles/bundle/jedi-vim/
+#vim/vimfiles/bundle/nerdtree/
+#vim/vimfiles/bundle/syntastic/
+#vim/vimfiles/bundle/vim-repeat/
+#vim/vimfiles/bundle/vim-surround/
+#vim/vimfiles/bundle/*
 vim/vimfiles/.netrwhist
 misc/tests/*.exe
 youtube-dl.exe

@@ -71,8 +71,43 @@ init_git()
     git config --global push.default current
 }
  
+gnome_settings()
+{
+    #gconftool-2 --all-dirs "/"
+    #gconftool-2 --all-dirs "/desktop/url-handlers"
+    #gconftool-2 -a "/desktop/url-handlers"
+    #gconftool-2 -a "/desktop/applications"
+    #gconftool-2 --all-dirs "/schemas/desktop"
+    #gconftool-2 --all-dirs "/apps"
+    gconftool-2 -R /desktop
+    gconftool-2 -R /
+    gconftool-2 --get /apps/nautilus/preferences/desktop_font
+    gconftool-2 --get /desktop/gnome/interface/monospace_font_name
 
-bashrc_symlinks()
-source ~/local/vim/init_vim.sh
+    gconftool-2 -a "/apps/gnome-terminal/profiles/Default" 
+    #gsettings set org.gnome.desktop.lockdown disable-lock-screen 'true'
+
+    gconftool-2 --set "/apps/gnome-terminal/profiles/Default/background_color" --type string "#1111111"
+    gconftool-2 --set "/apps/gnome-terminal/profiles/Default/foreground_color" --type string "#FFFF6999BBBB"
+    gconftool-2 --set /apps/gnome-screensaver/lock_enabled --type bool 0
+    
+}
+
+setup_ibeis()
+{
+    cd ~/code/ibeis
+    git checkout pyqt5
+    ./_scripts/bootstrap.py
+    ./_scripts/__install_prereqs__.sh
+    ./super_setup.py --build --develop
+    ./super_setup.py --checkout pyqt5
+    ./super_setup.py --build --develop
+}
+
 customize_sudoers()  
+setup_homefolder()
+bashrc_symlinks()
+mkdir ~/local/vim/vimfiles/bundle
+source ~/local/vim/init_vim.sh
+python ~/local/init/ensure_vim_plugins.py
 bashrc_symlinks()
