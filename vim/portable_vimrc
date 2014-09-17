@@ -96,7 +96,7 @@ source ~/local/vim/rc_settings/autocommand_settings.vim
 :call QUICKOPEN_leader_tvio('k', '~/code/ibeis/ibeis/model/hots/smk.py')
 :call QUICKOPEN_leader_tvio('l', '~/latex/crall-lab-notebook/main.tex')
 :call QUICKOPEN_leader_tvio('m', '~/code/ibeis/ibeis/main_module.py')
-:call QUICKOPEN_leader_tvio('n', '~/code/ibeis/notebook/')
+:call QUICKOPEN_leader_tvio('n', '~/code/ibeis/ibeis/model/Config.py')
 :call QUICKOPEN_leader_tvio('o', '~/code/ibeis/ibeis/model/preproc/preproc_image.py')
 :call QUICKOPEN_leader_tvio('p', '~/code/plottool/plottool/__init__.py')
 "q
@@ -111,6 +111,7 @@ source ~/local/vim/rc_settings/autocommand_settings.vim
 :call QUICKOPEN_leader_tvio('z', '~/code/ibeis/ibeis/viz/viz_matches.py')
 
 "call MagicPython()
+":call QUICKOPEN_leader_tvio('n', '~/code/ibeis/notebook/')
 ":call QUICKOPEN_leader_tvio('2', '~/code/ibeis/ibeis/dev/params.py')
 ":call QUICKOPEN_leader_tvio('3', '~/code/guitool/guitool/guitool_components.py')
 ":call QUICKOPEN_leader_tvio('4', '~/code/ibeis/ibeis/dev/results_organizer.py')

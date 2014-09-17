@@ -103,8 +103,11 @@ recover_backup()
     cd "$BACKUPHOME/joncrall"
     cp -rv $BACKUPHOME/joncrall/code/hotspotter ~/code/hotspotter
     cp -rv $BACKUPHOME/joncrall/latex ~/latex
-    cp -rv $BACKUPHOME/joncrall/Pictures ~/Pictures
-    cp -rv $BACKUPHOME/joncrall/Documents ~/Documents
+    cp -rv $BACKUPHOME/joncrall/Pictures/* ~/Pictures
+    cp -rv $BACKUPHOME/joncrall/Documents/* ~/Documents
+    
+    export BACKUPHOME="/media/joncrall/SeagateBackup/sep14bak/home"
+    sudo cp -rv $BACKUPHOME/git/* ~git
 }
 
 
