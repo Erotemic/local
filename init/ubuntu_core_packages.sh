@@ -26,4 +26,7 @@ cd ~/tmp && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar x
 
 
 sudo apt-get install gparted -y
-sudo apt-get install openssh-server
+sudo apt-get install htop -y
+sudo apt-get install openssh-server -y
+
+sudo apt-get install python-tk

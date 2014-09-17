@@ -1,8 +1,12 @@
 sudo apt-get install git -y
 
-git clone https://github.com/Erotemic/local.git
-cd local/init 
+cd ~
 
+# If local does not exist
+if [ ! -f ~/local ]; then
+    git clone https://github.com/Erotemic/local.git
+    cd local/init 
+fi
 
 customize_sudoers()
 { 
@@ -21,13 +25,12 @@ customize_sudoers()
 
 setup_homefolder()
 { 
-mkdir ~/tmp
-mkdir ~/code
-cd ~
-git clone https://github.com/Erotemic/local.git
-cd ~/code
-git clone https://github.com/Erotemic/ibeis.git
-
+    mkdir ~/tmp
+    mkdir ~/code
+    cd ~
+    git clone https://github.com/Erotemic/local.git
+    cd ~/code
+    git clone https://github.com/Erotemic/ibeis.git
 }
 
 bashrc_symlinks()
@@ -42,35 +45,9 @@ bashrc_symlinks()
 
 install_fonts()
 {
-sudo cp ~/Dropbox/Installers/Fonts/*.ttf /usr/share/fonts/truetype/
-sudo cp ~/Dropbox/Installers/Fonts/*.otf /usr/share/fonts/opentype/
-sudo fc-cache
-}
-
-
-recover_backup()
-{
-    export BACKUPLOCAL="/media/joncrall/HADES/local"
-    cd "$BACKUPLOCAL"
-    export BACKUPHOME="/media/joncrall/Seagate Backup Plus Drive/sep14bak/home"
-    cd "$BACKUPHOME/joncrall/.ssh"
-    # Recover ssh keys
-    mkdir ~/.ssh
-    cp -r * ~/.ssh
-    cd ~/.ssh
-    #cd ~/.ssh
-    #cp -r "$BACKUPHOME/.ssh" .
-    #mv .ssh/* .
-    #rm -rf  ~/.ssh/.ssh
-    #
-    # Restore user home directories
-    export BACKUPHOME="/media/joncrall/Seagate Backup Plus Drive/sep14bak/home"
-    cd $BACKUPHOME/hendrik
-    sudo cp -r * "/home/hendrik/" 
-    #
-    # Restore fstab
-    export BACKUPETC="/media/joncrall/Seagate Backup Plus Drive/sep14bak/etc"
-    cd "$BACKUPETC"
+    sudo cp ~/Dropbox/Installers/Fonts/*.ttf /usr/share/fonts/truetype/
+    sudo cp ~/Dropbox/Installers/Fonts/*.otf /usr/share/fonts/opentype/
+    sudo fc-cache
 }
  
 init_git()
@@ -99,7 +76,37 @@ gnome_settings()
     gconftool-2 --set "/apps/gnome-terminal/profiles/Default/background_color" --type string "#1111111"
     gconftool-2 --set "/apps/gnome-terminal/profiles/Default/foreground_color" --type string "#FFFF6999BBBB"
     gconftool-2 --set /apps/gnome-screensaver/lock_enabled --type bool 0
-    
+}
+
+
+nautilus_settings()
+{
+    chmod +w ~/.config/user-dirs.dirs
+    sed -i 's/XDG_TEMPLATES_DIR/#XDG_TEMPLATES_DIR/' ~/.config/user-dirs.dirs 
+    sed -i 's/XDG_PUBLICSHARE_DIR/#XDG_PUBLICSHARE_DIR/' ~/.config/user-dirs.dirs
+    sed -i 's/XDG_DOCUMENTS_DIR/#XDG_DOCUMENTS_DIR/' ~/.config/user-dirs.dirs
+    sed -i 's/XDG_MUSIC_DIR/#XDG_MUSIC_DIR/' ~/.config/user-dirs.dirs
+    sed -i 's/XDG_PICTURES_DIR/#XDG_PICTURES_DIR/' ~/.config/user-dirs.dirs
+    sed -i 's/XDG_VIDEOS_DIR/#XDG_VIDEOS_DIR/' ~/.config/user-dirs.dirs
+    echo "enabled=true" >> ~/.config/user-dirs.conf
+    chmod -w ~/.config/user-dirs.dirs
+    #cat ~/.config/user-dirs.conf 
+    #cat ~/.config/user-dirs.dirs 
+    #cat ~/.config/user-dirs.locale
+    #cat /etc/xdg/user-dirs.conf 
+    #cat /etc/xdg/user-dirs.defaults 
+    ###
+    sudo sed -i 's/TEMPLATES/#TEMPLATES/'     /etc/xdg/user-dirs.defaults 
+    sudo sed -i 's/PUBLICSHARE/#PUBLICSHARE/' /etc/xdg/user-dirs.defaults 
+    sudo sed -i 's/DOCUMENTS/#DOCUMENTS/'     /etc/xdg/user-dirs.defaults 
+    sudo sed -i 's/MUSIC/#MUSIC/'             /etc/xdg/user-dirs.defaults 
+    sudo sed -i 's/PICTURES/#PICTURES/'       /etc/xdg/user-dirs.defaults 
+    sudo sed -i 's/VIDEOS/#VIDEOS/'           /etc/xdg/user-dirs.defaults 
+    ###
+    sudo sed -i "s/enabled=true/enabled=false/" /etc/xdg/user-dirs.conf
+    sudo echo "enabled=false" >> /etc/xdg/user-dirs.conf
+    sudo sed -i "s/enabled=true/enabled=false/" /etc/xdg/user-dirs.conf
+    xdg-user-dirs-gtk-update
 }
 
 setup_ibeis()
@@ -119,90 +126,22 @@ setup_sshd()
 
     # small change to default sshd_config
     sudo sed -i 's/#AuthorizedKeysFile\t%h\/.ssh\/authorized_keys/AuthorizedKeysFile\t%h\/.ssh\/authorized_keys/' /etc/ssh/sshd_config
-    sudo sed -i 's/#Banner \/etc\/issue.net/Banner \/etc\/issue.net/' /etc/ssh/sshd_config
-    sudo restart ssh
-    cat /etc/issue.net 
-    sudo sh -c 'cat >> /etc/issue.net << EOL
-    
-           #  
-          ###  
-         #####  
-        #######  
-       #       #  
-      ###     ###  
-     #####   #####  
-    ####### #######  
-EOL'
-    # Cheeck to see if its running
-    ps -A | grep sshd
-
-    cat /etc/network/interfaces
-    sudo sh -c 'cat >> /etc/network/interfaces << EOL
-auto eth0
-iface eth0 inet static 
-    address 128.213.17.14
-    network 128.213.17.0
-    netmask 255.255.255.0
-    gateway 128.213.17.1
-    broadcast 128.213.17.255
-    dns-nameservers 128.113.26.77 128.113.28.67
-    dns-search cs.rpi.edu
-EOL'
-    cat /etc/network/interfaces
-    
 }
 
 
-setup_fstab()
+dosetup()
 {
-    # Info
-    sudo fdisk -l | grep -e '^/dev/sd'
-    # Write store to fstab
-    sudo sh -c 'echo "/dev/sdc1                                  /media/Store      ntfs  nls=iso8859-1,uid=1000,windows_names,hide_hid_files,0  0  0" >> /etc/fstab'
-    sudo ln -s /media/raid /raid  
-    ln -s ~/local/scripts/ubuntu_scripts ~/scripts
-    # For Hyrule
-    ln -s /media/Store ~/Store
-    ln -s /media/raid/work ~/work
-    
-    
+    customize_sudoers
+    setup_homefolder
+    bashrc_symlinks
+    mkdir ~/local/vim/vimfiles/bundle
+    source ~/local/vim/init_vim.sh
+    python ~/local/init/ensure_vim_plugins.py
+    bashrc_symlinks
 
-    
+    source settings_hyrule.sh
+    hyrule_setup_sshd
+    hyrule_setup_fstab
+    hyrule_create_users
 }
-
-other()
-{
-    # monitors
-    # http://askubuntu.com/questions/450767/multi-display-issue-with-ubuntu-gnome-14-04
-}
-
-create_users()
-{
-    # Grant sudoers
-    #sudo visudo
-    sudo adduser jason
-    sudo adduser hendrik
-    sudo adduser zack
-    # Add group
-    sudo groupadd rpi
-    sudo usermod -a -G rpi jason
-    sudo usermod -a -G rpi joncrall
-    sudo usermod -a -G rpi hendrik
-    sudo usermod -a -G rpi zack
-    # Delete user
-    #sudo deluser --remove-home newuser
-    #sudo chown -R joncrall:rpi *
-    #umask 002 work
-    #chgrp rpi work
-    #chmod g+s work
-}
-
-
-customize_sudoers()  
-setup_homefolder()
-bashrc_symlinks()
-mkdir ~/local/vim/vimfiles/bundle
-source ~/local/vim/init_vim.sh
-python ~/local/init/ensure_vim_plugins.py
-bashrc_symlinks()
 
