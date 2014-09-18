@@ -28,5 +28,27 @@ cd ~/tmp && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar x
 sudo apt-get install gparted -y
 sudo apt-get install htop -y
 sudo apt-get install openssh-server -y
+sudo apt-get install python-tk -y
+sudo apt-get install screen -y
+sudo apt-get install synaptic -y
+sudo apt-get install okular -y
 
-sudo apt-get install python-tk
+# Zotero
+sudo add-apt-repository ppa:smathot/cogscinl
+sudo apt-get update
+sudo apt-get install zotero-standalone -y
+ 
+
+# Latex
+sudo apt-get install texlive-base -y
+sudo apt-get install texlive -y
+sudo apt-get install texlive-bibtex-extra -y
+sudo apt-get install texlive-full -y
+
+
+sudo pip install jedi
+sudo pip install line_profiler
+
+# Cleanup
+#sudo apt-get remove jasper -y
+

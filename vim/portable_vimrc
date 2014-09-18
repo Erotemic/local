@@ -18,7 +18,6 @@ enabled = [
     'syntastic',
     'vim-repeat',
     'vim-startify',
-    'vim-startify',
 ] 
 
 # Add a plugin to this list to disable it 
