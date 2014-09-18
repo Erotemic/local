@@ -17,6 +17,8 @@ my_vocab = [
 
 
 words = {
+    #'hots': fly.Text('hots'),
+    'ibeis | ibis': fly.Text('ibeis'),
     'vim': fly.Text('vim'),
     'G. vim': fly.Text('gvim'),
     'pandas': fly.Text('pandas'),
