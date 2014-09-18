@@ -32,6 +32,7 @@ sudo apt-get install python-tk -y
 sudo apt-get install screen -y
 sudo apt-get install synaptic -y
 sudo apt-get install okular -y
+sudo apt-get install tree -y
 
 # Zotero
 sudo add-apt-repository ppa:smathot/cogscinl
@@ -40,10 +41,10 @@ sudo apt-get install zotero-standalone -y
  
 
 # Latex
-sudo apt-get install texlive-base -y
-sudo apt-get install texlive -y
-sudo apt-get install texlive-bibtex-extra -y
-sudo apt-get install texlive-full -y
+#sudo apt-get install texlive-base -y
+#sudo apt-get install texlive -y
+#sudo apt-get install texlive-bibtex-extra -y
+#sudo apt-get install texlive-full -y
 
 
 sudo pip install jedi

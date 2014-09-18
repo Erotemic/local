@@ -125,3 +125,10 @@ NoDisplay=false
 '
     #echo "xrandr --output DVI-D-0 --pos 1920x0 --rotate left --output DVI-I-0 --pos 0x0" >> ~/.config/autostart/
 }
+
+
+printer(){
+#http://www.cs.rpi.edu/twiki/view/LabstaffWeb/PublicPrinters
+#http://www.rpi.edu/dept/arc/web/printing/printertype.html
+128.213.17.40
+}
