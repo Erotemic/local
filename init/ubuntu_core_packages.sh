@@ -12,22 +12,6 @@ sudo apt-get install vim-gtk -y
 # Trash put
 sudo apt-get install trash-cli
 
-# Google PPA
-wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
-sudo apt-get update
-# Google Chrome
-sudo apt-get install google-chrome-stable -y
-
-
-# Dropbox 
-#cd ~/tmp
-#cd ~/tmp && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
-#.dropbox-dist/dropboxd
-sudo apt-get -y install nautilus-dropbox
-
-
-
 sudo apt-get install gparted -y
 sudo apt-get install htop -y
 sudo apt-get install openssh-server -y
@@ -37,19 +21,37 @@ sudo apt-get install synaptic -y
 sudo apt-get install okular -y
 sudo apt-get install tree -y
 
+install_chrome()
+{
+    # Google PPA
+    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+    sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+    sudo apt-get update
+    # Google Chrome
+    sudo apt-get install google-chrome-stable -y
+}
+
+install_dropbox()
+{
+    # Dropbox 
+    #cd ~/tmp
+    #cd ~/tmp && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
+    #.dropbox-dist/dropboxd
+    sudo apt-get -y install nautilus-dropbox
+}
+
 # Zotero
 sudo add-apt-repository ppa:smathot/cogscinl
 sudo apt-get update
 sudo apt-get install zotero-standalone -y
  
-
 # Latex
 #sudo apt-get install texlive-base -y
 #sudo apt-get install texlive -y
 #sudo apt-get install texlive-bibtex-extra -y
 #sudo apt-get install texlive-full -y
 
-
+# Python
 sudo pip install jedi
 sudo pip install line_profiler
 

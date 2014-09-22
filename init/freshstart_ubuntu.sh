@@ -16,6 +16,7 @@ virtualbox_ubuntu_init()
     sudo apt-get install dkms 
     sudo apt-get update
     sudo apt-get upgrade
+    # Press Ctrl+D to automatically install virtualbox addons do this
     sudo apt-get install virtualbox-guest-additions-iso
     sudo apt-get install dkms build-essential linux-headers-generic
     sudo apt-get install build-essential linux-headers-$(uname -r)
@@ -44,18 +45,27 @@ setup_homefolder()
     mkdir ~/tmp
     mkdir ~/code
     cd ~
-    git clone https://github.com/Erotemic/local.git
+    if [ ! -f ~/local ]; then
+        git clone https://github.com/Erotemic/local.git
+    fi
     cd ~/code
-    git clone https://github.com/Erotemic/ibeis.git
-}
+    if [ ! -f ~/ibeis ]; then
+        git clone https://github.com/Erotemic/ibeis.git
+    fi
 
-bashrc_symlinks()
-{ 
-  mv ~/.bashrc ~/.bashrc.orig
-  mv ~/.profile ~/.profile.orig
-  ln -s ~/local/bashrc.sh ~/.bashrc
-  ln -s ~/local/profile.sh ~/.profile 
-  source ~/.bashrc
+    mv ~/.bashrc ~/.bashrc.orig
+    mv ~/.profile ~/.profile.orig
+    ln -s ~/local/bashrc.sh ~/.bashrc
+    ln -s ~/local/profile.sh ~/.profile 
+    source ~/.bashrc
+
+    git config --global user.name joncrall
+    git config --global user.email crallj@rpi.edu
+    git config --global push.default current
+
+    mkdir ~/local/vim/vimfiles/bundle
+    source ~/local/vim/init_vim.sh
+    python ~/local/init/ensure_vim_plugins.py
 }
 
 
@@ -65,13 +75,7 @@ install_fonts()
     sudo cp ~/Dropbox/Installers/Fonts/*.otf /usr/share/fonts/opentype/
     sudo fc-cache
 }
- 
-init_git()
-{
-    git config --global user.name joncrall
-    git config --global user.email crallj@rpi.edu
-    git config --global push.default current
-}
+
  
 gnome_settings()
 {
@@ -81,12 +85,12 @@ gnome_settings()
     #gconftool-2 -a "/desktop/applications"
     #gconftool-2 --all-dirs "/schemas/desktop"
     #gconftool-2 --all-dirs "/apps"
-    gconftool-2 -R /desktop
-    gconftool-2 -R /
-    gconftool-2 --get /apps/nautilus/preferences/desktop_font
-    gconftool-2 --get /desktop/gnome/interface/monospace_font_name
+    #gconftool-2 -R /desktop
+    #gconftool-2 -R /
+    #gconftool-2 --get /apps/nautilus/preferences/desktop_font
+    #gconftool-2 --get /desktop/gnome/interface/monospace_font_name
 
-    gconftool-2 -a "/apps/gnome-terminal/profiles/Default" 
+    #gconftool-2 -a "/apps/gnome-terminal/profiles/Default" 
     #gsettings set org.gnome.desktop.lockdown disable-lock-screen 'true'
 
     gconftool-2 --set "/apps/gnome-terminal/profiles/Default/background_color" --type string "#1111111"
@@ -144,20 +148,21 @@ setup_sshd()
     sudo sed -i 's/#AuthorizedKeysFile\t%h\/.ssh\/authorized_keys/AuthorizedKeysFile\t%h\/.ssh\/authorized_keys/' /etc/ssh/sshd_config
 }
 
-
-dosetup()
+dosetup_hyrule()
 {
     customize_sudoers
     setup_homefolder
-    bashrc_symlinks
-    mkdir ~/local/vim/vimfiles/bundle
-    source ~/local/vim/init_vim.sh
-    python ~/local/init/ensure_vim_plugins.py
-    bashrc_symlinks
-
     source settings_hyrule.sh
     hyrule_setup_sshd
     hyrule_setup_fstab
     hyrule_create_users
 }
 
+dosetup_virtual()
+{
+    customize_sudoers
+    source ~/local/init/ubuntu_core_packages.sh
+    setup_homefolder
+    gnome_settings
+    nautilus_settings
+}
