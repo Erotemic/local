@@ -249,3 +249,12 @@ git mv smk_debug.py ibeis/model/hots
 
 rob sp "from smk" "from ibeis.model.hots.smk"
 rob sp "import smk" "from ibeis.model.hots import smk"
+
+rob sp "ibeis.model.hots.smk" "ibeis.model.hots.smk.smk"
+rob sp "from ibeis.model.hots import pandas_helpers" "from ibeis.model.hots.smk import pandas_helpers" 
+
+rob sp "ibeis.model.hots.hstypes" "ibeis.model.hots.smk.hstypes"
+
+rob sp "ibeis.model.hots import smk_" "ibeis.model.hots.smk import smk_"
+ 
+rob sp "ibeis.model.hots.pandas_helpers" "ibeis.model.hots.smk.pandas_helpers"

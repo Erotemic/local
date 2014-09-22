@@ -1,12 +1,28 @@
-sudo apt-get install git -y
 
-cd ~
+step1()
+{
+    # This is usually done manually
+    sudo apt-get install git -y
+    cd ~
+    # If local does not exist
+    if [ ! -f ~/local ]; then
+        git clone https://github.com/Erotemic/local.git
+        cd local/init 
+    fi
+}
 
-# If local does not exist
-if [ ! -f ~/local ]; then
-    git clone https://github.com/Erotemic/local.git
-    cd local/init 
-fi
+virtualbox_ubuntu_init()
+{
+    sudo apt-get install dkms 
+    sudo apt-get update
+    sudo apt-get upgrade
+    sudo apt-get install virtualbox-guest-additions-iso
+    sudo apt-get install dkms build-essential linux-headers-generic
+    sudo apt-get install build-essential linux-headers-$(uname -r)
+    sudo apt-get install virtualbox-ose-guest-x11
+    # setup virtualbox for ssh
+    VBoxManage modifyvm virtual-ubuntu --natpf1 "ssh,tcp,,3022,,22"
+}
 
 customize_sudoers()
 { 
