@@ -21,6 +21,15 @@ install_core()
 
     # Trash put
     sudo apt-get install -y trash-cli
+    # make sure you have permission to trash
+    #ls -al ~/.local/share/
+    #sudo chown -R $USERNAME:$USERNAME ~/.local/share/Trash 
+    #sudo chown $USERNAME:$USERNAME ~/.local/share/Trash/files
+    #sudo chown -R $USERNAME:$USERNAME ~/.local/share/Trash/info
+    #ls -al ~/.local/share/
+    #ls -al ~/.local/share/Trash
+    #sudo ls -al ~/.local/share/Trash/files
+    #sudo ls -al ~/.local/share/Trash/info
     
     # Commonly used and frequently forgotten
     sudo apt-get install -y gparted
@@ -88,6 +97,9 @@ install_python()
     sudo pip install pylint
     sudo pip install line_profiler
     #sudo pip install Xlib
+    sudo pip install virtualenv
+    sudo pip install requests
+    
 }
 
 
