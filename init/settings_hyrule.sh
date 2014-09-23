@@ -108,6 +108,7 @@ recover_backup()
     
     export BACKUPHOME="/media/joncrall/SeagateBackup/sep14bak/home"
     sudo cp -rv $BACKUPHOME/git/* ~git
+    sudo cp -rv $BACKUPHOME/joncrall/code/gnome-shell-grid ~joncrall/code/
 }
 
 

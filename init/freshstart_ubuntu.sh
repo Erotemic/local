@@ -61,6 +61,8 @@ setup_homefolder()
     mkdir ~/local/vim/vimfiles/bundle
     source ~/local/vim/init_vim.sh
     python ~/local/init/ensure_vim_plugins.py
+
+    cd ~/code
 }
 
 

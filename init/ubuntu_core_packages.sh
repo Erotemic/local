@@ -1,25 +1,42 @@
-sudo apt-get update -y 
-sudo apt-get upgrade -y
+pypackin()
+{
+    sudo pip install $*
+}
+packin()
+{
+    sudo apt-get install -y $*
+}
 
 
-# Git
-sudo apt-get install git -y
+install_core()
+{
+    sudo apt-get update -y 
+    sudo apt-get upgrade -y
+    # Git
+    sudo apt-get install -y git
 
-# Vim
-sudo apt-get install vim -y
-sudo apt-get install vim-gtk -y
- 
-# Trash put
-sudo apt-get install trash-cli
+    # Vim
+    sudo apt-get install -y vim
+    sudo apt-get install -y vim-gtk
 
-sudo apt-get install gparted -y
-sudo apt-get install htop -y
-sudo apt-get install openssh-server -y
-sudo apt-get install python-tk -y
-sudo apt-get install screen -y
-sudo apt-get install synaptic -y
-sudo apt-get install okular -y
-sudo apt-get install tree -y
+    # Trash put
+    sudo apt-get install -y trash-cli
+    
+    # Commonly used and frequently forgotten
+    sudo apt-get install -y gparted
+    sudo apt-get install -y htop
+    sudo apt-get install -y tree
+    sudo apt-get install -y openssh-server
+    sudo apt-get install -y screen
+    sudo apt-get install -y synaptic
+}
+
+install_core_extras()
+{
+    # Not commonly used but frequently forgotten
+    sudo apt-get install -y okular
+    sudo apt-get install -y subversion
+}
 
 install_chrome()
 {
@@ -28,7 +45,7 @@ install_chrome()
     sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
     sudo apt-get update
     # Google Chrome
-    sudo apt-get install google-chrome-stable -y
+    sudo apt-get install -y google-chrome-stable 
 }
 
 install_dropbox()
@@ -40,20 +57,49 @@ install_dropbox()
     sudo apt-get -y install nautilus-dropbox
 }
 
-# Zotero
-sudo add-apt-repository ppa:smathot/cogscinl
-sudo apt-get update
-sudo apt-get install zotero-standalone -y
- 
-# Latex
-#sudo apt-get install texlive-base -y
-#sudo apt-get install texlive -y
-#sudo apt-get install texlive-bibtex-extra -y
-#sudo apt-get install texlive-full -y
+install_zotero()
+{
+    # Zotero
+    sudo add-apt-repository ppa:smathot/cogscinl
+    sudo apt-get update
+    sudo apt-get install -y zotero-standalone 
+}
 
-# Python
-sudo pip install jedi
-sudo pip install line_profiler
+ 
+install_latex()
+{
+    echo 'latex'
+    # Latex
+    #sudo apt-get install texlive-base -y
+    #sudo apt-get install texlive -y
+    #sudo apt-get install texlive-bibtex-extra -y
+    #sudo apt-get install texlive-full -y
+}
+
+
+install_python()
+{
+    # Python
+    sudo apt-get install -y python-tk
+    sudo pip install jedi
+    sudo pip install pep8
+    sudo pip install autopep8
+    sudo pip install flake8
+    sudo pip install pylint
+    sudo pip install line_profiler
+    #sudo pip install Xlib
+}
+
+
+install_xlib()
+{
+    # for gnome-shell-grid
+    sudo pip install svn+https://python-xlib.svn.sourceforge.net/svnroot/python-xlib/trunk/
+    sudo apt-get install -y python-wnck 
+    sudo apt-get install -y wmctrl 
+    packin xdotool
+}
+
 
 # Cleanup
 #sudo apt-get remove jasper -y

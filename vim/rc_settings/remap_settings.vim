@@ -176,7 +176,7 @@ endfu
 
 " Close a tab
 noremap <leader>qt :tabclose<CR>
-
+noremap <leader>. i>>> 
 map <c-`> <c-o>
 
 
