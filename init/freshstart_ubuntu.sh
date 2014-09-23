@@ -48,11 +48,6 @@ setup_homefolder()
     if [ ! -f ~/local ]; then
         git clone https://github.com/Erotemic/local.git
     fi
-    cd ~/code
-    if [ ! -f ~/ibeis ]; then
-        git clone https://github.com/Erotemic/ibeis.git
-    fi
-
     mv ~/.bashrc ~/.bashrc.orig
     mv ~/.profile ~/.profile.orig
     ln -s ~/local/bashrc.sh ~/.bashrc
@@ -131,6 +126,12 @@ nautilus_settings()
 
 setup_ibeis()
 {
+    mkdir ~/code
+    cd ~/code
+    if [ ! -f ~/ibeis ]; then
+        git clone https://github.com/Erotemic/ibeis.git
+    fi
+
     cd ~/code/ibeis
     git checkout pyqt5
     ./_scripts/bootstrap.py
