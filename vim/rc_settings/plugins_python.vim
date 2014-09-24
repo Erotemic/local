@@ -58,13 +58,13 @@ let g:SuperTabDefaultCompletionType = "context"
 
 "-------------------------
 "PLUGIN: Synstastic General
-let g:syntastic_aggregate_errors = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_warning_symbol = 'W>'
-let g:syntastic_error_symbol = '!>'
-let g:syntastic_style_error_symbol = 'S>'
-let g:syntastic_style_warning_symbol = 's>'
-let g:syntastic_always_populate_loc_list = 1
+"let g:syntastic_aggregate_errors = 1
+"let g:syntastic_check_on_open = 1
+"let g:syntastic_warning_symbol = 'W>'
+"let g:syntastic_error_symbol = '!>'
+"let g:syntastic_style_error_symbol = 'S>'
+"let g:syntastic_style_warning_symbol = 's>'
+"let g:syntastic_always_populate_loc_list = 1
 
 "-------------------------
 " PLUGIN: Syntastic Python

@@ -12,7 +12,7 @@ au FileType python set textwidth=80
 au FileType python set foldmethod=indent
 "au FileType python set foldmethod=syntax
 au FileType python set foldnestmax=2
-au FileType python call PythonInvert()
+"au FileType python call PythonInvert()
 "au BufNewFile,BufRead *.py :%s/\t/    /g
 
 "au BufNewFile,BufRead *.tex call LatexInitialize() 

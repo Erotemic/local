@@ -73,6 +73,15 @@ install_zotero()
     sudo apt-get update
     sudo apt-get install -y zotero-standalone 
 }
+ 
+install_spotify()
+{
+    #cat /etc/apt/sources.list
+    sudo sh -c 'echo "deb http://repository.spotify.com stable non-free" >> /etc/apt/sources.list'
+    sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 94558F59
+    sudo apt-get update
+    sudo apt-get install -y spotify-client
+}
 
  
 install_latex()
