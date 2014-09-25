@@ -258,3 +258,7 @@ rob sp "ibeis.model.hots.hstypes" "ibeis.model.hots.smk.hstypes"
 rob sp "ibeis.model.hots import smk_" "ibeis.model.hots.smk import smk_"
  
 rob sp "ibeis.model.hots.pandas_helpers" "ibeis.model.hots.smk.pandas_helpers"
+
+rob gp "[^.]\<get_flag\>"
+rob sp "\<get_arg\>" "get_argval" True
+rob sp "\<get_flag\>" "get_argflag" True

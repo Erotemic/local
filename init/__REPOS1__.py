@@ -50,7 +50,7 @@ LATEX_REPOS_URLS, LATEX_REPOS = repo_list([
 VIM_REPO_URLS, VIM_REPOS = repo_list([
     #'https://github.com/dbarsam/vim-vimtweak.git',
     #'https://github.com/bling/vim-airline.git',
-    #'https://github.com/davidhalter/jedi-vim.git',
+    'https://github.com/davidhalter/jedi-vim.git',
     'https://github.com/ervandew/supertab.git',
     'https://github.com/mhinz/vim-startify.git',
     'https://github.com/scrooloose/nerdcommenter.git',

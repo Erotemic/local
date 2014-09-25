@@ -285,6 +285,9 @@ def project_dpaths():
         '~/code/utool',
         '~/code/guitool',
         '~/code/plottool',
+        '~/code/cyth',
+        '~/code/detecttools',
+        '~/code/pyrf',
     ]
     return map(expanduser, project_list)
 
