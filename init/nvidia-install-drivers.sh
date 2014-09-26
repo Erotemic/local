@@ -4,7 +4,9 @@
 # Try this aptget repo
 sudo add-apt-repository ppa:xorg-edgers/ppa -y
 sudo apt-get update
-sudo apt-get install nvidia-343
+#sudo apt-get install nvidia-343
+#sudo apt-get remove nvidia-343
+sudo apt-get install nvidia-340
 
 
 
@@ -66,9 +68,6 @@ install_cuda_prereq()
     sudo apt-get install -y python-pillow
 }
 
-
-sudo apt-get install nvidia-cuda-toolkit
-
 # Get the cuda 6.5 deb file
 mkdir ~/installers
 cd ~/installers
@@ -76,3 +75,6 @@ wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1404/x86_64/c
 sudo dpkg -i cuda-repo-*
 # Carefull this removes 343 drivers and puts in 340 drivers
 sudo apt-get update
+sudo apt-get install cuda
+
+#sudo apt-get install nvidia-cuda-toolkit
