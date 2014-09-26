@@ -70,5 +70,9 @@ install_cuda_prereq()
 sudo apt-get install nvidia-cuda-toolkit
 
 # Get the cuda 6.5 deb file
-cd ~/tmp
+mkdir ~/installers
+cd ~/installers
 wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1404/x86_64/cuda-repo-ubuntu1404_6.5-14_amd64.deb
+sudo dpkg -i cuda-repo-*
+# Carefull this removes 343 drivers and puts in 340 drivers
+sudo apt-get update
