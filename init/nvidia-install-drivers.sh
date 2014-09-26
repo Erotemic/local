@@ -7,6 +7,7 @@ sudo apt-get update
 sudo apt-get install nvidia-343
 
 
+
 # Remember you have to stop the xserver before you do anything else
 
 # ctrl+alt+f1
@@ -22,15 +23,52 @@ sudo apt-get install nvidia-343
 #export INSTALL_NVIDIA=/home/joncrall/Drivers/NVIDIA-Linux-x86_64-319.32.run
 #export INSTALL_NVIDIA=/home/joncrall/Drivers/NVIDIA-Linux-x86_64-331.20.run
 manual_nvidia_install(){
-mkdir ~/Drivers
-mv ~/Downloads/NVIDIA-Linux* ~/Drivers
-ls -al ~/Drivers
+    mkdir ~/Drivers
+    mv ~/Downloads/NVIDIA-Linux* ~/Drivers
+    ls -al ~/Drivers
 
-export INSTALL_NVIDIA=~/Drivers/NVIDIA-Linux-x86_64-340.32.run
-chmod +x $INSTALL_NVIDIA
-sudo stop gdm
+    export INSTALL_NVIDIA=~/Drivers/NVIDIA-Linux-x86_64-340.32.run
+    chmod +x $INSTALL_NVIDIA
+    sudo stop gdm
 }
 # Doesnt actually seem echo correctly
 #sudo cat /etc/modprobe.d/blacklist.conf
 #sudo echo "blacklist nouveau" >> /etc/modprobe.d/blacklist.conf
 #sudo $INSTALL_NVIDIA
+
+install_cuda_prereq()
+{
+	sudo apt-get install -y libprotobuf-dev
+    sudo apt-get install -y libleveldb-dev 
+    sudo apt-get install -y libsnappy-dev 
+    sudo apt-get install -y libopencv-dev 
+    sudo apt-get install -y libboost-all-dev 
+    sudo apt-get install -y libhdf5-serial-dev
+    sudo apt-get install -y libgflags-dev
+    sudo apt-get install -y libgoogle-glog-dev
+    sudo apt-get install -y liblmdb-dev
+    sudo apt-get install -y protobuf-compiler 
+
+    sudo apt-get install -y libfreeimage-dev
+
+    #sudo apt-get install -y gcc-4.6 
+    #sudo apt-get install -y g++-4.6 
+    #sudo apt-get install -y gcc-4.6-multilib
+    #sudo apt-get install -y g++-4.6-multilib 
+    #sudo apt-get install -y libjpeg62
+
+    sudo apt-get install -y gfortran
+    sudo apt-get install -y libatlas-base-dev 
+
+    sudo apt-get install -y python-dev
+    sudo apt-get install -y python-pip
+    sudo apt-get install -y python-numpy
+    sudo apt-get install -y python-pillow
+}
+
+
+sudo apt-get install nvidia-cuda-toolkit
+
+# Get the cuda 6.5 deb file
+cd ~/tmp
+wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1404/x86_64/cuda-repo-ubuntu1404_6.5-14_amd64.deb

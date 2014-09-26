@@ -88,8 +88,8 @@ install_latex()
 {
     echo 'latex'
     # Latex
-    #sudo apt-get install texlive-base -y
-    #sudo apt-get install texlive -y
+    sudo apt-get install texlive -y
+    sudo apt-get install texlive-base -y
     #sudo apt-get install texlive-bibtex-extra -y
     #sudo apt-get install texlive-full -y
 }
@@ -109,6 +109,35 @@ install_python()
     sudo pip install virtualenv
     sudo pip install requests
     
+}
+
+install_cuda_prereq()
+{
+	sudo apt-get install -y libprotobuf-dev
+    sudo apt-get install -y libleveldb-dev 
+    sudo apt-get install -y libsnappy-dev 
+    sudo apt-get install -y libopencv-dev 
+    sudo apt-get install -y libboost-all-dev 
+    sudo apt-get install -y libhdf5-serial-dev
+    sudo apt-get install -y libgflags-dev
+    sudo apt-get install -y libgoogle-glog-dev
+    sudo apt-get install -y liblmdb-dev
+    sudo apt-get install -y protobuf-compiler 
+
+    #sudo apt-get install -y gcc-4.6 
+    #sudo apt-get install -y g++-4.6 
+    #sudo apt-get install -y gcc-4.6-multilib
+    #sudo apt-get install -y g++-4.6-multilib 
+
+    sudo apt-get install -y gfortran
+    sudo apt-get install -y libjpeg62
+    sudo apt-get install -y libfreeimage-dev
+    sudo apt-get install -y libatlas-base-dev 
+
+    sudo apt-get install -y python-dev
+    sudo apt-get install -y python-pip
+    sudo apt-get install -y python-numpy
+    sudo apt-get install -y python-pillow
 }
 
 
