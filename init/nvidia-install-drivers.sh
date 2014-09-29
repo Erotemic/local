@@ -83,6 +83,9 @@ echo 'export PATH=$PATH:/usr/local/cuda/bin' >> ~/.bashrc
 echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/lib' >> ~/.bashrc
 source ~/.bashrc
 
+
+nvcc --version
+nvidia-smi
 # Use: "nvcc --version" for CUDA version [Ex: V6.5.X]
 # Use: "nvidia-smi" for driver version [Ex: 34X.XX]
 #sudo apt-get install nvidia-cuda-toolkit

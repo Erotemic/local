@@ -45,6 +45,7 @@ install_core_extras()
     # Not commonly used but frequently forgotten
     sudo apt-get install -y okular
     sudo apt-get install -y subversion
+    sudo apt-get install -y filezilla
 }
 
 install_chrome()
@@ -88,8 +89,21 @@ install_latex()
 {
     echo 'latex'
     # Latex
-    sudo apt-get install texlive -y
-    sudo apt-get install texlive-base -y
+    sudo apt-get install -y texlive
+    sudo apt-get install -y texlive
+    sudo apt-get install -y texlive-base 
+    sudo apt-get install -y texlive-extra-utils
+    sudo apt-get install -y texlive-binaries
+    sudo apt-get install -y texlive-latex-base
+    sudo apt-get install -y texlive-latex-extra
+    sudo apt-get install -y texlive-latex-recommended
+    sudo apt-get install -y texlive-math-extra
+    sudo apt-get install -y texlive-science
+    sudo apt-get install -y texlive-bibtex-extra
+    sudo apt-get install -y texlive-fonts-extra
+    sudo apt-get install -y texlive-generic-recommended
+
+    #sudo apt-get remove texlive-generic-extra
     #sudo apt-get install texlive-bibtex-extra -y
     #sudo apt-get install texlive-full -y
 }

@@ -109,6 +109,7 @@ source ~/local/vim/rc_settings/autocommand_settings.vim
 :call QUICKOPEN_leader_tvio('y', '~/code/cyth/cyth/cyth_script.py')
 :call QUICKOPEN_leader_tvio('z', '~/code/ibeis/ibeis/viz/viz_matches.py')
 :call QUICKOPEN_leader_tvio('C', '~/Dropbox/crall')
+:call QUICKOPEN_leader_tvio('P', '~/Dropbox/CVPR\ Paper/main.tex')
 
 "call MagicPython()
 ":call QUICKOPEN_leader_tvio('n', '~/code/ibeis/notebook/')

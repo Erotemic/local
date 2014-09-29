@@ -174,3 +174,8 @@ dosetup_virtual()
     gnome_settings
     nautilus_settings
 }
+
+extrafix()
+{
+    chmod og-w ~/.python-eggs
+}

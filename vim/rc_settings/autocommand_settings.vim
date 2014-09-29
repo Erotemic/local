@@ -15,7 +15,7 @@ au FileType python set foldnestmax=2
 "au FileType python call PythonInvert()
 "au BufNewFile,BufRead *.py :%s/\t/    /g
 
-"au BufNewFile,BufRead *.tex call LatexInitialize() 
+au BufNewFile,BufRead *.tex call LatexInitialize() 
 au SwapExists * let v:swapchoice = 'e'
 
 :call AuOnReadPatterns('set ft=cpp', '*.txx')
