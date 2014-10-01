@@ -22,6 +22,7 @@ EOL'
 
     cat /etc/network/interfaces
     sudo sh -c 'cat >> /etc/network/interfaces << EOL
+#Static IP Address
 auto eth0
 iface eth0 inet static 
     address 128.213.17.14
@@ -33,6 +34,11 @@ iface eth0 inet static
     dns-search cs.rpi.edu
 EOL'
     cat /etc/network/interfaces
+
+    #http://www.blackmoreops.com/2013/11/25/how-to-fix-wired-network-interface-device-not-managed-error/
+    #http://askubuntu.com/questions/71159/network-manager-says-device-not-managed
+    sudo sed -i 's/^managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
+    sudo service network-manager restart
 }
 
 
