@@ -262,3 +262,9 @@ rob sp "ibeis.model.hots.pandas_helpers" "ibeis.model.hots.smk.pandas_helpers"
 rob gp "[^.]\<get_flag\>"
 rob sp "\<get_arg\>" "get_argval" True
 rob sp "\<get_flag\>" "get_argflag" True
+
+
+smk
+rob sed "tf" "scc_norm" 
+rob sed "scc_norm" "sccw" 
+
