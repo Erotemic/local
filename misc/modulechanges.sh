@@ -268,3 +268,11 @@ smk
 rob sed "tf" "scc_norm" 
 rob sed "scc_norm" "sccw" 
 
+
+rob sp "mystats" "get_stats"
+rob sp "common_stats" "get_stats_str"
+rob sp "common_stats" "get_stats_str"
+rob sp "\<stats_str\>" "get_stats_str"
+rob sp "\<print_get_stats\>" "print_stats"
+rob gp "\<print_stats\>"
+rob sp "\<print_stats\>" "print_stats"

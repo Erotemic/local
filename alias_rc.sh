@@ -114,6 +114,8 @@ alias hshsgui='cd $CODE_DIR/hotspotter/hsgui'
 alias hes='cd $CODE_DIR/hesaff'
 alias work='cd ~/work'
 alias lnote='cd ~/latex/crall-lab-notebook'
+alias cvp='cd ~/latex/crall-cvpr-15'
+alias cvpr='cd ~/latex/crall-cvpr-15'
 alias cand='cd ~/latex/crall-candidacy-2013/'
 
 alias vdd='vd ~/data'

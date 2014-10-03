@@ -52,9 +52,9 @@ echo '
     fetch = +refs/heads/*:refs/remotes/origin/*
     url = git@hyrule.cs.rpi.edu:'$1'.git
 
-[remote "github"]
-	url = https://github.com/'$gitusername'/'$repo_name'.git
-	fetch = +refs/heads/*:refs/remotes/github/*
+#[remote "github"]
+#    url = https://github.com/'$gitusername'/'$repo_name'.git
+#    fetch = +refs/heads/*:refs/remotes/github/*
 ' > config
 
 echo '5) Fixing ownership'

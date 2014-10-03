@@ -76,9 +76,40 @@ hyrule_create_users()
     #umask 002 work
     #chgrp rpi work
     #chmod g+s work
+
+
+}
+
+setup_gitserver()
+{
+    # Set git user password
+    sudo passwd git
+    # Become git
+    su git
+    cd
+    # Make .ssh dir
+    mkdir .ssh
+    # add authorized keys
+    cat ~joncrall/.ssh/id_rsa.pub >> ~git/.ssh/authorized_keys
+    # Permissions
+    chmod -R go= ~git/.ssh
+    # Change shell so nasty things can't happen on the relatively open git server
+    sudo chsh -s /bin/rbash git
+    sudo chown -R git:git ~git/*
+    sudo chown -R git:git ~git/.ssh
 }
 
 
+make_newrepo()
+{
+    sudo /home/joncrall/scripts//new_repo.sh crall-cvpr-15
+    lt
+    git clone git@hyrule.cs.rpi.edu:crall-cvpr-15.git
+
+    ####
+    #cp .gitignore ../crall-cvpr-15/
+    #cp ~/Dropbox/CVPR\ Paper/*.tex .
+}
 
 recover_backup()
 {
