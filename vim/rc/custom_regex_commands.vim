@@ -127,11 +127,3 @@ s/
 %s/\([a-zA-Z0-9_.]\+\).iteritems()/six.iteritems(\1)/gc
 %s/\([a-zA-Z0-9_.]\+\).iterkeys()/six.iterkeys(\1)/gc
 %s/\([a-zA-Z0-9_.]\+\).itervalues()/six.itervalues(\1)/gc
-
-python -c "import utool; utool.copy('super_setup.py', '_ibeis_setup.py')"
-python _ibeis_setup.py --gg "git checkout master"
-python _ibeis_setup.py --gg "git checkout -b next"
-python _ibeis_setup.py --gg "git merge master"
-python _ibeis_setup.py --gg "git push remote origin/next"
-python _ibeis_setup.py --gg "git checkout next"
-python _ibeis_setup.py --gg "git merge pyqt5"
