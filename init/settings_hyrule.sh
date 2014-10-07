@@ -169,4 +169,38 @@ printer(){
 #http://www.cs.rpi.edu/twiki/view/LabstaffWeb/PublicPrinters
 #http://www.rpi.edu/dept/arc/web/printing/printertype.html
 128.213.17.40
+sudo cat /etc/cups/printers.conf
+sudo gvim /etc/cups/printers.conf
+sudo lpstat -s
+
+# This by itself doesnt seem to work 
+
+sudo sh -c 'cat >> /etc/cups/printers.conf << EOL
+<DefaultPrinter Xerox-Phaser-6300DN>
+UUID urn:uuid:fa12f4f5-4401-3be7-7c43-e1583d40f019
+Info Xerox Phaser 6300DN
+Location 128.213.17.40
+DeviceURI socket://128.213.17.40:9100
+PPDTimeStamp *
+State Idle
+StateTime 1409678168
+Type 8433684
+Accepting Yes
+Shared Yes
+ColorManaged Yes
+JobSheets none none
+QuotaPeriod 0
+PageLimit 0
+KLimit 0
+OpPolicy default
+ErrorPolicy retry-job
+Attribute marker-colors \#00FFFF,#FF00FF,#FFFF00,#000000,none,none,none,none,none,none,none
+Attribute marker-levels 24,33,41,32,0,63,88,88,88,88,0
+Attribute marker-names Cyan Toner Cartridge, Phaser 6300/6350, PN 106R01073,Magenta Toner Cartridge, Phaser 6300/6350, PN 106R01074,Yellow Toner Cartridge, Phaser 6300/6350, PN 106R01075,Black Toner Cartridge, Phaser 6300/6350, PN 106R01076,Imaging Unit, Phaser 6300/6350, PN 108R00645,Fuser, Phaser 6300/6350, PN 115R00035 (110 V)/115R00036 (220 V),Cyan Developer Unit,Magenta Developer Unit,Yellow Developer Unit,Black Developer Unit,Transfer Roller, Phaser 6300/6350, PN 108R000646
+Attribute marker-types toner,toner,toner,toner,opc,fuser,opc,opc,opc,opc,transferUnit
+Attribute marker-change-time 1409678168
+</Printer>
+'
+
+sudo restart cups
 }
