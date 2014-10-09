@@ -76,6 +76,7 @@ alias scr='cd ~/scripts'
 # Special navigation
 alias s='git status'
 alias code='cd $CODE_DIR'
+alias co='cd $CODE_DIR'
 alias cv='cd $CODE_DIR/opencv'
 alias fl='cd $CODE_DIR/flann/'
 #alias cv='cd $CODE_DIR/opencv3'
