@@ -1,4 +1,4 @@
-pypackin()
+ypackin()
 {
     sudo pip install $*
 }
@@ -38,6 +38,7 @@ install_core()
     sudo apt-get install -y openssh-server
     sudo apt-get install -y screen
     sudo apt-get install -y synaptic
+    sudo apt-get install -y astyle
 }
 
 install_core_extras()
@@ -122,7 +123,16 @@ install_python()
     #sudo pip install Xlib
     sudo pip install virtualenv
     sudo pip install requests
-    
+    sudo pip install objgraph
+    sudo pip install memory_profiler
+    sudo pip install guppy
+
+    #https://github.com/rogerbinns/apsw/releases/download/3.8.6-r1/apsw-3.8.6-r1.win32-py2.7.exe
+    sudo apt-get install libsqlite3-dev 
+    sudo apt-get install sqlite3
+    sudo apt-get install libsqlite3
+    sudo apt-get install python-apsw
+    #sudo pip install apsw
 }
 
 install_cuda_prereq()
