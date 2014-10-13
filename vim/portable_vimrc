@@ -48,7 +48,7 @@ source ~/local/vim/rc/custom_font_functions.vim
 source ~/local/vim/rc/custom_misc_functions.vim
 source ~/local/vim/rc/custom_pep8_functions.vim
 source ~/local/vim/rc/custom_regex_functions.vim
-source ~/local/vim/rc/custom_py_functions.vim
+"source ~/local/vim/rc/custom_py_functions.vim
 source ~/local/vim/rc/custom_tex_functions.vim
 source ~/local/vim/rc/commands.vim
 
@@ -60,7 +60,7 @@ source ~/local/vim/rc_settings/gui_settings.vim
 source ~/local/vim/rc_settings/behavior_settings.vim
 source ~/local/vim/rc_settings/remap_funcs.vim
 source ~/local/vim/rc_settings/remap_settings.vim
-source ~/local/vim/rc_settings/autocommand_settings.vim
+"source ~/local/vim/rc_settings/autocommand_settings.vim
 
 
 " Trial / project / temporary vimrc commands
