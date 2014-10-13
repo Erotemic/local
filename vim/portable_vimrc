@@ -69,7 +69,7 @@ source ~/local/vim/rc_settings/autocommand_settings.vim
 "___________________
 " Quick File Access:
 :call QUICKOPEN_leader_tvio(',', '~/local/vim/portable_vimrc')
-:call QUICKOPEN_leader_tvio('0', '~/code/ibeis/_scripts/_timeits')
+:call QUICKOPEN_leader_tvio('0', '~/code/ibeis/ibeis/main_module.py')
 :call QUICKOPEN_leader_tvio('1', '~/code/hesaff/pyhesaff/_pyhesaff.py')
 :call QUICKOPEN_leader_tvio('2', '~/code/vtool/vtool/nearest_neighbors.py')
 :call QUICKOPEN_leader_tvio('3', '~/code/guitool/guitool/api_item_model.py')
@@ -94,7 +94,7 @@ source ~/local/vim/rc_settings/autocommand_settings.vim
 :call QUICKOPEN_leader_tvio('j', '~/code/ibeis/ibeis/io/ingest_database.py')
 :call QUICKOPEN_leader_tvio('k', '~/code/ibeis/ibeis/model/hots/smk/smk_core.py')
 :call QUICKOPEN_leader_tvio('l', '~/latex/crall-lab-notebook/main.tex')
-:call QUICKOPEN_leader_tvio('m', '~/code/ibeis/ibeis/main_module.py')
+:call QUICKOPEN_leader_tvio('m', '~/code/ibeis/ibeis/model/hots/smk/smk_match.py')
 :call QUICKOPEN_leader_tvio('n', '~/code/ibeis/ibeis/model/Config.py')
 :call QUICKOPEN_leader_tvio('o', '~/code/ibeis/ibeis/model/preproc/preproc_image.py')
 :call QUICKOPEN_leader_tvio('p', '~/code/plottool/plottool/__init__.py')
