@@ -226,6 +226,14 @@ Section "InputClass"
     Option "Emulate3Buttons" "false"
 EndSection
 '
+    # Reconfigure x
+    reconfigx(){
+        sudo stop gdm
+        sudo sudo dpkg-reconfigure xserver-xorg
+        sudo sudo nvidia-xconfig 
+    }
+
+    
     #echo "xrandr --output DVI-D-0 --pos 1920x0 --rotate left --output DVI-I-0 --pos 0x0" >> ~/.config/autostart/
 
     #grep DVI | tree -f -L 1 -i --noreport
