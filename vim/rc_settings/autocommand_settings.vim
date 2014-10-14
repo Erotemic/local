@@ -22,7 +22,7 @@ au FileType cpp set cinkeys-=0#
 au FileType cpp set smartindent
 
 " Latex
-"au BufNewFile,BufRead *.tex call LatexInitialize() 
+au BufNewFile,BufRead *.tex call LatexInitialize() 
 
 " AuOnReadPatterns is defined in custom_misc_functions
 :call AuOnReadPatterns('set ft=cpp', '*.txx')
@@ -33,7 +33,7 @@ au FileType cpp set smartindent
 " Prewrite Modifications
 " Remove trailing whitespace
 ":call AuPreWritePatterns(':%s/  *$//e', '*.py', '*.c', '*.cxx', '*.cpp', '*.h', '*.hpp', '*.hxx')
-"au BufWritePre *.py :%s/\s\+$//e
+au BufWritePre *.py :%s/\s\+$//e
 
 "au! BufWritePre *.py :%s/\s\+$//e
 "au BufWritePre *.c :%s/\s\+$//e

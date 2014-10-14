@@ -152,7 +152,7 @@ recover_backup()
 fix_monitor_positions()
 {
     mkdir ~/.config/autostart
-sh -c 'cat >> ~/.config/autostart/fixmonitor.desktop << EOL
+    sh -c 'cat >> ~/.config/autostart/fixmonitor.desktop << EOL
 [Desktop Entry]
 Type=Application
 Name=FixMonitor
