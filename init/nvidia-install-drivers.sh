@@ -82,10 +82,11 @@ apt-cache depends nvidia-340-uvm
 
 reinstall_nvidia()
 {
-    sudo apt-get remove nvidia-340-dev
-    sudo apt-get remove nvidia-340
     sudo apt-get remove cuda
     sudo apt-get remove libcuda1-340
+
+    sudo apt-get remove nvidia-340-dev
+    sudo apt-get remove nvidia-340
     sudo apt-get remove nvidia-libopencl1-340
     sudo apt-get remove nvidia-libopencl-icd-340
     sudo apt-get remove nvidia-settings
