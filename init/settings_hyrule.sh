@@ -161,7 +161,79 @@ Exec=xrandr --output DVI-D-0 --pos 1920x0 --rotate left --output DVI-I-0 --pos 0
 NoDisplay=false
 #X-GNOME-Autostart-Delay=1
 '
+
+
+
+    echo '
+Section "Monitor"
+    Identifier     "Monitor0"
+    VendorName     "Unknown"
+    ModelName      "Samsung SMS24A450/460"
+    HorizSync       30.0 - 81.0
+    VertRefresh     56.0 - 75.0
+    Option         "DPMS"
+	# HorizSync source: edid, VertRefresh source: edid
+EndSection
+
+Section "Monitor"
+    Identifier     "Monitor1"
+    VendorName     "Unknown"
+    ModelName      "Samsung SyncMaster"
+    HorizSync       30.0 - 81.0
+    VertRefresh     56.0 - 60.0
+EndSection
+
+Section "Screen"
+    Identifier     "Screen0"
+    Device         "Device0"
+    Monitor        "Monitor0"
+    DefaultDepth    24
+    Option         "NoLogo" "True"
+    Option         "Stereo" "0"
+    Option         "nvidiaXineramaInfoOrder" "DFP-0"
+    Option         "metamodes" "DFP-0: nvidia-auto-select +0+0, DFP-3: nvidia-auto-select @1920x1920 +1920+0"
+    Option         "AddARGBGLXVisuals" "true"
+    Option         "AllowGLXWithComposite" "true"
+    SubSection     "Display"
+        Depth       24
+    EndSubSection
+EndSection
+
+Section "Screen"
+    Identifier     "Screen1"
+    Device         "Device1"
+    Monitor        "Monitor1"
+    DefaultDepth    24
+    Option         "Stereo" "0"
+    Option         "metamodes" "DFP-3: nvidia-auto-select @1920x1920 +0+0"
+    Option         "AddARGBGLXVisuals" "true"
+    SubSection     "Display"
+        Depth       24
+    EndSubSection
+EndSection
+
+Section "InputClass"
+    Identifier "Marble Mouse"
+    Driver "evdev"
+    MatchProduct "Logitech USB Trackball"
+    MatchDevicePath "/dev/input/event*"
+    MatchIsPointer "yes"
+    Option "ButtonMapping" "1 9 3 4 5 6 7 2 8"
+    Option "EmulateWheel" "true"
+    Option "EmulateWheelButton" "3"
+    Option "ZAxisMapping" "4 5"
+    Option "XAxisMapping" "6 7"
+    Option "Emulate3Buttons" "false"
+EndSection
+'
     #echo "xrandr --output DVI-D-0 --pos 1920x0 --rotate left --output DVI-I-0 --pos 0x0" >> ~/.config/autostart/
+
+    #grep DVI | tree -f -L 1 -i --noreport
+    #sudo grep -rRl --include="*" "DVI-D-0" .
+
+    # Regenen /etc/X11/xorg.conf
+    #sudo nvidia-xconfig
+    
 }
 
 
