@@ -1,0 +1,1 @@
+cd %USERPROFILE%/latex/crall-cvpr-15 %*

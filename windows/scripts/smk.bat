@@ -1,0 +1,1 @@
+cd %CODE_DIR%/ibeis/ibeis/model/hots/smk %*
