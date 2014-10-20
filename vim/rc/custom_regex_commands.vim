@@ -127,3 +127,6 @@ s/
 %s/\([a-zA-Z0-9_.]\+\).iteritems()/six.iteritems(\1)/gc
 %s/\([a-zA-Z0-9_.]\+\).iterkeys()/six.iterkeys(\1)/gc
 %s/\([a-zA-Z0-9_.]\+\).itervalues()/six.itervalues(\1)/gc
+
+
+%s/^\( *\)\<[a-zA-Z_]* *= *lambda\(.*\):\(.*\)/\1def\2(\3):\r\1    return \4
