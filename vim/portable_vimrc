@@ -120,3 +120,93 @@ source ~/local/vim/rc_settings/autocommand_settings.vim
 ":call QUICKOPEN_leader_tvio('e', '~/code/ibeis/ibeis/dev/experiment_harness.py')
 ":call QUICKOPEN_leader_tvio('e', '~/code/ibeis/ibeis/io/export_subset.py')
 ":call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/inspect_gui.py')
+
+
+func! InsertDocstr() 
+    if !exists("g:togfont") 
+        let g:togfont=0
+    endif
+    python << endpython
+import vim
+import utool
+
+# Get text posision
+(row, col) = vim.current.window.cursor
+# Text to insert into the current buffer
+
+# Janky way to find function name
+searchlines = []
+def seach_for_funcname():
+    for i in range(20):
+        offset = (i / 2) * (-1 * (i % 2))
+        searchline = vim.current.buffer[row + offset]
+        clean = searchline.strip(' ')
+        searchlines.append('SEARCHLINE ' + clean)
+        if clean.startswith('def '):  # and clean.endswith(':'):
+            rparen_pos = clean.find('(')
+            if rparen_pos > 0:
+                funcname = clean[4:rparen_pos].strip(' ')
+                return funcname
+  
+funcname = seach_for_funcname()
+dbgtext = ''
+
+modname = utool.get_absolute_import(vim.current.buffer.name)
+modname = modname.replace('.__init__', '').strip()
+
+flag = False
+docstr = ''
+if funcname is None:
+    funcname = '[vimerr] UNKNOWN_FUNC'
+    flag = True
+else:
+    modname = modname
+    docstr = utool.auto_docstr(modname, funcname, verbose=False)
+    if docstr[:].strip() == 'error':
+        flag = True
+      
+if flag:
+    dbgtext = '\nDEBUGTEXT: modname=%r, funcname=%r\n' % (modname, funcname)
+    dbgtext += '\n'.join(searchlines)
+
+text = '\n'.join([docstr + dbgtext])
+lines = [line.encode('utf-8') for line in text.split('\n')]
+
+#+--------------
+# Insertion Code
+#+--------------
+buffer_tail = vim.current.buffer[row:]  # Original end of the file
+new_tail = lines + buffer_tail  # Prepend our data
+del(vim.current.buffer[row:]) # delete old data
+vim.current.buffer.append(new_tail) # append new data
+#L______________
+endpython
+":ECHOVAR gfn
+endfu 
+
+:noremap <c-d> :call InsertDocstr()<CR>
+:inoremap <c-d> :call InsertDocstr()<CR>
+
+"vim.current.buffer[row:row + 1].append(lines)
+"#vim.command('r~/%s' % fpath)
+"#print(docstr)
+"# utool.write_to(fpath, docstr)
+"#vim.current.buffer[0] = "hello, world" # change first line
+"#vim.current.buffer.append("last line!")
+":let @" = expand("%")
+"#"dbgtext += ' modname=' + modname + ' funcname=' + funcname
+"#modname = 'utool.util_path'
+"#funcname = 'get_module_dir'
+
+"#print(utool.list_str(dir(vim.current.buffer)))
+"#print('fpath=%r' % fpath)
+"#vim.current.buffer[row:row + len(lines)].extend(lines)
+"#for line in lines:
+"#modname = 'ibeis.model.detect.randomforest'
+"#funcname = 'compute_hough_images'
+"#utool.rrrr()
+"#"print(type(vim.current.buffer))
+"#for _ in docstr.split('\n'):
+"#    vim.current.buffer.append(_) 
+"# Filename of the module we are in
+"#vim.current.buffer.append(lines)
