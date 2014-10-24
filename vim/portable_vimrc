@@ -9,19 +9,19 @@ set encoding=utf8
 python << endpython
 import vim
 enabled = [
-    'csv.vim',
-    'grep.vim',
     'jedi-vim',
     'nerdcommenter',
     'nerdtree',
     'supertab',
     'syntastic',
-    'vim-repeat',
     'vim-startify',
 ] 
 
 # Add a plugin to this list to disable it 
 disabled = [
+    'csv.vim',
+    'grep.vim',
+    'vim-repeat',
     'Conque-Shell',
     'highlight.vim',
     'vim-airline',
@@ -55,7 +55,7 @@ source ~/local/vim/rc/commands.vim
 "===========Settings==========="
 source ~/local/vim/rc_settings/plugin_settings.vim
 source ~/local/vim/rc_settings/plugins_python.vim
-source ~/local/vim/rc_settings/plugins_latex.vim
+"source ~/local/vim/rc_settings/plugins_latex.vim
 source ~/local/vim/rc_settings/gui_settings.vim
 source ~/local/vim/rc_settings/behavior_settings.vim
 source ~/local/vim/rc_settings/remap_funcs.vim
@@ -103,6 +103,7 @@ source ~/local/vim/rc_settings/autocommand_settings.vim
 :call QUICKOPEN_leader_tvio('s', '~/code/ibeis/ibeis/control/SQLDatabaseControl.py')
 :call QUICKOPEN_leader_tvio('t', '~/code/ibeis/ibeis/tests')
 :call QUICKOPEN_leader_tvio('u', '~/code/utool/utool/__init__.py')
+:call QUICKOPEN_leader_tvio('U', '~/code/utool/utool/util_dev.py')
 :call QUICKOPEN_leader_tvio('v', '~/code/vtool/vtool/__init__.py')
 "w
 :call QUICKOPEN_leader_tvio('x', '~/code/ibeis/ibeis/viz/interact/interact_name.py')
@@ -120,72 +121,6 @@ source ~/local/vim/rc_settings/autocommand_settings.vim
 ":call QUICKOPEN_leader_tvio('e', '~/code/ibeis/ibeis/dev/experiment_harness.py')
 ":call QUICKOPEN_leader_tvio('e', '~/code/ibeis/ibeis/io/export_subset.py')
 ":call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/inspect_gui.py')
-
-
-func! InsertDocstr() 
-    if !exists("g:togfont") 
-        let g:togfont=0
-    endif
-    python << endpython
-import vim
-import utool
-
-# Get text posision
-(row, col) = vim.current.window.cursor
-# Text to insert into the current buffer
-
-# Janky way to find function name
-searchlines = []
-def seach_for_funcname():
-    for i in range(20):
-        offset = (i / 2) * (-1 * (i % 2))
-        searchline = vim.current.buffer[row + offset]
-        clean = searchline.strip(' ')
-        searchlines.append('SEARCHLINE ' + clean)
-        if clean.startswith('def '):  # and clean.endswith(':'):
-            rparen_pos = clean.find('(')
-            if rparen_pos > 0:
-                funcname = clean[4:rparen_pos].strip(' ')
-                return funcname
-  
-funcname = seach_for_funcname()
-dbgtext = ''
-
-modname = utool.get_absolute_import(vim.current.buffer.name)
-modname = modname.replace('.__init__', '').strip()
-
-flag = False
-docstr = ''
-if funcname is None:
-    funcname = '[vimerr] UNKNOWN_FUNC'
-    flag = True
-else:
-    modname = modname
-    docstr = utool.auto_docstr(modname, funcname, verbose=False)
-    if docstr[:].strip() == 'error':
-        flag = True
-      
-if flag:
-    dbgtext = '\nDEBUGTEXT: modname=%r, funcname=%r\n' % (modname, funcname)
-    dbgtext += '\n'.join(searchlines)
-
-text = '\n'.join([docstr + dbgtext])
-lines = [line.encode('utf-8') for line in text.split('\n')]
-
-#+--------------
-# Insertion Code
-#+--------------
-buffer_tail = vim.current.buffer[row:]  # Original end of the file
-new_tail = lines + buffer_tail  # Prepend our data
-del(vim.current.buffer[row:]) # delete old data
-vim.current.buffer.append(new_tail) # append new data
-#L______________
-endpython
-":ECHOVAR gfn
-endfu 
-
-:noremap <c-d> :call InsertDocstr()<CR>
-:inoremap <c-d> :call InsertDocstr()<CR>
 
 "vim.current.buffer[row:row + 1].append(lines)
 "#vim.command('r~/%s' % fpath)

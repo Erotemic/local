@@ -312,6 +312,26 @@ endfu
 command! MYINFOCMD call MYINFO() <C-R>
 
 
+func! InsertDocstr() 
+python << endpython
+import vim
+#vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
+import utool
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+
+text = pyvim_funcs.auto_docstr()
+pyvim_funcs.insert_codeblock_at_cursor(text)
+
+#L______________
+endpython
+":ECHOVAR gfn
+endfu 
+
+
+func! ReloadVIMRC()
+    source ~/local/vim/portable_vimrc
+endfu
+
 
 " ========= Functions ========= "
 "command! TextWidthMarkerOn call FUNC_TextWidthMarkerOn()

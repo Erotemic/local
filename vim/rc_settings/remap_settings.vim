@@ -7,7 +7,6 @@
 "useful funcs for leaderkeys
 " Remap COLOn colon to semicolon (in normal and visual mode)
 
-
 :noremap <F9> <s-v>
 :noremap <F10> <s-v>
 
@@ -17,7 +16,7 @@ CMDSWAP : ;
 
 " Map to several leaderkeys with the main being ","
 let mapleader = ","
-:noremap \ ,
+noremap \ ,
 ":noremap y "+y
 "CMDUNMAP y y
 
@@ -26,7 +25,16 @@ let mapleader = ","
 "noremap <Home> <Esc>
 ":imap <Del> <Esc>
 
+noremap <leader>d :call InsertDocstr()<CR>
+"inoremap <leader>d :call InsertDocstr()<CR>
 
+:noremap <c-d> :call InsertDocstr()<CR>
+":inoremap <c-d> :call InsertDocstr()<CR>
+
+" Hotkey: <leader>rrr Reload the vimrc
+"noremap <leader>rrr :source ~/local/vim/portable_vimrc<CR>
+noremap <leader>r :source ~/local/vim/portable_vimrc<CR>
+noremap <leader>R :source ~/local/vim/portable_vimrc<CR>
 
 " Function Keys
 "
@@ -57,11 +65,6 @@ let mapleader = ","
 :noremap <F8> :call Tex_RunViewLaTeX()<CR>
 :noremap <F12> :call ToggleAlpha()<CR>
 
-" Hotkey: <leader>rrr Reload the vimrc
-"noremap <leader>rrr :source ~/local/vim/portable_vimrc<CR>
-noremap <leader>r :source ~/local/vim/portable_vimrc<CR>
-noremap <leader>R :source ~/local/vim/portable_vimrc<CR>
-
 
 " Remap Alt+q to escape
 inoremap <silent><A-q> <ESC>
@@ -91,7 +94,7 @@ nnoremap <leader>p :call Tex_RunViewLaTeX()<CR>
 nmap <C-P> :call Tex_RunViewLaTeX() <CR>
 imap <C-P> :call Tex_RunViewLaTeX() <CR>
 
-nnoremap <leader>d :FontDecrease<c-w> <c-w>
+"nnoremap <leader>d :FontDecrease<c-w> <c-w>
 
 " Move in split windows
 "nnoremap <leader>w w :<c-w> <c-w>
@@ -164,11 +167,6 @@ noremap <leader>9 9gt
 let @q=',qw'
 let @r='VG;<c-p>'
 
-func! FIXQT_DOC()
-:s/\t/    /gc
-:s/ * Qt::\([^0-9]*\)\([0-9]\)/\2: '\1' #/gc
-endfu
-
 " K goes to the help for the object under the cursor.
 " This is anoying. Kill the behavior
 " Or learn how to use it?
@@ -176,7 +174,6 @@ endfu
 
 " Close a tab
 noremap <leader>qt :tabclose<CR>
-noremap <leader>. i>>> 
 map <c-`> <c-o>
 
 
@@ -203,7 +200,6 @@ let@e=':Align ='
 " I got this by typing Ctrl+Q<ESC> 
 " 
 " 
-"
 
 
 "nmap <leader>u :call ToggleNumberLineInvert()<CR>
@@ -223,3 +219,6 @@ let@e=':Align ='
 
 ":noremap <leader><F2> "+y
 ":inoremap <leader><F2> <ESC>"+ya
+
+" OLD
+"noremap <leader>. i>>> 

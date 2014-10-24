@@ -45,3 +45,8 @@ fu! FUNC_np_FIX_COMMON()
     :call FUNC_np_Style_NoCheck("bitwise_or")
     :call FUNC_np_Style_NoCheck("iterable")
 endfu
+
+func! FIXQT_DOC()
+    :s/\t/    /gc
+    :s/ * Qt::\([^0-9]*\)\([0-9]\)/\2: '\1' #/gc
+endfu

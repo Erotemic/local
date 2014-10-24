@@ -39,6 +39,14 @@ install_core()
     sudo apt-get install -y screen
     sudo apt-get install -y synaptic
     sudo apt-get install -y astyle
+
+    # 
+    sudo apt_get install libhighgui2.4
+    sudo apt_get install libcv2.4
+    sudo apt_get install libcvaux-dev
+    sudo apt_get install opencv-doc
+
+    
 }
 
 install_core_extras()

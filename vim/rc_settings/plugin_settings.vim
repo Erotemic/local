@@ -37,7 +37,7 @@ ignore_files = [
 "\'", 
 #"~", 
 ]
-# FIXME: FIx the tilde
+# FIXME: Fix the tilde
 
 # Convert files and suffixes to regexes
 ignore_suffix_regexes = [suffix.replace('.', '\\.') + '$' for suffix in ignore_suffixes]

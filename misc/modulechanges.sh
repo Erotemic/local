@@ -276,3 +276,35 @@ rob sp "\<stats_str\>" "get_stats_str"
 rob sp "\<print_get_stats\>" "print_stats"
 rob gp "\<print_stats\>"
 rob sp "\<print_stats\>" "print_stats"
+
+python -c "import utool; utool.print_auto_docstr('ibeis.model.hots.smk.smk_index', 'compute_negentropy_names')"
+python -c "import utool; utool.print_auto_docstr('ibeis.model.hots.nn_weights', 'nn_normalized_weight')"
+python -c "import utool; utool.print_auto_docstr('ibeis.model.hots.match_chips4', 'execute_query_and_save_L1')"
+python -c "import utool; utool.print_auto_docstr('ibeis.model.hots.pipeline', 'weight_neighbors')" --verbose
+python -c "import utool; utool.print_auto_docstr('ibeis.model.hots.pipeline', 'weight_neighbors')" --verbose
+python -c "import utool; utool.print_auto_docstr('ibeis.model.hots.pipeline', 'filter_neighbors')" 
+python -c "import utool; utool.print_auto_docstr('ibeis.model.hots.pipeline', 'spatial_verification')" 
+python -c "import utool; utool.print_auto_docstr('ibeis.model.hots.pipeline', 'precompute_topx2_dlen_sqrd')" 
+python -c "import utool; utool.print_auto_docstr('ibeis.model.hots.pipeline', 'chipmatch_to_resdict')" 
+python -c "import utool; utool.print_auto_docstr('ibeis.model.hots.pipeline', 'try_load_resdict')" 
+python -c "import utool; utool.print_auto_docstr('ibeis.model.hots.pipeline', 'save_resdict')" 
+python -c "import utool; utool.print_auto_docstr('ibeis.model.hots.pipeline', 'score_chipmatch')" 
+python -c "import utool; utool.print_auto_docstr('ibeis.model.hots.nn_weights', 'apply_normweight')" 
+python -c "import utool; utool.print_auto_docstr('ibeis.model.hots.nn_weights', 'get_name_normalizers')" 
+python -c "import utool; utool.print_auto_docstr('ibeis.model.hots.nn_weights', 'mark_name_valid_normalizers')" 
+
+python -c "import utool; utool.print_auto_docstr('utool.util_dbg', 'search_stack_for_localvar')" 
+python -c "import utool; utool.print_auto_docstr('utool.util_dbg', 'get_parent_locals')" 
+python -c "import utool; utool.print_auto_docstr('utool.util_dbg', 'printex')" --verbose
+python -c "import utool; utool.print_auto_docstr('utool.util_dbg', 'get_varname_from_locals')" --verbose
+python -c "import utool; utool.print_auto_docstr('ibeis.dev.experiment_helpers', 'get_cfg_list_and_lbls')" --verbose
+
+
+
+rob sp smk_index.index_data_annots smk_repr.index_data_annots
+rob sp smk_index.compute_data_internals_ smk_repr.compute_data_internals_
+rob sp smk_index.make_annot_df smk_repr.make_annot_df
+rob sp smk_index.new_qindex smk_repr.new_qindex
+rob sp smk_core.sccw_summation smk_scoreing.sccw_summation
+
+
