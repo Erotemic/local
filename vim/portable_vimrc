@@ -6,6 +6,8 @@ set encoding=utf8
 " Pathogen is the first thing to run
 "filetype off
 
+:set runtimepath+=~/local/vim/vimfiles/
+
 python << endpython
 import vim
 enabled = [
@@ -34,7 +36,10 @@ disabled = [
 vim.command('let g:pathogen_disabled = ' + repr(disabled))
 endpython
 
+":ECHOVAR runtimepath
+"# http://stackoverflow.com/questions/6639786/pathogen-vim-non-default-bundle-directory-location
 source ~/local/vim/vimfiles/autoload/pathogen.vim
+:call pathogen#runtime_append_all_bundles('bundle')
 execute pathogen#infect()
 call pathogen#helptags()
 "call pathogen#infect()

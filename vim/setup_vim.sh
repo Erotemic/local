@@ -8,4 +8,3 @@
 
 #ln -s ~joncrall/Dropbox/Settings/vim/vimfiles ~/.vim
 #ln -s ~joncrall/Dropbox/Settings/vim/_vimrc ~/.vimrc
-

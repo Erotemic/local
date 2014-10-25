@@ -86,10 +86,6 @@ if !exists("g:togfont")
     :exec "call ToggleFont()"
 endif
 
-
-
-
-
 "---------
 " clean these up
 "

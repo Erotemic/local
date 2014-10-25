@@ -10,4 +10,5 @@ cd %INSTALL32%\Vim\
 
 echo source $USERPROFILE\local\vim\portable_vimrc > _vimrc
 
-MKLINK /J vimfiles %LOCAL_DIR%\vim\vimfiles
+:: taken care of in portable_vimrc
+:: MKLINK /J vimfiles %LOCAL_DIR%\vim\vimfiles
