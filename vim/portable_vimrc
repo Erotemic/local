@@ -126,27 +126,3 @@ source ~/local/vim/rc_settings/autocommand_settings.vim
 ":call QUICKOPEN_leader_tvio('e', '~/code/ibeis/ibeis/dev/experiment_harness.py')
 ":call QUICKOPEN_leader_tvio('e', '~/code/ibeis/ibeis/io/export_subset.py')
 ":call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/inspect_gui.py')
-
-"vim.current.buffer[row:row + 1].append(lines)
-"#vim.command('r~/%s' % fpath)
-"#print(docstr)
-"# utool.write_to(fpath, docstr)
-"#vim.current.buffer[0] = "hello, world" # change first line
-"#vim.current.buffer.append("last line!")
-":let @" = expand("%")
-"#"dbgtext += ' modname=' + modname + ' funcname=' + funcname
-"#modname = 'utool.util_path'
-"#funcname = 'get_module_dir'
-
-"#print(utool.list_str(dir(vim.current.buffer)))
-"#print('fpath=%r' % fpath)
-"#vim.current.buffer[row:row + len(lines)].extend(lines)
-"#for line in lines:
-"#modname = 'ibeis.model.detect.randomforest'
-"#funcname = 'compute_hough_images'
-"#utool.rrrr()
-"#"print(type(vim.current.buffer))
-"#for _ in docstr.split('\n'):
-"#    vim.current.buffer.append(_) 
-"# Filename of the module we are in
-"#vim.current.buffer.append(lines)
