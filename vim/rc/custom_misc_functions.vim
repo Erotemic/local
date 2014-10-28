@@ -266,8 +266,8 @@ while True:
     try:
         pattern = vim.eval('a:%d' % ix)
         cmdfmt = ":exec au BufWritePre {pattern} {aucmdstr}"
-        cmd = cmdfmt.format(pattern=pattern, aucmdstr=aucmdstr)
-        vim.command(cmd)
+        cmdstr = cmdfmt.format(pattern=pattern, aucmdstr=aucmdstr)
+        vim.command(cmdstr)
     except Exception:
         break
     ix += 1
@@ -319,12 +319,33 @@ import vim
 import utool
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 
-text = pyvim_funcs.auto_docstr()
-pyvim_funcs.insert_codeblock_at_cursor(text)
-
+if pyvim_funcs.is_module_pythonfile():
+    print('building docstr')
+    text = pyvim_funcs.auto_docstr()
+    pyvim_funcs.insert_codeblock_at_cursor(text)
+else:
+    print('current file is not a pythonfile')
 #L______________
 endpython
-":ECHOVAR gfn
+endfu 
+
+
+func! AutoPep8Block() 
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool
+
+pyvim_funcs.ensure_normalmode()
+
+if pyvim_funcs.is_module_pythonfile():
+    print('autopep8ing file')
+    text = pyvim_funcs.get_codelines_around_buffer()
+    pyvim_funcs.insert_codeblock_at_cursor(text)
+else:
+    print('current file is not a pythonfile')
+#L______________
+endpython
 endfu 
 
 

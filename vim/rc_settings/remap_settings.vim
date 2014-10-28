@@ -29,6 +29,12 @@ noremap <leader>d :call InsertDocstr()<CR>
 "inoremap <leader>d :call InsertDocstr()<CR>
 
 :noremap <c-d> :call InsertDocstr()<CR>
+:noremap <c-1> :call InsertDocstr()<CR>
+:inoremap <c-1> :call InsertDocstr()<CR>
+
+:noremap <c-e> :call InsertDocstr()<CR>
+:inoremap <c-2> :call AutoPep8Block()<CR>
+:noremap <c-2> :call AutoPep8Block()<CR>
 ":inoremap <c-d> :call InsertDocstr()<CR>
 
 " Hotkey: <leader>rrr Reload the vimrc
