@@ -48,9 +48,12 @@ def get_codelines_around_buffer(rows_before=0, rows_after=10):
 
 def is_module_pythonfile():
     from os.path import splitext
-    modname = get_current_modulename()
-    ext = splitext(modname)[1]
+    import vim
+    modpath = vim.current.buffer.name
+    ext = splitext(modpath)[1]
     ispyfile = ext == '.py'
+    #print(modname)
+    #print(ext)
     return ispyfile
 
 

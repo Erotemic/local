@@ -55,6 +55,18 @@ install_core_extras()
     sudo apt-get install -y okular
     sudo apt-get install -y subversion
     sudo apt-get install -y filezilla
+
+}
+
+install_ppa_extras()
+{
+    
+    # To clean up old kernels
+    # References: http://askubuntu.com/questions/2793/how-do-i-remove-or-hide-old-kernel-versions-to-clean-up-the-boot-menu
+    sudo add-apt-repository ppa:tualatrix/ppa
+    sudo apt-get update
+    sudo apt-get install -y ubuntu-tweak
+    
 }
 
 install_chrome()

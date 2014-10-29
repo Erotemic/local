@@ -130,3 +130,6 @@ s/
 
 
 %s/^\( *\)\<[a-zA-Z_]* *= *lambda\(.*\):\(.*\)/\1def\2(\3):\r\1    return \4
+
+# Remove iter()
+s/iter(\([^)]*\))/\1/gc
