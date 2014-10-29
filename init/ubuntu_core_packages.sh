@@ -46,6 +46,11 @@ install_core()
     sudo apt_get install libcvaux-dev
     sudo apt_get install opencv-doc
 
+
+    # sqlite db  editor
+    sudo apt-get install sqliteman
+    
+
     
 }
 
