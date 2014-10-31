@@ -53,10 +53,10 @@ noremap <leader>R :source ~/local/vim/portable_vimrc<CR>
 
 " === F2 ===
 :call FKeyFuncMap('<F2>', ':call PythonRevert()<CR>')
-:call FKeyFuncMap('<c-F2>', ':call PythonInvert()<CR>')
+:call FKeyFuncMap('<F3>', ':call PythonInvert()<CR>')
 
 " === F3 ===
-:call FKeyFuncMap('<F3>', ':call NumberLineRevert()<CR>')
+:call FKeyFuncMap('<c-F2>', ':call NumberLineRevert()<CR>')
 :call FKeyFuncMap('<c-F3>', ':call NumberLineInvert()<CR>')
 " === F4 ===
 "http://vim.1045645.n5.nabble.com/How-to-map-two-commands-on-one-key-td1162164.html
@@ -195,8 +195,10 @@ inoremap <C-U> <C-G>u<C-U>
 
 " Define Macros
 let @q=',qw'
-let @1='40j'
-let @2='40k'
+let @2=',qw'
+
+"let @1='40j'
+"let @2='40k'
 
 " write a self. in normal mode
 let@s='iself.'

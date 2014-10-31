@@ -1,42 +1,81 @@
 from os.path import expanduser
 
 
-def find_pyfunc_near_cursor():
+def parse_callname(searchline, sentinal='def '):
+    rparen_pos = searchline.find('(')
+    if rparen_pos > 0:
+        callname = searchline[len(sentinal):rparen_pos].strip(' ')
+        return callname
+    return None
+
+
+def find_pattern_above_row(pattern, line_list, row, maxIter=50):
+    import re
+    # Janky way to find function name
+    ix = 0
+    while True:
+        pos = row - ix
+        if maxIter is not None and ix > maxIter:
+            break
+        if pos < 0:
+            break
+            raise AssertionError('end of buffer')
+        searchline = line_list[pos]
+        if re.match(pattern, searchline) is not None:
+            return searchline, pos
+        ix += 1
+
+
+def find_pyclass_above_row(line_list, row):
+    # Get text posision
+    pattern = '^class [a-zA-Z_]'
+    classline, classpos = find_pattern_above_row(pattern, line_list, row, maxIter=None)
+    return classline, classpos
+
+
+def find_pyfunc_above_row(line_list, row):
+    """
+    >>> import utool
+    >>> fpath = utool.truepath('~/code/ibeis/ibeis/control/IBEISControl.py')
+    >>> line_list = utool.read_from(fpath, aslines=True)
+    >>> row = 200
+    >>> pyfunc, searchline = find_pyfunc_above_row(line_list, row)
+    """
+    searchlines = []  # for debugging
+    funcname = None
+    # Janky way to find function name
+    func_sentinal   = 'def '
+    method_sentinal = '    def '
+    for ix in range(50):
+        func_pos = row - ix
+        searchline = line_list[func_pos]
+        cleanline = searchline.strip(' ')
+        searchlines.append(cleanline)
+        if searchline.startswith(func_sentinal):  # and cleanline.endswith(':'):
+            # Found a valid function name
+            funcname = parse_callname(searchline, func_sentinal)
+            if funcname is not None:
+                break
+        if searchline.startswith(method_sentinal):  # and cleanline.endswith(':'):
+            # Found a valid function name
+            funcname = parse_callname(searchline, method_sentinal)
+            if funcname is not None:
+                classline, classpos = find_pyclass_above_row(line_list, func_pos)
+                classname = parse_callname(classline, 'class ')
+                if classname is not None:
+                    funcname = '.'.join([classname, funcname])
+                    break
+                else:
+                    funcname = None
+    return funcname, searchlines
+
+
+def find_pyfunc_above_cursor():
     import vim
     # Get text posision
     (row, col) = vim.current.window.cursor
-    searchlines = []  # for debugging
-
-    # Janky way to find function name
-    for ix in range(50):
-        searchline = vim.current.buffer[row - ix]
-        cleanline = searchline.strip(' ')
-        searchlines.append(cleanline)
-        if cleanline.startswith('def '):  # and cleanline.endswith(':'):
-            rparen_pos = cleanline.find('(')
-            if rparen_pos > 0:
-                funcname = cleanline[4:rparen_pos].strip(' ')
-                # Found a valid function name
-                return funcname,  searchlines
-    return None, searchlines
-
-
-def pep8_codeblock(uglycode):
-    """
-    >>> import utool
-    >>> uglycode = utool.codeblock(
-        '''
-        def verysimplefunc(with , some = 'Problems'):
-          syntax ='Ok'
-          but = 'Its very very  very  very  very  very  very  very  very  very very  very very  very messy'
-          if None:
-           # syntax might not be perfect due to being cut off
-        ''')
-    """
-    import autopep8
-    nicecode = autopep8.fix_code(uglycode)
-    #print(nicecode)
-    return nicecode
+    line_list = vim.current.buffer
+    return find_pyfunc_above_row(line_list, row)
 
 
 def get_codelines_around_buffer(rows_before=0, rows_after=10):
@@ -82,7 +121,7 @@ def insert_codeblock_at_cursor(text):
     vim.current.buffer.append(new_tail)  # append new data
 
 
-def auto_docstr(tmp=False):
+def auto_docstr():
     from utool import util_dev
     from utool import util_str
     import vim
@@ -98,16 +137,19 @@ def auto_docstr(tmp=False):
     dbgmsg = ''
 
     try:
-        funcname, searchlines = find_pyfunc_near_cursor()
+        funcname, searchlines = find_pyfunc_above_cursor()
         modname = get_current_modulename()
 
         if funcname is None:
-            funcname = '[vimerr] UNKNOWN_FUNC'
+            funcname = '[vimerr] UNKNOWN_FUNC: funcname is None'
             flag = True
         else:
             modname = modname
             # Text to insert into the current buffer
+            #util_dev.rrr()
             docstr = util_dev.auto_docstr(modname, funcname, verbose=False)
+            #if docstr.find('unexpected indent') > 0:
+            #    docstr = funcname + ' ' + docstr
             if docstr[:].strip() == 'error':
                 flag = True
     except vim.error as ex:

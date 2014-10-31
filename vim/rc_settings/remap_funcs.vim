@@ -164,7 +164,7 @@ endfu
 
 func! PythonInvert()
     "map each number to its shift-key character
-    ":CMDSWAP : ;
+    :CMDSWAP : ;
     :CMDSWAP 9 (
     :CMDSWAP 0 )
     :CMDSWAP - _
@@ -174,7 +174,7 @@ endfu
 
 func! PythonRevert()
     "map each number to its shift-key character
-    ":CMDUNSWAP : ;
+    :CMDUNSWAP : ;
     :CMDUNSWAP 9 (
     :CMDUNSWAP 0 )
     :CMDUNSWAP - _
