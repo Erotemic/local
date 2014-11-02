@@ -49,7 +49,7 @@ au BufWritePre *.py :%s/\s\+$//e
 "au BufNewFile,BufRead *.txx  set ft=cpp
 "au BufNewFile,BufRead *.poly set ft=cmake
 "au BufNewFile,BufRead *.pyx  set ft=cython
-"au BufNewFile,BufRead *.spec set ft=python
+au BufNewFile,BufRead *.spec set ft=python
 "au BufNewFile,BufRead *.node set ft=cmake
 "au BufNewFile,BufRead *.ele  set ft=cmake
 "au BufNewFile,BufRead *.ahk, set ft=Autohotkey

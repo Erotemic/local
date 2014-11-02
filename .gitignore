@@ -21,3 +21,6 @@ vim/vimfiles/bundle
 vim/vimfiles/.netrwhist
 misc/tests/*.exe
 youtube-dl.exe
+
+vim/vimfiles/ftplugin/latex-suite/bibtools.pyc
+vim/vimfiles/ftplugin/latex-suite/outline.pyc
