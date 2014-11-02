@@ -24,3 +24,9 @@ youtube-dl.exe
 
 vim/vimfiles/ftplugin/latex-suite/bibtools.pyc
 vim/vimfiles/ftplugin/latex-suite/outline.pyc
+
+tests/
+vim/docstr_template.txt
+vim/vimfiles/clutter
+speech/_multiedit.txt
+speech/_bringme-en.txt
