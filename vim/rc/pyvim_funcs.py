@@ -122,10 +122,13 @@ def insert_codeblock_at_cursor(text):
 
 
 def auto_docstr():
+    import imp
+    import utool
+    imp.reload(utool)
+    utool.rrrr(verbose=False)
     from utool import util_dev
     from utool import util_str
     import vim
-    import imp
     imp.reload(util_dev)
     imp.reload(util_str)
 
