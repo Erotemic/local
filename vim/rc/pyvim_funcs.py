@@ -100,11 +100,10 @@ def get_current_modulename():
     """
     returns current module being edited
     """
-    from utool  import util_path
-    import imp
+    import utool
+    utool.rrrr(True)
     import vim
-    imp.reload(util_path)
-    modname = util_path.get_absolute_import(vim.current.buffer.name)
+    modname = utool.get_absolute_import(vim.current.buffer.name)
     return modname
 
 
@@ -126,11 +125,7 @@ def auto_docstr():
     import utool
     imp.reload(utool)
     utool.rrrr(verbose=False)
-    from utool import util_dev
-    from utool import util_str
     import vim
-    imp.reload(util_dev)
-    imp.reload(util_str)
 
     modname = None
     funcname = None
@@ -149,8 +144,7 @@ def auto_docstr():
         else:
             modname = modname
             # Text to insert into the current buffer
-            #util_dev.rrr()
-            docstr = util_dev.auto_docstr(modname, funcname, verbose=False)
+            docstr = utool.auto_docstr(modname, funcname, verbose=False)
             #if docstr.find('unexpected indent') > 0:
             #    docstr = funcname + ' ' + docstr
             if docstr[:].strip() == 'error':
@@ -171,7 +165,7 @@ def auto_docstr():
         dbgtext += '\n+----------------------'
         dbgtext += '\n| InsertDoctstr(modname=%r, funcname=%r' % (modname, funcname)
         dbgtext += '\n+----------------------'
-        dbgtext += util_str.indentjoin(searchlines, '\n| ')
+        dbgtext += utool.indentjoin(searchlines, '\n| ')
         dbgtext += '\nL----------------------'
 
     text = '\n'.join([docstr + dbgtext])
