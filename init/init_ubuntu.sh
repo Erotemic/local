@@ -170,6 +170,15 @@ other_fonts()
     sudo cp zevv-peep-iso8859-15-08x16.bdf /usr/share/fonts/X11/misc
     xset +fp /usr/share/fonts/X11/misc
 }
+
+
+make_rcfiles()
+{
+     sh -c 'cat >> ~/.screenrc << EOL
+    def scrollback 99999
+EOL'
+    echo 
+}
   
 
 purge_opencv()

@@ -308,3 +308,7 @@ rob sp smk_index.new_qindex smk_repr.new_qindex
 rob sp smk_core.sccw_summation smk_scoreing.sccw_summation
 
 
+rob sp classmember make_class_method_decorator
+rob sp decorate_make_class_method_decorator decorate_class_method
+rob sp classpostinject make_class_postinject_decorator
+rob sp decorate_postinject decorate_postinject

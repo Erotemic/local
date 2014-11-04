@@ -91,6 +91,7 @@ source ~/local/vim/rc_settings/autocommand_settings.vim
 :call QUICKOPEN_leader_tvio('b', '~/local/bashrc.sh')
 :call QUICKOPEN_leader_tvio('c', '~/code/ibeis/ibeis/control/IBEISControl.py')
 :call QUICKOPEN_leader_tvio('d', '~/code/ibeis/dev.py')
+:call QUICKOPEN_leader_tvio('R', '~/code/ibeis/README.md')
 :call QUICKOPEN_leader_tvio('e', '~/code/ibeis/ibeis/dev/experiment_printres.py')
 :call QUICKOPEN_leader_tvio('E', '~/code/ibeis/ibeis/dev/experiment_configs.py')
 :call QUICKOPEN_leader_tvio('f', '~/code/ibeis/ibeis/ibsfuncs.py')

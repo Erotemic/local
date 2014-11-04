@@ -76,8 +76,6 @@ hyrule_create_users()
     #umask 002 work
     #chgrp rpi work
     #chmod g+s work
-
-
 }
 
 setup_gitserver()
