@@ -102,6 +102,7 @@ source ~/local/vim/rc_settings/autocommand_settings.vim
 :call QUICKOPEN_leader_tvio('k', '~/code/ibeis/ibeis/model/hots/smk/smk_core.py')
 :call QUICKOPEN_leader_tvio('l', '~/latex/crall-lab-notebook/main.tex')
 :call QUICKOPEN_leader_tvio('m', '~/code/ibeis/ibeis/model/hots/smk/smk_match.py')
+:call QUICKOPEN_leader_tvio('M', '~/code/ibeis/ibeis/dev/main_helpers.py')
 :call QUICKOPEN_leader_tvio('n', '~/code/ibeis/ibeis/model/Config.py')
 :call QUICKOPEN_leader_tvio('o', '~/code/ibeis/ibeis/model/preproc/preproc_image.py')
 :call QUICKOPEN_leader_tvio('p', '~/code/plottool/plottool/__init__.py')
