@@ -141,4 +141,4 @@ source ~/local/vim/rc_settings/autocommand_settings.vim
 "  \ start="ut.codeblock([\n ]*r'''" end="'''[\n ]*)"
 "  \ contained contains=ALLBUT,pythonDoctest,@Spell
 
-set nofoldenable
+"set nofoldenable

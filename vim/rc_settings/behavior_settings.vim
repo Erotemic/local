@@ -1,7 +1,7 @@
 " ========= VIM PREFERENCES ========= "
 
 " Reference http://stackoverflow.com/questions/6671199/gvim-long-multiline-string-highlighting
-syntax sync minlines=500
+:syntax sync minlines=500
 
 
 " allow backspacing over everything in insert mode
