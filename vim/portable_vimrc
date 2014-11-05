@@ -8,6 +8,7 @@ set encoding=utf8
 
 :set runtimepath+=~/local/vim/vimfiles/
 
+
 python << endpython
 import vim
 enabled = [
