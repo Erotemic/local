@@ -133,3 +133,12 @@ source ~/local/vim/rc_settings/autocommand_settings.vim
 ":call QUICKOPEN_leader_tvio('e', '~/code/ibeis/ibeis/dev/experiment_harness.py')
 ":call QUICKOPEN_leader_tvio('e', '~/code/ibeis/ibeis/io/export_subset.py')
 ":call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/inspect_gui.py')
+
+
+" Try to do a utool codeblock syntax highlighting
+" 
+"syn region pythonDoctest
+"  \ start="ut.codeblock([\n ]*r'''" end="'''[\n ]*)"
+"  \ contained contains=ALLBUT,pythonDoctest,@Spell
+
+set nofoldenable
