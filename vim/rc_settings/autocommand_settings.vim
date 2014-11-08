@@ -30,6 +30,11 @@ au BufNewFile,BufRead *.tex call LatexInitialize()
 :call AuOnReadPatterns('set ft=cython', '*.pyx', '.pxd')
 :call AuOnReadPatterns('set ft=Autohotkey', '*.ahk')
 
+" Reference http://stackoverflow.com/questions/6671199/gvim-long-multiline-string-highlighting
+:call AuOnReadPatterns('syntax sync minlines=500', '*.py')
+
+
+
 " Prewrite Modifications
 " Remove trailing whitespace
 ":call AuPreWritePatterns(':%s/  *$//e', '*.py', '*.c', '*.cxx', '*.cpp', '*.h', '*.hpp', '*.hxx')

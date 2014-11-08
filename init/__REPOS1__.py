@@ -1,3 +1,10 @@
+"""
+A list of my personally used repositories
+
+CommandLine:
+    lc
+    python init/ensure_vim_plugins.py
+"""
 from __future__ import absolute_import, division, print_function
 from meta_util_git1 import set_userid, unixpath, repo_list
 
@@ -56,6 +63,7 @@ VIM_REPO_URLS, VIM_REPOS = repo_list([
     'https://github.com/scrooloose/nerdcommenter.git',
     'https://github.com/scrooloose/nerdtree.git',
     'https://github.com/scrooloose/syntastic.git',
+    'https://github.com/kien/rainbow_parentheses.vim.git',
     #'https://github.com/terryma/vim-multiple-cursors.git',
     #'https://github.com/tpope/vim-repeat.git',
     #'https://github.com/tpope/vim-sensible.git',

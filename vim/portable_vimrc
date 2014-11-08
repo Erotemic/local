@@ -8,6 +8,7 @@ set encoding=utf8
 
 :set runtimepath+=~/local/vim/vimfiles/
 
+source ~/local/vim/vimfiles/syntax/python.vim 
 
 python << endpython
 import vim
@@ -46,6 +47,7 @@ call pathogen#helptags()
 "call pathogen#infect()
 syntax on
 filetype plugin indent on
+
 
 " PLUGIN: External non-plugin source files
 source ~/local/vim/rc/align.vim
@@ -142,3 +144,5 @@ source ~/local/vim/rc_settings/autocommand_settings.vim
 "  \ contained contains=ALLBUT,pythonDoctest,@Spell
 
 "set nofoldenable
+"
+syntax sync minlines=500
