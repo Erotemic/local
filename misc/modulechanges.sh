@@ -312,3 +312,5 @@ rob sp classmember make_class_method_decorator
 rob sp decorate_make_class_method_decorator decorate_class_method
 rob sp classpostinject make_class_postinject_decorator
 rob sp decorate_postinject decorate_postinject
+
+rob sp "ibeis\.io" "ibeis\.dbio"
