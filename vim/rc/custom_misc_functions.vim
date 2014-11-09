@@ -330,6 +330,31 @@ endpython
 endfu 
 
 
+func! InsertIBEISExample() 
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool as ut
+pyvim_funcs.ensure_normalmode()
+if pyvim_funcs.is_module_pythonfile():
+    print('autopep8ing file')
+    modname = ut.get_absolute_import(vim.current.buffer.name)
+    text = ut.indent(ut.codeblock(
+        '''
+        Example:
+            >>> from {modname} import *   # NOQA
+            >>> import ibeis
+            >>> ibs = ibeis.opendb('testdb1')
+            >>> aid_list = ibs.get_valid_aids()
+        '''
+    )).format(modname=modname)
+    pyvim_funcs.insert_codeblock_at_cursor(text)
+else:
+    print('current file is not a pythonfile')
+#L______________
+endpython
+endfu 
+
 func! AutoPep8Block() 
 python << endpython
 import vim

@@ -26,6 +26,7 @@ noremap \ ,
 ":imap <Del> <Esc>
 
 noremap <leader>d :call InsertDocstr()<CR>
+noremap <leader>ex :call InsertIBEISExample()<CR>
 "inoremap <leader>d :call InsertDocstr()<CR>
 
 :noremap <c-d> :call InsertDocstr()<CR>

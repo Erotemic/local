@@ -100,10 +100,10 @@ def get_current_modulename():
     """
     returns current module being edited
     """
-    import utool
-    utool.rrrr(True)
+    import utool as ut
+    ut.rrrr(True)
     import vim
-    modname = utool.get_absolute_import(vim.current.buffer.name)
+    modname = ut.get_absolute_import(vim.current.buffer.name)
     return modname
 
 
