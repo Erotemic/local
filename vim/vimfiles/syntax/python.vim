@@ -258,8 +258,8 @@ endif
 """" <UTOOL THINGS> """"
 
 
-"syn match pythonFmtString "{[A-Za-z][A-Za-z_]}" contained 
-syn region pythonFmtString start="{[A-Za-z][A-Za-z_]*" end="}" contained 
+syn match pythonFmtString "{[A-Za-z][A-Za-z_]*}" contained 
+"syn region pythonFmtString start="{[A-Za-z][A-Za-z_]*" end="}" contained 
 
 syn match pythonUtoolStartBlock "^\s*# STARTBLOCK[\n ]*" contained
 syn match pythonUtoolEndBlock   "^\s*# ENDBLOCK[\n ]*" contained
