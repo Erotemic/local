@@ -338,7 +338,7 @@ import utool as ut
 pyvim_funcs.ensure_normalmode()
 if pyvim_funcs.is_module_pythonfile():
     print('autopep8ing file')
-    modname = ut.get_absolute_import(vim.current.buffer.name)
+    modname = ut.get_modname_from_modpath(vim.current.buffer.name)
     text = ut.indent(ut.codeblock(
         '''
         Example:

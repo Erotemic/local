@@ -103,7 +103,7 @@ def get_current_modulename():
     import utool as ut
     ut.rrrr(True)
     import vim
-    modname = ut.get_absolute_import(vim.current.buffer.name)
+    modname = ut.get_modname_from_modpath(vim.current.buffer.name)
     return modname
 
 
