@@ -110,6 +110,14 @@ install_spotify()
     sudo apt-get install -y spotify-client
 }
 
+
+svn_repos()
+{
+    # https://code.google.com/p/groupsac/source/checkout 
+    svn checkout http://groupsac.googlecode.com/svn/trunk/ groupsac-read-only
+    
+}
+
  
 install_latex()
 {
