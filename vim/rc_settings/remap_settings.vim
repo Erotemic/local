@@ -27,6 +27,7 @@ noremap \ ,
 
 noremap <leader>d :call InsertDocstr()<CR>
 noremap <leader>ex :call InsertIBEISExample()<CR>
+noremap <leader>em :call InsertMainPyTest()<CR>
 "inoremap <leader>d :call InsertDocstr()<CR>
 
 :noremap <c-d> :call InsertDocstr()<CR>
