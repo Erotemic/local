@@ -60,6 +60,7 @@ install_core_extras()
     sudo apt-get install -y okular
     sudo apt-get install -y subversion
     sudo apt-get install -y filezilla
+    sudo apt-get install -y gitg
 
 }
 
