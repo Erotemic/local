@@ -197,7 +197,7 @@ def update_env(r):
 def ps(r, flags=None):
     for pid in psutil.get_pid_list():
         proc = psutil.Process(pid)
-        if not flags is None and \
+        if flags is not None and \
            (proc.name.find(flags) == -1 and ' '.join(proc.cmdline).find(flags) == -1):
             continue
         #print(proc)
@@ -524,7 +524,7 @@ def print_env(r):
     print(sys.environs)
     #print_path(r)
     #for varval in r.env_vars_list:
-        #print(varval[0]+' = '+varval[1])
+    #    print(varval[0]+' = '+varval[1])
 
 
 def get_regstr(regtype, var, val):
