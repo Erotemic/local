@@ -374,6 +374,8 @@ if pyvim_funcs.is_module_pythonfile():
                 python {rel_modpath}
                 python {rel_modpath} --allexamples
             """
+            import multiprocessing
+            multiprocessing.freeze_support()  # for win32
             import utool as ut  # NOQA
             ut.doctest_funcs()
         '''
