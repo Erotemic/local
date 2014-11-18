@@ -1,3 +1,9 @@
+setup_ibeis()
+{
+    source ~/local/init/freshstart_ubuntu.sh
+    setup_ibeis
+}
+
 ypackin()
 {
     sudo pip install $*
@@ -49,40 +55,6 @@ install_core()
 
     # sqlite db  editor
     sudo apt-get install sqliteman
-    
-
-    
-}
-
-install_core_extras()
-{
-    # Not commonly used but frequently forgotten
-    sudo apt-get install -y okular
-    sudo apt-get install -y subversion
-    sudo apt-get install -y filezilla
-    sudo apt-get install -y gitg
-
-}
-
-install_ppa_extras()
-{
-    
-    # To clean up old kernels
-    # References: http://askubuntu.com/questions/2793/how-do-i-remove-or-hide-old-kernel-versions-to-clean-up-the-boot-menu
-    sudo add-apt-repository ppa:tualatrix/ppa
-    sudo apt-get update
-    sudo apt-get install -y ubuntu-tweak
-    
-}
-
-install_chrome()
-{
-    # Google PPA
-    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-    sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
-    sudo apt-get update
-    # Google Chrome
-    sudo apt-get install -y google-chrome-stable 
 }
 
 install_dropbox()
@@ -101,6 +73,34 @@ install_zotero()
     sudo apt-get update
     sudo apt-get install -y zotero-standalone 
 }
+
+install_core_extras()
+{
+    # Not commonly used but frequently forgotten
+    sudo apt-get install -y okular
+    sudo apt-get install -y subversion
+    sudo apt-get install -y filezilla
+    sudo apt-get install -y gitg
+}
+
+install_ppa_extras()
+{
+    # To clean up old kernels
+    # References: http://askubuntu.com/questions/2793/how-do-i-remove-or-hide-old-kernel-versions-to-clean-up-the-boot-menu
+    sudo add-apt-repository ppa:tualatrix/ppa
+    sudo apt-get update
+    sudo apt-get install -y ubuntu-tweak
+}
+
+install_chrome()
+{
+    # Google PPA
+    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+    sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+    sudo apt-get update
+    # Google Chrome
+    sudo apt-get install -y google-chrome-stable 
+}
  
 install_spotify()
 {
@@ -116,7 +116,6 @@ svn_repos()
 {
     # https://code.google.com/p/groupsac/source/checkout 
     svn checkout http://groupsac.googlecode.com/svn/trunk/ groupsac-read-only
-    
 }
 
  

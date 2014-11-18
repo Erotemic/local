@@ -1,5 +1,12 @@
+freshtart_ubuntu_main()
+{
+    source ~/local/init/frestart_ubuntu.sh
+    entry_prereq_git_and_local
+    freshtart_ubuntu_entry_point
+}
 
-step1()
+
+entry_prereq_git_and_local()
 {
     # This is usually done manually
     sudo apt-get install git -y
@@ -9,6 +16,54 @@ step1()
         git clone https://github.com/Erotemic/local.git
         cd local/init 
     fi
+}
+
+#setup_homefolder()
+freshtart_ubuntu_entry_point()
+{ 
+    if [ ! -f ~/local ]; then
+    mkdir ~/tmp
+    fi
+    if [ ! -f ~/code ]; then
+    mkdir ~/code
+    fi
+    cd ~
+    if [ ! -f ~/local ]; then
+        git clone https://github.com/Erotemic/local.git
+    fi
+    # TODO UTOOL
+    mv ~/.bashrc ~/.bashrc.orig
+    mv ~/.profile ~/.profile.orig
+    ln -s ~/local/bashrc.sh ~/.bashrc
+    ln -s ~/local/profile.sh ~/.profile 
+    source ~/.bashrc
+
+    git config --global user.name joncrall
+    git config --global user.email crallj@rpi.edu
+    git config --global push.default current
+
+    mkdir ~/local/vim/vimfiles/bundle
+    source ~/local/vim/init_vim.sh
+    python ~/local/init/ensure_vim_plugins.py
+    cd ~/code
+}
+
+
+install_dropbox()
+{
+    # Dropbox 
+    #cd ~/tmp
+    #cd ~/tmp && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
+    #.dropbox-dist/dropboxd
+    sudo apt-get -y install nautilus-dropbox
+}
+
+
+install_fonts()
+{
+    sudo cp ~/Dropbox/Installers/Fonts/*.ttf /usr/share/fonts/truetype/
+    sudo cp ~/Dropbox/Installers/Fonts/*.otf /usr/share/fonts/opentype/
+    sudo fc-cache
 }
 
 virtualbox_ubuntu_init()
@@ -39,39 +94,6 @@ customize_sudoers()
     rm ~/tmp/sudoers.tmp
     #sudo cat /etc/sudoers 
 } 
-
-setup_homefolder()
-{ 
-    mkdir ~/tmp
-    mkdir ~/code
-    cd ~
-    if [ ! -f ~/local ]; then
-        git clone https://github.com/Erotemic/local.git
-    fi
-    mv ~/.bashrc ~/.bashrc.orig
-    mv ~/.profile ~/.profile.orig
-    ln -s ~/local/bashrc.sh ~/.bashrc
-    ln -s ~/local/profile.sh ~/.profile 
-    source ~/.bashrc
-
-    git config --global user.name joncrall
-    git config --global user.email crallj@rpi.edu
-    git config --global push.default current
-
-    mkdir ~/local/vim/vimfiles/bundle
-    source ~/local/vim/init_vim.sh
-    python ~/local/init/ensure_vim_plugins.py
-
-    cd ~/code
-}
-
-
-install_fonts()
-{
-    sudo cp ~/Dropbox/Installers/Fonts/*.ttf /usr/share/fonts/truetype/
-    sudo cp ~/Dropbox/Installers/Fonts/*.otf /usr/share/fonts/opentype/
-    sudo fc-cache
-}
 
  
 gnome_settings()
@@ -133,18 +155,18 @@ nautilus_settings()
 
 setup_ibeis()
 {
-    mkdir ~/code
-    cd ~/code
+    if [ ! -f ~/code ]; then
+        mkdir ~/code
+    fi
     if [ ! -f ~/ibeis ]; then
         git clone https://github.com/Erotemic/ibeis.git
     fi
-
     cd ~/code/ibeis
-    git checkout pyqt5
+    git checkout next
     ./_scripts/bootstrap.py
     ./_scripts/__install_prereqs__.sh
     ./super_setup.py --build --develop
-    ./super_setup.py --checkout pyqt5
+    ./super_setup.py --checkout next
     ./super_setup.py --build --develop
 }
 
