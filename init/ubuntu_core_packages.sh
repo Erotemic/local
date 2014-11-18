@@ -54,7 +54,9 @@ install_core()
 
 
     # sqlite db  editor
-    sudo apt-get install sqliteman
+    #sudo apt-get install sqliteman
+    sudo apt-get install sqlitebrowser 
+    
 }
 
 install_dropbox()
@@ -205,6 +207,12 @@ install_xlib()
     sudo apt-get install -y python-wnck 
     sudo apt-get install -y wmctrl 
     packin xdotool
+}
+
+pip_upgrade()
+{
+     sudo pip install pyzmq --upgrade
+     sudo pip install matplotlib --upgrade
 }
 
 
