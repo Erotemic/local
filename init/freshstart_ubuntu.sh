@@ -162,6 +162,7 @@ setup_ibeis()
         git clone https://github.com/Erotemic/ibeis.git
     fi
     cd ~/code/ibeis
+    git pull
     git checkout next
     ./_scripts/bootstrap.py
     ./_scripts/__install_prereqs__.sh
