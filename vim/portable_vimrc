@@ -94,6 +94,7 @@ source ~/local/vim/rc_settings/autocommand_settings.vim
 :call QUICKOPEN_leader_tvio('0', '~/local/vim/rc/custom_regex_commands.vim')
 :call QUICKOPEN_leader_tvio('_', '$VIMRUNTIME/../_vimrc')
 :call QUICKOPEN_leader_tvio('a', '~/code/ibeis/ibeis/all_imports.py')
+:call QUICKOPEN_leader_tvio('A', '~/code/ibeis/ibeis/dev/results_all.py')
 :call QUICKOPEN_leader_tvio('b', '~/local/bashrc.sh')
 :call QUICKOPEN_leader_tvio('c', '~/code/ibeis/ibeis/control/IBEISControl.py')
 :call QUICKOPEN_leader_tvio('d', '~/code/ibeis/dev.py')

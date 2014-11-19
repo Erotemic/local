@@ -36,9 +36,9 @@ return
 ;NumpadEnd:: ; NumPad-1
     ;Open("todo")
     ;return
-;^NumpadEnd:: ; NumPad-1
-    ;Open("personal")
-    ;return
+^NumpadEnd:: ; NumPad-1
+    Open("personal")
+    return
 ;---------------------
     
 ;--------------   
