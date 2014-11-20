@@ -212,7 +212,7 @@ install_xlib()
 pip_upgrade()
 {
      sudo pip install numpy --upgrade
-     sudo pip install cython --upgrade
+     sudo pip install Cython --upgrade
      sudo pip install scipy --upgrade
      sudo pip install pyzmq --upgrade
      sudo pip install matplotlib --upgrade
