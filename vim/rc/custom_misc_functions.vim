@@ -373,6 +373,7 @@ if pyvim_funcs.is_module_pythonfile():
                 python -c "import utool, {modname}; utool.doctest_funcs({modname})"
                 python {rel_modpath}
                 python {rel_modpath} --allexamples
+                python {rel_modpath} --allexamples --noface --nosrc
             """
             import multiprocessing
             multiprocessing.freeze_support()  # for win32
