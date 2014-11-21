@@ -83,6 +83,10 @@ install_core_extras()
     sudo apt-get install -y subversion
     sudo apt-get install -y filezilla
     sudo apt-get install -y gitg
+    sudo apt-get install -y sysstat
+    sudo apt-get install -y sysstat
+
+    
 }
 
 install_ppa_extras()
