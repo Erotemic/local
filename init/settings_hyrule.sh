@@ -78,6 +78,12 @@ hyrule_create_users()
     #chmod g+s work
 }
 
+hyrule_setup_groups()
+{
+    sudo chown -R joncrall:rpi /raid
+    sudo chown -R joncrall:rpi ~/code/caffe
+}
+
 setup_gitserver()
 {
     # Set git user password
