@@ -119,7 +119,8 @@ source ~/local/vim/rc_settings/autocommand_settings.vim
 :call QUICKOPEN_leader_tvio('o', '~/code/ibeis/ibeis/model/preproc/preproc_annot.py')
 :call QUICKOPEN_leader_tvio('O', '~/code/ibeis/ibeis/model/preproc/preproc_chip.py')
 :call QUICKOPEN_leader_tvio('p', '~/code/plottool/plottool/__init__.py')
-"q
+:call QUICKOPEN_leader_tvio('q', '~/code/ibeis/ibeis/model/hots/query_request.py')
+:call QUICKOPEN_leader_tvio('Q', '~/code/ibeis/ibeis/model/hots/hots_query_result.py')
 :call QUICKOPEN_leader_tvio('r', '~/code/ibeis/ibeis/model/detect/randomforest.py')
 :call QUICKOPEN_leader_tvio('s', '~/code/ibeis/ibeis/control/SQLDatabaseControl.py')
 :call QUICKOPEN_leader_tvio('t', '~/code/ibeis/ibeis/control/template_generator.py')
