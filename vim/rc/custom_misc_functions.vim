@@ -330,6 +330,23 @@ endpython
 endfu 
 
 
+func! InsertMainPyTest() 
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool as ut
+pyvim_funcs.ensure_normalmode()
+if pyvim_funcs.is_module_pythonfile():
+    modname = ut.get_modname_from_modpath(vim.current.buffer.name)
+    text = ut.make_default_module_maintest(modname)
+    pyvim_funcs.insert_codeblock_at_cursor(text)
+else:
+    print('current file is not a pythonfile')
+#L______________
+endpython
+endfu 
+
+
 func! InsertIBEISExample() 
 python << endpython
 import vim
@@ -355,42 +372,9 @@ endpython
 endfu 
 
 
-func! InsertMainPyTest() 
-python << endpython
-import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool as ut
-pyvim_funcs.ensure_normalmode()
-if pyvim_funcs.is_module_pythonfile():
-    modname = ut.get_modname_from_modpath(vim.current.buffer.name)
-    rel_modpath = ut.get_relative_modpath(vim.current.buffer.name)
-    text = ut.codeblock(
-        '''
-        if __name__ == '__main__':
-            """
-            CommandLine:
-                python -c "import utool, {modname}; utool.doctest_funcs({modname}, allexamples=True)"
-                python -c "import utool, {modname}; utool.doctest_funcs({modname})"
-                python {rel_modpath}
-                python {rel_modpath} --allexamples
-                python {rel_modpath} --allexamples --noface --nosrc
-            """
-            import multiprocessing
-            multiprocessing.freeze_support()  # for win32
-            import utool as ut  # NOQA
-            ut.doctest_funcs()
-        '''
-    ).format(modname=modname, rel_modpath=rel_modpath)
-    pyvim_funcs.insert_codeblock_at_cursor(text)
-else:
-    print('current file is not a pythonfile')
-#L______________
-endpython
-endfu 
-
-
 func! AutoPep8Block() 
 python << endpython
+# FIXME: Unfinished
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool
