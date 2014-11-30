@@ -355,15 +355,17 @@ import utool as ut
 pyvim_funcs.ensure_normalmode()
 if pyvim_funcs.is_module_pythonfile():
     modname = ut.get_modname_from_modpath(vim.current.buffer.name)
-    text = ut.indent(ut.codeblock(
-        '''
-        Example:
-            >>> from {modname} import *   # NOQA
-            >>> import ibeis
-            >>> ibs = ibeis.opendb('testdb1')
-            >>> aid_list = ibs.get_valid_aids()
-        '''
-    )).format(modname=modname)
+    #text = ut.indent(ut.codeblock(
+    #    '''
+    #    Example:
+    #        >>> # DOCTEST_DISABLE
+    #        >>> from {modname} import *   # NOQA
+    #        >>> import ibeis
+    #        >>> ibs = ibeis.opendb('testdb1')
+    #        >>> aid_list = ibs.get_valid_aids()
+    #    '''
+    #)).format(modname=modname)
+    text = pyvim_funcs.auto_docstr(with_args=False, with_ret=False)
     pyvim_funcs.insert_codeblock_at_cursor(text)
 else:
     print('current file is not a pythonfile')

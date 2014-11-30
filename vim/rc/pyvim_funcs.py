@@ -101,7 +101,7 @@ def get_current_modulename():
     returns current module being edited
     """
     import utool as ut
-    ut.rrrr(True)
+    ut.rrrr(verbose=False)
     import vim
     modname = ut.get_modname_from_modpath(vim.current.buffer.name)
     return modname
@@ -120,7 +120,7 @@ def insert_codeblock_at_cursor(text):
     vim.current.buffer.append(new_tail)  # append new data
 
 
-def auto_docstr():
+def auto_docstr(**kwargs):
     import imp
     import utool
     imp.reload(utool)
@@ -144,7 +144,9 @@ def auto_docstr():
         else:
             modname = modname
             # Text to insert into the current buffer
-            docstr = utool.auto_docstr(modname, funcname, verbose=False)
+            autodockw = {'verbose': False}
+            autodockw.update(kwargs)
+            docstr = utool.auto_docstr(modname, funcname, **autodockw)
             #if docstr.find('unexpected indent') > 0:
             #    docstr = funcname + ' ' + docstr
             if docstr[:].strip() == 'error':

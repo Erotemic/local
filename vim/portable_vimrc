@@ -56,7 +56,7 @@ filetype plugin indent on
 source ~/local/vim/rc/align.vim
 source ~/local/vim/rc/enable_code_snippets.vim
 source ~/local/vim/rc/custom_font_functions.vim
-source ~/local/vim/rc/custom_misc_functions.vim
+source ~/local/vim/rc/custom_misc_functions.vim   " <<<
 source ~/local/vim/rc/custom_pep8_functions.vim
 source ~/local/vim/rc/custom_regex_functions.vim
 source ~/local/vim/rc/custom_py_functions.vim
