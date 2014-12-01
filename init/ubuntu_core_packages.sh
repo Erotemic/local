@@ -55,7 +55,9 @@ install_core()
 
     # sqlite db  editor
     #sudo apt-get install sqliteman
-    sudo apt-get install sqlitebrowser 
+    sudo apt-get install -y sqlitebrowser 
+    #References: http://stackoverflow.com/questions/7454796/taglist-exuberant-ctags-not-found-in-path
+    sudo apt-get install -y exuberant-ctags 
     
 }
 
