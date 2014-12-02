@@ -185,6 +185,7 @@ fpath_list = [
 pyvim_funcs.open_fpath_list(fpath_list)
 endpython
 endfu
+command! Tocontrolparts call OpenControllerParts()
 
 
 func! TabOpenDev()
@@ -202,20 +203,23 @@ endfu
 command! Todev call TabOpenDev()
 
 
-func! TabOpenPipeline()
+func! TabOpenHotsPipeline()
 python << endpython
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 fpath_list = [
         '~/code/ibeis/ibeis/model/hots/query_request.py',
         '~/code/ibeis/ibeis/model/hots/neighbor_index.py',
-        '~/code/ibeis/ibeis/model/hots/pipeline.py',
-        '~/code/ibeis/ibeis/model/hots/match_chips4.py',
+        '~/code/ibeis/ibeis/model/hots/multi_index.py',
+        '~/code/ibeis/ibeis/model/hots/score_normalization.py',
+        #'~/code/ibeis/ibeis/model/hots/pipeline.py',
+        #'~/code/ibeis/ibeis/model/hots/match_chips4.py',
+        '~/code/ibeis/ibeis/control/manual_annot_funcs.py',
     ]
 pyvim_funcs.open_fpath_list(fpath_list, 3)
 endpython
 endfu
-command! Topipeline call TabOpenPipeline()
+command! Tohotspipeline call TabOpenHotsPipeline()
 
 
 func! TabOpenVimRC()
