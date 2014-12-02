@@ -165,6 +165,28 @@ endpython
 endfu
 
 
+func! OpenControllerParts()
+"pyfile pyvim_funcs.py
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+fpath_list = [
+    '~/code/ibeis/ibeis/control/manual_annot_funcs.py',
+    '~/code/ibeis/ibeis/control/manual_dependant_funcs.py',
+    '~/code/ibeis/ibeis/control/manual_ibeiscontrol_funcs.py',
+    '~/code/ibeis/ibeis/control/manual_image_funcs.py',
+    '~/code/ibeis/ibeis/control/manual_lblannot_funcs.py',
+    '~/code/ibeis/ibeis/control/manual_lblimage_funcs.py',
+    '~/code/ibeis/ibeis/control/manual_lbltype_funcs.py',
+    '~/code/ibeis/ibeis/control/manual_meta_funcs.py',
+    '~/code/ibeis/ibeis/control/manual_name_species_funcs.py',
+    '~/code/ibeis/ibeis/control/_autogen_featweight_funcs.py',
+    ]
+pyvim_funcs.open_fpath_list(fpath_list)
+endpython
+endfu
+
+
 func! TabOpenDev()
 python << endpython
 import vim
