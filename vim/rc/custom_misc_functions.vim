@@ -141,7 +141,7 @@ fpath_list = [
         '~/code/guitool/setup.py',
         '~/code/plottool/setup.py',
     ]
-pyvim_funcs.open_fpath_list(fpath_list)
+pyvim_funcs.open_fpath_list(fpath_list, num_hsplits=2)
 endpython
 endfu
 
@@ -160,7 +160,7 @@ fpath_list = [
         '~/code/guitool/.gitignore',
         '~/code/plottool/.gitignore',
     ]
-pyvim_funcs.open_fpath_list(fpath_list)
+pyvim_funcs.open_fpath_list(fpath_list, num_hsplits=2)
 endpython
 endfu
 
@@ -182,7 +182,7 @@ fpath_list = [
     '~/code/ibeis/ibeis/control/manual_name_species_funcs.py',
     '~/code/ibeis/ibeis/control/_autogen_featweight_funcs.py',
     ]
-pyvim_funcs.open_fpath_list(fpath_list)
+pyvim_funcs.open_fpath_list(fpath_list, num_hsplits=2)
 endpython
 endfu
 command! Tocontrolparts call OpenControllerParts()
@@ -197,7 +197,7 @@ fpath_list = [
         '~/code/ibeis/dev.py',
         '~/code/ibeis/ibeis/control/IBEISControl.py',
     ]
-pyvim_funcs.open_fpath_list(fpath_list, 3)
+pyvim_funcs.open_fpath_list(fpath_list, num_hsplits=3)
 endpython
 endfu
 command! Todev call TabOpenDev()
@@ -214,9 +214,9 @@ fpath_list = [
         '~/code/ibeis/ibeis/model/hots/score_normalization.py',
         #'~/code/ibeis/ibeis/model/hots/pipeline.py',
         #'~/code/ibeis/ibeis/model/hots/match_chips4.py',
-        '~/code/ibeis/ibeis/control/manual_annot_funcs.py',
+        #'~/code/ibeis/ibeis/control/manual_annot_funcs.py',
     ]
-pyvim_funcs.open_fpath_list(fpath_list, 3)
+pyvim_funcs.open_fpath_list(fpath_list, num_hsplits=2)
 endpython
 endfu
 command! Tohotspipeline call TabOpenHotsPipeline()
@@ -232,7 +232,7 @@ fpath_list = [
         '~/local/vim/rc/custom_misc_functions.vim',
         #'~/local/vim/rc/pyvim_funcs.py',
     ]
-pyvim_funcs.open_fpath_list(fpath_list, 3)
+pyvim_funcs.open_fpath_list(fpath_list, num_hsplits=3)
 endpython
 endfu
 command! Tovimrc call TabOpenVimRC()
@@ -249,7 +249,7 @@ fpath_list = [
         '~/code/vtool/vtool/keypoint.py',
         '~/code/vtool/vtool/spatial_verification.py',
     ]
-pyvim_funcs.open_fpath_list(fpath_list, 3)
+pyvim_funcs.open_fpath_list(fpath_list, num_hsplits=3)
 endpython
 endfu
 command! Tocyth call TabOpenCyth()

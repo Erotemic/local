@@ -217,36 +217,48 @@ def ensure_normalmode():
     #vim.command("ESC")
 
 
-def open_fpath_list(fpath_list, nsplits=2):
+def open_fpath_list(fpath_list, num_hsplits=2):
     """
     Very hacky function to nicely open a bunch of files
     Not well tested
+
+    num_hsplits is for horizonatal splits
     """
     import vim
-    ix = 0
-    if ix >= len(fpath_list):
-        return
-    vim_fpath_cmd('tabe', fpath_list[ix])
-    ix += 1
+    from six.moves import range
 
-    if ix >= len(fpath_list):
-        return
-    vim_fpath_cmd('vsplit', fpath_list[ix])
-    ix += 1
+    index = 0
+    try:
+        assert index < len(fpath_list)
+        # First file opens new tab
+        vim_fpath_cmd('tabe', fpath_list[index])
+        index += 1
 
-    if nsplits == 3:
-        if ix >= len(fpath_list):
-            return
-        vim_fpath_cmd('vsplit', fpath_list[ix])
-        ix += 1
+        # Second file opens a vsplit
+        assert index < len(fpath_list)
+        vim_fpath_cmd('vsplit', fpath_list[index])
+        index += 1
 
-    for ix in xrange(ix, ix + 3):
-        if ix >= len(fpath_list):
-            return
-        vim_fpath_cmd('split', fpath_list[ix])
+        if num_hsplits == 3:
+            assert index < len(fpath_list)
+            vim_fpath_cmd('vsplit', fpath_list[index])
+            index += 1
 
-    vim.command(":exec ':wincmd l'")  # Move to the left screen
-    for ix in xrange(ix, ix + 3):
-        if ix >= len(fpath_list):
-            return
-        vim_fpath_cmd('split', fpath_list[ix])
+        # The next 3 splits are horizontal splits
+        for index in range(index, index + 3):
+            assert index < len(fpath_list)
+            vim_fpath_cmd('split', fpath_list[index])
+
+        # Move to the left screen
+        vim.command(":exec ':wincmd l'")
+
+        # Continue doing horizontal splits
+        for index in range(index, index + 3):
+            assert index < len(fpath_list)
+            vim_fpath_cmd('split', fpath_list[index])
+    except AssertionError:
+        pass
+    if index < len(fpath_list):
+        print('WARNING: Too many files specified')
+        print('Can only handle %d' % index)
+
