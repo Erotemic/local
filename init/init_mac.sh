@@ -98,7 +98,10 @@ install_gcc()
     sudo port install g95
     sudo port install gcc45 +gfortran 
     sudo port install gcc46 +gfortran
-    sudo port install apple-gcc42
+    
+    # Does not work on Yosemite or later
+    #sudo port install apple-gcc42
+    sudo port uninstall apple-gcc42
 
     # Reload bash to get things working more or less
     source ~/.profile
