@@ -15,6 +15,38 @@ from os.path import join
 from meta_util_git1 import cd
 import util_git1
 
+
+def ensure_ctags_win32():
+    import os
+    import utool as ut
+    from os.path import join
+    dpath = ut.grab_zipped_url('http://prdownloads.sourceforge.net/ctags/ctags58.zip')
+    ctags_fname = 'ctags.exe'
+    ctags_src = join(dpath,ctags_fname)
+    def find_mingw_bin():
+        pathdirs = os.environ['PATH'].split(';')
+        copydir = None
+        for pathdir in pathdirs:
+            pathdir_ = pathdir.lower()
+            ismingwbin = (pathdir_.find('mingw') > -1 and pathdir_.endswith('bin'))
+            if ismingwbin:
+                issmaller = (copydir is None or len(pathdir) < len(copydir))
+                if issmaller:
+                    copydir = pathdir
+        return copydir
+    copydir = find_mingw_bin()
+    ctags_dst = join(copydir, ctags_fname)
+    ut.copy(ctags_src, ctags_dst, overwrite=False)
+    #ut.cmd(ctags_exe)
+    #ut.view_directory(dpath)
+
+if sys.platform.startswith('win32'):
+    try:
+        ensure_ctags_win32()
+    except Exception as ex:
+        pass
+
+
 if __name__ == '__main__':
     PULL = '--pull' in sys.argv
 

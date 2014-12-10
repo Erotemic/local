@@ -64,8 +64,9 @@ VIM_REPO_URLS, VIM_REPOS = repo_list([
     'https://github.com/scrooloose/nerdtree.git',
     'https://github.com/scrooloose/syntastic.git',
     'https://github.com/kien/rainbow_parentheses.vim.git',
-    'https://github.com/fholgado/minibufexpl.vim.git',
+    #'https://github.com/fholgado/minibufexpl.vim.git',
     'https://github.com/vim-scripts/taglist.vim.git',
+
     #'https://github.com/terryma/vim-multiple-cursors.git',
     #'https://github.com/tpope/vim-repeat.git',
     #'https://github.com/tpope/vim-sensible.git',
