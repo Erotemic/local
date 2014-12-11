@@ -22,7 +22,7 @@ def ensure_ctags_win32():
     from os.path import join
     dpath = ut.grab_zipped_url('http://prdownloads.sourceforge.net/ctags/ctags58.zip')
     ctags_fname = 'ctags.exe'
-    ctags_src = join(dpath,ctags_fname)
+    ctags_src = join(dpath, ctags_fname)
     def find_mingw_bin():
         pathdirs = os.environ['PATH'].split(';')
         copydir = None
