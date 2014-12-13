@@ -1,3 +1,11 @@
+
+clean_for_upgrade()
+{
+    # msg: Please free at least an additional 68,3 M of disk space on '/boot'. Empty your trash and remove temporary packages of former installations using 'sudo apt-get clean'.
+    # References: http://askubuntu.com/questions/495941/software-updater-needs-more-disk-space
+    ubuntu-tweak
+}
+
 setup_ibeis()
 {
     source ~/local/init/freshstart_ubuntu.sh
