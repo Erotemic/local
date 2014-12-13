@@ -26,6 +26,9 @@ noremap \ ,
 ":imap <Del> <Esc>
 
 noremap <leader>d :call InsertDocstr()<CR>
+noremap <leader>ed :call InsertDocstr()<CR>
+noremap <leader>ea :call InsertDocstrOnlyArgs()<CR>
+noremap <leader>ec :call InsertDocstrOnlyCommandLine()<CR>
 noremap <leader>ex :call InsertIBEISExample()<CR>
 noremap <leader>em :call InsertMainPyTest()<CR>
 "inoremap <leader>d :call InsertDocstr()<CR>
