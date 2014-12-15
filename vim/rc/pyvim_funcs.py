@@ -166,6 +166,7 @@ def auto_docstr(**kwargs):
             dbgtext += dbgmsg
         dbgtext += '\n+----------------------'
         dbgtext += '\n| InsertDoctstr(modname=%r, funcname=%r' % (modname, funcname)
+        dbgtext += '\n| python -c "import utool; utool.auto_docstr(%r, %f))' % (modname, funcname)
         dbgtext += '\n+----------------------'
         dbgtext += utool.indentjoin(searchlines, '\n| ')
         dbgtext += '\nL----------------------'
@@ -261,4 +262,3 @@ def open_fpath_list(fpath_list, num_hsplits=2):
     if index < len(fpath_list):
         print('WARNING: Too many files specified')
         print('Can only handle %d' % index)
-
