@@ -34,3 +34,7 @@ permit_erotemic_gitrepo()
 }
 export PATH=$PATH:/usr/local/cuda/bin
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/lib
+
+
+# set history to not ignore leading whitespace
+export HISTCONTROL=
