@@ -98,6 +98,15 @@ install_core_extras()
     
 }
 
+install_evaluating()
+{
+    #References: https://github.com/kayhayen/Nuitka#use-case-3-package-compilation
+    sudo apt-get install nuitka
+    nuitka --module ibeis --recurse-directory=ibeis
+    nuitka --recurse-all main.py
+    
+}
+
 install_ppa_extras()
 {
     # To clean up old kernels
