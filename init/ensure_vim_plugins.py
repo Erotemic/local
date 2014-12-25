@@ -17,15 +17,15 @@ import util_git1
 
 
 def ensure_ctags_win32():
-    import os
     import utool as ut
     from os.path import join
     dpath = ut.grab_zipped_url('http://prdownloads.sourceforge.net/ctags/ctags58.zip')
     ctags_fname = 'ctags.exe'
     ctags_src = join(dpath, ctags_fname)
     def find_mingw_bin():
-        pathdirs = os.environ['PATH'].split(';')
+        pathdirs = ut.get_path_dirs()
         copydir = None
+        # hueristic for finding mingw bin
         for pathdir in pathdirs:
             pathdir_ = pathdir.lower()
             ismingwbin = (pathdir_.find('mingw') > -1 and pathdir_.endswith('bin'))
@@ -44,6 +44,7 @@ if sys.platform.startswith('win32'):
     try:
         ensure_ctags_win32()
     except Exception as ex:
+        print('failed to get ctags.exe for win32')
         pass
 
 
