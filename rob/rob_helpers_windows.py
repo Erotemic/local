@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime  # NOQA
 try:
     import win32con
     import win32gui
@@ -69,6 +69,7 @@ def GetForegroundWindow():
     hwnd = win32gui.GetForegroundWindow()
     return hwnd
 
+
 def FindWindow():
     '''
     hwnd = FindWindow(className, WindowName )
@@ -78,24 +79,30 @@ def FindWindow():
     hwnd = win32gui.FindWindow
     #hwnd = win32gui.FindWindowEx
 
+
 def SystemParametersInfo():
     win32gui.SystemParametersInfo()
 
+
 def close_window():
     win32gui.CloseWindow
+
 
 def GetActiveWindowText():
     hwnd = win32gui.GetForegroundWindow()
     text = win32gui.GetWindowText(hwnd)
     return text
 
+
 def GetWindowText(hwnd, optional=None):
     text = win32gui.GetWindowText(hwnd)
     print text
     return 1
 
+
 def MinimizeWindow():
     win32gui.ShowWindow(firefox[0], win32con.SW_MINIMIZE)
+
 
 def EnumWindowTest():
     toplist = []
@@ -105,6 +112,7 @@ def EnumWindowTest():
     win32gui.EnumWindows(enum_callback, toplist)
     return winlist
 
+
 def check_settings(r):
     print repr(r.path_vars_list)
     #print '\n**'.join(map(repr,r.path_vars_list))
@@ -113,10 +121,12 @@ def check_settings(r):
     windows_path2 = registry2.get_env('PATH')
     print windows_path2
 
+
 def add_path_vars(pathvar_list):
     print('\nAdding path variables...')
     registry2.prepend_path(pathvar_list)
     registry2.refresh()
+
 
 def add_env_vars(r, envvar_list):
     print('\nAdding environment variables...')
@@ -134,8 +144,10 @@ def add_env_vars(r, envvar_list):
                     registry2.set_root_env(name, rob_val)
     registry2.refresh()
 
+
 def default_assisted(r):
     disable_windows_login_screen()
+
 
 def default_registry(r):
     print('Defaulting registry')
@@ -148,24 +160,39 @@ def default_registry(r):
     __remove_sidebar_network()
     __autohotkey_editor(r.f.gvim_exe)
 
+
 def __show_sidebar_computer():
     registry.set_key_value('HKEY_CLASSES_ROOT\CLSID\{20D04FE0-3AEA-1069-A2D8-08002B30309D}\ShellFolder', 'Attributes', 'b094010c', 'DWORD')
+
+
 def __remove_sidebar_network():
     registry.set_key_value('HKEY_CLASSES_ROOT\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}ShellFolder', 'Attributes', 'b0040064', 'DWORD')
+
+
 def __disable_winL_lock():  # Dont lock screeon on WIN+L
     registry.set_key_value(regkey('SYSTEM_POL'),   'DisableLockWorkstation', 1,       'DWORD')
-def __hide_file_bit(bit=0): # Don't Hide File Extensions
+
+
+def __hide_file_bit(bit=0):  # Don't Hide File Extensions
     bit = bool(bit)
     registry.set_key_value(regkey('EXPLORER_ADV'), 'HideFileExt', 0,                  'DWORD')
+
+
 def __autohotkey_editor(editor):  # Autohotkey will use the right editor
     registry.set_key_value(regkey('AHK_CMD'),      '(Default)', '"'+editor+'" "%1"', 'SZ')
+
+
 def __disable_areo_shake(): # Disable Aero Shake
     registry.set_key_value(regkey('EXPLORER_POL'), 'NoWindowMinimizingShortcuts', 1,  'DWORD')
+
+
 def __nav_pane(): # Setup windows explorer sidebar
     registry.set_key_value(regkey('NAVBAR_HG'),   'Attributes', 'b084010c', 'DWORD')
     registry.set_key_value(regkey('NAVBAR_LIB'),  'Attributes', 'b080010d', 'DWORD')
     registry.set_key_value(regkey('NAVBAR_COMP'), 'Attributes', 'b094010c', 'DWORD')
     registry.set_key_value(regkey('NAVBAR_NET'),  'Attributes', 'b0040064', 'DWORD')
+
+
 def __cmd_fonts(): # Get opendyslexic working in cmd
     #registry.set_key_value(regkey('TRUE_FONT'), '0',      'Lucida Console', 'SZ')
     #registry.set_key_value(regkey('TRUE_FONT'), '00',     'White Rabbit',   'SZ')
@@ -246,10 +273,6 @@ def save_power_settings_pref(r):
     rob_helpers.dircheck(r.d.PORT_SETTINGS + '\WinPowerDir')
     rob_helpers.call(r'POWERCFG -EXPORT "%PORT_SETTINGS%\WinPowerDir"\ '+guid_str)
 
-if __name__ == "__main__":
-         import sys
-         print "Evaling "+sys.argv[1]
-         exec sys.argv[1]
 
 #def append_to_path(to_add):
     #PATH_SEP = os.path.pathsep
@@ -259,6 +282,7 @@ if __name__ == "__main__":
         #return
     #newpath = to_add+PATH_SEP+path_str
     #robos.set_env_var('PATH',newpath)
+
 
 def test_devmgr():
     print grep_registry('Presonus')
@@ -282,16 +306,17 @@ def test_devmgr():
     dm1_subkeys = registry.get_subkeys(dm1)
     dm2_subkeys = registry.get_subkeys(dm2)
     dvmgr = {}
-    for (dm, subkey_list) in iter(((dm1, dm1_subkeys), (dm2, dm2_subkeys))):
+    for (dm, subkey_list) in [(dm1, dm1_subkeys), (dm2, dm2_subkeys)]:
         for skey in  subkey_list:
-            key = dm+'\\'+skey
+            key = dm + '\\' + skey
             key_subkeys = registry.get_subkeys(key)
             for _kskey in key_subkeys:
-                key2 = key+'\\'+_kskey
+                key2 = key + '\\' + _kskey
                 Defaults2 = registry.get_key_value(key2, '(Default)')
                 DriverDesc = registry.get_key_value(key2, 'DriverDesc')
                 provider_name = registry.get_key_value(key2, 'ProviderName')
-                if Defaults2 is None and DriverDesc is None: continue
+                if Defaults2 is None and DriverDesc is None:
+                    continue
                 dvmgr[key2] = (DriverDesc, Defaults2, provider_name, class_desc)
             _class = registry.get_key_value(key, 'Class')
             class_desc = registry.get_key_value(key, 'ClassDesc')
@@ -337,3 +362,9 @@ def get_clipboard():
     clipboard_data = win32clipboard.GetClipboardData()
     win32clipboard.CloseClipboard()
     return clipboard_data
+
+
+if __name__ == "__main__":
+    import sys
+    print("Evaling " + sys.argv[1])
+    exec(sys.argv[1])

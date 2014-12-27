@@ -530,7 +530,7 @@ def print_env(r):
 def get_regstr(regtype, var, val):
     regtype_map = {
         'REG_EXPAND_SZ': 'hex(2):',
-        'REG_DWORD': None,
+        'REG_DWORD': 'dword:',
         'REG_BINARY': None,
         'REG_MULTI_SZ': None,
         'REG_SZ': '',
@@ -555,6 +555,8 @@ def get_regstr(regtype, var, val):
         spacezip = [('0', '0')] * len(hex2zip)
         hex3zip = zip(hex2zip, spacezip)
         sanatized_val = ','.join([''.join(hex2) + ',' + ''.join(space) for hex2, space in hex3zip])
+    elif regtype == 'REG_DWORD':
+        sanatized_val = '%08d' % int(val)
     else:
         sanatized_val = quotes(val)
     comment = '; ' + var + '=' + val
@@ -576,6 +578,24 @@ def write_regfile(fpath, key, varval_list, rtype):
     envtxt_list.extend(vartxt_list)
     with open(fpath, 'wb') as file_:
         file_.write('\n'.join(envtxt_list))
+
+
+def reg_disable_automatic_reboot_122614(r):
+    """
+    rob reg_disable_automatic_reboot_122614
+
+    writes a registry file that can be executed to produce desired changes
+
+    References:
+        http://www.makeuseof.com/tag/disable-forced-restarts-windows-update/
+    """
+    write_dir = join(r.d.HOME, 'Sync/win7/registry')
+    envtxt_fpath = normpath(join(write_dir, 'disable_autoreboot.reg'))
+    key = r'[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU]'
+    varval_list = [('NoAutoRebootWithLoggedOnUsers', '1')]
+    rtype = 'REG_DWORD'
+    write_regfile(envtxt_fpath, key, varval_list, rtype)
+    rob_helpers.view_directory(write_dir)
 
 
 def write_env(r):
