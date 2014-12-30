@@ -244,6 +244,15 @@ pip_upgrade()
 }
 
 
+lprof_dl()
+{
+    cd $CODE_DIR
+    git clone https://github.com/rkern/line_profiler.git
+    sudo pip uninstall line-profiler
+    
+}
+
+
 # Cleanup
 #sudo apt-get remove jasper -y
 

@@ -150,6 +150,7 @@ source ~/local/vim/rc_settings/autocommand_settings.vim
 :call QUICKOPEN_leader_tvio('X', '~/code/ibeis/ibeis/model/hots/multi_index.py')
 :call QUICKOPEN_leader_tvio('y', '~/code/cyth/cyth/cyth_script.py')
 :call QUICKOPEN_leader_tvio('z', '~/code/ibeis/ibeis/viz/viz_matches.py')
+:call QUICKOPEN_leader_tvio('Z', '~/code/ibeis/ibeis/model/hots/neighbor_index.py')
 ":call QUICKOPEN_leader_tvio('P', '~/Dropbox/CVPR\ Paper/main.tex')
 :call QUICKOPEN_leader_tvio('P', '~/latex/crall-cvpr-15/main.tex')
 
