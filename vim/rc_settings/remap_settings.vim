@@ -112,7 +112,8 @@ imap <C-P> :call Tex_RunViewLaTeX() <CR>
 noremap <leader>w <C-w>w
 noremap <leader>, <C-w>w
 noremap <leader>j :NERDTreeToggle<CR>
-noremap <leader>J :NERDTree<CR>
+noremap <leader>h :Tlist<CR>
+"noremap <leader>J :NERDTree<CR>
 
 "noremap <leader>r zR<CR>
 "
