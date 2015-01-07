@@ -243,6 +243,24 @@ pip_upgrade()
      
 }
 
+install_virtualbox()
+{
+    # References: https://www.virtualbox.org/wiki/Linux_Downloads
+    # Add oracle keys
+    #wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
+    #sudo apt-get update
+    #sudo apt-get install virtualbox-4.3
+    sudo apt-get install virtualbox 
+    sudo apt-get install dkms
+    # download addons and mount on guest machine
+    #http://download.virtualbox.org/virtualbox/4.1.12/
+    utget 'http://download.virtualbox.org/virtualbox/4.1.12/VBoxGuestAdditions_4.1.12.iso'
+    utget 'http://mirror.solarvps.com/centos/7.0.1406/isos/x86_64/CentOS-7.0-1406-x86_64-DVD.iso'
+    python -c 'import utool; print(utool.grab_file_url("http://download.virtualbox.org/virtualbox/4.1.12/VBoxGuestAdditions_4.1.12.iso"))'
+    http://mirror.centos.org/centos/7/isos/x86_64/
+    
+}
+
 
 lprof_dl()
 {

@@ -206,6 +206,11 @@ read_clip()
     xsel --clipboard < ~/clipboard.txt
 }
 
+utget()
+{
+    python -c "import utool; print(utool.grab_file_url(\"$@\"))"
+}
+
 astyle_cpp()
 {
 
