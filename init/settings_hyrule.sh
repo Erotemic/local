@@ -76,6 +76,9 @@ hyrule_create_users()
     #umask 002 work
     #chgrp rpi work
     #chmod g+s work
+    #  New users
+    sudo adduser chuck
+    sudo usermod -a -G rpi chuck
 }
 
 hyrule_setup_groups()
