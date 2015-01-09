@@ -30,6 +30,7 @@ update_pip_dists()
  
 permit_erotemic_gitrepo()
 { 
+    #permit_gitrepo -i
     sed -i 's/https:\/\/github.com\/Erotemic/git@github.com:Erotemic/' .git/config
 }
 export PATH=$PATH:/usr/local/cuda/bin
