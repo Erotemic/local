@@ -270,6 +270,19 @@ lprof_dl()
     
 }
 
+install_captn_proto()
+{
+    sudo apt-get install capnproto
+    sudo pip install pycapnp
+    #References: http://kentonv.github.io/capnproto/install.html
+    #curl -O https://capnproto.org/capnproto-c++-0.5.0.tar.gz
+    #tar zxf capnproto-c++-0.5.0.tar.gz
+    #cd capnproto-c++-0.5.0
+    #./configure
+    #make -j6 check
+    #sudo make instal
+}
+
 
 # Cleanup
 #sudo apt-get remove jasper -y
