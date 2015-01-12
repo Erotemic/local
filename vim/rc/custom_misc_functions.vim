@@ -366,7 +366,7 @@ import utool
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 
 if pyvim_funcs.is_module_pythonfile():
-    print('building docstr')
+    #print('building docstr')
     text = pyvim_funcs.auto_docstr()
     pyvim_funcs.insert_codeblock_at_cursor(text)
 else:
