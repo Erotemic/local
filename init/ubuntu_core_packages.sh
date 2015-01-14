@@ -95,6 +95,13 @@ install_core_extras()
     sudo apt-get install -y gitg
     sudo apt-get install -y sysstat
 
+    # References: https://help.ubuntu.com/community/Skype
+    #sudo dpkg --add-architecture i386
+    sudo add-apt-repository "deb http://archive.canonical.com/ $(lsb_release -sc) partner"
+    sudo apt-get update 
+    sudo apt-get install skype -y
+    #sudo apt-get install -y skype
+
     
 }
 
