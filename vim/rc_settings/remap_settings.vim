@@ -47,6 +47,12 @@ noremap <leader>em :call InsertMainPyTest()<CR>
 noremap <leader>r :source ~/local/vim/portable_vimrc<CR>
 noremap <leader>R :source ~/local/vim/portable_vimrc<CR>
 
+
+" for python doctests
+:inoremap ,,, >>> 
+:noremap <leader>> :s/^\( *[^ ].*\)\([^ ]\)>>>/\1\2/g<CR>
+":noremap <leader>> :'<,'>s/^\( *[^ ].*\)\([^ ]\)>>>/\1\2/g<CR>
+
 " Function Keys
 "
 " === F1 ===
