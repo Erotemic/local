@@ -102,7 +102,10 @@ install_core_extras()
     sudo apt-get install skype -y
     #sudo apt-get install -y skype
 
-    
+
+    sudo apt-get install graphviz -y
+    sudo apt-get install python-pydot -y
+    sudo apt-get install imagemagick -y
 }
 
 install_evaluating()

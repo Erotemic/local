@@ -85,6 +85,12 @@ hyrule_setup_groups()
 {
     sudo chown -R joncrall:rpi /raid
     sudo chown -R joncrall:rpi ~/code/caffe
+
+    # fix for hendrik
+    sudo chown -R hendrik:hendrik /home/hendrik/Desktop
+    sudo chown -R hendrik:hendrik /home/hendrik/Downloads
+    sudo chown -R hendrik:hendrik /home/hendrik/ibeis
+    sudo chown -R hendrik:hendrik /home/hendrik/project
 }
 
 setup_gitserver()
