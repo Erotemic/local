@@ -29,7 +29,7 @@ IBEIS_REPOS_URLS, IBEIS_REPOS = repo_list([
     'https://github.com/Erotemic/plottool.git',
     'https://github.com/Erotemic/guitool.git',
     'https://github.com/Erotemic/utool.git',
-    'https://github.com/aweinstock314/cyth.git',
+    #'https://github.com/aweinstock314/cyth.git',
     'https://github.com/Erotemic/ibeis.git',
 ], CODE_DIR)
 

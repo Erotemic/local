@@ -67,7 +67,7 @@ source ~/local/vim/rc/commands.vim
 "===========Settings==========="
 source ~/local/vim/rc_settings/plugin_settings.vim
 source ~/local/vim/rc_settings/plugins_python.vim
-"source ~/local/vim/rc_settings/plugins_latex.vim
+source ~/local/vim/rc_settings/plugins_latex.vim
 source ~/local/vim/rc_settings/gui_settings.vim
 source ~/local/vim/rc_settings/behavior_settings.vim
 source ~/local/vim/rc_settings/remap_funcs.vim
@@ -105,7 +105,8 @@ source ~/local/vim/rc_settings/autocommand_settings.vim
 ":call QUICKOPEN_leader_tvio('d', '~/code/ibeis/dev.py')
 :call QUICKOPEN_leader_tvio('d', '~/code/ibeis/ibeis/model/hots/devcases.py')
 :call QUICKOPEN_leader_tvio('D', '~/code/ibeis/ibeis/model/hots/smk/smk_debug.py')
-:call QUICKOPEN_leader_tvio('e', '~/code/ibeis/ibeis/dev/experiment_printres.py')
+":call QUICKOPEN_leader_tvio('e', '~/code/ibeis/ibeis/dev/experiment_printres.py')
+:call QUICKOPEN_leader_tvio('e', '~/code/hesaff/src/hesaff.cpp')
 :call QUICKOPEN_leader_tvio('E', '~/code/ibeis/ibeis/dev/experiment_configs.py')
 :call QUICKOPEN_leader_tvio('f', '~/code/ibeis/ibeis/ibsfuncs.py')
 :call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/newgui.py')
