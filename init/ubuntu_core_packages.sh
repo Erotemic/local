@@ -299,7 +299,41 @@ install_captn_proto()
     #sudo make instal
 }
 
+install_clang()
+{
+    sudo apt-get install clang-3.5
+    sudo apt-get install libstdc++-4.8-dev
+}
+
+install_cmake_latest()
+{
+    # http://www.cmake.org/download/
+    python -c "http://www.cmake.org/files/v3.0/cmake-3.0.2-Linux-i386.tar.gz"
+    # +==================================================
+    # SIMPLE WAY OF EXECUTING MULTILINE PYTHON FROM BASH
+    # +--------------------------------------------------
+    # Creates custom file descriptor that runs the script
+    # References: http://superuser.com/questions/607367/raw-multiline-string-in-bash
+    sudo apt-get remove cmake
+    exec 42<<'__PYSCRIPT__'
+import utool as ut
+from os.path import join
+cmake_zipped_url = 'http://www.cmake.org/files/v3.0/cmake-3.0.2-Linux-i386.tar.gz'
+cmake_unzipped_fpath = ut.grab_zipped_url(cmake_zipped_url)
+ut.vd(cmake_unzipped_fpath)
+install_prefix = ut.unixpath('~')
+for dname in ['bin', 'doc', 'man', 'share']:
+    install_dst = join(install_prefix, dname)
+    install_src = join(cmake_unzipped_fpath, dname)
+    ut.copy(install_src, install_dst)
+print(cmake_unzipped_fpath)
+__PYSCRIPT__
+python /dev/fd/42 $@
+
+
+    # L_________________________________________________
+
+}
 
 # Cleanup
 #sudo apt-get remove jasper -y
-
