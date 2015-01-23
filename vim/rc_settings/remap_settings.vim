@@ -13,6 +13,7 @@
 ":call PythonInvert()
 ":call TeckInvert()
 CMDSWAP : ;
+"CMDUNSWAP : ;
 
 " Map to several leaderkeys with the main being ","
 let mapleader = ","

@@ -1,4 +1,10 @@
 
+index_opencv_with_ctags()
+{
+    #References:
+    #    http://sourceforge.net/p/ctags/mailman/message/20916991/
+    ctags -R -ICVAPI --c++-kinds=+p --fields=+iaS --extra=+q --language-force=c++ /usr/include/opencv/
+}
 clean_for_upgrade()
 {
     # msg: Please free at least an additional 68,3 M of disk space on '/boot'. Empty your trash and remove temporary packages of former installations using 'sudo apt-get clean'.
