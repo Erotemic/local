@@ -9,8 +9,8 @@ else
 fi
 
 export QT_API=pyqt
-export PYTHONPATH=/home/joncall/code/utool:$PYTHONPATH
-export PYTHONPATH=/home/joncall/local/pyscripts:$PYTHONPATH
+export PYTHONPATH=/home/joncrall/code/utool:$PYTHONPATH
+export PYTHONPATH=/home/joncrall/local/pyscripts:$PYTHONPATH
 
 
 if [[ "$(hostname)" == "ibeis.cs.uic.edu"  ]]; then 
