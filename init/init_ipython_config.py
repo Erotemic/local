@@ -4,6 +4,10 @@ import utool as ut
 
 def write_default_ipython_profile():
     """
+    CommandLine:
+        python -c "import utool as ut; ut.vd(ut.unixpath('~/.ipython/profile_default'))"
+        python -c "import utool as ut; ut.editfile(ut.unixpath('~/.ipython/profile_default/ipython_config.py'))"
+
     References:
         http://2sn.org/python/ipython_config.py
     """
@@ -34,5 +38,6 @@ if __name__ == '__main__':
     """
     CommandLine:
         python ~/local/init/init_ipython_config.py
+        python local/init/init_ipython_config.py
     """
     main()
