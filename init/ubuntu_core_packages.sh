@@ -335,5 +335,36 @@ python /dev/fd/42 $@
 
 }
 
+
+install_workrave()
+{
+    # DOENT BUILD RIGHT
+    sudo apt-get install libxtst-dev -y
+    sudo apt-get install libxss-dev -y
+    sudo apt-get install python-cheetah -y
+    sudo apt-get install gnome-core-devel -y
+    exec 42<<'__PYSCRIPT__'
+import utool as ut
+import os
+from os.path import join
+zipped_url = 'http://sourceforge.net/projects/workrave/files/workrave/1.10/workrave-1.10.tar.gz'
+unzipped_fpath = ut.grab_zipped_url(zipped_url)
+ut.vd(unzipped_fpath)
+os.chdir(unzipped_fpath)
+ut.cmd('./configure')
+ut.cmd('make')
+
+install_prefix = ut.unixpath('~')
+for dname in ['bin', 'doc', 'man', 'share']:
+    install_dst = join(install_prefix, dname)
+    install_src = join(unzipped_fpath, dname)
+    ut.copy(install_src, install_dst)
+print(unzipped_fpath)
+__PYSCRIPT__
+python /dev/fd/42 $@
+
+}
+
+
 # Cleanup
 #sudo apt-get remove jasper -y
