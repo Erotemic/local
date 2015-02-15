@@ -7,6 +7,7 @@ CommandLine:
 
     python -c "import os, sys; os.system(sys.executable + ' ' + os.path.expanduser('~/local/init/ensure_vim_plugins')"
     python init/ensure_vim_plugins.py
+    python ~/init/ensure_vim_plugins.py
 """
 from __future__ import absolute_import, division, print_function
 import sys

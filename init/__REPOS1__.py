@@ -4,9 +4,11 @@ A list of my personally used repositories
 CommandLine:
     lc
     python init/ensure_vim_plugins.py
+    python ~/init/ensure_vim_plugins.py
 """
 from __future__ import absolute_import, division, print_function
 from meta_util_git1 import set_userid, unixpath, repo_list
+
 
 set_userid(userid='Erotemic',
            owned_computers=['Hyrule', 'BakerStreet', 'Ooo'],
@@ -54,6 +56,19 @@ LATEX_REPOS_URLS, LATEX_REPOS = repo_list([
 ], LATEX_DIR)
 
 
+"""
+sudo add-apt-repository ppa:pgolm/the-silver-searcher
+sudo apt-get update
+sudo apt-get install the-silver-searcher
+"""
+
+"""
+CommandLine;
+    # install vim plugins
+    python ~/local/init/ensure_vim_plugins.py
+    # update vim plugins
+"""
+
 VIM_REPO_URLS, VIM_REPOS = repo_list([
     #'https://github.com/dbarsam/vim-vimtweak.git',
     #'https://github.com/bling/vim-airline.git',
@@ -66,6 +81,16 @@ VIM_REPO_URLS, VIM_REPOS = repo_list([
     'https://github.com/kien/rainbow_parentheses.vim.git',
     #'https://github.com/fholgado/minibufexpl.vim.git',
     'https://github.com/vim-scripts/taglist.vim.git',
+    'https://github.com/honza/vim-snippets.git'
+
+    #'https://github.com/ggreer/the_silver_searcher.git'  # Ag
+    # FOR SNIP MATE
+    #'https://github.com/tomtom/tlib_vim.git',
+    #'https://github.com/MarcWeber/vim-addon-mw-utils.git',
+    #'https://github.com/garbas/vim-snipmate.git',
+    #'https://github.com/honza/vim-snippets.git',
+
+    'https://github.com/SirVer/ultisnips.git'
 
     #'https://github.com/terryma/vim-multiple-cursors.git',
     #'https://github.com/tpope/vim-repeat.git',
