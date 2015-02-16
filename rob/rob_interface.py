@@ -19,7 +19,6 @@ from rob_nav import *  # NOQA
 import rob_nav
 #
 import textwrap  # NOQA
-from os.path import expanduser
 
 
 def print_module_funcs(r):
@@ -277,19 +276,46 @@ def kill(r, procname):
 
 
 def project_dpaths():
-    project_list = [
-        #'~/code/hotspotter',
-        '~/code/hesaff',
-        '~/code/ibeis',
-        '~/code/vtool',
-        '~/code/utool',
-        '~/code/guitool',
-        '~/code/plottool',
-        '~/code/cyth',
-        '~/code/detecttools',
-        '~/code/pyrf',
-    ]
-    return map(expanduser, project_list)
+    def import_module_from_fpath(module_fpath_, addpath=False):
+        """ imports module from a file path """
+        import platform
+        from os.path import basename, splitext, expanduser, dirname
+        python_version = platform.python_version()
+        module_fpath = expanduser(module_fpath_)
+        modname = splitext(basename(module_fpath))[0]
+        if addpath:
+            import sys
+            module_dpath = dirname(module_fpath)
+            sys.path.append(module_dpath)
+        if python_version.startswith('2'):
+            import imp
+            module = imp.load_source(modname, module_fpath)
+        elif python_version.startswith('3'):
+            import importlib.machinery
+            loader = importlib.machinery.SourceFileLoader(modname, module_fpath)
+            module = loader.load_module()
+        else:
+            raise AssertionError('invalid python version')
+        return module
+    __REPOS1__ = import_module_from_fpath('~/local/init/__REPOS1__.py', True)
+    project_list = __REPOS1__.PROJECT_REPOS
+    return project_list
+
+    #project_list = [
+    #    #'~/code/hotspotter',
+    #    '~/code/hesaff',
+    #    '~/code/ibeis',
+    #    '~/code/vtool',
+    #    '~/code/utool',
+    #    '~/code/guitool',
+    #    '~/code/plottool',
+    #    '~/code/cyth',
+    #    '~/code/detecttools',
+    #    '~/code/pyrf',
+    #    '~/code/gzc-client',
+    #    '~/code/gzc-server',
+    #]
+    #return map(expanduser, project_list)
 
 
 # Grep my projects

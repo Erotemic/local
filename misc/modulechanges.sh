@@ -317,5 +317,5 @@ git mv io dbio
 rob sp "ibeis\.io" "ibeis.dbio"
 rob sp "ibeis/io" "ibeis/dbio"
 
-rob sp get_annot_chipsizes get_annot_chip_sizes
-rob sp get_annot_chip_dlen_sqrd get_annot_chip_dlensqrd
+rob sp get_annot_chipsizes get_annot_chip_sizes True
+rob sp get_annot_chip_dlen_sqrd get_annot_chip_dlensqrd True
