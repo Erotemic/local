@@ -213,7 +213,7 @@ rob sp "\'--no-assert\' in sys.argv or \'--noassert\' in sys.argv" "not (\'--no-
 
 rob sp get_rowid_from_uuid get_rowid_from_superkey True
 
-:%s/\(^  *\)\(id_iter = .* in \)\([a-z_]*\))/\1#\2\3)\r\1id_iter = \3/
+#:%s/\(^  *\)\(id_iter = .* in \)\([a-z_]*\))/\1#\2\3)\r\1id_iter = \3/
 
 rob sp get_annot_lblannot_rowids get_annot_lblannot_rowids_oftype
 
@@ -316,3 +316,6 @@ rob sp decorate_postinject decorate_postinject
 git mv io dbio
 rob sp "ibeis\.io" "ibeis.dbio"
 rob sp "ibeis/io" "ibeis/dbio"
+
+rob sp get_annot_chipsizes get_annot_chip_sizes
+rob sp get_annot_chip_dlen_sqrd get_annot_chip_dlensqrd
