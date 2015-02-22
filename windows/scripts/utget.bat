@@ -1,0 +1,1 @@
+    python -c "import utool; print(utool.grab_file_url(\"%%@\"))"
