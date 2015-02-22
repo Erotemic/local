@@ -101,7 +101,7 @@ def parse_bash_script(fpath):
             print(ex)
             print('Failed parsing line#=%r' % count)
             print('Failed parsing line=%r' % line)
-            raise
+            #raise
     #print('\n'.join(map(str, parse_tree)))
     return parse_tree_root
 
@@ -176,6 +176,7 @@ def translate_rc(rc_fpath):
             print(bat_fpath)
             with open(bat_fpath, 'w') as file_:
                 file_.write(batcommand)
+                print('Wrote: %r' % (bat_fpath,))
             pass
         else:
             print('type_ = %r' % type_)
