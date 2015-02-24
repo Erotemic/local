@@ -94,8 +94,12 @@ hyrule_setup_groups()
 
 
     # give group write access to raid
-    sudo chmod -R g+w /raid
-    sudo chmod -R g+w /raid
+    sudo chmod -R g+rw /raid
+    sudo chmod -R g+rw /raid/work
+    sudo chmod -R g+rw /raid/work/GIRM_MUGU_20
+
+    sudo chown -R joncrall:rpi /raid/work/
+    sudo chown -R joncrall:rpi /raid/work/GIRM_MUGU_20
 }
 
 setup_gitserver()
