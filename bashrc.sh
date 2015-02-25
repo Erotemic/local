@@ -1,10 +1,11 @@
 #!/bin/sh
 export QT_ACCESSIBILITY=0
-export NCPUS=$(grep -c ^processor /proc/cpuinfo)
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
+    export NCPUS=$(sysctl -n hw.ncpu)
     source ~/local/bashrc_mac.sh
 else
+    export NCPUS=$(grep -c ^processor /proc/cpuinfo)
     source ~/local/bashrc_ubuntu.sh
 fi
 
