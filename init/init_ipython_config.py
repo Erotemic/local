@@ -11,7 +11,9 @@ def write_default_ipython_profile():
     References:
         http://2sn.org/python/ipython_config.py
     """
-    ipy_config_fpath = ut.unixpath('~/.ipython/profile_default/ipython_config.py')
+    dpath = ut.unixpath('~/.ipython/profile_default')
+    ut.ensuredir(dpath, info=True, verbose=True)
+    ipy_config_fpath = ut.unixjoin(dpath, 'ipython_config.py')
     ipy_config_text = ut.codeblock(
         '''
         c = get_config()  # NOQA
@@ -39,5 +41,6 @@ if __name__ == '__main__':
     CommandLine:
         python ~/local/init/init_ipython_config.py
         python local/init/init_ipython_config.py
+        python init_ipython_config.py
     """
     main()
