@@ -112,6 +112,8 @@ install_core_extras()
     sudo apt-get install graphviz -y
     sudo apt-get install python-pydot -y
     sudo apt-get install imagemagick -y
+
+    sudo apt-get install dia-gnome -y
 }
 
 install_evaluating()
@@ -283,7 +285,6 @@ lprof_dl()
     cd $CODE_DIR
     git clone https://github.com/rkern/line_profiler.git
     sudo pip uninstall line-profiler
-    
 }
 
 install_captn_proto()
