@@ -10,7 +10,8 @@ else
 fi
 
 export QT_API=pyqt
-export PYTHONPATH=/home/joncall/code/utool:$PYTHONPATH
+export PYTHONPATH=/home/joncrall/code/utool:$PYTHONPATH
+export PYTHONPATH=/home/joncrall/local/pyscripts:$PYTHONPATH
 
 
 if [[ "$(hostname)" == "ibeis.cs.uic.edu"  ]]; then 
@@ -31,7 +32,12 @@ update_pip_dists()
  
 permit_erotemic_gitrepo()
 { 
+    #permit_gitrepo -i
     sed -i 's/https:\/\/github.com\/Erotemic/git@github.com:Erotemic/' .git/config
 }
 export PATH=$PATH:/usr/local/cuda/bin
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/lib
+
+
+# set history to not ignore leading whitespace
+export HISTCONTROL=

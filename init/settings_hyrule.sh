@@ -76,12 +76,30 @@ hyrule_create_users()
     #umask 002 work
     #chgrp rpi work
     #chmod g+s work
+    #  New users
+    sudo adduser chuck
+    sudo usermod -a -G rpi chuck
 }
 
 hyrule_setup_groups()
 {
     sudo chown -R joncrall:rpi /raid
     sudo chown -R joncrall:rpi ~/code/caffe
+
+    # fix for hendrik
+    sudo chown -R hendrik:hendrik /home/hendrik/Desktop
+    sudo chown -R hendrik:hendrik /home/hendrik/Downloads
+    sudo chown -R hendrik:hendrik /home/hendrik/ibeis
+    sudo chown -R hendrik:hendrik /home/hendrik/project
+
+
+    # give group write access to raid
+    sudo chmod -R g+rw /raid
+    sudo chmod -R g+rw /raid/work
+    sudo chmod -R g+rw /raid/work/GIRM_MUGU_20
+
+    sudo chown -R joncrall:rpi /raid/work/
+    sudo chown -R joncrall:rpi /raid/work/GIRM_MUGU_20
 }
 
 setup_gitserver()

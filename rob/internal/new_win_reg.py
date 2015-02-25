@@ -5,21 +5,25 @@ import win32con
 import win32gui
 import datetime
 
- 
+
 def refresh():
     print('Broadcasting environment changed')
     win32gui.SendMessage(win32con.HWND_BROADCAST, win32con.WM_SETTINGCHANGE, 0, 'Environment')
+
 
 def refresh_key(subkey):
     # broadcast change
     print('Broadcasting '+repr(subkey)+' changed')
     win32gui.SendMessage(win32con.HWND_BROADCAST, win32con.WM_SETTINGCHANGE, 0, subkey)
 
+
 def get_env(name):
     return get_root_env(name)
 
+
 def set_env(name, value):
     return set_root_env(name, value)
+
 
 def set_root_env(name, value):
     (root, subkey) = __root_env_keys()
@@ -28,6 +32,7 @@ def set_root_env(name, value):
     _winreg.CloseKey(key)
     refresh_key(subkey)
 
+
 def set_user_env(name, value):
     (root, subkey) = __user_env_keys()
     key = _winreg.OpenKey(root, subkey, 0, _winreg.KEY_ALL_ACCESS)
@@ -35,18 +40,21 @@ def set_user_env(name, value):
     _winreg.CloseKey(key)
     refresh_key(subkey)
 
-WIN_BIN_TYPES = {'BINARY':_winreg.REG_BINARY,\
-             'DWORD':_winreg.REG_DWORD,\
-             'DWORD_LITTLE_ENDIAN':_winreg.REG_DWORD_LITTLE_ENDIAN,\
-             'DWORD_BIG_ENDIAN':_winreg.REG_DWORD_BIG_ENDIAN,\
-             'EXPAND_SZ':_winreg.REG_EXPAND_SZ,\
-             'LINK':_winreg.REG_LINK,\
-             'MULTI_SZ':_winreg.REG_MULTI_SZ,\
-             'NONE':_winreg.REG_NONE,\
-             'RESOURCE_LIST':_winreg.REG_RESOURCE_LIST,\
-             'FULL_RESOURCE_DESCRIPTOR':_winreg.REG_FULL_RESOURCE_DESCRIPTOR,\
-             'RESOURCE_REQUIREMENTS_LIST':_winreg.REG_RESOURCE_REQUIREMENTS_LIST,\
-             'SZ':_winreg.REG_SZ}
+
+WIN_BIN_TYPES = {
+    'BINARY': _winreg.REG_BINARY,
+    'DWORD': _winreg.REG_DWORD,
+    'DWORD_LITTLE_ENDIAN': _winreg.REG_DWORD_LITTLE_ENDIAN,
+    'DWORD_BIG_ENDIAN': _winreg.REG_DWORD_BIG_ENDIAN,
+    'EXPAND_SZ': _winreg.REG_EXPAND_SZ,
+    'LINK': _winreg.REG_LINK,
+    'MULTI_SZ': _winreg.REG_MULTI_SZ,
+    'NONE': _winreg.REG_NONE,
+    'RESOURCE_LIST': _winreg.REG_RESOURCE_LIST,
+    'FULL_RESOURCE_DESCRIPTOR': _winreg.REG_FULL_RESOURCE_DESCRIPTOR,
+    'RESOURCE_REQUIREMENTS_LIST': _winreg.REG_RESOURCE_REQUIREMENTS_LIST,
+    'SZ': _winreg.REG_SZ,
+}
 
 WIN_STR_TYPES = {}
 for (key, val) in WIN_BIN_TYPES.iteritems():
@@ -130,7 +138,7 @@ def timestamp_from_windows_time(windows_time):
     microseconds = (windows_time*0.1)+TIMEZONE_DIFF
     delta = datetime.timedelta(microseconds=microseconds)
     timestamp = JAN_1_1601 + delta
-    return timestamp 
+    return timestamp
 
 def __print_key(key):
     print('query info key')
@@ -154,9 +162,9 @@ def __print_key(key):
     for valx in xrange(num_values):
         try:
             (val_name, val_data, val_type) = _winreg.EnumValue(key, valx)
-            try: 
+            try:
                 val_type_str = WIN_STR_TYPES[val_type]
-            except Exception: 
+            except Exception:
                 val_type_str = type_val
             print(' * * name=%r, type=%r\n * * data=%r\n * ------' %\
                   (val_type_str, val_name, val_data))

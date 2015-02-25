@@ -39,6 +39,8 @@ au BufNewFile,BufRead *.tex call LatexInitialize()
 " Remove trailing whitespace
 ":call AuPreWritePatterns(':%s/  *$//e', '*.py', '*.c', '*.cxx', '*.cpp', '*.h', '*.hpp', '*.hxx')
 au BufWritePre *.py :%s/\s\+$//e
+au BufWritePre *.py :%s///e
+
 
 "au! BufWritePre *.py :%s/\s\+$//e
 "au BufWritePre *.c :%s/\s\+$//e

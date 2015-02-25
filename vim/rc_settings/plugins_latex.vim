@@ -58,3 +58,5 @@ endif
 " Toggle Compile to OpenDyslexic
 command! LATEXCompileRuleLaTeX :call SetLaTeX()
 command! LATEXCompileRuleXeTeX :call SetXeTeX()
+
+":inoremap <leader>* \item 

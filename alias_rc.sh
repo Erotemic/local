@@ -83,6 +83,7 @@ alias fl='cd $CODE_DIR/flann/'
 alias hs='cd $CODE_DIR/ibeis/ibeis/model/hots'
 alias smk='cd $CODE_DIR/ibeis/ibeis/model/hots/smk'
 alias ib='cd $CODE_DIR/ibeis/'
+alias db='cd ~/Dropbox/'
 alias cy='cd $CODE_DIR/cyth/'
 alias rf='cd $CODE_DIR/pyrf/'
 alias gi='cd $CODE_DIR/pygist/'
@@ -204,6 +205,11 @@ cls()
 read_clip()
 {
     xsel --clipboard < ~/clipboard.txt
+}
+
+utget()
+{
+    python -c "import utool; print(utool.grab_file_url(\"$@\"))"
 }
 
 astyle_cpp()

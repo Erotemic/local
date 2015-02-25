@@ -100,11 +100,13 @@ def get_current_modulename():
     """
     returns current module being edited
     """
+    from os.path import dirname
     import utool as ut
     ut.rrrr(verbose=False)
     import vim
     modname = ut.get_modname_from_modpath(vim.current.buffer.name)
-    return modname
+    moddir = dirname(vim.current.buffer.name)
+    return modname, moddir
 
 
 def insert_codeblock_at_cursor(text):
@@ -136,7 +138,7 @@ def auto_docstr(**kwargs):
 
     try:
         funcname, searchlines = find_pyfunc_above_cursor()
-        modname = get_current_modulename()
+        modname, moddir = get_current_modulename()
 
         if funcname is None:
             funcname = '[vimerr] UNKNOWN_FUNC: funcname is None'
@@ -144,18 +146,18 @@ def auto_docstr(**kwargs):
         else:
             modname = modname
             # Text to insert into the current buffer
-            autodockw = {'verbose': False}
+            autodockw = {'verbose': True}
             autodockw.update(kwargs)
-            docstr = utool.auto_docstr(modname, funcname, **autodockw)
+            docstr = utool.auto_docstr(modname, funcname, moddir=moddir, **autodockw)
             #if docstr.find('unexpected indent') > 0:
             #    docstr = funcname + ' ' + docstr
             if docstr[:].strip() == 'error':
                 flag = True
     except vim.error as ex:
-        dbgmsg = str(ex)
+        dbgmsg = 'vim_error' + str(ex)
         flag = False
     except Exception as ex:
-        dbgmsg = str(ex)
+        dbgmsg = 'exception' + str(ex)
         flag = False
 
     if flag:
@@ -166,7 +168,11 @@ def auto_docstr(**kwargs):
             dbgtext += dbgmsg
         dbgtext += '\n+----------------------'
         dbgtext += '\n| InsertDoctstr(modname=%r, funcname=%r' % (modname, funcname)
+        pycmd = ('import utool; print(utool.auto_docstr(%r, %r)))' % (modname, funcname))
+        pycmd = pycmd.replace('\'', '\\"')
+        dbgtext += '\n| python -c "%s"' % (pycmd,)
         dbgtext += '\n+----------------------'
+        dbgtext += '\n+searchlines = '
         dbgtext += utool.indentjoin(searchlines, '\n| ')
         dbgtext += '\nL----------------------'
 
@@ -261,4 +267,3 @@ def open_fpath_list(fpath_list, num_hsplits=2):
     if index < len(fpath_list):
         print('WARNING: Too many files specified')
         print('Can only handle %d' % index)
-

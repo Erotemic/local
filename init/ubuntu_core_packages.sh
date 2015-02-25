@@ -1,3 +1,17 @@
+
+index_opencv_with_ctags()
+{
+    #References:
+    #    http://sourceforge.net/p/ctags/mailman/message/20916991/
+    ctags -R -ICVAPI --c++-kinds=+p --fields=+iaS --extra=+q --language-force=c++ /usr/include/opencv/
+}
+clean_for_upgrade()
+{
+    # msg: Please free at least an additional 68,3 M of disk space on '/boot'. Empty your trash and remove temporary packages of former installations using 'sudo apt-get clean'.
+    # References: http://askubuntu.com/questions/495941/software-updater-needs-more-disk-space
+    ubuntu-tweak
+}
+
 setup_ibeis()
 {
     source ~/local/init/freshstart_ubuntu.sh
@@ -87,6 +101,25 @@ install_core_extras()
     sudo apt-get install -y gitg
     sudo apt-get install -y sysstat
 
+    # References: https://help.ubuntu.com/community/Skype
+    #sudo dpkg --add-architecture i386
+    sudo add-apt-repository "deb http://archive.canonical.com/ $(lsb_release -sc) partner"
+    sudo apt-get update 
+    sudo apt-get install skype -y
+    #sudo apt-get install -y skype
+
+
+    sudo apt-get install graphviz -y
+    sudo apt-get install python-pydot -y
+    sudo apt-get install imagemagick -y
+}
+
+install_evaluating()
+{
+    #References: https://github.com/kayhayen/Nuitka#use-case-3-package-compilation
+    sudo apt-get install nuitka
+    nuitka --module ibeis --recurse-directory=ibeis
+    nuitka --recurse-all main.py
     
 }
 
@@ -226,7 +259,134 @@ pip_upgrade()
      
 }
 
+install_virtualbox()
+{
+    # References: https://www.virtualbox.org/wiki/Linux_Downloads
+    # Add oracle keys
+    #wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
+    #sudo apt-get update
+    #sudo apt-get install virtualbox-4.3
+    sudo apt-get install virtualbox 
+    sudo apt-get install dkms
+    # download addons and mount on guest machine
+    #http://download.virtualbox.org/virtualbox/4.1.12/
+    utget 'http://download.virtualbox.org/virtualbox/4.1.12/VBoxGuestAdditions_4.1.12.iso'
+    utget 'http://mirror.solarvps.com/centos/7.0.1406/isos/x86_64/CentOS-7.0-1406-x86_64-DVD.iso'
+    python -c 'import utool; print(utool.grab_file_url("http://download.virtualbox.org/virtualbox/4.1.12/VBoxGuestAdditions_4.1.12.iso"))'
+    http://mirror.centos.org/centos/7/isos/x86_64/
+    
+}
+
+
+lprof_dl()
+{
+    cd $CODE_DIR
+    git clone https://github.com/rkern/line_profiler.git
+    sudo pip uninstall line-profiler
+    
+}
+
+install_captn_proto()
+{
+    sudo apt-get install capnproto
+    sudo pip install pycapnp
+    #References: http://kentonv.github.io/capnproto/install.html
+    #curl -O https://capnproto.org/capnproto-c++-0.5.0.tar.gz
+    #tar zxf capnproto-c++-0.5.0.tar.gz
+    #cd capnproto-c++-0.5.0
+    #./configure
+    #make -j6 check
+    #sudo make instal
+}
+
+install_clang()
+{
+    sudo apt-get install clang-3.5
+    sudo apt-get install libstdc++-4.8-dev
+}
+
+install_cmake_latest()
+{
+    # http://www.cmake.org/download/
+    python -c "http://www.cmake.org/files/v3.0/cmake-3.0.2-Linux-i386.tar.gz"
+    # +==================================================
+    # SIMPLE WAY OF EXECUTING MULTILINE PYTHON FROM BASH
+    # +--------------------------------------------------
+    # Creates custom file descriptor that runs the script
+    # References: http://superuser.com/questions/607367/raw-multiline-string-in-bash
+    sudo apt-get remove cmake
+    exec 42<<'__PYSCRIPT__'
+import utool as ut
+from os.path import join
+cmake_zipped_url = 'http://www.cmake.org/files/v3.0/cmake-3.0.2-Linux-i386.tar.gz'
+cmake_unzipped_fpath = ut.grab_zipped_url(cmake_zipped_url)
+ut.vd(cmake_unzipped_fpath)
+install_prefix = ut.unixpath('~')
+for dname in ['bin', 'doc', 'man', 'share']:
+    install_dst = join(install_prefix, dname)
+    install_src = join(cmake_unzipped_fpath, dname)
+    ut.copy(install_src, install_dst)
+print(cmake_unzipped_fpath)
+__PYSCRIPT__
+python /dev/fd/42 $@
+
+
+    # L_________________________________________________
+
+}
+
+install_nomachine()
+{
+    # https://www.nomachine.com/download/download&id=1
+
+    #utget http://download.nomachine.com/download/4.4/Linux/nomachine_4.4.6_8_i686.tar.gz
+    exec 42<<'__PYSCRIPT__'
+import utool as ut
+import os
+from os.path import join
+zipped_url = 'http://download.nomachine.com/download/4.4/Linux/nomachine_4.4.6_8_i686.tar.gz'
+unzipped_fpath = ut.grab_zipped_url(zipped_url)
+ut.vd(unzipped_fpath)
+os.chdir(unzipped_fpath)
+ut.cmd('./configure')
+ut.cmd('make')
+ut.cmd('cp -r --verbose NX /usr/NX', sudo=True)
+ut.cmd('/usr/NX/nxserver --install', sudo=True)
+__PYSCRIPT__
+python /dev/fd/42 $@
+
+}
+
+
+install_workrave()
+{
+    # DOENT BUILD RIGHT
+    sudo apt-get install libxtst-dev -y
+    sudo apt-get install libxss-dev -y
+    sudo apt-get install python-cheetah -y
+    sudo apt-get install gnome-core-devel -y
+    exec 42<<'__PYSCRIPT__'
+import utool as ut
+import os
+from os.path import join
+zipped_url = 'http://sourceforge.net/projects/workrave/files/workrave/1.10/workrave-1.10.tar.gz'
+unzipped_fpath = ut.grab_zipped_url(zipped_url)
+ut.vd(unzipped_fpath)
+os.chdir(unzipped_fpath)
+ut.cmd('./configure')
+ut.cmd('make')
+
+install_prefix = ut.unixpath('~')
+for dname in ['bin', 'doc', 'man', 'share']:
+    install_dst = join(install_prefix, dname)
+    install_src = join(unzipped_fpath, dname)
+    ut.copy(install_src, install_dst)
+print(unzipped_fpath)
+__PYSCRIPT__
+python /dev/fd/42 $@
+
+}
+
 
 # Cleanup
 #sudo apt-get remove jasper -y
-

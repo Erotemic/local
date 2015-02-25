@@ -237,8 +237,24 @@ endpython
 endfu
 command! Tovimrc call TabOpenVimRC()
 
+
 """"""""""""""""""""""""""""""""""
 
+func! TabOpenAutogen()
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+fpath_list = [
+        '~/code/utool/utool/util_inspect.py',
+        '~/code/utool/utool/util_autogen.py',
+    ]
+pyvim_funcs.open_fpath_list(fpath_list, num_hsplits=2)
+endpython
+endfu
+command! Toautogen call TabOpenAutogen()
+
+
+""""""""""""""""""""""""""""""""""
 
 func! TabOpenCyth()
 python << endpython
@@ -253,6 +269,10 @@ pyvim_funcs.open_fpath_list(fpath_list, num_hsplits=3)
 endpython
 endfu
 command! Tocyth call TabOpenCyth()
+
+
+""""""""""""""""""""""""""""""""""
+
 
 func! MagicPython()
     "https://dev.launchpad.net/UltimateVimPythonSetup
@@ -346,8 +366,54 @@ import utool
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 
 if pyvim_funcs.is_module_pythonfile():
-    print('building docstr')
+    #print('building docstr')
     text = pyvim_funcs.auto_docstr()
+    pyvim_funcs.insert_codeblock_at_cursor(text)
+else:
+    print('current file is not a pythonfile')
+#L______________
+endpython
+endfu 
+
+
+func! InsertDocstrOnlyArgs() 
+python << endpython
+import vim
+#vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
+import utool
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+
+if pyvim_funcs.is_module_pythonfile():
+    print('building docstr')
+    text = pyvim_funcs.auto_docstr( 
+        with_args=True,
+        with_ret=False,
+        with_commandline=False,
+        with_example=False,
+        with_header=False)
+    pyvim_funcs.insert_codeblock_at_cursor(text)
+else:
+    print('current file is not a pythonfile')
+#L______________
+endpython
+endfu 
+
+
+func! InsertDocstrOnlyCommandLine() 
+python << endpython
+import vim
+#vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
+import utool
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+
+if pyvim_funcs.is_module_pythonfile():
+    print('building docstr')
+    text = pyvim_funcs.auto_docstr( 
+        with_args=False,
+        with_ret=False,
+        with_commandline=True,
+        with_example=False,
+        with_header=False)
     pyvim_funcs.insert_codeblock_at_cursor(text)
 else:
     print('current file is not a pythonfile')

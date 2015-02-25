@@ -129,3 +129,12 @@ func! FIX_PRINT_QUOTE()
     :%s/\(^ *\)print("/\1print('/gc
     :g/^ *print('[^[]/s/print('/print('[@tag]/gc
 endfunc
+
+
+func! REPLACE_DOUBLEQUOTE_WITH_SINGLEQUOTE()
+    " leave triple double quotes alone
+    :%s/\([^"]\)"\([^"]\)/\1'\2/gc
+    " Fix end of lines
+    :%s/\([^"]\)"$/\1'/gc
+    " does not take into account single quotes inside double quotes
+endfunc

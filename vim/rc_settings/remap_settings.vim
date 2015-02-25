@@ -13,6 +13,7 @@
 ":call PythonInvert()
 ":call TeckInvert()
 CMDSWAP : ;
+"CMDUNSWAP : ;
 
 " Map to several leaderkeys with the main being ","
 let mapleader = ","
@@ -26,6 +27,9 @@ noremap \ ,
 ":imap <Del> <Esc>
 
 noremap <leader>d :call InsertDocstr()<CR>
+noremap <leader>ed :call InsertDocstr()<CR>
+noremap <leader>ea :call InsertDocstrOnlyArgs()<CR>
+noremap <leader>ec :call InsertDocstrOnlyCommandLine()<CR>
 noremap <leader>ex :call InsertIBEISExample()<CR>
 noremap <leader>em :call InsertMainPyTest()<CR>
 "inoremap <leader>d :call InsertDocstr()<CR>
@@ -43,6 +47,12 @@ noremap <leader>em :call InsertMainPyTest()<CR>
 "noremap <leader>rrr :source ~/local/vim/portable_vimrc<CR>
 noremap <leader>r :source ~/local/vim/portable_vimrc<CR>
 noremap <leader>R :source ~/local/vim/portable_vimrc<CR>
+
+
+" for python doctests
+:inoremap ,,, >>> 
+:noremap <leader>> :s/^\( *[^ ].*\)\([^ ]\)>>>/\1\2/g<CR>
+":noremap <leader>> :'<,'>s/^\( *[^ ].*\)\([^ ]\)>>>/\1\2/g<CR>
 
 " Function Keys
 "
@@ -109,7 +119,8 @@ imap <C-P> :call Tex_RunViewLaTeX() <CR>
 noremap <leader>w <C-w>w
 noremap <leader>, <C-w>w
 noremap <leader>j :NERDTreeToggle<CR>
-noremap <leader>J :NERDTree<CR>
+noremap <leader>h :Tlist<CR>
+"noremap <leader>J :NERDTree<CR>
 
 "noremap <leader>r zR<CR>
 "

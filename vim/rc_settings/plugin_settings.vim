@@ -72,6 +72,15 @@ let g:syntastic_cpp_remove_include_errors = 1
 "let g:syntastic_c_include_dirs = ['include', '../include']
 "let g:syntastic_c_compiler = 'clang'
 
+
+"-------------------------
+" PLUGIN: Taglist
+"https://justin.abrah.ms/vim/vim_and_python.html
+let Tlist_GainFocus_On_ToggleOpen = 1
+let Tlist_Close_On_Select = 0
+let Tlist_Use_Right_Window = 0
+let Tlist_File_Fold_Auto_Close = 1
+
 "-------------------------
 " PLUGIN: Unimpaired
 "https://github.com/tpope/vim-unimpaired
