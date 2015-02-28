@@ -239,8 +239,8 @@ class ROB_Directories:
                 d.CODE,
                 d.PORT_CODE,
                 d.HOTSPOTTER])
-                             #,
-                             #d.PORT_CODE]
+            #,
+            #d.PORT_CODE]
 
         #elif os_type == 'linux2':
             #d.GUI_CMD = 'gnome-terminal'

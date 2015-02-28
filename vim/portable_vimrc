@@ -116,9 +116,9 @@ source ~/local/vim/rc_settings/autocommand_settings.vim
 ":call QUICKOPEN_leader_tvio('e', '~/code/hesaff/src/hesaff.cpp')
 :call QUICKOPEN_leader_tvio('E', '~/code/ibeis/ibeis/dev/experiment_configs.py')
 :call QUICKOPEN_leader_tvio('f', '~/code/ibeis/ibeis/ibsfuncs.py')
+:call QUICKOPEN_leader_tvio('F', '~/code/ibeis/ibeis/gui/inspect_gui.py')
 ":call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/newgui.py')
-":call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/guiback.py')
-:call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/inspect_gui.py')
+:call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/guiback.py')
 :call QUICKOPEN_leader_tvio('G', '~/code/ibeis/ibeis/gui/newgui.py')
 """"""""""""""
 :call QUICKOPEN_leader_tvio('H', '~/code/ibeis/ibeis/model/hots/match_chips4.py')
