@@ -101,6 +101,7 @@ endfu
 " NAVIGATION
 
 func! QUICKOPEN_leader_tvio(...)
+    " TODO: remove for plugin
     " Maps <leader>t<key> to tab open a filename
     " Maps <leader>s<key> to vsplit open a filename
     " Maps <leader>i<key> to split open a filename

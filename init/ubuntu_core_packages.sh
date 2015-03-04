@@ -75,6 +75,13 @@ install_core()
     
 }
 
+install_synergy()
+{
+    sudo apt-get install synergy -y
+
+}
+
+
 install_dropbox()
 {
     # Dropbox 
