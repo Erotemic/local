@@ -119,4 +119,7 @@ endif
     ""endif
 "endif
 
-"
+
+" References: http://blog.ezyang.com/2010/03/vim-textwidth/
+" Set it so gq will reformat but no automatic breaking
+set tw=0 fo=cqt wm=0
