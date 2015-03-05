@@ -13,6 +13,7 @@ au FileType python filetype indent on
 au FileType python set textwidth=80
 au FileType python set foldmethod=indent
 au FileType python set foldnestmax=3
+au FileType python set nospell
 "au FileType python call PythonInvert()
 
 " C++ indenting, folding, etc...
