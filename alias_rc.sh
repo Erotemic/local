@@ -71,7 +71,7 @@ alias loc='cd ~/local'
 alias lc='cd ~/local'
 alias vf='cd ~/local/vim/vimfiles'
 alias vfb='cd ~/local/vim/vimfiles/bundle'
-alias lt='cd ~/latex'
+alias lt='cd ~/latex/crall-lab-notebook/'
 alias scr='cd ~/scripts'
 # Special navigation
 alias s='git status'
