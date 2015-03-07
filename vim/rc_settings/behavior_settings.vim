@@ -10,8 +10,8 @@ if has('mouse')
 endif
 
 
-set ff=unix
-set ffs=unix,dos
+set fileformat=unix
+set fileformats=unix,dos
 
 " Set backup directory
 if has("win32") || has("win16")
@@ -43,11 +43,14 @@ endif
 
 "-------------------------
 set nobackup
+set nowritebackup
 set autochdir
+set noswapfile
+"Windows symlink problems
+set backupcopy=yes
+set nowritebackup
 
 set nomousehide
-set nowb
-set noswapfile
 " Do not open these sort of files
 set wildignore=*.o,*~,*.pyc,*.aux,*.masv,*.bbl,*.bcf,*.blg,*.brf,*.synctex,*.upa,*.upb,*.pdf,*.dvi
 
@@ -62,17 +65,12 @@ set tabstop=4
 set expandtab
 set cino={1s
 set autoread
-set lbr " Linebreak on 500 characters
-set tw=500
+"set lbr " Linebreak on 500 characters
 set history=5000  " keep 5000 lines of command line history
 set ruler
-set showcmd	
+"set showcmd	
 set incsearch
 set hlsearch
-
-"Windows symlink problems
-set bkc=yes
-set nowritebackup
 
 hi StatusLine ctermbg=red ctermfg=green
 hi StatusLine guibg=gray10 guifg=green
@@ -122,4 +120,4 @@ endif
 
 " References: http://blog.ezyang.com/2010/03/vim-textwidth/
 " Set it so gq will reformat but no automatic breaking
-set tw=0 fo=cqt wm=0
+set textwidth=0 formatoptions=cqt wrapmargin=0

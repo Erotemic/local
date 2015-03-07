@@ -3,9 +3,9 @@
 
 " Initialize
 func! LatexInitialize()
-    :set textwidth=80
-    :set spell
-    :setlocal spell spelllang=en_us
+    ":set textwidth=80
+    ":set spell
+    ":setlocal spell spelllang=en_us
     ":call SetFontMonoDyslexic()
     "set wildignore=*.o, *~, *.pyc, *.pyo, *.aux, *.masv, *.bbl, *.bcf, *.blg, *.brf, *.synctex, *.upa, *.upb, *.pdf, *.out, *.log
     "set wildignore=*.o, *.pyc, *.pyo, *.aux, *.masv, *.bbl, *.bcf, *.blg, *.brf, *.synctex, *.upa, *.upb, *.pdf, *.out, *.log
@@ -39,9 +39,9 @@ let g:Tex_UseMakefile = 1
 let g:Tex_SmartKeyDot=0
 
 " Turn off LATEX code folding
-:let Tex_FoldedSections=""
-:let Tex_FoldedEnvironments=""
-:let Tex_FoldedMisc=""
+":let Tex_FoldedSections=""
+":let Tex_FoldedEnvironments=""
+":let Tex_FoldedMisc=""
 
 " Turn of XeLaTeX errors
 set makeprg=texwrapper

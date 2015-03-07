@@ -24,6 +24,8 @@ au FileType cpp set smartindent
 
 " Latex
 au BufNewFile,BufRead *.tex call LatexInitialize() 
+autocmd Filetype tex,latex set spell
+autocmd Filetype tex,latex set spell spelllang=en_us
 
 " AuOnReadPatterns is defined in custom_misc_functions
 :call AuOnReadPatterns('set ft=cpp', '*.txx')
