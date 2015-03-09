@@ -1,1 +1,1 @@
-cd %USERPROFILE%/code/ibeis/ibeis/model/hots %*
+cd %CODE_DIR%/ibeis/ibeis/model/hots %*

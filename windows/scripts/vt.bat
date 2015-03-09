@@ -1,1 +1,1 @@
-cd %USERPROFILE%/code/vtool %*
+cd %CODE_DIR%/vtool %*

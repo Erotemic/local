@@ -1,1 +1,1 @@
-cd %USERPROFILE%/code/hesaff %*
+cd %CODE_DIR%/hesaff %*

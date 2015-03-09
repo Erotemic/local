@@ -26,17 +26,17 @@ FORCE = '--force' in sys.argv
 
 #import shlex
 #with open(fpath, 'r') as file_:
-    #sh = (shlex.shlex(file_))
-    #print(sh.read_token())
-    #print(sh.read_token())
-    #print(sh.read_token())
-    #print(sh.read_token())
-    #print(sh.read_token())
-    #print(sh.read_token())
-    #print(sh.read_token())
-    #print(sh.read_token())
-    #print(sh.read_token())
-    ##sh = (shlex.split(file_))
+#    sh = (shlex.shlex(file_))
+#    print(sh.read_token())
+#    print(sh.read_token())
+#    print(sh.read_token())
+#    print(sh.read_token())
+#    print(sh.read_token())
+#    print(sh.read_token())
+#    print(sh.read_token())
+#    print(sh.read_token())
+#    print(sh.read_token())
+#    #sh = (shlex.split(file_))
 #print(sh)
 
 #def fm():

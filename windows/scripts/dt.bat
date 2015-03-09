@@ -1,1 +1,1 @@
-cd %USERPROFILE%/code/detecttools/ %*
+cd %CODE_DIR%/detecttools/ %*

@@ -1,1 +1,1 @@
-cd %USERPROFILE%/code/guitool %*
+cd %CODE_DIR%/guitool %*

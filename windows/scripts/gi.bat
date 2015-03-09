@@ -1,1 +1,1 @@
-cd %USERPROFILE%/code/pygist/ %*
+cd %CODE_DIR%/pygist/ %*

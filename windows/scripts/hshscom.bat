@@ -1,1 +1,1 @@
-cd %USERPROFILE%/code/hotspotter/hscom %*
+cd %CODE_DIR%/hotspotter/hscom %*

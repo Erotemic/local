@@ -1,1 +1,1 @@
-cd %USERPROFILE%/code/utool %*
+cd %CODE_DIR%/utool %*

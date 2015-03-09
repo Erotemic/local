@@ -1,1 +1,1 @@
-cd %USERPROFILE%/code/plottool %*
+cd %CODE_DIR%/plottool %*

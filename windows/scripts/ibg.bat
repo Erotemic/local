@@ -1,1 +1,1 @@
-cd %USERPROFILE%/code/ibeis/ibeis/gui
+cd %CODE_DIR%/ibeis/ibeis/gui %*

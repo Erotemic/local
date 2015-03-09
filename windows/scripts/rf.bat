@@ -1,1 +1,1 @@
-cd %USERPROFILE%/code/pyrf/ %*
+cd %CODE_DIR%/pyrf/ %*

@@ -1,1 +1,1 @@
-call gvim %USERPROFILE%\local\rob\rob_interface.py
+gvim %prob% %*

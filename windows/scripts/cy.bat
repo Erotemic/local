@@ -1,1 +1,1 @@
-cd %USERPROFILE%/code/cyth
+cd %CODE_DIR%/cyth/ %*

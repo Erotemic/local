@@ -1,1 +1,1 @@
-cd C:\Python27
+cd %%(python -c "import site; print(site.getsitepackages()[0])") %*
