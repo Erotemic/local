@@ -4,7 +4,7 @@ A list of my personally used repositories
 CommandLine:
     lc
     python init/ensure_vim_plugins.py
-    python ~/init/ensure_vim_plugins.py
+    python ~/local/init/ensure_vim_plugins.py
 """
 from __future__ import absolute_import, division, print_function
 from meta_util_git1 import set_userid, unixpath, repo_list
@@ -111,6 +111,7 @@ VIM_REPO_URLS, VIM_REPOS = repo_list([
     ###'https://github.com/klen/python-mode.git'
     ###'https://github.com/Valloric/YouCompleteMe.git',
     ###'https://github.com/koron/minimap-vim.git',
+    #'https://github.com/severin-lemaignan/vim-minimap.git',
     ###'https://github.com/zhaocai/GoldenView.Vim.git',
 ], BUNDLE_DPATH)
 
