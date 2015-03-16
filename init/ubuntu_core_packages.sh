@@ -416,3 +416,29 @@ install_numba()
 
 # Cleanup
 #sudo apt-get remove jasper -y
+
+install_hpn()
+{
+    # References: https://spoutcraft.org/threads/blazing-fast-sftp-ssh-transfer.7682/
+    ssh -V
+
+    sudo apt-get install python-software-properties
+    sudo add-apt-repository ppa:w-rouesnel/openssh-hpn
+    sudo apt-get update -y
+    sudo apt-get install openssh-server
+
+
+    sudo gvim /etc/ssh/sshd_config
+    sudo sh -c 'cat >> /etc/ssh/sshd_config << EOL
+# +--- HPN SETTINGS
+HPNDisabled no
+TcpRcvBufPoll yes
+HPNBufferSize 16384
+NoneEnabled yes
+# L___ HPN SETTINGS
+EOL'
+   sudo service ssh restart
+   ssh -V
+    
+
+}
