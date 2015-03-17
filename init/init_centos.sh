@@ -62,3 +62,16 @@ wget http://pkgs.repoforge.org/bash-completion/bash-completion-20060301-1.el6.rf
 rpm -ivh bash-completion-20060301-1.el6.rf.noarch.rpm
  bash-completion-20060301-1.noarch.rpm
 . /etc/bash_completion
+
+
+
+# Virtual environment
+#sudo pip2.7 install virtualenv
+#usr/local/lib/python2.7/site-packages/virtualenv/
+#sudo /usr/local/lib/python2.7/site-packages/virtualenv.py
+
+cd
+mkdir venv
+sudo pip2.7 install virtualenv
+python2.7 -m virtualenv -p /usr/bin/python2.7 venv
+source ~/venv/bin/activate

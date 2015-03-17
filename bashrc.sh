@@ -22,6 +22,11 @@ else
     export CODE_DIR=~/code
 fi
 
+if [ -d "~/venv" ]; then
+    source ~/venv/bin/activate
+fi
+
+
 #export OMP_NUM_THREADS=7
 
 source ~/local/alias_rc.sh
