@@ -16,6 +16,8 @@ export PYTHONPATH=/home/joncrall/local/pyscripts:$PYTHONPATH
 
 if [[ "$HOSTNAME" == "ibeis.cs.uic.edu"  ]]; then 
     export CODE_DIR=/opt/ibeis
+elif [[ "$HOSTNAME" == "pachy.cs.uic.edu"  ]]; then 
+    export CODE_DIR=/opt/ibeis
 else
     export CODE_DIR=~/code
 fi
