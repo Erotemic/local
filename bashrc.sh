@@ -22,8 +22,10 @@ else
     export CODE_DIR=~/code
 fi
 
-if [ -d "~/venv" ]; then
-    source ~/venv/bin/activate
+export PYTHON_VENV="$HOME/venv"
+
+if [ -d "$PYTHON_VENV" ]; then
+    source $PYTHON_VENV/bin/activate
 fi
 
 
