@@ -14,7 +14,7 @@ export PYTHONPATH=/home/joncrall/code/utool:$PYTHONPATH
 export PYTHONPATH=/home/joncrall/local/pyscripts:$PYTHONPATH
 
 
-if [[ "$(hostname)" == "ibeis.cs.uic.edu"  ]]; then 
+if [[ "$HOSTNAME" == "ibeis.cs.uic.edu"  ]]; then 
     export CODE_DIR=/opt/ibeis
 else
     export CODE_DIR=~/code

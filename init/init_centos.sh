@@ -29,9 +29,26 @@ sudo sed -i s/ONBOOT=no/ONBOOT=yes/ $GLOBAL_ifcfg_eth0
 sudo sed -i s/NM_CONTROLLED=yes/NM_CONTROLLED=no/ $GLOBAL_ifcfg_eth0
 
 sudo yum install vim
+sudo yum install gvim
 
 
 sudo yum install git
+if [ ! -f ~/local ]; then
+mkdir ~/tmp
+fi
+if [ ! -f ~/code ]; then
+mkdir ~/code
+fi
+cd ~
+if [ ! -f ~/local ]; then
+    git clone https://github.com/Erotemic/local.git
+fi
+# TODO UTOOL
+mv ~/.bashrc ~/.bashrc.orig
+mv ~/.profile ~/.profile.orig
+ln -s ~/local/bashrc.sh ~/.bashrc
+ln -s ~/local/profile.sh ~/.profile 
+source ~/.bashrc
 git config --global user.name joncrall
 git config --global user.email crallj@rpi.edu
 git config --global push.default current
