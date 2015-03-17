@@ -10,8 +10,6 @@ else
 fi
 
 export QT_API=pyqt
-export PYTHONPATH=/home/joncrall/code/utool:$PYTHONPATH
-export PYTHONPATH=/home/joncrall/local/pyscripts:$PYTHONPATH
 
 
 if [[ "$HOSTNAME" == "ibeis.cs.uic.edu"  ]]; then 
@@ -22,7 +20,12 @@ else
     export CODE_DIR=~/code
 fi
 
+
+export PYTHONPATH=$CODE_DIR/utool:$PYTHONPATH
+export PYTHONPATH=$HOME/local/pyscripts:$PYTHONPATH
+
 export PYTHON_VENV="$HOME/venv"
+echo $PYTHON_VENV
 
 if [ -d "$PYTHON_VENV" ]; then
     source $PYTHON_VENV/bin/activate
