@@ -49,10 +49,16 @@ if sys.platform.startswith('win32'):
         pass
 
 
+def ensuredir(path):
+    if not os.path.exists(path):
+        os.makedirs(os.path.normpath(path))
+
+
 def main():
     PULL = '--pull' in sys.argv
 
     BUNDLE_DPATH = util_git1.BUNDLE_DPATH
+    ensuredir(BUNDLE_DPATH)
     VIM_REPOS_WITH_SUBMODULES = util_git1.VIM_REPOS_WITH_SUBMODULES
     VIM_REPO_URLS = util_git1.VIM_REPO_URLS
     VIM_REPO_DIRS = util_git1.get_repo_dirs(VIM_REPO_URLS, BUNDLE_DPATH)
