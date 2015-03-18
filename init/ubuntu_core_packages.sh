@@ -349,21 +349,28 @@ install_nomachine()
 {
     # https://www.nomachine.com/download/download&id=1
 
+    # NOT COMPLETELY DONE
+    # FIX MANUALLY
+
     #utget http://download.nomachine.com/download/4.4/Linux/nomachine_4.4.6_8_i686.tar.gz
     exec 42<<'__PYSCRIPT__'
 import utool as ut
 import os
 from os.path import join
-zipped_url = 'http://download.nomachine.com/download/4.4/Linux/nomachine_4.4.6_8_i686.tar.gz'
+#zipped_url = 'http://download.nomachine.com/download/4.4/Linux/nomachine_4.4.6_8_i686.tar.gz'
+zipped_url = 'http://download.nomachine.com/download/4.4/Linux/nomachine_4.4.12_11_x86_64.tar.gz'
 unzipped_fpath = ut.grab_zipped_url(zipped_url)
-ut.vd(unzipped_fpath)
 os.chdir(unzipped_fpath)
-ut.cmd('./configure')
-ut.cmd('make')
-ut.cmd('cp -r --verbose NX /usr/NX', sudo=True)
+ut.cmd('ls')
+ut.vd(unzipped_fpath)
+os.chdir(unzipped_fpath + '/NX')
+ut.cmd('ls')
+ut.cmd('nxserver --install', sudo=True)
 ut.cmd('/usr/NX/nxserver --install', sudo=True)
 __PYSCRIPT__
 python /dev/fd/42 $@
+
+#ut.cmd('cp -r --verbose NX /usr/NX', sudo=True)
 
 }
 
