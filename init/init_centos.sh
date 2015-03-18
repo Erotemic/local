@@ -73,5 +73,5 @@ rpm -ivh bash-completion-20060301-1.el6.rf.noarch.rpm
 cd
 mkdir venv
 sudo pip2.7 install virtualenv
-python2.7 -m virtualenv -p /usr/bin/python2.7 venv
-source ~/venv/bin/activate
+python2.7 -m virtualenv -p /usr/bin/python2.7 venv ----system-site-packages
+source ~/venv/bin/activate 

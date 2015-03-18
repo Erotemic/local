@@ -125,6 +125,7 @@ gnome_settings()
 
 nautilus_settings()
 {
+    # Get rid of anyonying nautilus sidebar items
     chmod +w ~/.config/user-dirs.dirs
     sed -i 's/XDG_TEMPLATES_DIR/#XDG_TEMPLATES_DIR/' ~/.config/user-dirs.dirs 
     sed -i 's/XDG_PUBLICSHARE_DIR/#XDG_PUBLICSHARE_DIR/' ~/.config/user-dirs.dirs
@@ -169,6 +170,11 @@ setup_ibeis()
     ./super_setup.py --build --develop
     ./super_setup.py --checkout next
     ./super_setup.py --build --develop
+
+    cd 
+    export IBEIS_WORK_DIR="$(python -c 'import ibeis; print(ibeis.get_workdir())')"
+    echo $IBEIS_WORK_DIR
+    ln -s $IBEIS_WORK_DIR  work
 }
 
 setup_sshd()

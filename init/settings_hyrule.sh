@@ -64,12 +64,14 @@ hyrule_create_users()
     sudo adduser hendrik
     sudo adduser zack
     sudo adduser git
+    sudo adduser kerner
     # Add group
     sudo groupadd rpi
     sudo usermod -a -G rpi jason
     sudo usermod -a -G rpi joncrall
     sudo usermod -a -G rpi hendrik
     sudo usermod -a -G rpi zack
+    sudo usermod -a -G rpi kerner
     # Delete user
     #sudo deluser --remove-home newuser
     #sudo chown -R joncrall:rpi *

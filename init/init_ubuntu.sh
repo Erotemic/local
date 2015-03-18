@@ -141,8 +141,10 @@ install_python()
     cd
     mkdir venv
     sudo pip2.7 install virtualenv
-    python2.7 -m virtualenv -p /usr/bin/python2.7 venv
+    #python2.7 -m virtualenv -p /usr/bin/python2.7 venv
+    python2.7 -m virtualenv -p /usr/bin/python2.7 venv --system-site-packages
     source ~/venv/bin/activate
+    
     
 }
 
