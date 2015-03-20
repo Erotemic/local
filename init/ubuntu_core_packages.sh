@@ -217,6 +217,10 @@ install_python()
     sudo apt-get install libsqlite3
     sudo apt-get install python-apsw
     #sudo pip install apsw
+
+
+    sudo apt-get install libgeos-dev -y
+    pip install shapely
 }
 
 install_cuda_prereq()
