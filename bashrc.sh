@@ -25,7 +25,7 @@ export PYTHONPATH=$CODE_DIR/utool:$PYTHONPATH
 export PYTHONPATH=$HOME/local/pyscripts:$PYTHONPATH
 
 export PYTHON_VENV="$HOME/venv"
-echo $PYTHON_VENV
+#echo $PYTHON_VENV
 
 if [ -d "$PYTHON_VENV" ]; then
     source $PYTHON_VENV/bin/activate
