@@ -320,3 +320,6 @@ rob sp "ibeis/io" "ibeis/dbio"
 rob sp get_annot_chipsizes get_annot_chip_sizes True
 rob sp get_annot_chip_dlen_sqrd get_annot_chip_dlensqrd True
 rob sp get_chip_paths get_chip_uris
+
+rob sp "get_annot_chip_fpaths\>" get_annot_chip_fpath True
+rob sp "get_annot_probchip_fpaths\>" get_annot_probchip_fpath True
