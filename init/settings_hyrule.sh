@@ -83,6 +83,22 @@ hyrule_create_users()
     sudo usermod -a -G rpi chuck
 }
 
+create_bare_repos()
+{
+    # References:
+    # http://www.saintsjd.com/2011/01/what-is-a-bare-git-repository/
+    # http://stackoverflow.com/questions/2888029/how-to-push-a-local-git-repository-to-another-computer
+    sudo git clone --bare ~joncrall/code/ibeis ~git/ibeis.git
+    sudo git clone --bare ~joncrall/code/utool ~git/utool.git
+    sudo chown -R git:git ~git/ibeis.git
+    sudo chown -R git:git ~git/utool.git
+    
+    #
+    git remote add hyrule git@hyrule.cs.rpi.edu:ibeis.git
+    git remote add hyrule git@hyrule.cs.rpi.edu:utool.git
+    
+}
+
 hyrule_setup_groups()
 {
     sudo chown -R joncrall:rpi /raid
