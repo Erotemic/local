@@ -185,6 +185,7 @@ install_latex()
     sudo apt-get install -y texlive-bibtex-extra
     sudo apt-get install -y texlive-fonts-extra
     sudo apt-get install -y texlive-generic-recommended
+    sudo apt-get install -y xindy
 
     sudo apt-get install -y remmina 
 

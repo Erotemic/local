@@ -14,6 +14,7 @@ endfu
 
 " Remove open dyslexic
 func! SetLaTeX()
+    " References: http://vim-latex.sourceforge.net/documentation/latex-suite/customizing-compiling.html
     let g:Tex_CompileRule_pdf = 'pdflatex -shell-escape --synctex=-1 -src-specials -interaction=nonstopmode $*'
 endfu   
 
@@ -30,7 +31,9 @@ endfu
 let g:Tex_SmartKeyDot=0
 let g:tex_flavor='latex'
 let g:Tex_DefaultTargetFormat='pdf'
-let g:Tex_MultipleCompileFormats='pdf'
+"# http://tex.stackexchange.com/questions/95026/vim-latex-does-not-run-bibtex
+"let g:Tex_MultipleCompileFormats='pdf'
+let g:Tex_MultipleCompileFormats='pdf,bib,pdf'
 let g:Tex_CompileRule_pdf = 'pdflatex -shell-escape --synctex=-1 -src-specials -interaction=nonstopmode $*'
 " Use main.tex.mainfile to compile
 let g:Tex_UseMakefile = 1

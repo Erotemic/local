@@ -1,1 +1,1 @@
-ssh jonc@pachy.cs.uic.edu
+ssh -X jonc@pachy.cs.uic.edu
