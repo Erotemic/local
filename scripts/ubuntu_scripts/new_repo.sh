@@ -1,4 +1,26 @@
 #!/bin/sh
+'
+CommandLine:
+    sudo new_repo.sh <reponame>
+
+    sudo ~joncrall/local/scripts/ubuntu_scripts/new_repo.sh <reponame>
+    git clone git@hyrule.cs.rpi.edu:<reponame>
+
+    sudo ~joncrall/local/scripts/ubuntu_scripts/new_repo.sh crall-candidacy-2015
+    git clone git@hyrule.cs.rpi.edu:crall-candidacy-2015
+    cd crall-candidacy-2015
+    touch main.tex.latexmain
+    cp ../crall-lab-notebook/chapter* .
+    cp ../crall-lab-notebook/main.tex .
+    cp ../crall-lab-notebook/fix_bib.py .
+    cp ../crall-lab-notebook/CrallPramb.tex .
+    cp ../crall-lab-notebook/CrallDef.tex .
+    cp ../crall-lab-notebook/appendix.tex .
+    cp "../crall-lab-notebook/My Library.bib" .
+    cp ../crall-lab-notebook/My_Library_clean.bib .
+    cp ../crall-lab-notebook/guts.tex .
+    cp ../crall-lab-notebook/.gitignore .
+'
 echo '1) Ensuring that you have sudo sued first:'
 
 export LUID=$(id -u)
