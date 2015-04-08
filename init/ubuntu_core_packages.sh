@@ -121,6 +121,7 @@ install_core_extras()
     sudo apt-get install imagemagick -y
 
     sudo apt-get install dia-gnome -y
+    sudo apt-get install inkscape -y
 }
 
 install_evaluating()

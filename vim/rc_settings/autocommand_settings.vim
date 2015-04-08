@@ -23,7 +23,7 @@ au FileType cpp set cinkeys-=0#
 au FileType cpp set smartindent
 
 " Latex
-au BufNewFile,BufRead *.tex call LatexInitialize() 
+"au BufNewFile,BufRead *.tex call LatexInitialize() 
 autocmd Filetype tex,latex set spell
 autocmd Filetype tex,latex set spell spelllang=en_us
 
