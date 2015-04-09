@@ -64,3 +64,4 @@ command! LATEXCompileRuleLaTeX :call SetLaTeX()
 command! LATEXCompileRuleXeTeX :call SetXeTeX()
 
 ":inoremap <leader>* \item 
+" http://mirrors.ctan.org/install/macros/latex/contrib/mathtools.tds.zip

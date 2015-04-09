@@ -1,1 +1,1 @@
-cd %USERPROFILE%/latex/crall-lab-notebook/ %*
+cd %USERPROFILE%/latex/ %*
