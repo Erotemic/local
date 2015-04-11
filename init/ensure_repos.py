@@ -4,12 +4,6 @@ import sys
 import util_git1
 import __REPOS1__
 
-
-PULL    = '--pull' in sys.argv
-DEVELOP = '--develop' in sys.argv
-CHECK   = '--nocheck' not in sys.argv
-
-
 # Get IBEIS git repository URLS and their local path
 ibeis_repo_urls = __REPOS1__.CODE_REPO_URLS
 ibeis_repo_dirs = __REPOS1__.CODE_REPOS
@@ -31,9 +25,10 @@ def setup_develop_ibeis_repos():
 
 
 if __name__ == '__main__':
-    if CHECK:
+    if '--nocheck' not in sys.argv:
         checkout_ibeis_repos()
-    if PULL:
+        util_git1.checkout_repos(*__REPOS1__.LATEX_REPO_TUP)
+    if '--pull' in sys.argv:
         pull_ibeis_repos()
-    if DEVELOP:
+    if '--develop' in sys.argv:
         setup_develop_ibeis_repos()
