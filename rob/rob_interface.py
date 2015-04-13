@@ -567,7 +567,7 @@ def get_regstr(regtype, var, val):
         return ''
     def quotes(str_):
         return '"' + str_.replace('"', r'\"') + '"'
-    sanatized_var = quotes(var)
+    sanitized_var = quotes(var)
     if regtype == 'REG_EXPAND_SZ':
         # Weird encoding
         #bin_ = binascii.hexlify(hex_)
@@ -580,13 +580,13 @@ def get_regstr(regtype, var, val):
         hex2zip = zip(hex_[0::2], hex_[1::2])
         spacezip = [('0', '0')] * len(hex2zip)
         hex3zip = zip(hex2zip, spacezip)
-        sanatized_val = ','.join([''.join(hex2) + ',' + ''.join(space) for hex2, space in hex3zip])
+        sanitized_val = ','.join([''.join(hex2) + ',' + ''.join(space) for hex2, space in hex3zip])
     elif regtype == 'REG_DWORD':
-        sanatized_val = '%08d' % int(val)
+        sanitized_val = '%08d' % int(val)
     else:
-        sanatized_val = quotes(val)
+        sanitized_val = quotes(val)
     comment = '; ' + var + '=' + val
-    regstr = sanatized_var + '=' + regtype_map[regtype] + sanatized_val
+    regstr = sanitized_var + '=' + regtype_map[regtype] + sanitized_val
     return comment + '\n' + regstr
 
 
