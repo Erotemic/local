@@ -455,3 +455,11 @@ EOL'
     
 
 }
+
+
+secure_ssl_pip()
+{ 
+    pip install pyasn1
+    pip install ndg-httpsclient
+    pip install pyopenssl
+}

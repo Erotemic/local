@@ -44,4 +44,9 @@
   endif
 "endif
 
+
+  syn region texRefZone		matchgroup=texStatement start="\\\(page\|eq\)cref{"	end="}\|%stopzone\>"	contains=@texRefGroup
+  syn region texRefZone		matchgroup=texStatement start="\\v\=cref{"		end="}\|%stopzone\>"	contains=@texRefGroup
+
+
 "HiLink texZone		PreCondit

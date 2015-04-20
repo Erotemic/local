@@ -21,6 +21,11 @@ set encoding=utf8
 
 source ~/local/vim/vimfiles/syntax/python.vim 
 
+" Syntax is based in:
+" $VIMRUNTIME/syntax
+" overloading happens in 
+" ~/local/vim/vimfiles/after/syntax
+
 python << endpython
 import vim
 enabled = [

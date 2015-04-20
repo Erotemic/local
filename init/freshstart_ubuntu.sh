@@ -36,6 +36,7 @@ freshtart_ubuntu_entry_point()
     mv ~/.profile ~/.profile.orig
     ln -s ~/local/bashrc.sh ~/.bashrc
     ln -s ~/local/profile.sh ~/.profile 
+    ln -s ~/local/misc/.pypirc ~/.pypirc 
     source ~/.bashrc
 
     git config --global user.name joncrall

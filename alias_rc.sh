@@ -96,6 +96,8 @@ alias dt='cd $CODE_DIR/detecttools/'
 #python -c "import site; print(site.getusersitepackages())"
 #python -c "import site; print(site.getsitepackages())"
 
+# https://github.com/pypa/virtualenv/issues/355
+# ['/usr/local/lib/python2.7/dist-packages', '/usr/lib/python2.7/dist-packages']
 alias pysite='cd $(python -c "import site; print(site.getsitepackages()[0])")'
 #alias vrc='cd $(python -c "import site; print(site.getsitepackages()[0]))"'
 
