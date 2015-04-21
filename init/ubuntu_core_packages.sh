@@ -463,3 +463,11 @@ secure_ssl_pip()
     pip install ndg-httpsclient
     pip install pyopenssl
 }
+
+
+install_lyx{
+    # Useless because it can't convert .tex to .lyx well
+    sudo add-apt-repository ppa:lyx-devel/release
+    sudo apt-get update
+    sudo apt-get install lyx -y
+}

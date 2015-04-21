@@ -1,11 +1,3 @@
-freshtart_ubuntu_main()
-{
-    source ~/local/init/frestart_ubuntu.sh
-    entry_prereq_git_and_local
-    freshtart_ubuntu_entry_point
-}
-
-
 entry_prereq_git_and_local()
 {
     # This is usually done manually
@@ -16,6 +8,14 @@ entry_prereq_git_and_local()
         git clone https://github.com/Erotemic/local.git
         cd local/init 
     fi
+}
+
+
+freshtart_ubuntu_main()
+{
+    source ~/local/init/frestart_ubuntu.sh
+    entry_prereq_git_and_local
+    freshtart_ubuntu_entry_point
 }
 
 #setup_homefolder()
@@ -36,7 +36,8 @@ freshtart_ubuntu_entry_point()
     mv ~/.profile ~/.profile.orig
     ln -s ~/local/bashrc.sh ~/.bashrc
     ln -s ~/local/profile.sh ~/.profile 
-    ln -s ~/local/misc/.pypirc ~/.pypirc 
+    ln -s ~/local/config/.pypirc ~/.pypirc 
+    ln -s ~/local/config/.theanorc ~/.theanorc 
     source ~/.bashrc
 
     git config --global user.name joncrall
@@ -47,6 +48,19 @@ freshtart_ubuntu_entry_point()
     source ~/local/vim/init_vim.sh
     python ~/local/init/ensure_vim_plugins.py
     cd ~/code
+}
+
+
+install_python()
+{
+    sudo pip install pillow
+    # Virtual Environment 
+    cd
+    mkdir venv
+    sudo pip2.7 install virtualenv
+    #python2.7 -m virtualenv -p /usr/bin/python2.7 venv
+    python2.7 -m virtualenv -p /usr/bin/python2.7 venv --system-site-packages
+    source ~/venv/bin/activate
 }
 
 

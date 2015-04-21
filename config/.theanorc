@@ -1,0 +1,7 @@
+[global]
+floatX = float32
+device = gpu0
+#exception_verbosity = high
+
+[nvcc]
+fastmath = True

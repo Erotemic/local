@@ -91,8 +91,12 @@ def is_module_pythonfile():
     modpath = vim.current.buffer.name
     ext = splitext(modpath)[1]
     ispyfile = ext == '.py'
-    #print(modname)
-    #print(ext)
+    verbose = False
+    if verbose:
+        print('is_module_pythonfile?')
+        print('  * modpath = %r' % (modpath,))
+        print('  * ext = %r' % (ext,))
+        print('  * ispyfile = %r' % (ispyfile,))
     return ispyfile
 
 
@@ -124,9 +128,9 @@ def insert_codeblock_at_cursor(text):
 
 def auto_docstr(**kwargs):
     import imp
-    import utool
-    imp.reload(utool)
-    utool.rrrr(verbose=False)
+    import utool as ut
+    imp.reload(ut)
+    ut.rrrr(verbose=False)
     import vim
 
     modname = None
@@ -148,16 +152,17 @@ def auto_docstr(**kwargs):
             # Text to insert into the current buffer
             autodockw = {'verbose': True}
             autodockw.update(kwargs)
-            docstr = utool.auto_docstr(modname, funcname, moddir=moddir, **autodockw)
+            docstr = ut.auto_docstr(modname, funcname, moddir=moddir, **autodockw)
             #if docstr.find('unexpected indent') > 0:
             #    docstr = funcname + ' ' + docstr
             if docstr[:].strip() == 'error':
                 flag = True
     except vim.error as ex:
-        dbgmsg = 'vim_error' + str(ex)
+        dbgmsg = 'vim_error: ' + str(ex)
         flag = False
     except Exception as ex:
-        dbgmsg = 'exception' + str(ex)
+        dbgmsg = 'exception(%r): %s' % (type(ex), str(ex))
+        ut.printex(ex, tb=True)
         flag = False
 
     if flag:
@@ -168,15 +173,21 @@ def auto_docstr(**kwargs):
             dbgtext += dbgmsg
         dbgtext += '\n+----------------------'
         dbgtext += '\n| InsertDoctstr(modname=%r, funcname=%r' % (modname, funcname)
-        pycmd = ('import utool; print(utool.auto_docstr(%r, %r)))' % (modname, funcname))
+        pycmd = ('import ut; print(ut.auto_docstr(%r, %r)))' % (modname, funcname))
         pycmd = pycmd.replace('\'', '\\"')
         dbgtext += '\n| python -c "%s"' % (pycmd,)
         dbgtext += '\n+----------------------'
         dbgtext += '\n+searchlines = '
-        dbgtext += utool.indentjoin(searchlines, '\n| ')
+        dbgtext += ut.indentjoin(searchlines, '\n| ')
         dbgtext += '\nL----------------------'
+    elif len(dbgmsg) > 0:
+        dbgtext += '\n| Message: '
+        dbgtext += dbgmsg
 
     text = '\n'.join([docstr + dbgtext])
+
+    if text == '':
+        print('No Text! For some reason flag=%r' % (flag,))
     return text
 
 

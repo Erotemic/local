@@ -132,22 +132,6 @@ install_gcc()
     sudo update-alternatives --install /usr/bin/cpp cpp-bin /usr/bin/cpp-4.6 100
 }
 
-
-install_python()
-{
-    sudo pip install pillow
-
-    # Virtual Environment 
-    cd
-    mkdir venv
-    sudo pip2.7 install virtualenv
-    #python2.7 -m virtualenv -p /usr/bin/python2.7 venv
-    python2.7 -m virtualenv -p /usr/bin/python2.7 venv --system-site-packages
-    source ~/venv/bin/activate
-    
-    
-}
-
 install_gdrive()
 {
     sudo add-apt-repository ppa:alessandro-strada/ppa
