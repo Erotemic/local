@@ -107,6 +107,7 @@ install_core_extras()
     sudo apt-get install -y filezilla
     sudo apt-get install -y gitg
     sudo apt-get install -y sysstat
+    sudo apt-get install -y vlc
 
     # References: https://help.ubuntu.com/community/Skype
     #sudo dpkg --add-architecture i386

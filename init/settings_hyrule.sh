@@ -65,6 +65,7 @@ hyrule_create_users()
     sudo adduser zack
     sudo adduser git
     sudo adduser kerner
+    sudo adduser guest
     # Add group
     sudo groupadd rpi
     sudo usermod -a -G rpi jason
