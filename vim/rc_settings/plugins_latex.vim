@@ -1,6 +1,10 @@
 " =========== LATEX =========== "
 " LATEX: Functions
 
+if has("win32") || has("win16")
+    set shellslash
+endif
+
 " Initialize
 "func! LatexInitialize()
 "    ":set textwidth=80

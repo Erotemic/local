@@ -11,3 +11,7 @@ if !exists('s:initLatexSuite')
 endif
 
 silent! do LatexSuite User LatexSuiteFileType
+
+
+"
+"http://sourceforge.net/p/vim-latex/mailman/vim-latex-devel/thread/CAOAiV5wSXVc1O2-svDu9JsmN92AnrUKQQriin+3heBp7CpwKOg@mail.gmail.com/
