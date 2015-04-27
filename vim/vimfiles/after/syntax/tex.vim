@@ -48,5 +48,10 @@
   syn region texRefZone		matchgroup=texStatement start="\\\(page\|eq\)cref{"	end="}\|%stopzone\>"	contains=@texRefGroup
   syn region texRefZone		matchgroup=texStatement start="\\v\=cref{"		end="}\|%stopzone\>"	contains=@texRefGroup
 
+  syn region texRefZone		matchgroup=texStatement start="\\\(page\|eq\)Cref{"	end="}\|%stopzone\>"	contains=@texRefGroup
+  syn region texRefZone		matchgroup=texStatement start="\\v\=Cref{"		end="}\|%stopzone\>"	contains=@texRefGroup
+
+  syn region texRefZone		matchgroup=texStatement start="\\subimport{common}{"	end="}\|%stopzone\>"	contains=@texRefGroup
+  syn region texRefZone		matchgroup=texStatement start="\\v\=subimport{common}{"		end="}\|%stopzone\>"	contains=@texRefGroup
 
 "HiLink texZone		PreCondit
