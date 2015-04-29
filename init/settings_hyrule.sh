@@ -291,12 +291,21 @@ EndSection
 
 
 printer(){
-#http://www.cs.rpi.edu/twiki/view/LabstaffWeb/PublicPrinters
-#http://www.rpi.edu/dept/arc/web/printing/printertype.html
+    # References
+    #http://www.cs.rpi.edu/twiki/view/LabstaffWeb/PublicPrinters
+    #http://www.rpi.edu/dept/arc/web/printing/printertype.html
+    # http://askubuntu.com/questions/153672/how-to-add-a-printer-in-gnome-shell
 128.213.17.40
 sudo cat /etc/cups/printers.conf
 sudo gvim /etc/cups/printers.conf
 sudo lpstat -s
+
+sudo apt-get install hplip
+
+# USE THE SYSTEM PRINTER INSTEAD
+system-config-printer
+# or use the CPUS web interface at
+http://localhost:631
 
 # This by itself doesnt seem to work 
 

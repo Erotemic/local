@@ -407,7 +407,10 @@ def process_research_line(line):
 
 
 def research_clipboard(r, start_line_str=None, rate='3', sentence_mode=True, open_file=False):
-    to_speak = robos.get_clipboard()
+    import utool as ut
+    to_speak = ut.get_clipboard()
+    #ut.embed()
+    #to_speak = robos.get_clipboard()
     write_research(r, to_speak)
     research(r, start_line_str='0', rate=rate, sentence_mode=True, open_file=False)
 
