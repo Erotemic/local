@@ -1,81 +1,13 @@
 from os.path import expanduser
 
 
-def parse_callname(searchline, sentinal='def '):
-    rparen_pos = searchline.find('(')
-    if rparen_pos > 0:
-        callname = searchline[len(sentinal):rparen_pos].strip(' ')
-        return callname
-    return None
-
-
-def find_pattern_above_row(pattern, line_list, row, maxIter=50):
-    import re
-    # Janky way to find function name
-    ix = 0
-    while True:
-        pos = row - ix
-        if maxIter is not None and ix > maxIter:
-            break
-        if pos < 0:
-            break
-            raise AssertionError('end of buffer')
-        searchline = line_list[pos]
-        if re.match(pattern, searchline) is not None:
-            return searchline, pos
-        ix += 1
-
-
-def find_pyclass_above_row(line_list, row):
-    # Get text posision
-    pattern = '^class [a-zA-Z_]'
-    classline, classpos = find_pattern_above_row(pattern, line_list, row, maxIter=None)
-    return classline, classpos
-
-
-def find_pyfunc_above_row(line_list, row):
-    """
-    >>> import utool
-    >>> fpath = utool.truepath('~/code/ibeis/ibeis/control/IBEISControl.py')
-    >>> line_list = utool.read_from(fpath, aslines=True)
-    >>> row = 200
-    >>> pyfunc, searchline = find_pyfunc_above_row(line_list, row)
-    """
-    searchlines = []  # for debugging
-    funcname = None
-    # Janky way to find function name
-    func_sentinal   = 'def '
-    method_sentinal = '    def '
-    for ix in range(50):
-        func_pos = row - ix
-        searchline = line_list[func_pos]
-        cleanline = searchline.strip(' ')
-        searchlines.append(cleanline)
-        if searchline.startswith(func_sentinal):  # and cleanline.endswith(':'):
-            # Found a valid function name
-            funcname = parse_callname(searchline, func_sentinal)
-            if funcname is not None:
-                break
-        if searchline.startswith(method_sentinal):  # and cleanline.endswith(':'):
-            # Found a valid function name
-            funcname = parse_callname(searchline, method_sentinal)
-            if funcname is not None:
-                classline, classpos = find_pyclass_above_row(line_list, func_pos)
-                classname = parse_callname(classline, 'class ')
-                if classname is not None:
-                    funcname = '.'.join([classname, funcname])
-                    break
-                else:
-                    funcname = None
-    return funcname, searchlines
-
-
 def find_pyfunc_above_cursor():
     import vim
+    import utool as ut
     # Get text posision
     (row, col) = vim.current.window.cursor
     line_list = vim.current.buffer
-    return find_pyfunc_above_row(line_list, row)
+    return ut.find_pyfunc_above_row(line_list, row)
 
 
 def get_codelines_around_buffer(rows_before=0, rows_after=10):
