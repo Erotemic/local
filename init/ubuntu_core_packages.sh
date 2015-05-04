@@ -94,9 +94,24 @@ install_dropbox()
 install_zotero()
 {
     # Zotero
-    sudo add-apt-repository ppa:smathot/cogscinl
-    sudo apt-get update
-    sudo apt-get install -y zotero-standalone 
+    #sudo add-apt-repository ppa:smathot/cogscinl
+    #sudo apt-get update
+    #sudo apt-get install -y zotero-standalone 
+    #python -c "import ssl; print ssl.OPENSSL_VERSION"
+
+    #python3 -c "import utool; print(utool.grab_file_url(\"$@\", spoof=True))"
+    #python3 -c "import utool; print(utool.grab_file_url(\"https://download.zotero.org/standalone/4.0.26.3/Zotero-4.0.26.3_linux-x86_64.tar.bz2\", spoof=True))"
+    
+
+    #utget "https://download.zotero.org/standalone/4.0.26.3/Zotero-4.0.26.3_linux-x86_64.tar.bz2"
+    cd ~/Downloads
+    utarbz2 Zotero-4.0.26.3_linux-x86_64.tar.bz2
+    cd Zotero_linux-x86_64/
+    cd /opt
+    cd ~/Downloads
+    sudo cp -r Zotero_linux-x86_64 /opt/zotero
+
+
 }
 
 install_core_extras()
@@ -123,6 +138,12 @@ install_core_extras()
 
     sudo apt-get install dia-gnome -y
     sudo apt-get install inkscape -y
+
+    # flux
+    sudo add-apt-repository ppa:kilian/f.lux
+    sudo apt-get update
+    sudo apt-get install fluxgui -y
+    
 }
 
 install_evaluating()

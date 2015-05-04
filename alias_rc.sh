@@ -214,7 +214,7 @@ read_clip()
 
 utget()
 {
-    python -c "import utool; print(utool.grab_file_url(\"$@\"))"
+    python -c "import utool; print(utool.grab_file_url(\"$@\", spoof=True))"
 }
 
 astyle_cpp()
