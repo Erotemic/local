@@ -302,6 +302,8 @@ sudo lpstat -s
 
 sudo apt-get install hplip
 
+#sudo apt-get install y-ppa-manager
+
 # USE THE SYSTEM PRINTER INSTEAD
 system-config-printer
 # or use the CPUS web interface at
@@ -337,4 +339,5 @@ Attribute marker-change-time 1409678168
 '
 
 sudo restart cups
+#sudo apt-key adv --recv-key --keyserver keyserver.ubuntu.com 24CBF5474CFD1E2F
 }

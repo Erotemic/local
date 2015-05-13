@@ -1,39 +1,21 @@
 source ~/local/vim/rc/win32_presource.vim
-
-" References: http://stackoverflow.com/questions/3881534/set-python-virtualenv-in-vim
-" Function to activate a virtualenv in the embedded interpreter for
-" omnicomplete and other things like that.
-function! LoadVirtualEnv(path)
-    let activate_this = a:path . '/bin/activate_this.py'
-    if getftype(a:path) == "dir" && filereadable(activate_this)
-        python << EOF
-import vim
-activate_this = vim.eval('l:activate_this')
-execfile(activate_this, dict(__file__=activate_this))
-EOF
-    endif
-endfunction
-
-" Load up personal vritual env
-let defaultvirtualenv = $HOME . "/venv"
-
-" Only attempt to load this virtualenv if the defaultvirtualenv
-" actually exists, and we aren't running with a virtualenv active.
-if has("python")
-    "if empty($VIRTUAL_ENV) && getftype(defaultvirtualenv) == "dir"
-    if getftype(defaultvirtualenv) == "dir"
-        call LoadVirtualEnv(defaultvirtualenv)
-    endif
-endif
+source ~/local/vim/rc/venv_presource.vim
 
 
+" COMMON JUMP TO RC FILES
+":e ~/local/vim/vimfiles/spell/en.latin1.add
+":e ~/local/vim/vimfiles/spell/en.utf-8.add
 ":e $VIMRUNTIME/syntax/python.vim
 ":e $VIMRUNTIME/syntax/markdown.vim
 ":e ~/local/init/ensure_vim_plugins.py
 ":e ~/local/init/ensure_vim_plugins.py
+":e ~/local/vim/rc/pyvim_funcs.py
 " My plugins are grabbed from
 " ~/local/init/__REPOS1__.py
-"
+" Syntax is based in:
+" $VIMRUNTIME/syntax
+" overloading happens in 
+" ~/local/vim/vimfiles/after/syntax
 " Snippets Directory
 " ~/local/vim/vimfiles/UltiSnips/python.snippets
 
@@ -46,11 +28,6 @@ set encoding=utf8
 :set runtimepath+=~/local/vim/vimfiles/
 
 source ~/local/vim/vimfiles/syntax/python.vim 
-
-" Syntax is based in:
-" $VIMRUNTIME/syntax
-" overloading happens in 
-" ~/local/vim/vimfiles/after/syntax
 
 python << endpython
 import vim
@@ -140,7 +117,7 @@ call QUICKOPEN_leader_tvio('w', '$CODE_DIR/ibeis_cnn/ibeis_cnn/train.py')
 call QUICKOPEN_leader_tvio('0', '~/local/vim/rc/custom_regex_commands.vim')
 call QUICKOPEN_leader_tvio('_', '$VIMRUNTIME/../_vimrc')
 call QUICKOPEN_leader_tvio('a', '$CODE_DIR/ibeis/ibeis/all_imports.py')
-call QUICKOPEN_leader_tvio('A', '$CODE_DIR/ibeis/ibeis/dev/results_all.py')
+call QUICKOPEN_leader_tvio('A', '$CODE_DIR/ibeis/ibeis/experiments/results_all.py')
 call QUICKOPEN_leader_tvio('b', '~/local/bashrc.sh')
 call QUICKOPEN_leader_tvio('c', '$CODE_DIR/ibeis/ibeis/control/IBEISControl.py')
 "call QUICKOPEN_leader_tvio('C', '~/Dropbox/crall')
@@ -149,9 +126,9 @@ call QUICKOPEN_leader_tvio('C', '$CODE_DIR/ibeis/ibeis/constants.py')
 call QUICKOPEN_leader_tvio('D', '$CODE_DIR/ibeis/ibeis/model/hots/devcases.py')
 call QUICKOPEN_leader_tvio('d', '$CODE_DIR/ibeis/dev.py')
 "call QUICKOPEN_leader_tvio('D', '$CODE_DIR/ibeis/ibeis/model/hots/smk/smk_debug.py')
-call QUICKOPEN_leader_tvio('e', '$CODE_DIR/ibeis/ibeis/dev/experiment_printres.py')
+call QUICKOPEN_leader_tvio('e', '$CODE_DIR/ibeis/ibeis/experiments/experiment_printres.py')
 "call QUICKOPEN_leader_tvio('e', '$CODE_DIR/hesaff/src/hesaff.cpp')
-call QUICKOPEN_leader_tvio('E', '$CODE_DIR/ibeis/ibeis/dev/experiment_configs.py')
+call QUICKOPEN_leader_tvio('E', '$CODE_DIR/ibeis/ibeis/experiments/experiment_configs.py')
 call QUICKOPEN_leader_tvio('f', '$CODE_DIR/ibeis/ibeis/ibsfuncs.py')
 "call QUICKOPEN_leader_tvio('g', '$CODE_DIR/ibeis/ibeis/gui/newgui.py')
 "call QUICKOPEN_leader_tvio('g', '$CODE_DIR/ibeis/ibeis/gui/guiback.py')
@@ -168,6 +145,7 @@ call QUICKOPEN_leader_tvio('I', '$CODE_DIR/ibeis/ibeis/__init__.py')
 call QUICKOPEN_leader_tvio('j', '/home/joncrall/code/ibeis/ibeis/dbio/export_subset.py')
 "call QUICKOPEN_leader_tvio('k', '$CODE_DIR/ibeis/ibeis/model/hots/smk/smk_core.py')
 call QUICKOPEN_leader_tvio('k', '$CODE_DIR/ibeis/ibeis/model/hots/chip_match.py')
+call QUICKOPEN_leader_tvio('K', '$CODE_DIR/ibeis/ibeis/model/hots/smk')
 call QUICKOPEN_leader_tvio('L', '~/latex/crall-lab-notebook/main.tex')
 call QUICKOPEN_leader_tvio('l', '~/latex/crall-candidacy-2015/main.tex')
 "call QUICKOPEN_leader_tvio('m', '$CODE_DIR/ibeis/ibeis/model/hots/smk/smk_match.py')
@@ -218,8 +196,8 @@ call QUICKOPEN_leader_tvio('P', '~/latex/crall-cvpr-15/main.tex')
 "call QUICKOPEN_leader_tvio('n', '$CODE_DIR/ibeis/notebook/')
 "call QUICKOPEN_leader_tvio('2', '$CODE_DIR/ibeis/ibeis/dev/params.py')
 "call QUICKOPEN_leader_tvio('3', '$CODE_DIR/guitool/guitool/guitool_components.py')
-"call QUICKOPEN_leader_tvio('4', '$CODE_DIR/ibeis/ibeis/dev/results_organizer.py')
-"call QUICKOPEN_leader_tvio('e', '$CODE_DIR/ibeis/ibeis/dev/experiment_harness.py')
+"call QUICKOPEN_leader_tvio('4', '$CODE_DIR/ibeis/ibeis/experiments/results_organizer.py')
+"call QUICKOPEN_leader_tvio('e', '$CODE_DIR/ibeis/ibeis/experiments/experiment_harness.py')
 "call QUICKOPEN_leader_tvio('e', '$CODE_DIR/ibeis/ibeis/io/export_subset.py')
 "call QUICKOPEN_leader_tvio('g', '$CODE_DIR/ibeis/ibeis/gui/inspect_gui.py')
 

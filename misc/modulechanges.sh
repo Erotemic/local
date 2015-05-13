@@ -323,3 +323,78 @@ rob sp get_chip_paths get_chip_uris
 
 rob sp "get_annot_chip_fpaths\>" get_annot_chip_fpath True
 rob sp "get_annot_probchip_fpaths\>" get_annot_probchip_fpath True
+
+rob sp "from ibeis.dev import experiment_helpers" "from ibeis.experiments import experiment_helpers" True
+rob sp "ibeis.dev.experiment_helpers" "ibeis.experiments.experiment_helpers" True
+
+rob sp "from ibeis.dev import experiment_configs" "from ibeis.experiments import experiment_configs" True
+rob sp "ibeis.dev.experiment_configs" "ibeis.experiments.experiment_configs" True
+
+rob sp "from ibeis.dev import experiment_harness" "from ibeis.experiments import experiment_harness" True
+rob sp "ibeis.dev.experiment_harness" "ibeis.experiments.experiment_harness" True
+
+rob sp "from ibeis.dev import experiment_configs" "from ibeis.experiments import experiment_configs" True
+rob sp "ibeis.dev.experiment_configs" "ibeis.experiments.experiment_configs" True
+
+rob sp "from ibeis.dev import experiment_helpers" "from ibeis.experiments import experiment_helpers" True
+rob sp "ibeis.dev.experiment_helpers" "ibeis.experiments.experiment_helpers" True
+
+rob sp "from ibeis.dev import results_analyzer" "from ibeis.experiments import results_analyzer" True
+rob sp "ibeis.dev.results_analyzer" "ibeis.experiments.results_analyzer" True
+
+rob sp "from ibeis.dev import experiment_harness" "from ibeis.experiments import experiment_harness" True
+rob sp "ibeis.dev.experiment_harness" "ibeis.experiments.experiment_harness" True
+
+rob sp "from ibeis.dev import experiment_printres" "from ibeis.experiments import experiment_printres" True
+rob sp "ibeis.dev.experiment_printres" "ibeis.experiments.experiment_printres" True
+
+rob sp "from ibeis.dev import results_all" "from ibeis.experiments import results_all" True
+rob sp "ibeis.dev.results_all" "ibeis.experiments.results_all" True
+
+rob sp "from ibeis.dev import results_organizer" "from ibeis.experiments import results_organizer" True
+rob sp "ibeis.dev.results_organizer" "ibeis.experiments.results_organizer" True
+
+# ---
+
+rob sp "from ibeis.dev import main_commands" "from ibeis.init import main_commands" True
+rob sp "ibeis.dev.main_commands" "ibeis.init.main_commands" True
+
+rob sp "from ibeis.dev import main_helpers" "from ibeis.init import main_helpers" True
+rob sp "ibeis.dev.main_helpers" "ibeis.init.main_helpers" True
+
+rob sp "from ibeis.dev import sysres" "from ibeis.init import sysres" True
+rob sp "ibeis.dev.sysres" "ibeis.init.sysres" True
+
+
+
+rob sp "from ibeis.dev import " "from ibeis.init import " True
+rob sp "ibeis.dev." "ibeis.init." True
+
+rob sp "from ibeis.dev import " "from ibeis.init import " True
+rob sp "ibeis.dev." "ibeis.init." True
+
+ls
+
+modname_list = 'experiment_configs experiment_helpers results_analyzer experiment_harness experiment_printres results_all results_organizer'.split(' ')
+modparent_src = 'ibeis.dev'
+modparent_dst = 'ibeis.experiments'
+
+modname_list = ut.remove_doublspaces('main_commands.py  main_helpers.py  sysres.py').replace('.py', '').split(' ')
+modparent_src = 'ibeis.dev'
+modparent_dst = 'ibeis.init'
+
+modname_list = ut.remove_doublspaces('dbinfo.py  duct_tape.py  optimize_k.py').replace('.py', '').split(' ')
+modparent_src = 'ibeis.init'
+modparent_dst = 'ibeis.dev'
+
+for modname in modname_list:
+    cmd_fmtstr = ut.codeblock('''
+    rob sp "from {modparent_src} import {modname}" "from {modparent_dst} import {modname}" True
+    rob sp "{modparent_src}.{modname}" "{modparent_dst}.{modname}" True
+    ''')
+    cmd_str = cmd_fmtstr.format(modparent_src=modparent_src, modparent_dst=modparent_dst, modname=modname)
+    print(cmd_str)
+    print()
+
+
+

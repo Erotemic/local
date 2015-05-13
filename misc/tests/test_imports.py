@@ -114,18 +114,18 @@ import pandas as pd
 #from plottool import fig_presenter
 
 ## IBEIS DEV
-#from ibeis.dev import main_commands
+#from ibeis.init import main_commands
 #from ibeis import params
 #from ibeis.dev import dbinfo
-#from ibeis.dev import sysres
+#from ibeis.init import sysres
 #from ibeis import ibsfuncs
-#from ibeis.dev import results_organizer
-#from ibeis.dev import results_analyzer
-#from ibeis.dev import results_all
-#from ibeis.dev import experiment_configs
-#from ibeis.dev import experiment_harness
-#from ibeis.dev import experiment_printres
-#from ibeis.dev import experiment_helpers as eh
+#from ibeis.experiments import results_organizer
+#from ibeis.experiments import results_analyzer
+#from ibeis.experiments import results_all
+#from ibeis.experiments import experiment_configs
+#from ibeis.experiments import experiment_harness
+#from ibeis.experiments import experiment_printres
+#from ibeis.experiments import experiment_helpers as eh
 ## IBEIS EXPORT
 #from ibeis.io import export_hsdb
 ## IBEIS INGEST

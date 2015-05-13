@@ -25,6 +25,8 @@ noremap \ ,
 "noremap <Del> <Esc>
 "noremap <Home> <Esc>
 ":imap <Del> <Esc>
+"
+vnoremap <leader>fp :call PyFormatParagraph()<CR>
 
 noremap <leader>d :call InsertDocstr()<CR>
 noremap <leader>ed :call InsertDocstr()<CR>

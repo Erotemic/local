@@ -495,6 +495,26 @@ func! ReloadVIMRC()
 endfu
 
 
+"func! GetSelectedText()
+"  normal gv"xy
+"  let result = getreg("x")
+"  normal gv
+"  return result
+"endfunc
+
+
+func! PyFormatParagraph() range
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+text = pyvim_funcs.get_selected_text()
+#wrapped_text = pyvim_funcs.format_single_paragraph_sentences(text)
+wrapped_text = pyvim_funcs.format_multiple_paragraph_sentences(text)
+pyvim_funcs.insert_codeblock_over_selection(wrapped_text)
+endpython
+endfunc
+
+
 " ========= Functions ========= "
 "command! TextWidthMarkerOn call FUNC_TextWidthMarkerOn()
 " Textwidth command

@@ -143,6 +143,11 @@ install_core_extras()
     sudo add-apt-repository ppa:kilian/f.lux
     sudo apt-get update
     sudo apt-get install fluxgui -y
+
+
+    sudo apt-get install y-ppa-manager
+    #for printer
+    sudo apt-key adv --recv-key --keyserver keyserver.ubuntu.com 24CBF5474CFD1E2F
     
 }
 
@@ -487,7 +492,8 @@ secure_ssl_pip()
 }
 
 
-install_lyx{
+install_lyx()
+{
     # Useless because it can't convert .tex to .lyx well
     sudo add-apt-repository ppa:lyx-devel/release
     sudo apt-get update
