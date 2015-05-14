@@ -3,13 +3,13 @@ source ~/local/vim/rc/venv_presource.vim
 
 
 " COMMON JUMP TO RC FILES
+":e ~/local/vim/rc/pyvim_funcs.py
 ":e ~/local/vim/vimfiles/spell/en.latin1.add
 ":e ~/local/vim/vimfiles/spell/en.utf-8.add
 ":e $VIMRUNTIME/syntax/python.vim
 ":e $VIMRUNTIME/syntax/markdown.vim
 ":e ~/local/init/ensure_vim_plugins.py
 ":e ~/local/init/ensure_vim_plugins.py
-":e ~/local/vim/rc/pyvim_funcs.py
 " My plugins are grabbed from
 " ~/local/init/__REPOS1__.py
 " Syntax is based in:

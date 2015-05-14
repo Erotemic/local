@@ -27,6 +27,9 @@ noremap \ ,
 ":imap <Del> <Esc>
 "
 vnoremap <leader>fp :call PyFormatParagraph()<CR>
+vnoremap <leader>fe :call PyFormatParagraph()<CR>
+noremap <leader>ge vip:call PyFormatParagraph()<CR>
+vnoremap ge :call PyFormatParagraph()<CR>
 
 noremap <leader>d :call InsertDocstr()<CR>
 noremap <leader>ed :call InsertDocstr()<CR>

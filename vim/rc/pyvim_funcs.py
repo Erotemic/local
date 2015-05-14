@@ -77,7 +77,15 @@ def format_single_paragraph_sentences(text):
         wrapped_lines_list.append(wrapped_lines)
 
     wrapped_sentences = ['\n'.join(line) for line in wrapped_lines_list]
-    wrapped_text = ut.indent('.\n'.join(wrapped_sentences), ' ' * min_indent)
+
+    BIG_SEP = False
+    if BIG_SEP:
+        sepfmt = '%+------\n{}\n%L______'
+        wrapped_block =  sepfmt.format('.\n%\n'.join(wrapped_sentences))
+    else:
+        wrapped_block = '.\n'.join(wrapped_sentences)
+
+    wrapped_text = ut.indent(wrapped_block, ' ' * min_indent)
     return wrapped_text
 
 
