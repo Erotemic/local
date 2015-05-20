@@ -2,7 +2,7 @@ from os.path import expanduser
 
 
 def testdata_text():
-    text = '''
+    text = r'''
         % COMMENT
         Image matching relies on finding similar features between query and
         database images, and there are many factors that can cause this to be
@@ -16,11 +16,32 @@ def testdata_text():
 
         \distractorexample
 
-         Occluders are objects in the foreground of an image that impact the
+        \paragraph{foobar}
+        Occluders are objects in the foreground of an image that impact the
         visibility of the features on the subject animal.
          Both scenery and other animals are the main contributors of occlusion in
         our dataset.
          Occlusion from other animals is especially challenging because not only
+
+        \begin{enumerate} % Affine Adaptation Procedure
+           \item Compute the second moment matrix at the warped image patch defined by $\ellmat_i$.
+
+           \item If the keypoint is stable, stop.  If convergence has not been reached in
+                some number of iterations stop and discard the keypoint.
+
+           \item
+                  Update the affine shape  using the rule $\ellmat_{i + 1} =
+                \sqrtm{\momentmat} \ellmat_i$.
+                  This ensures the eigenvalues at the previously detected point
+                are equal in the new frame.
+                  If the keypoint is stable, it should be re-detected close to
+                the same location.
+                  (The square root of a matrix defined as:
+                $\sqrtm{\momentmatNOARG} \equiv \mat{X} \where \mat{X}^T\mat{X}
+                = \momentmatNOARG$.
+                  If $\momentmatNOARG$ is degenerate than $\mat{X}$ does not
+                exist.)
+        \end{enumerate}
     '''.strip('\n')
     return text
 
@@ -40,11 +61,41 @@ def regex_reconstruct_split(pattern, text):
 
 
 def format_multiple_paragraph_sentences(text):
+    """
+
+    CommandLine:
+        python ~/local/vim/rc/pyvim_funcs.py --test-format_multiple_paragraph_sentences
+
+    Example:
+        >>> # DISABLE_DOCTEST
+        >>> import os, sys
+        >>> sys.path.append(os.path.expanduser('~/local/vim/rc'))
+        >>> from pyvim_funcs import *  # NOQA
+        >>> text = testdata_text()
+        >>> formated_text = format_multiple_paragraph_sentences(text)
+        >>> #print(text)
+        >>> #print('--------')
+        >>> #print(formated_text)
+    """
     import utool as ut
-    #pattern = '\n\n\n*'
-    pattern = '(\n\n\n*)|(\n? *%.*\n)'
+    # Patterns that define separations between paragraphs in latex
+    pattern_list = [
+        '\n\n\n*',     # newlines
+        '\n? *%.*\n',  # comments
+
+        # paragraph commands
+        '\n? *\\\\paragraph{[^}]*}\n',
+        '\n? *\\\\section{[^}]*}\n',
+
+        '\n? *\\\\begin{[^}]*}\n',
+        '\n? *\\\\item *\n',
+        '\n? *\\\\end{[^}]*}\n?',
+    ]
+    pattern = '|'.join(['(%s)' % (pat,) for pat in pattern_list])
     # break into paragraph blocks
     block_list, separators = regex_reconstruct_split(pattern, text)
+    #print(pattern)
+    print(separators)
     # apply formatting
     formated_block_list = [format_single_paragraph_sentences(block) for block in block_list]
     rejoined_list = list(ut.interleave((formated_block_list, separators)))
@@ -326,3 +377,16 @@ def open_fpath_list(fpath_list, num_hsplits=2):
     if index < len(fpath_list):
         print('WARNING: Too many files specified')
         print('Can only handle %d' % index)
+
+
+if __name__ == '__main__':
+    """
+    CommandLine:
+        python -m pyvim_funcs
+        python -m pyvim_funcs --allexamples
+        python -m pyvim_funcs --allexamples --noface --nosrc
+    """
+    import multiprocessing
+    multiprocessing.freeze_support()  # for win32
+    import utool as ut  # NOQA
+    ut.doctest_funcs()
