@@ -123,8 +123,14 @@ def format_single_paragraph_sentences(text):
     #wrapped_lines_list = [textwrap.wrap(sentence_prefix + line, **wrapkw)
     #                      for line in sentence_list]
     wrapped_lines_list = []
+    INDENT_FIRST = False
     for count, line in enumerate(sentence_list):
-        wrapped_lines = textwrap.wrap(sentence_prefix + line, **wrapkw)
+        if INDENT_FIRST:
+            wrapped_lines = textwrap.wrap(sentence_prefix + line, **wrapkw)
+        else:
+            wrapped_lines = textwrap.wrap(line, **wrapkw)
+            wrapped_lines = [line_ if count == 0 else line_.replace('\n', '\n' + sentence_prefix)
+                             for count, line_ in enumerate(wrapped_lines)]
         wrapped_lines_list.append(wrapped_lines)
 
     wrapped_sentences = ['\n'.join(line) for line in wrapped_lines_list]
