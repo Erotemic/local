@@ -129,7 +129,7 @@ def format_single_paragraph_sentences(text):
             wrapped_lines = textwrap.wrap(sentence_prefix + line, **wrapkw)
         else:
             wrapped_lines = textwrap.wrap(line, **wrapkw)
-            wrapped_lines = [line_ if count == 0 else line_.replace('\n', '\n' + sentence_prefix)
+            wrapped_lines = [line_ if count == 0 else sentence_prefix + line_
                              for count, line_ in enumerate(wrapped_lines)]
         wrapped_lines_list.append(wrapped_lines)
 
