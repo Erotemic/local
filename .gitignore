@@ -30,3 +30,5 @@ vim/docstr_template.txt
 vim/vimfiles/clutter
 speech/_multiedit.txt
 speech/_bringme-en.txt
+
+test_times.txt
