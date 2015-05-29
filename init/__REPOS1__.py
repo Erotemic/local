@@ -37,8 +37,8 @@ IBEIS_REPOS_URLS, IBEIS_REPOS = repo_list([
 
     #'https://github.com/Theano/Theano.git'
 
-    'https://github.com/bluemellophone/gzc-server.git',
-    'https://github.com/bluemellophone/gzc-client.git',
+    #'https://github.com/bluemellophone/gzc-server.git',
+    #'https://github.com/bluemellophone/gzc-client.git',
 
 ], CODE_DIR)
 

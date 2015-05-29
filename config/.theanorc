@@ -1,6 +1,11 @@
 [global]
 floatX = float32
 device = gpu0
+openmp = True
+#linker='c|py'
+#linker='c|py_nogc'
+linker=cvm
+#int_division = 'floatX'
 #exception_verbosity = high
 
 [nvcc]

@@ -86,6 +86,7 @@ def format_multiple_paragraph_sentences(text):
         # paragraph commands
         '\n? *\\\\paragraph{[^}]*}\n',
         '\n? *\\\\section{[^}]*}\n',
+        '\n? *\\\\newcommand{[^}]*}.*\n',
 
         '\n? *\\\\begin{[^}]*}\n',
         '\n? *\\\\item *\n',
