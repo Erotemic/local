@@ -86,6 +86,7 @@ def format_multiple_paragraph_sentences(text):
         # paragraph commands
         '\n? *\\\\paragraph{[^}]*}\n',
         '\n? *\\\\section{[^}]*}\n',
+        '\n? *\\\\subsection{[^}]*}\n',
         '\n? *\\\\newcommand{[^}]*}.*\n',
 
         '\n? *\\\\begin{[^}]*}\n',
@@ -121,6 +122,10 @@ def format_single_paragraph_sentences(text):
     sentence_prefix = '  '
     width = 80 - min_indent
     wrapkw = dict(width=width, break_on_hyphens=False, break_long_words=False)
+    if text_.startswith('>>>'):
+        # Hack to do docstrings
+        # TODO: make actualy docstring reformater
+        sentence_prefix = '...     '
     #wrapped_lines_list = [textwrap.wrap(sentence_prefix + line, **wrapkw)
     #                      for line in sentence_list]
     wrapped_lines_list = []
