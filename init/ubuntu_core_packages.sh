@@ -220,6 +220,10 @@ install_latex()
     #sudo apt-get remove texlive-generic-extra
     #sudo apt-get install texlive-bibtex-extra -y
     #sudo apt-get install texlive-full -y
+
+    # references
+    # http://askubuntu.com/questions/207442/how-to-add-open-terminal-here-to-nautilus-context-menu
+    sudo apt-get install nautilus-open-terminal
 }
 
 
