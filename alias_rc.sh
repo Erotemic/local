@@ -282,3 +282,22 @@ astyle_cpp()
     #--indent-cases
 
 }
+
+
+# Start TMUX session
+# References: 
+#     http://lukaszwrobel.pl/blog/tmux-tutorial-split-terminal-windows-easily
+#     https://gist.github.com/MohamedAlaa/2961058
+change_terminal_title()
+    {
+    echo -en "\033]0;$@\a"
+    }
+
+tmuxnew(){
+    change_terminal_title "TMUX NEW"
+    tmux new -s default_session
+}
+tmuxattach(){
+    change_terminal_title "TMUX ATTACHED"
+    tmux attach -t default_session
+}
