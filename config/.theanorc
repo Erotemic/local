@@ -4,7 +4,7 @@ device = gpu0
 openmp = True
 #linker='c|py'
 #linker='c|py_nogc'
-linker=cvm
+#linker=cvm
 #int_division = 'floatX'
 #exception_verbosity = high
 
