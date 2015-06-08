@@ -44,7 +44,7 @@ IBEIS_REPOS_URLS, IBEIS_REPOS = repo_list([
 
 
 TPL_REPOS_URLS, TPL_REPOS = repo_list([
-    'https://github.com/Erotemic/opencv',
+    #'https://github.com/Erotemic/opencv',
     'https://github.com/Erotemic/flann',
 ], CODE_DIR)
 
