@@ -11,7 +11,6 @@ fi
 
 export QT_API=pyqt
 
-
 if [[ "$HOSTNAME" == "ibeis.cs.uic.edu"  ]]; then 
     export CODE_DIR=/opt/ibeis
 elif [[ "$HOSTNAME" == "pachy.cs.uic.edu"  ]]; then 
@@ -54,3 +53,11 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/lib
 
 # set history to not ignore leading whitespace
 export HISTCONTROL=
+
+
+
+# More machine specific settings
+if [[ "$HOSTNAME" == "dozer"  ]]; then 
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-6.5/lib64:/usr/local/lib
+    export PATH=$PATH:/usr/local/cuda-6.5/bin
+fi
