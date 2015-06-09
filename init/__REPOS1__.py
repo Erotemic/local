@@ -94,6 +94,7 @@ VIM_REPO_URLS, VIM_REPOS = repo_list([
     'https://github.com/honza/vim-snippets.git',
     'https://github.com/altercation/vim-colors-solarized.git',
 
+    'https://github.com/tpope/vim-fugitive.git',
 
     #'https://github.com/ggreer/the_silver_searcher.git'  # Ag
     # FOR SNIP MATE
