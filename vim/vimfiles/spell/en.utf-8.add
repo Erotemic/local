@@ -160,3 +160,8 @@ DeepFace
 ROC
 GrabCut
 foregroundness
+kd
+GPUs
+Kullback
+Leibler
+Boiman's

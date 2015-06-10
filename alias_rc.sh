@@ -294,10 +294,10 @@ change_terminal_title()
     }
 
 tmuxnew(){
-    change_terminal_title "TMUX NEW"
+    change_terminal_title "TMUX $HOSTNAME NEW"
     tmux new -s default_session
 }
 tmuxattach(){
-    change_terminal_title "TMUX ATTACHED"
+    change_terminal_title "TMUX $HOSTNAME ATTACHED"
     tmux attach -t default_session
 }
