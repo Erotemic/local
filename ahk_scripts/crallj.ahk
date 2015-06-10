@@ -96,6 +96,9 @@ NumpadDown:: ; NumPad-2
 
 ;--------------------- 
 ; 4 - VIM Open and Focus
+^NumpadLeft::  ; Numpad-4
+    Open("vim")
+    return
 NumpadLeft::  ; Numpad-4
     Focus("vim")
     return
