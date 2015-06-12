@@ -55,6 +55,7 @@ def process_args(r, argv):
             cmd = cmd_name + '(r' + arg_str + ' )'
         print('R.O.B. is evaling: \n    ' + cmd)
         print("__________________________________")
+        print(rob_interface.__dict__[cmd_name])
         ret = eval('rob_interface.' + cmd)
         if ret is not None:
             print(ret)
@@ -65,6 +66,7 @@ def main():
     print('Run main: %r: ' % (sys.argv,))
     if len(sys.argv) > 1:
         ARG_SEP = ';'
+        ARG_SEP = '--'
         #Arguemnts are broken up with semicolons
         semi_pos = [i for i, a in enumerate(sys.argv) if a == ARG_SEP] + [-1]
         pre = 1
@@ -73,6 +75,8 @@ def main():
                 process_args(r, sys.argv[pre:])
             else:
                 process_args(r, sys.argv[pre:post])
+            # ONLY DO ONE COMMAND
+            break
     return r
 
 

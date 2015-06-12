@@ -506,9 +506,15 @@ def research(r, start_line_str=None, rate='3', sentence_mode=True, open_file=Fal
 def info(r):
     """ Provides interface help """
     import rob_interface
+    import pydoc
     print("===================\n")
-    help(rob_interface)
+    print(pydoc.render_doc(rob_interface))
+    #help(rob_interface)
     print("===================\n")
+
+
+def foo(r):
+    print('foo')
 
 
 def symlink(r, source=None, target=None):

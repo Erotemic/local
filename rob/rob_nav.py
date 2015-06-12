@@ -112,10 +112,16 @@ def _sed(r, regexpr, repl, force=False, recursive=False, dpath_list=None):
     #_grep(r, [repl], dpath_list=dpath_list, recursive=recursive)
     force = rutil.cast(force, bool)
     recursive = rutil.cast(recursive, bool)
-    include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h']
+    import utool as ut
+    pyext = ut.get_argflag('--pyext')
+    if pyext:
+        include_patterns = ['*.py']
+    else:
+        include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h']
     if dpath_list is None:
         dpath_list = [os.getcwd()]
     print('sed-ing %r' % (dpath_list,))
+    print(' * regular include_patterns : %r' % (include_patterns,))
     print(' * regular expression : %r' % (regexpr,))
     print(' * replacement        : %r' % (repl,))
     print(' * recursive: %r' % (recursive,))
