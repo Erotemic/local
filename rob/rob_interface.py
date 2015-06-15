@@ -49,10 +49,17 @@ def print_module_funcs(r):
 
 
 def batch_move(r, search, repl, force=False):
-    '''
+    r"""
     This function has not yet been successfully implemented.
     Its a start though.
-    '''
+
+    rob batch_move train_patchmetric\(.*\) patchmatch\1 False
+    ut.named_field('rest', '.*' )
+    ut.backref_field('rest')
+
+    search = 'train_patchmetric(?P<rest>.*)'
+    repl = 'patchmatch\\g<rest>'
+    """
     force = rutil.cast(force, bool)
     # rob batch_move '\(*\)util.py' 'util_\1.py'
     print('Batch Move')
@@ -66,10 +73,25 @@ def batch_move(r, search, repl, force=False):
     print('special_repl_strs = %r' % special_repl_strs)
     print('special_search_strs = %r' % ((spec_open, spec_close,),))
 
-    search_pat = search
-    for spec in spec_open + spec_close:
-        search_pat = search_pat.replace(spec, '')
+    search_pat = ut.extend_regex(search)
+    #for spec in spec_open + spec_close:
+    #    search_pat = search_pat.replace(spec, '')
     print('search_pat=%r' % search_pat)
+
+    include_patterns = [search_pat]
+
+    import utool as ut
+    import re
+    fpath_list = ut.ls('.')
+    matching_fpaths = [fpath for fpath in fpath_list if re.search(search_pat, basename(fpath))]
+    repl_fpaths = [re.sub(search_pat, repl, fpath) for fpath in matching_fpaths]
+
+    ut.rrrr()
+    for fpath1, fpath2 in zip(matching_fpaths, repl_fpaths):
+        ut.util_path.copy(fpath1, fpath2, deeplink=False, dryrun=False)
+    #for fpath in rob_nav._matching_fnames(dpath_list, include_patterns, recursive=False):
+    #    print(fpath)
+    return
 
     parse_str = search
     for spec in spec_open:
@@ -78,8 +100,6 @@ def batch_move(r, search, repl, force=False):
         parse_str = parse_str.replace(spec, '}')
     parse_str = parse_str.replace('{*}', '{}')
     print('parse_str = %r' % parse_str)
-
-    include_patterns = [search_pat]
 
     for fpath in rob_nav._matching_fnames(dpath_list, include_patterns, recursive=False):
         dpath, fname = split(fpath)
