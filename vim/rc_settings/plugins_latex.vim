@@ -42,6 +42,7 @@ let g:Tex_MultipleCompileFormats='pdf,bib,pdf'
 let g:Tex_CompileRule_pdf = 'pdflatex -shell-escape --synctex=-1 -src-specials -interaction=nonstopmode $*'
 " Use main.tex.mainfile to compile
 let g:Tex_UseMakefile = 1
+let g:Tex_IgnoredWarnings='undefined on input'
 
 "Autocomplete off
 let g:Tex_SmartKeyDot=0
