@@ -72,6 +72,8 @@ install_core()
     sudo apt-get install -y sqlitebrowser 
     #References: http://stackoverflow.com/questions/7454796/taglist-exuberant-ctags-not-found-in-path
     sudo apt-get install -y exuberant-ctags 
+
+    sudo apt-get install -y hdfview
     
 }
 
@@ -256,6 +258,22 @@ install_python()
     pip install shapely
 }
 
+install_hdf5()
+{
+    #sudo apt-get install -y libhdf5-serial-dev
+    #The following extra packages will be installed:
+    #  libhdf5-openmpi-7
+    #Suggested packages:
+    #  libhdf5-doc
+    #The following packages will be REMOVED:
+    #  libhdf5-7 libhdf5-dev libhdf5-serial-dev
+    #The following NEW packages will be installed:
+    #  libhdf5-openmpi-7 libhdf5-openmpi-dev
+    sudo apt-get install -y libhdf5-openmpi-dev
+    #h5cc -showconfig
+    sudo apt-get install hdf5-tools
+}
+
 install_cuda_prereq()
 {
 	sudo apt-get install -y libprotobuf-dev
@@ -263,7 +281,9 @@ install_cuda_prereq()
     sudo apt-get install -y libsnappy-dev 
     sudo apt-get install -y libopencv-dev 
     sudo apt-get install -y libboost-all-dev 
-    sudo apt-get install -y libhdf5-serial-dev
+
+    install_hdf5
+
     sudo apt-get install -y libgflags-dev
     sudo apt-get install -y libgoogle-glog-dev
     sudo apt-get install -y liblmdb-dev
