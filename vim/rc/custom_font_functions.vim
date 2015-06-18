@@ -43,9 +43,9 @@ def pyrun_fuzzyfont():
         'monodyslexic': [r'Mono_Dyslexic:h10:cANSI']
     }
     linux_fonts = [
+        r'Inconsolata\ Medium\ 9',
         r'MonoDyslexic\ 9.4',
         r'Inconsolata\ Medium\ 11',
-        r'Inconsolata\ Medium\ 9',
         r'Neep\ 11',
         r'monofur\ 11',
         r'White\ Rabbit\ 10',

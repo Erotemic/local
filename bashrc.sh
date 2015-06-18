@@ -61,3 +61,6 @@ if [[ "$HOSTNAME" == "dozer"  ]]; then
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-6.5/lib64:/usr/local/lib
     export PATH=$PATH:/usr/local/cuda-6.5/bin
 fi
+
+# massive hack. TODO: remove
+#export PATH=$PATH:/home/joncrall/.config/ibeis_cnn/training_junction/
