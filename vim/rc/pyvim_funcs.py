@@ -88,7 +88,7 @@ def format_multiple_paragraph_sentences(text):
         '\n? *\\\\section{[^}]*}\n',
         '\n? *\\\\subsection{[^}]*}\n',
         '\n? *\\\\newcommand{[^}]*}.*\n',
-        # generic commands with text inside (like devcomment)
+        # generic multiline commands with text inside (like devcomment)
         '\n? *\\\\[a-zA-Z]+{ *\n',
 
         '\n? *\\\\begin{[^}]*}\n',

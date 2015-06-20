@@ -51,6 +51,12 @@
   syn region texRefZone		matchgroup=texStatement start="\\\(page\|eq\)ucref{"	end="}\|%stopzone\>"	contains=@texRefGroup
   syn region texRefZone		matchgroup=texStatement start="\\v\=ucref{"		end="}\|%stopzone\>"	contains=@texRefGroup
 
+  syn region texRefZone		matchgroup=texStatement start="\\\(page\|eq\)dref{"	end="}\|%stopzone\>"	contains=@texRefGroup
+  syn region texRefZone		matchgroup=texStatement start="\\v\=dref{"		end="}\|%stopzone\>"	contains=@texRefGroup
+
+  syn region texRefZone		matchgroup=texStatement start="\\\(page\|eq\)Dref{"	end="}\|%stopzone\>"	contains=@texRefGroup
+  syn region texRefZone		matchgroup=texStatement start="\\v\=Dref{"		end="}\|%stopzone\>"	contains=@texRefGroup
+
   syn region texRefZone		matchgroup=texStatement start="\\\(page\|eq\)Cref{"	end="}\|%stopzone\>"	contains=@texRefGroup
   syn region texRefZone		matchgroup=texStatement start="\\v\=Cref{"		end="}\|%stopzone\>"	contains=@texRefGroup
 

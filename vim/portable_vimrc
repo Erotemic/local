@@ -100,6 +100,7 @@ source ~/local/vim/rc_settings/autocommand_settings.vim
 "___________________
 " Quick File Access:
 call QUICKOPEN_leader_tvio(',', '~/local/vim/portable_vimrc')
+call QUICKOPEN_leader_tvio('<', '~/local/vim/rc/pyvim_funcs.py')
 call QUICKOPEN_leader_tvio('/', '$CODE_DIR/ibeis_cnn')
 call QUICKOPEN_leader_tvio('!', '~/local/vim/rc/pyvim_funcs.py')
 call QUICKOPEN_leader_tvio('@', '~/local/vim/rc/custom_misc_functions.vim')
