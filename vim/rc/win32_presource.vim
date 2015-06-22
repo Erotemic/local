@@ -3,7 +3,6 @@ if has("win32") || has("win16")
     "source $VIMRUNTIME/vimrc_example.vim
     source $VIMRUNTIME/mswin.vim
     behave mswin
-
 function! MyDiff()
    let opt = '-a --binary '
    if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
@@ -32,4 +31,3 @@ else
     source $VIMRUNTIME/mswin.vim
     behave mswin
 endif
-

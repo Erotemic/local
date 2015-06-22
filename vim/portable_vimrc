@@ -1,5 +1,10 @@
+
+:set runtimepath+=~/local/vim/vimfiles/
+
 source ~/local/vim/rc/win32_presource.vim
 source ~/local/vim/rc/venv_presource.vim
+
+" source ~/local/vim/vimfiles/after/syntax/tex.vim
 
 
 " COMMON JUMP TO RC FILES
@@ -24,8 +29,6 @@ set encoding=utf8
 " PLUGIN: Pathogen
 " Pathogen is the first thing to run
 "filetype off
-
-:set runtimepath+=~/local/vim/vimfiles/
 
 source ~/local/vim/vimfiles/syntax/python.vim 
 
@@ -218,3 +221,12 @@ call QUICKOPEN_leader_tvio('P', '~/latex/crall-cvpr-15/main.tex')
 "set nofoldenable
 "
 syntax sync minlines=500
+
+
+"if has("win32") || has("win16")
+"    " http://stackoverflow.com/questions/4500748/how-to-source-all-vim-files-in-directory
+"    " Win32 does not load fater files correctly
+"    for f in split(glob('~/local/vim/vimfiles/after/syntax/*.vim'), '\n')
+"        exec 'source' f
+"    endfor
+"endif
