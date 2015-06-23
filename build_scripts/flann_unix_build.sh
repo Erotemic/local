@@ -2,6 +2,13 @@
 #REPODIR=$(cd $(dirname $0) ; pwd)
 #cd $REPODIR/flann
 #cd ~/code/flann
+
+# cd 
+checkout_flann()
+{
+    code
+    git clone https://github.com/mariusmuja/flann.git
+}
 mkdir build
 cd build
 
@@ -32,3 +39,20 @@ make install || { echo "FAILED MAKE INSTALL" ; exit 1; }
 
 
 python -c "import pyflann; print(pyflann)"
+
+
+uninstall_flann()
+{
+    pip list | grep flann
+    python -c "import pyflann; print(pyflann.__file__)"
+    python -c "import pyflann, os.path; print(os.path.dirname(pyflann.__file__))"
+    sudo rm -rf /home/joncrall/venv/local/lib/python2.7/site-packages/pyflann
+    python -c "import pyflann; print(pyflann.FLANN.add_points)"
+    python -c "import pyflann; print(pyflann.__tmp_version__)"
+
+    # The add remove/error branch info 
+    # Seems to work here: 880433b352d190fcbef78ea95d94ec8324059424
+    # Seems to fail here: e5b9cbeabc9f790e231fbb91376a6842207565ba
+}
+
+
