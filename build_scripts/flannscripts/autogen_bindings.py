@@ -9,6 +9,7 @@ def autogen_parts():
         python ~/local/build_scripts/flannscripts/autogen_bindings.py --test-autogen_parts --bindingname=set_dataset
         python ~/local/build_scripts/flannscripts/autogen_bindings.py --test-autogen_parts --bindingname=add_points
         python ~/local/build_scripts/flannscripts/autogen_bindings.py --test-autogen_parts --bindingname=remove_point --exec-mode --py
+        python ~/local/build_scripts/flannscripts/autogen_bindings.py --test-autogen_parts --bindingname=used_memory --exec-mode --py
 
     Example:
         >>> # ENABLE_DOCTEST
@@ -71,7 +72,7 @@ def autogen_parts():
             'c_int, # rows',
         ]
         c_source = ut.codeblock(
-            '''
+            r'''
             typedef typename Distance::ElementType ElementType;
             try {{
                 if (index_ptr==NULL) {{
@@ -110,7 +111,7 @@ def autogen_parts():
             "int  # point id"
         ]
         c_source = ut.codeblock(
-            '''
+            r'''
             typedef typename Distance::ElementType ElementType;
             try {{
                 if (index_ptr==NULL) {{
@@ -126,28 +127,63 @@ def autogen_parts():
             }}
             '''
         )
+    elif binding_name == 'used_memory':
+        return_type = 'int'
+        docstr = ut.codeblock(
+            '''
+            Returns the amount of memory used by the index
+
+            Returns: int
+            '''
+        )
+        binding_argnames = [
+            'index_ptr',
+        ]
+        binding_args = [
+            'FLANN_INDEX, # index_id',
+        ]
+        c_source = ut.codeblock(
+            r'''
+            typedef typename Distance::ElementType ElementType;
+            try {{
+                if (index_ptr==NULL) {{
+                    throw FLANNException("Invalid index");
+                }}
+                Index<Distance>* index = (Index<Distance>*)index_ptr;
+                return index->usedMemory();
+            }}
+            catch (std::runtime_error& e) {{
+                Logger::error("Caught exception: %s\n",e.what());
+                throw;
+            }}
+            '''
+        )
+        pass
     binding_args = [python_ctype_map[name] + ',  # ' + name for name in binding_argnames]
     binding_args_str = '        ' + '\n        '.join(binding_args)
     templated_args = ', '.join([templated_ctype_map[name] + ' ' + name for name in binding_argnames])
     callargs = ', '.join(binding_argnames)
     pycallargs = ', '.join([name for name in binding_argnames if name != 'index_ptr'])
+    pyinputargs = pycallargs  # FIXME
+
+    pyrestype = None if return_type == 'void' else 'c_' + return_type
 
     flann_ctypes_codeblock = ut.codeblock(
         '''
         flann.{binding_name} = {{}}
         define_functions(r"""
-        flannlib.flann_{binding_name}_%(C)s.restype = None
+        flannlib.flann_{binding_name}_%(C)s.restype = {pyrestype}
         flannlib.flann_{binding_name}_%(C)s.argtypes = [
         {binding_args_str}
         ]
         flann.{binding_name}[%(numpy)s] = flannlib.flann_{binding_name}_%(C)s
         """)
         '''
-    ).format(binding_name=binding_name, binding_args_str=binding_args_str)
+    ).format(binding_name=binding_name, binding_args_str=binding_args_str, pyrestype=pyrestype)
 
     flann_index_codeblock = ut.codeblock(
         r'''
-        def {binding_name}(self, *args):
+        def {binding_name}(self, {pyinputargs}):
             """''' + ut.indent('\n' + docstr, '            ') + '''
             """
             if pts.dtype.type not in allowed_types:
@@ -157,7 +193,7 @@ def autogen_parts():
             raise NotImplementedError('requires custom implementation')
             flann.{binding_name}[self.__curindex_type](self.__curindex, {pycallargs})
         '''
-    ).format(binding_name=binding_name, pycallargs=pycallargs)
+    ).format(binding_name=binding_name, pycallargs=pycallargs, pyinputargs=pyinputargs)
 
     templated_ctype_map2 = dict(**templated_ctype_map)
     templated_ctype_map2['dataset'] = 'T*'
@@ -167,42 +203,45 @@ def autogen_parts():
         r'''
         // {binding_name} BEGIN
         template<typename Distance>
-        void __flann_{binding_name}({templated_args})
+        {return_type} __flann_{binding_name}({templated_args})
         {{
             ''' + '\n' + ut.indent(c_source, ' ' * (4 * 3)) + r'''
         }}
 
         template<typename T>
-        void _flann_{binding_name}({typed_sigargs})
+        {return_type} _flann_{binding_name}({typed_sigargs})
         {{
             if (flann_distance_type==FLANN_DIST_EUCLIDEAN) {{
-                 __flann_{binding_name}<L2<T> >({callargs});
+                 return __flann_{binding_name}<L2<T> >({callargs});
             }}
             else if (flann_distance_type==FLANN_DIST_MANHATTAN) {{
-                 __flann_{binding_name}<L1<T> >({callargs});
+                 return __flann_{binding_name}<L1<T> >({callargs});
             }}
             else if (flann_distance_type==FLANN_DIST_MINKOWSKI) {{
-               __flann_{binding_name}<MinkowskiDistance<T> >({callargs});
+                 return __flann_{binding_name}<MinkowskiDistance<T> >({callargs});
             }}
             else if (flann_distance_type==FLANN_DIST_HIST_INTERSECT) {{
-                 __flann_{binding_name}<HistIntersectionDistance<T> >({callargs});
+                 return __flann_{binding_name}<HistIntersectionDistance<T> >({callargs});
             }}
             else if (flann_distance_type==FLANN_DIST_HELLINGER) {{
-                 __flann_{binding_name}<HellingerDistance<T> >({callargs});
+                 return __flann_{binding_name}<HellingerDistance<T> >({callargs});
             }}
             else if (flann_distance_type==FLANN_DIST_CHI_SQUARE) {{
-                 __flann_{binding_name}<ChiSquareDistance<T> >({callargs});
+                 return __flann_{binding_name}<ChiSquareDistance<T> >({callargs});
             }}
             else if (flann_distance_type==FLANN_DIST_KULLBACK_LEIBLER) {{
-                 __flann_{binding_name}<KL_Divergence<T> >({callargs});
+                 return __flann_{binding_name}<KL_Divergence<T> >({callargs});
             }}
             else {{
                 Logger::error( "Distance type unsupported in the C bindings, use the C++ bindings instead\n");
+                throw 0;
             }}
         }}
 
         '''
-    ).format(binding_name=binding_name, templated_args=templated_args, callargs=callargs, typed_sigargs=typed_sigargs)
+    ).format(binding_name=binding_name, templated_args=templated_args,
+             callargs=callargs, typed_sigargs=typed_sigargs,
+             return_type=return_type)
 
     dataset_types = [
         '',
@@ -253,7 +292,7 @@ def autogen_parts():
         body_blocks.append(bodyblock)
 
     flann_c_codeblock += '\n' + '\n'.join(body_blocks)
-    flann_c_codeblock += '\n' + '// {binding_name} END'
+    flann_c_codeblock += '\n' + '// {binding_name} END'.format(binding_name=binding_name)
 
     flann_h_codeblock = ut.codeblock(
         r'''
