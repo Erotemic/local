@@ -1,3 +1,6 @@
+"""
+Called by ~/local/vim/rc/custom_misc_functions.vim
+"""
 from os.path import expanduser
 
 

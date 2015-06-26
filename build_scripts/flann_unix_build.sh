@@ -50,6 +50,8 @@ uninstall_flann()
     python -c "import pyflann; print(pyflann.FLANN.add_points)"
     python -c "import pyflann; print(pyflann.__tmp_version__)"
 
+    ls -al /home/joncrall/venv/local/lib/python2.7/site-packages/pyflann/lib
+
     # The add remove/error branch info 
     # Seems to work here: 880433b352d190fcbef78ea95d94ec8324059424
     # Seems to fail here: e5b9cbeabc9f790e231fbb91376a6842207565ba

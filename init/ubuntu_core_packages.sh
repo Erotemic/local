@@ -59,6 +59,7 @@ install_core()
     sudo apt-get install -y screen
     sudo apt-get install -y synaptic
     sudo apt-get install -y astyle
+    sudo apt-get install -y valgrind
 
     # 
     sudo apt_get install libhighgui2.4

@@ -431,10 +431,12 @@ python << endpython
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
+ut.rrrr(verbose=False)
 pyvim_funcs.ensure_normalmode()
 if pyvim_funcs.is_module_pythonfile():
-    modname = ut.get_modname_from_modpath(vim.current.buffer.name)
-    text = ut.make_default_module_maintest(modname)
+    modpath = vim.current.buffer.name
+    modname = ut.get_modname_from_modpath(modpath)
+    text = ut.make_default_module_maintest(modname, modpath)
     pyvim_funcs.insert_codeblock_at_cursor(text)
 else:
     print('current file is not a pythonfile')

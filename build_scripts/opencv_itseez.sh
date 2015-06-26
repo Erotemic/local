@@ -13,6 +13,8 @@ git clone https://github.com/Itseez/opencv.git
 cd opencv
 
 mkdir build
+mkdir build27
+cd build27
 
 # use dist packages on ubuntu. may need to change for other platforms
 cmake -G "Unix Makefiles" \
@@ -26,7 +28,35 @@ cmake -G "Unix Makefiles" \
 make -j9
 sudo make install
 
+python -c "import numpy; print(numpy.__file__)"
+python -c "import numpy; print(numpy.__version__)"
 python -c "import cv2; print(cv2.__version__)"
 python -c "import cv2; print(cv2.__file__)"
 python -c "import cv2; print(cv2.__file__)"
 python -c "import vtool"
+
+# Check if we have contrib modules
+python -c "import cv2; print(cv2.xfeatures2d)"
+
+
+python -c "import cv2, utool; print(utool.align(utool.dict_str(utool.get_file_info(cv2.__file__)), ':'))"
+
+
+install_extras()
+{
+    code 
+    cd opencv
+    git clone https://github.com/Itseez/opencv_contrib.git
+    code 
+    cd opencv
+    cd build
+    cmake -G "Unix Makefiles" \
+        -D WITH_OPENMP=ON \
+        -D CMAKE_BUILD_TYPE=RELEASE \
+        -D PYTHON2_PACKAGES_PATH=/usr/local/lib/python2.7/dist-packages\
+        -D CMAKE_INSTALL_PREFIX=/usr/local \
+        -D OPENCV_EXTRA_MODULES_PATH=../opencv_contrib/modules \
+        ..
+    make -j9
+}
+

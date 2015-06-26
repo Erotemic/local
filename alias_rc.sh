@@ -302,3 +302,6 @@ tmuxattach(){
     change_terminal_title "TMUX $HOSTNAME ATTACHED"
     tmux attach -t default_session
 }
+
+alias dmsg=dmesg
+alias dmsgt='dmesg | tail'
