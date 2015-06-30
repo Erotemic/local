@@ -31,6 +31,10 @@ vnoremap <leader>fe :call PyFormatParagraph()<CR>
 noremap <leader>ge vip:call PyFormatParagraph()<CR>
 vnoremap ge :call PyFormatParagraph()<CR>
 
+
+vnoremap gd :call PyFormatDoctest()<CR>
+vnoremap gu :call PyUnFormatDoctest()<CR>
+
 noremap <leader>d :call InsertDocstr()<CR>
 noremap <leader>ed :call InsertDocstr()<CR>
 noremap <leader>ea :call InsertDocstrOnlyArgs()<CR>
@@ -52,6 +56,11 @@ noremap <leader>em :call InsertMainPyTest()<CR>
 "noremap <leader>rrr :source ~/local/vim/portable_vimrc<CR>
 noremap <leader>r :source ~/local/vim/portable_vimrc<CR>
 noremap <leader>R :source ~/local/vim/portable_vimrc<CR>
+
+
+" Find lone double quotes
+:noremap <leader>/' :/\([^"]\)"\([^"]\)<CR>
+:noremap <leader>s' :%s/\([^"]\)"\([^"]\)/'/gc<CR>
 
 
 " for python doctests

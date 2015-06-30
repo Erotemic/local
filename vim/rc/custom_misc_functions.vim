@@ -517,6 +517,27 @@ endpython
 endfunc
 
 
+func! PyFormatDoctest() range
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+text = pyvim_funcs.get_selected_text()
+formated_text = pyvim_funcs.format_text_as_docstr(text)
+pyvim_funcs.insert_codeblock_over_selection(formated_text)
+endpython
+endfunc
+
+func! PyUnFormatDoctest() range
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+text = pyvim_funcs.get_selected_text()
+formated_text = pyvim_funcs.unformat_text_as_docstr(text)
+pyvim_funcs.insert_codeblock_over_selection(formated_text)
+endpython
+endfunc
+
+
 " ========= Functions ========= "
 "command! TextWidthMarkerOn call FUNC_TextWidthMarkerOn()
 " Textwidth command

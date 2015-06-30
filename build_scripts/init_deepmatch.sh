@@ -56,18 +56,41 @@ python -c 'import utool as ut; ut.copy(ut.grab_test_imgpath("lena.png"), ".")'
 
 
 chmod +x deepmatching-static
+
 ./deepmatching-static
+
+cd $CODE_DIR/deepmatching_1.2_c++
+
+# Custom edited viz.py
+
+sh -c 'cat > run_deepmatch.sh << EOL
+export fpath1=\$1
+export fpath2=\$2
+shift
+shift
+export params=\$@
+outname=match.\$fpath1.\$fpath2.out
+./deepmatching-static \$fpath1 \$fpath2 -nt 9 -out \$outname \$params
+python viz.py \$fpath1 \$fpath2 \$outname
+EOL'
+chmod +x run_deepmatch.sh
 
 run_deepmatch()
 {
     ./deepmatching-static $1 $2 -nt 9 -out match.$1.$2.out 
-    cat match.$1.$2.out | python viz.py $1 $2
+    cat match.$1.$2.out | python viz.py $1 $2&
 }
 
-run_deepmatch easy1.png easy2.png
-run_deepmatch easy3.png easy2.png
-run_deepmatch hard3.png easy2.png
-run_deepmatch easy1.png lena.png
+./run_deepmatch.sh easy1.png easy2.png
+./run_deepmatch.sh easy3.png easy2.png
+./run_deepmatch.sh hard3.png easy2.png
+./run_deepmatch.sh easy2.png hard3.png
+
+./run_deepmatch.sh easy2.png hard3.png -ngh_rad 1
+
+./run_deepmatch.sh easy1.png lena.png  -ngh_rad 1 -rot_range 0 0
+./run_deepmatch.sh easy1.png lena.png -rot_range 0 0 -max_scale 1
+./run_deepmatch.sh easy1.png hard3.png -rot_range 0 0 -max_scale 3
 
 ./deepmatching-static easy1.png easy2.png -nt 9  > out12
 cat out12 | python viz.py easy1.png easy2.png
