@@ -524,3 +524,12 @@ install_lyx()
     sudo apt-get update
     sudo apt-get install lyx -y
 }
+
+
+install_screen_capture()
+{
+    #sudo apt-get install recordmydesktop gtk-recordmydesktop
+    sudo add-apt-repository ppa:obsproject/obs-studio
+    sudo apt-get update && sudo apt-get install obs-studio
+    
+}
