@@ -58,3 +58,9 @@ uninstall_flann()
 }
 
 
+
+python3_flann_hack()
+{
+    cd ~/code/flann/src/python
+    sudo python3 ~/code/flann/build/src/python/setup.py install
+}

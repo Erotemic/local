@@ -533,3 +533,43 @@ install_screen_capture()
     sudo apt-get update && sudo apt-get install obs-studio
     
 }
+
+
+cryptkeeper()
+{
+    sudo apt-get install cryptkeeper
+    #http://superuser.com/questions/179150/reading-an-encfs-volume-from-windows
+    #http://alternativeto.net/software/aescrypt/
+    #http://www.getsafe.org/about#linuxversion
+}
+
+
+setup_python3()
+{
+    sudo easy_install3 pip
+    sudo pip3 install lockfile
+    sudo pip3 install flask
+    sudo pip3 install numpy
+    sudo pip3 install scipy
+    sudo pip3 install Pillow
+    sudo pip3 install matplotlib
+    sudo pip3 install statsmodels
+    ut
+    sudo python3 setup.py develop
+    vt
+    sudo python3 setup.py develop
+    pt
+    sudo python3 setup.py develop
+    gt
+    sudo python3 setup.py develop
+    dt
+    sudo python3 setup.py develop
+    # setup pyflann3
+    hes
+    sudo python3 setup.py develop
+
+    sudo pip install git+https://github.com/pwaller/pyfiglet
+
+    python3 -c "import vtool"
+    
+}

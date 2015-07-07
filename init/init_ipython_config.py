@@ -45,7 +45,7 @@ def write_default_ipython_profile():
         c.InteractiveShellApp.exec_lines.append('import utool as ut')
         c.InteractiveShellApp.exec_lines.append('import plottool as pt')
         c.InteractiveShellApp.exec_lines.append('from os.path import *')
-        c.InteractiveShellApp.exec_lines.append('import cPickle as pickle')
+        c.InteractiveShellApp.exec_lines.append('from six.moves import cPickle as pickle')
         #c.InteractiveShell.autoindent = True
         #c.InteractiveShell.colors = 'LightBG'
         #c.InteractiveShell.confirm_exit = False

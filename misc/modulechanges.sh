@@ -398,3 +398,6 @@ for modname in modname_list:
 
 
 
+
+
+rob sp "import cPickle as pickle" "from six.moves import cPickle as pickle" True

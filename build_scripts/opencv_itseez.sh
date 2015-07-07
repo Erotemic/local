@@ -41,6 +41,30 @@ python -c "import cv2; print(cv2.xfeatures2d)"
 
 python -c "import cv2, utool; print(utool.align(utool.dict_str(utool.get_file_info(cv2.__file__)), ':'))"
 
+install_python3_version()
+{
+    code 
+    cd opencv
+    mkdir build3
+    cd build
+    # This seems to build both 2 and 3
+    cmake -G "Unix Makefiles" \
+        -D WITH_OPENMP=ON \
+        -D CMAKE_BUILD_TYPE=RELEASE \
+        -D CMAKE_INSTALL_PREFIX=/usr/local \
+        -D OPENCV_EXTRA_MODULES_PATH=../opencv_contrib/modules \
+        -D PYTHON2_PACKAGES_PATH=lib/python2.7/dist-packages\
+        -D PYTHON3_PACKAGES_PATH=lib/python3.4/dist-packages\
+        ..
+    make -j9
+
+    opencv_python3
+
+    # Weird would not install properly
+    #sudo cp /home/joncrall/code/opencv/build3/lib/python3.4/dist-packages/cv2.cpython-34m.so /usr/local/lib/python3.4/dist-packages/
+}
+
+
 
 install_extras()
 {
