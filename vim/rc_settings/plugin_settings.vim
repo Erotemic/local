@@ -23,7 +23,7 @@ def nerdtree_withbat():
     '.upa',
     '.upb',
     '.pdf', 
-    '.out',
+    #'.out',
     '.log',
     '.latexmain',
     '.glo',

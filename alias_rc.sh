@@ -148,6 +148,7 @@ alias ea='gvim ~/local/alias_rc.sh'
 alias emc='gvim ~/local/modulechanges.sh'
 alias sbrc='source ~/local/bashrc.sh' # Refresh
 alias todo='gvim ~/Dropbox/Notes/TODO.txt'
+alias ebs='gvim ~/local/build_scripts/'
 
 # Edit Project
 ep()
@@ -302,6 +303,14 @@ tmuxattach(){
     change_terminal_title "TMUX $HOSTNAME ATTACHED"
     tmux attach -t default_session
 }
+
+
+utzget()
+{
+python -c "import utool as ut; ut.grab_zipped_url(\"$1\", download_dir=".")"
+}
+
+
 
 alias dmsg=dmesg
 alias dmsgt='dmesg | tail'

@@ -9,7 +9,7 @@ export SERVER_ADDRESS=41.203.223.178
 #export SERVER_PORT=22
 export SERVER_PORT=1022
 echo "sshing into $SERVER_ADDRESS at port $SERVER_PORT"
-ssh -p $SERVER_PORT jonathan@$SERVER_ADDRESS
+ssh -X -p $SERVER_PORT jonathan@$SERVER_ADDRESS
 
 #-i ~/.ssh/id_rsa
 
