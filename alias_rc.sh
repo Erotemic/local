@@ -307,7 +307,7 @@ tmuxattach(){
 
 utzget()
 {
-python -c "import utool as ut; ut.grab_zipped_url(\"$1\", download_dir=".")"
+python -c "import utool as ut; ut.grab_zipped_url(\"$1\", download_dir=\".\")"
 }
 
 

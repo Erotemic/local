@@ -60,7 +60,7 @@ noremap <leader>R :source ~/local/vim/portable_vimrc<CR>
 
 " Find lone double quotes
 :noremap <leader>/' :/\([^"]\)"\([^"]\)<CR>
-:noremap <leader>s' :%s/\([^"]\)"\([^"]\)/'/gc<CR>
+:noremap <leader>s' :%s/\([^"]\)"\([^"]\)/\1'\2/gc<CR>
 
 
 " for python doctests
