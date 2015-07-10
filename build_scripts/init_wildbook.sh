@@ -23,6 +23,11 @@ apache-tomcat-8.0.24
 utzget http://dev.wildme.org/fluke/images/ibeis.war
 utget http://dev.wildme.org/fluke/images/ibeis.war
 
+grab_ibeis_war_from_pachy()                                                           
+{                                                                                     
+    scp jonc@pachy.cs.uic.edu:/var/tomcat/                                                        
+} 
+
 deploy_wildbook_war()
 {
     cd $CODE_DIR/Wildbook/apache-tomcat-8.0.24/webapps
