@@ -25,7 +25,7 @@ utget http://dev.wildme.org/fluke/images/ibeis.war
 
 grab_ibeis_war_from_pachy()                                                           
 {                                                                                     
-    scp jonc@pachy.cs.uic.edu:/var/tomcat/                                                        
+    scp jonc@pachy.cs.uic.edu:/var/lib/tomcat/webapps/ibeis.war ~/Downloads/pachy_ibeis.war
 } 
 
 deploy_wildbook_war()
