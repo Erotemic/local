@@ -23,9 +23,15 @@ apache-tomcat-8.0.24
 utzget http://dev.wildme.org/fluke/images/ibeis.war
 utget http://dev.wildme.org/fluke/images/ibeis.war
 
-grab_ibeis_war_from_pachy()                                                           
+
+grab_ibeis_war()                                                           
 {                                                                                     
+    # From patchy
     scp jonc@pachy.cs.uic.edu:/var/lib/tomcat/webapps/ibeis.war ~/Downloads/pachy_ibeis.war
+    # From Lewa
+    scp jonathan@ibeis.cs.uic.edu:/var/lib/tomcat/webapps/ibeis.war ~/Downloads/lewa_ibeis.war
+    # Slightly less volitile location
+    http://dev.wildme.org/ibeis_data_dir/ibeis.war
 } 
 
 deploy_wildbook_war()
