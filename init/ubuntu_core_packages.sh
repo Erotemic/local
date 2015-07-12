@@ -382,6 +382,7 @@ install_cmake_latest()
     # +--------------------------------------------------
     # Creates custom file descriptor that runs the script
     # References: http://superuser.com/questions/607367/raw-multiline-string-in-bash
+    # http://stackoverflow.com/questions/2043453/executing-python-multi-line-statements-in-the-one-line-command-line
     sudo apt-get remove cmake
     exec 42<<'__PYSCRIPT__'
 import utool as ut
