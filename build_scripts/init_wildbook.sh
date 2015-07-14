@@ -109,7 +109,25 @@ $CATALINA_HOME/bin/shutdown.sh
 #python -c 'import utool as ut; ut.grab_zipped_url("http://dev.wildme.org/fluke/images/ibeis.war", download_dir=".")'
 
 
+<<<<<<< HEAD
 #apache-tomcat-8.0.24
+=======
+
+grab_ibeis_war()                                                           
+{                                                                                     
+    # From patchy
+    scp jonc@pachy.cs.uic.edu:/var/lib/tomcat/webapps/ibeis.war ~/Downloads/pachy_ibeis.war
+    # From Lewa
+    scp jonathan@ibeis.cs.uic.edu:/var/lib/tomcat/webapps/ibeis.war ~/Downloads/lewa_ibeis.war
+    # Slightly less volitile location
+    http://dev.wildme.org/ibeis_data_dir/ibeis.war
+} 
+
+deploy_wildbook_war()
+{
+    cd $CODE_DIR/Wildbook/apache-tomcat-8.0.24/webapps
+    wget http://dev.wildme.org/fluke/images/ibeis.war
+>>>>>>> 5a12af43085164c2a93975fa0ecca7a6340ad5b3
 
 #utzget http://dev.wildme.org/fluke/images/ibeis.war
 #utget http://dev.wildme.org/fluke/images/ibeis.war

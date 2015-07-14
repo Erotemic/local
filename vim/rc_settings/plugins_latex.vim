@@ -33,6 +33,7 @@ func! Tex_RunViewLaTeX()
     call Tex_ViewLaTeX()
 endfu
 
+
 let g:Tex_SmartKeyDot=0
 let g:tex_flavor='latex'
 let g:Tex_DefaultTargetFormat='pdf'
@@ -82,6 +83,9 @@ endif
 if !exists('g:Tex_ShowallLines')
     let g:Tex_ShowallLines = 0
 endif
+
+" No comment spellcheck
+let g:tex_comment_nospell= 1
 
 " }}}
 

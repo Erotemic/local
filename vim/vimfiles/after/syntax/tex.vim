@@ -77,3 +77,9 @@ endif
 
 "HiLink texZone		PreCondit
 syn match  texRefZone		'\\ucite\%([tp]\*\=\)\=' nextgroup=texRefOption,texCite
+
+
+""""""
+" Other stuff
+"syn region SpecialKey		start="\\devcomment\*\=\z([^\ta-zA-Z@]\)"	end="\z1\|%stopzone\>"
+"syn region SpecialKey	 start="\\chuckcomment{"	end="}\|%stopzone\>"	contains=@Spell
