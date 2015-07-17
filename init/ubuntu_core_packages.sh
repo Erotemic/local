@@ -113,6 +113,10 @@ install_zotero()
     cd /opt
     cd ~/Downloads
     sudo cp -r Zotero_linux-x86_64 /opt/zotero
+    # Change permissions so zotero can automatically update itself
+    sudo chown -R root:joncrall /opt/zotero
+    sudo chmod -R g+w /opt/zotero
+    sudo chmod -R u+w /opt/zotero
 
 
 }
@@ -572,6 +576,10 @@ setup_python3()
     sudo pip install git+https://github.com/pwaller/pyfiglet
 
     python3 -c "import vtool"
+
+    # set pip to python2.7
+    sudo -H pip2.7 install pip -U --force-reinstall
+    #ls -al /usr/local/bin/pip
     
 }
 

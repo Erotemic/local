@@ -213,3 +213,6 @@ DCNN
 LRU
 LFU
 DCNNs
+LBP
+eigenfaces
+LSH

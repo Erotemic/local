@@ -157,9 +157,29 @@ def format_multiple_paragraph_sentences(text):
 
 
 def format_single_paragraph_sentences(text):
-    """
+    r"""
     helps me separatate sentences grouped in paragraphs that I have a difficult
     time reading due to dyslexia
+
+    Args:
+        text (str):
+
+    Returns:
+        str: wrapped_text
+
+    CommandLine:
+        python  ~/local/vim/rc/pyvim_funcs.py --test-format_single_paragraph_sentences --exec-mode
+
+    Example:
+        >>> # DISABLE_DOCTEST
+        >>> from pyvim_funcs import *  # NOQA
+        >>> text = 'lorium. ipsum? dolar erat. saultum. fds.fd...  fd oob fd.'
+        >>> #text = '? ? . lorium. ipsum? dolar erat. saultum. fds.fd...  fd oob fd. ? '  # causes breakdown
+        >>> print(text)
+        >>> wrapped_text = format_single_paragraph_sentences(text)
+        >>> result = ('wrapped_text =\n%s' % (str(wrapped_text),))
+        >>> print(result)
+
     """
     import utool as ut
     import textwrap
@@ -169,7 +189,23 @@ def format_single_paragraph_sentences(text):
     text_ = ut.remove_doublspaces(text)
     # TODO: more intelligent sentence parsing
     text_ = ut.flatten_textlines(text)
-    sentence_list = text_.split('. ')
+    USE_REGEX_SPLIT = True
+    if USE_REGEX_SPLIT:
+        import re
+        sep_chars = list(map(re.escape, ['.', '?', '!', ':']))
+        sep_pattern = ut.regex_or(sep_chars)
+        full_pattern = '(' + sep_pattern + r'\s)'
+        split_list = re.split(full_pattern, text_)
+        if len(split_list) > 0:
+            #assert len(split_list) % 3 ==  0, 'split has 2 groups and other stuff'
+            if not re.match(full_pattern, split_list[0]):
+                if len(split_list) > 1:
+                    assert re.match(full_pattern, split_list[1])
+            sentence_list = split_list[::3]
+            #fullsep_list = split_list[1::3]
+            sep_list = split_list[2::3]
+    else:
+        sentence_list = text_.split('. ')
     sentence_prefix = '  '
     width = 80 - min_indent
     wrapkw = dict(width=width, break_on_hyphens=False, break_long_words=False)
@@ -197,7 +233,14 @@ def format_single_paragraph_sentences(text):
         sepfmt = '%+------\n{}\n%L______'
         wrapped_block =  sepfmt.format('.\n%\n'.join(wrapped_sentences))
     else:
-        wrapped_block = '.\n'.join(wrapped_sentences)
+        if USE_REGEX_SPLIT:
+            newsep_list = [sep + '\n' for sep in sep_list]
+            wrapped_block = '.\n'.join(wrapped_sentences)
+            from six.moves import zip_longest
+            wrapped_sentences2 = ['' if x is None else x for x in list(ut.iflatten(zip_longest(wrapped_sentences, newsep_list)))]
+            wrapped_block = ''.join(wrapped_sentences2)
+        else:
+            wrapped_block = '.\n'.join(wrapped_sentences)
 
     wrapped_text = ut.indent(wrapped_block, ' ' * min_indent)
     return wrapped_text
