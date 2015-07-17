@@ -1,21 +1,13 @@
 " =========== LATEX =========== "
 " LATEX: Functions
 
+" vim-latex lives in
+" ~/local/vim/vimfiles/ftplugin/latex-suite
+" SumatraPDF forward search References: http://forums.fofou.org/sumatrapdf/topic?id=3184510&comments=2
+
 if has("win32") || has("win16")
     set shellslash
 endif
-
-" Initialize
-"func! LatexInitialize()
-"    ":set textwidth=80
-"    ":set spell
-"    ":setlocal spell spelllang=en_us
-"    ":call SetFontMonoDyslexic()
-"    "set wildignore=*.o, *~, *.pyc, *.pyo, *.aux, *.masv, *.bbl, *.bcf, *.blg, *.brf, *.synctex, *.upa, *.upb, *.pdf, *.out, *.log
-"    "set wildignore=*.o, *.pyc, *.pyo, *.aux, *.masv, *.bbl, *.bcf, *.blg, *.brf, *.synctex, *.upa, *.upb, *.pdf, *.out, *.log
-"    "let NERDTreeIgnore = ['\.o$', '\~$', '\.pyc$',  '\.pyo$', '\.aux$', '\.masv$', '\.bbl$', '\.bcf$', '\.blg$', '\.brf$', '\.synctex$', '\.upa$', '\.upb$', '\.pdf$', '\.out$', '\.log', '\.latexmain', '\.bib', '\.shelf', 'README.md', 'LICENSE']
-"    "let NERDTreeIgnore = ['\.o$', '\~$', '\.pyc$',  '\.pyo$', '\.aux$', '\.masv$', '\.bbl$', '\.bcf$', '\.blg$', '\.brf$', '\.synctex$', '\.upa$', '\.upb$', '\.pdf$', '\.out$', '\.log', '\.shelf', 'README.md', 'LICENSE', '\.glo$', '\.toc$', '\.xdy$']
-"endfu
 
 " Remove open dyslexic
 func! SetLaTeX()
@@ -37,12 +29,17 @@ endfu
 let g:Tex_SmartKeyDot=0
 let g:tex_flavor='latex'
 let g:Tex_DefaultTargetFormat='pdf'
-"# http://tex.stackexchange.com/questions/95026/vim-latex-does-not-run-bibtex
-"let g:Tex_MultipleCompileFormats='pdf'
+
+"References: http://tex.stackexchange.com/questions/95026/vim-latex-does-not-run-bibtex
 let g:Tex_MultipleCompileFormats='pdf,bib,pdf'
+"let g:Tex_MultipleCompileFormats='pdf'
+"
 let g:Tex_CompileRule_pdf = 'pdflatex -shell-escape --synctex=-1 -src-specials -interaction=nonstopmode $*'
+
 " Use main.tex.mainfile to compile
 let g:Tex_UseMakefile = 1
+
+
 "let g:Tex_IgnoredWarnings='undefined on input'
 " References for warnings
 "# http://sourceforge.net/p/vim-latex/vim-latex/ci/6607de98f5c05e50956b62f43cd67ac257f7b51f/tree/compiler/tex.vim?diff=841cfca18443ccbb07bbdfffeb9847be6e0f3f1d
@@ -109,9 +106,23 @@ else
     let g:Tex_ViewRule_pdf = 'okular --unique'
 endif
 
+
 " Toggle Compile to OpenDyslexic
 command! LATEXCompileRuleLaTeX :call SetLaTeX()
 command! LATEXCompileRuleXeTeX :call SetXeTeX()
 
 ":inoremap <leader>* \item 
 " http://mirrors.ctan.org/install/macros/latex/contrib/mathtools.tds.zip
+
+
+" Initialize
+"func! LatexInitialize()
+"    ":set textwidth=80
+"    ":set spell
+"    ":setlocal spell spelllang=en_us
+"    ":call SetFontMonoDyslexic()
+"    "set wildignore=*.o, *~, *.pyc, *.pyo, *.aux, *.masv, *.bbl, *.bcf, *.blg, *.brf, *.synctex, *.upa, *.upb, *.pdf, *.out, *.log
+"    "set wildignore=*.o, *.pyc, *.pyo, *.aux, *.masv, *.bbl, *.bcf, *.blg, *.brf, *.synctex, *.upa, *.upb, *.pdf, *.out, *.log
+"    "let NERDTreeIgnore = ['\.o$', '\~$', '\.pyc$',  '\.pyo$', '\.aux$', '\.masv$', '\.bbl$', '\.bcf$', '\.blg$', '\.brf$', '\.synctex$', '\.upa$', '\.upb$', '\.pdf$', '\.out$', '\.log', '\.latexmain', '\.bib', '\.shelf', 'README.md', 'LICENSE']
+"    "let NERDTreeIgnore = ['\.o$', '\~$', '\.pyc$',  '\.pyo$', '\.aux$', '\.masv$', '\.bbl$', '\.bcf$', '\.blg$', '\.brf$', '\.synctex$', '\.upa$', '\.upb$', '\.pdf$', '\.out$', '\.log', '\.shelf', 'README.md', 'LICENSE', '\.glo$', '\.toc$', '\.xdy$']
+"endfu

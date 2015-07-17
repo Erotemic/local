@@ -675,12 +675,20 @@ def write_env(r):
 
 
 def write_path(r):
+    """
+    Writes a script to update the PATH variable into the sync registry
+    The PATH update mirrors the current RobSettings
+
+    SeeAlso:
+        utool.util_win32.add_to_win32_PATH
+    """
     import utool
     write_dir = join(r.d.HOME, 'Sync/win7/registry')
     path_fpath = normpath(join(write_dir, 'UPDATE_PATH.reg'))
     key = '[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment]'
     rtype = 'REG_EXPAND_SZ'
     pathsep = os.path.pathsep
+    # Read current PATH values
     win_pathlist = list(os.environ['PATH'].split(os.path.pathsep))
     rob_pathlist = list(map(normpath, r.path_vars_list))
     new_path_list = utool.unique_ordered(win_pathlist + rob_pathlist)
@@ -689,6 +697,7 @@ def write_path(r):
     pathtxt = pathsep.join(new_path_list)
     varval_list = [('Path', pathtxt)]
     write_regfile(path_fpath, key, varval_list, rtype)
+
     rob_helpers.view_directory(write_dir)
 
 

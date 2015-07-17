@@ -352,6 +352,12 @@ function! Tex_ForwardSearchLaTeX()
 
 		let execString = 'silent! !start '. viewer.' -s '.line('.').expand('%').' '.mainfnameRoot
 
+	elseif (has('win32') && (viewer =~? 'sumatrapdf')) 
+        " Patch for SumatraPDF forward search 
+
+		let relativeFile=substitute(expand("%:p"), "\\/", '\',"g") 
+		let pdfname=substitute(mainfnameFull.'.'.s:target, "\\/", '\',"g") 
+		let execString = 'silent! !start '. viewer.' '.pdfname.' -forward-search '.relativeFile.' '.line('.') 
 
 	elseif (has('macunix') && (viewer =~ '^ *\(Skim\|PDFView\|TeXniscope\)\( \|$\)'))
 		" We're on a Mac using a traditional Mac viewer
