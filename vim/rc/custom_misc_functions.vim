@@ -504,6 +504,24 @@ endfu
 "  return result
 "endfunc
 
+func! PyCiteLookup() 
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+word = pyvim_funcs.get_word_at_cursor()
+import utool as ut
+import bibtexparser
+bib_fpath = ut.truepath('~/latex/crall-candidacy-2015/My_Library_clean.bib')
+bibtex_str = ut.readfrom(bib_fpath, verbose=False)
+bib_database = bibtexparser.loads(bibtex_str)
+bibtex_dict = bib_database.get_entry_dict()
+title = bibtex_dict[word]['title']
+ut.copy_text_to_clipboard(title)
+print(title)
+#print(repr(word))
+endpython
+endfunc
+
 
 func! PyFormatParagraph() range
 python << endpython

@@ -246,6 +246,28 @@ def format_single_paragraph_sentences(text):
     return wrapped_text
 
 
+def get_word_at_cursor():
+    """ returns the word highlighted by the curor """
+    import vim
+    buf = vim.current.buffer
+    (row, col) = vim.current.window.cursor
+    line = buf[row - 1]  # Original end of the file
+    lpos = col
+    rpos = col
+    nonword_chars = ' \t\n\r[](){}:;.,"\'\\/'
+    while lpos > 0:
+        if line[lpos] in nonword_chars:
+            lpos += 1
+            break
+        lpos -= 1
+    while rpos < len(line):
+        if line[rpos] in nonword_chars:
+            break
+        rpos += 1
+    word = line[lpos:rpos]
+    return word
+
+
 def get_selected_text():
     """ make sure the vim function calling this has a range after () """
     import vim

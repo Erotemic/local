@@ -43,6 +43,8 @@ noremap <leader>ex :call InsertIBEISExample()<CR>
 noremap <leader>em :call InsertMainPyTest()<CR>
 "inoremap <leader>d :call InsertDocstr()<CR>
 
+noremap <leader>ee :call PyCiteLookup()<CR>
+
 :noremap <c-d> :call InsertDocstr()<CR>
 :noremap <c-1> :call InsertDocstr()<CR>
 :inoremap <c-1> :call InsertDocstr()<CR>
@@ -56,7 +58,6 @@ noremap <leader>em :call InsertMainPyTest()<CR>
 "noremap <leader>rrr :source ~/local/vim/portable_vimrc<CR>
 noremap <leader>r :source ~/local/vim/portable_vimrc<CR>
 noremap <leader>R :source ~/local/vim/portable_vimrc<CR>
-
 
 " Find lone double quotes
 :noremap <leader>/' :/\([^"]\)"\([^"]\)<CR>
