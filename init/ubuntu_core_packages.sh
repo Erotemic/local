@@ -118,6 +118,10 @@ install_zotero()
     sudo chmod -R g+w /opt/zotero
     sudo chmod -R u+w /opt/zotero
 
+    http://www.rtwilson.com/academic/autozotbib
+    http://www.rtwilson.com/academic/autozotbib.xpi
+    https://addons.mozilla.org/en-US/firefox/addon/zotero-scholar-citations/
+
 
 }
 

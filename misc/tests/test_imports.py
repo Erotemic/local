@@ -116,7 +116,7 @@ import pandas as pd
 ## IBEIS DEV
 #from ibeis.init import main_commands
 #from ibeis import params
-#from ibeis.dev import dbinfo
+#from ibeis.other import dbinfo
 #from ibeis.init import sysres
 #from ibeis import ibsfuncs
 #from ibeis.experiments import results_organizer

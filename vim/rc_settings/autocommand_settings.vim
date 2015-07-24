@@ -29,6 +29,7 @@ autocmd Filetype tex,latex set spell spelllang=en_us
 
 " AuOnReadPatterns is defined in custom_misc_functions
 :call AuOnReadPatterns('set ft=cpp', '*.txx')
+:call AuOnReadPatterns('set ft=python', '*.py.tpl')
 :call AuOnReadPatterns('set ft=cmake', '*.poly', '*.node', '.ele')
 :call AuOnReadPatterns('set ft=cython', '*.pyx', '.pxd')
 :call AuOnReadPatterns('set ft=Autohotkey', '*.ahk')
@@ -60,6 +61,7 @@ au BufWritePre *.py :%s///e
 "au BufNewFile,BufRead *.poly set ft=cmake
 "au BufNewFile,BufRead *.pyx  set ft=cython
 au BufNewFile,BufRead *.spec set ft=python
+au BufNewFile,BufRead *.py.tpl set ft=python
 "au BufNewFile,BufRead *.node set ft=cmake
 "au BufNewFile,BufRead *.ele  set ft=cmake
 "au BufNewFile,BufRead *.ahk, set ft=Autohotkey

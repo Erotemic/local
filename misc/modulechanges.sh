@@ -401,3 +401,9 @@ for modname in modname_list:
 
 
 rob sp "import cPickle as pickle" "from six.moves import cPickle as pickle" True
+
+rob gp "ibeis\.dev"
+rob gp "ibeis\.other" 
+rob sp "ibeis\.dev" "ibeis.other" True
+
+rob gp "ibeis .* dev"

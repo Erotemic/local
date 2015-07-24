@@ -216,3 +216,13 @@ DCNNs
 LBP
 eigenfaces
 LSH
+LRUs
+ImageNet
+maxout
+ReLUs
+HoG
+trilinear
+L2
+L1
+bursty
+Gabor

@@ -58,7 +58,7 @@ export HISTCONTROL=
 if [[ "$HOSTNAME" == "hyrule"  ]]; then 
     export PATH=$PATH:/usr/local/cuda/bin
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/lib
-    export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
+    #export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
     # hacky
     #export TOMCAT_DIR=$CODE_DIR/Wildbook/tmp/apache-tomcat-8.0.24
     #export TOMCAT_HOME=$TOMCAT_DIR
@@ -70,7 +70,7 @@ else
     # These paths are likely to be true on other machines as weel
     #export PATH=$PATH:/usr/local/cuda/bin
     #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/lib
-    export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
+    #export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
 fi
 
 
