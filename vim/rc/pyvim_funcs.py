@@ -246,15 +246,60 @@ def format_single_paragraph_sentences(text):
     return wrapped_text
 
 
+def get_line_at_cursor():
+    import vim
+    buf = vim.current.buffer
+    (row, col) = vim.current.window.cursor
+    line = buf[row - 1]  # Original end of the file
+    return line
+
+
 def get_word_at_cursor():
     """ returns the word highlighted by the curor """
     import vim
     buf = vim.current.buffer
     (row, col) = vim.current.window.cursor
     line = buf[row - 1]  # Original end of the file
+    nonword_chars = ' \t\n\r[](){}:;.,"\'\\/'
+    word = get_word_in_line_at_col(line, col, nonword_chars)
+    return word
+
+
+def get_expr_at_cursor():
+    """ returns the word highlighted by the curor """
+    import vim
+    buf = vim.current.buffer
+    (row, col) = vim.current.window.cursor
+    line = buf[row - 1]  # Original end of the file
+    nonword_chars = ' \t\n\r[](){}:;,"\'\\/='
+    word = get_word_in_line_at_col(line, col, nonword_chars)
+    return word
+
+
+def get_word_in_line_at_col(line, col, nonword_chars=' \t\n\r[](){}:;.,"\'\\/'):
+    r"""
+    Args:
+        line (?):
+        col (?):
+
+    Returns:
+        ndarray[uint8_t, ndim=1]: word -  aggregate descriptor cluster center
+
+    CommandLine:
+        python  ~/local/vim/rc/pyvim_funcs.py --test-get_word_in_line_at_col
+
+    Example:
+        >>> # DISABLE_DOCTEST
+        >>> from pyvim_funcs import *  # NOQA
+        >>> line = 'myvar.foo = yourvar.foobar'
+        >>> col = 6
+        >>> nonword_chars=' \t\n\r[](){}:;.,"\'\\/'
+        >>> word = get_word_in_line_at_col(line, col, nonword_chars)
+        >>> result = ('word = %r' % (word,))
+        >>> print(result)
+    """
     lpos = col
     rpos = col
-    nonword_chars = ' \t\n\r[](){}:;.,"\'\\/'
     while lpos > 0:
         if line[lpos] in nonword_chars:
             lpos += 1

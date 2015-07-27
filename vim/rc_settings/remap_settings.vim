@@ -44,6 +44,7 @@ noremap <leader>em :call InsertMainPyTest()<CR>
 "inoremap <leader>d :call InsertDocstr()<CR>
 
 noremap <leader>ee :call PyCiteLookup()<CR>
+noremap <leader>pv :call PyMakePrintVar()<CR>
 
 :noremap <c-d> :call InsertDocstr()<CR>
 :noremap <c-1> :call InsertDocstr()<CR>
