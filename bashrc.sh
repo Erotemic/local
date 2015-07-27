@@ -67,6 +67,7 @@ elif [[ "$HOSTNAME" == "dozer"  ]]; then
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-6.5/lib64:/usr/local/lib
     export PATH=$PATH:/usr/local/cuda-6.5/bin
 else
+    export PATH=$PATH
     # These paths are likely to be true on other machines as weel
     #export PATH=$PATH:/usr/local/cuda/bin
     #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/lib
