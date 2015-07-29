@@ -39,7 +39,7 @@ python -c "import vtool"
 python -c "import cv2; print(cv2.xfeatures2d)"
 
 
-uninstall_opencv()
+reinstall_mac_opencv()
 {
     sudo rm -rf /usr/local/bin/opencv*
     sudo rm -rf /usr/local/include/opencv
@@ -49,6 +49,14 @@ uninstall_opencv()
     sudo rm -rf /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/cv2.so
     sudo rm -rf /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/cv.py
     sudo rm -rf /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/cv2.pyd
+
+    #http://stackoverflow.com/questions/8410443/how-to-install-python-2-7-bindings-for-opencv-using-macports
+    sudo port uninstall opencv
+    sudo port install py27-numpy
+    sudo port install opencv +python27
+
+    python -c "import cv2; print(cv2.__version__)"
+    
 }
 
 
