@@ -39,6 +39,19 @@ python -c "import vtool"
 python -c "import cv2; print(cv2.xfeatures2d)"
 
 
+uninstall_opencv()
+{
+    sudo rm -rf /usr/local/bin/opencv*
+    sudo rm -rf /usr/local/include/opencv
+    sudo rm -rf /usr/local/include/opencv2
+    sudo rm -rf /usr/local/lib/libopencv*
+    sudo rm -rf /usr/local/lib/pkgconfig/opencv.pc
+    sudo rm -rf /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/cv2.so
+    sudo rm -rf /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/cv.py
+    sudo rm -rf /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/cv2.pyd
+}
+
+
 python -c "import cv2, utool; print(utool.align(utool.dict_str(utool.get_file_info(cv2.__file__)), ':'))"
 
 install_python3_version()
