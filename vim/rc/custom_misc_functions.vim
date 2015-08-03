@@ -520,19 +520,47 @@ endfunc
 
 func! PyCiteLookup() 
 python << endpython
+"""
+SeeAlso:
+    ~/local/vim/rc_settings/remap_settings.vim
+"""
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-word = pyvim_funcs.get_word_at_cursor()
 import utool as ut
-import bibtexparser
+word = pyvim_funcs.get_word_at_cursor()
+# HACK: custom current bibtex file
 bib_fpath = ut.truepath('~/latex/crall-candidacy-2015/My_Library_clean.bib')
-bibtex_str = ut.readfrom(bib_fpath, verbose=False)
-bib_database = bibtexparser.loads(bibtex_str)
-bibtex_dict = bib_database.get_entry_dict()
+bibtex_dict = ut.get_bibtex_dict(bib_fpath)
 title = bibtex_dict[word]['title'].replace('{', '').replace('}', '')
 ut.copy_text_to_clipboard(title)
 print(title)
 #print(repr(word))
+endpython
+endfunc
+
+
+func! PyCiteScholarSearch() 
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool as ut
+ut.rrrr(verbose=False)
+word = pyvim_funcs.get_word_at_cursor()
+# HACK: custom current bibtex file
+bib_fpath = ut.truepath('~/latex/crall-candidacy-2015/My_Library_clean.bib')
+bibtex_dict = ut.get_bibtex_dict(bib_fpath)
+title = bibtex_dict[word]['title'].replace('{', '').replace('}', '')
+ut.copy_text_to_clipboard(title)
+# scholar search
+baseurl = r'https://scholar.google.com/scholar?hl=en&q='
+suffix = '+'.join(title.split(' '))
+url = baseurl + suffix
+#import webbrowser
+#ut.open_url_in_browser(url, 'windows-default')
+#ut.open_url_in_browser(url, 'windows-default')
+ut.open_url_in_browser(url, 'chrome')
+#webbrowser.open(url)
+print(url)
 endpython
 endfunc
 

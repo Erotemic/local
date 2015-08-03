@@ -31,6 +31,11 @@ vnoremap <leader>fe :call PyFormatParagraph()<CR>
 noremap <leader>ge vip:call PyFormatParagraph()<CR>
 vnoremap ge :call PyFormatParagraph()<CR>
 
+"""
+" SeeAlso:
+"     ~/local/vim/rc/custom_misc_functions.vim
+"""
+
 
 vnoremap gd :call PyFormatDoctest()<CR>
 vnoremap gu :call PyUnFormatDoctest()<CR>
@@ -42,8 +47,9 @@ noremap <leader>ec :call InsertDocstrOnlyCommandLine()<CR>
 noremap <leader>ex :call InsertIBEISExample()<CR>
 noremap <leader>em :call InsertMainPyTest()<CR>
 "inoremap <leader>d :call InsertDocstr()<CR>
-
 noremap <leader>ee :call PyCiteLookup()<CR>
+noremap <leader>es :call PyCiteScholarSearch()<CR>
+
 noremap <leader>pv :call PyMakePrintVar()<CR>
 
 :noremap <c-d> :call InsertDocstr()<CR>
