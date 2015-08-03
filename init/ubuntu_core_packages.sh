@@ -667,3 +667,28 @@ __PYSCRIPT__
      
     #echo >> ~/.xsession
 }
+
+install_vnc_client()
+{
+    sudo apt-get install x11vnc -y
+    sudo apt-get install vinagre -y
+
+    cd ~/tmp
+    utzget http://www.karlrunge.com/x11vnc/etv/ssvnc_unix_only-1.0.20.tar.gz
+#sudo apt-get install remmina
+}
+
+fix_softwarecenter_color()
+{
+    # http://askubuntu.com/questions/160932/text-in-ubuntu-software-center-is-unreadable
+gksudo gedit /usr/share/software-center/ui/gtk3/css/softwarecenter.css
+
+# Replace 
+'@define-color light-aubergine #DED7DB;'
+'@define-color super-light-aubergine #F4F1F3;'
+# With 
+'@define-color light-aubergine #333333;'
+'@define-color super-light-aubergine #333333;'
+    
+}
+

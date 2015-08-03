@@ -509,6 +509,7 @@ func! PyMakePrintVar()
 python << endpython
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool as ut
 expr = pyvim_funcs.get_expr_at_cursor()
 line = pyvim_funcs.get_line_at_cursor()
 min_indent = ut.get_minimum_indentation(line)
@@ -528,7 +529,7 @@ bib_fpath = ut.truepath('~/latex/crall-candidacy-2015/My_Library_clean.bib')
 bibtex_str = ut.readfrom(bib_fpath, verbose=False)
 bib_database = bibtexparser.loads(bibtex_str)
 bibtex_dict = bib_database.get_entry_dict()
-title = bibtex_dict[word]['title']
+title = bibtex_dict[word]['title'].replace('{', '').replace('}', '')
 ut.copy_text_to_clipboard(title)
 print(title)
 #print(repr(word))
