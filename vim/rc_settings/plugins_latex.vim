@@ -39,7 +39,6 @@ let g:Tex_CompileRule_pdf = 'pdflatex -shell-escape --synctex=-1 -src-specials -
 " Use main.tex.mainfile to compile
 let g:Tex_UseMakefile = 1
 
-
 "let g:Tex_IgnoredWarnings='undefined on input'
 " References for warnings
 "# http://sourceforge.net/p/vim-latex/vim-latex/ci/6607de98f5c05e50956b62f43cd67ac257f7b51f/tree/compiler/tex.vim?diff=841cfca18443ccbb07bbdfffeb9847be6e0f3f1d
