@@ -407,3 +407,15 @@ rob gp "ibeis\.other"
 rob sp "ibeis\.dev" "ibeis.other" True
 
 rob gp "ibeis .* dev"
+
+git mv chapter2-section1-features.tex chapter2-section1-featdetect.tex
+git mv chapter2-section2-neighbors.tex chapter2-section2-neighbors.tex
+
+
+git mv chapter2-section3-ir.tex chapter2-section4-ir.tex
+git mv chapter2-section4-cr.tex chapter2-section5-cr.tex
+git mv chapter2-section5-fgr.tex chapter2-section6-fgr.tex
+git mv chapter2-section6-dcnn.tex chapter2-section7-dcnn.tex 
+
+
+git mv chapter2-section3* body-chapter2

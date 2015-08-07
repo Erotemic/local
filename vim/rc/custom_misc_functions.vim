@@ -558,9 +558,9 @@ url = baseurl + suffix
 #import webbrowser
 #ut.open_url_in_browser(url, 'windows-default')
 #ut.open_url_in_browser(url, 'windows-default')
-ut.open_url_in_browser(url, 'chrome')
+print(title)
+ut.open_url_in_browser(url, 'google-chrome')
 #webbrowser.open(url)
-print(url)
 endpython
 endfunc
 

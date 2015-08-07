@@ -125,3 +125,17 @@ command! LATEXCompileRuleXeTeX :call SetXeTeX()
 "    "let NERDTreeIgnore = ['\.o$', '\~$', '\.pyc$',  '\.pyo$', '\.aux$', '\.masv$', '\.bbl$', '\.bcf$', '\.blg$', '\.brf$', '\.synctex$', '\.upa$', '\.upb$', '\.pdf$', '\.out$', '\.log', '\.latexmain', '\.bib', '\.shelf', 'README.md', 'LICENSE']
 "    "let NERDTreeIgnore = ['\.o$', '\~$', '\.pyc$',  '\.pyo$', '\.aux$', '\.masv$', '\.bbl$', '\.bcf$', '\.blg$', '\.brf$', '\.synctex$', '\.upa$', '\.upb$', '\.pdf$', '\.out$', '\.log', '\.shelf', 'README.md', 'LICENSE', '\.glo$', '\.toc$', '\.xdy$']
 "endfu
+"
+"
+"
+"
+"
+
+
+
+" DISABLE <++>
+" http://tex.stackexchange.com/questions/62134/how-to-disable-all-vim-latex-mappings
+let g:Imap_UsePlaceHolders = 0
+let g:Tex_SmartKeyBS = 0
+let g:Tex_SmartKeyQuote = 0
+let g:Tex_SmartKeyDot = 0

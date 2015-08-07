@@ -4,51 +4,6 @@ Called by ~/local/vim/rc/custom_misc_functions.vim
 from os.path import expanduser
 
 
-def testdata_text():
-    text = r'''
-        % COMMENT
-        Image matching relies on finding similar features between query and
-        database images, and there are many factors that can cause this to be
-        difficult.
-        % TALK ABOUT APPEARANCE HERE
-        Similar to issues seen in instance and face recognition,
-        images of animals taken ``in the wild'' contain many challenges such as
-        occlusion, distractors and variations in viewpoint, pose, illumination,
-        quality, and camera parameters.  We start the discussion of the problem
-        addressed in this thesis by considering examples of these challenges.
-
-        \distractorexample
-
-        \paragraph{foobar}
-        Occluders are objects in the foreground of an image that impact the
-        visibility of the features on the subject animal.
-         Both scenery and other animals are the main contributors of occlusion in
-        our dataset.
-         Occlusion from other animals is especially challenging because not only
-
-        \begin{enumerate} % Affine Adaptation Procedure
-           \item Compute the second moment matrix at the warped image patch defined by $\ellmat_i$.
-
-           \item If the keypoint is stable, stop.  If convergence has not been reached in
-                some number of iterations stop and discard the keypoint.
-
-           \item
-                  Update the affine shape  using the rule $\ellmat_{i + 1} =
-                \sqrtm{\momentmat} \ellmat_i$.
-                  This ensures the eigenvalues at the previously detected point
-                are equal in the new frame.
-                  If the keypoint is stable, it should be re-detected close to
-                the same location.
-                  (The square root of a matrix defined as:
-                $\sqrtm{\momentmatNOARG} \equiv \mat{X} \where \mat{X}^T\mat{X}
-                = \momentmatNOARG$.
-                  If $\momentmatNOARG$ is degenerate than $\mat{X}$ does not
-                exist.)
-        \end{enumerate}
-    '''.strip('\n')
-    return text
-
-
 def regex_reconstruct_split(pattern, text):
     import re
     #separators = re.findall(pattern, text)
@@ -122,9 +77,10 @@ def format_multiple_paragraph_sentences(text):
         >>> from pyvim_funcs import *  # NOQA
         >>> text = testdata_text()
         >>> formated_text = format_multiple_paragraph_sentences(text)
-        >>> #print(text)
-        >>> #print('--------')
-        >>> #print(formated_text)
+        >>> print('--------')
+        >>> print(text)
+        >>> print('--------')
+        >>> print(formated_text)
     """
     import utool as ut
     # Patterns that define separations between paragraphs in latex
@@ -142,13 +98,14 @@ def format_multiple_paragraph_sentences(text):
 
         '\n? *\\\\begin{[^}]*}\n',
         '\n? *\\\\item *\n',
+        '\n? *\\\\noindent *\n',
         '\n? *\\\\end{[^}]*}\n?',
     ]
     pattern = '|'.join(['(%s)' % (pat,) for pat in pattern_list])
     # break into paragraph blocks
     block_list, separators = regex_reconstruct_split(pattern, text)
     #print(pattern)
-    print(separators)
+    #print(separators)
     # apply formatting
     formated_block_list = [format_single_paragraph_sentences(block) for block in block_list]
     rejoined_list = list(ut.interleave((formated_block_list, separators)))
@@ -156,7 +113,7 @@ def format_multiple_paragraph_sentences(text):
     return formated_text
 
 
-def format_single_paragraph_sentences(text):
+def format_single_paragraph_sentences(text, debug=False):
     r"""
     helps me separatate sentences grouped in paragraphs that I have a difficult
     time reading due to dyslexia
@@ -173,16 +130,17 @@ def format_single_paragraph_sentences(text):
     Example:
         >>> # DISABLE_DOCTEST
         >>> from pyvim_funcs import *  # NOQA
-        >>> text = 'lorium. ipsum? dolar erat. saultum. fds.fd...  fd oob fd.'
+        >>> text = '     lorium ipsum? dolar erat. sau.ltum. fds.fd... . . fd oob fd. list: (1) abcd, (2) foobar (3) spam.'
         >>> #text = '? ? . lorium. ipsum? dolar erat. saultum. fds.fd...  fd oob fd. ? '  # causes breakdown
-        >>> print(text)
-        >>> wrapped_text = format_single_paragraph_sentences(text)
+        >>> print('text = %r' % (text,))
+        >>> wrapped_text = format_single_paragraph_sentences(text, True)
         >>> result = ('wrapped_text =\n%s' % (str(wrapped_text),))
         >>> print(result)
 
     """
     import utool as ut
     import textwrap
+    import re
     #ut.rrrr(verbose=False)
     min_indent = ut.get_minimum_indentation(text)
     min_indent = (min_indent // 4) * 4
@@ -191,21 +149,52 @@ def format_single_paragraph_sentences(text):
     text_ = ut.flatten_textlines(text)
     USE_REGEX_SPLIT = True
     if USE_REGEX_SPLIT:
-        import re
-        sep_chars = list(map(re.escape, ['.', '?', '!', ':']))
-        sep_pattern = ut.regex_or(sep_chars)
-        full_pattern = '(' + sep_pattern + r'\s)'
+        # ******* #
+        # SPLITS line endings based on regular expressions.
+        raw_sep_chars = ['.', '?', '!', ':']
+        regex_sep_chars = list(map(re.escape, raw_sep_chars))
+        esc = re.escape
+        regex_sep_prefix = [esc('(') + r'\d' + esc(')')]
+        #regex_sep_prefix = [esc('(') + '[0-9]' + esc(')')]
+        regex_sep_list = regex_sep_chars + regex_sep_prefix
+        sep_pattern = ut.regex_or(regex_sep_list)
+        full_pattern = '(' + sep_pattern + r'+\s)'
+        #full_pattern = r'((' + sep_pattern + r'+\s)+)'
+        full_regex = re.compile(full_pattern)
+        num_groups = full_regex.groups  # num groups in the regex
+        #full_pattern = r'((\.+))'
+        #full_pattern = r'((\.)+ )'
+        #split_list = re.split(full_pattern, text_, flags=re.DOTALL | re.MULTILINE)
         split_list = re.split(full_pattern, text_)
         if len(split_list) > 0:
             #assert len(split_list) % 3 ==  0, 'split has 2 groups and other stuff'
-            if not re.match(full_pattern, split_list[0]):
-                if len(split_list) > 1:
-                    assert re.match(full_pattern, split_list[1])
-            sentence_list = split_list[::3]
+            #if not re.match(full_pattern, split_list[0]):
+            #    if len(split_list) > 1:
+            #        assert re.match(full_pattern, split_list[1])
+            num_bins = num_groups + 1
+            sentence_list = split_list[0::num_bins]
             #fullsep_list = split_list[1::3]
-            sep_list = split_list[2::3]
+            sep_list_group1 = split_list[1::num_bins]
+            #sep_list_group2 = split_list[2::num_bins]
+            #sep_list_group3 = split_list[num_groups::num_bins]
+            sep_list = sep_list_group1
+            #sep_list = sep_list_group2
+        if debug:
+            print('num_groups = %r' % (num_groups,))
+            print('len(split_list) = %r' % (len(split_list)))
+            print('len(split_list) / len(sentence_list) = %r' % (len(split_list) / len(sentence_list)))
+            print('len(sentence_list) = %r' % (len(sentence_list),))
+            print('len(sep_list_group1) = %r' % (len(sep_list_group1),))
+            #print('len(sep_list_group2) = %r' % (len(sep_list_group2),))
+            print('full_pattern = %s' % (full_pattern,))
+            #print('split_list = %r' % (split_list,))
+            print('sentence_list = %s' % (ut.list_str(sentence_list),))
+            print('sep_list = %s' % ((sep_list),))
+        # ******* #
     else:
+        # Old way that just handled periods
         sentence_list = text_.split('. ')
+    # prefix for continuations of a sentence
     sentence_prefix = '  '
     width = 80 - min_indent
     wrapkw = dict(width=width, break_on_hyphens=False, break_long_words=False)
@@ -221,9 +210,11 @@ def format_single_paragraph_sentences(text):
         if INDENT_FIRST:
             wrapped_lines = textwrap.wrap(sentence_prefix + line, **wrapkw)
         else:
+            # ******* #
             wrapped_lines = textwrap.wrap(line, **wrapkw)
             wrapped_lines = [line_ if count == 0 else sentence_prefix + line_
                              for count, line_ in enumerate(wrapped_lines)]
+            # ******* #
         wrapped_lines_list.append(wrapped_lines)
 
     wrapped_sentences = ['\n'.join(line) for line in wrapped_lines_list]
@@ -234,16 +225,89 @@ def format_single_paragraph_sentences(text):
         wrapped_block =  sepfmt.format('.\n%\n'.join(wrapped_sentences))
     else:
         if USE_REGEX_SPLIT:
-            newsep_list = [sep + '\n' for sep in sep_list]
-            wrapped_block = '.\n'.join(wrapped_sentences)
+            # ******* #
+            # put the newline before or after the sep depending on if it is
+            # supposed to prefix or suffix the sentence.
             from six.moves import zip_longest
-            wrapped_sentences2 = ['' if x is None else x for x in list(ut.iflatten(zip_longest(wrapped_sentences, newsep_list)))]
+            newsep_list = [sep.strip() + '\n' if sep.strip()[0] in raw_sep_chars else '\n' + sep for sep in sep_list]
+            wrapped_sentences2 = []
+            for sentence, sep in zip_longest(wrapped_sentences, newsep_list):
+                # account for suffix-to-prefix double seperators
+                # helps fix things like enumerated stuff: (1) foo (2) you
+                if sep is None:
+                    sep = ''
+                if (sentence == '' and
+                        sep.startswith('\n') and
+                        len(wrapped_sentences2) > 1 and
+                        wrapped_sentences2[-1].endswith('\n')):
+                    sep = sep[1:]
+                if debug:
+                    print('---')
+                    print('sentence = %r' % (sentence,))
+                    print('sep = %r' % (sep,))
+                wrapped_sentences2.append(sentence + sep)
+            #wrapped_block = '.\n'.join(wrapped_sentences)
+            #wrapped_sentences1 = list(ut.iflatten(zip_longest(wrapped_sentences, newsep_list)))
+            #wrapped_sentences2 = ['' if x is None else x for x in wrapped_sentences1]
+            if debug:
+                print('---')
+                print('newsep_list = %r' % (newsep_list,))
+                print('len(newsep_list) = %r' % (len(newsep_list),))
+                print('len(wrapped_sentences) = %r' % (len(wrapped_sentences),))
+            # The wrapped block has a level 0 indentation
             wrapped_block = ''.join(wrapped_sentences2)
+            # ******* #
         else:
             wrapped_block = '.\n'.join(wrapped_sentences)
 
+    # Do the final indentation
     wrapped_text = ut.indent(wrapped_block, ' ' * min_indent)
     return wrapped_text
+
+
+def testdata_text():
+    text = r'''
+        % COMMENT
+        Image matching relies on finding similar features between query and
+        database images, and there are many factors that can cause this to be
+        difficult.
+        % TALK ABOUT APPEARANCE HERE
+        Similar to issues seen in (1) instance and (2) face recognition,
+        images of animals taken ``in the wild'' contain many challenges such as
+        occlusion, distractors and variations in viewpoint, pose, illumination,
+        quality, and camera parameters.  We start the discussion of the problem
+        addressed in this thesis by considering examples of these challenges.
+
+        \distractorexample
+
+        \paragraph{foobar}
+        Occluders are objects in the foreground of an image that impact the
+        visibility of the features on the subject animal.
+         Both scenery and other animals are the main contributors of occlusion in
+        our dataset.
+         Occlusion from other animals is especially challenging because not only
+
+        \begin{enumerate} % Affine Adaptation Procedure
+           \item Compute the second moment matrix at the warped image patch defined by $\ellmat_i$.
+
+           \item If the keypoint is stable, stop.  If convergence has not been reached in
+                some number of iterations stop and discard the keypoint.
+
+           \item
+                  Update the affine shape  using the rule $\ellmat_{i + 1} =
+                \sqrtm{\momentmat} \ellmat_i$.
+                  This ensures the eigenvalues at the previously detected point
+                are equal in the new frame.
+                  If the keypoint is stable, it should be re-detected close to
+                the same location.
+                  (The square root of a matrix defined as:
+                $\sqrtm{\momentmatNOARG} \equiv \mat{X} \where \mat{X}^T\mat{X}
+                = \momentmatNOARG$.
+                  If $\momentmatNOARG$ is degenerate than $\mat{X}$ does not
+                exist.)
+        \end{enumerate}
+    '''.strip('\n')
+    return text
 
 
 def get_line_at_cursor():
