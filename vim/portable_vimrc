@@ -176,6 +176,7 @@ call QUICKOPEN_leader_tvio('o', '$CODE_DIR/ibeis/ibeis/model/preproc/preproc_ann
 call QUICKOPEN_leader_tvio('O', '$CODE_DIR/ibeis/ibeis/model/preproc/preproc_chip.py')
 """"""""""""""
 call QUICKOPEN_leader_tvio('p', '$CODE_DIR/plottool/plottool/__init__.py')
+call QUICKOPEN_leader_tvio('P', '$CODE_DIR/plottool/plottool/draw_func2.py')
 """"""""""""""
 call QUICKOPEN_leader_tvio('q', '$CODE_DIR/ibeis/ibeis/model/hots/query_request.py')
 call QUICKOPEN_leader_tvio('Q', '$CODE_DIR/ibeis/ibeis/model/hots/hots_query_result.py')
@@ -207,7 +208,7 @@ call QUICKOPEN_leader_tvio('Y', '$CODE_DIR/cyth/cyth/cyth_script.py')
 call QUICKOPEN_leader_tvio('z', '$CODE_DIR/ibeis/ibeis/viz/viz_matches.py')
 call QUICKOPEN_leader_tvio('Z', '$CODE_DIR/ibeis/ibeis/model/hots/neighbor_index.py')
 "call QUICKOPEN_leader_tvio('P', '~/Dropbox/CVPR\ Paper/main.tex')
-call QUICKOPEN_leader_tvio('P', '~/latex/crall-cvpr-15/main.tex')
+"call QUICKOPEN_leader_tvio('P', '~/latex/crall-cvpr-15/main.tex')
 
 "call MagicPython()
 "call QUICKOPEN_leader_tvio('n', '$CODE_DIR/ibeis/notebook/')

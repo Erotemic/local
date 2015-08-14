@@ -28,7 +28,9 @@ def nerdtree_withbat():
     '.latexmain',
     '.glo',
     '.toc', 
-    '.xdy'
+    '.xdy',
+    '.lof',
+    '.lot',
     #'.bib',
     ]
     ignore_imgsuffix = ['.png']

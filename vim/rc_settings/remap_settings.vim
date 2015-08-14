@@ -66,6 +66,7 @@ noremap <leader>pv :call PyMakePrintVar()<CR>
 "noremap <leader>rrr :source ~/local/vim/portable_vimrc<CR>
 noremap <leader>r :source ~/local/vim/portable_vimrc<CR>
 noremap <leader>R :source ~/local/vim/portable_vimrc<CR>
+noremap <leader>rs :syntax sync minlines=500.<CR>
 
 " Find lone double quotes
 :noremap <leader>/' :/\([^"]\)"\([^"]\)<CR>

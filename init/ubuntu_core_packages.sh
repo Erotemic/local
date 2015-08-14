@@ -159,6 +159,9 @@ install_core_extras()
     sudo apt-get install y-ppa-manager
     #for printer
     sudo apt-key adv --recv-key --keyserver keyserver.ubuntu.com 24CBF5474CFD1E2F
+
+    # 7zip
+    sudo apt-get install p7zip-full
     
 }
 
