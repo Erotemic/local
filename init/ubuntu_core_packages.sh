@@ -547,12 +547,24 @@ install_screen_capture()
 }
 
 
-cryptkeeper()
+encryprtion()
 {
-    sudo apt-get install cryptkeeper
-    #http://superuser.com/questions/179150/reading-an-encfs-volume-from-windows
-    #http://alternativeto.net/software/aescrypt/
-    #http://www.getsafe.org/about#linuxversion
+    cd ~/tmp
+    utzget https://coderslagoon.com/download.php?file=trupax8A_linux64.zip
+    cd TruPax8A
+    chmod +x install.sh
+    sudo ./install.sh
+
+    trupaxgui
+
+    # https://coderslagoon.com/home.php
+    cryptkeeper()
+    {
+        sudo apt-get install cryptkeeper
+        #http://superuser.com/questions/179150/reading-an-encfs-volume-from-windows
+        #http://alternativeto.net/software/aescrypt/
+        #http://www.getsafe.org/about#linuxversion
+    }
 }
 
 
