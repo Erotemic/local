@@ -40,10 +40,10 @@ def write_default_ipython_profile():
             pass
         c.InteractiveShellApp.exec_lines.append('%load_ext autoreload')
         c.InteractiveShellApp.exec_lines.append('%autoreload 2')
-        c.InteractiveShellApp.exec_lines.append('%pylab qt4')
+        #c.InteractiveShellApp.exec_lines.append('%pylab qt4')
         c.InteractiveShellApp.exec_lines.append('import numpy as np')
         c.InteractiveShellApp.exec_lines.append('import utool as ut')
-        c.InteractiveShellApp.exec_lines.append('import plottool as pt')
+        #c.InteractiveShellApp.exec_lines.append('import plottool as pt')
         c.InteractiveShellApp.exec_lines.append('from os.path import *')
         c.InteractiveShellApp.exec_lines.append('from six.moves import cPickle as pickle')
         c.InteractiveShellApp.exec_lines.append('if \'verbose\' not in vars():\n    verbose = True')
