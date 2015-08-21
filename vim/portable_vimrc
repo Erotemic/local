@@ -37,17 +37,17 @@ import vim
 enabled = [
     'jedi-vim',
     'nerdcommenter',
-    'vim-quickopen-tvio',
     'nerdtree',
-    'supertab',
     'syntastic',
     'vim-startify',
-    'taglist.vim',
-    'vim-fugitive'
 ] 
 
 # Add a plugin to this list to disable it 
 disabled = [
+    'supertab',
+    'vim-quickopen-tvio',
+    'taglist.vim',
+    'vim-fugitive'
     'csv.vim',
     'grep.vim',
     'vim-repeat',
