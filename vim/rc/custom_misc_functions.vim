@@ -380,6 +380,24 @@ endpython
 endfu 
 
 
+func! InsertKWargsDoc() 
+python << endpython
+import vim
+#vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
+import utool
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+
+if pyvim_funcs.is_module_pythonfile():
+    print('building docstr')
+    text = pyvim_funcs.auto_docstr()
+    pyvim_funcs.insert_codeblock_at_cursor(text)
+else:
+    print('current file is not a pythonfile')
+#L______________
+endpython
+endfu 
+
+
 func! InsertDocstrOnlyArgs() 
 python << endpython
 import vim

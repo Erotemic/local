@@ -462,6 +462,12 @@ def get_current_modulename():
     return modname, moddir
 
 
+def get_current_func_and_module():
+    funcname, searchlines = find_pyfunc_above_cursor()
+    modname, moddir = get_current_modulename()
+    return funcname, searchlines, modname, moddir
+
+
 def auto_docstr(**kwargs):
     import imp
     import utool as ut
@@ -477,8 +483,7 @@ def auto_docstr(**kwargs):
     dbgmsg = ''
 
     try:
-        funcname, searchlines = find_pyfunc_above_cursor()
-        modname, moddir = get_current_modulename()
+        funcname, searchlines, modname, moddir = get_current_func_and_module()
 
         if funcname is None:
             funcname = '[vimerr] UNKNOWN_FUNC: funcname is None'

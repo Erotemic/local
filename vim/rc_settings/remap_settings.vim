@@ -52,6 +52,10 @@ noremap <leader>ee :call PyCiteLookup()<CR>
 noremap <leader>es :call PyCiteScholarSearch()<CR>
 
 noremap <leader>pv :call PyMakePrintVar()<CR>
+" alt-u
+inoremap <M-u> ut.
+inoremap <M-i> import
+inoremap <M-y> from import
 
 :noremap <c-d> :call InsertDocstr()<CR>
 :noremap <c-1> :call InsertDocstr()<CR>
