@@ -10,6 +10,16 @@ Cockatrice-WindowsClient.exe
 """
 
 
+def install_ansicon():
+    """ lets windows console display ansii
+    References:
+        http://www.liferay.com/web/igor.spasic/blog/-/blogs/enable-ansi-colors-in-windows-command-prompt
+
+    """
+    #http://adoxa.altervista.org/ansicon/dl.php?f=ansicon
+    pass
+
+
 def install_cockatrice():
     cockatrice_url = 'http://www.woogerworks.com/files/cockatrice.weeklybuilds/Cockatrice-WindowsClient.exe'
     import utool as ut

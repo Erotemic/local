@@ -41,11 +41,11 @@ enabled = [
     'nerdtree',
     'syntastic',
     'vim-startify',
+    'supertab',
 ] 
 
 # Add a plugin to this list to disable it 
 disabled = [
-    'supertab',
     'vim-quickopen-tvio',
     'taglist.vim',
     'vim-fugitive'
@@ -157,7 +157,7 @@ call QUICKOPEN_leader_tvio('h', '$CODE_DIR/ibeis/ibeis/model/hots/pipeline.py')
 call QUICKOPEN_leader_tvio('i', '$CODE_DIR/ibeis/ibeis/model/hots/qt_inc_automatch.py')
 call QUICKOPEN_leader_tvio('I', '$CODE_DIR/ibeis/ibeis/__init__.py')
 "call QUICKOPEN_leader_tvio('j', '$CODE_DIR/ibeis/ibeis/dbio/ingest_database.py')
-call QUICKOPEN_leader_tvio('j', '/home/joncrall/code/ibeis/ibeis/dbio/export_subset.py')
+call QUICKOPEN_leader_tvio('j', '$CODE_DIR/ibeis/ibeis/dbio/export_subset.py')
 "call QUICKOPEN_leader_tvio('k', '$CODE_DIR/ibeis/ibeis/model/hots/smk/smk_core.py')
 call QUICKOPEN_leader_tvio('k', '$CODE_DIR/ibeis/ibeis/model/hots/chip_match.py')
 call QUICKOPEN_leader_tvio('K', '$CODE_DIR/ibeis/ibeis/model/hots/smk')
@@ -188,10 +188,11 @@ call QUICKOPEN_leader_tvio('R', '$CODE_DIR/ibeis/README.md')
 "call QUICKOPEN_leader_tvio('s', '$CODE_DIR/ibeis/ibeis/control/SQLDatabaseControl.py')
 "call QUICKOPEN_leader_tvio('s', '$CODE_DIR/ibeis/ibeis/model/hots/score_normalization.py')
 call QUICKOPEN_leader_tvio('s', '$CODE_DIR/ibeis/setup.py')
-call QUICKOPEN_leader_tvio('S', '$CODE_DIR/ibeis/ibeis/control/SQLDatabaseControl.py')
+call QUICKOPEN_leader_tvio('S', '$CODE_DIR/ibeis/ibeis/scripts/gen_cand_expts.py')
+"call QUICKOPEN_leader_tvio('S', '$CODE_DIR/ibeis/ibeis/control/SQLDatabaseControl.py')
 call QUICKOPEN_leader_tvio('t', '$CODE_DIR/ibeis/ibeis/templates/template_generator.py')
 call QUICKOPEN_leader_tvio('T', '$CODE_DIR/ibeis/ibeis/tests')
-call QUICKOPEN_leader_tvio('S', '$CODE_DIR/ibeis/ibeis/control/DB_SCHEMA.py')
+"call QUICKOPEN_leader_tvio('S', '$CODE_DIR/ibeis/ibeis/control/DB_SCHEMA.py')
 "call QUICKOPEN_leader_tvio('S', '$CODE_DIR/ibeis/ibeis/control/DBCACHE_SCHEMA.py')
 call QUICKOPEN_leader_tvio('u', '$CODE_DIR/utool/utool/__init__.py')
 call QUICKOPEN_leader_tvio('U', '$CODE_DIR/utool/utool/util_dev.py')
