@@ -707,3 +707,12 @@ gksudo gedit /usr/share/software-center/ui/gtk3/css/softwarecenter.css
     
 }
 
+
+
+fix_gnome3_workspaces_multimonior()
+{
+    sudo apt-get install gconf-editor 
+    #http://gregcor.com/2011/05/07/fix-dual-monitors-in-gnome-3-aka-my-workspaces-are-broken/
+    gsettings get org.gnome.shell.overrides workspaces-only-on-primary
+    gsettings set org.gnome.shell.overrides workspaces-only-on-primary false
+}
