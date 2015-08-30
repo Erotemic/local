@@ -1,5 +1,8 @@
-
+if has("win32") || has("win16")
+    :set runtimepath+=$USERPROFILE\local\vim\portable_vimrc 
+endif
 :set runtimepath+=~/local/vim/vimfiles/
+"set rtp+=D:\Dropbox\vimfiles
 
 source ~/local/vim/rc/win32_presource.vim
 source ~/local/vim/rc/venv_presource.vim
@@ -241,3 +244,9 @@ syntax sync minlines=500
 "        exec 'source' f
 "    endfor
 "endif
+"
+if has("win32") || has("win16")
+    " Try to hack windows to recognize the custom syntax
+    " Seems to work. Thank god.
+    autocmd Filetype tex,latex source $USERPROFILE\local\vim\vimfiles\after\syntax\tex.vim
+endif

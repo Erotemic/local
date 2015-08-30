@@ -245,3 +245,5 @@ resampling
 ada
 Lanczos
 groundfalse
+timedelta
+timedeltas
