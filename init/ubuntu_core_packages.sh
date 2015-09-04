@@ -238,6 +238,20 @@ install_latex()
     # references
     # http://askubuntu.com/questions/207442/how-to-add-open-terminal-here-to-nautilus-context-menu
     sudo apt-get install nautilus-open-terminal
+
+
+    #texlive 2015
+    # https://www.tug.org/texlive/acquire-netinstall.html
+    cd ~/tmp
+    wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
+    7z x install-tl-unx.tar.gz
+    7z x install-tl-unx.tar
+    rm install-tl-unx.tar
+    cd ~/tmp/install-tl-20150902/
+    #export TEXLIVE_INSTALL_PREFIX=/opt/texlive
+    #export TEXDIR=/opt/texlive
+    chmod +x install-tl
+    sudo -H ./install-tl
 }
 
 

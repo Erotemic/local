@@ -83,3 +83,18 @@ syn match  texRefZone		'\\ucite\%([tp]\*\=\)\=' nextgroup=texRefOption,texCite
 " Other stuff
 "syn region SpecialKey		start="\\devcomment\*\=\z([^\ta-zA-Z@]\)"	end="\z1\|%stopzone\>"
 "syn region SpecialKey	 start="\\chuckcomment{"	end="}\|%stopzone\>"	contains=@Spell
+"
+"
+
+
+" SPELL CHECK INSIDE NEWCOMMAND
+" References: http://stackoverflow.com/questions/13553342/vim-spell-checking-latexs-newcommand-definition
+syn region texMyCmdSpell matchgroup=texStatement
+      \ start='\\newcommand{.*{' end='}$'
+      \ contains=@Spell
+      \ containedin=texCmdBody
+
+syn region texMyCaptionSpell matchgroup=texStatement
+      \ start='\\caption{.*{' end='}$'
+      \ contains=@Spell
+      \ containedin=texCmdBody
