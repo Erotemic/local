@@ -148,6 +148,7 @@ call QUICKOPEN_leader_tvio('e', '$CODE_DIR/ibeis/ibeis/experiments/experiment_dr
 "call QUICKOPEN_leader_tvio('e', '$CODE_DIR/hesaff/src/hesaff.cpp')
 call QUICKOPEN_leader_tvio('E', '$CODE_DIR/ibeis/ibeis/experiments/experiment_configs.py')
 call QUICKOPEN_leader_tvio('f', '$CODE_DIR/ibeis/ibeis/ibsfuncs.py')
+call QUICKOPEN_leader_tvio('F', '$CODE_DIR/ibeis/ibeis/init/filter_annots.py')
 "call QUICKOPEN_leader_tvio('g', '$CODE_DIR/ibeis/ibeis/gui/newgui.py')
 "call QUICKOPEN_leader_tvio('g', '$CODE_DIR/ibeis/ibeis/gui/guiback.py')
 call QUICKOPEN_leader_tvio('g', '$CODE_DIR/ibeis/ibeis/gui/inspect_gui.py')
