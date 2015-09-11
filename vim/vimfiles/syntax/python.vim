@@ -256,6 +256,7 @@ if !exists("python_no_doctest_highlight")
 endif
 
 """" <UTOOL THINGS> """"
+" TODO: put in after/syntax/python.vim
 
 
 syn match pythonFmtString "{[A-Za-z][A-Za-z_]*}" contained 

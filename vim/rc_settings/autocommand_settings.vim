@@ -88,3 +88,10 @@ au BufNewFile,BufRead *.py.tpl set ft=python
 "au BufWritePre *.py :%s/\t/    /g
 "au BufNewFile,BufRead *.py :%s/\t/    /g
 "au FileType python set foldmethod=syntax
+"
+
+
+" Save folds between runs 
+" http://vim.wikia.com/wiki/VimTip991
+autocmd BufWinLeave *.* mkview
+autocmd BufWinEnter *.* silent loadview 
