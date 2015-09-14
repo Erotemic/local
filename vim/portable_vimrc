@@ -158,8 +158,8 @@ call QUICKOPEN_leader_tvio('H', '$CODE_DIR/ibeis/ibeis/model/hots/match_chips4.p
 call QUICKOPEN_leader_tvio('h', '$CODE_DIR/ibeis/ibeis/model/hots/pipeline.py')
 """"""""""""""
 "call QUICKOPEN_leader_tvio('i', '$CODE_DIR/ibeis/ibeis/model/hots/smk/smk_index.py')
-call QUICKOPEN_leader_tvio('i', '$CODE_DIR/ibeis/ibeis/model/hots/qt_inc_automatch.py')
-call QUICKOPEN_leader_tvio('I', '$CODE_DIR/ibeis/ibeis/__init__.py')
+"call QUICKOPEN_leader_tvio('i', '$CODE_DIR/ibeis/ibeis/model/hots/qt_inc_automatch.py')
+call QUICKOPEN_leader_tvio('i', '$CODE_DIR/ibeis/ibeis/__init__.py')
 "call QUICKOPEN_leader_tvio('j', '$CODE_DIR/ibeis/ibeis/dbio/ingest_database.py')
 call QUICKOPEN_leader_tvio('j', '$CODE_DIR/ibeis/ibeis/dbio/export_subset.py')
 "call QUICKOPEN_leader_tvio('k', '$CODE_DIR/ibeis/ibeis/model/hots/smk/smk_core.py')

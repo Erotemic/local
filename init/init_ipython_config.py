@@ -2,6 +2,27 @@
 import utool as ut
 
 
+def setup_extensions():
+    """
+    code
+
+    git clone https://github.com/ipython-contrib/IPython-notebook-extensions.git
+    cd IPython-notebook-extensions
+    sudo python setup.py install
+
+    sudo pip install jupyter
+    sudo pip install ipython-extensions
+
+
+    Jupyter sutup is such a pain
+
+
+
+    Graphical Config editor
+    https://github.com/ipython-contrib/IPython-notebook-extensions/wiki/config-extension
+    """
+
+
 def write_default_ipython_profile():
     """
     CommandLine:
