@@ -38,6 +38,9 @@ vnoremap ge :call PyFormatParagraph()<CR>
 """
 
 
+:inoremap <c-b> import utool<CR>utool.embed()<CR>
+
+
 vnoremap gd :call PyFormatDoctest()<CR>
 vnoremap gu :call PyUnFormatDoctest()<CR>
 

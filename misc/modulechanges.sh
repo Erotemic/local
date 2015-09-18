@@ -422,3 +422,38 @@ git mv chapter2-section3* body-chapter2
 
 
 rob sp cond_phrase conj_phrase
+
+
+# new ibeis names
+
+ibeis_ia
+
+dre - detection recognition engine
+
+am - algorithm manager 
+
+dream
+
+amdre
+
+cv - computer vision
+
+ip - image processing
+
+idam - identification detection algorithm manager
+
+osdre  - open source detection recognition engeine
+
+odram - open detection recognition algorithm manager
+
+iam - image analysis module
+
+ibsiam - ibeis - image analysis module
+
+ibiam - ibeis - imabe based image analysis module
+
+ibam - image based analys module
+
+ibsam -  image based software analysis module
+
+ibsdre -  image based software algorithm manager

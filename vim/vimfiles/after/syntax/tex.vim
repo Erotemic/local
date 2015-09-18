@@ -89,12 +89,18 @@ syn match  texRefZone		'\\ucite\%([tp]\*\=\)\=' nextgroup=texRefOption,texCite
 
 " SPELL CHECK INSIDE NEWCOMMAND
 " References: http://stackoverflow.com/questions/13553342/vim-spell-checking-latexs-newcommand-definition
-syn region texMyCmdSpell matchgroup=texStatement
-      \ start='\\newcommand{.*{' end='}$'
-      \ contains=@Spell
-      \ containedin=texCmdBody
 
-syn region texMyCaptionSpell matchgroup=texStatement
-      \ start='\\caption{.*{' end='}$'
-      \ contains=@Spell
-      \ containedin=texCmdBody
+"syn region texMyCmdSpell matchgroup=texStatement
+"      \ start='\\newcommand{.*{' end='}$'
+"      \ contains=@Spell
+"      \ containedin=texCmdBody
+
+"syn region texMyCaptionSpell matchgroup=texStatement
+"      \ start='\\caption{.*{' end='}$'
+"      \ contains=@Spell
+"      \ containedin=texCmdBody
+
+
+" Custom command syntax highlight
+syn match texInputFile		"\\ImageCommand{.\{-}}"	contains=texStatement,texInputCurlies,texInputFileOpt nextgroup=@Spell
+

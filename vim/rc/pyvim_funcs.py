@@ -196,12 +196,13 @@ def format_single_paragraph_sentences(text, debug=False):
         sentence_list = text_.split('. ')
     # prefix for continuations of a sentence
     sentence_prefix = '  '
-    width = 80 - min_indent
-    wrapkw = dict(width=width, break_on_hyphens=False, break_long_words=False)
     if text_.startswith('>>>'):
         # Hack to do docstrings
         # TODO: make actualy docstring reformater
         sentence_prefix = '...     '
+
+    width = 80 - min_indent - len(sentence_prefix)
+    wrapkw = dict(width=width, break_on_hyphens=False, break_long_words=False)
     #wrapped_lines_list = [textwrap.wrap(sentence_prefix + line, **wrapkw)
     #                      for line in sentence_list]
     wrapped_lines_list = []
