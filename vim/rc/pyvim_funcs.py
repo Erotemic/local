@@ -75,7 +75,7 @@ def format_multiple_paragraph_sentences(text):
         >>> import os, sys
         >>> sys.path.append(os.path.expanduser('~/local/vim/rc'))
         >>> from pyvim_funcs import *  # NOQA
-        >>> text = testdata_text()
+        >>> text = testdata_text(2)
         >>> formated_text = format_multiple_paragraph_sentences(text)
         >>> print('--------')
         >>> print(text)
@@ -99,11 +99,27 @@ def format_multiple_paragraph_sentences(text):
         '\n? *\\\\begin{[^}]*}\n',
         '\n? *\\\\item *\n',
         '\n? *\\\\noindent *\n',
+        '\n? *\\\\ImageCommand[^}]*}[^}]*}{\n',
         '\n? *\\\\end{[^}]*}\n?',
+        '\n}{',
     ]
     pattern = '|'.join(['(%s)' % (pat,) for pat in pattern_list])
     # break into paragraph blocks
     block_list, separators = regex_reconstruct_split(pattern, text)
+
+    collapse_pos_list = []
+    # Dont format things within certain block types
+    for count, (block, window) in enumerate(zip(block_list, ut.iter_window([''] + separators + [''], 2))):
+        if window[0].strip() == r'\begin{comment}' and window[1].strip() == r'\end{comment}':
+            collapse_pos_list.append(count)
+
+    collapse_pos_list = sorted(collapse_pos_list)[::-1]
+    for pos in collapse_pos_list:
+        collapsed_sep = separators[pos - 1] + block_list[pos] + separators[pos]
+        separators[pos - 1] = collapsed_sep
+        del separators[pos]
+        del block_list[pos]
+
     #print(pattern)
     #print(separators)
     # apply formatting
@@ -130,13 +146,15 @@ def format_single_paragraph_sentences(text, debug=False):
     Example:
         >>> # DISABLE_DOCTEST
         >>> from pyvim_funcs import *  # NOQA
-        >>> text = '     lorium ipsum? dolar erat. sau.ltum. fds.fd... . . fd oob fd. list: (1) abcd, (2) foobar (3) spam.'
+        >>> text = '     lorium ipsum doloar dolar dolar dolar erata man foobar is this there yet almost man not quit ate 80 chars yet hold out almost there? dolar erat. sau.ltum. fds.fd... . . fd oob fd. list: (1) abcd, (2) foobar (4) 123456789 123456789 123456789 123456789 123 123 123 123 123456789 123 123 123 123 123456789 123456789 123456789 123456789 123456789 123 123 123 123 123 123456789 123456789 123456789 123456789 123456789 123456789 (3) spam.'
+        >>> #text = 'list: (1) abcd, (2) foobar (3) spam.'
+        >>> #text = 'foo. when: (1) there is a new individual,'
+        >>> #text = 'when: (1) there is a new individual,'
         >>> #text = '? ? . lorium. ipsum? dolar erat. saultum. fds.fd...  fd oob fd. ? '  # causes breakdown
         >>> print('text = %r' % (text,))
         >>> wrapped_text = format_single_paragraph_sentences(text, True)
         >>> result = ('wrapped_text =\n%s' % (str(wrapped_text),))
         >>> print(result)
-
     """
     import utool as ut
     import textwrap
@@ -147,126 +165,166 @@ def format_single_paragraph_sentences(text, debug=False):
     text_ = ut.remove_doublspaces(text)
     # TODO: more intelligent sentence parsing
     text_ = ut.flatten_textlines(text)
-    USE_REGEX_SPLIT = True
-    if USE_REGEX_SPLIT:
-        # ******* #
-        # SPLITS line endings based on regular expressions.
-        raw_sep_chars = ['.', '?', '!', ':']
-        regex_sep_chars = list(map(re.escape, raw_sep_chars))
-        esc = re.escape
-        regex_sep_prefix = [esc('(') + r'\d' + esc(')')]
-        #regex_sep_prefix = [esc('(') + '[0-9]' + esc(')')]
-        regex_sep_list = regex_sep_chars + regex_sep_prefix
-        sep_pattern = ut.regex_or(regex_sep_list)
-        full_pattern = '(' + sep_pattern + r'+\s)'
-        #full_pattern = r'((' + sep_pattern + r'+\s)+)'
-        full_regex = re.compile(full_pattern)
-        num_groups = full_regex.groups  # num groups in the regex
-        #full_pattern = r'((\.+))'
-        #full_pattern = r'((\.)+ )'
-        #split_list = re.split(full_pattern, text_, flags=re.DOTALL | re.MULTILINE)
-        split_list = re.split(full_pattern, text_)
-        if len(split_list) > 0:
-            #assert len(split_list) % 3 ==  0, 'split has 2 groups and other stuff'
-            #if not re.match(full_pattern, split_list[0]):
-            #    if len(split_list) > 1:
-            #        assert re.match(full_pattern, split_list[1])
-            num_bins = num_groups + 1
-            sentence_list = split_list[0::num_bins]
-            #fullsep_list = split_list[1::3]
-            sep_list_group1 = split_list[1::num_bins]
-            #sep_list_group2 = split_list[2::num_bins]
-            #sep_list_group3 = split_list[num_groups::num_bins]
-            sep_list = sep_list_group1
-            #sep_list = sep_list_group2
-        if debug:
-            print('num_groups = %r' % (num_groups,))
-            print('len(split_list) = %r' % (len(split_list)))
-            print('len(split_list) / len(sentence_list) = %r' % (len(split_list) / len(sentence_list)))
-            print('len(sentence_list) = %r' % (len(sentence_list),))
-            print('len(sep_list_group1) = %r' % (len(sep_list_group1),))
-            #print('len(sep_list_group2) = %r' % (len(sep_list_group2),))
-            print('full_pattern = %s' % (full_pattern,))
-            #print('split_list = %r' % (split_list,))
-            print('sentence_list = %s' % (ut.list_str(sentence_list),))
-            print('sep_list = %s' % ((sep_list),))
-        # ******* #
-    else:
-        # Old way that just handled periods
-        sentence_list = text_.split('. ')
-    # prefix for continuations of a sentence
-    sentence_prefix = '  '
-    if text_.startswith('>>>'):
-        # Hack to do docstrings
-        # TODO: make actualy docstring reformater
-        sentence_prefix = '...     '
 
-    width = 80 - min_indent - len(sentence_prefix)
-    wrapkw = dict(width=width, break_on_hyphens=False, break_long_words=False)
-    #wrapped_lines_list = [textwrap.wrap(sentence_prefix + line, **wrapkw)
-    #                      for line in sentence_list]
-    wrapped_lines_list = []
-    INDENT_FIRST = False
-    for count, line in enumerate(sentence_list):
-        if INDENT_FIRST:
-            wrapped_lines = textwrap.wrap(sentence_prefix + line, **wrapkw)
+    raw_sep_chars = ['.', '?', '!', ':']
+    USE_REGEX_SPLIT = True
+
+    def split_sentences(text_):
+        if not USE_REGEX_SPLIT:
+            # Old way that just handled periods
+            sentence_list = text_.split('. ')
         else:
             # ******* #
+            # SPLITS line endings based on regular expressions.
+            esc = re.escape
+            # Define separation patterns
+            regex_sep_chars = list(map(re.escape, raw_sep_chars))
+            regex_sep_prefix = [esc('(') + r'\d' + esc(')')]
+            regex_sep_list = regex_sep_chars + regex_sep_prefix
+            # Combine into a full regex
+            sep_pattern = ut.regex_or(regex_sep_list)
+            full_pattern = '(' + sep_pattern + r'+\s)'
+            full_regex = re.compile(full_pattern)
+            # Make the splits
+            num_groups = full_regex.groups  # num groups in the regex
+            split_list = re.split(full_pattern, text_)
+            if len(split_list) > 0:
+                num_bins = num_groups + 1
+                sentence_list = split_list[0::num_bins]
+                sep_list_group1 = split_list[1::num_bins]
+                sep_list = sep_list_group1
+            if debug:
+                print('<SPLIT DBG>')
+                print('num_groups = %r' % (num_groups,))
+                print('len(split_list) = %r' % (len(split_list)))
+                print('len(split_list) / len(sentence_list) = %r' % (
+                    len(split_list) / len(sentence_list)))
+                print('len(sentence_list) = %r' % (len(sentence_list),))
+                print('len(sep_list_group1) = %r' % (len(sep_list_group1),))
+                #print('len(sep_list_group2) = %r' % (len(sep_list_group2),))
+                print('full_pattern = %s' % (full_pattern,))
+                #print('split_list = %r' % (split_list,))
+                print('sentence_list = %s' % (ut.list_str(sentence_list),))
+                print('sep_list = %s' % ((sep_list),))
+                print('</SPLIT DBG>')
+            # ******* #
+            return sentence_list, sep_list
+
+    def wrap_sentences(sentence_list, min_indent):
+        # prefix for continuations of a sentence
+        sentence_prefix = '  '
+        if text_.startswith('>>>'):
+            # Hack to do docstrings
+            # TODO: make actualy docstring reformater
+            sentence_prefix = '...     '
+
+        width = 80 - min_indent - len(sentence_prefix)
+        wrapkw = dict(width=width, break_on_hyphens=False, break_long_words=False)
+        #wrapped_lines_list = [textwrap.wrap(sentence_prefix + line, **wrapkw)
+        #                      for line in sentence_list]
+        wrapped_lines_list = []
+        for count, line in enumerate(sentence_list):
             wrapped_lines = textwrap.wrap(line, **wrapkw)
             wrapped_lines = [line_ if count == 0 else sentence_prefix + line_
                              for count, line_ in enumerate(wrapped_lines)]
-            # ******* #
-        wrapped_lines_list.append(wrapped_lines)
+            wrapped_lines_list.append(wrapped_lines)
 
-    wrapped_sentences = ['\n'.join(line) for line in wrapped_lines_list]
+        wrapped_sentences = ['\n'.join(line) for line in wrapped_lines_list]
+        return wrapped_sentences
 
-    BIG_SEP = False
-    if BIG_SEP:
-        sepfmt = '%+------\n{}\n%L______'
-        wrapped_block =  sepfmt.format('.\n%\n'.join(wrapped_sentences))
-    else:
+    def rewrap_sentences2(sentence_list, sep_list):
+        # ******* #
+        # put the newline before or after the sep depending on if it is
+        # supposed to prefix or suffix the sentence.
+        from six.moves import zip_longest
+        # FIXME: Place the separators either before or after a sentence
+
+        sentence_list2 = ['']
+
+        _iter = zip_longest(sentence_list, sep_list)
+        for count, (sentence, sep) in enumerate(_iter):
+            if sep is None:
+                sentence_list2[-1] += sentence
+                continue
+            sepchars = sep.strip()
+            if len(sepchars) > 0 and sepchars[0] in raw_sep_chars:
+                sentence_list2[-1] += sentence + (sep.strip())
+                sentence_list2.append('')
+            else:
+                # Place before next
+                sentence_list2[-1] += sentence
+                sentence_list2.append(sep)
+
+        sentence_list2 = [x.strip() for x in sentence_list2 if len(x.strip()) > 0]
+
+        return sentence_list2
+
+    def rejoin_sentences(wrapped_sentences, sep_list):
         if USE_REGEX_SPLIT:
             # ******* #
             # put the newline before or after the sep depending on if it is
             # supposed to prefix or suffix the sentence.
             from six.moves import zip_longest
-            newsep_list = [sep.strip() + '\n' if sep.strip()[0] in raw_sep_chars else '\n' + sep for sep in sep_list]
+            newsep_list = [
+                (
+                    sep.strip() + '\n'
+                    if sep.strip()[0] in raw_sep_chars else
+                    '\n' + sep
+                )
+                for sep in sep_list
+            ]
+            if debug:
+                print('')
             wrapped_sentences2 = []
-            for sentence, sep in zip_longest(wrapped_sentences, newsep_list):
-                # account for suffix-to-prefix double seperators
-                # helps fix things like enumerated stuff: (1) foo (2) you
+            # account for suffix-to-prefix double seperators
+            # helps fix things like enumerated stuff: (1) foo (2) you
+            _iter = zip_longest(wrapped_sentences, newsep_list)
+            for count, (sentence, sep) in enumerate(_iter):
                 if sep is None:
                     sep = ''
                 if (sentence == '' and
                         sep.startswith('\n') and
-                        len(wrapped_sentences2) > 1 and
+                        len(wrapped_sentences2) > 0 and
                         wrapped_sentences2[-1].endswith('\n')):
                     sep = sep[1:]
                 if debug:
-                    print('---')
+                    print('--- FixSep Iter %d ---' % (count,))
                     print('sentence = %r' % (sentence,))
                     print('sep = %r' % (sep,))
                 wrapped_sentences2.append(sentence + sep)
-            #wrapped_block = '.\n'.join(wrapped_sentences)
-            #wrapped_sentences1 = list(ut.iflatten(zip_longest(wrapped_sentences, newsep_list)))
-            #wrapped_sentences2 = ['' if x is None else x for x in wrapped_sentences1]
+
             if debug:
-                print('---')
+                print('\n<RESEP DBG>')
                 print('newsep_list = %r' % (newsep_list,))
                 print('len(newsep_list) = %r' % (len(newsep_list),))
                 print('len(wrapped_sentences) = %r' % (len(wrapped_sentences),))
+                print('</RESEP DBG>')
             # The wrapped block has a level 0 indentation
             wrapped_block = ''.join(wrapped_sentences2)
             # ******* #
         else:
             wrapped_block = '.\n'.join(wrapped_sentences)
+        return wrapped_block
+
+    if 0:
+        # Old way
+        sentence_list, sep_list = split_sentences(text_)
+        wrapped_sentences = wrap_sentences(sentence_list, min_indent)
+        wrapped_block = rejoin_sentences(wrapped_sentences, sep_list)
+    else:
+        # New way
+        sentence_list, sep_list = split_sentences(text_)
+        sentence_list2 = rewrap_sentences2(sentence_list, sep_list)
+        wrapped_sentences = wrap_sentences(sentence_list2, min_indent)
+        wrapped_block = '\n'.join(wrapped_sentences)
 
     # Do the final indentation
     wrapped_text = ut.indent(wrapped_block, ' ' * min_indent)
     return wrapped_text
 
 
-def testdata_text():
+def testdata_text(num=1):
+    import utool as ut
     text = r'''
         % COMMENT
         Image matching relies on finding similar features between query and
@@ -308,7 +366,22 @@ def testdata_text():
                 exist.)
         \end{enumerate}
     '''.strip('\n')
-    return text
+
+    text2 = ut.codeblock(r'''
+        \begin{comment}
+        python -m ibeis -e rank_cdf -t invar -a viewdiff --test_cfgx_slice=6: --db PZ_Master1 --hargv=expt --prefix "Invariance+View Experiment "
+        \end{comment}
+        \ImageCommand{figuresX/expt_rank_cdf_PZ_Master1_a_viewdiff_t_invar.png}{\textwidth}{
+        Results of the invariance experiment with different viewpoints for plains
+        zebras.  Only the results with different viewpoints are shown.  The query and
+        database annotations are the same as those in the viewpoint experiment.  Thre
+        is less than a $2\percent$ gap between the best results with keypoint
+        invariance and the results without any keypoint invariance.  (Note that
+        invariance we we discuss here only refers to keypoint shape and not the
+        invariance that is implicit in the SIFT descriptor).
+        }{PZInvarViewExpt}
+    ''')
+    return text if num == 1 else text2
 
 
 def get_line_at_cursor():

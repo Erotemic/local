@@ -498,12 +498,15 @@ VAMOSS
 
 Vision Algorithm Manager Open Source Software
 
+Vision Algorithm Manager Made for Open Source Software
+
 
 iamodre 
 
 ibam - image based algorithm manager
 
 pybird - Python Based Image Recognition and Detection
+pybirde - Python Based Image Recognition and Detection Engine
 
 eagle
 
@@ -525,3 +528,7 @@ vamps
 veipam
 
 iam
+
+pybeis - python based image systam
+
+iambird - image algorithm manager based instance recognition and detection
