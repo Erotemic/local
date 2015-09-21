@@ -93,5 +93,5 @@ au BufNewFile,BufRead *.py.tpl set ft=python
 
 " Save folds between runs 
 " http://vim.wikia.com/wiki/VimTip991
-autocmd BufWinLeave *.* mkview
-autocmd BufWinEnter *.* silent loadview 
+"autocmd BufWinLeave *.* mkview
+"autocmd BufWinEnter *.* silent loadview 

@@ -442,7 +442,8 @@ ip - image processing
 
 idam - identification detection algorithm manager
 
-osdre  - open source detection recognition engeine
+osdre  - open source detection recognition engine
+ospre  - open source pixel recognition engine
 
 odram - open detection recognition algorithm manager
 
@@ -453,7 +454,74 @@ ibsiam - ibeis - image analysis module
 ibiam - ibeis - imabe based image analysis module
 
 ibam - image based analys module
+ibam - image based algorithm manager
 
 ibsam -  image based software analysis module
 
 ibsdre -  image based software algorithm manager
+
+iamdre - image algorithm manager detection recognition engine
+
+u  - understanding 
+r  - recognition 
+m  - manager / module 
+i  - image
+d  - detection
+cv - computer vision
+b  - based 
+s  - software / server
+o  - open / online
+p  - pattern
+py - python
+a  - automated / algorithm / analysis
+al - algorithm 
+f - functional
+
+alm
+
+amoose
+
+vamoose 
+vamuose 
+
+Vision
+Algorithm
+Manager 
+#for
+#Online 
+Using
+Open  
+Source 
+Engine
+
+VAMOSS
+
+Vision Algorithm Manager Open Source Software
+
+
+iamodre 
+
+ibam - image based algorithm manager
+
+pybird - Python Based Image Recognition and Detection
+
+eagle
+
+animg
+
+am 
+
+pylant
+
+animal
+
+iamve
+
+osvam
+pyvam
+
+vamps
+
+veipam
+
+iam
