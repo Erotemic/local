@@ -103,4 +103,4 @@ syn match  texRefZone		'\\ucite\%([tp]\*\=\)\=' nextgroup=texRefOption,texCite
 
 " Custom command syntax highlight
 syn match texInputFile		"\\ImageCommand{.\{-}}"	contains=texStatement,texInputCurlies,texInputFileOpt nextgroup=@Spell
-
+syn match texInputFile		"\\ImageCommandII{.\{-}}"	contains=texStatement,texInputCurlies,texInputFileOpt nextgroup=@Spell
