@@ -44,6 +44,7 @@ vnoremap ge :call PyFormatParagraph()<CR>
 vnoremap gd :call PyFormatDoctest()<CR>
 vnoremap gu :call PyUnFormatDoctest()<CR>
 
+"noremap <leader>/ /\c
 noremap <leader>d :call InsertDocstr()<CR>
 noremap <leader>ed :call InsertDocstr()<CR>
 noremap <leader>ea :call InsertDocstrOnlyArgs()<CR>
