@@ -65,9 +65,12 @@ install_cuda()
     cd ~/tmp
     wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1404/x86_64/cuda-repo-ubuntu1404_6.5-14_amd64.deb
     sudo dpkg -i cuda-repo-*
+
+    sudo apt-get install nvidia-cuda-toolkit
+
     # Carefull this removes 343 drivers and puts in 340 drivers
-    sudo apt-get update
-    sudo apt-get install cuda
+    #sudo apt-get update
+    #sudo apt-get install cuda
 
     #REBOOT
 
@@ -76,6 +79,7 @@ install_cuda()
     source ~/.bashrc
 }
 
+install_nvidia_driver
 install_cuda_prereq
 install_cuda
 
@@ -87,6 +91,7 @@ test_nvidia()
 {
     nvcc --version
     nvidia-smi
+    python -m ibeis_cnn
 }
 
 # INFO
@@ -133,6 +138,7 @@ reinstall_nvidia()
 
     # List what nvidia packages are still installed
     dpkg -l | grep -i nvidia
+    dpkg -l | grep -i nvcc
 }
 
 # OLD
