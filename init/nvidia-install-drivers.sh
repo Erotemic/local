@@ -8,15 +8,23 @@
 
 #http://www.nvidia.com/download/driverResults.aspx/77525/en-us
 
-# Add drivers repo from edgers
-sudo add-apt-repository ppa:xorg-edgers/ppa -y
-sudo apt-get update
+# References
+# http://askubuntu.com/questions/206283/how-can-i-uninstall-a-nvidia-driver-completely
 
-# Install Correct Driver for Geforce 670 GTX
-# Use 340 for cuda compadability
-sudo apt-get install nvidia-340
-#sudo apt-get install nvidia-343
-#sudo apt-get remove nvidia-343
+install_nvidia_driver()
+{
+    # Add drivers repo from edgers
+    sudo add-apt-repository ppa:xorg-edgers/ppa -y
+    sudo apt-get update
+
+    # Hyrule has Geforce 670 GTX
+    # Install Correct Driver for Geforce 670 GTX
+    # Use 340 for cuda compadability
+    sudo apt-get install nvidia-340
+    #sudo apt-get install nvidia-343
+    #sudo apt-get remove nvidia-343
+}
+
 
 install_cuda_prereq()
 {
@@ -48,40 +56,67 @@ install_cuda_prereq()
     sudo apt-get install -y python-pillow
 }
 
+
+
+install_cuda()
+{
+    # Get the cuda 6.5 deb file
+    mkdir ~/tmp
+    cd ~/tmp
+    wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1404/x86_64/cuda-repo-ubuntu1404_6.5-14_amd64.deb
+    sudo dpkg -i cuda-repo-*
+    # Carefull this removes 343 drivers and puts in 340 drivers
+    sudo apt-get update
+    sudo apt-get install cuda
+
+    #REBOOT
+
+    echo 'export PATH=$PATH:/usr/local/cuda/bin' >> ~/.bashrc
+    echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/lib' >> ~/.bashrc
+    source ~/.bashrc
+}
+
 install_cuda_prereq
+install_cuda
 
-# Get the cuda 6.5 deb file
-mkdir ~/tmp
-cd ~/tmp
-wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1404/x86_64/cuda-repo-ubuntu1404_6.5-14_amd64.deb
-sudo dpkg -i cuda-repo-*
-# Carefull this removes 343 drivers and puts in 340 drivers
-sudo apt-get update
-sudo apt-get install cuda
-
-#REBOOT
-
-echo 'export PATH=$PATH:/usr/local/cuda/bin' >> ~/.bashrc
-echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/lib' >> ~/.bashrc
-source ~/.bashrc
-
+# Need to reboot here
 
 #TEST 
 
-nvcc --version
-nvidia-smi
-
+test_nvidia()
+{
+    nvcc --version
+    nvidia-smi
+}
 
 # INFO
 apt-cache depends cuda
 apt-cache depends nvidia-340-dev
 apt-cache depends nvidia-340-uvm
+apt-cache depends nvidia-340
+apt-cache depends nvidia-settings
+
+
+remove_upgraded_nvidia_drivers(){
+    # Ubuntu upgraded my drivers, and that broke cuda
+    echo 'foo'
+    # This is my attemp to remove them. 
+    # apt-cache depends nvidia-340-dev reports
+    #  Depends: nvidia-340
+    #  Conflicts: nvidia-340-dev:i386
+
+    #sudo apt-get remove nvidia-340-dev:i386
+    #sudo apt-get remove nvidia-340-uvm:i386
+
+    # Actually, I'm just going to try reinstalling
+}
 
 
 # OTHER 
 
 reinstall_nvidia()
 {
+    # Part for removing what was there
     sudo apt-get remove cuda
     sudo apt-get remove libcuda1-340
 
@@ -89,7 +124,15 @@ reinstall_nvidia()
     sudo apt-get remove nvidia-340
     sudo apt-get remove nvidia-libopencl1-340
     sudo apt-get remove nvidia-libopencl-icd-340
+    sudo apt-get remove nvidia-opencl-icd-340
     sudo apt-get remove nvidia-settings
+
+    sudo apt-get remove --purge nvidia-340
+    sudo apt-get remove --purge nvidia-3*
+    sudo apt-get remove --purge libcuda1-3*
+
+    # List what nvidia packages are still installed
+    dpkg -l | grep -i nvidia
 }
 
 # OLD
