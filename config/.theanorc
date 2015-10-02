@@ -2,15 +2,7 @@
 floatX = float32
 device = gpu0
 openmp = True
-#print_active_device = False
-#linker='c|py'
-#linker='c|py_nogc'
-#linker=cvm
-#int_division = 'floatX'
-#exception_verbosity = high
-
 int_division = raise
-
 [nvcc]
 fastmath = True
 
@@ -19,3 +11,11 @@ fastmath = True
 #
 #[cmodule]
 #preload_cache = True
+#[global]
+#print_active_device = False
+#linker='c|py'
+#linker='c|py_nogc'
+#linker=cvm
+#int_division = 'floatX'
+#exception_verbosity = high
+

@@ -10,6 +10,7 @@
 
 # References
 # http://askubuntu.com/questions/206283/how-can-i-uninstall-a-nvidia-driver-completely
+# https://github.com/Theano/libgpuarray/issues/19
 
 install_nvidia_driver()
 {
@@ -92,6 +93,25 @@ test_nvidia()
     nvcc --version
     nvidia-smi
     python -m ibeis_cnn
+    python -m ibeis_cnn._plugin --exec-detect_annot_zebra_background_mask --show
+}
+
+
+fix_permission_issues()
+{
+
+    sudo pip install PyYAML --upgrade
+
+    sudo python -m ibeis_cnn
+    sudo python -m ibeis
+    python -m ibeis_cnn
+
+    sudo chown -R joncrall:joncrall ~/.theano/*
+
+    rm -rf ~/.theano/*
+
+    python -m ibeis_cnn
+    python -m ibeis_cnn._plugin --exec-detect_annot_zebra_background_mask --show
 }
 
 # INFO
