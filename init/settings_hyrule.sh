@@ -58,13 +58,20 @@ hyrule_setup_fstab()
 
 hyrule_create_users()
 {
+    #List Users
+    cut -d: -f1 /etc/passwd
+    ls /home/
+
+    # Delete a user
+    sudo userdel kerner
+    sudo rm -r /home/kerner
+
     # Grant sudoers
     #sudo visudo
     sudo adduser jason
     sudo adduser hendrik
     sudo adduser zack
     sudo adduser git
-    sudo adduser kerner
     sudo adduser guest
     # Add group
     sudo groupadd rpi
@@ -72,7 +79,7 @@ hyrule_create_users()
     sudo usermod -a -G rpi joncrall
     sudo usermod -a -G rpi hendrik
     sudo usermod -a -G rpi zack
-    sudo usermod -a -G rpi kerner
+    sudo usermod -a -G rpi guest
     # Delete user
     #sudo deluser --remove-home newuser
     #sudo chown -R joncrall:rpi *

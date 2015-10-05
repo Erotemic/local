@@ -25,6 +25,12 @@ export PYTHONPATH=$CODE_DIR/utool:$PYTHONPATH
 export PYTHONPATH=$HOME/local/pyscripts:$PYTHONPATH
 
 export PYTHON_VENV="$HOME/venv"
+
+setup_venv(){
+    mkdir $PYTHON_VENV
+    virtualenv -p /usr/bin/python2.7 $PYTHON_VENV
+}
+
 #echo $PYTHON_VENV
 
 if [ -d "$PYTHON_VENV" ]; then

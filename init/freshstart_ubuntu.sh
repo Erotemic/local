@@ -44,10 +44,16 @@ freshtart_ubuntu_entry_point()
     git config --global user.email crallj@rpi.edu
     git config --global push.default current
 
+    # setup virtual env
+    export PYTHON_VENV="$HOME/venv"
+    mkdir $PYTHON_VENV
+    virtualenv -p /usr/bin/python2.7 $PYTHON_VENV
+
+    pip install six
+
     mkdir ~/local/vim/vimfiles/bundle
     source ~/local/vim/init_vim.sh
     python ~/local/init/ensure_vim_plugins.py
-    cd ~/code
 }
 
 
@@ -185,6 +191,9 @@ setup_ibeis()
     ./super_setup.py --build --develop
     ./super_setup.py --checkout next
     ./super_setup.py --build --develop
+
+    # Options
+    ./_scripts/bootstrap.py --no-syspkg --nosudo
 
     cd 
     export IBEIS_WORK_DIR="$(python -c 'import ibeis; print(ibeis.get_workdir())')"

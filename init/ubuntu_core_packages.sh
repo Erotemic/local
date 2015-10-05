@@ -15,7 +15,6 @@ clean_for_upgrade()
 setup_ibeis()
 {
     source ~/local/init/freshstart_ubuntu.sh
-    setup_ibeis
 }
 
 ypackin()
@@ -81,7 +80,6 @@ install_core()
 install_synergy()
 {
     sudo apt-get install synergy -y
-
 }
 
 
@@ -729,4 +727,31 @@ fix_gnome3_workspaces_multimonior()
     #http://gregcor.com/2011/05/07/fix-dual-monitors-in-gnome-3-aka-my-workspaces-are-broken/
     gsettings get org.gnome.shell.overrides workspaces-only-on-primary
     gsettings set org.gnome.shell.overrides workspaces-only-on-primary false
+}
+
+
+install_pydio(){
+    gvim   /etc/apt/sources.list
+sudo sh -c 'cat >>  /etc/apt/sources.list  << EOL
+
+# pydio manual stuff
+deb http://dl.ajaxplorer.info/repos/apt stable main
+deb-src http://dl.ajaxplorer.info/repos/apt stable main
+EOL'
+wget -O - http://dl.ajaxplorer.info/repos/charles@ajaxplorer.info.gpg.key | sudo apt-key add -
+
+sudo apt-get update
+sudo apt-get install pydio
+
+
+cd ~/tmp
+wget http://downloads.sourceforge.net/project/ajaxplorer/pydio-sync/java/0.8.4/PydioSync-0.8.4-Linux-x86_64-Jars.zip
+7z x PydioSync-0.8.4-Linux-x86_64-Jars.zip
+
+cd ~/tmp
+wget https://pyd.io/resources/pydio6/data/public/pydiosync-linux-1-0-2-targz?dl=true\&file=/1e481dfadf/PydioSync-Linux-v1.0.2.tar.gz
+cp pydiosync-linux-1-0-2-targz\?dl\=true\&file\=%2F1e481dfadf%2FPydioSync-Linux-v1.0.2.tar.gz PydioSync-Linux-v1.0.2.tar.gz
+7z xz pydiosync-linux-1-0-2-targz\?dl\=true\&file\=%2F1e481dfadf%2FPydioSync-Linux-v1.0.2.tar.gz
+7z xzvf PydioSync-Linux-v1.0.2.tar.gz
+7z x PydioSync-Linux-v1.0.2.tar -o Pydio
 }

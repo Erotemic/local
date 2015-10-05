@@ -38,19 +38,69 @@ sudo yum install openssl-devel -y
 sudo yum install libXext-devel -y
 sudo yum install libXt-devel -y
 
+sudo apt-get install 7zip
 
+
+mkdir tmp
 cd ~/tmp
-export QT_SOURCE_SNAPSHOT=qt-everywhere-opensource-src-4.8.6
+#export QT_SOURCE_SNAPSHOT=qt-everywhere-opensource-src-4.8.6
+export QT_SOURCE_SNAPSHOT=qt-everywhere-opensource-src-4.8.7
 # Download the Qt Source Code
-wget http://download.qt-project.org/official_releases/qt/4.8/4.8.6/$QT_SOURCE_SNAPSHOT.tar.gz
-
-grabzippedurl.py http://download.qt-project.org/official_releases/qt/4.8/4.8.6/$QT_SOURCE_SNAPSHOT.tar.gz
-gunzip $QT_SOURCE_SNAPSHOT.tar.gz && tar -xvf $QT_SOURCE_SNAPSHOT.tar
+wget http://download.qt-project.org/official_releases/qt/4.8/4.8.7/$QT_SOURCE_SNAPSHOT.tar.gz
+tar xzvf $QT_SOURCE_SNAPSHOT.tar.gz
 cd $QT_SOURCE_SNAPSHOT
-# Configure
 export QTCONFFLAGS="-prefix-install --shared -openssl -confirm-license -opensource"
-./configure --prefix=/usr/local/qt $QTCONFFLAGS LDFLAGS="-Wl,-rpath /usr/local/qt/lib" || { echo "FAILED QT CONFIGURE" ; exit 1; }
+./configure --prefix=$PYTHON_VENV/local/qt $QTCONFFLAGS 
+LDFLAGS="-Wl,-rpath,$PYTHON_VENV/local/qt/lib"
 # Make
-gmake -j9 || { echo "FAILED QT QMAKE" ; exit 1; }
+make -j9 
 # Install
-sudo qmake install || { echo "FAILED QT QMAKE" ; exit 1; }
+sudo qmake install 
+#|| { echo "FAILED QT QMAKE" ; exit 1; }
+
+
+#grabzippedurl.py http://download.qt-project.org/official_releases/qt/4.8/4.8.6/$QT_SOURCE_SNAPSHOT.tar.gz
+#gunzip $QT_SOURCE_SNAPSHOT.tar.gz && tar -xvf $QT_SOURCE_SNAPSHOT.tar
+#cd $QT_SOURCE_SNAPSHOT
+# Configure
+#export QTCONFFLAGS="-prefix-install --shared -openssl -confirm-license -opensource"
+#./configure --prefix=/usr/local/qt $QTCONFFLAGS LDFLAGS="-Wl,-rpath /usr/local/qt/lib" || { echo "FAILED QT CONFIGURE" ; exit 1; }
+## Make
+#gmake -j9 || { echo "FAILED QT QMAKE" ; exit 1; }
+## Install
+#sudo qmake install || { echo "FAILED QT QMAKE" ; exit 1; }
+
+
+#====================
+# SOURCE BUILD: SIP
+export SIP_URL=http://sourceforge.net/projects/pyqt/files/sip/sip-4.16.9
+export SIP_SNAPSHOT=sip-4.16.9
+cd ~/tmp
+wget $SIP_URL/$SIP_SNAPSHOT.tar.gz
+tar xzfv $SIP_SNAPSHOT.tar.gz
+cd $SIP_SNAPSHOT
+python2.7 configure.py --sysroot=$VIRTUAL_ENV --incdir=$VIRTUAL_ENV/include/python2.7
+make -j$NCPUS && make install
+python -c "import sip; print('[test] Python can import sip')"
+#====================
+
+#====================
+# SOURCE BUILD: PyQt4
+cd ~/tmp
+# Use snapshot instead
+# References: https://www.riverbankcomputing.com/software/pyqt/download
+#export PYQT4_SNAPSHOT=PyQt-x11-gpl-4.11.tar.gz
+/
+#export PYQT4_URL=http://www.riverbankcomputing.co.uk/static/Downloads/PyQt4
+#export PYQT4_SNAPSHOT=PyQt-x11-gpl-4.11.1-snapshot-e1e46b3cad30
+export PYQT4_URL=http://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.11.4
+export PYQT4_SNAPSHOT=PyQt-x11-gpl-4.11.4
+wget $PYQT4_URL/$PYQT4_SNAPSHOT.tar.gz
+tar xzvf $PYQT4_SNAPSHOT.tar.gz 
+mv $PYQT4_SNAPSHOT ~/srcdistro
+python27 configure-ng.py --qmake=$VIRTUAL_ENV/local/qt/bin/qmake --no-designer-plugin --confirm-license --target-py-version=2.7
+make -j$NCPUS && sudo make install
+python2.7 -c "import PyQt4; print('[test] SUCCESS import PyQt4: %r' % PyQt4)"
+python2.7 -c "from PyQt4 import QtGui; print('[test] SUCCESS import QtGui: %r' % QtGui)"
+python2.7 -c "from PyQt4 import QtCore; print('[test] SUCCESS import QtCore: %r' % QtCore)"
+python2.7 -c "from PyQt4.QtCore import Qt; print('[test] SUCCESS import Qt: %r' % Qt)"

@@ -8,12 +8,13 @@ def send_public_key_to_server(username, server):
     ssh-copy-id id@server
 
     ssh-copy-id git@hyrule.cs.rpi.edu
+    ssh-copy-id joncrall@128.213.17.87
+    ssh-copy-id jonc@pachy.cs.uic.edu
 
     ut.copy_text_to_clipboard(remote_cmdstr)
 
     chmod 700 ~git/.ssh
     chmod 600 ~git/.ssh/authorized_keys
-
 
     """
 
