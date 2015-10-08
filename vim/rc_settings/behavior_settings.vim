@@ -121,3 +121,10 @@ endif
 " References: http://blog.ezyang.com/2010/03/vim-textwidth/
 " Set it so gq will reformat but no automatic breaking
 set textwidth=0 formatoptions=cqt wrapmargin=0
+
+
+" Remove Autocopy
+" References: http://vim.wikia.com/wiki/Auto_copy_the_mouse_selection
+ set guioptions-=a
+ set guioptions-=A
+ set guioptions-=aA
