@@ -21,3 +21,27 @@ remove_hdf5()
 {
     rm -rf ~/usr/include/H5* ~/usr/include/hdf5* ~/usr/lib/libhdf5* ~/usr/bin/h5*
 }
+
+remove_h5py()
+{
+    code 
+    cd h5py
+    python setup clean
+    rm -rf build
+    python setup.py develop
+
+}
+
+install_h5py(){
+    sudo apt-get install libopenmpi-dev
+    sudo apt-get install libhdf5-dev
+    pip install h5py
+    #env CFLAGS=-I/usr/lib/openmpi/include pip install h5py
+
+    python -m utool.util_io --test-save_hdf5
+    python -c "import h5py; print(h5py.__file__)"
+    python -c "import h5py; print(h5py.__version__)"
+    
+    
+    #python setup.py build 
+}

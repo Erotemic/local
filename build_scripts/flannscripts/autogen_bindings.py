@@ -5,11 +5,40 @@ import utool as ut
 def autogen_parts():
     r"""
     CommandLine:
-        python ~/local/build_scripts/flannscripts/autogen_bindings.py --test-autogen_parts
-        python ~/local/build_scripts/flannscripts/autogen_bindings.py --test-autogen_parts --bindingname=set_dataset
-        python ~/local/build_scripts/flannscripts/autogen_bindings.py --test-autogen_parts --bindingname=add_points
-        python ~/local/build_scripts/flannscripts/autogen_bindings.py --test-autogen_parts --bindingname=remove_point --exec-mode --py
-        python ~/local/build_scripts/flannscripts/autogen_bindings.py --test-autogen_parts --bindingname=used_memory --exec-mode --py
+        python ~/local/build_scripts/flannscripts/autogen_bindings.py --exec-autogen_parts
+        python ~/local/build_scripts/flannscripts/autogen_bindings.py --exec-autogen_parts --bindingname=set_dataset
+        python ~/local/build_scripts/flannscripts/autogen_bindings.py --exec-autogen_parts --bindingname=add_points
+        python ~/local/build_scripts/flannscripts/autogen_bindings.py --exec-autogen_parts --bindingname=remove_point --py
+        python ~/local/build_scripts/flannscripts/autogen_bindings.py --exec-autogen_parts --bindingname=used_memory  --py
+        python ~/local/build_scripts/flannscripts/autogen_bindings.py --exec-autogen_parts --bindingname=remove_points  --py --c
+
+        python ~/local/build_scripts/flannscripts/autogen_bindings.py --exec-autogen_parts --bindingname=veclen  --py --c
+
+        python ~/local/build_scripts/flannscripts/autogen_bindings.py --exec-autogen_parts --bindingname=size  --py --c
+        python ~/local/build_scripts/flannscripts/autogen_bindings.py --exec-autogen_parts --bindingname=clean_removed_points  --py --c
+
+    Ignore:
+        # Logic goes here
+        ~/code/flann/src/cpp/flann/algorithms/kdtree_index.h
+
+        ~/code/flann/src/cpp/flann/util/serialization.h
+        ~/code/flann/src/cpp/flann/util/dynamic_bitset.h
+
+        # Bindings go here
+        ~/code/flann/src/cpp/flann/flann.cpp
+        ~/code/flann/src/cpp/flann/flann.h
+
+        # Contains stuff for the flann namespace like flann::log_level
+        # Also has Index with
+        # Matrix<ElementType> features; SEEMS USEFUL
+        ~/code/flann/src/cpp/flann/flann.hpp
+
+
+        # Wrappers go here
+        ~/code/flann/src/python/pyflann/flann_ctypes.py
+        ~/code/flann/src/python/pyflann/index.py
+
+        ~/local/build_scripts/flannscripts/autogen_bindings.py
 
     Example:
         >>> # ENABLE_DOCTEST
@@ -27,7 +56,9 @@ def autogen_parts():
         'index_ptr': 'flann_index_t',
         'rows': 'int',
         'rebuild_threshold': 'int',
-        'id_': 'int'
+        'id_': 'int',
+        'id_list': 'int*',
+        'num': 'int',
     }
 
     python_ctype_map = {
@@ -36,6 +67,9 @@ def autogen_parts():
         'rows': 'c_int',
         'id_': 'c_int',
         'rebuild_threshold': 'c_int',
+        #'id_list': 'POINTER(c_int)',
+        'id_list': "ndpointer(int32, ndim = 1, flags='aligned, c_contiguous')",
+        'num': 'c_int',
     }
 
     # default c source
@@ -45,7 +79,97 @@ def autogen_parts():
         '''
     )
 
-    if binding_name == 'add_points':
+    standard_csource = ut.codeblock(
+        r'''
+        try {{
+            if (index_ptr==NULL) {{
+                throw FLANNException("Invalid index");
+            }}
+            Index<Distance>* index = (Index<Distance>*)index_ptr;
+            return index->{cpp_binding_name}();
+        }}
+        catch (std::runtime_error& e) {{
+            Logger::error("Caught exception: %s\n",e.what());
+            throw;
+        }}
+        '''
+    )
+    cpp_binding_name = binding_name
+
+    if binding_name == 'clean_removed_points':
+        cpp_binding_name = ut.to_camel_case(binding_name)
+        return_type = 'void'
+        docstr = ut.codeblock(
+            '''
+            Deletes removed points in index?
+            '''
+        )
+        binding_argnames = [
+            'index_ptr',
+        ]
+        c_source = standard_csource
+    elif binding_name == 'veclen':
+        return_type = 'int'
+        docstr = ut.codeblock(
+            '''
+            Returns number of features in this index
+            '''
+        )
+        binding_argnames = [
+            'index_ptr',
+        ]
+        c_source = standard_csource
+    elif binding_name == 'size':
+        return_type = 'int'
+        docstr = ut.codeblock(
+            '''
+            returns The dimensionality of the features in this index.
+            '''
+        )
+        binding_argnames = [
+            'index_ptr',
+        ]
+        c_source = standard_csource.format(**locals())
+    elif binding_name == 'getType':
+        return_type = 'flann_algorithm_t'
+        docstr = ut.codeblock(
+            '''
+            returns The index type (kdtree, kmeans,...)
+            '''
+        )
+        binding_argnames = [
+            'index_ptr',
+        ]
+        c_source = standard_csource.format(**locals())
+    elif binding_name == 'used_memory':
+        return_type = 'int'
+        docstr = ut.codeblock(
+            '''
+            Returns the amount of memory used by the index
+
+            Returns: int
+            '''
+        )
+        binding_argnames = [
+            'index_ptr',
+        ]
+        c_source = ut.codeblock(
+            r'''
+            typedef typename Distance::ElementType ElementType;
+            try {{
+                if (index_ptr==NULL) {{
+                    throw FLANNException("Invalid index");
+                }}
+                Index<Distance>* index = (Index<Distance>*)index_ptr;
+                return index->usedMemory();
+            }}
+            catch (std::runtime_error& e) {{
+                Logger::error("Caught exception: %s\n",e.what());
+                throw;
+            }}
+            '''
+        )
+    elif binding_name == 'add_points':
         return_type = 'void'
         docstr = ut.codeblock(
             '''
@@ -65,11 +189,6 @@ def autogen_parts():
             'dataset',
             'rows',
             'rebuild_threshold',
-        ]
-        binding_args = [
-            'FLANN_INDEX, # index_id',
-            "ndpointer(%(numpy)s, ndim = 2, flags='aligned, c_contiguous'), # dataset",
-            'c_int, # rows',
         ]
         c_source = ut.codeblock(
             r'''
@@ -106,10 +225,6 @@ def autogen_parts():
             'index_ptr',
             'id_',
         ]
-        binding_args = [
-            'FLANN_INDEX, # index_id',
-            "int  # point id"
-        ]
         c_source = ut.codeblock(
             r'''
             typedef typename Distance::ElementType ElementType;
@@ -127,20 +242,23 @@ def autogen_parts():
             }}
             '''
         )
-    elif binding_name == 'used_memory':
-        return_type = 'int'
+    elif binding_name == 'remove_points':
+        return_type = 'void'
         docstr = ut.codeblock(
             '''
-            Returns the amount of memory used by the index
+            Removes a point from the index
 
-            Returns: int
+            Params:
+                index_id The index that should be modified
+                id_list = list of point ids to be removed
+
+            Returns: void
             '''
         )
         binding_argnames = [
             'index_ptr',
-        ]
-        binding_args = [
-            'FLANN_INDEX, # index_id',
+            'id_list',
+            'num',
         ]
         c_source = ut.codeblock(
             r'''
@@ -150,15 +268,17 @@ def autogen_parts():
                     throw FLANNException("Invalid index");
                 }}
                 Index<Distance>* index = (Index<Distance>*)index_ptr;
-                return index->usedMemory();
+                index->removePoints(id_list, num);
+                return;
             }}
             catch (std::runtime_error& e) {{
                 Logger::error("Caught exception: %s\n",e.what());
-                throw;
+                return;
             }}
             '''
         )
-        pass
+    else:
+        raise NotImplementedError('Unknown binding name %r' % (binding_name,))
     binding_args = [python_ctype_map[name] + ',  # ' + name for name in binding_argnames]
     binding_args_str = '        ' + '\n        '.join(binding_args)
     templated_args = ', '.join([templated_ctype_map[name] + ' ' + name for name in binding_argnames])
@@ -199,7 +319,7 @@ def autogen_parts():
     templated_ctype_map2['dataset'] = 'T*'
     typed_sigargs = ', '.join([templated_ctype_map2[name] + ' ' + name for name in binding_argnames])
 
-    flann_c_codeblock = ut.codeblock(
+    flann_c_code_fmtstr = ut.codeblock(
         r'''
         // {binding_name} BEGIN
         template<typename Distance>
@@ -208,6 +328,20 @@ def autogen_parts():
             ''' + '\n' + ut.indent(c_source, ' ' * (4 * 3)) + r'''
         }}
 
+        '''
+    )
+
+    implicit_type_bindings_fmtstr = ut.codeblock(
+        '''
+        DISTANCE_TYPE_BINDINGS({return_type}, {binding_name},
+                SINGLE_ARG({typed_sigargs}),
+                SINGLE_ARG({callargs}))
+
+        '''
+    )
+
+    explicit_type_bindings_fmtstr = ut.codeblock(
+        '''
         template<typename T>
         {return_type} _flann_{binding_name}({typed_sigargs})
         {{
@@ -237,11 +371,19 @@ def autogen_parts():
                 throw 0;
             }}
         }}
-
         '''
-    ).format(binding_name=binding_name, templated_args=templated_args,
-             callargs=callargs, typed_sigargs=typed_sigargs,
-             return_type=return_type)
+    )
+    #type_bindings_fmtstr = explicit_type_bindings_fmtstr
+    type_bindings_fmtstr = implicit_type_bindings_fmtstr
+
+    flann_c_codeblock_fmtstr = flann_c_code_fmtstr + '\n\n' + type_bindings_fmtstr + '\n'
+
+    flann_c_codeblock = flann_c_codeblock_fmtstr.format(
+        cpp_binding_name=cpp_binding_name,
+        binding_name=binding_name,
+        templated_args=templated_args, callargs=callargs,
+        typed_sigargs=typed_sigargs,
+        return_type=return_type)
 
     dataset_types = [
         '',

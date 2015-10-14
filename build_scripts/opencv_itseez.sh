@@ -28,6 +28,9 @@ cmake -G "Unix Makefiles" \
 make -j9
 sudo make install
 
+# Hack because cv2 does not want to be installed for some reason
+cp lib/cv2.so $PYTHON2_PACKAGES_PATH
+
 python -c "import numpy; print(numpy.__file__)"
 python -c "import numpy; print(numpy.__version__)"
 python -c "import cv2; print(cv2.__version__)"
