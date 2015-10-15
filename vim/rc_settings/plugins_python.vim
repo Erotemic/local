@@ -87,10 +87,15 @@ flake8_errors = [
     'E271', # multiple spaces after keyword 
     'E272', # multiple spaces before keyword
     'E301', # expected 1 blank line, found 0
-    'E501', # > 79
+    #'E501', # > 79
     'W602', # Old reraise syntax
 ] 
-flake8_ignore = '--ignore=' + ','.join(flake8_errors)
-vim.command('let g:syntastic_python_flake8_args = "%s"' % flake8_ignore)
+flake8_args_list = [
+    #'--max-line-length 80',
+    '--max-line-length 100',
+    '--ignore=' + ','.join(flake8_errors)
+]
+flake8_args = ' '.join(flake8_args_list)
+vim.command('let g:syntastic_python_flake8_args = "%s"' % flake8_args)
 endpython
 
