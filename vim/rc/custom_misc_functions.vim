@@ -587,10 +587,22 @@ func! PyFormatParagraph() range
 python << endpython
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-text = pyvim_funcs.get_selected_text()
-#wrapped_text = pyvim_funcs.format_single_paragraph_sentences(text)
+text = pyvim_funcs.get_selected_text(select_at_cursor=False)
+##wrapped_text = pyvim_funcs.format_single_paragraph_sentences(text)
 wrapped_text = pyvim_funcs.format_multiple_paragraph_sentences(text)
 pyvim_funcs.insert_codeblock_over_selection(wrapped_text)
+endpython
+endfunc
+
+
+func! PySelectAndFormatParagraph() 
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+row1, row2 = pyvim_funcs.get_paragraph_line_range_at_cursor()
+text = pyvim_funcs.get_text_between_lines(row1, row2)
+wrapped_text = pyvim_funcs.format_multiple_paragraph_sentences(text)
+pyvim_funcs.insert_codeblock_between_lines(wrapped_text, row1, row2)
 endpython
 endfunc
 

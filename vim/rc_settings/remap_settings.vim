@@ -28,9 +28,13 @@ noremap \ ,
 "
 vnoremap <leader>fp :call PyFormatParagraph()<CR>
 vnoremap <leader>fe :call PyFormatParagraph()<CR>
-noremap <leader>ge vip:call PyFormatParagraph()<CR>
 vnoremap ge :call PyFormatParagraph()<CR>
-:noremap <c-g> vip:call PyFormatParagraph()<CR>
+
+"noremap <leader>ge vip:call PyFormatParagraph()<CR>
+":noremap <c-g> vip:call PyFormatParagraph()<CR>
+
+noremap <leader>ge :call PySelectAndFormatParagraph()<CR>
+:noremap <c-g> :call PySelectAndFormatParagraph()<CR>
 
 """
 " SeeAlso:

@@ -1,7 +1,19 @@
 """
 Called by ~/local/vim/rc/custom_misc_functions.vim
+
+References:
+    # The vim python module documentation
+    http://vimdoc.sourceforge.net/htmldoc/if_pyth.html
+
+ToLookAt:
+    https://github.com/ivanov/ipython-vimception
+
+FIXME:
+    the indexing is messed up because some places row2 means the last line,
+    instead of the last line you dont want
 """
 from os.path import expanduser
+import sys
 
 
 def regex_reconstruct_split(pattern, text):
@@ -60,7 +72,8 @@ def unformat_text_as_docstr(formated_text):
     import re
     min_indent = ut.get_minimum_indentation(formated_text)
     indent_ =  ' ' * min_indent
-    unformated_text = re.sub('^' + indent_ + '>>> ', '' + indent_, formated_text, flags=re.MULTILINE)
+    unformated_text = re.sub('^' + indent_ + '>>> ', '' + indent_,
+                             formated_text, flags=re.MULTILINE)
     return unformated_text
 
 
@@ -109,7 +122,8 @@ def format_multiple_paragraph_sentences(text):
 
     collapse_pos_list = []
     # Dont format things within certain block types
-    for count, (block, window) in enumerate(zip(block_list, ut.iter_window([''] + separators + [''], 2))):
+    _iter = ut.iter_window([''] + separators + [''], 2)
+    for count, (block, window) in enumerate(zip(block_list, _iter)):
         if window[0].strip() == r'\begin{comment}' and window[1].strip() == r'\end{comment}':
             collapse_pos_list.append(count)
 
@@ -369,7 +383,7 @@ def testdata_text(num=1):
 
     text2 = ut.codeblock(r'''
         \begin{comment}
-        python -m ibeis -e rank_cdf -t invar -a viewdiff --test_cfgx_slice=6: --db PZ_Master1 --hargv=expt --prefix "Invariance+View Experiment "
+        python -m ibeis -e rank_cdf -t invar -a viewdiff --test_cfgx_slice=6: --db PZ_Master1 --hargv=expt --prefix "Invariance+View Experiment "  # NOQA
         \end{comment}
         \ImageCommand{figuresX/expt_rank_cdf_PZ_Master1_a_viewdiff_t_invar.png}{\textwidth}{
         Results of the invariance experiment with different viewpoints for plains
@@ -451,19 +465,126 @@ def get_word_in_line_at_col(line, col, nonword_chars=' \t\n\r[](){}:;.,"\'\\/'):
     return word
 
 
-def get_selected_text():
-    """ make sure the vim function calling this has a range after () """
+# --- Find file markers
+
+def find_pyfunc_above_cursor():
+    import vim
+    import utool as ut
+    # Get text posision
+    (row, col) = vim.current.window.cursor
+    line_list = vim.current.buffer
+    return ut.find_pyfunc_above_row(line_list, row)
+
+
+def is_paragraph_end(line_):
+    # Hack, par_marker_list should be an argument
+    striped_line = line_.strip()
+    isblank = striped_line == ''
+    if isblank:
+        return True
+    par_marker_list = [
+        #'\\noindent',
+        '\\begin{equation}',
+        '\\end{equation}',
+        '% ---',
+    ]
+    return any(striped_line.startswith(marker)
+                 for marker in par_marker_list)
+
+
+def find_paragraph_end(row_, direction=1):
+    """
+    returns the line that a paragraph ends on in some direction
+    """
+    import vim
+    line_list = vim.current.buffer
+    line_ = line_list[row_ - 1]
+    if (row_ == 0 or row_ == len(line_list) - 1):
+        return row_
+    if is_paragraph_end(line_):
+        return row_
+    while True:
+        if (row_ == -1 or row_ == len(line_list)):
+            break
+        line_ = line_list[row_ - 1]
+        if is_paragraph_end(line_):
+            break
+        row_ += direction
+    row_ -= direction
+    return row_
+
+
+def get_paragraph_line_range_at_cursor():
+    """
+    Fixme row2 should be the first row you do not want
+    """
+    # Get cursor position
+    import vim
+    (row, col) = vim.current.window.cursor
+    row1 = find_paragraph_end(row, -1)
+    row2 = find_paragraph_end(row, +1)
+    return row1, row2
+
+
+# --- Text extractors
+
+
+def get_selected_text(select_at_cursor=False):
+    """ make sure the vim function calling this has a range after ()
+
+    Currently used by <ctrl+g>
+
+    References:
+        http://stackoverflow.com/questions/18165973/vim-obtain-string-between-visual-selection-range-with-python
+
+    SeeAlso:
+        ~/local/vim/rc/custom_misc_functions.vim
+
+    Test paragraph.
+    Far out in the uncharted backwaters of the unfashionable end of the western
+    spiral arm of the Galaxy lies a small unregarded yellow sun. Orbiting this at a
+    distance of roughly ninety-two million miles is an utterly insignificant little
+    blue green planet whose ape-descended life forms are so amazingly primitive
+    that they still think digital watches are a pretty neat idea.
+    % ---
+    one. two three. four.
+
+    """
     import vim
     buf = vim.current.buffer
     (lnum1, col1) = buf.mark('<')
     (lnum2, col2) = buf.mark('>')
+    text = get_text_between_lines(lnum1, lnum2, col1, col2)
+    return text
+
+
+def get_text_between_lines(lnum1, lnum2, col1=0, col2=sys.maxint - 1):
+    import vim
     lines = vim.eval('getline({}, {})'.format(lnum1, lnum2))
-    if len(lines) == 1:
-        lines[0] = lines[0][col1:col2 + 1]
-    else:
-        lines[0] = lines[0][col1:]
-        lines[-1] = lines[-1][:col2 + 1]
-    return "\n".join(lines)
+    try:
+        if len(lines) == 0:
+            pass
+        elif len(lines) == 1:
+            lines[0] = lines[0][col1:col2 + 1]
+        else:
+            lines[0] = lines[0][col1:]
+            lines[-1] = lines[-1][:col2 + 1]
+        text = '\n'.join(lines)
+    except Exception:
+        import utool as ut
+        print(ut.list_str(lines))
+        raise
+    return text
+
+
+def get_codelines_around_buffer(rows_before=0, rows_after=10):
+    import vim
+    (row, col) = vim.current.window.cursor
+    codelines = [vim.current.buffer[row - ix] for ix in range(rows_before, rows_after)]
+    return codelines
+
+
+# --- INSERT TEXT CODE
 
 
 def insert_codeblock_over_selection(text):
@@ -472,6 +593,16 @@ def insert_codeblock_over_selection(text):
     # These are probably 1 based
     (row1, col1) = buf.mark('<')
     (row2, col2) = buf.mark('>')
+    insert_codeblock_between_lines(text, row1, row2)
+    #buffer_tail = vim.current.buffer[row2:]  # Original end of the file
+    #lines = [line.encode('utf-8') for line in text.split('\n')]
+    #new_tail  = lines + buffer_tail
+    #del(vim.current.buffer[row1 - 1:])  # delete old data
+    #vim.current.buffer.append(new_tail)  # append new data
+
+
+def insert_codeblock_between_lines(text, row1, row2):
+    import vim
     buffer_tail = vim.current.buffer[row2:]  # Original end of the file
     lines = [line.encode('utf-8') for line in text.split('\n')]
     new_tail  = lines + buffer_tail
@@ -491,21 +622,7 @@ def insert_codeblock_at_cursor(text):
     del(vim.current.buffer[row:])  # delete old data
     vim.current.buffer.append(new_tail)  # append new data
 
-
-def find_pyfunc_above_cursor():
-    import vim
-    import utool as ut
-    # Get text posision
-    (row, col) = vim.current.window.cursor
-    line_list = vim.current.buffer
-    return ut.find_pyfunc_above_row(line_list, row)
-
-
-def get_codelines_around_buffer(rows_before=0, rows_after=10):
-    import vim
-    (row, col) = vim.current.window.cursor
-    codelines = [vim.current.buffer[row - ix] for ix in range(rows_before, rows_after)]
-    return codelines
+# --- Docstr Stuff
 
 
 def is_module_pythonfile():
