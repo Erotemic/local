@@ -1,4 +1,8 @@
 "-------------------------
+"""
+" SeeAlso:
+"     ~/local/vim/rc/custom_misc_functions.vim
+"""
 " Function Remaps
 "map <F1> :call  ToggleWordHighlight()<CR>
 "Map Ctrl+W (navkey) to Ctrl+(navkey) (for split windows)
@@ -36,14 +40,7 @@ vnoremap ge :call PyFormatParagraph()<CR>
 noremap <leader>ge :call PySelectAndFormatParagraph()<CR>
 :noremap <c-g> :call PySelectAndFormatParagraph()<CR>
 
-"""
-" SeeAlso:
-"     ~/local/vim/rc/custom_misc_functions.vim
-"""
-
-
 :inoremap <c-b> import utool<CR>utool.embed()<CR>
-
 
 vnoremap gd :call PyFormatDoctest()<CR>
 vnoremap gu :call PyUnFormatDoctest()<CR>
@@ -57,7 +54,8 @@ noremap <leader>ex :call InsertIBEISExample()<CR>
 noremap <leader>em :call InsertMainPyTest()<CR>
 "inoremap <leader>d :call InsertDocstr()<CR>
 noremap <leader>ee :call PyCiteLookup()<CR>
-noremap <leader>es :call PyCiteScholarSearch()<CR>
+"noremap <leader>es :call PyCiteScholarSearch()<CR>
+noremap <leader>es :call SmartSearchWordAtCursor()<CR>
 
 noremap <leader>pv :call PyMakePrintVar()<CR>
 " alt-u

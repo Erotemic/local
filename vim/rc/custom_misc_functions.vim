@@ -583,6 +583,37 @@ endpython
 endfunc
 
 
+func! SmartSearchWordAtCursor() 
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool as ut
+ut.rrrr(verbose=False)
+word = pyvim_funcs.get_word_at_cursor(url_ok=True)
+# HACK: custom current bibtex file
+
+if ut.is_url(word):
+    url = word
+    print(url)
+else:
+    bib_fpath = ut.truepath('~/latex/crall-candidacy-2015/My_Library_clean.bib')
+    bibtex_dict = ut.get_bibtex_dict(bib_fpath)
+    title = bibtex_dict[word]['title'].replace('{', '').replace('}', '')
+    ut.copy_text_to_clipboard(title)
+    # scholar search
+    baseurl = r'https://scholar.google.com/scholar?hl=en&q='
+    suffix = '+'.join(title.split(' '))
+    url = baseurl + suffix
+    print(title)
+#import webbrowser
+#ut.open_url_in_browser(url, 'windows-default')
+#ut.open_url_in_browser(url, 'windows-default')
+ut.open_url_in_browser(url, 'google-chrome')
+#webbrowser.open(url)
+endpython
+endfunc
+
+
 func! PyFormatParagraph() range
 python << endpython
 import vim

@@ -406,13 +406,16 @@ def get_line_at_cursor():
     return line
 
 
-def get_word_at_cursor():
+def get_word_at_cursor(url_ok=False):
     """ returns the word highlighted by the curor """
     import vim
     buf = vim.current.buffer
     (row, col) = vim.current.window.cursor
     line = buf[row - 1]  # Original end of the file
-    nonword_chars = ' \t\n\r[](){}:;.,"\'\\/'
+    if url_ok:
+        nonword_chars = ' \t\n\r{},"\'\\'
+    else:
+        nonword_chars = ' \t\n\r[](){}:;.,"\'\\/'
     word = get_word_in_line_at_col(line, col, nonword_chars)
     return word
 
