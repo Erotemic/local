@@ -87,8 +87,9 @@ flake8_errors = [
     'E271', # multiple spaces after keyword 
     'E272', # multiple spaces before keyword
     'E301', # expected 1 blank line, found 0
-    #'E501', # > 79
+    'E501', # line length > 79
     'W602', # Old reraise syntax
+    'E266', # too many leading '#' for block comment 
 ] 
 flake8_args_list = [
     #'--max-line-length 80',
