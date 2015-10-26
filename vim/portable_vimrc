@@ -126,7 +126,7 @@ call QUICKOPEN_leader_tvio('6', '$CODE_DIR/Lasagne')
 "call QUICKOPEN_leader_tvio('8', '$CODE_DIR/flann/src/python/pyflann/flann_ctypes.py')
 call QUICKOPEN_leader_tvio('8', '$CODE_DIR/hesaff/src/hesaff.cpp')
 call QUICKOPEN_leader_tvio('9', '~/local/misc/modulechanges.sh')
-call QUICKOPEN_leader_tvio('w', '$CODE_DIR/ibeis_cnn/ibeis_cnn/train.py')
+call QUICKOPEN_leader_tvio('w', '$CODE_DIR/ibeis_cnn/ibeis_cnn/netrun.py')
 
 call QUICKOPEN_leader_tvio('0', '~/local/vim/rc/custom_regex_commands.vim')
 call QUICKOPEN_leader_tvio('_', '$VIMRUNTIME/../_vimrc')
