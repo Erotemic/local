@@ -19,6 +19,7 @@ source ~/local/vim/rc/venv_presource.vim
 ":e ~/local/init/ensure_vim_plugins.py
 ":e ~/local/init/ensure_vim_plugins.py
 ":e ~/local/vim/rc_settings/remap_settings.vim
+":e ~/local/vim/rc_settings/plugins_python.vim
 " My plugins are grabbed from
 " ~/local/init/__REPOS1__.py
 " Syntax is based in:

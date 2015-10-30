@@ -476,7 +476,8 @@ def find_pyfunc_above_cursor():
     # Get text posision
     (row, col) = vim.current.window.cursor
     line_list = vim.current.buffer
-    return ut.find_pyfunc_above_row(line_list, row)
+    funcname, searchlines = ut.find_pyfunc_above_row(line_list, row)
+    return funcname, searchlines
 
 
 def is_paragraph_end(line_):
@@ -646,20 +647,17 @@ def is_module_pythonfile():
 def get_current_modulename():
     """
     returns current module being edited
+
+    buffer_name = ut.truepath('~/local/vim/rc/pyvim_funcs.py')
     """
+    import vim
     from os.path import dirname
     import utool as ut
-    ut.rrrr(verbose=False)
-    import vim
-    modname = ut.get_modname_from_modpath(vim.current.buffer.name)
-    moddir = dirname(vim.current.buffer.name)
+    #ut.rrrr(verbose=False)
+    buffer_name = vim.current.buffer.name
+    modname = ut.get_modname_from_modpath(buffer_name)
+    moddir = dirname(buffer_name)
     return modname, moddir
-
-
-def get_current_func_and_module():
-    funcname, searchlines = find_pyfunc_above_cursor()
-    modname, moddir = get_current_modulename()
-    return funcname, searchlines, modname, moddir
 
 
 def auto_docstr(**kwargs):
@@ -677,15 +675,16 @@ def auto_docstr(**kwargs):
     dbgmsg = ''
 
     try:
-        funcname, searchlines, modname, moddir = get_current_func_and_module()
+        funcname, searchlines = find_pyfunc_above_cursor()
+        modname, moddir = get_current_modulename()
 
         if funcname is None:
             funcname = '[vimerr] UNKNOWN_FUNC: funcname is None'
             flag = True
         else:
-            modname = modname
             # Text to insert into the current buffer
-            autodockw = {'verbose': True}
+            verbose = True
+            autodockw = dict(verbose=verbose)
             autodockw.update(kwargs)
             docstr = ut.auto_docstr(modname, funcname, moddir=moddir, **autodockw)
             #if docstr.find('unexpected indent') > 0:
