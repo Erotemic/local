@@ -148,7 +148,7 @@ call QUICKOPEN_leader_tvio('e', '$CODE_DIR/ibeis/ibeis/expt/experiment_drawing.p
 call QUICKOPEN_leader_tvio('ed', '$CODE_DIR/ibeis/ibeis/expt/experiment_drawing.py')
 call QUICKOPEN_leader_tvio('eh', '$CODE_DIR/ibeis/ibeis/expt/experiment_harness.py')
 call QUICKOPEN_leader_tvio('ep', '$CODE_DIR/ibeis/ibeis/expt/experiment_printres.py')
-call QUICKOPEN_leader_tvio('es', '$CODE_DIR/ibeis/ibeis/expt/experiment_storage.py')
+call QUICKOPEN_leader_tvio('er', '$CODE_DIR/ibeis/ibeis/expt/test_result.py')
 "call QUICKOPEN_leader_tvio('e', '$CODE_DIR/hesaff/src/hesaff.cpp')
 call QUICKOPEN_leader_tvio('E', '$CODE_DIR/ibeis/ibeis/expt/experiment_configs.py')
 call QUICKOPEN_leader_tvio('f', '$CODE_DIR/ibeis/ibeis/ibsfuncs.py')
