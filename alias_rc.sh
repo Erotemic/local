@@ -39,7 +39,7 @@ clean_latex()
     rm main.dvi
 }
 alias ipy='ipython'
-alias ipynb='ipython notebook'
+#alias ipynb='ipython notebook'
 alias pyl='pylint --disable=C'
 alias pyf='pyflakes'
 alias lls='ls -I *.aux -I *.bbl -I *.blg -I *.out -I *.log -I *.synctex'

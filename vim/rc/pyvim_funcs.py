@@ -30,53 +30,6 @@ def regex_reconstruct_split(pattern, text):
     return block_list, separators
 
 
-def format_text_as_docstr(text):
-    r"""
-
-    CommandLine:
-        python  ~/local/vim/rc/pyvim_funcs.py  --test-format_text_as_docstr
-
-    Example:
-        >>> # DISABLE_DOCTEST
-        >>> from pyvim_funcs import *  # NOQA
-        >>> text = testdata_text()
-        >>> formated_text = format_text_as_docstr(text)
-        >>> result = ('formated_text = \n%s' % (str(formated_text),))
-        >>> print(result)
-    """
-    import utool as ut
-    import re
-    min_indent = ut.get_minimum_indentation(text)
-    indent_ =  ' ' * min_indent
-    formated_text = re.sub('^' + indent_, '' + indent_ + '>>> ', text, flags=re.MULTILINE)
-    formated_text = re.sub('^$', '' + indent_ + '>>> #', formated_text, flags=re.MULTILINE)
-    return formated_text
-
-
-def unformat_text_as_docstr(formated_text):
-    r"""
-
-    CommandLine:
-        python  ~/local/vim/rc/pyvim_funcs.py  --test-unformat_text_as_docstr
-
-    Example:
-        >>> # DISABLE_DOCTEST
-        >>> from pyvim_funcs import *  # NOQA
-        >>> text = testdata_text()
-        >>> formated_text = format_text_as_docstr(text)
-        >>> unformated_text = unformat_text_as_docstr(formated_text)
-        >>> result = ('unformated_text = \n%s' % (str(unformated_text),))
-        >>> print(result)
-    """
-    import utool as ut
-    import re
-    min_indent = ut.get_minimum_indentation(formated_text)
-    indent_ =  ' ' * min_indent
-    unformated_text = re.sub('^' + indent_ + '>>> ', '' + indent_,
-                             formated_text, flags=re.MULTILINE)
-    return unformated_text
-
-
 def format_multiple_paragraph_sentences(text):
     """
 
@@ -447,6 +400,7 @@ def get_word_in_line_at_col(line, col, nonword_chars=' \t\n\r[](){}:;.,"\'\\/'):
         >>> # DISABLE_DOCTEST
         >>> from pyvim_funcs import *  # NOQA
         >>> line = 'myvar.foo = yourvar.foobar'
+        >>> line = 'def loadfunc(self):'
         >>> col = 6
         >>> nonword_chars=' \t\n\r[](){}:;.,"\'\\/'
         >>> word = get_word_in_line_at_col(line, col, nonword_chars)
@@ -625,6 +579,13 @@ def insert_codeblock_at_cursor(text):
     new_tail = lines + buffer_tail  # Prepend our data
     del(vim.current.buffer[row:])  # delete old data
     vim.current.buffer.append(new_tail)  # append new data
+
+
+def append_text(text):
+    import vim
+    lines = text.split('\n')
+    vim.current.buffer.append(lines)
+
 
 # --- Docstr Stuff
 

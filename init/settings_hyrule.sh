@@ -348,3 +348,36 @@ Attribute marker-change-time 1409678168
 sudo restart cups
 #sudo apt-key adv --recv-key --keyserver keyserver.ubuntu.com 24CBF5474CFD1E2F
 }
+
+
+
+add_ipynb_mimetypes(){
+    # https://termueske.wordpress.com/2015/03/16/a-hack-for-ipython-notebook/
+
+    python -m utool.util_ubuntu --exec-add_new_mimetype_association --mime-name=ipynb+json --ext=.ipynb --exe-fpath=jupyter-notebook --force
+
+    #sudo sh -c 'cat > /usr/local/bin/ipynb << EOL
+    ##!/bin/bash
+    #netstat -tln |grep "8902"
+    ## if not found - equals to 1, start it
+    #if [ \$? -eq 1 ]
+    #then
+    #jupyter-notebook / --no-browser --port=8902 &
+    #sleep .5
+    #fi
+    #xdg-open http://localhost:8902/notebooks\$1
+    #'
+    #sudo chmod +x /usr/local/bin/ipynb 
+
+
+    #<?xml version="1.0" encoding="UTF-8"?>
+    #<mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>
+    #    <mime-type type="application/x-ipynb+json">
+    #        <comment>IPython Notebook</comment>
+    #        <glob pattern="*.ipynb"/>
+    #    </mime-type>
+    #</mime-info>
+
+    #import utool as ut
+    #ut.util_ubuntu.add_new_mimetype_association(ext, exe_fpath, mime_name)
+}

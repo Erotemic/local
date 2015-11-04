@@ -614,6 +614,26 @@ endpython
 endfunc
 
 
+func! GrepProjectWordAtCursor() 
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool as ut
+import re
+ut.rrrr(verbose=False)
+word = pyvim_funcs.get_word_at_cursor(url_ok=False)
+#msg_list = ut.grep_projects(['\\b' + re.escape(word) + '\\b'], verbose=False)
+print('Grepping for pattern = %r' % (word,))
+pat = r'\b' + re.escape(word) + r'\b'
+msg_list = ut.grep_projects([pat], verbose=False)
+fpath = ut.unixjoin(ut.get_app_resource_dir('utool'), 'tmp_grep_results.txt')
+pyvim_funcs.vim_fpath_cmd('split', fpath)
+text = '\n'.join(msg_list)
+pyvim_funcs.append_text(text)
+endpython
+endfunc
+
+
 func! PyFormatParagraph() range
 python << endpython
 import vim
@@ -642,8 +662,9 @@ func! PyFormatDoctest() range
 python << endpython
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool as ut
 text = pyvim_funcs.get_selected_text()
-formated_text = pyvim_funcs.format_text_as_docstr(text)
+formated_text = ut.format_text_as_docstr(text)
 pyvim_funcs.insert_codeblock_over_selection(formated_text)
 endpython
 endfunc
@@ -652,8 +673,9 @@ func! PyUnFormatDoctest() range
 python << endpython
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool as ut
 text = pyvim_funcs.get_selected_text()
-formated_text = pyvim_funcs.unformat_text_as_docstr(text)
+formated_text = ut.unformat_text_as_docstr(text)
 pyvim_funcs.insert_codeblock_over_selection(formated_text)
 endpython
 endfunc

@@ -56,6 +56,7 @@ noremap <leader>em :call InsertMainPyTest()<CR>
 noremap <leader>ee :call PyCiteLookup()<CR>
 "noremap <leader>es :call PyCiteScholarSearch()<CR>
 noremap <leader>es :call SmartSearchWordAtCursor()<CR>
+noremap <leader>eg :call GrepProjectWordAtCursor()<CR>
 
 noremap <leader>pv :call PyMakePrintVar()<CR>
 " alt-u
