@@ -587,6 +587,13 @@ def append_text(text):
     vim.current.buffer.append(lines)
 
 
+def overwrite_text(text):
+    import vim
+    lines = text.split('\n')
+    del (vim.current.buffer[:])
+    vim.current.buffer.append(lines)
+
+
 # --- Docstr Stuff
 
 

@@ -120,13 +120,18 @@ def _sed(r, regexpr, repl, force=False, recursive=False, dpath_list=None):
         include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h']
     if dpath_list is None:
         dpath_list = [os.getcwd()]
+    regexpr = extend_regex(regexpr)
+    #import re
     print('sed-ing %r' % (dpath_list,))
     print(' * regular include_patterns : %r' % (include_patterns,))
+    print(' * (orig) regular expression : %r' % (regexpr,))
+    print(' * (origstr) regular expression : %s' % (regexpr,))
+    #regexpr = re.escape(regexpr)
     print(' * regular expression : %r' % (regexpr,))
+    print(' * (str)regular expression : %s' % (regexpr,))
     print(' * replacement        : %r' % (repl,))
     print(' * recursive: %r' % (recursive,))
     print(' * force: %r' % (force,))
-    regexpr = extend_regex(regexpr)
     if '\x08' in regexpr:
         print('Remember \\x08 != \\b')
         print('subsituting for you for you')
@@ -159,7 +164,10 @@ def _grep(r, tofind_list, recursive=True, case_insensitive=True, regex=False,
         if regex:
             if len(tofind_list) > 1:
                 print('WARNING IN ROB NAV 133')
+            #import re
             regexpr = extend_regex(tofind_list[0])
+            regexpr = tofind_list[0]
+            #regexpr = re.escape(regexpr)
             ret = __regex_grepfile(fpath, regexpr, verbose=not invert)
         else:
             ret = __grepfile(fpath, tofind_list, case_insensitive,
@@ -200,8 +208,8 @@ def ls2(r):
                     to_list_dirs += [path]
                 if isfile(path):
                     to_list_files += [path]
-
-    sort_fn = lambda x: x.lower()
+    def sort_fn(x):
+        return x.lower()
     to_list_dirs.sort(key=sort_fn)
     to_list_files.sort(key=sort_fn)
 
@@ -222,7 +230,8 @@ def ls(r):
             if isfile(path):
                 to_list_files += [path]
 
-    sort_fn = lambda x: x.lower()
+    def sort_fn(x):
+        return x.lower()
     to_list_dirs.sort(key=sort_fn)
     to_list_files.sort(key=sort_fn)
 
