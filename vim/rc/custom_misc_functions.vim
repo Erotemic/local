@@ -402,7 +402,8 @@ func! InsertDocstrOnlyArgs()
 python << endpython
 import vim
 #vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
-import utool
+import utool as ut
+ut.rrrr(verbose=False)
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 
 if pyvim_funcs.is_module_pythonfile():
@@ -425,7 +426,12 @@ func! InsertDocstrOnlyCommandLine()
 python << endpython
 import vim
 #vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
-import utool
+import utool as ut
+imp.reload(ut._internal)
+imp.reload(ut._internal.meta_util_six)
+import imp
+imp.reload(ut)
+ut.rrrr(verbose=False)
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 
 if pyvim_funcs.is_module_pythonfile():
@@ -645,6 +651,19 @@ text = pyvim_funcs.get_selected_text(select_at_cursor=False)
 wrapped_text = pyvim_funcs.format_multiple_paragraph_sentences(text)
 pyvim_funcs.insert_codeblock_over_selection(wrapped_text)
 endpython
+endfunc
+
+
+func! SortLinesByFloat() range
+'<,'>!sort -n -k 2
+"python << endpython
+"import vim
+"import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+"text = pyvim_funcs.get_selected_text(select_at_cursor=False)
+"##wrapped_text = pyvim_funcs.format_single_paragraph_sentences(text)
+"wrapped_text = pyvim_funcs.format_multiple_paragraph_sentences(text)
+"pyvim_funcs.insert_codeblock_over_selection(wrapped_text)
+"endpython
 endfunc
 
 
