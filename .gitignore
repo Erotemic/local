@@ -32,3 +32,5 @@ speech/_multiedit.txt
 speech/_bringme-en.txt
 
 test_times.txt
+
+vim/vimfiles/view/*
