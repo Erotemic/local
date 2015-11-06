@@ -755,3 +755,32 @@ cp pydiosync-linux-1-0-2-targz\?dl\=true\&file\=%2F1e481dfadf%2FPydioSync-Linux-
 7z xzvf PydioSync-Linux-v1.0.2.tar.gz
 7z x PydioSync-Linux-v1.0.2.tar -o Pydio
 }
+
+
+git_and_hg()
+{
+    # References:
+    # https://felipec.wordpress.com/2012/11/13/git-remote-hg-bzr-2/
+    http://github.com/felipec/git-remote-hg/blob/master/git-remote-hg
+    http://github.com/felipec/git-remote-bzr/blob/master/git-remote-bzr
+
+    hg clone https://bitbucket.org/birkenfeld/sphinx-contrib
+
+    python -m utool.util_cplat --exec-get_path_dirs
+
+    # put the extension in the path
+    cd ~/bin
+    wget https://raw.githubusercontent.com/felipec/git-remote-hg/master/git-remote-hg
+    chmod +x ~/bin/git-remote-hg
+
+    # Clone a mercurial repo with git
+    code
+    git clone hg::https://bitbucket.org/birkenfeld/sphinx-contrib
+
+    od -c ~/bin/git-remote-hg
+
+    sudo pip uninstall sphinxcontrib-napoleon
+    cd ~/code/sphinx-contrib/napoleon
+    sudo python setup develop
+
+}

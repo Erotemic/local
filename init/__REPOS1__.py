@@ -108,6 +108,8 @@ VIM_REPO_URLS, VIM_REPOS = repo_list([
     'https://github.com/Erotemic/vim-quickopen-tvio.git',
     'https://github.com/docunext/closetag.vim.git',
 
+    'https://github.com/jeetsukumaran/vim-buffergator.git',
+
     #'https://github.com/terryma/vim-multiple-cursors.git',
     #'https://github.com/tpope/vim-repeat.git',
     #'https://github.com/tpope/vim-sensible.git',
