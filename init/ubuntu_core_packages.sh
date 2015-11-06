@@ -781,6 +781,6 @@ git_and_hg()
 
     sudo pip uninstall sphinxcontrib-napoleon
     cd ~/code/sphinx-contrib/napoleon
-    sudo python setup develop
+    sudo python setup.py develop
 
 }
