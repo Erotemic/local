@@ -381,3 +381,42 @@ add_ipynb_mimetypes(){
     #import utool as ut
     #ut.util_ubuntu.add_new_mimetype_association(ext, exe_fpath, mime_name)
 }
+
+
+ipython_notebook_server()
+{
+    # References: http://www.akadia.com/services/ssh_test_certificate.html
+    #openssl genrsa -des3 -out server.key 1024
+    #openssl req -new -key server.key -out server.csr
+    #cp server.key server.key.org
+    #openssl rsa -in server.key.org -out server.key
+    #openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
+    #jupyter-notebook --no-browser --certfile=server.crt
+
+    # References: https://ipython.org/ipython-doc/1/interactive/public_server.html
+    #openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout mycert.pem -out mycert.pem
+    #jupyter-notebook --no-browser --certfile=mycert.pem
+
+    # References: http://jupyter-notebook.readthedocs.org/en/latest/public_server.html
+#    openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout mycert.key -out mycert.pem
+
+#    jupyter-notebook --generate-config --help
+#    jupyter-notebook --config
+
+#    sh -c 'cat > nbserver_config.py << EOL
+## Notebook configuration for public notebook server
+#c = get_config()
+
+## Set options for certfile, ip, password, and toggle off browser auto-opening
+##c.NotebookApp.certfile = "mycert.pem"
+## Set ip to "*" to bind on all interfaces (ips) for the public server
+#c.NotebookApp.ip = "*"
+#c.NotebookApp.open_browser = False
+
+## It is a good idea to set a known, fixed port for server access
+#c.NotebookApp.port = 9999
+#EOL'
+    #jupyter-notebook --config nbserver_config.py --certfile=mycert.pem
+    #jupyter-notebook --config nbserver_config.py 
+    jupyter-notebook --ip="*" --no-browser
+}
