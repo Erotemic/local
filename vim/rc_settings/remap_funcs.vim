@@ -1,3 +1,10 @@
+
+"
+" Write all maps to files
+" :redir >> ~/mymaps.txt
+" :map
+" :redir END
+
 func! FUNC_Unmap(lhs, rhs)
     ":CMDREMAP(a:lhs, a:lhs)
     ":CMDREMAP(a:rhs, a:rhs)

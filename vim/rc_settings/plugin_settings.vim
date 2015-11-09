@@ -90,6 +90,24 @@ let Tlist_File_Fold_Auto_Close = 1
 " PLUGIN: Unimpaired
 "https://github.com/tpope/vim-unimpaired
 
+
+"-------------------------
+" PLUGIN: Buffergator
+" Remove mappings that I dont like 
+unmap!  <leader><S-Down>  
+unmap!  <leader><S-Right>  
+unmap!  <leader><S-Up>     
+unmap!  <leader><S-Left>   
+unmap!  <leader><Down>     
+unmap!  <leader><Right>    
+unmap!  <leader><Up>       
+unmap!  <leader><Left>     
+unmap!  <leader>T          
+unmap!  <leader>tc         
+unmap!  <leader>to         
+unmap!  <leader>t          
+" 
+
 " VimTweak
 let g:vimtweak_focus_transparency=0
 let s:ft=0

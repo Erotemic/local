@@ -46,6 +46,7 @@ enabled = [
     'syntastic',
     'vim-startify',
     'supertab',
+    'buffergator'
 ] 
 
 # Add a plugin to this list to disable it 
