@@ -94,18 +94,18 @@ let Tlist_File_Fold_Auto_Close = 1
 "-------------------------
 " PLUGIN: Buffergator
 " Remove mappings that I dont like 
-unmap!  <leader><S-Down>  
-unmap!  <leader><S-Right>  
-unmap!  <leader><S-Up>     
-unmap!  <leader><S-Left>   
-unmap!  <leader><Down>     
-unmap!  <leader><Right>    
-unmap!  <leader><Up>       
-unmap!  <leader><Left>     
-unmap!  <leader>T          
-unmap!  <leader>tc         
-unmap!  <leader>to         
-unmap!  <leader>t          
+silent! unmap!  <leader><S-Down>  
+silent! unmap!  <leader><S-Right>  
+silent! unmap!  <leader><S-Up>     
+silent! unmap!  <leader><S-Left>   
+silent! unmap!  <leader><Down>     
+silent! unmap!  <leader><Right>    
+silent! unmap!  <leader><Up>       
+silent! unmap!  <leader><Left>     
+silent! unmap!  <leader>T          
+silent! unmap!  <leader>tc         
+silent! unmap!  <leader>to         
+silent! unmap!  <leader>t          
 " 
 
 " VimTweak
