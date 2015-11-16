@@ -6,19 +6,25 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import utool as ut
 
 
-def register_drive():
+def register_drive(root_drive):
     r"""
+
     CommandLine:
+        set PYTHONPATH=%PYTHONPATH%;C:/Users/joncrall/local/scripts
         python -m register_files --exec-register_drive
 
-    Example:
+    Ignore:
         >>> # ENABLE_DOCTEST
         >>> import sys
         >>> from os.path import *
-        >>> sys.path.append(normpath(expanduser('~/local/scripts')))
         >>> from register_files import *  # NOQA
-        >>> result = register_drive()
-        >>> print(result)
+        >>> sys.path.append(normpath(expanduser('~/local/scripts')))
+
+    Example:
+        >>> from register_files import *  # NOQA
+        >>> result = register_drive('D:/')
+        >>> result = register_drive('E:/')
+        >>> result = register_drive('F:/')
     """
     import os
     from os.path import join, exists, dirname
@@ -26,8 +32,11 @@ def register_drive():
     # BUILD INFO ABOUT A SPECIFIC DIRECTORY
 
     #dpath = ut.truepath('~/local')
-    #dpath = ut.truepath('F:/')
-    ROOT_DPATH = ut.truepath('~')
+    #ROOT_DPATH = ut.truepath('F:/')
+    #ROOT_DPATH = ut.truepath('D:/')
+    #ROOT_DPATH = ut.truepath('E:/')
+    #ROOT_DPATH = ut.truepath('~')
+    ROOT_DPATH = ut.truepath(root_drive)
     print('Registering %s' % (ROOT_DPATH,))
     #cfgstr = ut.hashstr27(ROOT_DPATH)
 
@@ -53,6 +62,7 @@ def register_drive():
         print('Regsitering %d files and %d directories' % (len(fpath_registry), len(dpath_registry)))
         cache.save('fpath_registry', fpath_registry)
         cache.save('dpath_registry', dpath_registry)
+    print('Loaded %d files and %d directories' % (len(fpath_registry), len(dpath_registry)))
 
     if False:
         # Update existing files
@@ -76,6 +86,99 @@ def register_drive():
         cache.save('fpath_registry', fpath_registry)
         cache.save('dpath_registry', dpath_registry)
 
+    import numpy as np
+    try:
+        fpath_bytes_list = cache.load('fpath_bytes_list')
+        assert len(fpath_bytes_list) == len(fpath_registry)
+        #print(len(fpath_bytes_list))
+    except ut.CacheMissException:
+        def tryread_nbytes(fpath):
+            try:
+                return ut.file_bytes(fpath)
+            except WindowsError:
+                return np.nan
+
+        fpath_bytes_list = [
+            tryread_nbytes(fpath)
+            for fpath in prog_(fpath_registry, 'reading size')
+        ]
+        assert len(fpath_registry) == len(fpath_registry)
+        cache.save('fpath_bytes_list', fpath_bytes_list)
+
+    fpath_bytes_arr = np.array(fpath_bytes_list)
+    print('Loaded filesize for %d / %d files' % ((~np.isnan(fpath_bytes_arr)).sum(), len(fpath_bytes_arr)))
+
+    from six.moves import zip
+    try:
+        #fpath_hashX_list = cache.load('fpath_hashX_list')
+        pass
+    except ut.CacheMissException:
+        def bytes_based_hash(fpath, nbytes):
+            try:
+                if nbytes > 2 ** 30:
+                    return None
+                elif nbytes > (2 ** 20):
+                    return ut.get_file_hash(fpath, stride=256)
+                else:
+                    return ut.get_file_hash(fpath, stride=1)
+            except IOError:
+                return None
+
+        fpath_hashX_list = [None] * len(fpath_registry)
+
+        import numpy as np  # NOQA
+        import vtool as vt  # NOQA
+        assert len(fpath_bytes_list) == len(fpath_registry)
+
+        nbytes_tiers = [
+            np.inf, 2 ** 32, 2 ** 30,
+            2 ** 29, 2 ** 28, 2 ** 25,
+            2 ** 20, 2 ** 10, 0, -np.inf,
+        ]
+        tier_windows = list(ut.itertwo(nbytes_tiers))
+
+        print('Tier Windows')
+        for tier, (high, low) in enumerate(tier_windows):
+            print('tier = %r' % (tier,))
+            print('tier_windows = %s - %s' % (ut.byte_str2(high), ut.byte_str2(low)))
+
+        tier_flags = [
+            np.logical_and.reduce([fpath_bytes_arr <= high, fpath_bytes_arr > low])
+            for high, low in tier_windows
+        ]
+        tier_fpaths = [ut.compress(fpath_registry, flags) for flags in tier_flags]
+
+        for tier, fpaths in enumerate(tier_fpaths):
+            print('tier = %r' % (tier,))
+            high, low = tier_windows[tier]
+            print('tier_windows = %s - %s' % (ut.byte_str2(high), ut.byte_str2(low)))
+            print('len(fpaths) = %r' % (len(fpaths),))
+
+        def tryhash(fpath_, stride=1):
+            try:
+                return ut.get_file_hash(fpath_, stride=stride)
+            except IOError:
+                return None
+
+        #for tier, fpaths in enumerate(tier_fpaths):
+        for tier in [3, 4, 5]:
+            tier = 4
+            window = np.array(tier_windows[tier])
+            minbytes = window[np.isfinite(window)].min()
+            stride = max(1, minbytes // (2 ** 20))
+            fpaths = tier_fpaths[tier]
+
+            tier_hashes = [
+                tryhash(fpath, stride) for fpath in
+                prog_(fpaths, 'tier=%r hashes' % (tier,), freq=100)
+            ]
+            tier_idxs = np.where(tier_flags[tier])[0]
+
+            for idx, hash_ in zip(tier_idxs, tier_hashes):
+                fpath_hashX_list[idx] = hash_
+
+        cache.save('fpath_hashX_list', fpath_hashX_list)
+
     # Create mapping from directory to subfiles
     try:
         dpath_to_fidx = cache.load('dpath_to_fidx')
@@ -94,127 +197,7 @@ def register_drive():
                     break
         cache.save('dpath_to_fidx', dpath_to_fidx)
 
-    try:
-        fpath_bytes_list = cache.load('fpath_bytes_list')
-        assert len(fpath_bytes_list) == len(fpath_registry)
-        #print(len(fpath_bytes_list))
-    except ut.CacheMissException:
-        import numpy as np
-        def tryread_nbytes(fpath):
-            try:
-                return ut.file_bytes(fpath)
-            except WindowsError:
-                return np.nan
-
-        fpath_bytes_list = [
-            tryread_nbytes(fpath)
-            for fpath in prog_(fpath_registry, 'reading size')
-        ]
-        assert len(fpath_registry) == len(fpath_registry)
-        cache.save('fpath_bytes_list', fpath_bytes_list)
-
-    if False:
-        try:
-            fpath_hashX_list = cache.load('fpath_hashX_list')
-        except ut.CacheMissException:
-            from six.moves import zip
-            def bytes_based_hash(fpath, nbytes):
-                try:
-                    if nbytes > 2 ** 30:
-                        return None
-                    elif nbytes > (2 ** 20):
-                        return ut.get_file_hash(fpath, stride=256)
-                    else:
-                        return ut.get_file_hash(fpath, stride=1)
-                except IOError:
-                    return None
-
-            #fpath_hashX_list = [
-            #    bytes_based_hash(fpath, nbytes)
-            #    for fpath, nbytes in
-            #    prog_(zip(fpath_registry, fpath_bytes_list),  'reading hash256', nTotal=len(fpath_registry))
-            #]
-            #fpath_hash256_list = fpath_hashX_list
-
-            fpath_hashX_list = [None] * len(fpath_registry)
-
-            import numpy as np  # NOQA
-            import vtool as vt  # NOQA
-            assert len(fpath_bytes_list) == len(fpath_registry)
-            fpath_bytes_arr = np.array(fpath_bytes_list)
-
-            nbytes_tiers = [
-                np.inf,
-                2 ** 32,
-                2 ** 30,
-                2 ** 29,
-                2 ** 28,
-                2 ** 25,
-                2 ** 20,
-                2 ** 10,
-                0,
-                -np.inf,
-            ]
-            tier_windows = list(ut.itertwo(nbytes_tiers))
-
-            print('Tier Windows')
-            for tier, (high, low) in enumerate(tier_windows):
-                print('tier = %r' % (tier,))
-                print('tier_windows = %s - %s' % (ut.byte_str2(high), ut.byte_str2(low)))
-
-            tier_flags = [
-                np.logical_and.reduce([fpath_bytes_arr <= high, fpath_bytes_arr > low])
-                for high, low in tier_windows
-            ]
-            tier_fpaths = [ut.compress(fpath_registry, flags) for flags in tier_flags]
-
-            for tier, fpaths in enumerate(tier_fpaths):
-                print('tier = %r' % (tier,))
-                high, low = tier_windows[tier]
-                #if not np.isfinite(high):
-                #    high = -1
-                #if not np.isfinite(low):
-                #    low = -1
-                print('tier_windows = %s - %s' % (ut.byte_str2(high), ut.byte_str2(low)))
-                print('len(fpaths) = %r' % (len(fpaths),))
-                #print(ut.list_str(fpaths[0:2]))
-
-            #is_verylargefile = fpath_bytes_arr > 2 ** 40
-            #is_largefile = np.logical_and.reduce([fpath_bytes_arr <= 2 ** 40, fpath_bytes_arr > 2 ** 30])
-            #is_normalfile = np.logical_and.reduce([fpath_bytes_arr <= 2 ** 30, fpath_bytes_arr > 2 ** 20])
-            #is_smallfile = np.logical_and.reduce([fpath_bytes_arr <= 2 ** 20, fpath_bytes_arr > 2 ** 10])
-            #is_verysmallfile = np.logical_and.reduce([fpath_bytes_arr <= 2 ** 10, fpath_bytes_arr > 0])
-            #is_emptyfile = fpath_bytes_arr == 0
-
-            def tryhash(fpath_, stride=1):
-                try:
-                    return ut.get_file_hash(fpath_, stride=stride)
-                except IOError:
-                    return None
-
-            #for tier, fpaths in enumerate(tier_fpaths):
-            tier = 4
-            window = np.array(tier_windows[tier])
-            minbytes = window[np.isfinite(window)].min()
-            stride = max(1, minbytes // (2 ** 20))
-            fpaths = tier_fpaths[tier]
-
-            tier_hashes = [
-                tryhash(fpath, stride) for fpath in
-                prog_(fpaths, 'tier=%r hashes' % (tier,), freq=100)
-            ]
-            tier_idxs = np.where(tier_flags[tier])[0]
-
-            for idx, hash_ in zip(tier_idxs, tier_hashes):
-                fpath_hashX_list[idx] = hash_
-
-            #very_large_fpath_list = ut.compress(fpath_registry, is_very_largefile)
-
-            #fpath_hash256_list = [
-            #]
-
-            cache.save('fpath_hashX_list', fpath_hashX_list)
-            #cache.save('fpath_hash256_list', fpath_hash256_list)
+    return
 
     # INFER INFORMATION ABOUT THINGS
     def biggest_files():
