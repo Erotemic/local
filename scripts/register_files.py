@@ -110,8 +110,7 @@ def register_drive(root_drive):
 
     from six.moves import zip
     try:
-        #fpath_hashX_list = cache.load('fpath_hashX_list')
-        pass
+        fpath_hashX_list = cache.load('fpath_hashX_list')
     except ut.CacheMissException:
         def bytes_based_hash(fpath, nbytes):
             try:
@@ -161,8 +160,7 @@ def register_drive(root_drive):
                 return None
 
         #for tier, fpaths in enumerate(tier_fpaths):
-        for tier in [3, 4, 5]:
-            tier = 4
+        for tier in [5, 4, 3]:
             window = np.array(tier_windows[tier])
             minbytes = window[np.isfinite(window)].min()
             stride = max(1, minbytes // (2 ** 20))
@@ -185,7 +183,7 @@ def register_drive(root_drive):
         assert len(dpath_to_fidx) <= len(dpath_registry)
     except ut.CacheMissException:
         dpath_to_fidx = ut.ddict(list)
-        for fidx, fpath in prog_(enumerate(fpath_registry), 'making dpath fidx map', nTotal=len(fpath_registry)):
+        for fidx, fpath in prog_(enumerate(fpath_registry), 'making dpath fidx map', freq=10000, nTotal=len(fpath_registry)):
             current_path = fpath
             #last_dpath = None
             while True:
