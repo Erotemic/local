@@ -17,7 +17,6 @@ source ~/local/vim/rc/venv_presource.vim
 ":e $VIMRUNTIME/syntax/python.vim
 ":e $VIMRUNTIME/syntax/markdown.vim
 ":e ~/local/init/ensure_vim_plugins.py
-":e ~/local/init/ensure_vim_plugins.py
 ":e ~/local/vim/rc_settings/remap_settings.vim
 ":e ~/local/vim/rc_settings/plugins_python.vim
 " My plugins are grabbed from
