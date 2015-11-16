@@ -11,7 +11,8 @@ def register_drive(root_drive):
 
     CommandLine:
         set PYTHONPATH=%PYTHONPATH%;C:/Users/joncrall/local/scripts
-        python -m register_files --exec-register_drive
+        export PYTHONPATH=$PYTHONPATH:~/local/scripts
+        python -m register_files --exec-register_drive --drives ~
 
     Ignore:
         >>> # ENABLE_DOCTEST
@@ -22,12 +23,17 @@ def register_drive(root_drive):
 
     Example:
         >>> from register_files import *  # NOQA
-        >>> result = register_drive('D:/')
-        >>> result = register_drive('E:/')
-        >>> result = register_drive('F:/')
+        >>> drives = ut.get_argval('--drives', type_=list, default=[])
+        >>> for root_drive in drives:
+        >>>     register_drive(root_drive)
+
+        #>>> result = register_drive('D:/')
+        #>>> result = register_drive('E:/')
+        #>>> result = register_drive('F:/')
     """
     import os
     from os.path import join, exists, dirname
+    root_drive = ut.ensure_unicode(root_drive)
 
     # BUILD INFO ABOUT A SPECIFIC DIRECTORY
 
@@ -86,6 +92,11 @@ def register_drive(root_drive):
         cache.save('fpath_registry', fpath_registry)
         cache.save('dpath_registry', dpath_registry)
 
+    if ut.WIN32:
+        SystemErrors = (OSError, WindowsError)
+    else:
+        SystemErrors = (OSError)
+
     import numpy as np
     try:
         fpath_bytes_list = cache.load('fpath_bytes_list')
@@ -95,7 +106,7 @@ def register_drive(root_drive):
         def tryread_nbytes(fpath):
             try:
                 return ut.file_bytes(fpath)
-            except WindowsError:
+            except SystemErrors:
                 return np.nan
 
         fpath_bytes_list = [
@@ -195,12 +206,10 @@ def register_drive(root_drive):
                     break
         cache.save('dpath_to_fidx', dpath_to_fidx)
 
-    return
-
     # INFER INFORMATION ABOUT THINGS
     def biggest_files():
         sortx = ut.list_argsort(fpath_bytes_list)[::-1]
-        sel = sortx[0:100]
+        sel = sortx[0:10]
         biggest_nbytes = ut.take(fpath_bytes_list, sel)
         biggest_files = ut.take(fpath_registry, sel)
         biginfo_list = list(zip(map(ut.byte_str2, biggest_nbytes), biggest_files))
@@ -214,12 +223,15 @@ def register_drive(root_drive):
         dpath_nbytes_list = list(map(sum, unflat_dpath_bytes_list))
 
         sortx = ut.list_argsort(dpath_nbytes_list)[::-1]
-        sel = sortx[0:100]
+        sel = sortx[0:10]
         biggest_nbytes = ut.take(dpath_nbytes_list, sel)
         biggest_dpaths = ut.take(dpath_list, sel)
         biginfo_list = list(zip(map(ut.byte_str2, biggest_nbytes), biggest_dpaths))
         print(ut.list_str(biginfo_list, strvals=True))
         pass
+
+    #biggest_files()
+    #biggest_dirs()
 
     # --- FIND POTENTIALLY DUPLICATE FILES ---
     def fix_duplicate_files():
@@ -240,24 +252,29 @@ def register_drive(root_drive):
         # Look at duplicate files
         unflat_fpaths = ut.list_unflat_take(fpath_registry, duplicate_idxs)
         unflat_sizes = ut.list_unflat_take(fpath_bytes_list, duplicate_idxs)
-        print('Duplicate sizes: ' + ut.list_str(unflat_sizes[0:10], nl=True))
+        print('%d unique files are duplicated' % (len(unflat_sizes),))
+        #print('Duplicate sizes: ' + ut.list_str(unflat_sizes[0:10], nl=True))
         print('Duplicate fpaths: ' + ut.list_str(unflat_fpaths[0:10], nl=True))
 
     # --- FIND EMPTY DIRECTORIES ---
-    def find_empty_directories():
+    def find_empty_directories(dryrun=True):
         fidxs_list = ut.dict_take(dpath_to_fidx, dpath_registry)
         isempty_flags = [len(fidxs) == 0 for fidxs in fidxs_list]
         empty_dpaths = ut.compress(dpath_registry, isempty_flags)
+        from os.path import islink
 
-        def iswin32link(path_):
+        def is_cplat_link(path_):
             try:
+                if islink(path_):
+                    return True
                 os.listdir(d)
                 return False
-            except WindowsError:
+            except SystemErrors:
                 return True
-        valid_flags = [not iswin32link(d) for d  in empty_dpaths]
+        valid_flags = [not is_cplat_link(d) for d  in empty_dpaths]
         if not all(valid_flags):
-            print('Filtered windows links %r / %r' % (len(empty_dpaths) - sum(valid_flags), len(empty_dpaths)))
+            print('Filtered windows links %r / %r' % (
+                len(empty_dpaths) - sum(valid_flags), len(empty_dpaths)))
             #print(ut.list_str(empty_dpaths[0:10]))
             empty_dpaths = ut.compress(empty_dpaths, valid_flags)
 
@@ -265,7 +282,8 @@ def register_drive(root_drive):
         print(ut.list_str(empty_dpaths[0:10]))
 
         # Ensure actually still empty
-        current_contents = [ut.glob(d, with_dirs=False) for d in prog_(empty_dpaths, 'checking empty status')]
+        current_contents = [ut.glob(d, with_dirs=False)
+                            for d in prog_(empty_dpaths, 'checking empty status')]
         current_lens = list(map(len, current_contents))
         assert not any(current_lens), 'some dirs are not empty'
 
@@ -297,34 +315,46 @@ def register_drive(root_drive):
                     yield dir_
                 for fpath in fpaths:
                     yield fpath
-        # FIX PART
-        #from os.path import normpath
-        #for d in prog_(truly_empty_dirs):
-        #    break
-        #    if ut.WIN32:
-        #        # http://www.sevenforums.com/system-security/53095-file-folder-read-only-attribute-wont-disable.html
-        #        ut.cmd('attrib', '-r', '-s', normpath(d), verbose=False)
-        #x = ut.remove_fpaths(truly_empty_dirs, strict=False)
 
-        exclude_dirs = [join(ROOT_DPATH, 'AppData')]
+        exclude_base_dirs = [join(ROOT_DPATH, 'AppData')]
+        exclude_end_dirs = ['__pycache__']
         truly_empty_dirs1 = truly_empty_dirs
-        for ed in exclude_dirs:
-            truly_empty_dirs1 = [d for d in truly_empty_dirs1 if not d.startswith(ed)]
+        for ed in exclude_base_dirs:
+            truly_empty_dirs1 = [
+                d for d in truly_empty_dirs1
+                if (
+                    not any(d.startswith(ed) for ed in exclude_base_dirs) and
+                    not any(d.endswith(ed) for ed in exclude_end_dirs)
+                )
+            ]
+        #print('truly_empty_dirs1 = %s' % (ut.list_str(truly_empty_dirs1[0::5], strvals=True),))
+        print('truly_empty_dirs1 = %s' % (ut.list_str(truly_empty_dirs1, strvals=True),))
 
-        print('Deleting %d truly_empty_dirs1' % (len(truly_empty_dirs1),))
-        print('truly_empty_dirs1 = %s' % (ut.list_str(truly_empty_dirs1[0::5], strvals=True),))
+        if not dryrun:
+            # FIX PART
+            #from os.path import normpath
+            #for d in prog_(truly_empty_dirs):
+            #    break
+            #    if ut.WIN32:
+            #        # http://www.sevenforums.com/system-security/53095-file-folder-read-only-attribute-wont-disable.html
+            #        ut.cmd('attrib', '-r', '-s', normpath(d), verbose=False)
+            #x = ut.remove_fpaths(truly_empty_dirs, strict=False)
 
-        for d in prog_(truly_empty_dirs1, 'DELETE empty dirs'):  # NOQA
-            ut.delete(d, quiet=True)
+            print('Deleting %d truly_empty_dirs1' % (len(truly_empty_dirs1),))
 
-        if False:
-            # remove file that failed removing
-            flags = list(map(exists, truly_empty_dirs1))
-            truly_empty_dirs1 = ut.compress(truly_empty_dirs1, flags)
-            for d in prog_(truly_empty_dirs1, 'rming'):
-                ut.cmd('rmdir', d)
+            for d in prog_(truly_empty_dirs1, 'DELETE empty dirs'):  # NOQA
+                ut.delete(d, quiet=True)
+
+            if False:
+                # remove file that failed removing
+                flags = list(map(exists, truly_empty_dirs1))
+                truly_empty_dirs1 = ut.compress(truly_empty_dirs1, flags)
+                for d in prog_(truly_empty_dirs1, 'rming'):
+                    ut.cmd('rmdir', d)
 
     # Ensure actually still empty (with recursive checks for hidden files)
+    find_empty_directories()
+    fix_duplicate_files()
 
 
 if __name__ == '__main__':
