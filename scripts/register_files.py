@@ -248,7 +248,6 @@ def register_drive(root_drive):
         duplicate_hashes = [
             key for key, val in six.iteritems(multiindex_dict_)
             if len(val) > 1]
-        ut.embed()
         duplicate_idxs = ut.dict_take(multiindex_dict_, duplicate_hashes)
         unflat_fpaths = ut.list_unflat_take(fpath_registry, duplicate_idxs)
         # Check if any dups have been removed
@@ -259,6 +258,23 @@ def register_drive(root_drive):
         # Look at duplicate files
         unflat_fpaths = ut.list_unflat_take(fpath_registry, duplicate_idxs)
         unflat_sizes = ut.list_unflat_take(fpath_bytes_list, duplicate_idxs)
+
+        # Find highly coupled directories
+        if True:
+            coupled_dirs = []
+            for fpaths in unflat_fpaths:
+                #basedir = ut.longest_existing_path(commonprefix(fpaths))
+                dirs = sorted(list(map(dirname, fpaths)))
+                def up_diag_prodx(num):
+                    return [(n1, n2) for n1 in range(num) for n2 in range(num) if n1 < n2]
+                idxs = up_diag_prodx(len(dirs))
+                coupled_dirs.extend(list(map(tuple, ut.list_unflat_take(dirs, idxs))))
+            hist_ = ut.dict_hist(coupled_dirs)
+            coupled_idxs = ut.list_argsort(hist_.values())[::-1]
+            most_coupled = ut.list_take(list(hist_.keys()), coupled_idxs[0:100])
+            print('Coupled fpaths: ' + ut.list_str(most_coupled, nl=True))
+
+        ut.embed()
         print('%d unique files are duplicated' % (len(unflat_sizes),))
         #print('Duplicate sizes: ' + ut.list_str(unflat_sizes[0:10], nl=True))
         #print('Duplicate fpaths: ' + ut.list_str(unflat_fpaths[0:10], nl=True))
