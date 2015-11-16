@@ -207,6 +207,7 @@ def register_drive(root_drive):
         cache.save('dpath_to_fidx', dpath_to_fidx)
 
     # INFER INFORMATION ABOUT THINGS
+    @ut.argv_flag_dec
     def biggest_files():
         sortx = ut.list_argsort(fpath_bytes_list)[::-1]
         sel = sortx[0:10]
@@ -215,6 +216,7 @@ def register_drive(root_drive):
         biginfo_list = list(zip(map(ut.byte_str2, biggest_nbytes), biggest_files))
         print(ut.list_str(biginfo_list, strvals=True))
 
+    @ut.argv_flag_dec
     def biggest_dirs():
         dpath_list = dpath_registry
         #dpath_list = [ROOT_DPATH]
@@ -230,11 +232,9 @@ def register_drive(root_drive):
         print(ut.list_str(biginfo_list, strvals=True))
         pass
 
-    #biggest_files()
-    #biggest_dirs()
-
     # --- FIND POTENTIALLY DUPLICATE FILES ---
-    def fix_duplicate_files():
+    @ut.argv_flag_dec
+    def fix_duplicates():
         from six.moves import zip, range  # NOQA
         import six  # NOQA
         def build_multindex(list_):
@@ -248,16 +248,27 @@ def register_drive(root_drive):
         duplicate_hashes = [
             key for key, val in six.iteritems(multiindex_dict_)
             if len(val) > 1]
+        ut.embed()
         duplicate_idxs = ut.dict_take(multiindex_dict_, duplicate_hashes)
+        unflat_fpaths = ut.list_unflat_take(fpath_registry, duplicate_idxs)
+        # Check if any dups have been removed
+        still_exists = ut.unflat_map(exists, unflat_fpaths)
+        unflat_idxs2 = ut.zipcompress(duplicate_idxs, still_exists)
+        duplicate_idxs = [idxs for idxs in unflat_idxs2 if len(idxs) > 1]
+
         # Look at duplicate files
         unflat_fpaths = ut.list_unflat_take(fpath_registry, duplicate_idxs)
         unflat_sizes = ut.list_unflat_take(fpath_bytes_list, duplicate_idxs)
         print('%d unique files are duplicated' % (len(unflat_sizes),))
         #print('Duplicate sizes: ' + ut.list_str(unflat_sizes[0:10], nl=True))
-        print('Duplicate fpaths: ' + ut.list_str(unflat_fpaths[0:10], nl=True))
+        #print('Duplicate fpaths: ' + ut.list_str(unflat_fpaths[0:10], nl=True))
+        #print('Duplicate fpaths: ' + ut.list_str(unflat_fpaths[0::5], nl=True))
+        print('Duplicate fpaths: ' + ut.list_str(unflat_fpaths, nl=True))
 
     # --- FIND EMPTY DIRECTORIES ---
-    def find_empty_directories(dryrun=True):
+    dryrun = not ut.get_argflag('--force')
+    @ut.argv_flag_dec
+    def fix_empty_dirs():
         fidxs_list = ut.dict_take(dpath_to_fidx, dpath_registry)
         isempty_flags = [len(fidxs) == 0 for fidxs in fidxs_list]
         empty_dpaths = ut.compress(dpath_registry, isempty_flags)
@@ -327,8 +338,8 @@ def register_drive(root_drive):
                     not any(d.endswith(ed) for ed in exclude_end_dirs)
                 )
             ]
-        #print('truly_empty_dirs1 = %s' % (ut.list_str(truly_empty_dirs1[0::5], strvals=True),))
-        print('truly_empty_dirs1 = %s' % (ut.list_str(truly_empty_dirs1, strvals=True),))
+        print('truly_empty_dirs1[::5] = %s' % (ut.list_str(truly_empty_dirs1[0::5], strvals=True),))
+        #print('truly_empty_dirs1 = %s' % (ut.list_str(truly_empty_dirs1, strvals=True),))
 
         if not dryrun:
             # FIX PART
@@ -345,7 +356,7 @@ def register_drive(root_drive):
             for d in prog_(truly_empty_dirs1, 'DELETE empty dirs'):  # NOQA
                 ut.delete(d, quiet=True)
 
-            if False:
+            if ut.WIN32 and False:
                 # remove file that failed removing
                 flags = list(map(exists, truly_empty_dirs1))
                 truly_empty_dirs1 = ut.compress(truly_empty_dirs1, flags)
@@ -353,8 +364,11 @@ def register_drive(root_drive):
                     ut.cmd('rmdir', d)
 
     # Ensure actually still empty (with recursive checks for hidden files)
-    find_empty_directories()
-    fix_duplicate_files()
+
+    biggest_files()
+    biggest_dirs()
+    fix_empty_dirs()
+    fix_duplicates()
 
 
 if __name__ == '__main__':
