@@ -127,7 +127,7 @@ call QUICKOPEN_leader_tvio('6', '~/code/Lasagne')
 "call QUICKOPEN_leader_tvio('8', '~/code/flann/src/python/pyflann/flann_ctypes.py')
 call QUICKOPEN_leader_tvio('8', '~/code/hesaff/src/hesaff.cpp')
 call QUICKOPEN_leader_tvio('9', '~/local/misc/modulechanges.sh')
-"call QUICKOPEN_leader_tvio('w', '~/code/ibeis_cnn/ibeis_cnn/netrun.py')
+call QUICKOPEN_leader_tvio('W', '~/code/ibeis_cnn/ibeis_cnn/netrun.py')
 call QUICKOPEN_leader_tvio('w', '~/code/ibeis/ibeis/web/zmq_task_queue.py')
 
 call QUICKOPEN_leader_tvio('0', '~/local/vim/rc/custom_regex_commands.vim')
