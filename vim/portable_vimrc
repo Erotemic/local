@@ -37,16 +37,8 @@ set encoding=utf8
 source ~/local/vim/vimfiles/syntax/python.vim 
 
 python << endpython
+import sys
 import vim
-enabled = [
-    'jedi-vim',
-    'nerdcommenter',
-    'nerdtree',
-    'syntastic',
-    'vim-startify',
-    'supertab',
-    'buffergator'
-] 
 
 # Add a plugin to this list to disable it 
 disabled = [
@@ -65,6 +57,29 @@ disabled = [
     'vim-unimpaired',
     'vim-vimtweak',
 ]
+
+if sys.platform.startswith('win32'):
+    enabled = [
+        'jedi-vim',
+        'nerdcommenter',
+        'nerdtree',
+        'syntastic',
+        'vim-startify',
+        'supertab',
+        'buffergator'
+    ] 
+    disabled.append('supertab')
+    disabled.append('jedi-vim')
+else:
+    enabled = [
+        'jedi-vim',
+        'nerdcommenter',
+        'nerdtree',
+        'syntastic',
+        'vim-startify',
+        'supertab',
+        'buffergator'
+    ] 
 vim.command('let g:pathogen_disabled = ' + repr(disabled))
 endpython
 
