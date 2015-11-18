@@ -38,34 +38,49 @@ source ~/local/vim/vimfiles/syntax/python.vim
 
 python << endpython
 import vim
-enabled = [
-    'jedi-vim',
-    'nerdcommenter',
-    'nerdtree',
-    'syntastic',
-    'vim-startify',
-    'supertab',
-    'buffergator'
-] 
+import sys
 
-# Add a plugin to this list to disable it 
-disabled = [
-    'vim-quickopen-tvio',
-    'taglist.vim',
-    'vim-fugitive'
-    'csv.vim',
-    'grep.vim',
-    'vim-repeat',
-    'Conque-Shell',
-    'highlight.vim',
-    'vim-airline',
-    'vim-multiple-cursors',
-    'vim-sensible',
-    'vim-surround',
-    'vim-unimpaired',
-    'vim-vimtweak',
-]
-vim.command('let g:pathogen_disabled = ' + repr(disabled))
+def get_disabled_plugins():
+    """
+    Returns a list of disabled plugin names
+
+    SeeAlso:
+        ~/local/init/ensure_vim_plugins.py
+        # list of plugins are in
+        ~/local/init/__REPOS1__.py
+    """
+    WIN32 = sys.platform.startswith('win32')
+    # Set flag to be false to disable plugin
+    known_plugins = [
+        (True, 'jedi-vim'),
+        (True, 'nerdcommenter'),
+        (True, 'nerdtree'),
+        (True, 'syntastic'),
+        (True, 'vim-startify'),
+        (True, 'supertab'),
+        (True, 'buffergator'),
+        (not WIN32, 'taglist.vim'),  # ctags
+        (False, 'vim-quickopen-tvio'),
+        (False, 'vim-fugitive'),
+        (False, 'csv.vim'),
+        (False, 'grep.vim'),
+        (False, 'vim-repeat'),
+        (False, 'Conque-Shell'),
+        (False, 'highlight.vim'),
+        (False, 'vim-airline'),
+        (False, 'vim-multiple-cursors'),
+        (False, 'vim-sensible'),
+        (False, 'vim-surround'),
+        (False, 'vim-unimpaired'),
+        (False, 'vim-vimtweak'),
+    ] 
+    disabled = [name for flag, name in known_plugins if not flag]
+    return disabled
+
+disabled = get_disabled_plugins()
+#disabled_str = repr(disabled)
+disabled_str = '[' + (', '.join(['"%s"' % (name,) for name in disabled])) + ']'
+vim.command('let g:pathogen_disabled = ' + disabled_str)
 endpython
 
 ":ECHOVAR runtimepath

@@ -90,7 +90,7 @@ VIM_REPO_URLS, VIM_REPOS = repo_list([
     'https://github.com/scrooloose/syntastic.git',
     'https://github.com/kien/rainbow_parentheses.vim.git',
     #'https://github.com/fholgado/minibufexpl.vim.git',
-    'https://github.com/vim-scripts/taglist.vim.git',
+    'https://github.com/vim-scripts/taglist.vim.git',  # ctags
     'https://github.com/honza/vim-snippets.git',
     'https://github.com/altercation/vim-colors-solarized.git',
 
