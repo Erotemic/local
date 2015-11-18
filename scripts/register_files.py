@@ -190,9 +190,8 @@ class Drive(object):
             for fpaths in unflat_fpaths:
                 #basedir = ut.longest_existing_path(commonprefix(fpaths))
                 dirs = sorted(list(map(dirname, fpaths)))
-                def up_diag_prodx(num):
-                    return [(n1, n2) for n1 in range(num) for n2 in range(num) if n1 < n2]
-                idxs = up_diag_prodx(len(dirs))
+                _list = list(range(len(dirs)))
+                idxs = ut.upper_diag_self_prodx(_list)
                 coupled_dirs.extend(list(map(tuple, ut.list_unflat_take(dirs, idxs))))
             hist_ = ut.dict_hist(coupled_dirs)
             coupled_idxs = ut.list_argsort(hist_.values())[::-1]
