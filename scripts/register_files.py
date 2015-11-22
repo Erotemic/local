@@ -3,6 +3,9 @@
 Script to register files on a drive and reconcile duplicates
 
 CommandLine:
+    cd ~/local/scripts
+    import register_files
+
     set PYTHONPATH=%PYTHONPATH%;%HOME%/local/scripts
     export PYTHONPATH=$PYTHONPATH:~/local/scripts
     python -m register_files --exec-register_drive --drives ~
@@ -12,10 +15,9 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import utool as ut
 import six  # NOQA
 import os
-from os.path import join, exists, dirname
+from os.path import join, exists, dirname, basename
 from os.path import islink
 from os.path import splitext
-from functools import partial
 import functools
 import numpy as np
 import numpy as np  # NOQA
@@ -36,6 +38,9 @@ def prog_(iter_, lbl, freq=1000, **kwargs):
 
 
 def build_multindex(list_):
+    """
+    Creates mapping from unique items to indicies at which they appear
+    """
     multiindex_dict_ = ut.ddict(list)
     for item, index in zip(list_, range(len(list_))):
         if item is not None:
@@ -44,6 +49,16 @@ def build_multindex(list_):
 
 
 def analyize_multiple_drives(drives):
+    """
+    cd ~/local/scripts
+
+    >>> from register_files import *  # NOQA
+    >>> dpaths = ut.get_argval('--drives', type_=list, default=['E:/'])#'D:/', 'E:/', 'F:/'])
+    >>> drives = [Drive(root_dpath) for root_dpath in dpaths]
+    >>> E = drive = drives[0]
+    >>> #D, E, F = drives
+    >>> #drive = D
+    """
     for drive in drives:
         drive.num_fpaths = len(drive.fpath_registry)
 
@@ -60,13 +75,6 @@ def analyize_multiple_drives(drives):
     #    drive.nbytes_to_idxs = ut.hierarchical_group_items(drive.fpath_idxs, [drive.fpath_exts, drive.fpath_bytes_list])
 
     for drive in drives:
-        def build_multindex(list_):
-            import utool as ut
-            multiindex_dict_ = ut.ddict(list)
-            for item, index in zip(list_, range(len(list_))):
-                if item is not None:
-                    multiindex_dict_[item].append(index)
-            return multiindex_dict_
         multiindex_dict_ = build_multindex(drive.fpath_hashX_list)
         drive.hash_to_fpaths = dict(
             [(hash_, ut.take(drive.fpath_registry, idxs))
@@ -90,51 +98,106 @@ def analyize_multiple_drives(drives):
     ut.embed()
 
 
-@six.add_metaclass(ut.ReloadingMetaclass)
+class BroadcastAttribute(object):
+    def __init__(battr, attr_list):
+        battr.attr_list = attr_list
+
+    def __call__(battr, *args, **kwargs):
+        return [a(*args, **kwargs) for a in battr.attr_list]
+
+
 class Broadcaster(object):
-    """
-    objs = drives
-    multidrive = Broadcaster(objs)
-    multidrive.biggest_dirs()
-    """
-    def __init__(self, objs):
-        self.objs = objs
-        cls = objs[0].__class__
-        self.cls = cls
+    def __init__(bcast, objs):
+        bcast.objs = objs
 
-        for attr in dir(cls):
-            if attr.startswith('__'):
-                continue
-            setattr(self, attr, partial(self.broadcast, attr))
-
-    def __getattribute__(self, attr):
-        return partial(self.broadcast, attr)
-
-    def broadcast(self, funcname, *args, **kwargs):
-        return [getattr(obj, funcname)(*args, **kwargs) for obj in self.objs]
+    def __getattr__(bcast, attr):
+        attr_list = [getattr(obj, attr) for obj in bcast.objs]
+        return BroadcastAttribute(attr_list)
+        #def execute(*args, **kwargs):
+        #    return [a(*args, **kwargs) for a in attr_list]
+        #return execute
+        #return attr_list
+        #print('attr = %r' % (attr,))
 
 
 @six.add_metaclass(ut.ReloadingMetaclass)
 class Drive(object):
-    """
+    r"""
+    Stores properties, builds properties, infers info
+
+    CommandLine:
+        set PYTHONPATH=%PYTHONPATH%;%HOME%/local/scripts
+        python -m register_files --exec-Drive --drives E:/
+
+        export PYTHONPATH=$PYTHONPATH:~/local/scripts
+        python -m register_files --exec-Drive --drives ~
+
+        python %HOME%/local/scripts/register_files.py --exec-Drive --drives D:/ E:/ F:/
+
+    Ignore:
+        >>> # ENABLE_DOCTEST
+        >>> import sys
+        >>> from os.path import *
+        >>> from register_files import *  # NOQA
+        >>> sys.path.append(normpath(expanduser('~/local/scripts')))
+
+    Example:
+        >>> from register_files import *  # NOQA
+        >>> dpaths = ut.get_argval('--drives', type_=list, default=[])
+        >>> drives = [Drive(root_dpath) for root_dpath in dpaths]
+        >>> drive = Broadcaster(drives)
+        >>> #drive = drives[0]
+        >>> drive.compute_info()
+        >>> print(drive)
+        >>> drive.check_consistency()
+        >>> #drive.cache.clear()
+        >>> #analyize_multiple_drives(drives)
+        #>>> result = register_drive('D:/')
+        #>>> result = register_drive('E:/')
+        #>>> result = register_drive('F:/')
     """
 
-    def __init__(drive):
-        """
-        """
-        pass
+    def __init__(drive, root_dpath=None, state_fpath=None):
+        drive.root_dpath = ut.truepath(ut.ensure_unicode(root_dpath))
+        print('Initializing drive %s' % (drive.root_dpath,))
+        # Mapping from dpath strings to fpath indexes
+        assert state_fpath is None, 'not yet supported for external analysis'
+        drive.cache_fname = join(drive.root_dpath, 'ut_pathreg_cache.shelf')
+        drive.fpath_bytes_list = None
+        drive.dpath_to_fidx = None
+        drive.cache = ut.ShelfCacher(drive.cache_fname)
+
+    def check_consistency(drive):
+        print('Checking %r consistency' % (drive,))
+        total = ut.get_total_diskbytes(drive.root_dpath)
+        free = ut.get_free_diskbytes(drive.root_dpath)
+        used = total - free
+        print('total             = %r' % (total,))
+        print('used              = %r' % (used,))
+        print('drive.total_bytes = %r' % (drive.total_bytes,))
+
+        print('total             = %r' % (ut.byte_str2(total),))
+        print('used              = %r' % (ut.byte_str2(used),))
+        print('drive.total_bytes = %r' % (ut.byte_str2(drive.total_bytes),))
 
     def __str__(drive):
-        return drive.root_dpath + ' - ' + ut.byte_str2(drive.total_bytes)
+        if drive.total_bytes is None:
+            bytes_str = '?'
+        else:
+            bytes_str = ut.byte_str2(drive.total_bytes)
+        return drive.root_dpath + ' - ' + bytes_str
 
     def __repr__(drive):
-        return '<Drive ' + drive.root_dpath + ' - ' + ut.byte_str2(drive.total_bytes) + '>'
+        return '<Drive ' + drive.__str__() + '>'
 
     @property
     def total_bytes(drive):
+        if drive.fpath_bytes_list is None:
+            return None
         return np.nansum(drive.fpath_bytes_list)
 
     def biggest_files(drive):
+        print('Biggest Files in %r' % (drive,))
         sortx = ut.list_argsort(drive.fpath_bytes_list)[::-1]
         sel = sortx[0:10]
         biggest_nbytes = ut.take(drive.fpath_bytes_list, sel)
@@ -143,8 +206,8 @@ class Drive(object):
         print(ut.list_str(biginfo_list, strvals=True))
 
     def biggest_dirs(drive):
+        print('Biggest Dirs in %r' % (drive,))
         dpath_list = drive.dpath_registry
-        #dpath_list = [ROOT_DPATH]
         fidxs_list = ut.dict_take(drive.dpath_to_fidx, dpath_list)
         unflat_dpath_bytes_list = ut.list_unflat_take(drive.fpath_bytes_list, fidxs_list)
         dpath_nbytes_list = list(map(sum, unflat_dpath_bytes_list))
@@ -158,32 +221,39 @@ class Drive(object):
         pass
 
     def fix_duplicates(drive):
-        """
-        for every duplicate file passing a (eg avi) filter,
-        remove the file that is in the smallest directory. On a tie
-        use the smallest dpath. This will filter all duplicate files in a folder into
-        a single folder.
+        r"""
+        for every duplicate file passing a (eg avi) filter, remove the file
+        that is in the smallest directory. On a tie use the smallest dpath.
+        This will filter all duplicate files in a folder into a single folder.
 
-        but... need to look at non-duplicates in that folder and decide if they should be moved as well.
-        So, should trigger on folders that have at least 50% duplicate.
-        Might not want to move curated folders.
+        but... need to look at non-duplicates in that folder and decide if they
+        should be moved as well.  So, should trigger on folders that have at
+        least 50% duplicate.  Might not want to move curated folders.
+
+        Example:
+            cd ~/local/scripts
+            >>> from register_files import *  # NOQA
+            >>> dpaths = ut.get_argval('--drives', type_=list, default=['E:/'])#'D:/', 'E:/', 'F:/'])
+            >>> drives = [Drive(root_dpath) for root_dpath in dpaths]
+            >>> E = drive = drives[0]
+            >>> #D, E, F = drives
         """
+        print('Fixing Duplicates in %r' % (drive,))
         list_ = drive.fpath_hashX_list
         multiindex_dict_ = build_multindex(list_)
         duplicate_hashes = [
             key for key, val in six.iteritems(multiindex_dict_)
-            if len(val) > 1]
+            if len(val) > 1
+        ]
         duplicate_idxs = ut.dict_take(multiindex_dict_, duplicate_hashes)
         unflat_fpaths = ut.list_unflat_take(drive.fpath_registry, duplicate_idxs)
         # Check if any dups have been removed
         still_exists = ut.unflat_map(exists, unflat_fpaths)
         unflat_idxs2 = ut.zipcompress(duplicate_idxs, still_exists)
         duplicate_idxs = [idxs for idxs in unflat_idxs2 if len(idxs) > 1]
-
         # Look at duplicate files
         unflat_fpaths = ut.list_unflat_take(drive.fpath_registry, duplicate_idxs)
         unflat_sizes = ut.list_unflat_take(drive.fpath_bytes_list, duplicate_idxs)
-
         # Find highly coupled directories
         if True:
             coupled_dirs = []
@@ -197,15 +267,35 @@ class Drive(object):
             coupled_idxs = ut.list_argsort(hist_.values())[::-1]
             most_coupled = ut.list_take(list(hist_.keys()), coupled_idxs[0:100])
             print('Coupled fpaths: ' + ut.list_str(most_coupled, nl=True))
-
         print('%d unique files are duplicated' % (len(unflat_sizes),))
         #print('Duplicate sizes: ' + ut.list_str(unflat_sizes[0:10], nl=True))
         #print('Duplicate fpaths: ' + ut.list_str(unflat_fpaths[0:10], nl=True))
         #print('Duplicate fpaths: ' + ut.list_str(unflat_fpaths[0::5], nl=True))
         print('Duplicate fpaths: ' + ut.list_str(unflat_fpaths, nl=True))
+        # Find duplicate directories
+        dpath_list = list(drive.dpath_to_fidx.keys())
+        fidxs_list = ut.dict_take(drive.dpath_to_fidx, drive.dpath_registry)
+        #exists_list = list(map(exists, drive.fpath_registry))
+        #unflat_exists = ut.list_unflat_take(exists_list, fidxs_list)
+        fname_registry = [basename(fpath) for fpath in drive.fpath_registry]
+        unflat_fnames = ut.list_unflat_take(fname_registry, fidxs_list)
+        def unsorted_list_hash(list_):
+            return ut.hashstr27(str(sorted(list_)))
+        unflat_fname_sets = list(map(unsorted_list_hash, ut.ProgIter(unflat_fnames, freq=10000)))
+        fname_based_duplicate_dpaths = []
+        multiindex_dict2_ = build_multindex(unflat_fname_sets)
+        fname_based_duplicate_hashes = [key for key, val in multiindex_dict2_.items() if len(val) > 1]
+        print('#fname_based_duplicate_dpaths = %r' % (len(fname_based_duplicate_hashes),))
+        fname_based_duplicate_didxs = ut.dict_take(multiindex_dict2_, fname_based_duplicate_hashes)
+        fname_based_duplicate_dpaths = ut.list_unflat_take(dpath_list, fname_based_duplicate_didxs)
+        print(ut.repr3(fname_based_duplicate_dpaths[0:10]))
+        #dpath_to_contents
 
     def fix_empty_dirs(drive):
+        """
         # --- FIND EMPTY DIRECTORIES ---
+        """
+        print('Fixing Empty Dirs in %r' % (drive,))
         fidxs_list = ut.dict_take(drive.dpath_to_fidx, drive.dpath_registry)
         isempty_flags = [len(fidxs) == 0 for fidxs in fidxs_list]
         empty_dpaths = ut.compress(drive.dpath_registry, isempty_flags)
@@ -263,7 +353,7 @@ class Drive(object):
                 for fpath in fpaths:
                     yield fpath
 
-        exclude_base_dirs = [join(drive.ROOT_DPATH, 'AppData')]
+        exclude_base_dirs = [join(drive.root_dpath, 'AppData')]
         exclude_end_dirs = ['__pycache__']
         truly_empty_dirs1 = truly_empty_dirs
         for ed in exclude_base_dirs:
@@ -301,118 +391,118 @@ class Drive(object):
                 for d in prog_(truly_empty_dirs1, 'rming'):
                     ut.cmd('rmdir', d)
 
-    #biggest_files(drive)
-    #biggest_dirs(drive)
-    #fix_empty_dirs(drive)
-    #fix_duplicates(drive)
+    def compute_info(drive):
+        print('Computing Info of %r' % (drive,))
+        drive.register_files()
+        drive.build_fpath_bytes()
+        drive.build_dpath_to_fidx()
+        #drive.build_fpath_hashes()
 
+    def register_files(drive):
+        print('Loading registered files in %r' % (drive,))
+        try:
+            fpath_registry = drive.cache.load('fpath_registry')
+            dpath_registry = drive.cache.load('dpath_registry')
+        except ut.CacheMissException:
+            print('Recomputing registry')
+            fpath_gen_list = []
+            dpath_gen_list = []
+            for root, dname_list, fname_list in prog_(os.walk(drive.root_dpath), 'walking'):
+                # Ignore hidden directories
+                dname_list[:] = [d for d in dname_list if not d.startswith('.')]
+                fpath_gen_list.append((root, fname_list))
+                dpath_gen_list.append((root, dname_list))
+            fpath_registry = [join(root, f) for root, fs in fpath_gen_list for f in fs]
+            dpath_registry =  [join(root, d) for root, ds in dpath_gen_list for d in ds]
+            dpath_registry = [drive.root_dpath] + dpath_registry
+            print('Regsitering %d files and %d directories' % (len(fpath_registry), len(dpath_registry)))
+            drive.cache.save('fpath_registry', fpath_registry)
+            drive.cache.save('dpath_registry', dpath_registry)
+        print('Loaded %d files and %d directories' % (len(fpath_registry), len(dpath_registry)))
+        drive.fpath_registry = fpath_registry
+        drive.dpath_registry = dpath_registry
 
-def register_drive(root_drive):
-    r"""
-
-    Ignore:
-        >>> # ENABLE_DOCTEST
-        >>> import sys
-        >>> from os.path import *
-        >>> from register_files import *  # NOQA
-        >>> sys.path.append(normpath(expanduser('~/local/scripts')))
-
-    Example:
-        >>> from register_files import *  # NOQA
-        >>> dpaths = ut.get_argval('--drives', type_=list, default=[])
-        >>> drives = [register_drive(root_drive) for root_drive in dpaths]
-        >>> analyize_multiple_drives(drives)
-
-        #>>> result = register_drive('D:/')
-        #>>> result = register_drive('E:/')
-        #>>> result = register_drive('F:/')
-    """
-    root_drive = ut.ensure_unicode(root_drive)
-    drive = Drive()
-
-    # BUILD INFO ABOUT A SPECIFIC DIRECTORY
-
-    #dpath = ut.truepath('~/local')
-    #ROOT_DPATH = ut.truepath('F:/')
-    #ROOT_DPATH = ut.truepath('D:/')
-    #ROOT_DPATH = ut.truepath('E:/')
-    #ROOT_DPATH = ut.truepath('~')
-    ROOT_DPATH = ut.truepath(root_drive)
-    drive.root_dpath = root_drive
-    print('Registering %s' % (ROOT_DPATH,))
-    #cfgstr = ut.hashstr27(ROOT_DPATH)
-
-    cache_fname = join(ROOT_DPATH, 'ut_pathreg_cache.shelf')
-    cache = ut.ShelfCacher(cache_fname)
-
-    try:
-        fpath_registry = cache.load('fpath_registry')
-        dpath_registry = cache.load('dpath_registry')
-    except ut.CacheMissException:
-        fpath_gen_list = []
-        dpath_gen_list = []
-        for root, dname_list, fname_list in prog_(os.walk(ROOT_DPATH), 'walking'):
-            # Ignore hidden directories
-            dname_list[:] = [d for d in dname_list if not d.startswith('.')]
-            fpath_gen_list.append((root, fname_list))
-            dpath_gen_list.append((root, dname_list))
-        fpath_registry = [join(root, f) for root, fs in fpath_gen_list for f in fs]
-        dpath_registry =  [join(root, d) for root, ds in dpath_gen_list for d in ds]
-        dpath_registry = [ROOT_DPATH] + dpath_registry
-        print('Regsitering %d files and %d directories' % (len(fpath_registry), len(dpath_registry)))
-        cache.save('fpath_registry', fpath_registry)
-        cache.save('dpath_registry', dpath_registry)
-    print('Loaded %d files and %d directories' % (len(fpath_registry), len(dpath_registry)))
-    drive.fpath_registry = fpath_registry
-    drive.dpath_registry = dpath_registry
-
-    if False:
+    def update_registry(drive):
+        print('Updating registered files in %r' % (drive,))
         # Update existing files
-        fpath_exists_list = list(map(exists, prog_(fpath_registry, 'checkexist fpath')))
-        dpath_exists_list = list(map(exists, prog_(dpath_registry, 'checkexist dpath')))
+        fpath_exists_list = list(map(exists, prog_(drive.fpath_registry, 'checkexist fpath')))
+        dpath_exists_list = list(map(exists, prog_(drive.dpath_registry, 'checkexist dpath')))
         if all(fpath_exists_list):
             print('No change in file structure')
         else:
-            print('%d/%d files no longer exist' % (len(fpath_registry) - sum(fpath_exists_list), len(fpath_registry)))
-            removed_fpaths = ut.compress(fpath_registry, ut.not_list(fpath_exists_list))
+            print('%d/%d files no longer exist' % (
+                len(drive.fpath_registry) - sum(fpath_exists_list),
+                len(drive.fpath_registry)))
+            removed_fpaths = ut.compress(drive.fpath_registry, ut.not_list(fpath_exists_list))
             print('removed_fpaths = %s' % (ut.list_str(removed_fpaths),))
         if all(dpath_exists_list):
             print('No change in dpath structure')
         else:
-            print('%d/%d dirs no longer exist' % (len(dpath_registry) - sum(dpath_exists_list), len(dpath_registry)))
-            removed_dpaths = ut.compress(dpath_registry, ut.not_list(dpath_exists_list))
+            print('%d/%d dirs no longer exist' % (
+                len(drive.dpath_registry) - sum(dpath_exists_list),
+                len(drive.dpath_registry)))
+            removed_dpaths = ut.compress(
+                drive.dpath_registry,
+                ut.not_list(dpath_exists_list))
             print('removed_dpaths = %s' % (ut.list_str(removed_dpaths),))
 
-        fpath_registry = ut.compress(fpath_registry, fpath_exists_list)
-        dpath_registry = ut.compress(dpath_registry, dpath_exists_list)
-        cache.save('fpath_registry', fpath_registry)
-        cache.save('dpath_registry', dpath_registry)
+        drive.fpath_registry = ut.compress(drive.fpath_registry, fpath_exists_list)
+        drive.dpath_registry = ut.compress(drive.dpath_registry, dpath_exists_list)
+        drive.cache.save('fpath_registry', drive.fpath_registry)
+        drive.cache.save('dpath_registry', drive.dpath_registry)
 
-    try:
-        fpath_bytes_list = cache.load('fpath_bytes_list')
-        assert len(fpath_bytes_list) == len(fpath_registry)
-        #print(len(fpath_bytes_list))
-    except ut.CacheMissException:
-        def tryread_nbytes(fpath):
-            try:
-                return ut.file_bytes(fpath)
-            except SystemErrors:
-                return np.nan
-
-        fpath_bytes_list = [
-            tryread_nbytes(fpath)
-            for fpath in prog_(fpath_registry, 'reading size')
-        ]
-        assert len(fpath_registry) == len(fpath_registry)
-        cache.save('fpath_bytes_list', fpath_bytes_list)
-    drive.fpath_bytes_list = fpath_bytes_list
-
-    fpath_bytes_arr = np.array(fpath_bytes_list)
-    print('Loaded filesize for %d / %d files' % ((~np.isnan(fpath_bytes_arr)).sum(), len(fpath_bytes_arr)))
-
-    if True:
+    def build_fpath_bytes(drive):
+        print('Building fpath bytes for %r' % (drive,))
         try:
-            fpath_hashX_list = cache.load('fpath_hashX_list')
+            fpath_bytes_list = drive.cache.load('fpath_bytes_list')
+            assert len(fpath_bytes_list) == len(drive.fpath_registry)
+            #print(len(fpath_bytes_list))
+        except ut.CacheMissException:
+            def tryread_nbytes(fpath):
+                try:
+                    return ut.file_bytes(fpath)
+                except SystemErrors:
+                    return np.nan
+
+            fpath_bytes_list = [
+                tryread_nbytes(fpath)
+                for fpath in prog_(drive.fpath_registry, 'reading size')
+            ]
+            assert len(drive.fpath_registry) == len(drive.fpath_registry)
+            drive.cache.save('fpath_bytes_list', fpath_bytes_list)
+        drive.fpath_bytes_list = fpath_bytes_list
+
+        fpath_bytes_arr = np.array(fpath_bytes_list)
+        print('Loaded filesize for %d / %d files' % ((~np.isnan(fpath_bytes_arr)).sum(), len(fpath_bytes_arr)))
+
+    def build_dpath_to_fidx(drive):
+        """
+        Build mapping from each dpath to contained file indexes
+        """
+        # Create mapping from directory to subfiles
+        try:
+            dpath_to_fidx = drive.cache.load('dpath_to_fidx')
+            assert len(dpath_to_fidx) <= len(drive.dpath_registry)
+        except ut.CacheMissException:
+            dpath_to_fidx = ut.ddict(list)
+            _iter = prog_(enumerate(drive.fpath_registry), 'making dpath fidx map', freq=10000,
+                          nTotal=len(drive.fpath_registry))
+            for fidx, fpath in _iter:
+                current_path = fpath
+                #last_dpath = None
+                while True:
+                    #current_path != last_dpath:
+                    #last_dpath = current_path
+                    current_path = dirname(current_path)
+                    dpath_to_fidx[current_path].append(fidx)
+                    if current_path == drive.root_dpath:
+                        break
+            drive.cache.save('dpath_to_fidx', dpath_to_fidx)
+        drive.dpath_to_fidx = dpath_to_fidx
+
+    def build_fpath_hashes(drive):
+        try:
+            fpath_hashX_list = drive.cache.load('fpath_hashX_list')
         except ut.CacheMissException:
             def bytes_based_hash(fpath, nbytes):
                 try:
@@ -425,9 +515,9 @@ def register_drive(root_drive):
                 except IOError:
                     return None
 
-            fpath_hashX_list = [None] * len(fpath_registry)
+            fpath_hashX_list = [None] * len(drive.fpath_registry)
 
-            assert len(fpath_bytes_list) == len(fpath_registry)
+            assert len(drive.fpath_bytes_list) == len(drive.fpath_registry)
 
             nbytes_tiers = [
                 np.inf, 2 ** 32, 2 ** 30,
@@ -442,10 +532,10 @@ def register_drive(root_drive):
                 print('tier_windows = %s - %s' % (ut.byte_str2(high), ut.byte_str2(low)))
 
             tier_flags = [
-                np.logical_and.reduce([fpath_bytes_arr <= high, fpath_bytes_arr > low])
+                np.logical_and.reduce([drive.fpath_bytes_arr <= high, drive.fpath_bytes_arr > low])
                 for high, low in tier_windows
             ]
-            tier_fpaths = [ut.compress(fpath_registry, flags) for flags in tier_flags]
+            tier_fpaths = [ut.compress(drive.fpath_registry, flags) for flags in tier_flags]
 
             for tier, fpaths in enumerate(tier_fpaths):
                 print('tier = %r' % (tier,))
@@ -475,28 +565,8 @@ def register_drive(root_drive):
                 for idx, hash_ in zip(tier_idxs, tier_hashes):
                     fpath_hashX_list[idx] = hash_
 
-            cache.save('fpath_hashX_list', fpath_hashX_list)
+            drive.cache.save('fpath_hashX_list', fpath_hashX_list)
         drive.fpath_hashX_list = fpath_hashX_list
-
-    # Create mapping from directory to subfiles
-    try:
-        dpath_to_fidx = cache.load('dpath_to_fidx')
-        assert len(dpath_to_fidx) <= len(dpath_registry)
-    except ut.CacheMissException:
-        dpath_to_fidx = ut.ddict(list)
-        for fidx, fpath in prog_(enumerate(fpath_registry), 'making dpath fidx map', freq=10000, nTotal=len(fpath_registry)):
-            current_path = fpath
-            #last_dpath = None
-            while True:
-                #current_path != last_dpath:
-                #last_dpath = current_path
-                current_path = dirname(current_path)
-                dpath_to_fidx[current_path].append(fidx)
-                if current_path == ROOT_DPATH:
-                    break
-        cache.save('dpath_to_fidx', dpath_to_fidx)
-    drive.dpath_to_fidx = dpath_to_fidx
-    return drive
 
 
 if __name__ == '__main__':
