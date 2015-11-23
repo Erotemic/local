@@ -427,9 +427,9 @@ python << endpython
 import vim
 #vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
 import utool as ut
-imp.reload(ut._internal)
-imp.reload(ut._internal.meta_util_six)
 import imp
+#imp.reload(ut._internal)
+#imp.reload(ut._internal.meta_util_six)
 imp.reload(ut)
 ut.rrrr(verbose=False)
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
