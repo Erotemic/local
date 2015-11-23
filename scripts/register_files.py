@@ -48,6 +48,14 @@ def build_multindex(list_):
     return multiindex_dict_
 
 
+def tryhash(fpath_, stride=1):
+    import utool as ut
+    try:
+        return ut.get_file_hash(fpath_, stride=stride)
+    except IOError:
+        return None
+
+
 def analyize_multiple_drives(drives):
     """
     cd ~/local/scripts
@@ -98,21 +106,22 @@ def analyize_multiple_drives(drives):
     ut.embed()
 
 
-class BroadcastAttribute(object):
-    def __init__(battr, attr_list):
-        battr.attr_list = attr_list
-
-    def __call__(battr, *args, **kwargs):
-        return [a(*args, **kwargs) for a in battr.attr_list]
-
-
 class Broadcaster(object):
     def __init__(bcast, objs):
         bcast.objs = objs
 
+    def __repr__(bcast):
+        return repr(bcast.objs)
+
+    def __str__(bcast):
+        return str(bcast.objs)
+
+    def __call__(battr, *args, **kwargs):
+        return [a(*args, **kwargs) for a in battr.objs]
+
     def __getattr__(bcast, attr):
         attr_list = [getattr(obj, attr) for obj in bcast.objs]
-        return BroadcastAttribute(attr_list)
+        return Broadcaster(attr_list)
         #def execute(*args, **kwargs):
         #    return [a(*args, **kwargs) for a in attr_list]
         #return execute
@@ -146,15 +155,21 @@ class Drive(object):
         >>> dpaths = ut.get_argval('--drives', type_=list, default=[])
         >>> drives = [Drive(root_dpath) for root_dpath in dpaths]
         >>> drive = Broadcaster(drives)
+        >>> #drive.cache.clear()
         >>> #drive = drives[0]
         >>> drive.compute_info()
         >>> print(drive)
         >>> drive.check_consistency()
-        >>> #drive.cache.clear()
+        >>> drive.build_fpath_hashes()
         >>> #analyize_multiple_drives(drives)
         #>>> result = register_drive('D:/')
         #>>> result = register_drive('E:/')
         #>>> result = register_drive('F:/')
+
+    Ignore:
+        drive.rrr()
+        drive.total_bytes
+        E, D, F = drives
     """
 
     def __init__(drive, root_dpath=None, state_fpath=None):
@@ -394,7 +409,7 @@ class Drive(object):
     def compute_info(drive):
         print('Computing Info of %r' % (drive,))
         drive.register_files()
-        drive.build_fpath_bytes()
+        drive.get_fpath_bytes_list()
         drive.build_dpath_to_fidx()
         #drive.build_fpath_hashes()
 
@@ -451,7 +466,7 @@ class Drive(object):
         drive.cache.save('fpath_registry', drive.fpath_registry)
         drive.cache.save('dpath_registry', drive.dpath_registry)
 
-    def build_fpath_bytes(drive):
+    def get_fpath_bytes_list(drive):
         print('Building fpath bytes for %r' % (drive,))
         try:
             fpath_bytes_list = drive.cache.load('fpath_bytes_list')
@@ -472,8 +487,15 @@ class Drive(object):
             drive.cache.save('fpath_bytes_list', fpath_bytes_list)
         drive.fpath_bytes_list = fpath_bytes_list
 
-        fpath_bytes_arr = np.array(fpath_bytes_list)
+        drive.fpath_bytes_arr = np.array(fpath_bytes_list)
+        fpath_bytes_arr = drive.fpath_bytes_arr
         print('Loaded filesize for %d / %d files' % ((~np.isnan(fpath_bytes_arr)).sum(), len(fpath_bytes_arr)))
+
+    def check_filesize_errors(drive):
+        flags = np.isnan(drive.fpath_bytes_arr)
+        nan_fpaths = ut.compress(drive.fpath_registry, flags)
+        print('#nan fsize fpaths = %r' % (len(nan_fpaths),))
+        print('nan_fpaths = %r' % (nan_fpaths[0:10],))
 
     def build_dpath_to_fidx(drive):
         """
@@ -500,66 +522,75 @@ class Drive(object):
             drive.cache.save('dpath_to_fidx', dpath_to_fidx)
         drive.dpath_to_fidx = dpath_to_fidx
 
+    def get_tier_windows(drive):
+        nbytes_tiers = [
+            np.inf, 2 ** 32, 2 ** 30,
+            2 ** 29, 2 ** 28, 2 ** 25,
+            2 ** 20, 2 ** 10, 0, -np.inf,
+        ]
+        tier_windows = list(ut.itertwo(nbytes_tiers))
+        return tier_windows
+
+    def get_tier_flags(drive):
+        try:
+            tier_flags = drive.cache.load('tier_flags')
+        except ut.CacheMissException:
+            tier_windows = drive.get_tier_windows()
+
+            print('Tier Windows')
+            for tier, (high, low) in enumerate(tier_windows):
+                print('tier %r window = %s - %s' % (tier, ut.byte_str2(high), ut.byte_str2(low)))
+
+            fpath_bytes_arr = np.array(drive.fpath_bytes_list)
+            tier_flags = [
+                np.logical_and.reduce([fpath_bytes_arr <= high, fpath_bytes_arr > low])
+                for high, low in tier_windows
+            ]
+            drive.cache.save('tier_flags', tier_flags)
+        return tier_flags
+
+    def print_tier_info(drive):
+        tier_windows = drive.get_tier_windows()
+        tier_flags = drive.get_tier_flags()
+
+        for tier, flags in enumerate(tier_flags):
+            high, low = tier_windows[tier]
+            print('tier %r window = %s - %s' % (tier, ut.byte_str2(high), ut.byte_str2(low)))
+            print('    len(fpaths) = %r' % (np.sum(flags)))
+
     def build_fpath_hashes(drive):
         try:
             fpath_hashX_list = drive.cache.load('fpath_hashX_list')
         except ut.CacheMissException:
-            def bytes_based_hash(fpath, nbytes):
-                try:
-                    if nbytes > 2 ** 30:
-                        return None
-                    elif nbytes > (2 ** 20):
-                        return ut.get_file_hash(fpath, stride=256)
-                    else:
-                        return ut.get_file_hash(fpath, stride=1)
-                except IOError:
-                    return None
-
             fpath_hashX_list = [None] * len(drive.fpath_registry)
 
             assert len(drive.fpath_bytes_list) == len(drive.fpath_registry)
 
-            nbytes_tiers = [
-                np.inf, 2 ** 32, 2 ** 30,
-                2 ** 29, 2 ** 28, 2 ** 25,
-                2 ** 20, 2 ** 10, 0, -np.inf,
-            ]
-            tier_windows = list(ut.itertwo(nbytes_tiers))
-
-            print('Tier Windows')
-            for tier, (high, low) in enumerate(tier_windows):
-                print('tier = %r' % (tier,))
-                print('tier_windows = %s - %s' % (ut.byte_str2(high), ut.byte_str2(low)))
-
-            tier_flags = [
-                np.logical_and.reduce([drive.fpath_bytes_arr <= high, drive.fpath_bytes_arr > low])
-                for high, low in tier_windows
-            ]
+            tier_windows = drive.get_tier_windows()
+            tier_flags = drive.get_tier_flags()
             tier_fpaths = [ut.compress(drive.fpath_registry, flags) for flags in tier_flags]
 
-            for tier, fpaths in enumerate(tier_fpaths):
-                print('tier = %r' % (tier,))
-                high, low = tier_windows[tier]
-                print('tier_windows = %s - %s' % (ut.byte_str2(high), ut.byte_str2(low)))
-                print('len(fpaths) = %r' % (len(fpaths),))
-
-            def tryhash(fpath_, stride=1):
-                try:
-                    return ut.get_file_hash(fpath_, stride=stride)
-                except IOError:
-                    return None
-
             #for tier, fpaths in enumerate(tier_fpaths):
-            for tier in [5, 4, 3]:
+            #chosen_tiers = [6, 5, 4, 3, 2, 1, 0]
+            chosen_tiers = list(range(len(tier_windows)))[::-1]
+            for tier in chosen_tiers:
                 window = np.array(tier_windows[tier])
                 minbytes = window[np.isfinite(window)].min()
+                #stride = max(1, minbytes // (2 ** 20))
                 stride = max(1, minbytes // (2 ** 20))
+                print('tier %d stride = %r' % (tier, stride,))
                 fpaths = tier_fpaths[tier]
+                print('# fpaths = %r' % (len(fpaths),))
 
                 tier_hashes = [
                     tryhash(fpath, stride) for fpath in
                     prog_(fpaths, 'tier=%r hashes' % (tier,), freq=100)
                 ]
+                #import register_files
+                #tier_hashes = list(ut.buffered_generator((
+                #    register_files.tryhash(fpath, stride) for fpath in
+                #    prog_(fpaths, 'tier=%r hashes' % (tier,), freq=100)
+                #)))
                 tier_idxs = np.where(tier_flags[tier])[0]
 
                 for idx, hash_ in zip(tier_idxs, tier_hashes):
