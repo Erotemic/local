@@ -524,9 +524,22 @@ class Drive(object):
 
     def get_tier_windows(drive):
         nbytes_tiers = [
-            np.inf, 2 ** 32, 2 ** 30,
-            2 ** 29, 2 ** 28, 2 ** 25,
-            2 ** 20, 2 ** 10, 0, -np.inf,
+            np.inf,
+            2 ** 32,
+            2 ** 30,
+            2 ** 29,
+            2 ** 28,
+            2 ** 27,
+            2 ** 26,
+            2 ** 25,
+            2 ** 24,
+            2 ** 23,
+            2 ** 22,
+            2 ** 21,
+            2 ** 20,
+            2 ** 10,
+            0,
+            -np.inf,
         ]
         tier_windows = list(ut.itertwo(nbytes_tiers))
         return tier_windows
@@ -578,7 +591,7 @@ class Drive(object):
                 minbytes = window[np.isfinite(window)].min()
                 #stride = max(1, minbytes // (2 ** 20))
                 stride = max(1, minbytes // (2 ** 20))
-                print('tier %d stride = %r' % (tier, stride,))
+                print('%s tier %d stride = %r' % (drive.root_dpath, tier, stride,))
                 fpaths = tier_fpaths[tier]
                 print('# fpaths = %r' % (len(fpaths),))
 
