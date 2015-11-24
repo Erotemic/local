@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Called by ~/local/vim/rc/custom_misc_functions.vim
 
@@ -12,6 +13,7 @@ FIXME:
     the indexing is messed up because some places row2 means the last line,
     instead of the last line you dont want
 """
+#from __future__ import absolute_import, division, print_function, unicode_literals
 from os.path import expanduser
 import sys
 
@@ -50,6 +52,7 @@ def format_multiple_paragraph_sentences(text):
     """
     import utool as ut
     # Patterns that define separations between paragraphs in latex
+    #NL = '\n'
     pattern_list = [
         '\n\n\n*',     # newlines
         '\n? *%.*\n',  # comments
@@ -68,6 +71,11 @@ def format_multiple_paragraph_sentences(text):
         '\n? *\\\\ImageCommand[^}]*}[^}]*}{\n',
         '\n? *\\\\end{[^}]*}\n?',
         '\n}{',
+
+        # docstr stuff
+        '\n' + ut.TRIPLE_DOUBLE_QUOTE + '\n',
+        '\n? *Args: *\n',
+        #'\n? [A-Za-z_]*[0-9A-Za-z_]* (.*?) *:',
     ]
     pattern = '|'.join(['(%s)' % (pat,) for pat in pattern_list])
     # break into paragraph blocks
