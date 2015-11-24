@@ -58,14 +58,24 @@ def tryhash(fpath_, stride=1):
 
 def analyize_multiple_drives(drives):
     """
-    cd ~/local/scripts
+    CommandLine:
+        set PYTHONPATH=%PYTHONPATH%;%HOME%/local/scripts
+        python -m register_files --exec-analyize_multiple_drives --drives E:/ D:/
 
-    >>> from register_files import *  # NOQA
-    >>> dpaths = ut.get_argval('--drives', type_=list, default=['E:/'])#'D:/', 'E:/', 'F:/'])
-    >>> drives = [Drive(root_dpath) for root_dpath in dpaths]
-    >>> E = drive = drives[0]
-    >>> #D, E, F = drives
-    >>> #drive = D
+        cd ~/local/scripts
+
+    Example:
+        >>> from register_files import *  # NOQA
+        >>> dpaths = ut.get_argval('--drives', type_=list, default=['E:/'])#'D:/', 'E:/', 'F:/'])
+        >>> drives = [Drive(root_dpath) for root_dpath in dpaths]
+        >>> drive = Broadcaster(drives)
+        >>> drive.compute_info()
+        >>> drive.build_fpath_hashes()
+        >>> drive.check_consistency()
+        >>> E = drive = drives[0]
+        >>> analyize_multiple_drives(drives)
+        >>> #D, E, F = drives
+        >>> #drive = D
     """
     for drive in drives:
         drive.num_fpaths = len(drive.fpath_registry)
@@ -83,11 +93,12 @@ def analyize_multiple_drives(drives):
     #    drive.nbytes_to_idxs = ut.hierarchical_group_items(drive.fpath_idxs, [drive.fpath_exts, drive.fpath_bytes_list])
 
     for drive in drives:
-        multiindex_dict_ = build_multindex(drive.fpath_hashX_list)
+        drive.hash_to_fidxs = build_multindex(drive.fpath_hashX_list)
         drive.hash_to_fpaths = dict(
             [(hash_, ut.take(drive.fpath_registry, idxs))
-             for hash_, idxs in multiindex_dict_.items()])
+             for hash_, idxs in drive.hash_to_fidxs.items()])
 
+    # Find the files shared on all disks
     allhave = reduce(
         functools.partial(ut.dict_intersection, combine=True),
         [drive.hash_to_fpaths for drive in drives])
@@ -95,13 +106,79 @@ def analyize_multiple_drives(drives):
     #allhave = reduce(set.intersection, [set(drive.hash_to_fpaths.keys()) for drive in drives])
 
     for drive in drives:
+        drive.hash_to_fidxs = ut.delete_keys(
+            drive.hash_to_fidxs.copy(), allhave.keys())
         drive.hash_to_unique_fpaths = ut.delete_keys(
             drive.hash_to_fpaths.copy(), allhave.keys())
 
     for drive in drives:
-        drive.rrr()
+        #drive.rrr()
         print(drive.root_dpath)
         print(len(drive.hash_to_unique_fpaths))
+        print(len(drive.hash_to_fpaths))
+        print(len(drive.hash_to_unique_fpaths) / len(drive.hash_to_fpaths))
+        print()
+
+        # Use subset while developing
+        #unique_fpaths_list = drive.hash_to_unique_fpaths.values()
+        unique_fidxs_list = drive.hash_to_fidxs.values()
+
+        fidxs = ut.flatten(unique_fidxs_list)
+        fpaths = sorted(ut.take(drive.fpath_registry, fidxs))
+        #fpaths = sorted([items[0] for items in unique_fpaths_list if len(items) == 1])
+
+        dpath_to_unique_fidx = dict([(key, ut.list_intersection(fidx, fidxs)) for key, fidx in drive.dpath_to_fidx.items()])
+
+        def make_tree_structure(root):
+            root = {}
+
+            def dict_getitem_default(dict_, key, type_):
+                try:
+                    val = dict_[key]
+                except KeyError:
+                    val = type_()
+                    dict_[key] = val
+                return val
+
+            for fpath in fpaths:
+                path_components = ut.dirsplit(fpath)
+                current = root
+                for comp in path_components[:-1]:
+                    current = dict_getitem_default(current, comp, dict)
+                contents = dict_getitem_default(current, '.', list)
+                contents.append(path_components[-1])
+            #print(ut.dict_str(root, indent_='-'))
+
+            root['E:'].keys()
+
+
+            def print_tree(root, path):
+                import utool as ut
+                path_components = ut.dirsplit(path)
+                current = root
+                for c in path_components:
+                    current = current[c]
+                print(ut.repr3(current))
+
+            def print_keys(root, path):
+                import utool as ut
+                path_components = ut.dirsplit(path)
+                current = root
+                for c in path_components:
+                    current = current[c]
+                print(ut.repr3(current.keys()))
+
+            print_keys(root, path=r'E:')
+            print_tree(root, path=r'E:\TV')
+            print_tree(root, path=r'E:\Movies')
+            print_tree(root, path=r'E:\Boot')
+
+            print_tree(root, path=r'E:\.')
+            print_tree(root, path=r'E:\Downloaded')
+            print_tree(root, path=r'E:\Recordings')
+            print_tree(root, path=r'E:\Clutter')
+            print_tree(root, path=r'E:')
+            print_tree(root, path=r'E:\Audio Books')
 
     ut.embed()
 
