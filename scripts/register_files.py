@@ -129,56 +129,66 @@ def analyize_multiple_drives(drives):
 
         dpath_to_unique_fidx = dict([(key, ut.list_intersection(fidx, fidxs)) for key, fidx in drive.dpath_to_fidx.items()])
 
-        def make_tree_structure(root):
-            root = {}
+        #def make_tree_structure(root):
+        root = {}
 
-            def dict_getitem_default(dict_, key, type_):
-                try:
-                    val = dict_[key]
-                except KeyError:
-                    val = type_()
-                    dict_[key] = val
-                return val
+        def dict_getitem_default(dict_, key, type_):
+            try:
+                val = dict_[key]
+            except KeyError:
+                val = type_()
+                dict_[key] = val
+            return val
 
-            for fpath in fpaths:
-                path_components = ut.dirsplit(fpath)
-                current = root
-                for comp in path_components[:-1]:
-                    current = dict_getitem_default(current, comp, dict)
-                contents = dict_getitem_default(current, '.', list)
-                contents.append(path_components[-1])
-            #print(ut.dict_str(root, indent_='-'))
+        for fpath in fpaths:
+            path_components = ut.dirsplit(fpath)
+            current = root
+            for comp in path_components[:-1]:
+                current = dict_getitem_default(current, comp, dict)
+            contents = dict_getitem_default(current, '.', list)
+            contents.append(path_components[-1])
+        #print(ut.dict_str(root, indent_='-'))
 
-            root['E:'].keys()
+        root['E:'].keys()
 
+        print(ut.byte_str2(sum(ut.take(drive.fpath_bytes_list, dpath_to_unique_fidx['E:\\']))))
 
-            def print_tree(root, path):
-                import utool as ut
-                path_components = ut.dirsplit(path)
-                current = root
-                for c in path_components:
-                    current = current[c]
-                print(ut.repr3(current))
+        def print_tree(root, path, dpath_to_unique_fidx=dpath_to_unique_fidx, drive=drive):
+            print('path = %r' % (path,))
+            print(ut.byte_str2(sum(ut.take(drive.fpath_bytes_list, dpath_to_unique_fidx[path + os.sep]))))
+            import utool as ut
+            path_components = ut.dirsplit(path)
+            current = root
+            for c in path_components:
+                current = current[c]
+            print(ut.repr3(current))
 
-            def print_keys(root, path):
-                import utool as ut
-                path_components = ut.dirsplit(path)
-                current = root
-                for c in path_components:
-                    current = current[c]
-                print(ut.repr3(current.keys()))
+        def print_keys(root, path, dpath_to_unique_fidx=dpath_to_unique_fidx, drive=drive):
+            import os
+            import utool as ut
+            print('path = %r' % (path,))
+            print(ut.byte_str2(sum(ut.take(drive.fpath_bytes_list, dpath_to_unique_fidx[path + os.sep]))))
+            path_components = ut.dirsplit(path)
+            current = root
+            for c in path_components:
+                current = current[c]
+            print(ut.repr3(current.keys()))
+            print(ut.repr3([(key,
+                # hacky. build more rubust str reprs of paths
+                ut.byte_str2(sum(ut.take(drive.fpath_bytes_list,
+                    dpath_to_unique_fidx.get((path + os.sep + key), []))))) for key in current.keys()], nl=1))
 
-            print_keys(root, path=r'E:')
-            print_tree(root, path=r'E:\TV')
-            print_tree(root, path=r'E:\Movies')
-            print_tree(root, path=r'E:\Boot')
+        print_keys(root, path=r'E:')
+        print_tree(root, path=r'E:\TV')
+        print_tree(root, path=r'E:\Movies')
+        print_tree(root, path=r'E:\Boot')
 
-            print_tree(root, path=r'E:\.')
-            print_tree(root, path=r'E:\Downloaded')
-            print_tree(root, path=r'E:\Recordings')
-            print_tree(root, path=r'E:\Clutter')
-            print_tree(root, path=r'E:')
-            print_tree(root, path=r'E:\Audio Books')
+        print_tree(root, path=r'E:\.')
+        print_tree(root, path=r'E:\Downloaded')
+        print_tree(root, path=r'E:\Recordings')
+        print_tree(root, path=r'E:\Clutter')
+        print_tree(root, path=r'E:')
+        print_tree(root, path=r'E:\Audio Books')
 
     ut.embed()
 
