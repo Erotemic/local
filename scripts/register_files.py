@@ -59,8 +59,12 @@ def tryhash(fpath_, stride=1):
 def analyize_multiple_drives(drives):
     """
     CommandLine:
+        export PYTHONPATH=$PYTHONPATH:~/local/scripts
+
         set PYTHONPATH=%PYTHONPATH%;%HOME%/local/scripts
         python -m register_files --exec-analyize_multiple_drives --drives E:/ D:/
+
+        python -m register_files --exec-analyize_multiple_drives --drives ~ /media/Store
 
         cd ~/local/scripts
 
@@ -173,10 +177,10 @@ def analyize_multiple_drives(drives):
             for c in path_components:
                 current = current[c]
             print(ut.repr3(current.keys()))
+            # hacky. build more rubust str reprs of paths
             print(ut.repr3([(key,
-                # hacky. build more rubust str reprs of paths
-                ut.byte_str2(sum(ut.take(drive.fpath_bytes_list,
-                    dpath_to_unique_fidx.get((path + os.sep + key), []))))) for key in current.keys()], nl=1))
+                             ut.byte_str2(sum(ut.take(drive.fpath_bytes_list,
+                                                      dpath_to_unique_fidx.get((path + os.sep + key), []))))) for key in current.keys()], nl=1))
 
         print_keys(root, path=r'E:')
         print_tree(root, path=r'E:\TV')
@@ -262,6 +266,7 @@ class Drive(object):
     def __init__(drive, root_dpath=None, state_fpath=None):
         drive.root_dpath = ut.truepath(ut.ensure_unicode(root_dpath))
         print('Initializing drive %s' % (drive.root_dpath,))
+        ut.assert_exists(drive.root_dpath)
         # Mapping from dpath strings to fpath indexes
         assert state_fpath is None, 'not yet supported for external analysis'
         drive.cache_fname = join(drive.root_dpath, 'ut_pathreg_cache.shelf')
