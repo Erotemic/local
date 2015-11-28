@@ -11,11 +11,11 @@ entry_prereq_git_and_local()
 }
 
 
-freshtart_ubuntu_main()
+freshstart_ubuntu_entry_point()
 {
-    source ~/local/init/frestart_ubuntu.sh
+    source ~/local/init/freshstart_ubuntu.sh
     entry_prereq_git_and_local
-    freshtart_ubuntu_entry_point
+    freshstart_ubuntu_entry_point
 }
 
 #setup_homefolder()
