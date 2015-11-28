@@ -17,8 +17,8 @@ import six  # NOQA
 import os
 from os.path import join, exists, dirname, basename
 from os.path import islink
-from os.path import splitext
-import functools
+#from os.path import splitext
+import re
 import numpy as np
 import numpy as np  # NOQA
 import vtool as vt  # NOQA
@@ -33,10 +33,6 @@ else:
 dryrun = not ut.get_argflag('--force')
 
 
-def prog_(iter_, lbl, freq=1000, **kwargs):
-    return ut.ProgressIter(iter_, freq=freq, lbl=lbl, **kwargs)
-
-
 def build_multindex(list_):
     """
     Creates mapping from unique items to indicies at which they appear
@@ -49,11 +45,26 @@ def build_multindex(list_):
 
 
 def tryhash(fpath_, stride=1):
-    import utool as ut
     try:
         return ut.get_file_hash(fpath_, stride=stride)
     except IOError:
         return None
+
+
+def build_dpath_to_fidx(fpath_list, fidx_list, root_dpath):
+    dpath_to_fidx = ut.ddict(list)
+    nTotal = len(fpath_list)
+    _iter = zip(fidx_list, fpath_list)
+    dpath_to_fidx = ut.ddict(list)
+    for fidx, fpath in ut.ProgIter(_iter, 'making dpath fidx map',
+                                   freq=50000, nTotal=nTotal):
+        current_path = fpath
+        while True:
+            current_path = dirname(current_path)
+            dpath_to_fidx[current_path].append(fidx)
+            if current_path == root_dpath:
+                break
+    return dpath_to_fidx
 
 
 def analyize_multiple_drives(drives):
@@ -62,7 +73,7 @@ def analyize_multiple_drives(drives):
         export PYTHONPATH=$PYTHONPATH:~/local/scripts
 
         set PYTHONPATH=%PYTHONPATH%;%HOME%/local/scripts
-        python -m register_files --exec-analyize_multiple_drives --drives E:/ D:/
+        python -m register_files --exec-analyize_multiple_drives --drives ~ E:/ D:/
 
         python -m register_files --exec-analyize_multiple_drives --drives ~ /media/Store
 
@@ -70,70 +81,84 @@ def analyize_multiple_drives(drives):
 
     Example:
         >>> from register_files import *  # NOQA
-        >>> dpaths = ut.get_argval('--drives', type_=list, default=['E:/'])#'D:/', 'E:/', 'F:/'])
+        >>> dpaths = ut.get_argval('--drives', type_=list, default=['E://', 'D://'])#'D:/', 'E:/', 'F:/'])
         >>> drives = [Drive(root_dpath) for root_dpath in dpaths]
         >>> drive = Broadcaster(drives)
         >>> drive.compute_info()
-        >>> drive.build_fpath_hashes()
+        >>> #drive.build_fpath_hashes()
         >>> drive.check_consistency()
         >>> E = drive = drives[0]
         >>> analyize_multiple_drives(drives)
         >>> #D, E, F = drives
         >>> #drive = D
     """
-    for drive in drives:
-        drive.num_fpaths = len(drive.fpath_registry)
-
-    for drive in drives:
-        drive.fpath_idxs = list(range(drive.num_fpaths))
-
-    for drive in drives:
-        drive.fpath_exts = [splitext(fpath)[1].lower() for fpath in drive.fpath_registry]
-
+    # -----
+    ## Find the files shared on all disks
+    #allhave = reduce(ut.dict_isect_combine, [drive.hash_to_fpaths for drive in drives])
+    #print('#allhave = %r' % (len(allhave),))
+    #allhave.keys()[0:3]
+    #allhave.values()[0:3]
+    #ut.embed()
     #for drive in drives:
-    #    print(ut.dict_str(ut.dict_hist(drive.fpath_exts), key_order_metric='val'))
+    #drive.rrr()
+    #print(drive.root_dpath)
+    #print(len(drive.hash_to_unique_fpaths))
+    #print(len(drive.hash_to_fpaths))
+    #print(len(drive.hash_to_unique_fpaths) / len(drive.hash_to_fpaths))
 
-    #for drive in drives:
-    #    drive.nbytes_to_idxs = ut.hierarchical_group_items(drive.fpath_idxs, [drive.fpath_exts, drive.fpath_bytes_list])
+    # Build dict to map from dpath to file pointers of unique descendants
+    #unique_fidxs_list = drive.hash_to_fidxs.values()
+    #fidxs = ut.flatten(unique_fidxs_list)
 
-    for drive in drives:
-        drive.hash_to_fidxs = build_multindex(drive.fpath_hashX_list)
-        drive.hash_to_fpaths = dict(
-            [(hash_, ut.take(drive.fpath_registry, idxs))
-             for hash_, idxs in drive.hash_to_fidxs.items()])
+    esc = re.escape
 
-    # Find the files shared on all disks
-    allhave = reduce(
-        functools.partial(ut.dict_intersection, combine=True),
-        [drive.hash_to_fpaths for drive in drives])
-    print('allhave = %r' % (len(allhave),))
-    #allhave = reduce(set.intersection, [set(drive.hash_to_fpaths.keys()) for drive in drives])
+    # Find which files exist on all drives
+    hashes_list = [set(drive_.hash_to_fidxs.keys()) for drive_ in drives]
+    allhave_hashes = reduce(set.intersection, hashes_list)
+    print('Drives %r have %d file hashes in common' % (drives, len(allhave_hashes)))
 
-    for drive in drives:
-        drive.hash_to_fidxs = ut.delete_keys(
-            drive.hash_to_fidxs.copy(), allhave.keys())
-        drive.hash_to_unique_fpaths = ut.delete_keys(
-            drive.hash_to_fpaths.copy(), allhave.keys())
+    lbls = [drive_.root_dpath for drive_ in drives]
+    isect_lens = np.zeros((len(drives), len(drives)))
+    for idx1, (hashes1, drive1) in enumerate(zip(hashes_list, drives)):
+        for idx2, (hashes2, drive2) in enumerate(zip(hashes_list, drives)):
+            if drive1 is not drive2:
+                common = set.intersection(hashes1, hashes2)
+                isect_lens[idx1, idx2] = len(common)
+            else:
+                isect_lens[idx1, idx2] = len(hashes2)
+    import pandas as pd
+    print(pd.DataFrame(isect_lens, index=lbls, columns=lbls))
 
-    for drive in drives:
-        #drive.rrr()
-        print(drive.root_dpath)
-        print(len(drive.hash_to_unique_fpaths))
-        print(len(drive.hash_to_fpaths))
-        print(len(drive.hash_to_unique_fpaths) / len(drive.hash_to_fpaths))
-        print()
+    # for drive in drives
+    drive = drives[0]
+    print('Finding unique files in drive=%r' % (drive,))
+    # Get subset of fidxs on this drive
+    unflat_valid_fidxs = ut.take(drive.hash_to_fidxs, allhave_hashes)
+    valid_fidxs = sorted(ut.flatten(unflat_valid_fidxs))
 
-        # Use subset while developing
-        #unique_fpaths_list = drive.hash_to_unique_fpaths.values()
-        unique_fidxs_list = drive.hash_to_fidxs.values()
+    # Filter fpaths by patterns
+    ignore_patterns = [
+        esc('Thumbs.db')
+    ]
+    ignore_paths = [
+        'Spotify'
+    ]
+    patterns = ignore_paths + ignore_patterns
+    valid_fpaths = ut.take(drive.fpath_list, valid_fidxs)
+    valid_flags = [not any([re.search(p, fpath) for p in patterns])
+                   for fpath in valid_fpaths]
+    valid_flags = np.array(valid_flags)
+    valid_fidxs = ut.compress(valid_fidxs, valid_flags)
 
-        fidxs = ut.flatten(unique_fidxs_list)
-        fpaths = sorted(ut.take(drive.fpath_registry, fidxs))
-        #fpaths = sorted([items[0] for items in unique_fpaths_list if len(items) == 1])
+    print(ut.filtered_infostr(valid_flags, 'invalid fpaths'))
 
-        dpath_to_unique_fidx = dict([(key, ut.list_intersection(fidx, fidxs)) for key, fidx in drive.dpath_to_fidx.items()])
+    fidxs = valid_fidxs
+    valid_fpaths = sorted(ut.take(drive.fpath_list, fidxs))
 
-        #def make_tree_structure(root):
+    dpath_to_unique_fidx = build_dpath_to_fidx(valid_fpaths, valid_fidxs,
+                                                drive.root_dpath)
+
+    def make_tree_structure(valid_fpaths):
         root = {}
 
         def dict_getitem_default(dict_, key, type_):
@@ -144,55 +169,100 @@ def analyize_multiple_drives(drives):
                 dict_[key] = val
             return val
 
-        for fpath in fpaths:
+        for fpath in ut.ProgIter(valid_fpaths, 'building tree', freq=30000):
             path_components = ut.dirsplit(fpath)
             current = root
             for comp in path_components[:-1]:
                 current = dict_getitem_default(current, comp, dict)
             contents = dict_getitem_default(current, '.', list)
             contents.append(path_components[-1])
-        #print(ut.dict_str(root, indent_='-'))
+        return root
 
-        root['E:'].keys()
+    root = make_tree_structure(valid_fpaths)
 
-        print(ut.byte_str2(sum(ut.take(drive.fpath_bytes_list, dpath_to_unique_fidx['E:\\']))))
+    def print_tree(root, path, dpath_to_unique_fidx=dpath_to_unique_fidx, drive=drive, depth=None):
+        print('path = %r' % (path,))
+        print(ut.byte_str2(drive.get_total_nbytes(dpath_to_unique_fidx[path])))
+        path_components = ut.dirsplit(path)
+        # Navigate to correct spot in tree
+        current = root
+        for c in path_components:
+            current = current[c]
+        print(ut.repr3(current, truncate=1))
 
-        def print_tree(root, path, dpath_to_unique_fidx=dpath_to_unique_fidx, drive=drive):
-            print('path = %r' % (path,))
-            print(ut.byte_str2(sum(ut.take(drive.fpath_bytes_list, dpath_to_unique_fidx[path + os.sep]))))
-            import utool as ut
-            path_components = ut.dirsplit(path)
-            current = root
-            for c in path_components:
-                current = current[c]
-            print(ut.repr3(current))
+    def get_tree_info(root, path, dpath_to_unique_fidx=dpath_to_unique_fidx, drive=drive, depth=0):
+        path_components = ut.dirsplit(path)
+        current = root
+        for c in path_components:
+            current = current[c]
+        if isinstance(current, list):
+            tree_tmp = []
+        else:
+            key_list = list(current.keys())
+            child_list = [join(path, key) for key in key_list]
+            dpath_nbytes_list = [
+                drive.get_total_nbytes(dpath_to_unique_fidx.get(child, []))
+                for child in child_list
+            ]
+            nfiles_list = [
+                len(dpath_to_unique_fidx.get(child, []))
+                for child in child_list
+            ]
+            tree_tmp = sorted([
+                (key, ut.byte_str2(nbytes), nfiles)
+                if depth == 0 else
+                (key, ut.byte_str2(nbytes), nfiles,
+                    get_tree_info(root, path=child,
+                                  dpath_to_unique_fidx=dpath_to_unique_fidx, drive=drive,
+                                  depth=depth - 1))
+                for key, child, nbytes, nfiles in zip(key_list, child_list, dpath_nbytes_list, nfiles_list)
+            ])
+        return tree_tmp
 
-        def print_keys(root, path, dpath_to_unique_fidx=dpath_to_unique_fidx, drive=drive):
-            import os
-            import utool as ut
-            print('path = %r' % (path,))
-            print(ut.byte_str2(sum(ut.take(drive.fpath_bytes_list, dpath_to_unique_fidx[path + os.sep]))))
-            path_components = ut.dirsplit(path)
-            current = root
-            for c in path_components:
-                current = current[c]
-            print(ut.repr3(current.keys()))
-            # hacky. build more rubust str reprs of paths
-            print(ut.repr3([(key,
-                             ut.byte_str2(sum(ut.take(drive.fpath_bytes_list,
-                                                      dpath_to_unique_fidx.get((path + os.sep + key), []))))) for key in current.keys()], nl=1))
+    def print_tree_struct(*args, **kwargs):
+        tree_str = (ut.indent(ut.repr3(get_tree_info(*args, **kwargs), nl=1)))
+        print(tree_str)
+        #bytes_str = ut.byte_str2(drive.get_total_nbytes(dpath_to_unique_fidx[path]))
+        #print('path = %r, %s' % (path, bytes_str))
+        #print(ut.repr3(key_list))
+        return tree_str
 
-        print_keys(root, path=r'E:')
-        print_tree(root, path=r'E:\TV')
-        print_tree(root, path=r'E:\Movies')
-        print_tree(root, path=r'E:\Boot')
+    dpath_to_unique_fidx
+    dpath_to_fidxs = ut.map_dict_vals(set, drive.dpath_to_fidx)
+    complete_unique_dpaths = ut.dict_isect(dpath_to_fidxs, dpath_to_unique_fidx)
+    complete_root = make_tree_structure(complete_unique_dpaths.keys())
 
-        print_tree(root, path=r'E:\.')
-        print_tree(root, path=r'E:\Downloaded')
-        print_tree(root, path=r'E:\Recordings')
-        print_tree(root, path=r'E:\Clutter')
-        print_tree(root, path=r'E:')
-        print_tree(root, path=r'E:\Audio Books')
+    globals()['ut'] = ut
+    globals()['os'] = os
+    globals()['join'] = join
+
+    print(ut.byte_str2(drive.get_total_nbytes(dpath_to_unique_fidx['E:\\'])))
+    get_tree_info(root, path='E:\\', depth=0)
+
+    get_tree_info(complete_root, path='E:\\', depth=0)
+
+    get_tree_info(root, path='E:\\', depth=1)
+    print(print_tree_struct(root, path='E:\\Clutter', depth=0))
+    print_tree(root, path=r'E:\TV')
+    print_tree(root, path=r'E:\Movies')
+    print_tree(root, path=r'E:\Boot')
+
+    print_tree(root, path='E:\\')
+    print_tree(root, path=r'E:\Downloaded')
+    print_tree(root, path=r'E:\Recordings')
+    print_tree(root, path=r'E:\Clutter')
+    print_tree(root, path=r'E:\Audio Books')
+
+    # TODO:
+    # * Ignore list
+    # * Find and rectify internal duplicates
+    # * Update registry with new files and deleted ones
+    # * Ensure that all unique files are backed up
+    # Index the C: Drive as well.
+    # * Lazy properties of drive
+    # * Multiple types of identifiers (hash, fname, ext, fsize)
+    # Drive subsets
+    # Export/Import Drive for analysis on other machines
 
     ut.embed()
 
@@ -263,6 +333,60 @@ class Drive(object):
         E, D, F = drives
     """
 
+    @property
+    def fpath_list(drive):
+        if getattr(drive, 'fpath_list_', None) is None:
+            drive.register_files()
+        return drive.fpath_list_
+
+    @property
+    def dpath_list(drive):
+        if getattr(drive, 'dpath_list_', None) is None:
+            drive.register_files()
+        return drive.dpath_list_
+
+    @property
+    def fpath_hashX_list(drive):
+        if getattr(drive, 'fpath_hashX_list_', None) is None:
+            drive.fpath_hashX_list_ = drive.build_fpath_hashes()
+        return drive.fpath_hashX_list_
+
+    @property
+    def hash_to_fidxs(drive):
+        if getattr(drive, 'hash_to_fidxs_', None) is None:
+            drive.hash_to_fidxs_ = build_multindex(drive.fpath_hashX_list)
+        return drive.hash_to_fidxs_
+
+    @property
+    def dpath_to_fidx(drive):
+        if getattr(drive, 'dpath_to_fidx_', None) is None:
+            drive.dpath_to_fidx_ = drive.get_dpath_to_fidx()
+        return drive.dpath_to_fidx_
+
+    @property
+    def fpath_bytes_list(drive):
+        if getattr(drive, 'fpath_bytes_list_', None) is None:
+            drive.fpath_bytes_list_ = drive.get_fpath_bytes_list()
+        return drive.fpath_bytes_list_
+
+    @property
+    def total_bytes(drive):
+        if getattr(drive, 'total_bytes_', None) is None:
+            drive.total_bytes_ = drive.get_total_nbytes()
+        return drive.total_bytes_
+
+    def compute_info(drive):
+        print('Computing Info of %r' % (drive,))
+        drive.register_files()
+        drive.fpath_bytes_list
+        #drive.group_duplicates()
+
+    #def group_duplicates(drive):
+    #    # Map to the fpaths as well
+    #    drive.hash_to_fpaths = dict(
+    #        [(hash_, ut.take(drive.fpath_list, idxs))
+    #         for hash_, idxs in drive.hash_to_fidxs.items()])
+
     def __init__(drive, root_dpath=None, state_fpath=None):
         drive.root_dpath = ut.truepath(ut.ensure_unicode(root_dpath))
         print('Initializing drive %s' % (drive.root_dpath,))
@@ -270,8 +394,11 @@ class Drive(object):
         # Mapping from dpath strings to fpath indexes
         assert state_fpath is None, 'not yet supported for external analysis'
         drive.cache_fname = join(drive.root_dpath, 'ut_pathreg_cache.shelf')
-        drive.fpath_bytes_list = None
-        drive.dpath_to_fidx = None
+
+        drive.fpath_bytes_list_ = None
+        drive.dpath_to_fidx_ = None
+        drive.fpath_hashX_list_ = None
+        drive.hash_to_fidxs_ = None
         drive.cache = ut.ShelfCacher(drive.cache_fname)
 
     def check_consistency(drive):
@@ -297,24 +424,49 @@ class Drive(object):
     def __repr__(drive):
         return '<Drive ' + drive.__str__() + '>'
 
-    @property
-    def total_bytes(drive):
-        if drive.fpath_bytes_list is None:
-            return None
-        return np.nansum(drive.fpath_bytes_list)
+    def get_infostr(drive, extra=False):
+        drive.num_fpaths = len(drive.fpath_list)
+        infostr_list = [str(drive)]
+        drive.get_filesize_errors()
+        nan_fpaths = drive.get_filesize_errors()
+        infostr_list += ['#nan fsize fpaths = %r' % (len(nan_fpaths),)]
+        if extra:
+            infostr_list += ['#nan_fpaths = %r' % (nan_fpaths[0:10],)]
+        total_drive_bytes = ut.get_total_diskbytes(drive.root_dpath)
+        infostr_list += [('total drive size = %r' % (ut.byte_str2(total_drive_bytes),))]
+        infostr_list += [('drive.num_fpaths = %r' % (drive.num_fpaths,))]
+        infostr = '\n'.join(infostr_list)
+        return infostr
+
+    def print_infostr(drive):
+        print(drive.get_infostr())
+
+    def get_filesize_errors(drive):
+        flags = np.isnan(drive.fpath_bytes_arr)
+        nan_fpaths = ut.compress(drive.fpath_list, flags)
+        return nan_fpaths
+
+    def get_total_nbytes(drive, fidx_list=None):
+        if fidx_list is None:
+            if drive.fpath_bytes_list_ is None:
+                return None
+        if fidx_list is None:
+            return np.nansum(drive.fpath_bytes_list)
+        else:
+            return np.nansum(ut.take(drive.fpath_bytes_list, fidx_list))
 
     def biggest_files(drive):
         print('Biggest Files in %r' % (drive,))
         sortx = ut.list_argsort(drive.fpath_bytes_list)[::-1]
         sel = sortx[0:10]
         biggest_nbytes = ut.take(drive.fpath_bytes_list, sel)
-        biggest_files = ut.take(drive.fpath_registry, sel)
+        biggest_files = ut.take(drive.fpath_list, sel)
         biginfo_list = list(zip(map(ut.byte_str2, biggest_nbytes), biggest_files))
         print(ut.list_str(biginfo_list, strvals=True))
 
     def biggest_dirs(drive):
         print('Biggest Dirs in %r' % (drive,))
-        dpath_list = drive.dpath_registry
+        dpath_list = drive.dpath_list
         fidxs_list = ut.dict_take(drive.dpath_to_fidx, dpath_list)
         unflat_dpath_bytes_list = ut.list_unflat_take(drive.fpath_bytes_list, fidxs_list)
         dpath_nbytes_list = list(map(sum, unflat_dpath_bytes_list))
@@ -353,13 +505,13 @@ class Drive(object):
             if len(val) > 1
         ]
         duplicate_idxs = ut.dict_take(multiindex_dict_, duplicate_hashes)
-        unflat_fpaths = ut.list_unflat_take(drive.fpath_registry, duplicate_idxs)
+        unflat_fpaths = ut.list_unflat_take(drive.fpath_list, duplicate_idxs)
         # Check if any dups have been removed
         still_exists = ut.unflat_map(exists, unflat_fpaths)
         unflat_idxs2 = ut.zipcompress(duplicate_idxs, still_exists)
         duplicate_idxs = [idxs for idxs in unflat_idxs2 if len(idxs) > 1]
         # Look at duplicate files
-        unflat_fpaths = ut.list_unflat_take(drive.fpath_registry, duplicate_idxs)
+        unflat_fpaths = ut.list_unflat_take(drive.fpath_list, duplicate_idxs)
         unflat_sizes = ut.list_unflat_take(drive.fpath_bytes_list, duplicate_idxs)
         # Find highly coupled directories
         if True:
@@ -381,10 +533,10 @@ class Drive(object):
         print('Duplicate fpaths: ' + ut.list_str(unflat_fpaths, nl=True))
         # Find duplicate directories
         dpath_list = list(drive.dpath_to_fidx.keys())
-        fidxs_list = ut.dict_take(drive.dpath_to_fidx, drive.dpath_registry)
-        #exists_list = list(map(exists, drive.fpath_registry))
+        fidxs_list = ut.dict_take(drive.dpath_to_fidx, drive.dpath_list)
+        #exists_list = list(map(exists, drive.fpath_list))
         #unflat_exists = ut.list_unflat_take(exists_list, fidxs_list)
-        fname_registry = [basename(fpath) for fpath in drive.fpath_registry]
+        fname_registry = [basename(fpath) for fpath in drive.fpath_list]
         unflat_fnames = ut.list_unflat_take(fname_registry, fidxs_list)
         def unsorted_list_hash(list_):
             return ut.hashstr27(str(sorted(list_)))
@@ -403,9 +555,9 @@ class Drive(object):
         # --- FIND EMPTY DIRECTORIES ---
         """
         print('Fixing Empty Dirs in %r' % (drive,))
-        fidxs_list = ut.dict_take(drive.dpath_to_fidx, drive.dpath_registry)
+        fidxs_list = ut.dict_take(drive.dpath_to_fidx, drive.dpath_list)
         isempty_flags = [len(fidxs) == 0 for fidxs in fidxs_list]
-        empty_dpaths = ut.compress(drive.dpath_registry, isempty_flags)
+        empty_dpaths = ut.compress(drive.dpath_list, isempty_flags)
 
         def is_cplat_link(path_):
             try:
@@ -422,12 +574,12 @@ class Drive(object):
             #print(ut.list_str(empty_dpaths[0:10]))
             empty_dpaths = ut.compress(empty_dpaths, valid_flags)
 
-        print('Found %r / %r empty_dpaths' % (len(empty_dpaths), len(drive.dpath_registry)))
+        print('Found %r / %r empty_dpaths' % (len(empty_dpaths), len(drive.dpath_list)))
         print(ut.list_str(empty_dpaths[0:10]))
 
         # Ensure actually still empty
         current_contents = [ut.glob(d, with_dirs=False)
-                            for d in prog_(empty_dpaths, 'checking empty status')]
+                            for d in ut.ProgIter(empty_dpaths, 'checking empty status')]
         current_lens = list(map(len, current_contents))
         assert not any(current_lens), 'some dirs are not empty'
 
@@ -435,7 +587,7 @@ class Drive(object):
         isbase_dir = [
             not any([d.startswith(dpath_) and d != dpath_
                         for dpath_ in empty_dpaths])
-            for d in prog_(empty_dpaths, 'finding base dirs')
+            for d in ut.ProgIter(empty_dpaths, 'finding base dirs')
         ]
         base_empty_dirs = ut.compress(empty_dpaths, isbase_dir)
         def list_only_files(dpath):
@@ -445,7 +597,7 @@ class Drive(object):
                     yield fpath
         base_current_contents = [
             list(list_only_files(d))
-            for d in prog_(base_empty_dirs, 'checking emptyness', freq=10)]
+            for d in ut.ProgIter(base_empty_dirs, 'checking emptyness', freq=10)]
         is_actually_empty = [len(fs) == 0 for fs in base_current_contents]
         not_really_empty = ut.compress(base_empty_dirs, ut.not_list(is_actually_empty))
         print('%d dirs are not actually empty' % (len(not_really_empty),))
@@ -479,7 +631,7 @@ class Drive(object):
         if not dryrun:
             # FIX PART
             #from os.path import normpath
-            #for d in prog_(truly_empty_dirs):
+            #for d in ut.ProgIter(truly_empty_dirs):
             #    break
             #    if ut.WIN32:
             #        # http://www.sevenforums.com/system-security/53095-file-folder-read-only-attribute-wont-disable.html
@@ -488,131 +640,102 @@ class Drive(object):
 
             print('Deleting %d truly_empty_dirs1' % (len(truly_empty_dirs1),))
 
-            for d in prog_(truly_empty_dirs1, 'DELETE empty dirs'):  # NOQA
+            for d in ut.ProgIter(truly_empty_dirs1, 'DELETE empty dirs', freq=1000):  # NOQA
                 ut.delete(d, quiet=True)
 
             if ut.WIN32 and False:
                 # remove file that failed removing
                 flags = list(map(exists, truly_empty_dirs1))
                 truly_empty_dirs1 = ut.compress(truly_empty_dirs1, flags)
-                for d in prog_(truly_empty_dirs1, 'rming'):
+                for d in ut.ProgIter(truly_empty_dirs1, 'rming', freq=1000):
                     ut.cmd('rmdir', d)
-
-    def compute_info(drive):
-        print('Computing Info of %r' % (drive,))
-        drive.register_files()
-        drive.get_fpath_bytes_list()
-        drive.build_dpath_to_fidx()
-        #drive.build_fpath_hashes()
 
     def register_files(drive):
         print('Loading registered files in %r' % (drive,))
         try:
-            fpath_registry = drive.cache.load('fpath_registry')
-            dpath_registry = drive.cache.load('dpath_registry')
+            fpath_list = drive.cache.load('fpath_registry')
+            dpath_list = drive.cache.load('dpath_registry')
         except ut.CacheMissException:
             print('Recomputing registry')
             fpath_gen_list = []
             dpath_gen_list = []
-            for root, dname_list, fname_list in prog_(os.walk(drive.root_dpath), 'walking'):
+            for root, dname_list, fname_list in ut.ProgIter(os.walk(drive.root_dpath), 'walking', freq=1000):
                 # Ignore hidden directories
                 dname_list[:] = [d for d in dname_list if not d.startswith('.')]
                 fpath_gen_list.append((root, fname_list))
                 dpath_gen_list.append((root, dname_list))
-            fpath_registry = [join(root, f) for root, fs in fpath_gen_list for f in fs]
-            dpath_registry =  [join(root, d) for root, ds in dpath_gen_list for d in ds]
-            dpath_registry = [drive.root_dpath] + dpath_registry
-            print('Regsitering %d files and %d directories' % (len(fpath_registry), len(dpath_registry)))
-            drive.cache.save('fpath_registry', fpath_registry)
-            drive.cache.save('dpath_registry', dpath_registry)
-        print('Loaded %d files and %d directories' % (len(fpath_registry), len(dpath_registry)))
-        drive.fpath_registry = fpath_registry
-        drive.dpath_registry = dpath_registry
+            fpath_list = [join(root, f) for root, fs in fpath_gen_list for f in fs]
+            dpath_list =  [join(root, d) for root, ds in dpath_gen_list for d in ds]
+            dpath_list = [drive.root_dpath] + dpath_list
+            print('Regsitering %d files and %d directories' % (len(fpath_list), len(dpath_list)))
+            drive.cache.save('fpath_registry', fpath_list)
+            drive.cache.save('dpath_registry', dpath_list)
+        print('Loaded %d files and %d directories' % (len(fpath_list), len(dpath_list)))
+        drive.fpath_list_ = fpath_list
+        drive.dpath_list_ = dpath_list
 
     def update_registry(drive):
         print('Updating registered files in %r' % (drive,))
         # Update existing files
-        fpath_exists_list = list(map(exists, prog_(drive.fpath_registry, 'checkexist fpath')))
-        dpath_exists_list = list(map(exists, prog_(drive.dpath_registry, 'checkexist dpath')))
+        fpath_exists_list = list(map(exists, ut.ProgIter(drive.fpath_list, 'checkexist fpath', freq=1000)))
+        dpath_exists_list = list(map(exists, ut.ProgIter(drive.dpath_list, 'checkexist dpath', freq=1000)))
         if all(fpath_exists_list):
             print('No change in file structure')
         else:
             print('%d/%d files no longer exist' % (
-                len(drive.fpath_registry) - sum(fpath_exists_list),
-                len(drive.fpath_registry)))
-            removed_fpaths = ut.compress(drive.fpath_registry, ut.not_list(fpath_exists_list))
+                len(drive.fpath_list) - sum(fpath_exists_list),
+                len(drive.fpath_list)))
+            removed_fpaths = ut.compress(drive.fpath_list, ut.not_list(fpath_exists_list))
             print('removed_fpaths = %s' % (ut.list_str(removed_fpaths),))
         if all(dpath_exists_list):
             print('No change in dpath structure')
         else:
             print('%d/%d dirs no longer exist' % (
-                len(drive.dpath_registry) - sum(dpath_exists_list),
-                len(drive.dpath_registry)))
+                len(drive.dpath_list) - sum(dpath_exists_list),
+                len(drive.dpath_list)))
             removed_dpaths = ut.compress(
-                drive.dpath_registry,
+                drive.dpath_list,
                 ut.not_list(dpath_exists_list))
             print('removed_dpaths = %s' % (ut.list_str(removed_dpaths),))
 
-        drive.fpath_registry = ut.compress(drive.fpath_registry, fpath_exists_list)
-        drive.dpath_registry = ut.compress(drive.dpath_registry, dpath_exists_list)
-        drive.cache.save('fpath_registry', drive.fpath_registry)
-        drive.cache.save('dpath_registry', drive.dpath_registry)
+        drive.fpath_list = ut.compress(drive.fpath_list, fpath_exists_list)
+        drive.dpath_list = ut.compress(drive.dpath_list, dpath_exists_list)
+        drive.cache.save('fpath_list', drive.fpath_list)
+        drive.cache.save('dpath_list', drive.dpath_list)
 
     def get_fpath_bytes_list(drive):
         print('Building fpath bytes for %r' % (drive,))
         try:
             fpath_bytes_list = drive.cache.load('fpath_bytes_list')
-            assert len(fpath_bytes_list) == len(drive.fpath_registry)
-            #print(len(fpath_bytes_list))
+            assert len(fpath_bytes_list) == len(drive.fpath_list), 'bad length'
         except ut.CacheMissException:
             def tryread_nbytes(fpath):
                 try:
                     return ut.file_bytes(fpath)
                 except SystemErrors:
                     return np.nan
-
             fpath_bytes_list = [
                 tryread_nbytes(fpath)
-                for fpath in prog_(drive.fpath_registry, 'reading size')
+                for fpath in ut.ProgIter(drive.fpath_list, 'reading size', freq=1000)
             ]
-            assert len(drive.fpath_registry) == len(drive.fpath_registry)
+            assert len(drive.fpath_list) == len(drive.fpath_list)
             drive.cache.save('fpath_bytes_list', fpath_bytes_list)
-        drive.fpath_bytes_list = fpath_bytes_list
+        return fpath_bytes_list
 
-        drive.fpath_bytes_arr = np.array(fpath_bytes_list)
-        fpath_bytes_arr = drive.fpath_bytes_arr
-        print('Loaded filesize for %d / %d files' % ((~np.isnan(fpath_bytes_arr)).sum(), len(fpath_bytes_arr)))
-
-    def check_filesize_errors(drive):
-        flags = np.isnan(drive.fpath_bytes_arr)
-        nan_fpaths = ut.compress(drive.fpath_registry, flags)
-        print('#nan fsize fpaths = %r' % (len(nan_fpaths),))
-        print('nan_fpaths = %r' % (nan_fpaths[0:10],))
-
-    def build_dpath_to_fidx(drive):
+    def get_dpath_to_fidx(drive):
         """
         Build mapping from each dpath to contained file indexes
         """
         # Create mapping from directory to subfiles
         try:
             dpath_to_fidx = drive.cache.load('dpath_to_fidx')
-            assert len(dpath_to_fidx) <= len(drive.dpath_registry)
+            assert len(dpath_to_fidx) <= len(drive.dpath_list)
         except ut.CacheMissException:
-            dpath_to_fidx = ut.ddict(list)
-            _iter = prog_(enumerate(drive.fpath_registry), 'making dpath fidx map', freq=10000,
-                          nTotal=len(drive.fpath_registry))
-            for fidx, fpath in _iter:
-                current_path = fpath
-                #last_dpath = None
-                while True:
-                    #current_path != last_dpath:
-                    #last_dpath = current_path
-                    current_path = dirname(current_path)
-                    dpath_to_fidx[current_path].append(fidx)
-                    if current_path == drive.root_dpath:
-                        break
+            fpath_list = drive.fpath_list
+            fidx_list = list(range(len(fpath_list)))
+            dpath_to_fidx = build_dpath_to_fidx(fpath_list, fidx_list, drive.root_dpath)
             drive.cache.save('dpath_to_fidx', dpath_to_fidx)
-        drive.dpath_to_fidx = dpath_to_fidx
+        return dpath_to_fidx
 
     def get_tier_windows(drive):
         nbytes_tiers = [
@@ -667,13 +790,13 @@ class Drive(object):
         try:
             fpath_hashX_list = drive.cache.load('fpath_hashX_list')
         except ut.CacheMissException:
-            fpath_hashX_list = [None] * len(drive.fpath_registry)
+            fpath_hashX_list = [None] * len(drive.fpath_list)
 
-            assert len(drive.fpath_bytes_list) == len(drive.fpath_registry)
+            assert len(drive.fpath_bytes_list) == len(drive.fpath_list)
 
             tier_windows = drive.get_tier_windows()
             tier_flags = drive.get_tier_flags()
-            tier_fpaths = [ut.compress(drive.fpath_registry, flags) for flags in tier_flags]
+            tier_fpaths = [ut.compress(drive.fpath_list, flags) for flags in tier_flags]
 
             #for tier, fpaths in enumerate(tier_fpaths):
             #chosen_tiers = [6, 5, 4, 3, 2, 1, 0]
@@ -689,12 +812,12 @@ class Drive(object):
 
                 tier_hashes = [
                     tryhash(fpath, stride) for fpath in
-                    prog_(fpaths, 'tier=%r hashes' % (tier,), freq=100)
+                    ut.ProgIter(fpaths, 'tier=%r hashes' % (tier,), freq=100)
                 ]
                 #import register_files
                 #tier_hashes = list(ut.buffered_generator((
                 #    register_files.tryhash(fpath, stride) for fpath in
-                #    prog_(fpaths, 'tier=%r hashes' % (tier,), freq=100)
+                #    ut.ProgIter(fpaths, 'tier=%r hashes' % (tier,), freq=100)
                 #)))
                 tier_idxs = np.where(tier_flags[tier])[0]
 
@@ -702,7 +825,7 @@ class Drive(object):
                     fpath_hashX_list[idx] = hash_
 
             drive.cache.save('fpath_hashX_list', fpath_hashX_list)
-        drive.fpath_hashX_list = fpath_hashX_list
+        return fpath_hashX_list
 
 
 if __name__ == '__main__':
