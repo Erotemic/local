@@ -6,7 +6,6 @@ CommandLine:
     cd ~/local/scripts
     import register_files
 
-    set PYTHONPATH=%PYTHONPATH%;%HOME%/local/scripts
     export PYTHONPATH=$PYTHONPATH:~/local/scripts
     python -m register_files --exec-register_drive --drives ~
     python %HOME%/local/scripts/register_files.py --exec-register_drive --drives D:/ E:/ F:/
@@ -21,7 +20,7 @@ from os.path import islink
 import re
 import numpy as np
 import numpy as np  # NOQA
-import vtool as vt  # NOQA
+# import vtool as vt  # NOQA
 from six.moves import zip, range  # NOQA
 
 if ut.WIN32:
@@ -72,10 +71,11 @@ def analyize_multiple_drives(drives):
     CommandLine:
         export PYTHONPATH=$PYTHONPATH:~/local/scripts
 
-        set PYTHONPATH=%PYTHONPATH%;%HOME%/local/scripts
         python -m register_files --exec-analyize_multiple_drives --drives ~ E:/ D:/
 
         python -m register_files --exec-analyize_multiple_drives --drives ~ /media/Store
+        python register_files.py --exec-analyize_multiple_drives --drives /media/joncrall/media/
+        /media/joncrall/store/ /media/joncrall/backup
 
         cd ~/local/scripts
 
@@ -296,13 +296,12 @@ class Drive(object):
     Stores properties, builds properties, infers info
 
     CommandLine:
-        set PYTHONPATH=%PYTHONPATH%;%HOME%/local/scripts
         python -m register_files --exec-Drive --drives E:/
 
         export PYTHONPATH=$PYTHONPATH:~/local/scripts
         python -m register_files --exec-Drive --drives ~
 
-        python %HOME%/local/scripts/register_files.py --exec-Drive --drives D:/ E:/ F:/
+        python ~/local/scripts/register_files.py --exec-Drive --drives D:/ E:/ F:/
 
     Ignore:
         >>> # ENABLE_DOCTEST

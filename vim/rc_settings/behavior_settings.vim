@@ -128,3 +128,7 @@ set textwidth=0 formatoptions=cqt wrapmargin=0
  set guioptions-=a
  set guioptions-=A
  set guioptions-=aA
+
+
+ " Turn off errobells
+ set noeb vb t_vb=

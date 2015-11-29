@@ -1,30 +1,30 @@
 
-index_opencv_with_ctags()
-{
-    #References:
-    #    http://sourceforge.net/p/ctags/mailman/message/20916991/
-    ctags -R -ICVAPI --c++-kinds=+p --fields=+iaS --extra=+q --language-force=c++ /usr/include/opencv/
-}
-clean_for_upgrade()
-{
-    # msg: Please free at least an additional 68,3 M of disk space on '/boot'. Empty your trash and remove temporary packages of former installations using 'sudo apt-get clean'.
-    # References: http://askubuntu.com/questions/495941/software-updater-needs-more-disk-space
-    ubuntu-tweak
-}
+#index_opencv_with_ctags()
+#{
+#    #References:
+#    #    http://sourceforge.net/p/ctags/mailman/message/20916991/
+#    ctags -R -ICVAPI --c++-kinds=+p --fields=+iaS --extra=+q --language-force=c++ /usr/include/opencv/
+#}
+#clean_for_upgrade()
+#{
+#    # msg: Please free at least an additional 68,3 M of disk space on '/boot'. Empty your trash and remove temporary packages of former installations using 'sudo apt-get clean'.
+#    # References: http://askubuntu.com/questions/495941/software-updater-needs-more-disk-space
+#    ubuntu-tweak
+#}
 
-setup_ibeis()
-{
-    source ~/local/init/freshstart_ubuntu.sh
-}
+#setup_ibeis()
+#{
+#    source ~/local/init/freshstart_ubuntu.sh
+#}
 
-ypackin()
-{
-    sudo pip install $*
-}
-packin()
-{
-    sudo apt-get install -y $*
-}
+#ypackin()
+#{
+#    sudo pip install $*
+#}
+#packin()
+#{
+#    sudo apt-get install -y $*
+#}
 
 
 install_core()
@@ -37,6 +37,7 @@ install_core()
     # Vim
     sudo apt-get install -y vim
     sudo apt-get install -y vim-gtk
+    sudo apt-get install -y exuberant-ctags 
 
     # Trash put
     sudo apt-get install -y trash-cli
@@ -71,16 +72,14 @@ install_core()
     #sudo apt-get install sqliteman
     sudo apt-get install -y sqlitebrowser 
     #References: http://stackoverflow.com/questions/7454796/taglist-exuberant-ctags-not-found-in-path
-    sudo apt-get install -y exuberant-ctags 
-
     sudo apt-get install -y hdfview
     
 }
 
-install_synergy()
-{
-    sudo apt-get install synergy -y
-}
+#install_synergy()
+#{
+#    sudo apt-get install synergy -y
+#}
 
 
 install_dropbox()
@@ -127,44 +126,52 @@ install_core_extras()
 {
     # Not commonly used but frequently forgotten
     sudo apt-get install -y okular
-    sudo apt-get install -y subversion
-    sudo apt-get install -y filezilla
+    sudo apt-get install -y synaptic
     sudo apt-get install -y gitg
     sudo apt-get install -y sysstat
     sudo apt-get install -y vlc
+    sudo apt-get install -y subversion
 
-    # References: https://help.ubuntu.com/community/Skype
-    #sudo dpkg --add-architecture i386
-    sudo add-apt-repository "deb http://archive.canonical.com/ $(lsb_release -sc) partner"
-    sudo apt-get update 
-    sudo apt-get install skype -y
-    #sudo apt-get install -y skype
+    #sudo apt-get install -y filezilla
 
 
     sudo apt-get install graphviz -y
-    sudo apt-get install python-pydot -y
     sudo apt-get install imagemagick -y
+    sudo apt-get install python-pydot -y
 
     sudo apt-get install dia-gnome -y
-    sudo apt-get install inkscape -y
 
     # flux
     sudo add-apt-repository ppa:kilian/f.lux
     sudo apt-get update
     sudo apt-get install fluxgui -y
 
-
-    sudo apt-get install y-ppa-manager
-    #for printer
-    sudo apt-key adv --recv-key --keyserver keyserver.ubuntu.com 24CBF5474CFD1E2F
-
     # 7zip
     sudo apt-get install p7zip-full
-    
+
+    # Make vlc default app
+    # http://askubuntu.com/questions/91701/how-to-set-vlc-as-default-video-player
+    cat /usr/share/applications/defaults.list | grep video
+    cat /usr/share/applications/defaults.list | grep totem.desktop
+    cat ~/.local/share/applications/mimeapps.list
+    sudo sed -i 's/\(^.*\)video\(.*\)=totem.desktop/\1video\2=vlc.desktop/' /usr/share/applications/defaults.list
+    sudo sed -i 's/\(^.*\)audio\(.*\)=totem.desktop/\audio\2=vlc.desktop/' /usr/share/applications/defaults.list
+}
+
+
+install_skype()
+{
+    # References: https://help.ubuntu.com/community/Skype
+    #sudo dpkg --add-architecture i386
+    sudo add-apt-repository "deb http://archive.canonical.com/ $(lsb_release -sc) partner"
+    sudo apt-get update 
+    sudo apt-get install skype -y
+    #sudo apt-get install -y skype
 }
 
 install_evaluating()
 {
+    #sudo apt-get install inkscape -y
     #References: https://github.com/kayhayen/Nuitka#use-case-3-package-compilation
     sudo apt-get install nuitka
     nuitka --module ibeis --recurse-directory=ibeis
@@ -172,7 +179,7 @@ install_evaluating()
     
 }
 
-install_ppa_extras()
+install_ubuntu_tweak()
 {
     # To clean up old kernels
     # References: http://askubuntu.com/questions/2793/how-do-i-remove-or-hide-old-kernel-versions-to-clean-up-the-boot-menu
@@ -197,14 +204,7 @@ install_spotify()
     sudo sh -c 'echo "deb http://repository.spotify.com stable non-free" >> /etc/apt/sources.list'
     sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 94558F59
     sudo apt-get update
-    sudo apt-get install -y spotify-client
-}
-
-
-svn_repos()
-{
-    # https://code.google.com/p/groupsac/source/checkout 
-    svn checkout http://groupsac.googlecode.com/svn/trunk/ groupsac-read-only
+    sudo apt-get install -y spotify-client --force-yes
 }
 
  
@@ -237,7 +237,6 @@ install_latex()
     # http://askubuntu.com/questions/207442/how-to-add-open-terminal-here-to-nautilus-context-menu
     sudo apt-get install nautilus-open-terminal
 
-
     #texlive 2015
     # https://www.tug.org/texlive/acquire-netinstall.html
     cd ~/tmp
@@ -256,7 +255,9 @@ install_latex()
 install_python()
 {
     # Python
+    sudo apt-get install python-pip
     sudo apt-get install -y python-tk
+    sudo pip install virtualenv
     sudo pip install jedi
     sudo pip install pep8
     sudo pip install autopep8
@@ -264,7 +265,6 @@ install_python()
     sudo pip install pylint
     sudo pip install line_profiler
     #sudo pip install Xlib
-    sudo pip install virtualenv
     sudo pip install requests
     sudo pip install objgraph
     sudo pip install memory_profiler
@@ -303,8 +303,8 @@ install_cuda_prereq()
 	sudo apt-get install -y libprotobuf-dev
     sudo apt-get install -y libleveldb-dev 
     sudo apt-get install -y libsnappy-dev 
-    sudo apt-get install -y libopencv-dev 
     sudo apt-get install -y libboost-all-dev 
+    sudo apt-get install -y libopencv-dev 
 
     install_hdf5
 
@@ -324,9 +324,9 @@ install_cuda_prereq()
     sudo apt-get install -y libatlas-base-dev 
 
     sudo apt-get install -y python-dev
-    sudo apt-get install -y python-pip
-    sudo apt-get install -y python-numpy
-    sudo apt-get install -y python-pillow
+    #sudo apt-get install -y python-pip
+    #sudo apt-get install -y python-numpy
+    #sudo apt-get install -y python-pillow
 }
 
 
@@ -336,20 +336,19 @@ install_xlib()
     sudo pip install svn+https://python-xlib.svn.sourceforge.net/svnroot/python-xlib/trunk/
     sudo apt-get install -y python-wnck 
     sudo apt-get install -y wmctrl 
-    packin xdotool
+    sudo apt-get install -y xdotool
 }
 
-pip_upgrade()
-{
-     sudo pip install numpy --upgrade
-     sudo pip install Cython --upgrade
-     sudo pip install scipy --upgrade
-     sudo pip install pyzmq --upgrade
-     sudo pip install matplotlib --upgrade
-     sudo pip install scikit-learn --upgrade
-     sudo pip install ipython --upgrade
-     
-}
+#pip_upgrade()
+#{
+#     sudo pip install numpy --upgrade
+#     sudo pip install Cython --upgrade
+#     sudo pip install scipy --upgrade
+#     sudo pip install pyzmq --upgrade
+#     sudo pip install matplotlib --upgrade
+#     sudo pip install scikit-learn --upgrade
+#     sudo pip install ipython --upgrade
+#}
 
 install_virtualbox()
 {
@@ -398,21 +397,30 @@ install_clang()
 
 install_cmake_latest()
 {
-    # http://www.cmake.org/download/
-    python -c "http://www.cmake.org/files/v3.0/cmake-3.0.2-Linux-i386.tar.gz"
-    # +==================================================
-    # SIMPLE WAY OF EXECUTING MULTILINE PYTHON FROM BASH
-    # +--------------------------------------------------
-    # Creates custom file descriptor that runs the script
-    # References: http://superuser.com/questions/607367/raw-multiline-string-in-bash
-    # http://stackoverflow.com/questions/2043453/executing-python-multi-line-statements-in-the-one-line-command-line
-    sudo apt-get remove cmake
+    # Download latest by parsing webpage
     exec 42<<'__PYSCRIPT__'
 import utool as ut
+from six.moves import urllib
+import urllib2
+headers = { 'User-Agent' : 'Mozilla/5.0' }
+req = urllib2.Request(r'https://cmake.org/download/', None, headers)
+page = urllib2.urlopen(req)
+page_str = page.read()
+
+next = False
+lines = page_str.split('\n')
+for index, x in enumerate(lines):
+    if next:
+        print(x)
+        import parse
+        url_suffix = parse.parse('{foo}href="{href}"{other}', x)['href']
+        url = r'https://cmake.org' + url_suffix
+        break
+    if 'Linux x86_64' in x:
+        next = True
+url = url.replace('.sh', '.tar.gz')
+cmake_unzipped_fpath = ut.grab_zipped_url(url)
 from os.path import join
-cmake_zipped_url = 'http://www.cmake.org/files/v3.0/cmake-3.0.2-Linux-i386.tar.gz'
-cmake_unzipped_fpath = ut.grab_zipped_url(cmake_zipped_url)
-ut.vd(cmake_unzipped_fpath)
 install_prefix = ut.unixpath('~')
 for dname in ['bin', 'doc', 'man', 'share']:
     install_dst = join(install_prefix, dname)
@@ -421,6 +429,31 @@ for dname in ['bin', 'doc', 'man', 'share']:
 print(cmake_unzipped_fpath)
 __PYSCRIPT__
 python /dev/fd/42 $@
+
+    
+    # http://www.cmake.org/download/
+    #python -c "http://www.cmake.org/files/v3.0/cmake-3.0.2-Linux-i386.tar.gz"
+    # +==================================================
+    # SIMPLE WAY OF EXECUTING MULTILINE PYTHON FROM BASH
+    # +--------------------------------------------------
+    # Creates custom file descriptor that runs the script
+    # References: http://superuser.com/questions/607367/raw-multiline-string-in-bash
+    # http://stackoverflow.com/questions/2043453/executing-python-multi-line-statements-in-the-one-line-command-line
+#    sudo apt-get remove cmake
+#    exec 42<<'__PYSCRIPT__'
+#import utool as ut
+#from os.path import join
+#cmake_zipped_url = 'http://www.cmake.org/files/v3.0/cmake-3.0.2-Linux-i386.tar.gz'
+#cmake_unzipped_fpath = ut.grab_zipped_url(cmake_zipped_url)
+#ut.vd(cmake_unzipped_fpath)
+#install_prefix = ut.unixpath('~')
+#for dname in ['bin', 'doc', 'man', 'share']:
+#    install_dst = join(install_prefix, dname)
+#    install_src = join(cmake_unzipped_fpath, dname)
+#    ut.copy(install_src, install_dst)
+#print(cmake_unzipped_fpath)
+#__PYSCRIPT__
+#python /dev/fd/42 $@
 
 
     # L_________________________________________________
@@ -541,13 +574,13 @@ secure_ssl_pip()
 }
 
 
-install_lyx()
-{
-    # Useless because it can't convert .tex to .lyx well
-    sudo add-apt-repository ppa:lyx-devel/release
-    sudo apt-get update
-    sudo apt-get install lyx -y
-}
+#install_lyx()
+#{
+#    # Useless because it can't convert .tex to .lyx well
+#    sudo add-apt-repository ppa:lyx-devel/release
+#    sudo apt-get update
+#    sudo apt-get install lyx -y
+#}
 
 
 install_screen_capture()
@@ -577,6 +610,9 @@ encryprtion()
         #http://alternativeto.net/software/aescrypt/
         #http://www.getsafe.org/about#linuxversion
     }
+
+    # Try OTFE
+    sudo apt-get install cryptmount
 }
 
 
@@ -783,4 +819,11 @@ git_and_hg()
     cd ~/code/sphinx-contrib/napoleon
     sudo python setup.py develop
 
+}
+
+
+svn_repos()
+{
+    # https://code.google.com/p/groupsac/source/checkout 
+    svn checkout http://groupsac.googlecode.com/svn/trunk/ groupsac-read-only
 }

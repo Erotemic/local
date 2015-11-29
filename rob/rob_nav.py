@@ -1,11 +1,14 @@
 #from rob_interface import *
 from os.path import split, relpath, join, isdir, isfile
 import os
-import six
 import fnmatch
 import re
 from rob_interface import robos
 import rob_util as rutil
+try:
+    import six
+except ImportError:
+    pass
 
 HS_EXCLUDE = ['_graveyard',
               '_broken',

@@ -7,7 +7,6 @@ import re
 from itertools import izip
 from os.path import split
 import shutil
-import psutil
 import platform
 from os.path import basename, expanduser
 from os.path import (normpath, realpath, join, isdir, exists, dirname,
@@ -17,6 +16,16 @@ from rob_nav import *  # NOQA
 import rob_nav
 #
 import textwrap  # NOQA
+
+try:
+    import psutil
+except ImportError:
+    pass
+
+try:
+    import six
+except ImportError:
+    pass
 
 
 def focus(r, window_name):

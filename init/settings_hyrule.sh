@@ -298,6 +298,10 @@ EndSection
 
 
 printer(){
+    #sudo apt-get install y-ppa-manager
+    ##for printer
+    #sudo apt-key adv --recv-key --keyserver keyserver.ubuntu.com 24CBF5474CFD1E2F
+
     # References
     #http://www.cs.rpi.edu/twiki/view/LabstaffWeb/PublicPrinters
     #http://www.rpi.edu/dept/arc/web/printing/printertype.html

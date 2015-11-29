@@ -3,6 +3,11 @@ entry_prereq_git_and_local()
     # This is usually done manually
     sudo apt-get install git -y
     cd ~
+
+    # Fix ssh keys if you have them
+    chmod 700 ~/.ssh
+    chmod 600 ~/.ssh/authorized_keys
+
     # If local does not exist
     if [ ! -f ~/local ]; then
         git clone https://github.com/Erotemic/local.git
@@ -18,15 +23,10 @@ freshstart_ubuntu_entry_point()
     freshstart_ubuntu_entry_point
 }
 
-#setup_homefolder()
 freshtart_ubuntu_entry_point()
 { 
-    if [ ! -f ~/local ]; then
-    mkdir ~/tmp
-    fi
-    if [ ! -f ~/code ]; then
-    mkdir ~/code
-    fi
+    mkdir -p ~/tmp
+    mkdir -p ~/code
     cd ~
     if [ ! -f ~/local ]; then
         git clone https://github.com/Erotemic/local.git
@@ -44,16 +44,77 @@ freshtart_ubuntu_entry_point()
     git config --global user.email crallj@rpi.edu
     git config --global push.default current
 
+    sudo apt-get install trash-cli
+
+    # Vim
+    sudo apt-get install -y vim
+    sudo apt-get install -y vim-gtk
+    sudo apt-get install -y exuberant-ctags 
+
+    # Terminal settings
+    sudo apt-get install terminator -y
+
+    # Development Environment
+    sudo apt-get install -y gcc
+    sudo apt-get install -y g++
+    sudo apt-get install -y gfortran
+
+    # Python 
+    sudo apt-get install -y python-dev
+    sudo apt-get install -y python-tk
+    sudo apt-get install python-pip -y
+    sudo pip install pip --upgrade
+    sudo pip install virtualenv
+
     # setup virtual env
     export PYTHON_VENV="$HOME/venv"
-    mkdir $PYTHON_VENV
+    mkdir -p $PYTHON_VENV
     virtualenv -p /usr/bin/python2.7 $PYTHON_VENV
+    source $PYTHON_VENV/bin/activate
 
+    pip install setuptools --upgrade
     pip install six
+    pip install jedi
+    pip install ipython
 
-    mkdir ~/local/vim/vimfiles/bundle
+    mkdir -p ~/local/vim/vimfiles/bundle
     source ~/local/vim/init_vim.sh
     python ~/local/init/ensure_vim_plugins.py
+
+    source ~/local/init/ubuntu_core_packages.sh
+
+    # Install utool
+    cd ~/code
+    if [ ! -f ~/utool ]; then
+        git clone git@github.com:Erotemic/utool.git
+        cd utool
+        python setup.py develop
+    fi
+
+    # Install machine specific things
+
+    if [[ "$HOSTNAME" == "hyrule"  ]]; then 
+        echo "SETUP HYRULE STUFF"
+        customize_sudoers
+        source settings_hyrule.sh
+        hyrule_setup_sshd
+        hyrule_setup_fstab
+        hyrule_create_users
+    elif [[ "$HOSTNAME" == "Ooo"  ]]; then 
+        echo "SETUP Ooo STUFF"
+        install_dropbox
+        customize_sudoers
+        nautilus_settings
+        gnome_settings
+        install_chrome
+        # Make sure dropbox has been initialized first
+        install_fonts
+
+        # 
+        install_spotify
+    else
+        echo "UNKNOWN HOSTNAME"
+    fi
 }
 
 
@@ -62,7 +123,7 @@ install_python()
     sudo pip install pillow
     # Virtual Environment 
     cd
-    mkdir venv
+    mkdir -p venv
     sudo pip2.7 install virtualenv
     #python2.7 -m virtualenv -p /usr/bin/python2.7 venv
     python2.7 -m virtualenv -p /usr/bin/python2.7 venv --system-site-packages
@@ -70,20 +131,10 @@ install_python()
 }
 
 
-install_dropbox()
-{
-    # Dropbox 
-    #cd ~/tmp
-    #cd ~/tmp && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
-    #.dropbox-dist/dropboxd
-    sudo apt-get -y install nautilus-dropbox
-}
-
-
 install_fonts()
 {
-    sudo cp ~/Dropbox/Installers/Fonts/*.ttf /usr/share/fonts/truetype/
-    sudo cp ~/Dropbox/Installers/Fonts/*.otf /usr/share/fonts/opentype/
+    sudo cp ~/Dropbox/Fonts/*.ttf /usr/share/fonts/truetype/
+    sudo cp ~/Dropbox/Fonts/*.otf /usr/share/fonts/opentype/
     sudo fc-cache
 }
 
@@ -119,6 +170,9 @@ customize_sudoers()
  
 gnome_settings()
 {
+    # NOTE: mouse scroll wheel behavior was fixed by unplugging and replugging
+    # the mouse. Odd. 
+
     #gconftool-2 --all-dirs "/"
     #gconftool-2 --all-dirs "/desktop/url-handlers"
     #gconftool-2 -a "/desktop/url-handlers"
@@ -134,6 +188,8 @@ gnome_settings()
     #gsettings set org.gnome.desktop.lockdown disable-lock-screen 'true'
     #sudo -u gdm gconftool-2 --type=bool --set /desktop/gnome/sound/event_sounds false
 
+    sudo apt-get install -y gnome-tweak-tool
+
     gconftool-2 --set "/apps/gnome-terminal/profiles/Default/background_color" --type string "#1111111"
     gconftool-2 --set "/apps/gnome-terminal/profiles/Default/foreground_color" --type string "#FFFF6999BBBB"
     gconftool-2 --set /apps/gnome-screensaver/lock_enabled --type bool false
@@ -141,12 +197,16 @@ gnome_settings()
 
     gconftool-2 --get /apps/gnome-screensaver/lock_enabled 
     gconftool-2 --get /desktop/gnome/sound/event_sounds
+
+    # TODO:
+    # echo out the .config/terminator/config file
 }
 
 
 nautilus_settings()
 {
     # Get rid of anyonying nautilus sidebar items
+    echo "Get Rid of anoying sidebar items"
     chmod +w ~/.config/user-dirs.dirs
     sed -i 's/XDG_TEMPLATES_DIR/#XDG_TEMPLATES_DIR/' ~/.config/user-dirs.dirs 
     sed -i 's/XDG_PUBLICSHARE_DIR/#XDG_PUBLICSHARE_DIR/' ~/.config/user-dirs.dirs
@@ -173,13 +233,15 @@ nautilus_settings()
     sudo echo "enabled=false" >> /etc/xdg/user-dirs.conf
     sudo sed -i "s/enabled=true/enabled=false/" /etc/xdg/user-dirs.conf
     xdg-user-dirs-gtk-update
+
+    echo "Get Open In Terminal in context menu"
+    sudo apt-get install nautilus-open-terminal -y
 }
 
 setup_ibeis()
 {
-    if [ ! -f ~/code ]; then
-        mkdir ~/code
-    fi
+    mkdir -p ~/code
+    cd ~/code
     if [ ! -f ~/ibeis ]; then
         git clone https://github.com/Erotemic/ibeis.git
     fi
@@ -209,21 +271,10 @@ setup_sshd()
     sudo sed -i 's/#AuthorizedKeysFile\t%h\/.ssh\/authorized_keys/AuthorizedKeysFile\t%h\/.ssh\/authorized_keys/' /etc/ssh/sshd_config
 }
 
-dosetup_hyrule()
-{
-    customize_sudoers
-    setup_homefolder
-    source settings_hyrule.sh
-    hyrule_setup_sshd
-    hyrule_setup_fstab
-    hyrule_create_users
-}
-
 dosetup_virtual()
 {
     customize_sudoers
     source ~/local/init/ubuntu_core_packages.sh
-    setup_homefolder
     gnome_settings
     nautilus_settings
 }
