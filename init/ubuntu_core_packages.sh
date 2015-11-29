@@ -56,10 +56,11 @@ install_core()
     sudo apt-get install -y htop
     sudo apt-get install -y tree
     sudo apt-get install -y openssh-server
-    sudo apt-get install -y screen
+    sudo apt-get install -y tmux
     sudo apt-get install -y synaptic
     sudo apt-get install -y astyle
     sudo apt-get install -y valgrind
+    #sudo apt-get install -y screen
 
     # 
     sudo apt_get install libhighgui2.4
@@ -207,6 +208,24 @@ install_spotify()
     sudo apt-get install -y spotify-client --force-yes
 }
 
+install_vpn()
+{
+
+    # 
+    http://dotcio.rpi.edu/services/network-remote-access/vpn-connection-and-installation/using-vpnc-open-source-client
+
+    # replaces cisco anyconnect
+    sudo apt-get install network-manager-openconnect-gnome -y
+
+    # gateway: vpn.net.rpi.edu
+
+    #https://www.reddit.com/r/RPI/comments/2c3fd9/rpi_vpn_from_ubuntu/
+    sudo openconnect -b vpn.net.rpi.edu -uyour_school_username -ucrallj
+    
+
+    
+}
+
  
 install_latex()
 {
@@ -225,17 +244,17 @@ install_latex()
     sudo apt-get install -y texlive-bibtex-extra
     sudo apt-get install -y texlive-fonts-extra
     sudo apt-get install -y texlive-generic-recommended
+
     sudo apt-get install -y xindy
 
-    sudo apt-get install -y remmina 
-
+    #sudo apt-get install -y remmina 
     #sudo apt-get remove texlive-generic-extra
     #sudo apt-get install texlive-bibtex-extra -y
     #sudo apt-get install texlive-full -y
 
     # references
     # http://askubuntu.com/questions/207442/how-to-add-open-terminal-here-to-nautilus-context-menu
-    sudo apt-get install nautilus-open-terminal
+    #sudo apt-get install nautilus-open-terminal
 
     #texlive 2015
     # https://www.tug.org/texlive/acquire-netinstall.html
@@ -243,12 +262,13 @@ install_latex()
     wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
     7z x install-tl-unx.tar.gz
     7z x install-tl-unx.tar
-    rm install-tl-unx.tar
-    cd ~/tmp/install-tl-20150902/
+    #rm install-tl-unx.tar
+    #cd ~/tmp/install-tl-20150902/
+    cd install-tl-*
     #export TEXLIVE_INSTALL_PREFIX=/opt/texlive
     #export TEXDIR=/opt/texlive
     chmod +x install-tl
-    sudo -H ./install-tl
+    sudo ./install-tl
 }
 
 

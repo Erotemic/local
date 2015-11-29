@@ -38,6 +38,7 @@ freshtart_ubuntu_entry_point()
     ln -s ~/local/profile.sh ~/.profile 
     ln -s ~/local/config/.pypirc ~/.pypirc 
     ln -s ~/local/config/.theanorc ~/.theanorc 
+    ln -s ~/local/scripts/ubuntu_scripts ~/scripts
     source ~/.bashrc
 
     git config --global user.name joncrall
@@ -76,6 +77,11 @@ freshtart_ubuntu_entry_point()
     pip install six
     pip install jedi
     pip install ipython
+    pip install pep8
+    pip install autopep8
+    pip install flake8
+    pip install pylint
+    pip install line_profiler
 
     mkdir -p ~/local/vim/vimfiles/bundle
     source ~/local/vim/init_vim.sh
@@ -195,7 +201,13 @@ gnome_settings()
     gconftool-2 --set /apps/gnome-screensaver/lock_enabled --type bool false
     gconftool-2 --set /desktop/gnome/sound/event_sounds --type=bool false
 
+    # try and disable password after screensaver lock
+    gsettings set org.gnome.desktop.lockdown disable-lock-screen 'true'
+    /usr/bin/gsettings set org.gnome.desktop.screensaver lock-enabled false
+    
+
     gconftool-2 --get /apps/gnome-screensaver/lock_enabled 
+    
     gconftool-2 --get /desktop/gnome/sound/event_sounds
 
     # TODO:

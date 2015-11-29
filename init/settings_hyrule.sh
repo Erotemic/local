@@ -49,7 +49,6 @@ hyrule_setup_fstab()
     # Write store to fstab
     sudo sh -c 'echo "/dev/sdc1                                  /media/Store      ntfs  nls=iso8859-1,uid=1000,windows_names,hide_hid_files,0  0  0" >> /etc/fstab'
     sudo ln -s /media/raid /raid  
-    ln -s ~/local/scripts/ubuntu_scripts ~/scripts
     # For Hyrule
     ln -s /media/Store ~/Store
     ln -s /media/raid/work ~/work

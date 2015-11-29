@@ -74,8 +74,8 @@ def analyize_multiple_drives(drives):
         python -m register_files --exec-analyize_multiple_drives --drives ~ E:/ D:/
 
         python -m register_files --exec-analyize_multiple_drives --drives ~ /media/Store
-        python register_files.py --exec-analyize_multiple_drives --drives /media/joncrall/media/
-        /media/joncrall/store/ /media/joncrall/backup
+        python register_files.py --exec-analyize_multiple_drives --drives /media/joncrall/media/ /media/joncrall/store/
+        /media/joncrall/backup
 
         cd ~/local/scripts
 
