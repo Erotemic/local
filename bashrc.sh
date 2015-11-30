@@ -63,7 +63,10 @@ export HISTCONTROL=
 # Other program environment variables
 if [[ "$HOSTNAME" == "hyrule"  ]]; then 
     export PATH=$PATH:/usr/local/cuda/bin
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/lib
+    #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/lib
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-7.5/targets/x86_64-linux/lib:/usr/local/cuda/lib64:/usr/local/lib
+    #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-7.5/targets/x86_64-linux/lib:/usr/local/lib
+    
     #export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
     # hacky
     #export TOMCAT_DIR=$CODE_DIR/Wildbook/tmp/apache-tomcat-8.0.24

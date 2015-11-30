@@ -206,6 +206,8 @@ install_spotify()
     sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 94558F59
     sudo apt-get update
     sudo apt-get install -y spotify-client --force-yes
+    # https://community.spotify.com/t5/Help-Desktop-Linux-Windows-Web/Linux-users-important-update/td-p/1157534
+    sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys D2C19886
 }
 
 install_vpn()

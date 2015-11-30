@@ -131,4 +131,7 @@ set textwidth=0 formatoptions=cqt wrapmargin=0
 
 
  " Turn off errobells
+ " https://coderwall.com/p/sccmea/disable-error-sounds-and-screen-flashing-in-vim
  set noeb vb t_vb=
+ set visualbell
+ set t_vb=

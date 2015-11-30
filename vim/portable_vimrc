@@ -8,6 +8,7 @@ source ~/local/vim/rc/win32_presource.vim
 source ~/local/vim/rc/venv_presource.vim
 
 " source ~/local/vim/vimfiles/after/syntax/tex.vim
+" source ~/local/vim/vimfiles/after/ftplugin/python/folding.vim 
 
 
 " COMMON JUMP TO RC FILES

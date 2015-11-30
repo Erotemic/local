@@ -1,12 +1,3 @@
-# Remember you have to stop the xserver before you do anything else
-
-# ctrl+alt+f1
-# stop lightdm # Unity
-# stop gdm # Gnome3
-# stop kdm # KDE
-#/Drivers/NVIDIA-Linux-x86_64-319.32.run
-
-#http://www.nvidia.com/download/driverResults.aspx/77525/en-us
 
 # References
 # http://askubuntu.com/questions/206283/how-can-i-uninstall-a-nvidia-driver-completely
@@ -53,8 +44,8 @@ install_cuda_prereq()
 
     sudo apt-get install -y python-dev
     sudo apt-get install -y python-pip
-    sudo apt-get install -y python-numpy
-    sudo apt-get install -y python-pillow
+    #sudo apt-get install -y python-numpy
+    #sudo apt-get install -y python-pillow
 }
 
 
@@ -62,10 +53,17 @@ install_cuda_prereq()
 install_cuda()
 {
     # Get the cuda 6.5 deb file
-    mkdir ~/tmp
+    mkdir -p ~/tmp
     cd ~/tmp
-    wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1404/x86_64/cuda-repo-ubuntu1404_6.5-14_amd64.deb
-    sudo dpkg -i cuda-repo-*
+
+    # Go to https://developer.nvidia.com/cuda-downloads
+    # to get this link
+    wget http://developer.download.nvidia.com/compute/cuda/7.5/Prod/local_installers/cuda-repo-ubuntu1404-7-5-local_7.5-18_amd64.deb
+    sudo dpkg -i cuda-repo-ubuntu1404-7-5-local_7.5-18_amd64.deb
+    sudo apt-get install cuda
+
+    #wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1404/x86_64/cuda-repo-ubuntu1404_6.5-14_amd64.deb
+    #sudo dpkg -i cuda-repo-*
 
     sudo apt-get install nvidia-cuda-toolkit
 
@@ -78,6 +76,9 @@ install_cuda()
     echo 'export PATH=$PATH:/usr/local/cuda/bin' >> ~/.bashrc
     echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/lib' >> ~/.bashrc
     source ~/.bashrc
+
+    # update ldconfig cache
+    sudo ldconfig /usr/local/cuda/lib64
 }
 
 install_nvidia_driver
@@ -85,15 +86,22 @@ install_cuda_prereq
 install_cuda
 
 # Need to reboot here
-
 #TEST 
 
 test_nvidia()
 {
     nvcc --version
     nvidia-smi
+
+    python -c "import theano"
+    python -c "import theano; print(theano.__file__)"
+    python -c "import cv2; print(cv2.__file__)"
     python -m ibeis_cnn
-    python -m ibeis_cnn._plugin --exec-detect_annot_zebra_background_mask --show
+    python -m ibeis_cnn._plugin --test-generate-species-background:0 --show
+
+    # May need to recompile theano and pylearn2 
+    # git rm -rf * in the code dir 
+    # then sudo python setup.py develop
 }
 
 
@@ -111,7 +119,8 @@ fix_permission_issues()
     rm -rf ~/.theano/*
 
     python -m ibeis_cnn
-    python -m ibeis_cnn._plugin --exec-detect_annot_zebra_background_mask --show
+    python -m ibeis_cnn._plugin --test-generate-species-background:0 --show
+    #python -m ibeis_cnn._plugin --exec-detect_annot_zebra_background_mask --show
 }
 
 # INFO
@@ -120,21 +129,6 @@ apt-cache depends nvidia-340-dev
 apt-cache depends nvidia-340-uvm
 apt-cache depends nvidia-340
 apt-cache depends nvidia-settings
-
-
-remove_upgraded_nvidia_drivers(){
-    # Ubuntu upgraded my drivers, and that broke cuda
-    echo 'foo'
-    # This is my attemp to remove them. 
-    # apt-cache depends nvidia-340-dev reports
-    #  Depends: nvidia-340
-    #  Conflicts: nvidia-340-dev:i386
-
-    #sudo apt-get remove nvidia-340-dev:i386
-    #sudo apt-get remove nvidia-340-uvm:i386
-
-    # Actually, I'm just going to try reinstalling
-}
 
 
 # OTHER 
@@ -162,9 +156,23 @@ reinstall_nvidia()
     # List what nvidia packages are still installed
     dpkg -l | grep -i nvidia
     dpkg -l | grep -i nvcc
+
+
+    # Remove cuda parts
+    sudo apt-get remove nvidia-cuda-toolkit
+    #sudo apt-get autoremove  # optional
 }
 
 # OLD
+# Remember you have to stop the xserver before you do anything else
+
+# ctrl+alt+f1
+# stop lightdm # Unity
+# stop gdm # Gnome3
+# stop kdm # KDE
+#/Drivers/NVIDIA-Linux-x86_64-319.32.run
+
+#http://www.nvidia.com/download/driverResults.aspx/77525/en-us
 # apt-get install nvidia-current
 # Use: "nvcc --version" for CUDA version [Ex: V6.5.X]
 # Use: "nvidia-smi" for driver version [Ex: 34X.XX]
@@ -187,3 +195,18 @@ reinstall_nvidia()
 #sudo cat /etc/modprobe.d/blacklist.conf
 #sudo echo "blacklist nouveau" >> /etc/modprobe.d/blacklist.conf
 #sudo $INSTALL_NVIDIA
+
+
+#remove_upgraded_nvidia_drivers(){
+#    # Ubuntu upgraded my drivers, and that broke cuda
+#    echo 'foo'
+#    # This is my attemp to remove them. 
+#    # apt-cache depends nvidia-340-dev reports
+#    #  Depends: nvidia-340
+#    #  Conflicts: nvidia-340-dev:i386
+
+#    #sudo apt-get remove nvidia-340-dev:i386
+#    #sudo apt-get remove nvidia-340-uvm:i386
+
+#    # Actually, I'm just going to try reinstalling
+#}
