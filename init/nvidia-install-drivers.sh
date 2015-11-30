@@ -141,6 +141,7 @@ remove_upgraded_nvidia_drivers(){
 
 reinstall_nvidia()
 {
+
     # Part for removing what was there
     sudo apt-get remove cuda
     sudo apt-get remove libcuda1-340
@@ -155,6 +156,8 @@ reinstall_nvidia()
     sudo apt-get remove --purge nvidia-340
     sudo apt-get remove --purge nvidia-3*
     sudo apt-get remove --purge libcuda1-3*
+
+    sudo apt-get update
 
     # List what nvidia packages are still installed
     dpkg -l | grep -i nvidia
