@@ -56,8 +56,7 @@ freshtart_ubuntu_entry_point()
     sudo apt-get install terminator -y
 
     # Development Environment
-    sudo apt-get install -y gcc
-    sudo apt-get install -y g++
+    sudo apt-get install -y gcc g++
     sudo apt-get install -y gfortran
 
     # Python 
@@ -66,6 +65,7 @@ freshtart_ubuntu_entry_point()
     sudo apt-get install python-pip -y
     sudo pip install pip --upgrade
     sudo pip install virtualenv
+    sudo pip install virtualenv --upgrade
 
     # setup virtual env
     export PYTHON_VENV="$HOME/venv"
@@ -97,6 +97,13 @@ freshtart_ubuntu_entry_point()
         python setup.py develop
     fi
 
+    # Get latex docs
+    cd ~/latex
+    if [ ! -f ~/latex ]; then
+        mkdir -p ~/latex
+        git clone git@hyrule.cs.rpi.edu.com:crall-candidacy-2015.git
+    fi
+
     # Install machine specific things
 
     if [[ "$HOSTNAME" == "hyrule"  ]]; then 
@@ -121,6 +128,62 @@ freshtart_ubuntu_entry_point()
     else
         echo "UNKNOWN HOSTNAME"
     fi
+
+    # Extended development environment
+    sudo apt-get install -y pkg-config
+    sudo apt-get install -y libtk-img-dev
+    sudo apt-get install -y libav-tools libgeos-dev 
+    sudo apt-get install -y libfftw3-dev libfreetype6-dev 
+    sudo apt-get install -y libatlas-base-dev liblcms1-dev zlib1g-dev
+    sudo apt-get install -y libjpeg-dev libopenjpeg-dev libpng12-dev libtiff5-dev
+
+    pip install numpy
+    pip install scipy
+    pip install Cython
+    pip install pandas
+    pip install statsmodels
+    pip install scikit-learn
+
+    pip install matplotlib
+
+    pip install functools32
+    pip install psutil
+    pip install six
+    pip install dateutils
+    pip install pyreadline
+    #pip install pyparsing
+    pip install parse
+    
+    pip install networkx
+    pip install Pygments
+    pip install colorama
+
+    pip install requests
+    pip install simplejson
+    pip install flask
+    pip install flask-cors
+
+    pip install lockfile
+    pip install lru-dict
+    pip install shapely
+
+    # pydot is currently broken
+    #http://stackoverflow.com/questions/15951748/pydot-and-graphviz-error-couldnt-import-dot-parser-loading-of-dot-files-will
+    #pip uninstall pydot
+    pip uninstall pyparsing
+    pip install -Iv 'https://pypi.python.org/packages/source/p/pyparsing/pyparsing-1.5.7.tar.gz#md5=9be0fcdcc595199c646ab317c1d9a709'
+    pip install pydot
+    python -c "import pydot"
+
+    # Ubuntu hack for pyqt4
+    # http://stackoverflow.com/questions/15608236/eclipse-and-google-app-engine-importerror-no-module-named-sysconfigdata-nd-u
+    #sudo apt-get install python-qt4-dev
+    #sudo apt-get remove python-qt4-dev
+    #sudo apt-get remove python-qt4
+    #sudo ln -s /usr/lib/python2.7/plat-*/_sysconfigdata_nd.py /usr/lib/python2.7/
+    #python -c "import PyQt4"
+    # TODO: install from source this is weird it doesnt work
+    # sudo apt-get autoremove
 }
 
 

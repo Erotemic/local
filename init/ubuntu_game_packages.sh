@@ -10,6 +10,11 @@ install_hearthstone()
     wget "http://www.battle.net/download/getInstallerForGame?os=win&locale=enUS&version=LIVE&gameProgram=HEARTHSTONE" -O setup_hearthstone.exe
     utget "http://www.battle.net/download/getInstallerForGame?os=win&locale=enUS&version=LIVE&gameProgram=HEARTHSTONE"
 
+    # http://us.battle.net/hearthstone/en/forum/topic/13595239895
+
+    sudo apt-get install playonlinux
+    
+
     sudo add-apt-repository ppa:ubuntu-wine/ppa -y
     sudo apt-get update
     sudo apt-get install -y wine1.7

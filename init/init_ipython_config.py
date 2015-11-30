@@ -36,13 +36,13 @@ def write_default_ipython_profile():
     ut.ensuredir(dpath, info=True, verbose=True)
     ipy_config_fpath = ut.unixjoin(dpath, 'ipython_config.py')
     ipy_config_text = ut.codeblock(
-        '''
+        r'''
+        # STARTBLOCK
         c = get_config()  # NOQA
         c.InteractiveShellApp.exec_lines = []
-        c.InteractiveShellApp.exec_lines.append('from __future__ import division')
-        c.InteractiveShellApp.exec_lines.append('from __future__ import print_function')
-        c.InteractiveShellApp.exec_lines.append('from __future__ import with_statement')
-        c.InteractiveShellApp.exec_lines.append('from __future__ import absolute_import')
+        future_line = (
+            'from __future__ import absolute_import, division, print_function, with_statement, unicode_literals')
+        c.InteractiveShellApp.exec_lines.append(future_line)
         # Fix sip versions
         try:
             import sip
@@ -56,6 +56,8 @@ def write_default_ipython_profile():
             sip.setapi('QDateTime', 2)
             if hasattr(sip, 'setdestroyonexit'):
                 sip.setdestroyonexit(False)  # This prevents a crash on windows
+        except ImportError as ex:
+            pass
         except ValueError as ex:
             print('Warning: Value Error: %s' % str(ex))
             pass
@@ -67,13 +69,14 @@ def write_default_ipython_profile():
         #c.InteractiveShellApp.exec_lines.append('import plottool as pt')
         c.InteractiveShellApp.exec_lines.append('from os.path import *')
         c.InteractiveShellApp.exec_lines.append('from six.moves import cPickle as pickle')
-        c.InteractiveShellApp.exec_lines.append('if \'verbose\' not in vars():\n    verbose = True')
+        c.InteractiveShellApp.exec_lines.append('if \'verbose\' not in vars():\\n    verbose = True')
         #c.InteractiveShell.autoindent = True
         #c.InteractiveShell.colors = 'LightBG'
         #c.InteractiveShell.confirm_exit = False
         #c.InteractiveShell.deep_reload = True
         c.InteractiveShell.editor = 'gvim'
         #c.InteractiveShell.xmode = 'Context'
+        # ENDBOCK
         '''
     )
     ut.write_to(ipy_config_fpath, ipy_config_text)

@@ -48,7 +48,7 @@ sudo yum install libXt-devel -y
 #export QT_SOURCE_SNAPSHOT=qt-everywhere-opensource-src-4.8.6
 export QT_SOURCE_SNAPSHOT=qt-everywhere-opensource-src-4.8.7
 
-mkdir tmp
+mkdir -p ~/tmp
 cd ~/tmp
 # Download the Qt Source Code
 wget http://download.qt-project.org/official_releases/qt/4.8/4.8.7/$QT_SOURCE_SNAPSHOT.tar.gz

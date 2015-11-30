@@ -220,9 +220,8 @@ install_vpn()
     # gateway: vpn.net.rpi.edu
 
     #https://www.reddit.com/r/RPI/comments/2c3fd9/rpi_vpn_from_ubuntu/
-    sudo openconnect -b vpn.net.rpi.edu -uyour_school_username -ucrallj
-    
 
+    sudo openconnect -b vpn.net.rpi.edu -uyour_school_username -ucrallj
     
 }
 
@@ -275,6 +274,7 @@ install_latex()
 install_python()
 {
     # Python
+    sudo apt-get install python-qt4
     sudo apt-get install python-pip
     sudo apt-get install -y python-tk
     sudo pip install virtualenv
@@ -638,6 +638,9 @@ encryprtion()
 
 setup_python3()
 {
+    sudo apt-get install python3-dev 
+    sudo apt-get install python3-pip 
+
     sudo easy_install3 pip
     sudo pip3 install lockfile
     sudo pip3 install flask
@@ -846,4 +849,10 @@ svn_repos()
 {
     # https://code.google.com/p/groupsac/source/checkout 
     svn checkout http://groupsac.googlecode.com/svn/trunk/ groupsac-read-only
+}
+
+video_driver_info(){
+    # find info on current video driver 
+    # http://ubuntuforums.org/showthread.php?t=1795372 
+    lspci  -mm | grep VGA
 }
