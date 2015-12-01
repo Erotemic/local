@@ -3,6 +3,10 @@
 
 function! ExampleFolds(lnum)
   let s:thisline = getline(a:lnum)
+  "if match(s:thisline, '^        ') >= 0
+  "  return '>1'
+  if match(s:thisline, '^\s*def .*$') >= 0
+    return '>1'
   if match(s:thisline, '^\s*Example:$') >= 0
     return '>1'
   elseif match(s:thisline, '^\s*$') >= 0
