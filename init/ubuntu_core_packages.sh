@@ -224,6 +224,7 @@ install_vpn()
     #https://www.reddit.com/r/RPI/comments/2c3fd9/rpi_vpn_from_ubuntu/
 
     sudo openconnect -b vpn.net.rpi.edu -uyour_school_username -ucrallj
+    alias rpivpn='sudo openconnect -b vpn.net.rpi.edu -uyour_school_username -ucrallj'
     
 }
 

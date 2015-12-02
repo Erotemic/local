@@ -273,6 +273,7 @@ gnome_settings()
     
     gconftool-2 --get /desktop/gnome/sound/event_sounds
 
+    sudo apt-get install nautilus-open-terminal
     # TODO:
     # echo out the .config/terminator/config file
 }

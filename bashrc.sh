@@ -84,3 +84,4 @@ else
 fi
 
 
+alias rpivpn='sudo openconnect -b vpn.net.rpi.edu -uyour_school_username -ucrallj'

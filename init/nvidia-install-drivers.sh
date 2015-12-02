@@ -3,6 +3,12 @@
 # http://askubuntu.com/questions/206283/how-can-i-uninstall-a-nvidia-driver-completely
 # https://github.com/Theano/libgpuarray/issues/19
 
+# Verify nvidia card model
+lspci | grep -i nvidia
+# Verify linux version
+uname -m && cat /etc/*release
+
+
 install_nvidia_driver()
 {
     # Add drivers repo from edgers
@@ -10,6 +16,7 @@ install_nvidia_driver()
     sudo apt-get update
 
     # Hyrule has Geforce 670 GTX
+    # Will this work for the GTX 285 as well?
     # Install Correct Driver for Geforce 670 GTX
     # Use 340 for cuda compadability
     sudo apt-get install nvidia-340
@@ -161,6 +168,18 @@ reinstall_nvidia()
     # Remove cuda parts
     sudo apt-get remove nvidia-cuda-toolkit
     #sudo apt-get autoremove  # optional
+}
+
+
+ooo_nvidia_gtx_285()
+{
+    cd ~/tmp
+    #probably should just use apt-get
+    #http://www.nvidia.com/download/driverResults.aspx/95165/en-us
+    #wget http://www.nvidia.com/content/DriverDownload-March2009/confirmation.php?url=/XFree86/Linux-x86_64/340.96/NVIDIA-Linux-x86_64-340.96.run
+    #export INSTALL_NVIDIA=~/Drivers/NVIDIA-Linux-x86_64-340.32.run
+    #chmod +x $INSTALL_NVIDIA
+    #sudo stop gdm
 }
 
 # OLD
