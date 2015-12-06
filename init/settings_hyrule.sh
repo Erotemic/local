@@ -204,6 +204,11 @@ recover_backup()
 
 fix_monitor_positions()
 {
+    # References:
+    #https://bugs.launchpad.net/ubuntu/+source/xorg/+bug/1311399
+    #http://askubuntu.com/questions/450767/multi-display-issue-with-ubuntu-gnome-14-04
+    #http://bernaerts.dyndns.org/linux/74-ubuntu/309-ubuntu-dual-display-monitor-position-lost
+
     mkdir ~/.config/autostart
     sh -c 'cat >> ~/.config/autostart/fixmonitor.desktop << EOL
 [Desktop Entry]

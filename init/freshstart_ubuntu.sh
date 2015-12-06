@@ -71,7 +71,15 @@ freshtart_ubuntu_entry_point()
     export PYTHON_VENV="$HOME/venv"
     mkdir -p $PYTHON_VENV
     virtualenv -p /usr/bin/python2.7 $PYTHON_VENV
+    virtualenv -p /usr/bin/python2.7 $HOME/abs_venv --always-copy
     source $PYTHON_VENV/bin/activate
+
+    # FIX ISSUE WITH SIP
+    virtualenv --relocatable venv
+    virtualenv --relocatable $HOME/abs_venv
+    ls venv/include
+    ls abs_venv/include
+    # //
 
     pip install setuptools --upgrade
     pip install six

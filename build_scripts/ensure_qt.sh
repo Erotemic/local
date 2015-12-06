@@ -42,10 +42,15 @@ sudo yum install libXt-devel -y
 #sudo apt-get install 7zip
 }
 
+prereq()
+{
+    sudo apt-get install libssl-dev
+    sudo apt-get install openssl
+}
+
 
 #====================
 # SOURCE BUILD: QT
-#export QT_SOURCE_SNAPSHOT=qt-everywhere-opensource-src-4.8.6
 export QT_SOURCE_SNAPSHOT=qt-everywhere-opensource-src-4.8.7
 
 mkdir -p ~/tmp
@@ -77,15 +82,17 @@ make install
 #make install > make_install_output.out
 #sudo qmake install 
 #|| { echo "FAILED QT QMAKE" ; exit 1; }
-
-ls $PYTHON_VENV/local/qt/include
-ls -al /usr/include/phonon/abstractaudiooutput.h
-locate phonon
-make install > make_intall_output.txt
-cat make_intall_output.txt | grep 3rdparty
-cat make_intall_output.txt | grep phonon
-grep -ER abstractaudiooutput.h * 
-ls -al /usr/include/phonon/abstractaudiooutput.h
+debug_errors()
+{
+    ls $PYTHON_VENV/local/qt/include
+    ls -al /usr/include/phonon/abstractaudiooutput.h
+    locate phonon
+    make install > make_intall_output.txt
+    cat make_intall_output.txt | grep 3rdparty
+    cat make_intall_output.txt | grep phonon
+    grep -ER abstractaudiooutput.h * 
+    ls -al /usr/include/phonon/abstractaudiooutput.h
+}
 #====================
 
 
@@ -102,6 +109,8 @@ ls -al /usr/include/phonon/abstractaudiooutput.h
 
 
 #====================
+# Ref on virtualenv problems
+#http://stackoverflow.com/questions/19856927/how-to-install-sip-and-pyqt-on-a-virtual-environment
 # SOURCE BUILD: SIP
 export SIP_URL=http://sourceforge.net/projects/pyqt/files/sip/sip-4.16.9
 export SIP_SNAPSHOT=sip-4.16.9
@@ -110,10 +119,12 @@ cd ~/tmp
 wget $SIP_URL/$SIP_SNAPSHOT.tar.gz
 tar xzfv $SIP_SNAPSHOT.tar.gz
 
-cd $SIP_SNAPSHOT
+cd ~/tmp/$SIP_SNAPSHOT
 python2.7 configure.py --sysroot=$VIRTUAL_ENV --incdir=$VIRTUAL_ENV/include/python2.7
 make -j$NCPUS 
-sudo make install
+# Need to fix virtualenv problem with a symlinked python include directory
+# before this command will work.
+make install
 python -c "import sip; print('[test] Python can import sip')"
 python -c "import sip; print('sip.__file__=%r' % (sip.__file__,))"
 python -c "import sip; print('sip.SIP_VERSION=%r' % (sip.SIP_VERSION,))"
@@ -136,7 +147,7 @@ wget $PYQT4_URL/$PYQT4_SNAPSHOT.tar.gz
 tar xzvf $PYQT4_SNAPSHOT.tar.gz 
 
 cd ~/tmp/$PYQT4_SNAPSHOT
-python2.7 configure-ng.py --qmake=$VIRTUAL_ENV/local/qt/bin/qmake --no-designer-plugin --confirm-license --target-py-version=2.7
+python2.7 configure-ng.py --qmake=$VIRTUAL_ENV/local/qt/bin/qmake --no-designer-plugin --confirm-license --target-py-version=2.7 --sip-incdir=$VIRTUAL_ENV/include/python2.7
 make -j$NCPUS 
 
 make install

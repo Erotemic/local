@@ -859,3 +859,34 @@ video_driver_info(){
     # http://ubuntuforums.org/showthread.php?t=1795372 
     lspci  -mm | grep VGA
 }
+
+
+utool_settings()
+{
+        # Add ability to open ipython notebooks via double click
+        python -m utool.util_ubuntu --exec-add_new_mimetype_association --mime-name=ipynb+json --ext=.ipynb --exe-fpath=jupyter-notebook --force
+    update-desktop-database ~/.local/share/applications
+    update-mime-database ~/.local/share/mime
+}
+
+
+make_venv_physical()
+{
+    # Hack to make venv physical
+    cd $PYTHON_VENV
+    cd $PYTHON_VENV/include
+    dpath=$PYTHON_VENV/include/python2.7
+    # Copy all things in the symlink dir into a physical one
+    # TODO: keep track of source location
+    if [[ -L "$dpath" && -d "$dpath" ]]; then\
+        echo "$dpath is a symlink directory"; \
+        mv $dpath "$dpath"_temp
+        mkdir $dpath 
+        cp -R "$dpath"_temp/* $dpath
+        rm "$dpath"_temp
+    elif [[ -d "$dpath" ]]; then echo \
+        "$dpath is a physical directory dpath"; \
+    else \
+        echo "Did not match"; \
+    fi
+}

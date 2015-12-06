@@ -75,6 +75,9 @@ if [[ "$HOSTNAME" == "hyrule"  ]]; then
 elif [[ "$HOSTNAME" == "dozer"  ]]; then 
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-6.5/lib64:/usr/local/lib
     export PATH=$PATH:/usr/local/cuda-6.5/bin
+elif [[ "$HOSTNAME" == "Ooo"  ]]; then 
+    export UTOOL_NO_CNN=True
+    export UTOOL_NO_PYRF=True
 else
     export PATH=$PATH
     # These paths are likely to be true on other machines as weel
