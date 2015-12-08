@@ -3,6 +3,9 @@ floatX = float32
 device = gpu0
 openmp = True
 int_division = raise
+print_active_device = False
+enable_initial_driver_test = False
+
 [nvcc]
 fastmath = True
 
@@ -14,7 +17,6 @@ fastmath = True
 #[cmodule]
 #preload_cache = True
 #[global]
-#print_active_device = False
 #linker='c|py'
 #linker='c|py_nogc'
 #linker=cvm
