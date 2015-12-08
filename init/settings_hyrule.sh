@@ -209,6 +209,17 @@ fix_monitor_positions()
     #http://askubuntu.com/questions/450767/multi-display-issue-with-ubuntu-gnome-14-04
     #http://bernaerts.dyndns.org/linux/74-ubuntu/309-ubuntu-dual-display-monitor-position-lost
 
+    sudo wget -O /usr/local/sbin/update-monitor-position https://raw.githubusercontent.com/NicolasBernaerts/ubuntu-scripts/master/ubuntugnome/update-monitor-position
+    sudo chmod +x /usr/local/sbin/update-monitor-position
+    sudo wget -O /usr/share/applications/update-monitor-position.desktop https://raw.githubusercontent.com/NicolasBernaerts/ubuntu-scripts/master/ubuntugnome/update-monitor-position.desktop
+    sudo chmod +x /usr/share/applications/update-monitor-position.desktop
+
+    mkdir -p $HOME/.config/autostart
+    wget -O $HOME/.config/autostart/update-monitor-position.desktop https://raw.githubusercontent.com/NicolasBernaerts/ubuntu-scripts/master/ubuntugnome/update-monitor-position.desktop
+    sed -i -e 's/^Exec=.*$/Exec=update-monitor-position 5/' $HOME/.config/autostart/update-monitor-position.desktop
+    chmod +x $HOME/.config/autostart/update-monitor-position.desktop
+        
+
     mkdir ~/.config/autostart
     sh -c 'cat >> ~/.config/autostart/fixmonitor.desktop << EOL
 [Desktop Entry]
@@ -219,7 +230,6 @@ Exec=xrandr --output DVI-D-0 --pos 1920x0 --rotate left --output DVI-I-0 --pos 0
 NoDisplay=false
 #X-GNOME-Autostart-Delay=1
 '
-
 
 
     echo '
