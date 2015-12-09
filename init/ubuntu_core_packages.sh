@@ -157,6 +157,12 @@ install_core_extras()
     cat ~/.local/share/applications/mimeapps.list
     sudo sed -i 's/\(^.*\)video\(.*\)=totem.desktop/\1video\2=vlc.desktop/' /usr/share/applications/defaults.list
     sudo sed -i 's/\(^.*\)audio\(.*\)=totem.desktop/\audio\2=vlc.desktop/' /usr/share/applications/defaults.list
+
+
+    # ssh file system
+    sudo apt-get install sshfs -y
+    mkdir ~/ami    
+    sshfs -o idmap=user ibeis-hackathon:/home/ubuntu ~/ami
 }
 
 

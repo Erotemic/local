@@ -110,6 +110,8 @@ VIM_REPO_URLS, VIM_REPOS = repo_list([
 
     'https://github.com/jeetsukumaran/vim-buffergator.git',
 
+    'https://github.com/vim-scripts/AnsiEsc.vim.git'
+
     #'https://github.com/terryma/vim-multiple-cursors.git',
     #'https://github.com/tpope/vim-repeat.git',
     #'https://github.com/tpope/vim-sensible.git',
@@ -126,6 +128,10 @@ VIM_REPO_URLS, VIM_REPOS = repo_list([
     #'https://github.com/severin-lemaignan/vim-minimap.git',
     ###'https://github.com/zhaocai/GoldenView.Vim.git',
 ], BUNDLE_DPATH)
+
+VIM_NONGIT_PLUGINS = [
+    #'http://www.drchip.org/astronaut/vim/vbafiles/AnsiEsc.vba.gz'
+]
 
 VIM_REPOS_WITH_SUBMODULES = [
     'jedi-vim',  # jedi, python setup.py build develop

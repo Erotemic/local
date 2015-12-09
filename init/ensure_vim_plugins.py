@@ -9,7 +9,7 @@ CommandLine:
     python init/ensure_vim_plugins.py
     python ~/local/init/ensure_vim_plugins.py
 """
-from __future__ import absolute_import, division, print_function
+from __future__ import absolute_import, division, print_function, unicode_literals
 import sys
 import os
 from os.path import join
@@ -41,20 +41,33 @@ def ensure_ctags_win32():
     #ut.cmd(ctags_exe)
     #ut.view_directory(dpath)
 
-if sys.platform.startswith('win32'):
-    try:
-        ensure_ctags_win32()
-    except Exception as ex:
-        print('failed to get ctags.exe for win32')
-        pass
-
 
 def ensuredir(path):
     if not os.path.exists(path):
         os.makedirs(os.path.normpath(path))
 
 
+def ensure_nongit_plugins():
+    import utool as ut
+    import __REPOS1__
+    BUNDLE_DPATH = util_git1.BUNDLE_DPATH
+    for url in __REPOS1__.VIM_NONGIT_PLUGINS:
+        fpath = ut.grab_zipped_url(url, download_dir=BUNDLE_DPATH)
+        if fpath.endswith('.vba'):
+            cmd_ = 'vim ' + fpath + ' -c "so % | q"'
+            ut.cmd(cmd_)
+        print('url = %r' % (url,))
+        pass
+
+
 def main():
+    if sys.platform.startswith('win32'):
+        try:
+            ensure_ctags_win32()
+        except Exception:
+            print('failed to get ctags.exe for win32')
+            pass
+
     PULL = '--pull' in sys.argv
 
     BUNDLE_DPATH = util_git1.BUNDLE_DPATH
@@ -81,6 +94,8 @@ def main():
 
     if PULL:
         util_git1.pull_repos(__BUNDLE_REPOS__, VIM_REPOS_WITH_SUBMODULES)
+
+    ensure_nongit_plugins()
 
     # Print suggestions for removing nonbundle repos
     if len(__NOT_GIT_REPOS__) > 0:

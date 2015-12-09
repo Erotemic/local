@@ -280,3 +280,9 @@ if has("win32") || has("win16")
     " Seems to work. Thank god.
     autocmd Filetype tex,latex source $USERPROFILE\local\vim\vimfiles\after\syntax\tex.vim
 endif
+
+" http://vim.wikia.com/wiki/Editing_remote_files_via_scp_in_vim
+        " vim 
+        
+ set visualbell
+ set noeb vb t_vb=
