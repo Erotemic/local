@@ -1,5 +1,10 @@
 " Refererences:  http://stackoverflow.com/questions/23486512/how-can-i-augment-an-existing-set-of-syntax-rules-for-a-filetype-in-vim-withou
 
+
+" http://vim.wikia.com/wiki/Identify_the_syntax_highlighting_group_used_at_the_cursor
+" Show syntax highlight group at cursor
+" synIDattr(synID(line("."),col("."),1),"name")
+
 " DUPLICATED FROM $VIMRUNTIME/syntax/tex.vim
 "let s:tex_fast= "bcmMprsSvV"
 "if exists("g:tex_fast")
@@ -33,17 +38,18 @@ if filereadable(s:pythonpath)
  exe "syn include @texPythonScript ".s:pythonpath
  "if exists("g:vimsyn_folding") && g:vimsyn_folding =~ 'P'
  if g:tex_fold_enabled && has("folding")
-  syn region texPythonRegion fold matchgroup=texScriptDelim start=+py\%[thon]3\=\s*<<\s*\z(.*\)$+ end=+^[ ]*\z1$+	contains=@texPythonScript,@NoSpell
-  syn region texPythonRegion fold matchgroup=texScriptDelim start=+py\%[thon]3\=\s*<<\s*$+ end=+\.$+		contains=@texPythonScript,@NoSpell
+  " Match python << endpython
+  syn region texPythonRegion fold matchgroup=texScriptDelim start=+py\%[thon]3\=\s*<<\s*\z(.*\)$+ end=+^[ ]*\z1$+	contains=@NoSpell,@texPythonScript
+  syn region texPythonRegion fold matchgroup=texScriptDelim start=+py\%[thon]3\=\s*<<\s*$+ end=+\.$+		contains=@NoSpell,@texPythonScript
  else
-  syn region texPythonRegion matchgroup=texScriptDelim start=+py\%[thon]3\=\s*<<\s*\z(.*\)$+ end=+^[ ]*\z1$+		contains=@texPythonScript,@NoSpell
-  syn region texPythonRegion matchgroup=texScriptDelim start=+py\%[thon]3\=\s*<<\s*$+ end=+\.$+		contains=@texPythonScript,@NoSpell
+  syn region texPythonRegion matchgroup=texScriptDelim start=+py\%[thon]3\=\s*<<\s*\z(.*\)$+ end=+^[ ]*\z1$+		contains=@NoSpell,@texPythonScript
+  syn region texPythonRegion matchgroup=texScriptDelim start=+py\%[thon]3\=\s*<<\s*$+ end=+\.$+		contains=@NoSpell,@texPythonScript
  endif
  "syn cluster vimFuncBodyList	add=texPythonRegion
  "syn cluster texCommentGroup	add=texPythonRegion
 else
- syn region texEmbedError start=+py\%[thon]3\=\s*<<\s*\z(.*\)$+ end=+^\z1$+
- syn region texEmbedError start=+py\%[thon]3\=\s*<<\s*$+ end=+\.$+
+ syn region texEmbedError start=+py\%[thon]3\=\s*<<\s*\z(.*\)$+ end=+^\z1$+ contains=@NoSpell
+ syn region texEmbedError start=+py\%[thon]3\=\s*<<\s*$+ end=+\.$+ contains=@NoSpell
 endif
 unlet s:pythonpath
 " L________________________________________
@@ -63,17 +69,17 @@ endif
 " Adapted FROM verbatim zone in $VIMRUNTIME/syntax/tex.vim
 "if s:tex_fast =~ 'v'
   if exists("g:tex_verbspell") && g:tex_verbspell
-   syn region texZone		start="\\begin{[cC]omment}"		end="\\end{[cC]omment}\|%stopzone\>"	contains=@Spell,texPythonRegion
+   syn region texZone		start="\\begin{[cC]omment}"		end="\\end{[cC]omment}\|%stopzone\>"	contains=@NoSpell,texPythonRegion
    " listings package:
-   syn region texZone		start="\\begin{lstlisting}"		end="\\end{lstlisting}\|%stopzone\>"	contains=@Spell,texPythonRegion
+   syn region texZone		start="\\begin{lstlisting}"		end="\\end{lstlisting}\|%stopzone\>"	contains=@NoSpell,texPythonRegion
    if version < 600
-    syn region texZone		start="\\comment\*\=`"			end="`\|%stopzone\>"			contains=@Spell,texPythonRegion
-    syn region texZone		start="\\comment\*\=#"			end="#\|%stopzone\>"			contains=@Spell,texPythonRegion
+    syn region texZone		start="\\comment\*\=`"			end="`\|%stopzone\>"			contains=@NoSpell,texPythonRegion
+    syn region texZone		start="\\comment\*\=#"			end="#\|%stopzone\>"			contains=@NoSpell,texPythonRegion
    else
      if b:tex_stylish
-      syn region texZone		start="\\comment\*\=\z([^\ta-zA-Z@]\)"	end="\z1\|%stopzone\>"			contains=@Spell,texPythonRegion
+      syn region texZone		start="\\comment\*\=\z([^\ta-zA-Z@]\)"	end="\z1\|%stopzone\>"			contains=@NoSpell,texPythonRegion
      else
-      syn region texZone		start="\\comment\*\=\z([^\ta-zA-Z]\)"	end="\z1\|%stopzone\>"			contains=@Spell,texPythonRegion
+      syn region texZone		start="\\comment\*\=\z([^\ta-zA-Z]\)"	end="\z1\|%stopzone\>"			contains=@NoSpell,texPythonRegion
      endif
    endif
   else
@@ -145,4 +151,4 @@ syn match texInputFile		"\\ImageCommandII{.\{-}}"	contains=texStatement,texInput
 
 " also from vim.vim
 hi def link texScriptDelim	Comment
- hi def link texEmbedError	texError
+hi def link texEmbedError	texError

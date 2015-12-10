@@ -238,22 +238,23 @@ install_vpn()
 install_latex()
 {
     echo 'latex'
-    # Latex
-    sudo apt-get install -y texlive
-    sudo apt-get install -y texlive
-    sudo apt-get install -y texlive-base 
-    sudo apt-get install -y texlive-extra-utils
-    sudo apt-get install -y texlive-binaries
-    sudo apt-get install -y texlive-latex-base
-    sudo apt-get install -y texlive-latex-extra
-    sudo apt-get install -y texlive-latex-recommended
-    sudo apt-get install -y texlive-math-extra
-    sudo apt-get install -y texlive-science
-    sudo apt-get install -y texlive-bibtex-extra
-    sudo apt-get install -y texlive-fonts-extra
-    sudo apt-get install -y texlive-generic-recommended
 
-    sudo apt-get install -y xindy
+    # Latex (ubuntu uses texlive 2013, use something more recent)
+    #sudo apt-get install -y texlive
+    #sudo apt-get install -y texlive
+    #sudo apt-get install -y texlive-base 
+    #sudo apt-get install -y texlive-extra-utils
+    #sudo apt-get install -y texlive-binaries
+    #sudo apt-get install -y texlive-latex-base
+    #sudo apt-get install -y texlive-latex-extra
+    #sudo apt-get install -y texlive-latex-recommended
+    #sudo apt-get install -y texlive-math-extra
+    #sudo apt-get install -y texlive-science
+    #sudo apt-get install -y texlive-bibtex-extra
+    #sudo apt-get install -y texlive-fonts-extra
+    #sudo apt-get install -y texlive-generic-recommended
+
+    #sudo apt-get install -y xindy
 
     #sudo apt-get install -y remmina 
     #sudo apt-get remove texlive-generic-extra
@@ -263,6 +264,11 @@ install_latex()
     # references
     # http://askubuntu.com/questions/207442/how-to-add-open-terminal-here-to-nautilus-context-menu
     #sudo apt-get install nautilus-open-terminal
+
+
+    sudo apt-get purge texlive
+    sudo apt-get purge texlive-base
+    sudo apt-get purge pgf
 
     #texlive 2015
     # https://www.tug.org/texlive/acquire-netinstall.html
@@ -277,6 +283,9 @@ install_latex()
     #export TEXDIR=/opt/texlive
     chmod +x install-tl
     sudo ./install-tl
+    # Installed to /usr/local/texlive/2015/
+    # Need to add /usr/local/texlive/2015/bin/x86_64-linux to the PATH
+    #python -m utool.util_cplat --exec-get-path-dirs:0
 }
 
 

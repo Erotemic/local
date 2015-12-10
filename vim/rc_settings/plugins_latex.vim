@@ -12,7 +12,8 @@ endif
 " Remove open dyslexic
 func! SetLaTeX()
     " References: http://vim-latex.sourceforge.net/documentation/latex-suite/customizing-compiling.html
-    let g:Tex_CompileRule_pdf = 'pdflatex -shell-escape --synctex=-1 -src-specials -interaction=nonstopmode $*'
+    "let g:Tex_CompileRule_pdf = 'pdflatex -shell-escape --synctex=-1 -src-specials -interaction=nonstopmode $*'
+    let g:Tex_CompileRule_pdf = 'lualatex -shell-escape --synctex=-1 -src-specials -interaction=nonstopmode $*'
 endfu   
 
 " Set open dyslexic
@@ -34,7 +35,8 @@ let g:Tex_DefaultTargetFormat='pdf'
 let g:Tex_MultipleCompileFormats='pdf,bib,pdf'
 "let g:Tex_MultipleCompileFormats='pdf'
 "
-let g:Tex_CompileRule_pdf = 'pdflatex -shell-escape --synctex=-1 -src-specials -interaction=nonstopmode $*'
+"let g:Tex_CompileRule_pdf = 'pdflatex -shell-escape --synctex=-1 -src-specials -interaction=nonstopmode $*'
+let g:Tex_CompileRule_pdf = 'lualatex -shell-escape --synctex=-1 -src-specials -interaction=nonstopmode $*'
 
 " Use main.tex.mainfile to compile
 let g:Tex_UseMakefile = 1
@@ -139,3 +141,35 @@ let g:Imap_UsePlaceHolders = 0
 let g:Tex_SmartKeyBS = 0
 let g:Tex_SmartKeyQuote = 0
 let g:Tex_SmartKeyDot = 0
+
+
+
+"-------------------------
+"PLUGIN: Synstastic General
+let g:syntastic_aggregate_errors = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_warning_symbol = 'W>'
+let g:syntastic_error_symbol = '!>'
+let g:syntastic_style_error_symbol = 'S>'
+let g:syntastic_style_warning_symbol = 's>'
+let g:syntastic_always_populate_loc_list = 1
+
+"-------------------------
+" PLUGIN: Syntastic Python
+"let g:syntastic_tex_checkers=['lacheck']
+let g:syntastic_tex_checkers=['']
+"let g:syntastic_tex_checkers=['chktex']
+
+" SCRIPTING VIM IN PYTHON 
+" http://orestis.gr/blog/2008/08/10/scripting-vim-with-python/
+
+python << endpython
+import vim
+latex_errors = [
+] 
+ccktex_args_list = [
+    #'--max-line-length 80',
+]
+args = ' '.join(ccktex_args_list)
+#vim.command('let g:syntastic_tex_chktex_args = "%s"' % args)
+endpython

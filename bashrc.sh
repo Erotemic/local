@@ -72,6 +72,9 @@ if [[ "$HOSTNAME" == "hyrule"  ]]; then
     #export TOMCAT_DIR=$CODE_DIR/Wildbook/tmp/apache-tomcat-8.0.24
     #export TOMCAT_HOME=$TOMCAT_DIR
     #export CATALINA_HOME=$TOMCAT_DIR
+
+    export PATH=$PATH
+    export PATH=/usr/local/texlive/2015/bin/x86_64-linux:$PATH
 elif [[ "$HOSTNAME" == "dozer"  ]]; then 
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-6.5/lib64:/usr/local/lib
     export PATH=$PATH:/usr/local/cuda-6.5/bin
@@ -79,12 +82,11 @@ elif [[ "$HOSTNAME" == "Ooo"  ]]; then
     export UTOOL_NO_CNN=True
     export UTOOL_NO_PYRF=True
 else
-    export PATH=$PATH
     # These paths are likely to be true on other machines as weel
     #export PATH=$PATH:/usr/local/cuda/bin
     #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/lib
     #export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
+    export PATH=$PATH
 fi
-
 
 alias rpivpn='sudo openconnect -b vpn.net.rpi.edu -uyour_school_username -ucrallj'

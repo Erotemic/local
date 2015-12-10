@@ -135,3 +135,9 @@ set textwidth=0 formatoptions=cqt wrapmargin=0
  set visualbell
  set noeb vb t_vb=
  set t_vb=
+
+function! SyntaxItem()
+    "http://vim.wikia.com/wiki/Showing_syntax_highlight_group_in_statusline
+    return synIDattr(synID(line("."),col("."),1),"name")
+endfunction
+"set statusline+=%{SyntaxItem()}
