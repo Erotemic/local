@@ -253,6 +253,10 @@ def sed(r, regexpr, repl, force=False, recursive=False):
     rob_nav._sed(r, regexpr, repl, force, recursive)
 
 
+def find(r, *tofind_list):
+    search(r, *tofind_list)
+
+
 def search(r, *tofind_list):
     dpath = os.getcwd()
     print('Searching %s for %r' % (dpath, tofind_list))
