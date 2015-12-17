@@ -158,7 +158,7 @@ let g:syntastic_always_populate_loc_list = 1
 " PLUGIN: Syntastic Python
 "let g:syntastic_tex_checkers=['lacheck']
 let g:syntastic_tex_checkers=['']
-"let g:syntastic_tex_checkers=['chktex']
+let g:syntastic_tex_checkers=['chktex']
 
 " SCRIPTING VIM IN PYTHON 
 " http://orestis.gr/blog/2008/08/10/scripting-vim-with-python/
