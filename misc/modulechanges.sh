@@ -532,3 +532,8 @@ iam
 pybeis - python based image systam
 
 iambird - image algorithm manager based instance recognition and detection
+
+
+rob sp "ut\\.filter_items" "ut.list_compress" True
+rob sp "ut\\.ifilter_items" "ut.iter_compress" True
+rob sp "ut\\.filter_items" "ut.list_compress" True
