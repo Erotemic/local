@@ -132,6 +132,7 @@ install_core_extras()
     sudo apt-get install -y sysstat
     sudo apt-get install -y vlc
     sudo apt-get install -y subversion
+    sudo apt-get install -y remmina 
 
     #sudo apt-get install -y filezilla
 
@@ -163,6 +164,19 @@ install_core_extras()
     sudo apt-get install sshfs -y
     mkdir ~/ami    
     sshfs -o idmap=user ibeis-hackathon:/home/ubuntu ~/ami
+
+
+    # To allow to get the flash package from software center
+    #http://askubuntu.com/questions/576562/apt-way-to-get-adobe-flash-player-latest-version-for-linux-not-working
+    #http://blog.cacoo.com/2012/08/07/troubleshooting-chrome-flash/
+    sudo add-apt-repository universe
+    sudo apt-get install pepperflashplugin-nonfree
+    sudo update-pepperflashplugin-nonfree --status
+    sudo update-pepperflashplugin-nonfree --install 
+
+    sudo add-apt-repository ppa:nilarimogard/webupd8
+    sudo apt-get update
+    sudo apt-get install freshplayerplugin
 }
 
 
@@ -256,7 +270,6 @@ install_latex()
 
     #sudo apt-get install -y xindy
 
-    #sudo apt-get install -y remmina 
     #sudo apt-get remove texlive-generic-extra
     #sudo apt-get install texlive-bibtex-extra -y
     #sudo apt-get install texlive-full -y
