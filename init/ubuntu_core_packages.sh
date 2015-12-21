@@ -574,8 +574,14 @@ install_numba()
 {
     # References: http://askubuntu.com/questions/588688/importerror-no-module-named-llvmlite-binding
     # References: http://askubuntu.com/questions/576510/error-while-trying-to-install-llvmlite-on-ubuntu-14-04
+    sudo apt-get install zlib1g zlib1g-dev 
+    sudo apt-get install libedit-dev
+    sudo apt-get install llvm-3.5 llvm-3.5-dev llvm-dev
+    sudo apt-get install llvm-3.6 llvm-3.6-dev llvm-dev
+    pip install enum34 funcsigs
+
     sudo apt-get install libedit-dev -y
-    sudo pip install enum34
+    sudo pip install enum34 -U
     sudo -H pip install pip --upgrade
     sudo -H pip install llvmlite
     sudo -H pip install funcsig
@@ -583,8 +589,13 @@ install_numba()
     sudo ln -s llvm-config-3.5 /usr/bin/llvm-config
     sudo apt-get install libedit-dev -y
     export LLVM_CONFIG=/usr/bin/llvm-config-3.5
+
+    sudo LLVM_CONFIG=/usr/bin/llvm-config-3.6 pip install llvmlite -U
+    sudo LLVM_CONFIG=/usr/bin/llvm-config-3.6 pip install numba -U
+
     sudo -H pip install llvmlite
-    python -c "import numba"
+    python -c "import numba; print(numba.__version__)"
+    python -c "import llvmlite; print(llvmlite.__version__)"
 }
 
 # Cleanup
