@@ -53,7 +53,8 @@ def get_disabled_plugins():
     WIN32 = sys.platform.startswith('win32')
     # Set flag to be false to disable plugin
     known_plugins = [
-        (not WIN32, 'jedi-vim'),
+        #(not WIN32, 'jedi-vim'),
+        (True, 'jedi-vim'),
         (True, 'nerdcommenter'),
         (True, 'nerdtree'),
         (not WIN32, 'syntastic'),

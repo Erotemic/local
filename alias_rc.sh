@@ -95,6 +95,7 @@ alias cy='cd $CODE_DIR/cyth/'
 alias rf='cd $CODE_DIR/pyrf/'
 alias gi='cd $CODE_DIR/pygist/'
 alias dt='cd $CODE_DIR/detecttools/'
+alias mtg='cd $CODE_DIR/mtgmonte/'
 
 #python -c "import site; print(site.getusersitepackages())"
 #python -c "import site; print(site.getsitepackages())"
