@@ -33,6 +33,8 @@ IBEIS_REPOS_URLS, IBEIS_REPOS = repo_list([
     'https://github.com/Erotemic/utool.git',
     #'https://github.com/aweinstock314/cyth.git',
     'https://github.com/bluemellophone/ibeis_cnn.git',
+    'https://github.com/Erotemic/pgmpy.git',
+    'https://github.com/Erotemic/mtgmonte.git',
     'https://github.com/Erotemic/ibeis.git',
 
     #'https://github.com/Theano/Theano.git'
