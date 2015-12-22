@@ -53,13 +53,13 @@ def get_disabled_plugins():
     WIN32 = sys.platform.startswith('win32')
     # Set flag to be false to disable plugin
     known_plugins = [
-        (True, 'jedi-vim'),
+        (not WIN32, 'jedi-vim'),
         (True, 'nerdcommenter'),
         (True, 'nerdtree'),
-        (True, 'syntastic'),
-        (True, 'vim-startify'),
-        (True, 'supertab'),
-        (True, 'buffergator'),
+        (not WIN32, 'syntastic'),
+        (not WIN32, 'vim-startify'),
+        (not WIN32, 'supertab'),
+        (not WIN32, 'buffergator'),
         (not WIN32, 'taglist.vim'),  # ctags
         (False, 'vim-quickopen-tvio'),
         (False, 'vim-fugitive'),

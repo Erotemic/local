@@ -71,7 +71,11 @@ au BufNewFile,BufRead *.py.tpl set ft=python
 ""Read vidtk config files as vidtk config file
 "au BufRead,BufNewFile *.conf setfiletype vidtkconf
 "
-"au FileType cpp set foldmethod=syntax
+au FileType cpp set foldmethod=syntax
+"autocmd FileType cpp if getfsize(@%) > 200 | set foldmethod=syntax | endif
+"autocmd FileType cpp if getfsize(@%) > 200 | normal zR | endif
+autocmd FileType cpp normal zR
+
 
 "au CursorMoved * call WordHighlightFun()
 "au InsertLeave * hi Cursor guibg=red
