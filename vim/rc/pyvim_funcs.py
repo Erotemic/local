@@ -438,7 +438,7 @@ def find_pyfunc_above_cursor():
     # Get text posision
     (row, col) = vim.current.window.cursor
     line_list = vim.current.buffer
-    funcname, searchlines = ut.find_pyfunc_above_row(line_list, row)
+    funcname, searchlines = ut.find_pyfunc_above_row(line_list, row, True)
     return funcname, searchlines
 
 
