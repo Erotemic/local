@@ -112,7 +112,7 @@ install_zotero()
     cd ~/Downloads
     sudo cp -r Zotero_linux-x86_64 /opt/zotero
     # Change permissions so zotero can automatically update itself
-    sudo chown -R root:joncrall /opt/zotero
+    sudo chown -R root:$USER /opt/zotero
     sudo chmod -R g+w /opt/zotero
     sudo chmod -R u+w /opt/zotero
 
@@ -344,6 +344,7 @@ install_hdf5()
     #  libhdf5-7 libhdf5-dev libhdf5-serial-dev
     #The following NEW packages will be installed:
     #  libhdf5-openmpi-7 libhdf5-openmpi-dev
+    sudo apt-get install -y libhdf5-serial-dev
     sudo apt-get install -y libhdf5-openmpi-dev
     #h5cc -showconfig
     sudo apt-get install hdf5-tools
@@ -932,4 +933,130 @@ make_venv_physical()
     else \
         echo "Did not match"; \
     fi
+}
+
+
+install_vigra()
+{
+    # Vision with Generic Algorithms
+    cd ~/code
+    git clone https://github.com/ukoethe/vigra.git
+    cd ~/code/vigra
+    mkdir build
+    cd ~/code/vigra/build
+    cmake ..
+    make -j9
+    sudo make install
+
+    sudo mv /usr/local/lib/python2.7/site-packages/vigra $VIRTUAL_ENV/lib/python2.7/site-packages/
+    sudo chown -R $USER:$USER $VIRTUAL_ENV/lib/python2.7/site-packages/vigra
+
+    python -c "import vigra"
+
+}
+
+install_cplex()
+{
+    sudo apt-get install openjdk-7-jre -y
+    sudo apt-get install openjdk-7-jdk -y
+    cd ~/Downloads
+    # Need to get an acount and licence from IBM
+    # http://www.maplesoft.com/support/faqs/detail.aspx?sid=35272
+    export PS1=">"
+    chmod +x COSCE1262LIN64.bin.bin
+    sudo ./COSCE1262LIN64.bin.bin 
+    # Silent Installation: 
+    # -r "./myresponse.properties"
+    #INSTALLER_UI silent 
+    #LICENSE_ACCEPTED true
+    #INSTALLER_LOCALE en	
+    #USER_INSTALL_DIR /opt/
+    # http://www-01.ibm.com/support/knowledgecenter/SSSA5P_12.6.3/ilog.odms.studio.help/Optimization_Studio/topics/td_silent_install.html
+    # Follow instructions to install into /opt/ibm
+
+    /opt/ibm/ILOG/CPLEX_Studio_Community1263/cplex/bin/x86-64_linux
+    /opt/ibm/ILOG/CPLEX_Studio_Community1263/concert/lib/x86-64_linux/static_pic
+
+    export CPLEX_PREFIX=/opt/ibm/ILOG/CPLEX_Studio_Community1263
+    export PATH=$PATH:$CPLEX_PREFIX/cplex/bin/x86-64_linux/
+    export PATH=$PATH:$CPLEX_PREFIX/opl/oplide/
+    export PATH=$PATH:$CPLEX_PREFIX/cplex/include/
+    export PATH=$PATH:$CPLEX_PREFIX/opl/include/
+    export PATH=$PATH:$CPLEX_PREFIX/opl/
+
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/cplex/lib/x86-64_linux/static_pic
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/cplex/bin/x86-64_linux/
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/opl/bin/x86-64_linux
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/opl/lib/x86-64_linux/static_pic
+}
+
+
+install_opengm()
+{
+    co
+    # http://hci.iwr.uni-heidelberg.de/opengm2/
+    # http://www-304.ibm.com/ibm/university/academic/pub/page/ban_prescriptive_analytics?
+    sudo apt-get install sphinxsearch
+    sudo apt-get install mysql-server -y
+    pip install pyVIGRA
+    
+    pip install sphinx
+    sudo apt-get install glpk -y
+    git clone https://github.com/opengm
+
+    cd ~/code/opengm/
+    mkdir -p build
+    cd ~/code/opengm/build
+
+    make externalLibs
+
+    cmake -DWITH_BOOST=On -DWITH_HDF5=On -DBUILD_PYTHON_WRAPPER=On -DBUILD_EXAMPLES=Off -DWITH_CPLEX=On -DWITH_OPENMP=On -DWITH_MAXFLOW=On -DWITH_MPLP=On -DWITH_MRF=On -DWITH_MAXFLOW_IBFS=On -DWITH_AD3=On -DWITH_QPBO=On -DWITH_PLANARITY=On -DWITH_SRMP=On -DWITH_TRWS=On -DWITH_GCO=On  -DWITH_BLOSSOM5=On  -DWITH_DAOOPT=On  -DWITH_CONICBUNDLE=On ..
+    #-DWITH_FASTPD=On ..
+    make externalLibs
+    make -j9
+    make install
+
+    # Hack into virtualenv
+    rm -rf $VIRTUAL_ENV/lib/python2.7/site-packages/opengm
+    sudo mv /usr/local/lib/python2.7/site-packages/opengm $VIRTUAL_ENV/lib/python2.7/site-packages/
+    sudo chown -R $USER:$USER $VIRTUAL_ENV/lib/python2.7/site-packages/opengm
+
+    python -c "import opengm"
+    python -c "import opengm; print(opengm.inference.Multicut)"
+
+    # Uninstall
+    sudo rm -rf /usr/local/include/opengm
+    sudo rm -rf /usr/local/lib/python2.7/site-packages/opengm 
+}
+
+install_gurobi(){
+    cd ~/Downloads
+
+    sudo cp gurobi6.5.0_linux64.tar.gz /opt/
+    cd /opt
+    sudo chmod -R 755 gurobi6.5.0_linux64.tar.gz
+    sudo tar xvfz gurobi6.5.0_linux64.tar.gz 
+    sudo chmod -R 777 /opt/gurobi650
+    cd /opt/gurobi650/linux64
+    python setup.py install
+    # setup bashrc
+
+    export PATH=$PATH:/opt/gurobi650/linux64/bin
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/gurobi650/linux64/lib
+
+    rrr
+    cd
+    python -c "import gurobipy; print(gurobipy.__file__)"
+
+    grbgetkey xxxxxxxxxxx
+
+    sudo updatedb
+    locate gurobipy
+
+    cd ~/venv/local/lib/python2.7/site-packages/gurobipy/
+
+    # UNINSTALL
+    echo $VIRTUAL_ENV
+    sudo rm -rf $VIRTUAL_ENV/lib/python2.7/site-packages/gurobipy
+    sudo rm -rf /lib/python2.7/site-packages/gurobipy
 }
