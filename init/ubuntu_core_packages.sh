@@ -1012,9 +1012,13 @@ install_opengm()
 
     cmake -DWITH_BOOST=On -DWITH_HDF5=On -DBUILD_PYTHON_WRAPPER=On -DBUILD_EXAMPLES=Off -DWITH_CPLEX=On -DWITH_OPENMP=On -DWITH_MAXFLOW=On -DWITH_MPLP=On -DWITH_MRF=On -DWITH_MAXFLOW_IBFS=On -DWITH_AD3=On -DWITH_QPBO=On -DWITH_PLANARITY=On -DWITH_SRMP=On -DWITH_TRWS=On -DWITH_GCO=On  -DWITH_BLOSSOM5=On  -DWITH_DAOOPT=On  -DWITH_CONICBUNDLE=On ..
     #-DWITH_FASTPD=On ..
+
+    -DLIBDAI_INCLUDE_DIR=~/code/libDAI/include
+    -DLIBDAI_LIBRARY=~/code/libDAI/lib/libdai.a
+
     make externalLibs
     make -j9
-    make install
+    sudo make install
 
     # Hack into virtualenv
     rm -rf $VIRTUAL_ENV/lib/python2.7/site-packages/opengm
@@ -1027,6 +1031,23 @@ install_opengm()
     # Uninstall
     sudo rm -rf /usr/local/include/opengm
     sudo rm -rf /usr/local/lib/python2.7/site-packages/opengm 
+
+    # Info
+    python -m utool.util_dev --exec-search_module --show --mod=opengm --pat=multi
+    python -m utool.util_dev --exec-search_module --show --mod=opengm --pat=bayes
+    python -m utool.util_dev --exec-search_module --show --mod=opengm --pat=net
+    
+    
+
+    # Libdai
+    sudo apt-get install g++ make doxygen graphviz libboost-dev libboost-graph-dev libboost-program-options-dev libboost-test-dev -y
+    sudo apt-get install libgmp-dev -y
+    sudo apt-get install cimg-dev -y
+    
+    co
+    git clone https://github.com/dbtsai/libDAI.git
+    cp Makefile.LINUX Makefile.conf
+    make -j7
 }
 
 install_gurobi(){

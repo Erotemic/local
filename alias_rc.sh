@@ -316,3 +316,9 @@ python -c "import utool as ut; ut.grab_zipped_url(\"$1\", download_dir=\".\")"
 
 alias dmsg=dmesg
 alias dmsgt='dmesg | tail'
+
+
+pyfile()
+{
+    python -c "import $1; print($1.__file__.replace(\".pyc\", \".py\"))"
+}

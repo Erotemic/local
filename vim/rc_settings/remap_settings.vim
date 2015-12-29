@@ -84,7 +84,7 @@ noremap <leader>R :source ~/local/vim/portable_vimrc<CR>
 noremap <leader>rs :syntax sync minlines=500.<CR>
 
 " Find lone double quotes
-:noremap <leader>/' :/\([^"]\)"\([^"]\)<CR>
+:noremap <leader>"r :/\([^"]\)"\([^"]\)<CR>
 :noremap <leader>s' :%s/\([^"]\)"\([^"]\)/\1'\2/gc<CR>
 
 
@@ -92,6 +92,11 @@ noremap <leader>rs :syntax sync minlines=500.<CR>
 :inoremap ,,, >>> 
 :noremap <leader>> :s/^\( *[^ ].*\)\([^ ]\)>>>/\1\2/g<CR>
 ":noremap <leader>> :'<,'>s/^\( *[^ ].*\)\([^ ]\)>>>/\1\2/g<CR>
+
+
+" Search in non-doctests
+:noremap <leader>/ :/\(^.*>>> .*\)\@<!
+":noremap <leader>/ :/\(^.*>>>\)\@!
 
 " Function Keys
 "
