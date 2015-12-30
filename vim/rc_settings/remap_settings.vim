@@ -63,6 +63,7 @@ noremap <leader>es :call SmartSearchWordAtCursor()<CR>
 noremap <leader>eg :call GrepProjectWordAtCursor()<CR>
 
 noremap <leader>pv :call PyMakePrintVar()<CR>
+noremap <leader>pl :call PyMakePrintLine()<CR>
 " alt-u
 inoremap <M-u> ut.
 inoremap <M-i> import
@@ -84,7 +85,8 @@ noremap <leader>R :source ~/local/vim/portable_vimrc<CR>
 noremap <leader>rs :syntax sync minlines=500.<CR>
 
 " Find lone double quotes
-:noremap <leader>"r :/\([^"]\)"\([^"]\)<CR>
+":noremap <leader>"/ :/\([^"]\)"\([^"]\)<CR>
+:noremap <leader>"/ :/\([^"]\)\@<="\([^"]\)\@=<CR>
 :noremap <leader>s' :%s/\([^"]\)"\([^"]\)/\1'\2/gc<CR>
 
 

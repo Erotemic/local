@@ -381,17 +381,6 @@ def get_word_at_cursor(url_ok=False):
     return word
 
 
-def get_expr_at_cursor():
-    """ returns the word highlighted by the curor """
-    import vim
-    buf = vim.current.buffer
-    (row, col) = vim.current.window.cursor
-    line = buf[row - 1]  # Original end of the file
-    nonword_chars = ' \t\n\r[](){}:;,"\'\\/='
-    word = get_word_in_line_at_col(line, col, nonword_chars)
-    return word
-
-
 def get_word_in_line_at_col(line, col, nonword_chars=' \t\n\r[](){}:;.,"\'\\/'):
     r"""
     Args:
@@ -639,8 +628,16 @@ def get_current_modulename():
 def auto_docstr(**kwargs):
     import imp
     import utool as ut
+    try:
+        print("RELOADING UTOOL via imp")
+        imp.reload(ut)
+        imp.reload(ut._internal.meta_util_arg)
+    except Exception as ex:
+        print("... errored")
+        pass
+    print("RELOADING UTOOL via rrrr")
+    ut.rrrr(verbose=0)
     imp.reload(ut)
-    ut.rrrr(verbose=False)
     import vim
 
     modname = None

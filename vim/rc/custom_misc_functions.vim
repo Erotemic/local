@@ -542,6 +542,20 @@ pyvim_funcs.insert_codeblock_at_cursor(newline)
 endpython
 endfunc
 
+
+func! PyMakePrintLine() 
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool as ut
+line = pyvim_funcs.get_line_at_cursor()
+expr = line.strip(' ')
+min_indent = ut.get_minimum_indentation(line)
+newline = ' ' * min_indent + "print('{expr} = %r' % ({expr},))".format(expr=expr)
+pyvim_funcs.insert_codeblock_at_cursor(newline)
+endpython
+endfunc
+
 func! PyCiteLookup() 
 python << endpython
 """
