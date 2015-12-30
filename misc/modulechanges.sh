@@ -537,3 +537,11 @@ iambird - image algorithm manager based instance recognition and detection
 rob sp "ut\\.filter_items" "ut.list_compress" True
 rob sp "ut\\.ifilter_items" "ut.iter_compress" True
 rob sp "ut\\.filter_items" "ut.list_compress" True
+
+
+grep -ER --include \*.py  model * | grep -v ibeis.model | grep model
+
+grep -ER --include \*.py  model * | grep -v ibeis.model | grep -v statsmodels | grep model 
+grep -ER --include \*.py  model * | grep -v ibeis.model | grep -v statsmodels | grep -v bayes | grep model 
+
+rob sp "ibeis\\.model" "ibeis\.algo" 
