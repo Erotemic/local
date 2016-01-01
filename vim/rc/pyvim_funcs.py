@@ -359,6 +359,17 @@ def testdata_text(num=1):
     return text if num == 1 else text2
 
 
+def get_expr_at_cursor():
+    """ returns the word highlighted by the curor """
+    import vim
+    buf = vim.current.buffer
+    (row, col) = vim.current.window.cursor
+    line = buf[row - 1]  # Original end of the file
+    nonword_chars = ' \t\n\r[](){}:;,"\'\\/='
+    word = get_word_in_line_at_col(line, col, nonword_chars)
+    return word
+
+
 def get_line_at_cursor():
     import vim
     buf = vim.current.buffer

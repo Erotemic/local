@@ -544,4 +544,8 @@ grep -ER --include \*.py  model * | grep -v ibeis.model | grep model
 grep -ER --include \*.py  model * | grep -v ibeis.model | grep -v statsmodels | grep model 
 grep -ER --include \*.py  model * | grep -v ibeis.model | grep -v statsmodels | grep -v bayes | grep model 
 
-rob sp "ibeis\\.model" "ibeis\.algo" 
+rob sp "ibeis\\.model" "ibeis.algo" True
+rob gp "ibeis\\.model"
+
+rob sp "ibeis\/model" "ibeis/algo"
+rob gp "ibeis.model" 
