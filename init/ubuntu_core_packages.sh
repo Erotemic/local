@@ -938,21 +938,35 @@ make_venv_physical()
 
 install_vigra()
 {
+
+    export PYEXE=$(which python2.7)
+    export PYTHON_EXECUTABLE=$($PYEXE -c "import sys; print(sys.executable)")
+    if [[ "$VIRTUAL_ENV" == ""  ]]; then
+        export LOCAL_PREFIX=/usr/local
+        export _SUDO="sudo"
+    else
+        export LOCAL_PREFIX=$($PYEXE -c "import sys; print(sys.prefix)")/local
+        export _SUDO=""
+    fi
     # Vision with Generic Algorithms
     cd ~/code
     git clone https://github.com/ukoethe/vigra.git
     cd ~/code/vigra
-    mkdir build
+    mkdir -p ~/code/vigra/build
     cd ~/code/vigra/build
-    cmake ..
+    cmake -DCMAKE_INSTALL_PREFIX=$LOCAL_PREFIX ..
     make -j9
-    sudo make install
+    $_SUDO make install
 
-    sudo mv /usr/local/lib/python2.7/site-packages/vigra $VIRTUAL_ENV/lib/python2.7/site-packages/
-    sudo chown -R $USER:$USER $VIRTUAL_ENV/lib/python2.7/site-packages/vigra
+    #sudo mv /usr/local/lib/python2.7/site-packages/vigra $VIRTUAL_ENV/lib/python2.7/site-packages/
+    #sudo mv $LOCAL_PREFIX/../lib/python2.7/site-packages/vigra $VIRTUAL_ENV/lib/python2.7/site-packages/
+    #sudo chown -R $USER:$USER $VIRTUAL_ENV/lib/python2.7/site-packages/vigra
+
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VIRTUAL_ENV/lib
 
     python -c "import vigra"
 
+    #pip install pyVIGRA
 }
 
 install_cplex()
@@ -962,6 +976,7 @@ install_cplex()
     cd ~/Downloads
     # Need to get an acount and licence from IBM
     # http://www.maplesoft.com/support/faqs/detail.aspx?sid=35272
+    # https://www-01.ibm.com/marketing/iwm/iwm/web/reg/signup.do?source=ESD-ILOG-OPST-EVAL&S_TACT=M161008W&S_CMP=web_ibm_ws_ilg-opt_bod_cospreviewedition-ov&lang=en_US&S_PKG=CRY7XML
     export PS1=">"
     chmod +x COSCE1262LIN64.bin.bin
     sudo ./COSCE1262LIN64.bin.bin 
@@ -996,34 +1011,60 @@ install_opengm()
     co
     # http://hci.iwr.uni-heidelberg.de/opengm2/
     # http://www-304.ibm.com/ibm/university/academic/pub/page/ban_prescriptive_analytics?
-    sudo apt-get install sphinxsearch
+    sudo apt-get install sphinxsearch -y
     sudo apt-get install mysql-server -y
-    pip install pyVIGRA
     
-    pip install sphinx
-    sudo apt-get install glpk -y
-    git clone https://github.com/opengm
+    #pip install sphinx
+    #sudo apt-get install glpk -y
+
+    cd ~/code
+    git clone https://github.com/opengm/opengm.git
 
     cd ~/code/opengm/
-    mkdir -p build
+    mkdir -p ~/code/opengm/build
     cd ~/code/opengm/build
+
+    export PYEXE=$(which python2.7)
+    export PYTHON_EXECUTABLE=$($PYEXE -c "import sys; print(sys.executable)")
+    export PYTHON_PREFIX=$($PYEXE -c "import sys; print(sys.prefix)")
+    export PYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython2.7.so
+    export PYTHON_INCLUDE_DIR=$VIRTUAL_ENV/include/python2.7
+    export PYTHON_LIBRARY=$($PYEXE -c "import utool; print(utool.get_system_python_library())")
+
+    python -c "import utool; print(utool.get_system_python_library())"
+
+    if [[ "$VIRTUAL_ENV" == ""  ]]; then
+        export LOCAL_PREFIX=/usr/local
+        export _SUDO="sudo"
+    else
+        export LOCAL_PREFIX=$($PYEXE -c "import sys; print(sys.prefix)")/local
+        export _SUDO=""
+    fi
+    
+    export OPENGM_CMAKE_OPTS="$OPENGM_CMAKE_OPTS -DPYTHON_EXECUTABLE=$PYTHON_EXECUTABLE -DPYTHON_LIBRARY=$PYTHON_LIBRARY" 
+    export OPENGM_CMAKE_OPTS="$OPENGM_CMAKE_OPTS -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
+    export OPENGM_CMAKE_OPTS="$OPENGM_CMAKE_OPTS -DWITH_BOOST=On -DWITH_HDF5=On -DBUILD_PYTHON_WRAPPER=On"
+    export OPENGM_CMAKE_OPTS="$OPENGM_CMAKE_OPTS -DWITH_CPLEX=On -DWITH_OPENMP=On"
+    export OPENGM_CMAKE_OPTS="$OPENGM_CMAKE_OPTS -DWITH_MAXFLOW=On -DWITH_MPLP=On -DWITH_MRF=On -DWITH_MAXFLOW_IBFS=On"
+    export OPENGM_CMAKE_OPTS="$OPENGM_CMAKE_OPTS -DWITH_AD3=On -DWITH_QPBO=On -DWITH_TRWS=On -DWITH_GCO=On -DWITH_CONICBUNDLE=On"
+    export OPENGM_CMAKE_OPTS="$OPENGM_CMAKE_OPTS -DBUILD_EXAMPLES=Off -DWITH_PLANARITY=Off -DWITH_SRMP=Off -DWITH_BLOSSOM5=Off  -DWITH_DAOOPT=Off"
+    cmake $OPENGM_CMAKE_OPTS -DCMAKE_INSTALL_PREFIX=$LOCAL_PREFIX ..
+    #-DWITH_FASTPD=On ..
 
     make externalLibs
 
-    cmake -DWITH_BOOST=On -DWITH_HDF5=On -DBUILD_PYTHON_WRAPPER=On -DBUILD_EXAMPLES=Off -DWITH_CPLEX=On -DWITH_OPENMP=On -DWITH_MAXFLOW=On -DWITH_MPLP=On -DWITH_MRF=On -DWITH_MAXFLOW_IBFS=On -DWITH_AD3=On -DWITH_QPBO=On -DWITH_PLANARITY=On -DWITH_SRMP=On -DWITH_TRWS=On -DWITH_GCO=On  -DWITH_BLOSSOM5=On  -DWITH_DAOOPT=On  -DWITH_CONICBUNDLE=On ..
-    #-DWITH_FASTPD=On ..
-
-    -DLIBDAI_INCLUDE_DIR=~/code/libDAI/include
-    -DLIBDAI_LIBRARY=~/code/libDAI/lib/libdai.a
+    #-DLIBDAI_INCLUDE_DIR=~/code/libDAI/include
+    #-DLIBDAI_LIBRARY=~/code/libDAI/lib/libdai.a
 
     make externalLibs
     make -j9
-    sudo make install
+
+    make install
 
     # Hack into virtualenv
-    rm -rf $VIRTUAL_ENV/lib/python2.7/site-packages/opengm
-    sudo mv /usr/local/lib/python2.7/site-packages/opengm $VIRTUAL_ENV/lib/python2.7/site-packages/
-    sudo chown -R $USER:$USER $VIRTUAL_ENV/lib/python2.7/site-packages/opengm
+    #rm -rf $VIRTUAL_ENV/lib/python2.7/site-packages/opengm
+    #sudo mv /usr/local/lib/python2.7/site-packages/opengm $VIRTUAL_ENV/lib/python2.7/site-packages/
+    #sudo chown -R $USER:$USER $VIRTUAL_ENV/lib/python2.7/site-packages/opengm
 
     python -c "import opengm"
     python -c "import opengm; print(opengm.inference.Multicut)"
@@ -1036,8 +1077,6 @@ install_opengm()
     python -m utool.util_dev --exec-search_module --show --mod=opengm --pat=multi
     python -m utool.util_dev --exec-search_module --show --mod=opengm --pat=bayes
     python -m utool.util_dev --exec-search_module --show --mod=opengm --pat=net
-    
-    
 
     # Libdai
     sudo apt-get install g++ make doxygen graphviz libboost-dev libboost-graph-dev libboost-program-options-dev libboost-test-dev -y

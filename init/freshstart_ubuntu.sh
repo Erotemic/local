@@ -38,6 +38,10 @@ freshtart_ubuntu_entry_point()
     ln -s ~/local/profile.sh ~/.profile 
     ln -s ~/local/config/.pypirc ~/.pypirc 
     ln -s ~/local/config/.theanorc ~/.theanorc 
+    ln -s ~/local/config/.theanorc ~/.theanorc 
+    mkdir -p ~/.config/terminator
+    ln -s ~/local/config/terminator_config ~/.config/terminator/config
+    #
     ln -s ~/local/scripts/ubuntu_scripts ~/scripts
     source ~/.bashrc
 

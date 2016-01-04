@@ -62,6 +62,19 @@ export HISTCONTROL=
 
 export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 
+# If IBM CPLEX is installed
+export CPLEX_PREFIX=/opt/ibm/ILOG/CPLEX_Studio_Community1263
+export PATH=$PATH:$CPLEX_PREFIX/cplex/bin/x86-64_linux/
+export PATH=$PATH:$CPLEX_PREFIX/opl/oplide/
+export PATH=$PATH:$CPLEX_PREFIX/cplex/include/
+export PATH=$PATH:$CPLEX_PREFIX/opl/include/
+export PATH=$PATH:$CPLEX_PREFIX/opl/
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/cplex/lib/x86-64_linux/static_pic
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/cplex/bin/x86-64_linux/
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/opl/bin/x86-64_linux
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/opl/lib/x86-64_linux/static_pic
+
 # Other program environment variables
 if [[ "$HOSTNAME" == "hyrule"  ]]; then 
     export PATH=$PATH:/usr/local/cuda/bin
@@ -88,13 +101,6 @@ elif [[ "$HOSTNAME" == "Ooo"  ]]; then
 
     export PATH=$PATH:/opt/gurobi650/linux64/bin
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/gurobi650/linux64/lib
-
-    export CPLEX_PREFIX=/opt/ibm/ILOG/CPLEX_Studio_Community1263
-    export PATH=$PATH:$CPLEX_PREFIX/cplex/bin/x86-64_linux/
-    export PATH=$PATH:$CPLEX_PREFIX/opl/oplide/
-    export PATH=$PATH:$CPLEX_PREFIX/cplex/include/
-    export PATH=$PATH:$CPLEX_PREFIX/opl/include/
-    export PATH=$PATH:$CPLEX_PREFIX/opl/
 else
     # These paths are likely to be true on other machines as weel
     #export PATH=$PATH:/usr/local/cuda/bin
@@ -104,3 +110,5 @@ else
 fi
 
 alias rpivpn='sudo openconnect -b vpn.net.rpi.edu -uyour_school_username -ucrallj'
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VIRTUAL_ENV/lib
