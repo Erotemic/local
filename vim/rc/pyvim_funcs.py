@@ -51,6 +51,7 @@ def format_multiple_paragraph_sentences(text):
         >>> print(formated_text)
     """
     import utool as ut
+    ut.util_dbg.COLORED_EXCEPTIONS = False
     # Patterns that define separations between paragraphs in latex
     #NL = '\n'
     pattern_list = [
@@ -132,6 +133,7 @@ def format_single_paragraph_sentences(text, debug=False):
         >>> print(result)
     """
     import utool as ut
+    ut.util_dbg.COLORED_EXCEPTIONS = False
     import textwrap
     import re
     #ut.rrrr(verbose=False)
@@ -300,6 +302,7 @@ def format_single_paragraph_sentences(text, debug=False):
 
 def testdata_text(num=1):
     import utool as ut
+    ut.util_dbg.COLORED_EXCEPTIONS = False
     text = r'''
         % COMMENT
         Image matching relies on finding similar features between query and
@@ -435,6 +438,7 @@ def get_word_in_line_at_col(line, col, nonword_chars=' \t\n\r[](){}:;.,"\'\\/'):
 def find_pyfunc_above_cursor():
     import vim
     import utool as ut
+    ut.util_dbg.COLORED_EXCEPTIONS = False
     # Get text posision
     (row, col) = vim.current.window.cursor
     line_list = vim.current.buffer
@@ -538,6 +542,7 @@ def get_text_between_lines(lnum1, lnum2, col1=0, col2=sys.maxint - 1):
         text = '\n'.join(lines)
     except Exception:
         import utool as ut
+        ut.util_dbg.COLORED_EXCEPTIONS = False
         print(ut.list_str(lines))
         raise
     return text
@@ -629,6 +634,7 @@ def get_current_modulename():
     import vim
     from os.path import dirname
     import utool as ut
+    ut.util_dbg.COLORED_EXCEPTIONS = False
     #ut.rrrr(verbose=False)
     buffer_name = vim.current.buffer.name
     modname = ut.get_modname_from_modpath(buffer_name)
@@ -639,6 +645,7 @@ def get_current_modulename():
 def auto_docstr(**kwargs):
     import imp
     import utool as ut
+    ut.util_dbg.COLORED_EXCEPTIONS = False
     try:
         print("RELOADING UTOOL via imp")
         imp.reload(ut)
@@ -752,6 +759,10 @@ def ensure_normalmode():
     #vim.command("ESC")
 
 
+def open_fpath(fpath, mode='e'):
+    vim_fpath_cmd(mode, fpath)
+
+
 def open_fpath_list(fpath_list, num_hsplits=2):
     """
     Very hacky function to nicely open a bunch of files
@@ -808,4 +819,5 @@ if __name__ == '__main__':
     import multiprocessing
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+    ut.util_dbg.COLORED_EXCEPTIONS = False
     ut.doctest_funcs()

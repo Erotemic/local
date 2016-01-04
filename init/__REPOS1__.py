@@ -112,7 +112,9 @@ VIM_REPO_URLS, VIM_REPOS = repo_list([
 
     'https://github.com/jeetsukumaran/vim-buffergator.git',
 
-    'https://github.com/vim-scripts/AnsiEsc.vim.git'
+    'https://github.com/vim-scripts/AnsiEsc.vim.git',
+
+    'https://github.com/ivanov/vim-ipython.git',
 
     #'https://github.com/terryma/vim-multiple-cursors.git',
     #'https://github.com/tpope/vim-repeat.git',

@@ -1081,3 +1081,16 @@ install_gurobi(){
     sudo rm -rf $VIRTUAL_ENV/lib/python2.7/site-packages/gurobipy
     sudo rm -rf /lib/python2.7/site-packages/gurobipy
 }
+
+install_brightness_adjust()
+{
+    sudo apt-get update
+    sudo apt-get install xbacklight
+    xbacklight -dec 10
+
+    xrandr -q | grep " connected"
+    xrandr --output DVI-I-2 --brightness 0.2
+    xrandr --output DVI-I-3 --brightness 0.2
+    
+}
+

@@ -62,6 +62,7 @@ def get_disabled_plugins():
         (not WIN32, 'supertab'),
         (not WIN32, 'buffergator'),
         (not WIN32, 'taglist.vim'),  # ctags
+        (False, 'vim-ipython'),
         (False, 'vim-quickopen-tvio'),
         (False, 'vim-fugitive'),
         (False, 'csv.vim'),

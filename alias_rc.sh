@@ -39,6 +39,7 @@ clean_latex()
     rm main.dvi
 }
 alias ipy='ipython'
+alias ipyk='ipython kernel'
 #alias ipynb='ipython notebook'
 alias pyl='pylint --disable=C'
 alias pyf='pyflakes'
@@ -61,9 +62,11 @@ alias png2jpg='for f in *.png; do ffmpeg -i "$f" "${f%.png}.jpg"; done'
 # Git
 alias gcwip='git commit -am "wip" && git push'
 alias gp='git pull'
+
 hyrule_get(){
     git clone git@hyrule.cs.rpi.edu:$1
 }
+alias hyrule='hyrule.sh'
 
 # General navigation
 alias home='cd ~'

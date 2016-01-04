@@ -101,3 +101,7 @@ flake8_args = ' '.join(flake8_args_list)
 vim.command('let g:syntastic_python_flake8_args = "%s"' % flake8_args)
 endpython
 
+
+
+"-------------------------
+" PLUGIN: IPython Vim

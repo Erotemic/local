@@ -84,6 +84,8 @@ elif [[ "$HOSTNAME" == "Ooo"  ]]; then
     #export UTOOL_NO_PYRF=True
     export UTOOL_NO_PYRF=False
     export UTOOL_NO_CNN=False
+    export THEANO_FLAGS="device=cpu"
+
     export PATH=$PATH:/opt/gurobi650/linux64/bin
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/gurobi650/linux64/lib
 

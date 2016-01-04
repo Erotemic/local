@@ -1,0 +1,34 @@
+[global_config]
+  inactive_color_offset = 1.0
+[keybindings]
+  new_terminator = <Primary><Shift>n
+  split_vert = <Primary><Shift>e
+  split_horiz = <Primary><Shift>i
+[profiles]
+  [[default]]
+    use_system_font = False
+    background_darkness = 0.0
+    scrollback_lines = 5000
+    background_image = None
+    foreground_color = "#ff9bf3"
+    scroll_on_output = False
+    font = Mono Dyslexic 9
+    background_color = "#292929"
+  [[joncrall]]
+    background_image = None
+    scrollback_lines = 5000
+    use_system_font = False
+    foreground_color = "#ff9bf3"
+    scroll_on_output = False
+    font = Mono Dyslexic 9
+    background_color = "#292929"
+[layouts]
+  [[default]]
+    [[[child1]]]
+      type = Terminal
+      parent = window0
+      profile = joncrall
+    [[[window0]]]
+      type = Window
+      parent = ""
+[plugins]

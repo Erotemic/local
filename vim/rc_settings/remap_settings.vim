@@ -153,7 +153,7 @@ map <c-h> <c-w>h
 " In vsplit-split window
 noremap <leader>gi :wincmd f<CR> 
 noremap gi :wincmd f<CR> 
-noremap <leader>gs :vertical wincmd f<CR>
+noremap <leader>go :call PyOpenFileUnderCursor()<CR>
 
 nnoremap <leader>p :call Tex_RunViewLaTeX()<CR>
 nmap <C-P> :call Tex_RunViewLaTeX() <CR>

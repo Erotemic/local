@@ -549,3 +549,6 @@ rob gp "ibeis\\.model"
 
 rob sp "ibeis\/model" "ibeis/algo"
 rob gp "ibeis.model" 
+
+
+rob sp "ChipMatch2" "ChipMatch" True

@@ -556,6 +556,28 @@ pyvim_funcs.insert_codeblock_at_cursor(newline)
 endpython
 endfunc
 
+
+func! PyOpenFileUnderCursor() 
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool as ut
+word = pyvim_funcs.get_word_at_cursor()
+if ut.checkpath(word):
+    pyvim_funcs.open_fpath(word)
+else:
+    modpath = ut.get_modpath_from_modname(word)
+    print(modpath)
+    # utool
+    if ut.checkpath(modpath):
+        pyvim_funcs.open_fpath(modpath, 'split')
+    else:
+        print(word)
+    # TODO: infer modules from the context with jedi perhaps
+
+endpython
+endfunc
+
 func! PyCiteLookup() 
 python << endpython
 """

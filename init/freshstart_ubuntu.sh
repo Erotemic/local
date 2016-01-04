@@ -231,17 +231,33 @@ virtualbox_ubuntu_init()
 
 customize_sudoers()
 { 
+    # References: http://askubuntu.com/questions/147241/execute-sudo-without-password
     # Make timeout for sudoers a bit longer
-    sudo cat /etc/sudoers > ~/tmp/sudoers.tmp  
-    sed -i 's/^Defaults.*env_reset/Defaults    env_reset, timestamp_timeout=480/' ~/tmp/sudoers.tmp 
-    #cat ~/tmp/sudoers.tmp  
+    sudo cat /etc/sudoers > ~/tmp/sudoers.next  
+    sed -i 's/^Defaults.*env_reset/Defaults    env_reset, timestamp_timeout=480/' ~/tmp/sudoers.next 
     # Copy over the new sudoers file
-    visudo -c -f ~/tmp/sudoers.tmp
+    visudo -c -f ~/tmp/sudoers.next
     if [ "$?" -eq "0" ]; then
-        sudo cp ~/tmp/sudoers.tmp /etc/sudoers
+        sudo cp ~/tmp/sudoers.next /etc/sudoers
     fi 
-    rm ~/tmp/sudoers.tmp
+    rm ~/tmp/sudoers.next
+    #cat ~/tmp/sudoers.next  
     #sudo cat /etc/sudoers 
+} 
+
+
+nopassword_on_sudo()
+{ 
+    # CAREFUL. THIS IS HUGE SECURITY RISK
+    # References: http://askubuntu.com/questions/147241/execute-sudo-without-password
+    sudo cat /etc/sudoers > ~/tmp/sudoers.next  
+    echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >> ~/tmp/sudoers.next  
+    # Copy over the new sudoers file
+    visudo -c -f ~/tmp/sudoers.next
+    if [ "$?" -eq "0" ]; then
+        sudo cp ~/tmp/sudoers.next /etc/sudoers
+    fi 
+    rm ~/tmp/sudoers.next
 } 
 
  
