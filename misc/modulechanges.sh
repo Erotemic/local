@@ -552,3 +552,7 @@ rob gp "ibeis.model"
 
 
 rob sp "ChipMatch2" "ChipMatch" True
+
+
+rob sp "ut\.list_take" "ut.take" 
+rob sp "ut\.list_compress" "ut.compress" 

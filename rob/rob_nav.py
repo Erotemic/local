@@ -142,8 +142,10 @@ def _sed(r, regexpr, repl, force=False, recursive=False, dpath_list=None):
         print(' * regular expression : %r' % (regexpr,))
 
     # Walk through each directory recursively
+    num_changed = 0
     for fpath in _matching_fnames(dpath_list, include_patterns, recursive=recursive):
-        __regex_sedfile(fpath, regexpr, repl, force)
+        num_changed += len(__regex_sedfile(fpath, regexpr, repl, force))
+    print('total lines changed = %r' % (num_changed,))
 
 
 def _grep(r, tofind_list, recursive=True, case_insensitive=True, regex=False,
@@ -311,7 +313,7 @@ def __regex_sedfile(fpath, regexpr, repl, force=False):
             with open(fpath, 'w') as file:
                 file.write(new_file)
         return changed_lines
-    return None
+    return []
 
 
 def win32_default(r, assisted=False):

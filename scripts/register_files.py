@@ -523,7 +523,7 @@ class Drive(object):
                 coupled_dirs.extend(list(map(tuple, ut.list_unflat_take(dirs, idxs))))
             hist_ = ut.dict_hist(coupled_dirs)
             coupled_idxs = ut.list_argsort(hist_.values())[::-1]
-            most_coupled = ut.list_take(list(hist_.keys()), coupled_idxs[0:100])
+            most_coupled = ut.take(list(hist_.keys()), coupled_idxs[0:100])
             print('Coupled fpaths: ' + ut.list_str(most_coupled, nl=True))
         print('%d unique files are duplicated' % (len(unflat_sizes),))
         #print('Duplicate sizes: ' + ut.list_str(unflat_sizes[0:10], nl=True))
