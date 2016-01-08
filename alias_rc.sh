@@ -97,7 +97,8 @@ alias db='cd ~/Dropbox/'
 alias cy='cd $CODE_DIR/cyth/'
 alias rf='cd $CODE_DIR/pyrf/'
 alias gi='cd $CODE_DIR/pygist/'
-alias dt='cd $CODE_DIR/detecttools/'
+#alias dt='cd $CODE_DIR/detecttools/'
+alias dt='cd $CODE_DIR/dtool'
 alias mtg='cd $CODE_DIR/mtgmonte/'
 
 #python -c "import site; print(site.getusersitepackages())"
@@ -323,5 +324,6 @@ alias dmsgt='dmesg | tail'
 
 pyfile()
 {
+    echo "python -c \"import $1; print($1.__file__)\""
     python -c "import $1; print($1.__file__.replace(\".pyc\", \".py\"))"
 }

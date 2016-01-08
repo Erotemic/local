@@ -111,4 +111,4 @@ fi
 
 alias rpivpn='sudo openconnect -b vpn.net.rpi.edu -uyour_school_username -ucrallj'
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VIRTUAL_ENV/lib
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PYTHON_VENV/lib
