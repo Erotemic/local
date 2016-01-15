@@ -112,6 +112,12 @@ def extend_regex(regexpr):
 
 
 def _sed(r, regexpr, repl, force=False, recursive=False, dpath_list=None):
+    if True:
+        import utool as ut
+        force = ut.smart_cast2(force)
+        ut.sed(regexpr, repl, force=force, recursive=recursive,
+               dpath_list=dpath_list, verbose=True)
+        return
     #_grep(r, [repl], dpath_list=dpath_list, recursive=recursive)
     force = rutil.cast(force, bool)
     recursive = rutil.cast(recursive, bool)

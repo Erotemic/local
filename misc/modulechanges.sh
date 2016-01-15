@@ -556,3 +556,65 @@ rob sp "ChipMatch2" "ChipMatch" True
 
 rob sp "ut\.list_take" "ut.take" 
 rob sp "ut\.list_compress" "ut.compress" 
+
+
+rob sp "encounter" "occurrence"
+rob gp "Encounter"
+
+rob sp "E" "occurrence"
+
+
+# Special cases
+ibeis/dbio/export_wb.py
+
+echo <<EOF
+def update_1_5_0(db, ibs=None):
+    # Rename encounters to occurrences
+    ENCOUNTER_TABLE  = 'encounters'
+    OCCURRENCE_TABLE = 'occurrences'
+    EG_RELATION_TABLE    = 'encounter_image_relationship'
+    OG_RELATION_TABLE    = 'occurrence_image_relationship'
+    db.rename_table(ENCOUNTER_TABLE, OCCURRENCE_TABLE)
+    db.rename_table(EG_RELATION_TABLE, OG_RELATION_TABLE)
+    db.modify_table(
+        OCCURRENCE_TABLE, [
+            ('encounter_rowid',             'occurrence_rowid',              'INTEGER PRIMARY KEY', None),
+            ('encounter_uuid',              'occurrence_uuid',               'UUID NOT NULL', None),
+            ('encounter_text',              'occurrence_text',               'TEXT NOT NULL', None),
+            ('encounter_note',              'occurrence_note',               'TEXT NOT NULL', None),
+            ('encounter_start_time_posix',  'occurrence_start_time_posix',   'INTEGER', None),
+            ('encounter_end_time_posix',    'occurrence_end_time_posix',     'INTEGER', None),
+            ('encounter_gps_lat',           'occurrence_gps_lat',            'INTEGER', None),
+            ('encounter_gps_lon',           'occurrence_gps_lon',            'INTEGER', None),
+            ('encounter_processed_flag',    'occurrence_processed_flag',     'INTEGER DEFAULT 0', None),
+            ('encounter_shipped_flag',      'occurrence_shipped_flag',       'INTEGER DEFAULT 0', None),
+            ('encounter_smart_xml_fname',   'occurrence_smart_xml_fname',    'TEXT', None),
+            ('encounter_smart_waypoint_id', 'occurrence_smart_waypoint_id',  'INTEGER', None),
+        ],
+        docstr='''
+        List of all occurrences. This used to be called the encounter table.
+        It represents a group of potentially many individuals seen in a
+        specific place at a specific time.
+        ''',
+        superkeys=[('occurrence_text',)],
+    )
+    db.modify_table(
+        OG_RELATION_TABLE, [
+            ('egr_rowid',       'ogr_rowid',         'INTEGER PRIMARY KEY', None),
+            ('encounter_rowid', 'occurrence_rowid',  'INTEGER', None),
+        ],
+        docstr='''
+        Relationship between occurrences and images (many to many mapping) the
+        many-to-many relationship between images and occurrences is encoded
+        here occurrence_image_relationship stands for occurrence-image-pairs.
+        ''',
+        superkeys=[('image_rowid', 'occurrence_rowid')],
+        relates=('images', 'occurrences'),
+        shortname='ogr',
+        dependsmap={
+            'occurrence_rowid': ('occurrences', ('occurrence_rowid',), ('occurrence_text',)),
+            'image_rowid'    : ('images', ('image_rowid',), ('image_uuid',)),
+        },
+    )
+    #pass
+EOF
