@@ -19,7 +19,7 @@ VIM_REPOS_WITH_SUBMODULES = __REPOS1__.VIM_REPOS_WITH_SUBMODULES
 def gitcmd(repo, command):
     try:
         import utool as ut
-        ut.gitcmd(repo, command)
+        ut.repocmd(repo, command)
     except Exception:
         print()
         print("************")
