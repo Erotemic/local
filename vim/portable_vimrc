@@ -1,17 +1,14 @@
 if has("win32") || has("win16")
     :set runtimepath+=$USERPROFILE\local\vim\portable_vimrc 
 endif
-:set runtimepath+=~/local/vim/vimfiles/
-"set rtp+=D:\Dropbox\vimfiles
-
+set runtimepath+=~/local/vim/vimfiles/
 source ~/local/vim/rc/win32_presource.vim
 source ~/local/vim/rc/venv_presource.vim
-
-" source ~/local/vim/vimfiles/after/syntax/tex.vim
-" source ~/local/vim/vimfiles/after/ftplugin/python/folding.vim 
-
+set encoding=utf8
 
 " COMMON JUMP TO RC FILES
+" source ~/local/vim/vimfiles/after/syntax/tex.vim
+" source ~/local/vim/vimfiles/after/ftplugin/python/folding.vim 
 ":e ~/local/vim/rc/pyvim_funcs.py
 ":e ~/local/vim/vimfiles/spell/en.latin1.add
 ":e ~/local/vim/vimfiles/spell/en.utf-8.add
@@ -29,14 +26,10 @@ source ~/local/vim/rc/venv_presource.vim
 " Snippets Directory
 " ~/local/vim/vimfiles/UltiSnips/python.snippets
 
-set encoding=utf8
+
 "===========PLUGINS==========="
 " PLUGIN: Pathogen
-" Pathogen is the first thing to run
-"filetype off
-
 source ~/local/vim/vimfiles/syntax/python.vim 
-
 python << endpython
 import sys
 import vim
@@ -53,7 +46,6 @@ def get_disabled_plugins():
     WIN32 = sys.platform.startswith('win32')
     # Set flag to be false to disable plugin
     known_plugins = [
-        #(not WIN32, 'jedi-vim'),
         (True, 'jedi-vim'),
         (True, 'nerdcommenter'),
         (True, 'nerdtree'),
@@ -62,26 +54,18 @@ def get_disabled_plugins():
         (not WIN32, 'supertab'),
         (not WIN32, 'buffergator'),
         (not WIN32, 'taglist.vim'),  # ctags
-        (False, 'vim-ipython'),
-        (False, 'vim-quickopen-tvio'),
-        (False, 'vim-fugitive'),
-        (False, 'csv.vim'),
-        (False, 'grep.vim'),
-        (False, 'vim-repeat'),
-        (False, 'Conque-Shell'),
-        (False, 'highlight.vim'),
-        (False, 'vim-airline'),
-        (False, 'vim-multiple-cursors'),
-        (False, 'vim-sensible'),
-        (False, 'vim-surround'),
-        (False, 'vim-unimpaired'),
+        (False, 'vim-ipython'), (False, 'vim-quickopen-tvio'),
+        (False, 'vim-fugitive'), (False, 'csv.vim'), (False, 'grep.vim'), 
+        (False, 'vim-repeat'), (False, 'Conque-Shell'),
+        (False, 'highlight.vim'), (False, 'vim-airline'), 
+        (False, 'vim-multiple-cursors'), (False, 'vim-sensible'), 
+        (False, 'vim-surround'), (False, 'vim-unimpaired'),
         (False, 'vim-vimtweak'),
     ] 
     disabled = [name for flag, name in known_plugins if not flag]
     return disabled
 
 disabled = get_disabled_plugins()
-#disabled_str = repr(disabled)
 disabled_str = '[' + (', '.join(['"%s"' % (name,) for name in disabled])) + ']'
 vim.command('let g:pathogen_disabled = ' + disabled_str)
 endpython
@@ -102,12 +86,11 @@ filetype plugin indent on
 source ~/local/vim/rc/align.vim
 source ~/local/vim/rc/enable_code_snippets.vim
 source ~/local/vim/rc/custom_font_functions.vim
-source ~/local/vim/rc/custom_misc_functions.vim   " <<< TODO: remove tvio
+source ~/local/vim/rc/custom_misc_functions.vim  
 source ~/local/vim/rc/custom_pep8_functions.vim
 source ~/local/vim/rc/custom_regex_functions.vim
 source ~/local/vim/rc/custom_py_functions.vim
 source ~/local/vim/rc/custom_tex_functions.vim
-source ~/local/vim/rc/commands.vim
 
 "===========Settings==========="
 source ~/local/vim/rc_settings/plugin_settings.vim
@@ -122,29 +105,38 @@ source ~/local/vim/rc_settings/autocommand_settings.vim
 
 " Trial / project / temporary vimrc commands
 " If they are good put them into a settings file
-
 "___________________
 " Quick File Access:
+
+func! QUICKOPEN_leader_tvio(...)
+    " TODO: remove for plugin
+    " Maps <leader>t<key> to tab open a filename
+    " Maps <leader>s<key> to vsplit open a filename
+    " Maps <leader>i<key> to split open a filename
+    let key = a:1
+    let fname = a:2
+    :exec 'noremap <leader>t'.key.' :tabe '.fname.'<CR>'
+    :exec 'noremap <leader>v'.key.' :vsplit '.fname.'<CR>'
+    :exec 'noremap <leader>i'.key.' :split '.fname.'<CR>'
+    :exec 'noremap <leader>o'.key.' :e '.fname.'<CR>'
+endfu
+
 call QUICKOPEN_leader_tvio(',', '~/local/vim/portable_vimrc')
 call QUICKOPEN_leader_tvio('>', '~/code/flann/src/python/pyflann/index.py')
 call QUICKOPEN_leader_tvio('.', '~/code/flann/src/cpp/flann/algorithms/nn_index.h')
 call QUICKOPEN_leader_tvio('<', '~/local/vim/rc/pyvim_funcs.py')
 call QUICKOPEN_leader_tvio('/', '~/code/ibeis_cnn')
 call QUICKOPEN_leader_tvio('!', '~/local/vim/rc/pyvim_funcs.py')
-"call QUICKOPEN_leader_tvio('@', '~/local/vim/rc/custom_misc_functions.vim')
 call QUICKOPEN_leader_tvio('*', '~/code/hesaff/pyhesaff/_pyhesaff.py')
 call QUICKOPEN_leader_tvio('1', '~/code/ibeis/ibeis/control/manual_annot_funcs.py')
 call QUICKOPEN_leader_tvio('2', '~/local/scripts/register_files.py')
 call QUICKOPEN_leader_tvio('@', '~/code/mtgmonte/mtgmonte.py')
-"call QUICKOPEN_leader_tvio('2', '~/code/utool/utool/util_scripts/ensure_python3_compatible.py')
 call QUICKOPEN_leader_tvio('3', '~/code/guitool/guitool/api_item_model.py')
 call QUICKOPEN_leader_tvio('4', '~/local/init/ubuntu_core_packages.sh')
 call QUICKOPEN_leader_tvio('$', '~/local/build_scripts/')
 call QUICKOPEN_leader_tvio('5', '~/local/bashrc.sh')
 call QUICKOPEN_leader_tvio('7', '~/local/vim/rc/custom_font_functions.vim')
-"call QUICKOPEN_leader_tvio('6', '~/code/pyrf')
 call QUICKOPEN_leader_tvio('6', '~/code/Lasagne')
-"call QUICKOPEN_leader_tvio('8', '~/code/flann/src/python/pyflann/flann_ctypes.py')
 call QUICKOPEN_leader_tvio('8', '~/code/hesaff/src/hesaff.cpp')
 call QUICKOPEN_leader_tvio('9', '~/local/misc/modulechanges.sh')
 call QUICKOPEN_leader_tvio('W', '~/code/ibeis_cnn/ibeis_cnn/netrun.py')
@@ -153,61 +145,40 @@ call QUICKOPEN_leader_tvio('w', '~/code/ibeis/ibeis/web/zmq_task_queue.py')
 call QUICKOPEN_leader_tvio('0', '~/local/vim/rc/custom_regex_commands.vim')
 call QUICKOPEN_leader_tvio('_', '$VIMRUNTIME/../_vimrc')
 call QUICKOPEN_leader_tvio('A', '~/code/ibeis/ibeis/all_imports.py')
-"call QUICKOPEN_leader_tvio('A', '~/code/ibeis/ibeis/expt/results_all.py')
 call QUICKOPEN_leader_tvio('a', '~/code/ibeis/ibeis/expt/annotation_configs.py')
-"call QUICKOPEN_leader_tvio('b', '~/local/bashrc.sh')
 call QUICKOPEN_leader_tvio('b', '~/code/pgmpy/pgmpy/factors/Factor.py')
-"call QUICKOPEN_leader_tvio('b', '~/code/ibeis_cnn/ibeis_cnn/models/siam.py')
 call QUICKOPEN_leader_tvio('B', '~/code/ibeis_cnn/ibeis_cnn/models/abstract_models.py')
 call QUICKOPEN_leader_tvio('c', '~/code/ibeis/ibeis/control/IBEISControl.py')
-"call QUICKOPEN_leader_tvio('C', '~/Dropbox/crall')
 call QUICKOPEN_leader_tvio('C', '~/code/ibeis/ibeis/constants.py')
-"call QUICKOPEN_leader_tvio('d', '~/code/ibeis/dev.py')
-"call QUICKOPEN_leader_tvio('D', '~/code/ibeis/ibeis/model/hots/devcases.py')
 call QUICKOPEN_leader_tvio('D', '~/code/')
-"call QUICKOPEN_leader_tvio('d', '~/code/ibeis/ibeis/dev.py')
 call QUICKOPEN_leader_tvio('d', '~/code/dtool/dtool/depcache_control.py')
-"call QUICKOPEN_leader_tvio('D', '~/code/ibeis/ibeis/algo/hots/smk/smk_debug.py')
-"call QUICKOPEN_leader_tvio('e', '~/code/ibeis/ibeis/expt/experiment_printres.py')
 call QUICKOPEN_leader_tvio('e', '~/code/ibeis/ibeis/expt/experiment_drawing.py')
 call QUICKOPEN_leader_tvio('ed', '~/code/ibeis/ibeis/expt/experiment_drawing.py')
 call QUICKOPEN_leader_tvio('eh', '~/code/ibeis/ibeis/expt/experiment_harness.py')
 call QUICKOPEN_leader_tvio('ep', '~/code/ibeis/ibeis/expt/experiment_printres.py')
 call QUICKOPEN_leader_tvio('tr', '~/code/ibeis/ibeis/expt/test_result.py')
-"call QUICKOPEN_leader_tvio('e', '~/code/hesaff/src/hesaff.cpp')
 call QUICKOPEN_leader_tvio('E', '~/code/ibeis/ibeis/expt/experiment_configs.py')
 call QUICKOPEN_leader_tvio('f', '~/code/ibeis/ibeis/ibsfuncs.py')
 call QUICKOPEN_leader_tvio('F', '~/code/ibeis/ibeis/init/filter_annots.py')
-"call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/newgui.py')
-"call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/guiback.py')
 call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/inspect_gui.py')
 call QUICKOPEN_leader_tvio('G', '~/code/ibeis/ibeis/gui/newgui.py')
 """"""""""""""
 call QUICKOPEN_leader_tvio('H', '~/code/ibeis/ibeis/algo/hots/match_chips4.py')
 call QUICKOPEN_leader_tvio('h', '~/code/ibeis/ibeis/algo/hots/pipeline.py')
 """"""""""""""
-"call QUICKOPEN_leader_tvio('i', '~/code/ibeis/ibeis/algo/hots/smk/smk_index.py')
-"call QUICKOPEN_leader_tvio('i', '~/code/ibeis/ibeis/algo/hots/qt_inc_automatch.py')
 call QUICKOPEN_leader_tvio('i', '~/code/ibeis/ibeis/__init__.py')
 call QUICKOPEN_leader_tvio('I', '~/code/ibeis/ibeis/other/dbinfo.py')
-"call QUICKOPEN_leader_tvio('j', '~/code/ibeis/ibeis/dbio/ingest_database.py')
 call QUICKOPEN_leader_tvio('j', '~/code/ibeis/ibeis/dbio/export_subset.py')
-"call QUICKOPEN_leader_tvio('k', '~/code/ibeis/ibeis/algo/hots/smk/smk_core.py')
 call QUICKOPEN_leader_tvio('k', '~/code/ibeis/ibeis/algo/hots/chip_match.py')
 call QUICKOPEN_leader_tvio('K', '~/code/ibeis/ibeis/algo/hots/smk')
-"call QUICKOPEN_leader_tvio('L', '~/latex/crall-lab-notebook/main.tex')
-"call QUICKOPEN_leader_tvio('L', '~/latex/ibeis_userguide/main.tex')
 call QUICKOPEN_leader_tvio('l', '~/latex/crall-candidacy-2015/main.tex')
 call QUICKOPEN_leader_tvio('L', '~/latex/crall-candidacy-2015/sec-3-4-expt.tex')
-"call QUICKOPEN_leader_tvio('m', '~/code/ibeis/ibeis/algo/hots/smk/smk_match.py')
-"call QUICKOPEN_leader_tvio('m', '~/code/ibeis/ibeis/algo/hots/automated_matcher.py')
 call QUICKOPEN_leader_tvio('m', '~/code/ibeis/ibeis/init/main_helpers.py')
 call QUICKOPEN_leader_tvio('M', '~/code/ibeis/ibeis/main_module.py')
 """"""""""""""
 call QUICKOPEN_leader_tvio('n', '~/code/ibeis/ibeis/algo/Config.py')
 call QUICKOPEN_leader_tvio('N', '~/code/ibeis/ibeis/algo/hots/score_normalization.py')
 """"""""""""""
-"call QUICKOPEN_leader_tvio('o', '~/code/ibeis/ibeis/algo/preproc/preproc_image.py')
 call QUICKOPEN_leader_tvio('o', '~/code/ibeis/ibeis/algo/preproc/preproc_annot.py')
 call QUICKOPEN_leader_tvio('O', '~/code/ibeis/ibeis/algo/preproc/preproc_chip.py')
 """"""""""""""
@@ -217,75 +188,30 @@ call QUICKOPEN_leader_tvio('P', '~/code/plottool/plottool/draw_func2.py')
 call QUICKOPEN_leader_tvio('q', '~/code/ibeis/ibeis/algo/hots/query_request.py')
 call QUICKOPEN_leader_tvio('Q', '~/code/ibeis/ibeis/algo/hots/hots_query_result.py')
 """"""""""""""
-"call QUICKOPEN_leader_tvio('r', '~/code/ibeis/ibeis/algo/detect/randomforest.py')
 call QUICKOPEN_leader_tvio('r', '~/code/ibeis/ibeis/expt/experiment_storage.py')
 call QUICKOPEN_leader_tvio('R', '~/code/ibeis/README.md')
-"call QUICKOPEN_leader_tvio('s', '~/code/ibeis/ibeis/control/SQLDatabaseControl.py')
-"call QUICKOPEN_leader_tvio('s', '~/code/ibeis/ibeis/algo/hots/score_normalization.py')
 call QUICKOPEN_leader_tvio('s', '~/code/ibeis/setup.py')
 call QUICKOPEN_leader_tvio('S', '~/code/ibeis/ibeis/scripts/gen_cand_expts.py')
-"call QUICKOPEN_leader_tvio('S', '~/code/ibeis/ibeis/control/SQLDatabaseControl.py')
-"call QUICKOPEN_leader_tvio('t', '~/code/ibeis/ibeis/templates/template_generator.py')
 call QUICKOPEN_leader_tvio('t', '~/code/ibeis/ibeis/templates/generate_notebook.py')
 call QUICKOPEN_leader_tvio('T', '~/code/ibeis/ibeis/tag_funcs.py')
-"call QUICKOPEN_leader_tvio('S', '~/code/ibeis/ibeis/control/DB_SCHEMA.py')
-"call QUICKOPEN_leader_tvio('S', '~/code/ibeis/ibeis/control/DBCACHE_SCHEMA.py')
 call QUICKOPEN_leader_tvio('u', '~/code/utool/utool/__init__.py')
 call QUICKOPEN_leader_tvio('U', '~/code/utool/utool/util_dev.py')
 call QUICKOPEN_leader_tvio('v', '~/code/vtool/vtool/__init__.py')
 call QUICKOPEN_leader_tvio('V', '~/code/vtool/vtool/spatial_verification.py')
 call QUICKOPEN_leader_tvio('V', '~/code/vtool/vtool/coverage_image.py')
-"call QUICKOPEN_leader_tvio('w', '~/code/ibeis/ibeis/algo/preproc/preproc_featweight.py')
-"call QUICKOPEN_leader_tvio('w', '~/code/ibeis/ibeis/algo/hots/scoring.py')
 call QUICKOPEN_leader_tvio('x', '~/code/ibeis/ibeis/viz/interact/interact_name.py')
-"call QUICKOPEN_leader_tvio('x', '~/code/ibeis/ibeis/viz/interact/interact_query_decision.py')
-"call QUICKOPEN_leader_tvio('x', '~/code/ibeis/ibeis/viz/interact/interact_matches.py')
 call QUICKOPEN_leader_tvio('X', '~/code/ibeis/ibeis/algo/hots/multi_index.py')
-"call QUICKOPEN_leader_tvio('y', '~/code/ibeis/ibeis/algo/hots/special_query.py')
 call QUICKOPEN_leader_tvio('y', '~/code/ibeis/ibeis/algo/hots/vsone_pipeline.py')
 call QUICKOPEN_leader_tvio('Y', '~/code/cyth/cyth/cyth_script.py')
 call QUICKOPEN_leader_tvio('z', '~/code/ibeis/ibeis/viz/viz_matches.py')
 call QUICKOPEN_leader_tvio('Z', '~/code/ibeis/ibeis/algo/hots/neighbor_index.py')
-"call QUICKOPEN_leader_tvio('P', '~/Dropbox/CVPR\ Paper/main.tex')
-"call QUICKOPEN_leader_tvio('P', '~/latex/crall-cvpr-15/main.tex')
 
-"call MagicPython()
-"call QUICKOPEN_leader_tvio('n', '~/code/ibeis/notebook/')
-"call QUICKOPEN_leader_tvio('2', '~/code/ibeis/ibeis/dev/params.py')
-"call QUICKOPEN_leader_tvio('3', '~/code/guitool/guitool/guitool_components.py')
-"call QUICKOPEN_leader_tvio('4', '~/code/ibeis/ibeis/expt/results_organizer.py')
-"call QUICKOPEN_leader_tvio('e', '~/code/ibeis/ibeis/expt/experiment_harness.py')
-"call QUICKOPEN_leader_tvio('e', '~/code/ibeis/ibeis/io/export_subset.py')
-"call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/inspect_gui.py')
-
-
-" Try to do a utool codeblock syntax highlighting
-" 
-"syn region pythonDoctest
-"  \ start="ut.codeblock([\n ]*r'''" end="'''[\n ]*)"
-"  \ contained contains=ALLBUT,pythonDoctest,@Spell
-
-"set nofoldenable
-"
-syntax sync minlines=500
-
-
-"if has("win32") || has("win16")
-"    " http://stackoverflow.com/questions/4500748/how-to-source-all-vim-files-in-directory
-"    " Win32 does not load fater files correctly
-"    for f in split(glob('~/local/vim/vimfiles/after/syntax/*.vim'), '\n')
-"        exec 'source' f
-"    endfor
-"endif
-"
 if has("win32") || has("win16")
     " Try to hack windows to recognize the custom syntax
     " Seems to work. Thank god.
     autocmd Filetype tex,latex source $USERPROFILE\local\vim\vimfiles\after\syntax\tex.vim
 endif
-
-" http://vim.wikia.com/wiki/Editing_remote_files_via_scp_in_vim
-        " vim 
         
- set visualbell
- set noeb vb t_vb=
+"syntax sync minlines=500
+"set visualbell
+"set noeb vb t_vb=

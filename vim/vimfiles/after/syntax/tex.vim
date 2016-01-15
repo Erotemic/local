@@ -147,6 +147,8 @@ syn match  texRefZone		'\\ucite\%([tp]\*\=\)\=' nextgroup=texRefOption,texCite
 syn match texInputFile		"\\ImageCommand{.\{-}}"	contains=texStatement,texInputCurlies,texInputFileOpt nextgroup=@Spell
 syn match texInputFile		"\\ImageCommandII{.\{-}}"	contains=texStatement,texInputCurlies,texInputFileOpt nextgroup=@Spell
 
+syn match texInputFile		"\\url{.\{-}}"	contains=texStatement,texInputCurlies,texInputFileOpt nextgroup=@Spell
+
 
 
 " also from vim.vim

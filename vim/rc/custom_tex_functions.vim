@@ -72,6 +72,7 @@ command! REPLprobibility :call FUNC_REPL_PAREN_WITH_BRACE('Pr')<CR>
 "http://vim.wikia.com/wiki/Converting_variables_to_or_from_camel_case
 command! CamelCase :call UnderscoresToCamelCase()
 func! UnderscoresToCamelCaseFirstUp()
+    " TODO use utool implementation
     " Convert each name_like_this to NameLikeThis in current line.
     :s#\(\%(\<\l\+\)\%(_\)\@=\)\|_\(\l\)#\u\1\2#g
 endfu

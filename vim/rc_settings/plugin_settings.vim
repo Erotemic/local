@@ -93,6 +93,7 @@ let Tlist_File_Fold_Auto_Close = 1
 
 "-------------------------
 " PLUGIN: Buffergator
+" https://github.com/jeetsukumaran/vim-buffergator/blob/master/doc/buffergator.txt
 " Remove mappings that I dont like 
 silent! unmap!  <leader><S-Down>  
 silent! unmap!  <leader><S-Right>  
