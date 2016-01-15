@@ -1,0 +1,69 @@
+
+"if has("win32") || has("win16")
+"    " http://stackoverflow.com/questions/4500748/how-to-source-all-vim-files-in-directory
+"    " Win32 does not load fater files correctly
+"    for f in split(glob('~/local/vim/vimfiles/after/syntax/*.vim'), '\n')
+"        exec 'source' f
+"    endfor
+"endif
+"
+
+" Try to do a utool codeblock syntax highlighting
+" 
+"syn region pythonDoctest
+"  \ start="ut.codeblock([\n ]*r'''" end="'''[\n ]*)"
+"  \ contained contains=ALLBUT,pythonDoctest,@Spell
+
+"set nofoldenable
+"
+"call QUICKOPEN_leader_tvio('P', '~/Dropbox/CVPR\ Paper/main.tex')
+"call QUICKOPEN_leader_tvio('P', '~/latex/crall-cvpr-15/main.tex')
+
+"call MagicPython()
+"call QUICKOPEN_leader_tvio('n', '~/code/ibeis/notebook/')
+"call QUICKOPEN_leader_tvio('2', '~/code/ibeis/ibeis/dev/params.py')
+"call QUICKOPEN_leader_tvio('3', '~/code/guitool/guitool/guitool_components.py')
+"call QUICKOPEN_leader_tvio('4', '~/code/ibeis/ibeis/expt/results_organizer.py')
+"call QUICKOPEN_leader_tvio('e', '~/code/ibeis/ibeis/expt/experiment_harness.py')
+"call QUICKOPEN_leader_tvio('e', '~/code/ibeis/ibeis/io/export_subset.py')
+"call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/inspect_gui.py')
+
+" http://vim.wikia.com/wiki/Editing_remote_files_via_scp_in_vim vim 
+
+"call QUICKOPEN_leader_tvio('r', '~/code/ibeis/ibeis/algo/detect/randomforest.py')
+"call QUICKOPEN_leader_tvio('s', '~/code/ibeis/ibeis/control/SQLDatabaseControl.py')
+"call QUICKOPEN_leader_tvio('s', '~/code/ibeis/ibeis/algo/hots/score_normalization.py')
+"call QUICKOPEN_leader_tvio('S', '~/code/ibeis/ibeis/control/SQLDatabaseControl.py')
+"call QUICKOPEN_leader_tvio('t', '~/code/ibeis/ibeis/templates/template_generator.py')
+"call QUICKOPEN_leader_tvio('S', '~/code/ibeis/ibeis/control/DB_SCHEMA.py')
+"call QUICKOPEN_leader_tvio('S', '~/code/ibeis/ibeis/control/DBCACHE_SCHEMA.py')
+"call QUICKOPEN_leader_tvio('y', '~/code/ibeis/ibeis/algo/hots/special_query.py')
+"call QUICKOPEN_leader_tvio('w', '~/code/ibeis/ibeis/algo/preproc/preproc_featweight.py')
+"call QUICKOPEN_leader_tvio('w', '~/code/ibeis/ibeis/algo/hots/scoring.py')
+"call QUICKOPEN_leader_tvio('x', '~/code/ibeis/ibeis/viz/interact/interact_query_decision.py')
+"call QUICKOPEN_leader_tvio('x', '~/code/ibeis/ibeis/viz/interact/interact_matches.py')
+"call QUICKOPEN_leader_tvio('i', '~/code/ibeis/ibeis/algo/hots/smk/smk_index.py')
+"call QUICKOPEN_leader_tvio('i', '~/code/ibeis/ibeis/algo/hots/qt_inc_automatch.py')
+"call QUICKOPEN_leader_tvio('j', '~/code/ibeis/ibeis/dbio/ingest_database.py')
+"call QUICKOPEN_leader_tvio('k', '~/code/ibeis/ibeis/algo/hots/smk/smk_core.py')
+"call QUICKOPEN_leader_tvio('L', '~/latex/crall-lab-notebook/main.tex')
+"call QUICKOPEN_leader_tvio('L', '~/latex/ibeis_userguide/main.tex')
+"call QUICKOPEN_leader_tvio('m', '~/code/ibeis/ibeis/algo/hots/smk/smk_match.py')
+"call QUICKOPEN_leader_tvio('m', '~/code/ibeis/ibeis/algo/hots/automated_matcher.py')
+"call QUICKOPEN_leader_tvio('o', '~/code/ibeis/ibeis/algo/preproc/preproc_image.py')
+"call QUICKOPEN_leader_tvio('@', '~/local/vim/rc/custom_misc_functions.vim')
+"call QUICKOPEN_leader_tvio('2', '~/code/utool/utool/util_scripts/ensure_python3_compatible.py')
+"call QUICKOPEN_leader_tvio('6', '~/code/pyrf')
+"call QUICKOPEN_leader_tvio('8', '~/code/flann/src/python/pyflann/flann_ctypes.py')
+"call QUICKOPEN_leader_tvio('A', '~/code/ibeis/ibeis/expt/results_all.py')
+"call QUICKOPEN_leader_tvio('b', '~/local/bashrc.sh')
+"call QUICKOPEN_leader_tvio('b', '~/code/ibeis_cnn/ibeis_cnn/models/siam.py')
+"call QUICKOPEN_leader_tvio('C', '~/Dropbox/crall')
+"call QUICKOPEN_leader_tvio('d', '~/code/ibeis/dev.py')
+"call QUICKOPEN_leader_tvio('D', '~/code/ibeis/ibeis/model/hots/devcases.py')
+"call QUICKOPEN_leader_tvio('d', '~/code/ibeis/ibeis/dev.py')
+"call QUICKOPEN_leader_tvio('D', '~/code/ibeis/ibeis/algo/hots/smk/smk_debug.py')
+"call QUICKOPEN_leader_tvio('e', '~/code/ibeis/ibeis/expt/experiment_printres.py')
+"call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/newgui.py')
+"call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/guiback.py')
+"call QUICKOPEN_leader_tvio('e', '~/code/hesaff/src/hesaff.cpp')
