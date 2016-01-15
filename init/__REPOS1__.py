@@ -35,7 +35,7 @@ IBEIS_REPOS_URLS, IBEIS_REPOS = repo_list([
     'https://github.com/bluemellophone/ibeis_cnn.git',
     'https://github.com/Erotemic/mtgmonte.git',
     'https://github.com/Erotemic/dtool.git',
-    'git@github.com:zmjjmz/ibeis-flukematch-module.git',
+    'https://github.com/zmjjmz/ibeis-flukematch-module.git',
     'https://github.com/Erotemic/ibeis.git',
 
     #'https://github.com/Theano/Theano.git'
