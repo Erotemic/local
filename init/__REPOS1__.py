@@ -38,7 +38,6 @@ IBEIS_REPOS_URLS, IBEIS_REPOS = repo_list([
     'https://github.com/Erotemic/dtool.git',
     'https://github.com/zmjjmz/ibeis-flukematch-module.git',
     'https://github.com/Erotemic/ibeis.git',
-    'https://github.com/zmjjmz/ibeis-flukematch-module.git',
 
     #'https://github.com/Theano/Theano.git'
 

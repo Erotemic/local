@@ -558,61 +558,92 @@ rob sp "ut\.list_take" "ut.take"
 rob sp "ut\.list_compress" "ut.compress" 
 
 
-rob sp "encounter" "occurrence"
+rob gp "occurrence"
+rob sp "ENCOUNTER" "IMAGESET" True
+rob sp "encounter" "imageset" True
+rob sp "Encounter" "ImageSet" True
+rob sp '(?<![a-zA-Z])encounter' "imageset" True
+rob sp '(?<![a-zA-Z])ENCOUNTER' "IMAGESET" True
+rob sp '(?<![a-zA-Z])EG_RELATION' "GSG_RELATION" True
+rob sp '(?<![a-zA-Z])egr(?![a-zA-Z])' "gsgr" True
+rob sp '(?<![a-zA-Z])egrid(?![a-zA-Z])' "gsgrid" True
+rob sp '(?<![a-zA-Z])egrids(?![a-zA-Z])' "gsgrids" True
+rob sp '(?<![a-zA-Z])eid(?![a-zA-Z])' "imgsetid" True
+rob sp '(?<![a-zA-Z])eids(?![a-zA-Z])' "imgsetids" True
+True
 rob gp "Encounter"
 
-rob sp "E" "occurrence"
+git checkout ibeis/control/DB_SCHEMA.py
+
+rob sp "Encounter" "ImageSet"
 
 
 # Special cases
 ibeis/dbio/export_wb.py
+/home/joncrall/code/ibeis/ibeis/algo/preproc/preproc_encounter.py
+/home/joncrall/code/ibeis/ibeis/control/manual_wildbook_funcs.py
+/home/joncrall/code/ibeis/ibeis/dbio/export_wb.py
+/home/joncrall/code/ibeis/ibeis/scripts/getshark.py
+
+
+# Rename files
+~/code/ibeis/ibeis/control/manual_egrelate_funcs.py
+~/code/ibeis/ibeis/control/manual_encounter_funcs.py
+~/code/ibeis/ibeis/algo/preproc/preproc_encounter.py
+
+git mv manual_encounter_funcs.py manual_imageset_funcs.py
+git mv manual_egrelate_funcs.py manual_gsgrelate_funcs.py
+
+rob sp min_imgs_per_imageset min_imgs_per_occurrence
+rob sp compute_imagesets compute_occurrences
+rob sp enctext imagesettext True
+rob sp ENCTEXT IMAGESETTEXT True
+
+rob gp '(?<![a-zA-Z])enc(?![a-zA-Z])'  
+
 
 echo <<EOF
 def update_1_5_0(db, ibs=None):
-    # Rename encounters to occurrences
-    ENCOUNTER_TABLE  = 'encounters'
-    OCCURRENCE_TABLE = 'occurrences'
-    EG_RELATION_TABLE    = 'encounter_image_relationship'
-    OG_RELATION_TABLE    = 'occurrence_image_relationship'
-    db.rename_table(ENCOUNTER_TABLE, OCCURRENCE_TABLE)
-    db.rename_table(EG_RELATION_TABLE, OG_RELATION_TABLE)
+    # Rename encounters to imagesets
+    db.rename_table('encounters', 'imagesets')
+    db.rename_table('encounter_image_relationship', 'imageset_image_relationship')
     db.modify_table(
-        OCCURRENCE_TABLE, [
-            ('encounter_rowid',             'occurrence_rowid',              'INTEGER PRIMARY KEY', None),
-            ('encounter_uuid',              'occurrence_uuid',               'UUID NOT NULL', None),
-            ('encounter_text',              'occurrence_text',               'TEXT NOT NULL', None),
-            ('encounter_note',              'occurrence_note',               'TEXT NOT NULL', None),
-            ('encounter_start_time_posix',  'occurrence_start_time_posix',   'INTEGER', None),
-            ('encounter_end_time_posix',    'occurrence_end_time_posix',     'INTEGER', None),
-            ('encounter_gps_lat',           'occurrence_gps_lat',            'INTEGER', None),
-            ('encounter_gps_lon',           'occurrence_gps_lon',            'INTEGER', None),
-            ('encounter_processed_flag',    'occurrence_processed_flag',     'INTEGER DEFAULT 0', None),
-            ('encounter_shipped_flag',      'occurrence_shipped_flag',       'INTEGER DEFAULT 0', None),
-            ('encounter_smart_xml_fname',   'occurrence_smart_xml_fname',    'TEXT', None),
-            ('encounter_smart_waypoint_id', 'occurrence_smart_waypoint_id',  'INTEGER', None),
+        'imagesets', [
+            ('encounter_rowid',             'imageset_rowid',              'INTEGER PRIMARY KEY', None),
+            ('encounter_uuid',              'imageset_uuid',               'UUID NOT NULL', None),
+            ('encounter_text',              'imageset_text',               'TEXT NOT NULL', None),
+            ('encounter_note',              'imageset_note',               'TEXT NOT NULL', None),
+            ('encounter_start_time_posix',  'imageset_start_time_posix',   'INTEGER', None),
+            ('encounter_end_time_posix',    'imageset_end_time_posix',     'INTEGER', None),
+            ('encounter_gps_lat',           'imageset_gps_lat',            'INTEGER', None),
+            ('encounter_gps_lon',           'imageset_gps_lon',            'INTEGER', None),
+            ('encounter_processed_flag',    'imageset_processed_flag',     'INTEGER DEFAULT 0', None),
+            ('encounter_shipped_flag',      'imageset_shipped_flag',       'INTEGER DEFAULT 0', None),
+            ('encounter_smart_xml_fname',   'imageset_smart_xml_fname',    'TEXT', None),
+            ('encounter_smart_waypoint_id', 'imageset_smart_waypoint_id',  'INTEGER', None),
         ],
         docstr='''
-        List of all occurrences. This used to be called the encounter table.
+        List of all imagesets. This used to be called the encounter table.
         It represents a group of potentially many individuals seen in a
         specific place at a specific time.
         ''',
-        superkeys=[('occurrence_text',)],
+        superkeys=[('imageset_text',)],
     )
     db.modify_table(
-        OG_RELATION_TABLE, [
-            ('egr_rowid',       'ogr_rowid',         'INTEGER PRIMARY KEY', None),
-            ('encounter_rowid', 'occurrence_rowid',  'INTEGER', None),
+        'imageset_image_relationship', [
+            ('egr_rowid',       'gsgr_rowid',      'INTEGER PRIMARY KEY', None),
+            ('encounter_rowid', 'imageset_rowid',  'INTEGER', None),
         ],
         docstr='''
-        Relationship between occurrences and images (many to many mapping) the
-        many-to-many relationship between images and occurrences is encoded
-        here occurrence_image_relationship stands for occurrence-image-pairs.
+        Relationship between imagesets and images (many to many mapping) the
+        many-to-many relationship between images and imagesets is encoded
+        here imageset_image_relationship stands for imageset-image-pairs.
         ''',
-        superkeys=[('image_rowid', 'occurrence_rowid')],
-        relates=('images', 'occurrences'),
-        shortname='ogr',
+        superkeys=[('image_rowid', 'imageset_rowid')],
+        relates=('images', 'imagesets'),
+        shortname='gsgr',
         dependsmap={
-            'occurrence_rowid': ('occurrences', ('occurrence_rowid',), ('occurrence_text',)),
+            'imageset_rowid': ('imagesets', ('imageset_rowid',), ('imageset_text',)),
             'image_rowid'    : ('images', ('image_rowid',), ('image_uuid',)),
         },
     )
