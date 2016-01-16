@@ -598,8 +598,23 @@ rob sp min_imgs_per_imageset min_imgs_per_occurrence
 rob sp compute_imagesets compute_occurrences
 rob sp enctext imagesettext True
 rob sp ENCTEXT IMAGESETTEXT True
+rob sp ImageSetConfig OccurrenceConfig
+
+rob sp enc_cfg occur_cfg
+rob sp enc_tabwgt imageset_tabwgt True
+rob sp _change_enc _change_imageset True
+rob sp _add_enc_tab _add_imageset_tab True
+rob sp _update_enc_tab_name _update_imageset_tab_name True
+
+rob sp INTRA_ENC_KEY INTRA_OCCUR_KEY
+rob sp intra_imageset intra_occurrence
+
+rob sp EncTableModel ImagesetTableModel True
+rob sp EncTableView ImagesetTableView True
+rob sp EncTableWidget ImagesetTableWidget True
 
 rob gp '(?<![a-zA-Z])enc(?![a-zA-Z])'  
+rob gp '\c(?<![a-zA-Z])enc(?![a-zA-Z])'  
 
 
 echo <<EOF

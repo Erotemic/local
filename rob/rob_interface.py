@@ -218,8 +218,9 @@ def project_dpaths():
 # Grep my projects
 def gp(r, regexp):
     import utool as ut
-    # ut.grep_projects([regexp], recursive=True)
-    rob_nav._grep(r, [regexp], recursive=True, dpath_list=project_dpaths(), regex=True)
+    # exclude_fpaths = ut.get_argval(('--exclude_fpath', '--xf'), type_=list, default=None)
+    ut.grep_projects([regexp], recursive=True)
+    # rob_nav._grep(r, [regexp], recursive=True, dpath_list=project_dpaths(), regex=True)
 
 
 # Sed my projects
