@@ -23,20 +23,22 @@ BUNDLE_DPATH = unixpath('~/local/vim/vimfiles/bundle')
 
 # Non local project repos
 IBEIS_REPOS_URLS, IBEIS_REPOS = repo_list([
-    'https://github.com/bluemellophone/pyrf.git',
-    'https://github.com/bluemellophone/detecttools.git',
+    # 'https://github.com/bluemellophone/pyrf.git',
+    # 'https://github.com/bluemellophone/detecttools.git',
     #'https://github.com/hjweide/pygist.git',
-    'https://github.com/Erotemic/hesaff.git',
+    # 'https://github.com/Erotemic/hesaff.git',
     'https://github.com/Erotemic/vtool.git',
     'https://github.com/Erotemic/plottool.git',
-    'https://github.com/Erotemic/guitool.git',
-    'https://github.com/Erotemic/utool.git',
+    # 'https://github.com/Erotemic/guitool.git',
+    'https://github.com/Erotemic/utool.git'
+    # 'git@github.com:zmjjmz/ibeis-flukematch-module.git'
     #'https://github.com/aweinstock314/cyth.git',
     'https://github.com/bluemellophone/ibeis_cnn.git',
     'https://github.com/Erotemic/mtgmonte.git',
     'https://github.com/Erotemic/dtool.git',
     'https://github.com/zmjjmz/ibeis-flukematch-module.git',
     'https://github.com/Erotemic/ibeis.git',
+    'https://github.com/zmjjmz/ibeis-flukematch-module.git',
 
     #'https://github.com/Theano/Theano.git'
 
@@ -50,6 +52,8 @@ TPL_REPOS_URLS, TPL_REPOS = repo_list([
     #'https://github.com/Erotemic/opencv',
     'https://github.com/Erotemic/pgmpy.git',
     'https://github.com/Erotemic/flann',
+    # 'https://github.com/Erotemic/flann',
+    # 'https://github.com/Erotemic/pgmpy.git',
 ], CODE_DIR)
 
 CODE_REPO_URLS = TPL_REPOS_URLS + IBEIS_REPOS_URLS
@@ -62,8 +66,8 @@ LOCAL_URLS, LOCAL_REPOS = repo_list([
 
 
 LATEX_REPO_TUP = repo_list([
-    'git@hyrule.cs.rpi.edu.com:crall-lab-notebook.git',
-    'git@hyrule.cs.rpi.edu.com:crall-candidacy-2015.git',
+    # 'git@hyrule.cs.rpi.edu.com:crall-lab-notebook.git',
+    # 'git@hyrule.cs.rpi.edu.com:crall-candidacy-2015.git',
     'git@hyrule.cs.rpi.edu.com:crall-candidacy-2015.git',
 
 ], LATEX_DIR)
