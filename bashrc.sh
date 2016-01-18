@@ -102,7 +102,8 @@ elif [[ "$HOSTNAME" == "Ooo"  ]]; then
     export THEANO_FLAGS="device=cpu"
 
     export PATH=$PATH:/opt/gurobi650/linux64/bin
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/gurobi650/linux64/lib
+    #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/gurobi650/linux64/lib
+    export PATH=/usr/local/texlive/2015/bin/x86_64-linux:$PATH
 else
     # These paths are likely to be true on other machines as weel
     #export PATH=$PATH:/usr/local/cuda/bin

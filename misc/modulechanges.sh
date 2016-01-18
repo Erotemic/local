@@ -604,14 +604,20 @@ rob sp enc_cfg occur_cfg
 rob sp enc_tabwgt imageset_tabwgt True
 rob sp _change_enc _change_imageset True
 rob sp _add_enc_tab _add_imageset_tab True
+rob sp _on_enctab_change _on_imagesettab_change True
 rob sp _update_enc_tab_name _update_imageset_tab_name True
+rob sp enc_config_rowid_list imageset_config_rowid_list True
+rob sp enc_suffix_list imageset_suffix_list True
+rob sp ENCTAB IMAGESETTAB True
 
 rob sp INTRA_ENC_KEY INTRA_OCCUR_KEY
 rob sp intra_imageset intra_occurrence
+rob sp _ADD_ENC_TAB _ADD_IMAGESET_TAB True
 
 rob sp EncTableModel ImagesetTableModel True
 rob sp EncTableView ImagesetTableView True
 rob sp EncTableWidget ImagesetTableWidget True
+rob sp EncoutnerTabWidget ImagesetTabWidget True
 
 rob gp '(?<![a-zA-Z])enc(?![a-zA-Z])'  
 rob gp '\c(?<![a-zA-Z])enc(?![a-zA-Z])'  

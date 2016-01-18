@@ -104,23 +104,23 @@ install_zotero()
     #python3 -c "import utool; print(utool.grab_file_url(\"https://download.zotero.org/standalone/4.0.26.3/Zotero-4.0.26.3_linux-x86_64.tar.bz2\", spoof=True))"
     
 
-    #utget "https://download.zotero.org/standalone/4.0.26.3/Zotero-4.0.26.3_linux-x86_64.tar.bz2"
-    cd ~/Downloads
-    utarbz2 Zotero-4.0.26.3_linux-x86_64.tar.bz2
-    cd Zotero_linux-x86_64/
-    cd /opt
-    cd ~/Downloads
+    cd ~/tmp
+    wget https://download.zotero.org/standalone/4.0.28/Zotero-4.0.28_linux-x86_64.tar.bz2
+    utarbz2 Zotero-4.0.*_linux-x86_64.tar.bz2
     sudo cp -r Zotero_linux-x86_64 /opt/zotero
     # Change permissions so zotero can automatically update itself
     sudo chown -R root:$USER /opt/zotero
     sudo chmod -R g+w /opt/zotero
     sudo chmod -R u+w /opt/zotero
 
+    # Need to do tools->Add-Ons->(setting icon)->Add from file
+    # view citation key
+    https://github.com/ZotPlus/zotero-better-bibtex
+    https://github.com/ZotPlus/zotero-better-bibtex/releases/download/1.6.30/zotero-better-bibtex-1.6.30.xpi
+    # others...
     http://www.rtwilson.com/academic/autozotbib
     http://www.rtwilson.com/academic/autozotbib.xpi
     https://addons.mozilla.org/en-US/firefox/addon/zotero-scholar-citations/
-
-
 }
 
 install_core_extras()
@@ -287,8 +287,9 @@ install_latex()
     # https://www.tug.org/texlive/acquire-netinstall.html
     cd ~/tmp
     wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
-    7z x install-tl-unx.tar.gz
-    7z x install-tl-unx.tar
+    tar xzvf install-tl-unx.tar.gz
+    #7z x install-tl-unx.tar.gz
+    #7z x install-tl-unx.tar
     #rm install-tl-unx.tar
     #cd ~/tmp/install-tl-20150902/
     cd install-tl-*
@@ -296,6 +297,7 @@ install_latex()
     #export TEXDIR=/opt/texlive
     chmod +x install-tl
     sudo ./install-tl
+    # cd /usr/local/texlive/2015/bin/x86_64-linux
     # Installed to /usr/local/texlive/2015/
     # Need to add /usr/local/texlive/2015/bin/x86_64-linux to the PATH
     #python -m utool.util_cplat --exec-get-path-dirs:0
