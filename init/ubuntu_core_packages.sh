@@ -113,6 +113,8 @@ install_zotero()
     sudo chmod -R g+w /opt/zotero
     sudo chmod -R u+w /opt/zotero
 
+    python -m utool.util_ubuntu --exec-make_application_icon --exe=/opt/zotero/zotero --icon=/opt/zotero/chrome/icons/default/main-window.ico -w
+
     # Need to do tools->Add-Ons->(setting icon)->Add from file
     # view citation key
     https://github.com/ZotPlus/zotero-better-bibtex
