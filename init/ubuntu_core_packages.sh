@@ -1072,6 +1072,11 @@ install_opengm()
 
     python -c "import opengm"
     python -c "import opengm; print(opengm.inference.Multicut)"
+    python -c "import opengm, utool; print(utool.get_func_sourcecode(opengm.PottsGFunction.__repr__))"
+
+    # ~/code/opengm/src/interfaces/python/opengm/opengmcore/function_injector.py
+    #cat /home/joncrall/code/opengm/build/src/interfaces/python/opengm/opengmcore/function_injector.py
+    #cat /home/joncrall/venv/local/lib/python2.7/site-packages/opengm/opengmcore/function_injector.py
 
     # Uninstall
     sudo rm -rf /usr/local/include/opengm
