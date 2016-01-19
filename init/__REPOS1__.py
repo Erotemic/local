@@ -50,7 +50,7 @@ print('IBEIS_REPOS = %r' % (IBEIS_REPOS,))
 TPL_REPOS_URLS, TPL_REPOS = repo_list([
     #'https://github.com/Erotemic/opencv',
     'https://github.com/Erotemic/pgmpy.git',
-    'https://github.com/Erotemic/flann',
+    'https://github.com/Erotemic/flann.git',
     # 'https://github.com/Erotemic/flann',
     # 'https://github.com/Erotemic/pgmpy.git',
 ], CODE_DIR)
