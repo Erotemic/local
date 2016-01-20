@@ -670,6 +670,7 @@ python << endpython
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
+ut.rrrr(0)
 text = pyvim_funcs.get_selected_text(select_at_cursor=False)
 ##wrapped_text = ut.format_single_paragraph_sentences(text)
 wrapped_text = ut.format_multiple_paragraph_sentences(text)
@@ -696,6 +697,7 @@ python << endpython
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
+ut.rrrr(0)
 row1, row2 = pyvim_funcs.get_paragraph_line_range_at_cursor()
 text = pyvim_funcs.get_text_between_lines(row1, row2)
 wrapped_text = ut.format_multiple_paragraph_sentences(text)
