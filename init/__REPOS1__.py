@@ -44,7 +44,6 @@ IBEIS_REPOS_URLS, IBEIS_REPOS = repo_list([
     #'https://github.com/bluemellophone/gzc-client.git',
 
 ], CODE_DIR)
-print('IBEIS_REPOS = %r' % (IBEIS_REPOS,))
 
 
 TPL_REPOS_URLS, TPL_REPOS = repo_list([

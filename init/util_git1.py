@@ -33,7 +33,6 @@ def gitcmd(repo, command):
 
 def gg_command(command):
     """ Runs a command on all of your PROJECT_REPOS """
-    print('PROJECT_REPOS = %r' % (PROJECT_REPOS,))
     for repo in PROJECT_REPOS:
         if exists(repo):
             gitcmd(repo, command)
