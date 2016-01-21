@@ -654,7 +654,7 @@ word = pyvim_funcs.get_word_at_cursor(url_ok=False)
 #msg_list = ut.grep_projects(['\\b' + re.escape(word) + '\\b'], verbose=False)
 print('Grepping for pattern = %r' % (word,))
 pat = r'\b' + re.escape(word) + r'\b'
-msg_list = ut.grep_projects([pat], verbose=False)
+msg_list = ut.grep_projects([pat], verbose=False, colored=False)
 fpath = ut.unixjoin(ut.get_app_resource_dir('utool'), 'tmp_grep_' + word + '.txt')
 #pyvim_funcs.vim_fpath_cmd('split', fpath)
 pyvim_funcs.vim_fpath_cmd('new', fpath)

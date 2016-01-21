@@ -23,7 +23,7 @@ except ImportError:
     pass
 
 try:
-    import six
+    import six  # NOQA
 except ImportError:
     pass
 
@@ -229,6 +229,8 @@ def sp(r, regexpr, repl, force=False):
 
 
 def grep(r, *tofind_list):
+    import utool as ut
+    #include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h', '*.vim']
     ut.grep(tofind_list, recursive=True, verbose=True)
     #rob_nav._grep(r, tofind_list, recursive=True)
 
