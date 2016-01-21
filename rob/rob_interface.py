@@ -229,7 +229,8 @@ def sp(r, regexpr, repl, force=False):
 
 
 def grep(r, *tofind_list):
-    rob_nav._grep(r, tofind_list, recursive=True)
+    ut.grep(tofind_list, recursive=True, verbose=True)
+    #rob_nav._grep(r, tofind_list, recursive=True)
 
 
 def invgrep(r, *tofind_list):
