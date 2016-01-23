@@ -481,7 +481,14 @@ install_prefix = ut.unixpath('~')
 for dname in ['bin', 'doc', 'man', 'share']:
     install_dst = join(install_prefix, dname)
     install_src = join(cmake_unzipped_fpath, dname)
-    ut.copy(install_src, install_dst)
+    # FIXME: this broke
+    #ut.util_path.copy(install_src, install_dst)
+    # HACK AROUND IT
+    from os.path import dirname
+    cmd = str('cp -r "' + install_src + '" "' + dirname(install_dst) + '"')
+    print(cmd)
+    ut.cmd(cmd)
+    #os.system(cmd)
 print(cmake_unzipped_fpath)
 __PYSCRIPT__
 python /dev/fd/42 $@
