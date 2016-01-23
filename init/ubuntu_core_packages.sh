@@ -373,6 +373,7 @@ install_cuda_prereq()
     #sudo apt-get install -y g++-4.6 
     #sudo apt-get install -y gcc-4.6-multilib
     #sudo apt-get install -y g++-4.6-multilib 
+    sudo apt-get install libpthread-stubs0-dev
 
     sudo apt-get install -y gfortran
     sudo apt-get install -y libjpeg62
