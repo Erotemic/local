@@ -46,7 +46,7 @@ def pyrun_fuzzyfont():
         r'Inconsolata\ Medium\ 9',
         r'MonoDyslexic\ 9.4',
         r'Inconsolata\ Medium\ 11',
-        r'Neep\ 11',
+        #r'Neep\ 11',
         r'monofur\ 11',
         r'White\ Rabbit\ 10',
     ]
@@ -54,7 +54,7 @@ def pyrun_fuzzyfont():
         r'MonoDyslexic\ 10',
         r'Inconsolata\ Medium\ 10',
         r'Courier\ New\ 11',
-        r'Nimbus\ Mono\ L\ 11', 
+        #r'Nimbus\ Mono\ L\ 11', 
         r'Ubuntu\ Mono\ 9',
         r'Neep\ Alt\ Medium\ Semi-Condensed\ 11'
         ]
