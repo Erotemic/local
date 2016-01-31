@@ -74,6 +74,9 @@ install_core()
     sudo apt-get install -y sqlitebrowser 
     #References: http://stackoverflow.com/questions/7454796/taglist-exuberant-ctags-not-found-in-path
     sudo apt-get install -y hdfview
+
+    sudo apt-get install lm-sensors
+    sudo apt-get install hardinfo
     
 }
 

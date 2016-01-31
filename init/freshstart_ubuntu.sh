@@ -217,6 +217,13 @@ install_fonts()
     sudo cp ~/Dropbox/Fonts/*.ttf /usr/share/fonts/truetype/
     sudo cp ~/Dropbox/Fonts/*.otf /usr/share/fonts/opentype/
     sudo fc-cache
+
+    mkdir -p ~/tmp 
+    cd ~/tmp
+    wget https://github.com/antijingoist/open-dyslexic/archive/master.zip
+    7z x master.zip
+    sudo cp ~/tmp/open-dyslexic-master/otf/*.otf /usr/share/fonts/opentype/
+    sudo fc-cache
 }
 
 virtualbox_ubuntu_init()
