@@ -1074,7 +1074,7 @@ install_opengm()
     make externalLibs
     make -j9
 
-    make install
+    $_SUDO make install
 
     # Hack into virtualenv
     #rm -rf $VIRTUAL_ENV/lib/python2.7/site-packages/opengm
