@@ -10,8 +10,8 @@ set encoding=utf8
 " source ~/local/vim/vimfiles/after/syntax/tex.vim
 " source ~/local/vim/vimfiles/after/ftplugin/python/folding.vim 
 ":e ~/local/vim/rc/pyvim_funcs.py
-":e ~/local/vim/vimfiles/spell/en.latin1.add
 ":e ~/local/vim/vimfiles/spell/en.utf-8.add
+":e ~/local/vim/vimfiles/spell/en.latin1.add
 ":e $VIMRUNTIME/syntax/python.vim
 ":e $VIMRUNTIME/syntax/markdown.vim
 ":e ~/local/init/ensure_vim_plugins.py
