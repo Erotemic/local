@@ -142,7 +142,7 @@ let g:Tex_SmartKeyBS = 0
 let g:Tex_SmartKeyQuote = 0
 let g:Tex_SmartKeyDot = 0
 
-
+set conceallevel=0
 
 "-------------------------
 "PLUGIN: Synstastic General
