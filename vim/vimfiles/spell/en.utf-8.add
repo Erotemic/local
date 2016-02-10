@@ -310,3 +310,5 @@ outlier
 algo
 t
 g
+LibSVM
+Platt's
