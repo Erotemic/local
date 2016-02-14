@@ -138,6 +138,9 @@ install_core_extras()
     sudo apt-get install -y vlc
     sudo apt-get install -y subversion
     sudo apt-get install -y remmina 
+    sudo apt-get install expect -y
+
+    
 
     #sudo apt-get install -y filezilla
 

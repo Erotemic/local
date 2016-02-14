@@ -328,3 +328,7 @@ pyfile()
     echo "python -c \"import $1; print($1.__file__)\""
     python -c "import $1; print($1.__file__.replace(\".pyc\", \".py\"))"
 }
+
+#alias rpivpn='sudo openconnect -b vpn.net.rpi.edu -uyour_school_username -ucrallj'
+alias rpivpn='rpivpn.sh'
+#sudo openconnect -b vpn.net.rpi.edu -ucrallj'
