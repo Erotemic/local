@@ -47,6 +47,10 @@ flake8_errors = [
     'E501', # line length > 79
     'W602', # Old reraise syntax
     'E266', # too many leading '#' for block comment 
+    'N805', # first argument of a method should be named 'self'
+    'N806', # variable in function should be lowercase [N806]
+    'N803', # argument should be lowercase [N806]
+    'N802', # function name should be lowercase [N806]
 ] 
 flake8_args_list = [
     #'--max-line-length 80',

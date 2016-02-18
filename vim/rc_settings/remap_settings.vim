@@ -118,8 +118,9 @@ noremap <leader>rs :syntax sync minlines=500.<CR>
 :call FKeyFuncMap('<c-F3>', ':call NumberLineInvert()<CR>')
 " === F4 ===
 "http://vim.1045645.n5.nabble.com/How-to-map-two-commands-on-one-key-td1162164.html
-:noremap <F4> :call ToggleFont() <Bar> redraw <Bar> call FUNC_ECHOVAR("gfn")<CR>
-:noremap <C-F4> <Esc>:tabclose<CR>
+:noremap <F4> :call ToggleFont(1) <Bar> redraw <Bar> call FUNC_ECHOVAR("gfn")<CR>
+:noremap <S-F4> :call ToggleFont(-1) <Bar> redraw <Bar> call FUNC_ECHOVAR("gfn")<CR>
+":noremap <C-F4> <Esc>:tabclose<CR>
 
 " === F5, 6, 7
 :noremap <F5> :call ViewDirectory()<CR>

@@ -317,6 +317,12 @@ utzget()
 python -c "import utool as ut; ut.grab_zipped_url(\"$1\", download_dir=\".\")"
 }
 
+tcp()
+{
+    cp $1 ../flann/$1
+}
+
+
 
 
 alias dmsg=dmesg

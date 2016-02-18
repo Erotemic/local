@@ -18,6 +18,99 @@ from os.path import expanduser
 import sys
 
 
+def pyrun_fuzzyfont(request):
+    """
+    Sets a font from an index or a string
+    """
+    import vim
+    import sys
+    import six
+    from operator import itemgetter
+
+    def vimprint(message):
+        #print('message = %r' % (message,))
+        # this doesnt even work #vim.command(':silent !echom %r' % message)
+        # vim.command(':echom %r' % message)
+        pass
+    vimprint('--- Called Fuzyzfont ---')
+
+    #print('request = %r' % (request,))
+    win32_fonts = [
+        r'Mono_Dyslexic:h10:cANSI',
+        r'Inconsolata:h10',
+        r'monofur:h11',
+        #r'Mono\ Dyslexic:h10',
+        #r'Inconsolata:h11',
+        #r'Source_Code_Pro:h11:cANSI',
+        #r'peep:h11:cOEM',
+        #r'Consolas',
+        #r'Liberation Mono',
+        #r'Lucida_Console:h10',
+        #r'Fixedsys',
+        #r'Courier:h10:cANSI',
+        #r'Courier New',
+        #r'DejaVu Sans Mono',
+    ]
+    #win32_alts = {
+    #    'monodyslexic': [r'Mono_Dyslexic:h10:cANSI']
+    #}
+    linux_fonts = [
+        r'Inconsolata\ Medium\ 9',
+        r'Inconsolata\ Medium\ 11',
+        r'MonoDyslexic\ 9.4',
+        r'OpenDyslexicMono\ 10',
+        r'monofur\ 11',
+    ]
+    #linux_extended = [
+    #    r'MonoDyslexic\ 10',
+    #    r'Inconsolata\ Medium\ 10',
+    #    r'Courier\ New\ 11',
+    #    #r'OpenDyslexic\ 10',
+    #    #r'Neep\ 11',
+    #    #r'Nimbus\ Mono\ L\ 11',
+    #    r'Ubuntu\ Mono\ 9',
+    #    r'Neep\ Alt\ Medium\ Semi-Condensed\ 11'
+    #    r'White\ Rabbit\ 10',
+    #]
+    #linux_fonts = sorted(linux_fonts + linux_extended)
+    if sys.platform.startswith('win32'):
+        known_fonts = win32_fonts
+    else:
+        known_fonts = linux_fonts
+
+    vimprint('numfonts=%r' % (len(known_fonts)))
+    vimprint('request=%r %r' % (type(request), request))
+
+    int_str = map(str, range(0, 10))
+    try:
+        is_integer_str = all([_ in int_str for _ in request])
+    except TypeError:
+        is_integer_str = False
+    if isinstance(request, six.string_types) and not is_integer_str:
+        # Calcualate edit distance to each known font
+        try:
+            import Levenshtein  # Edit distance algorithm
+        except ImportError:
+            vim.command(":echom 'error no python module Levenshtein"
+                        "(pip install python-levenshtein)'")
+        else:
+            edit_distance = Levenshtein.distance
+            known_dists = [edit_distance(known.lower(), request.lower())
+                            for known in known_fonts]
+
+            # Pick the minimum distance
+            min_index = min(enumerate(known_dists), key=itemgetter(1))[0]
+            fontindex = min_index
+    else:
+        fontindex = int(request) % len(known_fonts)
+
+    fontstr = known_fonts[fontindex]
+    # Set as current font
+    vimprint('fontindex=%r fontstr=%r' % (fontindex, fontstr))
+    vim.command('set gfn=' + fontstr)
+    vimprint('--- /Called Fuzyzfont ---')
+
+
 def get_expr_at_cursor():
     """ returns the word highlighted by the curor """
     import vim

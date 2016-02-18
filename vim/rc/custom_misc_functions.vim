@@ -625,7 +625,8 @@ if ut.is_url(word):
     url = word
     print(url)
 else:
-    bib_fpath = ut.truepath('~/latex/crall-candidacy-2015/My_Library_clean.bib')
+    _fpath = '~/latex/crall-candidacy-2015/My_Library_clean.bib'
+    bib_fpath = ut.truepath(_fpath)
     bibtex_dict = ut.get_bibtex_dict(bib_fpath)
     title = bibtex_dict[word]['title'].replace('{', '').replace('}', '')
     ut.copy_text_to_clipboard(title)

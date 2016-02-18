@@ -81,9 +81,10 @@ highlight Cursor guifg=blue guibg=orange
 
 " Set the font to one I like if it hasn't been done already
 " Dont change it if I've already got one I like
-if !exists("g:togfont") 
-    :exec "call ToggleFont()"
-endif
+:call ToggleFont(0)
+"if !exists("g:myfontindex") 
+"    :exec "call ToggleFont(0)"
+"endif
 
 "---------
 " clean these up

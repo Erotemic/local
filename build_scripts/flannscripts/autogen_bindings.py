@@ -2,7 +2,78 @@
 import utool as ut
 
 
-def autogen_parts():
+def update_bindings():
+    r"""
+    CommandLine:
+        python ~/local/build_scripts/flannscripts/autogen_bindings.py --exec-update_bindings
+
+    Example:
+        >>> # DISABLE_DOCTEST
+        >>> import sys
+        >>> import utool as ut
+        >>> sys.path.append(ut.truepath('~/local/build_scripts/flannscripts'))
+        >>> from autogen_bindings import *  # NOQA
+        >>> result = update_bindings()
+    """
+    binding_names = [
+        'used_memory',
+        'add_points',
+        'remove_point',
+        'remove_points',
+        'clean_removed_points',
+
+        'compute_cluster_centers',
+        'radius_search',
+        'find_nearest_neighbors_index',
+        'find_nearest_neighbors',
+        'load_index',
+        'save_index',
+        'build_index',
+        'free_index',
+    ]
+
+    _places = [
+        '~/code/flann/src/cpp/flann/flann.cpp',
+        '~/code/flann/src/cpp/flann/flann.h',
+        '~/code/flann/src/python/pyflann/flann_ctypes.py',
+        '~/code/flann/src/python/pyflann/index.py',
+    ]
+
+    sentinals = {
+        'flann_ctypes.py': '# END DEFINE BINDINGS'
+    }
+    from os.path import basename
+    places = {basename(fpath): fpath for fpath in ut.lmap(ut.truepath, _places)}
+    texts = ut.map_dict_vals(ut.readfrom, places)
+    orig_texts = texts.copy()  # NOQA
+
+    for binding_name in binding_names:
+        blocks_dict = autogen_parts(binding_name)
+        key = 'flann_ctypes.py'
+        print(texts[key])
+        text = old_text = texts[key]
+        sentinal = '\n' + sentinals[key] + ' *\n'
+        block = blocks_dict[key]
+        blockid = block.split('\n')[0]
+
+        blockpos = text.find(blockid)
+
+        if blockpos == -1:
+            new_text = ut.insert_before_sentinal(old_text, '\n' + block + '\n', sentinal)
+        else:
+            startpos = blockpos
+            #def find_block_endpos(startpos):
+            rel_endpos = text[startpos:].find('\n\n\n')
+            assert rel_endpos != -1
+            endpos = startpos + rel_endpos
+            new_text = old_text[:startpos] + block + old_text[endpos:]
+        texts[key] = new_text
+
+        #print(ut.get_colored_diff(ut.get_textdiff(old_text, new_text, num_context_lines=5)))
+    print(ut.get_colored_diff(ut.get_textdiff(orig_texts[key], texts[key], num_context_lines=100)))
+
+
+def autogen_parts(binding_name=None):
     r"""
     CommandLine:
         python ~/local/build_scripts/flannscripts/autogen_bindings.py --exec-autogen_parts
@@ -20,7 +91,6 @@ def autogen_parts():
     Ignore:
         # Logic goes here
         ~/code/flann/src/cpp/flann/algorithms/kdtree_index.h
-
         ~/code/flann/src/cpp/flann/util/serialization.h
         ~/code/flann/src/cpp/flann/util/dynamic_bitset.h
 
@@ -49,28 +119,67 @@ def autogen_parts():
     #ut.get_dynlib_exports(pyflann.flannlib._name)
     #flannlib
 
-    binding_name = ut.get_argval('--bindingname', type_=str, default='add_points')
+    if binding_name is None:
+        binding_name = ut.get_argval('--bindingname', type_=str, default='add_points')
+
+    # Variable names used in flann cpp source
+
+    simple_c_to_ctypes = {
+        'void': None,
+        'char*': 'c_char_p',
+        'int': 'c_int',
+        'float': 'c_float',
+        'float*': 'POINTER(c_float)',
+        'flann_index_t': 'FLANN_INDEX',
+        'FLANNParameters*': 'POINTER(FLANNParameters)',
+        'typename Distance::ElementType*': "ndpointer(%(numpy)s, ndim=2, flags='aligned, c_contiguous')",
+        'Distance::ResultType*': "ndpointer(%(restype)s, flags='aligned, c_contiguous, writeable')",
+        'typename Distance::ResultType*': "ndpointer(%(restype), ndim=2, flags='aligned, c_contiguous, writeable')",
+    }
+
+    INDEX_PTR_NAME = 'index_id'
 
     templated_ctype_map = {
-        'dataset': 'typename Distance::ElementType*',
-        'index_ptr': 'flann_index_t',
-        'rows': 'int',
-        'rebuild_threshold': 'int',
-        'id_': 'int',
-        'id_list': 'int*',
-        'num': 'int',
+        'filename'          : 'char*',
+        'rows'              : 'int',
+        'cols'              : 'int',
+        'id_'               : 'int',
+        'num'               : 'int',
+        'max_nn'            : 'int',
+        'tcount'            : 'int',
+        'nn'            : 'int',
+        'radius'            : 'float',
+        'clusters'          : 'int',
+        'rebuild_threshold' : 'int',
+        INDEX_PTR_NAME      : 'flann_index_t',
+        'flann_params'      : 'FLANNParameters*',
+        'speedup'           : 'float*',
+        'id_list'           : 'int*',
+        'indices'           : 'int*',
+        'dataset'           : 'typename Distance::ElementType*',
+        'query'             : 'typename Distance::ElementType*',
+        'query1d'           : 'typename Distance::ElementType*',
+        'testset'           : 'typename Distance::ElementType*',
+        'dists'             : 'typename Distance::ResultType*',
+        'dists1d'           : 'typename Distance::ResultType*',
+        'result_centers'    : 'Distance::ResultType*',
+        'result_ids'        : 'int*',
     }
 
+    # Python ctype bindings
     python_ctype_map = {
-        'index_ptr': 'FLANN_INDEX',
-        'dataset': "ndpointer(%(numpy)s, ndim = 2, flags='aligned, c_contiguous')",
-        'rows': 'c_int',
-        'id_': 'c_int',
-        'rebuild_threshold': 'c_int',
-        #'id_list': 'POINTER(c_int)',
-        'id_list': "ndpointer(int32, ndim = 1, flags='aligned, c_contiguous')",
-        'num': 'c_int',
+        'flann_params': 'POINTER(FLANNParameters)',
+        'id_list' : "ndpointer(int32, ndim=1, flags='aligned, c_contiguous')",
+        'indices' : "ndpointer(int32, ndim=1, flags='aligned, c_contiguous, writeable')",
+        'query1d'   : "ndpointer(%(numpy)s, ndim=1, flags='aligned, c_contiguous')",
+        'dists1d'   : "ndpointer(%(restype), ndim=1, flags='aligned, c_contiguous, writeable')",
+        'result_ids' : "ndpointer(int32, ndim=2, flags='aligned, c_contiguous, writeable')",
+        #'query'   : "ndpointer(float64, ndim=1, flags='aligned, c_contiguous')",
     }
+
+    for key, val in templated_ctype_map.items():
+        if key not in python_ctype_map:
+            python_ctype_map[key] = simple_c_to_ctypes[val]
 
     # default c source
     c_source = ut.codeblock(
@@ -105,7 +214,7 @@ def autogen_parts():
             '''
         )
         binding_argnames = [
-            'index_ptr',
+            INDEX_PTR_NAME,
         ]
         c_source = standard_csource
     elif binding_name == 'veclen':
@@ -116,7 +225,7 @@ def autogen_parts():
             '''
         )
         binding_argnames = [
-            'index_ptr',
+            INDEX_PTR_NAME,
         ]
         c_source = standard_csource
     elif binding_name == 'size':
@@ -127,7 +236,7 @@ def autogen_parts():
             '''
         )
         binding_argnames = [
-            'index_ptr',
+            INDEX_PTR_NAME,
         ]
         c_source = standard_csource.format(**locals())
     elif binding_name == 'getType':
@@ -138,7 +247,7 @@ def autogen_parts():
             '''
         )
         binding_argnames = [
-            'index_ptr',
+            INDEX_PTR_NAME,
         ]
         c_source = standard_csource.format(**locals())
     elif binding_name == 'used_memory':
@@ -151,7 +260,7 @@ def autogen_parts():
             '''
         )
         binding_argnames = [
-            'index_ptr',
+            INDEX_PTR_NAME,
         ]
         c_source = ut.codeblock(
             r'''
@@ -176,7 +285,7 @@ def autogen_parts():
             Adds points to an index.
 
             Params:
-                index_id The index that should be modified
+                index_ptr The index that should be modified
                 dataset = pointer to a data set stored in row major order
                 rows = number of rows (features) in the dataset
                 cols = number of columns in the dataset (feature dimensionality)
@@ -185,7 +294,7 @@ def autogen_parts():
             Returns: void
             ''')
         binding_argnames = [
-            'index_ptr',
+            INDEX_PTR_NAME,
             'dataset',
             'rows',
             'rebuild_threshold',
@@ -215,14 +324,14 @@ def autogen_parts():
             Removes a point from the index
 
             Params:
-                index_id The index that should be modified
+                index_ptr The index that should be modified
                 id = point id to be removed
 
             Returns: void
             '''
         )
         binding_argnames = [
-            'index_ptr',
+            INDEX_PTR_NAME,
             'id_',
         ]
         c_source = ut.codeblock(
@@ -249,14 +358,14 @@ def autogen_parts():
             Removes a point from the index
 
             Params:
-                index_id The index that should be modified
+                index_ptr The index that should be modified
                 id_list = list of point ids to be removed
 
             Returns: void
             '''
         )
         binding_argnames = [
-            'index_ptr',
+            INDEX_PTR_NAME,
             'id_list',
             'num',
         ]
@@ -277,6 +386,42 @@ def autogen_parts():
             }}
             '''
         )
+    elif binding_name == 'compute_cluster_centers':
+        docstr = ''
+        return_type = 'int'
+        binding_argnames = ['dataset', 'rows', 'cols', 'clusters', 'result_centers',
+                            'flann_params']
+    elif binding_name == 'radius_search':
+        docstr = ''
+        return_type = 'int'
+        binding_argnames = [INDEX_PTR_NAME, 'query1d', 'indices', 'dists1d', 'max_nn',
+                            'radius', 'flann_params', ]
+    elif binding_name == 'find_nearest_neighbors_index':
+        docstr = ''
+        return_type = 'int'
+        binding_argnames = [INDEX_PTR_NAME, 'testset', 'tcount', 'result_ids',
+                            'dists', 'nn', 'flann_params', ]
+    elif binding_name == 'find_nearest_neighbors':
+        docstr = ''
+        return_type = 'int'
+        binding_argnames = ['dataset', 'rows', 'cols', 'testset', 'tcount',
+                            'result_ids', 'dists', 'nn', 'flann_params']
+    elif binding_name == 'load_index':
+        docstr = ''
+        return_type = 'flann_index_t'
+        binding_argnames = ['filename', 'dataset', 'rows', 'cols']
+    elif binding_name == 'save_index':
+        docstr = ''
+        return_type = 'void'
+        binding_argnames = [INDEX_PTR_NAME, 'filename']
+    elif binding_name == 'build_index':
+        docstr = ''
+        return_type = 'flann_index_t'
+        binding_argnames = ['dataset', 'rows', 'cols', 'speedup', 'flann_params']
+    elif binding_name == 'free_index':
+        docstr = ''
+        return_type = 'void'
+        binding_argnames = ['index_id', 'flann_params']
     else:
         raise NotImplementedError('Unknown binding name %r' % (binding_name,))
     binding_args = [python_ctype_map[name] + ',  # ' + name for name in binding_argnames]
@@ -286,7 +431,7 @@ def autogen_parts():
     pycallargs = ', '.join([name for name in binding_argnames if name != 'index_ptr'])
     pyinputargs = pycallargs  # FIXME
 
-    pyrestype = None if return_type == 'void' else 'c_' + return_type
+    pyrestype = simple_c_to_ctypes[return_type]
 
     flann_ctypes_codeblock = ut.codeblock(
         '''
@@ -376,7 +521,7 @@ def autogen_parts():
     #type_bindings_fmtstr = explicit_type_bindings_fmtstr
     type_bindings_fmtstr = implicit_type_bindings_fmtstr
 
-    flann_c_codeblock_fmtstr = flann_c_code_fmtstr + '\n\n' + type_bindings_fmtstr + '\n'
+    flann_c_codeblock_fmtstr = flann_c_code_fmtstr + '\n\n\n' + type_bindings_fmtstr + '\n'
 
     flann_c_codeblock = flann_c_codeblock_fmtstr.format(
         cpp_binding_name=cpp_binding_name,
@@ -446,6 +591,14 @@ def autogen_parts():
 
     flann_h_codeblock = flann_h_codeblock
 
+    blocks_dict = {}
+    blocks_dict['flann_ctypes.py'] = flann_ctypes_codeblock
+    blocks_dict['index.py'] = flann_index_codeblock
+    blocks_dict['flann.h'] = flann_h_codeblock
+    blocks_dict['flann.cpp'] = flann_c_codeblock
+
+    flann_ctypes_codeblock
+
     if ut.get_argflag('--py'):
         print('\n\n# ---------------\n\n')
         print('GOES IN flann_ctypes.py')
@@ -467,8 +620,7 @@ def autogen_parts():
         print('GOES IN flann.cpp')
         print('\n\n# ---------------\n\n')
         print(flann_c_codeblock)
-
-    print('-------')
+    #print('-------')
 
     #FLANN_EXPORT void flann_{binding_name}(flann_index_t index_id, float* dataset, int rows, int rebuild_threshold);
 
@@ -479,6 +631,7 @@ def autogen_parts():
     #FLANN_EXPORT void flann_{binding_name}_int(flann_index_t index_id, int* dataset, int rows, int rebuild_threshold);
 
     #FLANN_EXPORT void flann_{binding_name}_byte(flann_index_t index_id, unsigned char* dataset, int rows, int rebuild_threshold);
+    return blocks_dict
 
 if __name__ == '__main__':
     """
@@ -491,3 +644,43 @@ if __name__ == '__main__':
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
     ut.doctest_funcs()
+
+
+"""
+Notes:
+
+    cpp/flann/algorithms/nn_index.h
+
+    void cleanRemovedPoints()
+    {
+        // FIXME: was protected. Are we sure this is the right function?
+        // I think the answer is no. Need to make function that reassigns ids
+        // to a new dataset.  Only called from within this function
+        Logger::debug("[NNIndex] cleanRemovedPoints()\n");
+        Logger::debug("[NNIndex] * removed_ = %d\n", removed_);
+        Logger::debug("[NNIndex] * removed_count_ = %d\n", removed_count_);
+        if (!removed_) return;
+
+        Logger::debug("[NNIndex] * size_ = %d\n", size_);
+
+        size_t last_idx = 0;
+        for (size_t i=0;i<size_;++i) {
+            if (!removed_points_.test(i)) {
+                points_[last_idx] = points_[i];
+                ids_[last_idx] = ids_[i];
+                removed_points_.reset(last_idx);
+                ++last_idx;
+            }
+        }
+
+        Logger::debug("[NNIndex] * last_idx = %d\n", last_idx);
+
+        points_.resize(last_idx);
+        ids_.resize(last_idx);
+        removed_points_.resize(last_idx);
+        size_ = last_idx;
+        removed_count_ = 0;
+        Logger::debug("[NNIndex] finished cleanRemovedPoints()\n");
+    }
+
+"""

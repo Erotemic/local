@@ -1,118 +1,40 @@
-func! ToggleFont() 
-    if !exists("g:togfont") 
-        let g:togfont=0
-    endif
-    python << endpython
+func! ToggleFont(...) 
+python << endpython
 import vim
-togfont = int(vim.eval('g:togfont'))
-try:
-    vim.command('call SetFuzzyFont(%r)' % togfont)
-except Exception as ex:
-    msg = "error in togglefont(%r): %r %s" % (togfont, type(ex), str(ex),)
-    vim.command(':echom %r' % (msg,))
-    pass
-vim.command('let g:togfont=%r' % (togfont + 1))
+def python_toggle_font():
+    import vim
+    import pyvim_funcs
+    hasindex = int(vim.eval('exists("g:myfontindex")')) != 0
+    increment = int(vim.eval('a:1'))
+    #print('hasindex = %r' % (hasindex,))
+    if hasindex: 
+        if increment == 0:
+            # early exit
+            return
+        orig_myfontindex = int(vim.eval('g:myfontindex'))
+    else:
+        orig_myfontindex = 0
+    myfontindex = orig_myfontindex + increment
+    vim.command('let g:myfontindex=%r' % (myfontindex))
+    #print('orig_myfontindex = %r' % (orig_myfontindex,))
+    #print('increment = %r' % (increment,))
+    #print('myfontindex = %r' % (myfontindex,))
+    try:
+        pyvim_funcs.pyrun_fuzzyfont(myfontindex)
+    except Exception as ex:
+        msg = 'error in togglefont(%r): %r %s' % (myfontindex, type(ex), str(ex),)
+        vim.command(':echom %r' % (msg,))
+python_toggle_font()
 endpython
 ":ECHOVAR gfn
 endfu 
 
 fu! SetFuzzyFont(fontid)
 python << endpython
-
-def pyrun_fuzzyfont():
-    import vim
-    import sys
-
-    def vimprint(message):
-        #print('message = %r' % (message,))
-        # this doesnt even work #vim.command(':silent !echom %r' % message)
-        # vim.command(':echom %r' % message)
-        pass
-    vimprint('--- Called Fuzyzfont ---')
-
-    #print('request = %r' % (request,))
-    win32_fonts = [
-        r'Mono_Dyslexic:h10:cANSI',
-        r'Inconsolata:h10',
-        r'monofur:h11',
-        #r'Mono\ Dyslexic:h10',
-        #r'Inconsolata:h11',
-        #r'Source_Code_Pro:h11:cANSI',
-        #r'peep:h11:cOEM',
-        #r'Consolas',
-        #r'Liberation Mono',
-        #r'Lucida_Console:h10',
-        #r'Fixedsys',
-        #r'Courier:h10:cANSI',
-        #r'Courier New',
-        #r'DejaVu Sans Mono',
-    ]
-    win32_alts = {
-        'monodyslexic': [r'Mono_Dyslexic:h10:cANSI']
-    }
-    linux_fonts = [
-        r'Inconsolata\ Medium\ 9',
-        r'Inconsolata\ Medium\ 11',
-        r'MonoDyslexic\ 9.4',
-        r'OpenDyslexicMono\ 10',
-        r'monofur\ 11',
-    ]
-    linux_extended = [
-        r'MonoDyslexic\ 10',
-        r'Inconsolata\ Medium\ 10',
-        r'Courier\ New\ 11',
-        #r'OpenDyslexic\ 10',
-        #r'Neep\ 11',
-        #r'Nimbus\ Mono\ L\ 11', 
-        r'Ubuntu\ Mono\ 9',
-        r'Neep\ Alt\ Medium\ Semi-Condensed\ 11'
-        r'White\ Rabbit\ 10',
-    ]
-    #linux_fonts = sorted(linux_fonts + linux_extended)
-    if sys.platform.startswith('win32'):
-        known_fonts = win32_fonts
-    else:
-        known_fonts = linux_fonts
-
-    import vim
-    import six
-    from operator import itemgetter
-    request = vim.eval('a:fontid')
-    vimprint('numfonts=%r' % (len(known_fonts)))
-    vimprint('request=%r %r' % (type(request), request))
-
-    int_str = map(str, range(0, 10))
-    is_integer_str = all([_ in int_str for _ in request])
-    if isinstance(request, six.string_types) and not is_integer_str:
-        # Calcualate edit distance to each known font
-        try:
-            import Levenshtein  # Edit distance algorithm
-        except ImportError as ex:
-            vim.command(":echom 'error no python module Levenshtein (pip install python-levenshtein)'")
-        else:
-            edit_distance = Levenshtein.distance
-            known_dists = [edit_distance(known.lower(), request.lower()) 
-                            for known in known_fonts]
-
-            # Pick the minimum distance
-            min_index = min(enumerate(known_dists), key=itemgetter(1))[0]
-            fontindex = min_index
-    else:
-        fontindex = int(request) % len(known_fonts)
-
-    fontstr = known_fonts[fontindex]
-    # Set as current font
-    vimprint('fontindex=%r fontstr=%r' % (fontindex, fontstr))
-    vim.command('set gfn=' + fontstr)
-    vimprint('--- /Called Fuzyzfont ---')
-
-pyrun_fuzzyfont()
+import pyvim_funcs
+request = vim.eval('a:fontid')
+pyvim_funcs.pyrun_fuzzyfont(request)
 endpython
-endfu
-
-
-fu! SetMyFont()
-    call SetFuzzyFont("monodyslexic")
 endfu
 
 
