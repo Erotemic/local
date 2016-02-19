@@ -41,7 +41,9 @@ def update_bindings():
 
     sentinals = {
         # 'flann_ctypes.py': '# END DEFINE BINDINGS',
-        'flann.h': '// END DEFINE BINDINGS',
+        # 'flann.h': '// END DEFINE BINDINGS',
+        # 'flann.cpp': '$'
+        'index.py': '$'
     }
     from os.path import basename
     places = {basename(fpath): fpath for fpath in ut.lmap(ut.truepath, _places)}
