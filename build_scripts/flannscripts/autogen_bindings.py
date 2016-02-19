@@ -40,7 +40,8 @@ def update_bindings():
     ]
 
     sentinals = {
-        'flann_ctypes.py': '# END DEFINE BINDINGS'
+        # 'flann_ctypes.py': '# END DEFINE BINDINGS',
+        'flann.h': '// END DEFINE BINDINGS',
     }
     from os.path import basename
     places = {basename(fpath): fpath for fpath in ut.lmap(ut.truepath, _places)}
@@ -49,25 +50,28 @@ def update_bindings():
 
     for binding_name in binding_names:
         blocks_dict = autogen_parts(binding_name)
-        key = 'flann_ctypes.py'
-        print(texts[key])
-        text = old_text = texts[key]
-        sentinal = '\n' + sentinals[key] + ' *\n'
-        block = blocks_dict[key]
-        blockid = block.split('\n')[0]
+        for key in sentinals.keys():
+            # key = 'flann_ctypes.py'
+            # print(texts[key])
+            text = old_text = texts[key]
+            sentinal = '\n' + sentinals[key] + ' *\n'
+            block = blocks_dict[key]
+            print(ut.msgblock(binding_name, block))
+            blockid = block.split('\n')[0]
 
-        blockpos = text.find(blockid)
+            blockpos = text.find(blockid)
 
-        if blockpos == -1:
-            new_text = ut.insert_before_sentinal(old_text, '\n' + block + '\n', sentinal)
-        else:
-            startpos = blockpos
-            #def find_block_endpos(startpos):
-            rel_endpos = text[startpos:].find('\n\n\n')
-            assert rel_endpos != -1
-            endpos = startpos + rel_endpos
-            new_text = old_text[:startpos] + block + old_text[endpos:]
-        texts[key] = new_text
+            if blockpos == -1:
+                print('sentinal = %r' % (sentinal,))
+                new_text = ut.insert_before_sentinal(old_text, '\n' + block + '\n\n', sentinal)
+            else:
+                startpos = blockpos
+                #def find_block_endpos(startpos):
+                rel_endpos = text[startpos:].find('\n\n\n')
+                assert rel_endpos != -1
+                endpos = startpos + rel_endpos
+                new_text = old_text[:startpos] + block + old_text[endpos:]
+            texts[key] = new_text
 
         #print(ut.get_colored_diff(ut.get_textdiff(old_text, new_text, num_context_lines=5)))
     print(ut.get_colored_diff(ut.get_textdiff(orig_texts[key], texts[key], num_context_lines=100)))
@@ -583,11 +587,11 @@ def autogen_parts(binding_name=None):
 
     flann_h_codeblock = ut.codeblock(
         r'''
-        /**
+        /** {binding_name}
         {docstr}
          */
-        '''.format(docstr=docstr)
-    ) + '\n\n' +  '\n\n'.join(header_sigs)
+        '''
+    ).format(docstr=docstr, binding_name=binding_name) + '\n\n' +  '\n\n'.join(header_sigs)
 
     flann_h_codeblock = flann_h_codeblock
 
