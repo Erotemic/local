@@ -51,6 +51,7 @@ flake8_errors = [
     'N806', # variable in function should be lowercase [N806]
     'N803', # argument should be lowercase [N806]
     'N802', # function name should be lowercase [N806]
+    'N801', # function name should be lowercase [N806]
 ] 
 flake8_args_list = [
     #'--max-line-length 80',

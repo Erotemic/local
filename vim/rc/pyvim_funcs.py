@@ -214,6 +214,8 @@ def is_paragraph_end(line_):
 def find_paragraph_end(row_, direction=1):
     """
     returns the line that a paragraph ends on in some direction
+
+    TODO Rectify with ut.find_block_end
     """
     import vim
     line_list = vim.current.buffer
@@ -328,6 +330,8 @@ def insert_codeblock_between_lines(text, row1, row2):
     new_tail  = lines + buffer_tail
     del(vim.current.buffer[row1 - 1:])  # delete old data
     vim.current.buffer.append(new_tail)  # append new data
+    # TODO:
+    #ut.insert_block_between_lines(text, row1, row2, vim.buffer, inplace=True)
 
 
 def insert_codeblock_at_cursor(text):
