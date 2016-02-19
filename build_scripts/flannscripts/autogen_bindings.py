@@ -16,11 +16,11 @@ def update_bindings():
         >>> result = update_bindings()
     """
     binding_names = [
-        'used_memory',
-        'add_points',
-        'remove_point',
-        'remove_points',
-        'clean_removed_points',
+        #'used_memory',
+        #'add_points',
+        #'remove_point',
+
+        # FIX THESE SO THEY WORK JOINTLY
 
         'compute_cluster_centers',
         'find_nearest_neighbors_index',
@@ -29,7 +29,12 @@ def update_bindings():
         'save_index',
         'build_index',
         'free_index',
-        'radius_search',
+        #'radius_search',
+        # Causes problems in cpp
+        # Function doesnt exist to replace
+        # 'clean_removed_points',
+        # 'remove_points',
+
 
         #'size',
         #'veclen',
@@ -396,6 +401,7 @@ def define_flann_bindings(binding_name):
         return_type = 'int'
         binding_argnames = ['dataset', 'rows', 'cols', 'clusters', 'result_centers',
                             'flann_params']
+        optional_args = ['Distance d = Distance()']
     elif binding_name == 'radius_search':
         docstr = ut.codeblock(
             r'''
@@ -726,7 +732,7 @@ def autogen_parts(binding_name=None):
         'testset'           : 'typename Distance::ElementType*',
         'dists'             : 'typename Distance::ResultType*',
         'dists1d'           : 'typename Distance::ResultType*',
-        'result_centers'    : 'Distance::ResultType*',
+        'result_centers'    : 'typename Distance::ResultType*',
         'result_ids'        : 'int*',
     }
 
@@ -1031,17 +1037,6 @@ def autogen_parts(binding_name=None):
         print('GOES IN flann.cpp')
         print('\n\n# ---------------\n\n')
         print(flann_cpp_codeblock)
-    #print('-------')
-
-    #FLANN_EXPORT void flann_{binding_name}(flann_index_t index_ptr, float* dataset, int rows, int rebuild_threshold);
-
-    #FLANN_EXPORT void flann_{binding_name}_float(flann_index_t index_ptr, float* dataset, int rows, int rebuild_threshold);
-
-    #FLANN_EXPORT void flann_{binding_name}_double(flann_index_t index_ptr, double* dataset, int rows, int rebuild_threshold);
-
-    #FLANN_EXPORT void flann_{binding_name}_int(flann_index_t index_ptr, int* dataset, int rows, int rebuild_threshold);
-
-    #FLANN_EXPORT void flann_{binding_name}_byte(flann_index_t index_ptr, unsigned char* dataset, int rows, int rebuild_threshold);
     return blocks_dict
 
 if __name__ == '__main__':
