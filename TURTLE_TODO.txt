@@ -4,10 +4,11 @@ Ensure encounter are matches
 * encounters are in folders
 
 for each of the 120 images, if you ran that against the database 
-
 can do turtle viewpoints with tags
 
 
-For each encounter, query (left) images from each encounter vs all non left encounters (name accuracy)
-For each encounter, query (left + right) in encounter vs all left+right non encounters (name accuracy)
-For each annotation (qpername=1), query against all non-encounters with [dpername=1,2,3] (annotation accuracy)
+* For each encounter, query (left) images from each encounter vs all non left encounters (name accuracy)
+
+* For each encounter, query (left + right) in encounter vs all left+right non encounters (name accuracy)
+
+* For each annotation (qpername=1), query against all non-encounters with [dpername=1,2,3] (annotation accuracy)
