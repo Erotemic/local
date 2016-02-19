@@ -16,20 +16,20 @@ def update_bindings():
         >>> result = update_bindings()
     """
     binding_names = [
-        #'used_memory',
-        #'add_points',
-        #'remove_point',
-        #'remove_points',
-        #'clean_removed_points',
+        'used_memory',
+        'add_points',
+        'remove_point',
+        'remove_points',
+        'clean_removed_points',
 
-        #'compute_cluster_centers',
-        #'find_nearest_neighbors_index',
-        #'find_nearest_neighbors',
+        'compute_cluster_centers',
+        'find_nearest_neighbors_index',
+        'find_nearest_neighbors',
         'load_index',
-        #'save_index',
-        #'build_index',
-        #'free_index',
-        #'radius_search',
+        'save_index',
+        'build_index',
+        'free_index',
+        'radius_search',
 
         #'size',
         #'veclen',
@@ -54,7 +54,7 @@ def update_bindings():
     }
     block_sentinals = {
         'flann.h': '/**',
-        'flann.cpp': 'template<typename Distance>',
+        'flann.cpp': 'template <typename Distance>',
     }
     from os.path import basename
     places = {basename(fpath): fpath for fpath in ut.lmap(ut.truepath, _places)}
@@ -66,8 +66,10 @@ def update_bindings():
     import numpy as np
     import re
 
+    named_blocks = {binding_name: autogen_parts(binding_name) for binding_name in binding_names}
+
     for binding_name in ut.ProgIter(binding_names):
-        blocks_dict = autogen_parts(binding_name)
+        blocks_dict = named_blocks[binding_name]
         for key in eof_sentinals.keys():
             # key = 'flann_ctypes.py'
             # print(text_dict[key])
@@ -160,7 +162,7 @@ def define_flann_bindings(binding_name):
     """
     # default c source
     c_source = None
-
+    optional_args = None
     c_source_part = None
 
     standard_csource = ut.codeblock(
@@ -242,7 +244,6 @@ def define_flann_bindings(binding_name):
         ]
         c_source = ut.codeblock(
             r'''
-            typedef typename Distance::ElementType ElementType;
             try {{
                 if (index_ptr==NULL) {{
                     throw FLANNException("Invalid index");
@@ -252,7 +253,7 @@ def define_flann_bindings(binding_name):
             }}
             catch (std::runtime_error& e) {{
                 Logger::error("Caught exception: %s\n",e.what());
-                throw;
+                return -1;
             }}
             '''
         )
@@ -289,13 +290,13 @@ def define_flann_bindings(binding_name):
                     throw FLANNException("Invalid index");
                 }}
                 Index<Distance>* index = (Index<Distance>*)index_ptr;
-                Matrix<ElementType> points = Matrix<ElementType>(dataset,rows,index->veclen());
+                Matrix<ElementType> points = Matrix<ElementType>(dataset, rows, index->veclen());
                 index->addPoints(points, rebuild_threshhold);
-                return;
+                return 0;
             }}
             catch (std::runtime_error& e) {{
                 Logger::error("Caught exception: %s\n",e.what());
-                return;
+                return -1;
             }}
             '''
         )
@@ -319,18 +320,18 @@ def define_flann_bindings(binding_name):
         ]
         c_source = ut.codeblock(
             r'''
-            typedef typename Distance::ElementType ElementType;
+            size_t point_id(point_id_uint);
             try {{
                 if (index_ptr==NULL) {{
                     throw FLANNException("Invalid index");
                 }}
                 Index<Distance>* index = (Index<Distance>*)index_ptr;
                 index->removePoint(point_id);
-                return;
+                return 0;
             }}
             catch (std::runtime_error& e) {{
                 Logger::error("Caught exception: %s\n",e.what());
-                return;
+                return -1;
             }}
             '''
         )
@@ -494,6 +495,7 @@ def define_flann_bindings(binding_name):
         return_type = 'int'
         binding_argnames = ['dataset', 'rows', 'cols', 'testset', 'tcount',
                             'result_ids', 'dists', 'nn', 'flann_params']
+        optional_args = ['Distance d = Distance()']
     elif binding_name == 'load_index':
         docstr = ut.codeblock(
             '''
@@ -513,6 +515,7 @@ def define_flann_bindings(binding_name):
         )
         return_type = 'flann_index_t'
         binding_argnames = ['filename', 'dataset', 'rows', 'cols']
+        optional_args = ['Distance d = Distance()']
     elif binding_name == 'save_index':
         docstr = ut.codeblock(
             '''
@@ -627,7 +630,7 @@ def define_flann_bindings(binding_name):
         'return_type': return_type,
         'binding_argnames': binding_argnames,
         'c_source': c_source,
-
+        'optional_args': optional_args,
     }
 
     return binding_def
@@ -748,10 +751,10 @@ def autogen_parts(binding_name=None):
     return_type      = binding_def['return_type']
     binding_argnames = binding_def['binding_argnames']
     c_source         = binding_def['c_source']
+    optional_args = binding_def['optional_args']
 
     binding_args = [python_ctype_map[name] + ',  # ' + name for name in binding_argnames]
     binding_args_str = '        ' + '\n        '.join(binding_args)
-    templated_args = ', '.join([templated_ctype_map[name] + ' ' + name for name in binding_argnames])
     callargs = ', '.join(binding_argnames)
     pycallargs = ', '.join([name for name in binding_argnames if name != 'index_ptr'])
     pyinputargs = pycallargs  # FIXME
@@ -793,8 +796,8 @@ def autogen_parts(binding_name=None):
 
     flann_cpp_code_fmtstr = ut.codeblock(
         r'''
-        // {binding_name} BEGIN
-        template<typename Distance>
+        // {binding_name} BEGIN CPP BINDING
+        template <typename Distance>
         {return_type} __flann_{binding_name}({templated_args})
         {{
             ''' + '\n' + ut.indent(c_source, ' ' * (4 * 3)) + r'''
@@ -814,7 +817,8 @@ def autogen_parts(binding_name=None):
 
     explicit_type_bindings_fmtstr = ut.codeblock(
         r'''
-        template<{used_templates}>
+        // DISTANCE TYPE TEMPLATE
+        template <{used_templates}>
         {return_type} _flann_{binding_name}({T_typed_sigargs_cpp})
         {{
             if (flann_distance_type==FLANN_DIST_EUCLIDEAN) {{
@@ -824,7 +828,7 @@ def autogen_parts(binding_name=None):
                 return __flann_{binding_name}<L1<T> >({callargs});
             }}
             else if (flann_distance_type==FLANN_DIST_MINKOWSKI) {{
-                return __flann_{binding_name}<MinkowskiDistance<T> >({callargs});
+                return __flann_{binding_name}<MinkowskiDistance<T> >({callargs}{minkowski_option});
             }}
             else if (flann_distance_type==FLANN_DIST_HIST_INTERSECT) {{
                 return __flann_{binding_name}<HistIntersectionDistance<T> >({callargs});
@@ -874,6 +878,13 @@ def autogen_parts(binding_name=None):
     binding_argtypes_cpp = ut.dict_take(templated_ctype_map_cpp, binding_argnames)
     binding_sigargs_cpp = [type_ + ' ' + name
                            for type_, name in zip(binding_argtypes_cpp, binding_argnames)]
+    templated_bindings = [templated_ctype_map[name] + ' ' + name for name in binding_argnames]
+    if optional_args is not None:
+        templated_bindings += optional_args
+        minkowski_option = ', MinkowskiDistance<T>(flann_distance_order)'
+    else:
+        minkowski_option = ''
+    templated_args = ', '.join(templated_bindings)
     T_typed_sigargs_cpp = ', '.join(binding_sigargs_cpp)
 
     flann_cpp_codeblock_fmtstr = flann_cpp_code_fmtstr + '\n\n\n' + type_bindings_fmtstr + '\n'
@@ -883,9 +894,13 @@ def autogen_parts(binding_name=None):
     if 'typename Distance::ResultType*' in binding_argtypes:
         used_template_list.append('typename R')
 
+    if binding_name == 'remove_point':
+        # HACK
+        templated_args += '_uint'
+
     if return_type == 'int':
         errorhandle = 'return -1;'
-    if return_type == 'flann_index_t':
+    elif return_type == 'flann_index_t':
         errorhandle = 'return NULL;'
     else:
         errorhandle = 'throw 0;'
@@ -894,6 +909,7 @@ def autogen_parts(binding_name=None):
 
     flann_cpp_codeblock = flann_cpp_codeblock_fmtstr.format(
         cpp_binding_name=cpp_binding_name,
+        minkowski_option=minkowski_option,
         binding_name=binding_name,
         templated_args=templated_args, callargs=callargs,
         T_typed_sigargs_cpp=T_typed_sigargs_cpp,
@@ -945,7 +961,7 @@ def autogen_parts(binding_name=None):
             #if type_ == 'struct FLANNParameters*':
             #    # hack
             #    templated_ctype_map_c[name] = 'FLANNParameters*'
-        if binding_name == 'load_index':
+        if binding_name == 'load_index' or binding_name == 'add_points':
             needstemplate = True
         binding_argtypes2 = ut.dict_take(templated_ctype_map_c, binding_argnames)
         binding_sigargs2 = [type_ + ' ' + name for type_, name in
@@ -957,6 +973,8 @@ def autogen_parts(binding_name=None):
             iftemplate = ''
         if return_type != 'void':
             ifreturns = 'return '
+        else:
+            ifreturns = ''
         bodyblock = c_bodyblock_fmtstr.format(signame_type=signame_type,
                                               T_typed_sigargs2=T_typed_sigargs2,
                                               binding_name=binding_name,
