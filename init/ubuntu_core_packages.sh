@@ -142,7 +142,7 @@ install_core_extras()
 
     
 
-    #sudo apt-get install -y filezilla
+    sudo apt-get install -y filezilla
 
 
     sudo apt-get install graphviz -y
