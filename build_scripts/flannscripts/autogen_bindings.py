@@ -1,40 +1,49 @@
-
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import, division, print_function, unicode_literals
 import utool as ut
+(print, rrr, profile) = ut.inject2(__name__, '[ibs]')
 
 
+@profile
 def update_bindings():
     r"""
+    Returns:
+        dict: matchtups
+
     CommandLine:
         python ~/local/build_scripts/flannscripts/autogen_bindings.py --exec-update_bindings
+        utprof.py ~/local/build_scripts/flannscripts/autogen_bindings.py --exec-update_bindings
 
     Example:
         >>> # DISABLE_DOCTEST
+        >>> from autogen_bindings import *  # NOQA
         >>> import sys
         >>> import utool as ut
         >>> sys.path.append(ut.truepath('~/local/build_scripts/flannscripts'))
-        >>> from autogen_bindings import *  # NOQA
-        >>> result = update_bindings()
+        >>> matchtups = update_bindings()
+        >>> result = ('matchtups = %s' % (ut.repr2(matchtups),))
+        >>> print(result)
+        >>> ut.quit_if_noshow()
+        >>> import plottool as pt
+        >>> ut.show_if_requested()
     """
     binding_names = [
-        #'used_memory',
-        #'add_points',
-        #'remove_point',
-
-        # FIX THESE SO THEY WORK JOINTLY
-
-        'compute_cluster_centers',
+        'build_index',
         'find_nearest_neighbors_index',
         'find_nearest_neighbors',
+        'used_memory',
+        'add_points',
+        'remove_point',
+        # FIX THESE SO THEY WORK JOINTLY
+        'compute_cluster_centers',
         'load_index',
         'save_index',
-        'build_index',
         'free_index',
-        #'radius_search',
+        'radius_search',
         # Causes problems in cpp
         # Function doesnt exist to replace
         # 'clean_removed_points',
-        # 'remove_points',
-
+        'remove_points',
 
         #'size',
         #'veclen',
@@ -46,20 +55,22 @@ def update_bindings():
 
     _places = [
         '~/code/flann/src/cpp/flann/flann.cpp',
-        '~/code/flann/src/cpp/flann/flann.h',
-        '~/code/flann/src/python/pyflann/flann_ctypes.py',
-        '~/code/flann/src/python/pyflann/index.py',
+        # '~/code/flann/src/cpp/flann/flann.h',
+        # '~/code/flann/src/python/pyflann/flann_ctypes.py',
+        # '~/code/flann/src/python/pyflann/index.py',
     ]
 
     eof_sentinals = {
-        #'flann_ctypes.py': '# END DEFINE BINDINGS',
-        #'flann.h': '// END DEFINE BINDINGS',
+        'flann_ctypes.py': '# END DEFINE BINDINGS',
+        'flann.h': '// END DEFINE BINDINGS',
         'flann.cpp': None,
-        #'index.py': '$'
+        'index.py': None,
     }
     block_sentinals = {
         'flann.h': '/**',
         'flann.cpp': 'template <typename Distance>',
+        'flann_ctypes.py': 'def ',
+        'index.py': None,
     }
     from os.path import basename
     places = {basename(fpath): fpath for fpath in ut.lmap(ut.truepath, _places)}
@@ -71,11 +82,13 @@ def update_bindings():
     import numpy as np
     import re
 
-    named_blocks = {binding_name: autogen_parts(binding_name) for binding_name in binding_names}
+    print('binding_names = %r' % (binding_names,))
+    named_blocks = {binding_name: autogen_parts(binding_name)
+                    for binding_name in binding_names}
 
     for binding_name in ut.ProgIter(binding_names):
         blocks_dict = named_blocks[binding_name]
-        for key in eof_sentinals.keys():
+        for key in places.keys():
             # key = 'flann_ctypes.py'
             # print(text_dict[key])
             old_text = text_dict[key]
@@ -83,14 +96,26 @@ def update_bindings():
             #text = old_text
             block = blocks_dict[key]
 
+            if ut.get_argflag('--debug'):
+                print(ut.highlight_code(block, 'cpp'))
+
             # Find a place in the code that already exists
 
             searchblock = block
             if key.endswith('.cpp') or key.endswith('.h'):
                 searchblock = re.sub(ut.REGEX_C_COMMENT, '', searchblock,
                                      flags=re.MULTILINE | re.DOTALL)
-            sm = difflib.SequenceMatcher(None, old_text, searchblock, autojunk=False)
-            matchtups = sm.get_matching_blocks()
+            searchblock = '\n'.join(searchblock.splitlines()[0:3])
+
+            @ut.cached_func()
+            def cached_match(old_text, searchblock):
+                sm = difflib.SequenceMatcher(None, old_text, searchblock,
+                                             autojunk=False)
+                matchtups = sm.get_matching_blocks()
+                return matchtups
+            matchtups = cached_match(old_text, searchblock)
+            # debug = True
+            debug = False
             # Find a reasonable match in matchtups
             found = False
             for (a, b, size) in matchtups:
@@ -98,20 +123,10 @@ def update_bindings():
                 if re.search(binding_name + '\\b', matchtext):
                     found = True
                     pos = a + size
-                    if False:
+                    if debug:
+                        print('matchtext')
                         print(matchtext)
                     break
-
-            #import utool
-            #utool.embed()
-
-            #largest_ = ut.argsort(ut.take_column(matchtups, 2))[-1]
-            #(a, b, size) = matchtups[largest_]
-            # print()
-
-            #import utool
-            #utool.embed()
-            #print('size = %r' % (size,))
             if found:
                 linelens = np.array(ut.lmap(len, line_list)) + 1
                 sumlen = np.cumsum(linelens)
@@ -121,44 +136,40 @@ def update_bindings():
                 block_sentinal = block_sentinals[key]
                 row1 = ut.find_block_end(row, line_list, re.escape(block_sentinal), -1)
                 row2 = ut.find_block_end(row + 1, line_list, re.escape(block_sentinal), +1)
-                if False:
-                    print('\n'.join(line_list[row1:row2]))
+                nr = len((block + '\n\n').splitlines())
                 new_line_list = ut.insert_block_between_lines(
-                    block + '\n\n', row1 - 1, row2, line_list)
+                    block + '\n\n', row1, row2, line_list)
+                rtext1 = '\n'.join(line_list[row1:row2])
+                rtext2 = '\n'.join(new_line_list[row1:row1 + nr])
+                if debug:
+                    print('-----')
+                    ut.colorprint('REPLACING', 'yellow')
+                    print(ut.highlight_code(rtext1))
+                if debug:
+                    print('-----')
+                    ut.colorprint('REPLACED WITH', 'yellow')
+                    print(ut.highlight_code(rtext2))
+                print(ut.get_colored_diff(ut.difftext(rtext1, rtext2, num_context_lines=7, ignore_whitespace=True)))
             else:
                 # Append to end of the file
                 eof_sentinal = eof_sentinals[key]
                 if eof_sentinal is None:
                     row2 = len(line_list) - 1
                 else:
-                    #block = 'MISSED ' + binding_name
                     row2 = [count for count, line in enumerate(line_list)
                             if line.startswith(eof_sentinal)][-1]
 
                 new_line_list = ut.insert_block_between_lines(
-                    block + '\n\n', row2 - 1, row2, line_list)
+                    block + '\n\n\n', row2 - 1, row2 - 1, line_list)
 
-            #print(ut.msgblock(binding_name, block))
-            #blockid = block.split('\n')[0]
-            #if False:
-            #    blockpos = text.find(blockid)
-            #    if blockpos == -1:
-            #        sentinal = eof_sentinals[key]
-            #        #print('sentinal = %r' % (sentinal,))
-            #        new_text = ut.insert_before_sentinal(old_text, '\n' + block + '\n\n', sentinal)
-            #    else:
-            #        startpos = blockpos
-            #        #def find_block_endpos(startpos):
-            #        rel_endpos = text[startpos:].find('\n\n\n')
-            #        assert rel_endpos != -1
-            #        endpos = startpos + rel_endpos
-            #        new_text = old_text[:startpos] + block + old_text[endpos:]
             text_dict[key] = '\n'.join(new_line_list)
             lines_dict[key] = new_line_list
-
-        #print(ut.get_colored_diff(ut.get_textdiff(old_text, new_text, num_context_lines=5)))
     new_text = '\n'.join(lines_dict[key])
-    print(ut.get_colored_diff(ut.get_textdiff(orig_texts[key], new_text, num_context_lines=5, ignore_whitespace=True)))
+    if ut.get_argval('--diff'):
+        difftext = ut.get_textdiff(orig_texts[key], new_text,
+                                   num_context_lines=7, ignore_whitespace=True)
+        difftext = ut.get_colored_diff(difftext)
+        print(difftext)
 
 
 def define_flann_bindings(binding_name):
@@ -295,8 +306,8 @@ def define_flann_bindings(binding_name):
                     throw FLANNException("Invalid index");
                 }}
                 Index<Distance>* index = (Index<Distance>*)index_ptr;
-                Matrix<ElementType> points = Matrix<ElementType>(dataset, rows, index->veclen());
-                index->addPoints(points, rebuild_threshhold);
+                Matrix<ElementType> points = Matrix<ElementType>(points, rows, index->veclen());
+                index->addPoints(points, rebuild_threshold);
                 return 0;
             }}
             catch (std::runtime_error& e) {{
@@ -402,6 +413,26 @@ def define_flann_bindings(binding_name):
         binding_argnames = ['dataset', 'rows', 'cols', 'clusters', 'result_centers',
                             'flann_params']
         optional_args = ['Distance d = Distance()']
+        c_source = ut.codeblock(
+            r'''
+            typedef typename Distance::ElementType ElementType;
+            typedef typename Distance::ResultType DistanceType;
+            try {
+                init_flann_parameters(flann_params);
+
+                Matrix<ElementType> inputData(dataset,rows,cols);
+                KMeansIndexParams params(flann_params->branching, flann_params->iterations, flann_params->centers_init, flann_params->cb_index);
+                Matrix<DistanceType> centers(result_centers, clusters,cols);
+                int clusterNum = hierarchicalClustering<Distance>(inputData, centers, params, d);
+
+                return clusterNum;
+            }
+            catch (std::runtime_error& e) {
+                Logger::error("Caught exception: %s\n",e.what());
+                return -1;
+            }
+            '''.replace('{', '{{').replace('}', '}}')
+        )
     elif binding_name == 'radius_search':
         docstr = ut.codeblock(
             r'''
@@ -478,9 +509,71 @@ def define_flann_bindings(binding_name):
             Returns: zero or a number <0 for error
             ''')
         return_type = 'int'
+        # optional_args = ['Distance d = Distance()']
         binding_argnames = ['index_ptr', 'testset', 'tcount', 'result_ids',
                             'dists', 'nn', 'flann_params', ]
+        c_source = ut.codeblock(
+            r'''
+            typedef typename Distance::ElementType ElementType;
+            typedef typename Distance::ResultType DistanceType;
+
+            try {
+                init_flann_parameters(flann_params);
+                if (index_ptr==NULL) {
+                    throw FLANNException("Invalid index");
+                }
+                Index<Distance>* index = (Index<Distance>*)index_ptr;
+
+                Matrix<int> m_indices(result_ids,tcount, nn);
+                Matrix<DistanceType> m_dists(dists, tcount, nn);
+
+                SearchParams search_params = create_search_params(flann_params);
+                index->knnSearch(Matrix<ElementType>(testset, tcount, index->veclen()),
+                                 m_indices,
+                                 m_dists, nn, search_params );
+
+                return 0;
+            }
+            catch (std::runtime_error& e) {
+                Logger::error("Caught exception: %s\n",e.what());
+                return -1;
+            }
+
+            return -1;
+        '''
+        ).replace('{', '{{').replace('}', '}}')
+
     elif binding_name == 'find_nearest_neighbors':
+        c_source = ut.codeblock(
+            r'''
+            typedef typename Distance::ElementType ElementType;
+            typedef typename Distance::ResultType DistanceType;
+
+            try {{
+                init_flann_parameters(flann_params);
+                if (index_ptr==NULL) {{
+                    throw FLANNException("Invalid index");
+                }}
+                Index<Distance>* index = (Index<Distance>*)index_ptr;
+
+                Matrix<int> m_indices(result_ids,tcount, nn);
+                Matrix<DistanceType> m_dists(dists, tcount, nn);
+
+                SearchParams search_params = create_search_params(flann_params);
+                index->knnSearch(Matrix<ElementType>(testset, tcount, index->veclen()),
+                                 m_indices,
+                                 m_dists, nn, search_params );
+
+                return 0;
+            }}
+            catch (std::runtime_error& e) {{
+                Logger::error("Caught exception: %s\n",e.what());
+                return -1;
+            }}
+
+            return -1;
+            '''
+        )
         docstr = ut.codeblock(
             '''
             Builds an index and uses it to find nearest neighbors.
@@ -558,7 +651,39 @@ def define_flann_bindings(binding_name):
             Returns: the newly created index or a number <0 for error
             """)
 
+        optional_args = ['Distance d = Distance()']
         return_type = 'flann_index_t'
+        # binding_argnames = ['dataset', 'rows', 'cols', 'speedup', 'flann_params']
+        c_source = ut.codeblock(
+            r'''
+            typedef typename Distance::ElementType ElementType;
+            try {
+                init_flann_parameters(flann_params);
+                if (flann_params == NULL) {
+                    throw FLANNException("The flann_params argument must be non-null");
+                }
+                IndexParams params = create_parameters(flann_params);
+                Index<Distance>* index = new Index<Distance>(Matrix<ElementType>(dataset,rows,cols), params, d);
+                index->buildIndex();
+
+                if (flann_params->algorithm==FLANN_INDEX_AUTOTUNED) {
+                    IndexParams params = index->getParameters();
+                    update_flann_parameters(params,flann_params);
+                    SearchParams search_params = get_param<SearchParams>(params,"search_params");
+                    *speedup = get_param<float>(params,"speedup");
+                    flann_params->checks = search_params.checks;
+                    flann_params->eps = search_params.eps;
+                    flann_params->cb_index = get_param<float>(params,"cb_index",0.0);
+                }
+
+                return index;
+            }
+            catch (std::runtime_error& e) {
+                Logger::error("Caught exception: %s\n",e.what());
+                return NULL;
+            }
+           ''').replace('{', '{{').replace('}', '}}')
+
         binding_argnames = ['dataset', 'rows', 'cols', 'speedup', 'flann_params']
     elif binding_name == 'free_index':
         docstr = ut.codeblock(
@@ -598,20 +723,16 @@ def define_flann_bindings(binding_name):
                     }}
                 '''
             ), ' ' * 4)
-
             if 'index_ptr' not in binding_argnames:
                 throw_ = ''
-
             if 'flann_params' in binding_argnames:
-                part1 = try_ + '\n' + 'init_flann_parameters(flann_params);' + throw_
+                part1 = try_ + '\n' + '    init_flann_parameters(flann_params);' + throw_
             else:
                 part1 = try_ + throw_
-
             if return_type == 'int':
                 default_return = '-1'
             else:
                 default_return = 'NULL'
-
             part2 = ut.codeblock(
                 r'''
                 }}
@@ -621,7 +742,6 @@ def define_flann_bindings(binding_name):
                 }}
             '''
             )
-
             c_source = part1 + '\n' +  ut.indent(c_source_part, ' ' * 4) + '\n' + part2
         else:
             c_source = ut.codeblock(
@@ -805,8 +925,7 @@ def autogen_parts(binding_name=None):
         // {binding_name} BEGIN CPP BINDING
         template <typename Distance>
         {return_type} __flann_{binding_name}({templated_args})
-        {{
-            ''' + '\n' + ut.indent(c_source, ' ' * (4 * 3)) + r'''
+        {{''' + '\n' + ut.indent(c_source, ' ' * (4 * 3)) + r'''
         }}
         '''
     )
@@ -823,7 +942,6 @@ def autogen_parts(binding_name=None):
 
     explicit_type_bindings_fmtstr = ut.codeblock(
         r'''
-        // DISTANCE TYPE TEMPLATE
         template <{used_templates}>
         {return_type} _flann_{binding_name}({T_typed_sigargs_cpp})
         {{
@@ -913,6 +1031,8 @@ def autogen_parts(binding_name=None):
 
     used_templates = ', '.join(used_template_list)
 
+    print('------')
+    print('flann_cpp_codeblock_fmtstr.format = %s' % (flann_cpp_codeblock_fmtstr,))
     flann_cpp_codeblock = flann_cpp_codeblock_fmtstr.format(
         cpp_binding_name=cpp_binding_name,
         minkowski_option=minkowski_option,
@@ -920,8 +1040,7 @@ def autogen_parts(binding_name=None):
         templated_args=templated_args, callargs=callargs,
         T_typed_sigargs_cpp=T_typed_sigargs_cpp,
         errorhandle=errorhandle,
-        used_templates=used_templates,
-        return_type=return_type)
+        used_templates=used_templates, return_type=return_type)
 
     dataset_types = [
         '',
@@ -967,7 +1086,10 @@ def autogen_parts(binding_name=None):
             #if type_ == 'struct FLANNParameters*':
             #    # hack
             #    templated_ctype_map_c[name] = 'FLANNParameters*'
+        # HACK
         if binding_name == 'load_index' or binding_name == 'add_points':
+            needstemplate = True
+        if binding_name == 'build_index':
             needstemplate = True
         binding_argtypes2 = ut.dict_take(templated_ctype_map_c, binding_argnames)
         binding_sigargs2 = [type_ + ' ' + name for type_, name in
