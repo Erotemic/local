@@ -12,3 +12,21 @@ can do turtle viewpoints with tags
 * For each encounter, query (left + right) in encounter vs all left+right non encounters (name accuracy)
 
 * For each annotation (qpername=1), query against all non-encounters with [dpername=1,2,3] (annotation accuracy)
+
+
+
+First, sample the query annotations such that there is one encounter per name. 
+Then, sample the database such that no daids are taken from matchable query encounters.
+
+The experiment needs to be run once for every offset possible
+
+
+python -m ibeis --tf get_annotcfg_list --db seaturtles \
+    -a default:has_any=\(left\),sample_occur=True,exclude_reference=True,sample_offset=[1,2,3,4,5,6,7,8] --acfginfo
+
+
+python -m ibeis --tf get_annotcfg_list --db seaturtles \
+    -a default:has_any=\(left,right\),sample_occur=True,exclude_reference=True,sample_offset=[1,2,3,4,5,6,7,8] --acfginfo
+
+
+Do we have to ing do this one query at a time?
