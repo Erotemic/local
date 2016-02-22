@@ -33,19 +33,19 @@ def update_bindings():
     import re
     binding_names = [
         'build_index',
-        'used_memory',
-        'add_points',
-        'remove_point',
+        # 'used_memory',
+        # 'add_points',
+        # 'remove_point',
 
-        'compute_cluster_centers',
-        'load_index',
-        'save_index',
-        'find_nearest_neighbors',
+        # 'compute_cluster_centers',
+        # 'load_index',
+        # 'save_index',
+        # 'find_nearest_neighbors',
 
-        'radius_search',
-        'remove_points',
-        'free_index',
-        'find_nearest_neighbors_index',
+        # 'radius_search',
+        # 'remove_points',
+        # 'free_index',
+        # 'find_nearest_neighbors_index',
 
         # 'size',
         # 'veclen',
@@ -60,24 +60,25 @@ def update_bindings():
 
     _places = [
         # '~/code/flann/src/cpp/flann/flann.cpp',
-        '~/code/flann/src/cpp/flann/flann.h',
+        # '~/code/flann/src/cpp/flann/flann.h',
         # '~/code/flann/src/python/pyflann/flann_ctypes.py',
-        # '~/code/flann/src/python/pyflann/index.py',
+        '~/code/flann/src/python/pyflann/index.py',
     ]
 
     eof_sentinals = {
-        'flann_ctypes.py': '# END DEFINE BINDINGS',
-        # 'flann_ctypes.py': 'def ensure_2d_array(arr, flags, **kwargs):',
-        'flann.h': '// END DEFINE BINDINGS',
+        # 'flann_ctypes.py': '# END DEFINE BINDINGS',
+        'flann_ctypes.py': 'def ensure_2d_array(arr',
+        # 'flann.h': '// END DEFINE BINDINGS',
+        'flann.h': '#ifdef __cplusplus',
         'flann.cpp': None,
         'index.py': None,
     }
     block_sentinals = {
         'flann.h': re.escape('/**'),
-        'flann.cpp': re.escape('template <typename Distance>'),
+        'flann.cpp': 'template *<typename Distance>',
         # 'flann_ctypes.py': '\n',
         'flann_ctypes.py': 'flann\.[a-z_.]* =',
-        'index.py': '    def .*',
+        # 'index.py': '    def .*',
         'index.py': '    [^ ].*',
     }
     places = {basename(fpath): fpath for fpath in ut.lmap(ut.truepath, _places)}
@@ -123,17 +124,26 @@ def update_bindings():
                 def isjunk(x):
                     return False
                     return x in ' \t,*()'
+                def isjunk2(x):
+                    return x in ' \t,*()'
+                # Not sure why the first one just doesnt find it
                 # isjunk = None
                 sm = difflib.SequenceMatcher(isjunk, old_text, searchblock,
                                              autojunk=False)
-                matchtups = sm.get_matching_blocks()
+                sm0 = difflib.SequenceMatcher(isjunk, old_text, searchblock,
+                                              autojunk=True)
+                sm1 = difflib.SequenceMatcher(isjunk2, old_text, searchblock,
+                                              autojunk=False)
+                sm2 = difflib.SequenceMatcher(isjunk2, old_text, searchblock,
+                                              autojunk=True)
+                matchtups = sm.get_matching_blocks() + sm0.get_matching_blocks() + sm1.get_matching_blocks() + sm2.get_matching_blocks()
                 return matchtups
             matchtups = cached_match(old_text, searchblock)
             # Find a reasonable match in matchtups
 
             found = False
             if debug:
-                print('searchblock =\n%s' % (searchblock,))
+                # print('searchblock =\n%s' % (searchblock,))
                 print('searchblock = %r' % (searchblock,))
             for (a, b, size) in matchtups:
                 matchtext = old_text[a: a + size]
@@ -163,6 +173,7 @@ def update_bindings():
                 row2 = ut.find_block_end(row + 1, line_list, block_sentinal, +1)
                 eof_sentinal = eof_sentinals[key]
                 if eof_sentinal is not None:
+                    print('eof_sentinal = %r' % (eof_sentinal,))
                     row2 = min([count for count, line in enumerate(line_list) if line.startswith(eof_sentinal)][-1], row2)
                 nr = len((block + '\n\n').splitlines())
                 new_line_list = ut.insert_block_between_lines(
@@ -191,7 +202,7 @@ def update_bindings():
                         row2 = len(line_list) - 1
                         assert False
                     else:
-                        row2 = row2_choice[-1]
+                        row2 = row2_choice[-1] - 1
 
                 # row1 = row2 - 1
                 # row2 = row2 - 1
@@ -220,6 +231,7 @@ def update_bindings():
             lines_dict[key] = new_line_list
         ut.colorprint('L___  GENERATED BINDING %s ___' % (binding_name,), 'yellow')
     new_text = '\n'.join(lines_dict[key])
+    ut.writeto(ut.augpath(places[key], '.new'), new_text)
     if ut.get_argflag('--diff'):
         difftext = ut.get_textdiff(orig_texts[key], new_text,
                                    num_context_lines=7, ignore_whitespace=True)
@@ -1494,8 +1506,8 @@ def autogen_parts(binding_name=None):
         '',
         'float',
         'double',
-        'int',
         'byte',
+        'int',
     ]
 
     #### format c parts
