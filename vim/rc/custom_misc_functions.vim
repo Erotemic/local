@@ -702,6 +702,7 @@ import utool as ut
 ut.rrrr(0)
 row1, row2 = pyvim_funcs.get_paragraph_line_range_at_cursor()
 text = pyvim_funcs.get_text_between_lines(row1, row2)
+text = ut.ensure_unicode(text)
 wrapped_text = ut.format_multiple_paragraph_sentences(text)
 pyvim_funcs.insert_codeblock_between_lines(wrapped_text, row1, row2)
 endpython
