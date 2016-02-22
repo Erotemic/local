@@ -27,68 +27,77 @@ def update_bindings():
         >>> import plottool as pt
         >>> ut.show_if_requested()
     """
+    from os.path import basename
+    import difflib
+    import numpy as np
+    import re
     binding_names = [
         'build_index',
-        'find_nearest_neighbors_index',
-        'find_nearest_neighbors',
         'used_memory',
         'add_points',
         'remove_point',
-        # FIX THESE SO THEY WORK JOINTLY
+
         'compute_cluster_centers',
         'load_index',
         'save_index',
-        'free_index',
-        'radius_search',
-        # Causes problems in cpp
-        # Function doesnt exist to replace
-        # 'clean_removed_points',
-        'remove_points',
+        'find_nearest_neighbors',
 
-        #'size',
-        #'veclen',
-        #'get_point',
-        #'flann_get_distance_order',
-        #'flann_get_distance_type',
-        #'flann_log_verbosity',
+        'radius_search',
+        'remove_points',
+        'free_index',
+        'find_nearest_neighbors_index',
+
+        # 'size',
+        # 'veclen',
+        # 'get_point',
+        # 'flann_get_distance_order',
+        # 'flann_get_distance_type',
+        # 'flann_log_verbosity',
+
+        # 'clean_removed_points',
+
     ]
 
     _places = [
-        '~/code/flann/src/cpp/flann/flann.cpp',
-        # '~/code/flann/src/cpp/flann/flann.h',
+        # '~/code/flann/src/cpp/flann/flann.cpp',
+        '~/code/flann/src/cpp/flann/flann.h',
         # '~/code/flann/src/python/pyflann/flann_ctypes.py',
         # '~/code/flann/src/python/pyflann/index.py',
     ]
 
     eof_sentinals = {
         'flann_ctypes.py': '# END DEFINE BINDINGS',
+        # 'flann_ctypes.py': 'def ensure_2d_array(arr, flags, **kwargs):',
         'flann.h': '// END DEFINE BINDINGS',
         'flann.cpp': None,
         'index.py': None,
     }
     block_sentinals = {
-        'flann.h': '/**',
-        'flann.cpp': 'template <typename Distance>',
-        'flann_ctypes.py': 'def ',
-        'index.py': None,
+        'flann.h': re.escape('/**'),
+        'flann.cpp': re.escape('template <typename Distance>'),
+        # 'flann_ctypes.py': '\n',
+        'flann_ctypes.py': 'flann\.[a-z_.]* =',
+        'index.py': '    def .*',
+        'index.py': '    [^ ].*',
     }
-    from os.path import basename
     places = {basename(fpath): fpath for fpath in ut.lmap(ut.truepath, _places)}
     text_dict = ut.map_dict_vals(ut.readfrom, places)
     lines_dict = {key: val.split('\n') for key, val in text_dict.items()}
     orig_texts = text_dict.copy()  # NOQA
-
-    import difflib
-    import numpy as np
-    import re
+    binding_defs = {}
+    named_blocks  = {}
 
     print('binding_names = %r' % (binding_names,))
-    named_blocks = {binding_name: autogen_parts(binding_name)
-                    for binding_name in binding_names}
+    for binding_name in binding_names:
+        blocks, defs = autogen_parts(binding_name)
+        binding_defs[binding_name] = defs
+        named_blocks[binding_name] = blocks
 
     for binding_name in ut.ProgIter(binding_names):
+        ut.colorprint('+--- GENERATE BINDING %s -----' % (binding_name,), 'yellow')
         blocks_dict = named_blocks[binding_name]
         for key in places.keys():
+            ut.colorprint('---- generating %s for %s -----' % (binding_name, key,), 'yellow')
             # key = 'flann_ctypes.py'
             # print(text_dict[key])
             old_text = text_dict[key]
@@ -96,8 +105,10 @@ def update_bindings():
             #text = old_text
             block = blocks_dict[key]
 
-            if ut.get_argflag('--debug'):
-                print(ut.highlight_code(block, 'cpp'))
+            debug = ut.get_argflag('--debug')
+            # debug = True
+            # if debug:
+            #     print(ut.highlight_code(block, splitext(key)[1]))
 
             # Find a place in the code that already exists
 
@@ -107,26 +118,40 @@ def update_bindings():
                                      flags=re.MULTILINE | re.DOTALL)
             searchblock = '\n'.join(searchblock.splitlines()[0:3])
 
-            @ut.cached_func()
+            # @ut.cached_func(verbose=False)
             def cached_match(old_text, searchblock):
-                sm = difflib.SequenceMatcher(None, old_text, searchblock,
+                def isjunk(x):
+                    return False
+                    return x in ' \t,*()'
+                # isjunk = None
+                sm = difflib.SequenceMatcher(isjunk, old_text, searchblock,
                                              autojunk=False)
                 matchtups = sm.get_matching_blocks()
                 return matchtups
             matchtups = cached_match(old_text, searchblock)
-            # debug = True
-            debug = False
             # Find a reasonable match in matchtups
+
             found = False
+            if debug:
+                print('searchblock =\n%s' % (searchblock,))
+                print('searchblock = %r' % (searchblock,))
             for (a, b, size) in matchtups:
                 matchtext = old_text[a: a + size]
-                if re.search(binding_name + '\\b', matchtext):
+                pybind = binding_defs[binding_name]['py_binding_name']
+                if re.search(binding_name + '\\b', matchtext) or re.search(pybind + '\\b', matchtext):
                     found = True
                     pos = a + size
                     if debug:
-                        print('matchtext')
+                        print('MATCHING TEXT')
                         print(matchtext)
                     break
+                else:
+                    if debug and 0:
+                        print('Not matching')
+                        print('matchtext = %r' % (matchtext,))
+                        matchtext2 = old_text[a - 10: a + size + 20]
+                        print('matchtext2 = %r' % (matchtext2,))
+
             if found:
                 linelens = np.array(ut.lmap(len, line_list)) + 1
                 sumlen = np.cumsum(linelens)
@@ -134,38 +159,68 @@ def update_bindings():
                 #print(line_list[row])
                 # Search for extents of the block to overwrite
                 block_sentinal = block_sentinals[key]
-                row1 = ut.find_block_end(row, line_list, re.escape(block_sentinal), -1)
-                row2 = ut.find_block_end(row + 1, line_list, re.escape(block_sentinal), +1)
+                row1 = ut.find_block_end(row, line_list, block_sentinal, -1) - 1
+                row2 = ut.find_block_end(row + 1, line_list, block_sentinal, +1)
+                eof_sentinal = eof_sentinals[key]
+                if eof_sentinal is not None:
+                    row2 = min([count for count, line in enumerate(line_list) if line.startswith(eof_sentinal)][-1], row2)
                 nr = len((block + '\n\n').splitlines())
                 new_line_list = ut.insert_block_between_lines(
-                    block + '\n\n', row1, row2, line_list)
+                    block + '\n', row1, row2, line_list)
                 rtext1 = '\n'.join(line_list[row1:row2])
                 rtext2 = '\n'.join(new_line_list[row1:row1 + nr])
                 if debug:
                     print('-----')
-                    ut.colorprint('REPLACING', 'yellow')
+                    ut.colorprint('FOUND AND REPLACING %s' % (binding_name,), 'yellow')
                     print(ut.highlight_code(rtext1))
                 if debug:
                     print('-----')
-                    ut.colorprint('REPLACED WITH', 'yellow')
+                    ut.colorprint('FOUND AND REPLACED WITH %s' % (binding_name,), 'yellow')
                     print(ut.highlight_code(rtext2))
-                print(ut.get_colored_diff(ut.difftext(rtext1, rtext2, num_context_lines=7, ignore_whitespace=True)))
+                if not ut.get_argflag('--diff') and not debug:
+                    print(ut.get_colored_diff(ut.difftext(rtext1, rtext2, num_context_lines=7, ignore_whitespace=True)))
             else:
                 # Append to end of the file
                 eof_sentinal = eof_sentinals[key]
                 if eof_sentinal is None:
                     row2 = len(line_list) - 1
                 else:
-                    row2 = [count for count, line in enumerate(line_list)
-                            if line.startswith(eof_sentinal)][-1]
+                    row2_choice = [count for count, line in enumerate(line_list)
+                                   if line.startswith(eof_sentinal)]
+                    if len(row2_choice) == 0:
+                        row2 = len(line_list) - 1
+                        assert False
+                    else:
+                        row2 = row2_choice[-1]
+
+                # row1 = row2 - 1
+                # row2 = row2 - 1
+                row1 = row2
 
                 new_line_list = ut.insert_block_between_lines(
-                    block + '\n\n\n', row2 - 1, row2 - 1, line_list)
+                    block + '\n', row1, row2, line_list)
+                # block + '\n\n\n', row1, row2, line_list)
 
+                rtext1 = '\n'.join(line_list[row1:row2])
+                nr = len((block + '\n\n').splitlines())
+                rtext2 = '\n'.join(new_line_list[row1:row1 + nr])
+
+                if debug:
+                    print('-----')
+                    ut.colorprint('NOT FOUND AND REPLACING %s' % (binding_name,), 'yellow')
+                    print(ut.highlight_code(rtext1))
+                if debug:
+                    print('-----')
+                    ut.colorprint('NOT FOUND AND REPLACED WITH %s' % (binding_name,), 'yellow')
+                    print(ut.highlight_code(rtext2))
+
+                if not ut.get_argflag('--diff') and not debug:
+                    print(ut.get_colored_diff(ut.difftext(rtext1, rtext2, num_context_lines=7, ignore_whitespace=True)))
             text_dict[key] = '\n'.join(new_line_list)
             lines_dict[key] = new_line_list
+        ut.colorprint('L___  GENERATED BINDING %s ___' % (binding_name,), 'yellow')
     new_text = '\n'.join(lines_dict[key])
-    if ut.get_argval('--diff'):
+    if ut.get_argflag('--diff'):
         difftext = ut.get_textdiff(orig_texts[key], new_text,
                                    num_context_lines=7, ignore_whitespace=True)
         difftext = ut.get_colored_diff(difftext)
@@ -180,6 +235,25 @@ def define_flann_bindings(binding_name):
     c_source = None
     optional_args = None
     c_source_part = None
+    py_source = None
+    py_alias = None
+    py_args = None
+    pydoc = None
+
+    cpp_param_doc = {
+        'cols': 'number of columns in the dataset (feature dimensionality)',
+        'dataset': 'pointer to a data set stored in row major order',
+        'dists': 'pointer to matrix for the distances of the nearest neighbors of the testset features in the dataset',
+        'flann_params': 'generic flann parameters',
+        'index_ptr': 'the index (constructed previously using flann_build_index)',
+        'nn': 'how many nearest neighbors to return',
+        'rebuild_threadhold': 'reallocs index when it grows by factor of `rebuild_threshold`. A smaller value results is more space efficient but less computationally efficient. Must be greater than 1.',
+        'result_ids': 'pointer to matrix for the indices of the nearest neighbors of the testset features in the dataset (must have tcount number of rows and nn number of columns)',
+        'rows': 'number of rows (features) in the dataset',
+        'tcount': 'number of rows (features) in the query dataset (same dimensionality as features in the dataset)',
+        'testset': 'pointer to a query set stored in row major order',
+        'level':  'verbosity level'
+    }
 
     standard_csource = ut.codeblock(
         r'''
@@ -197,7 +271,10 @@ def define_flann_bindings(binding_name):
         '''
     )
 
+    return_doc = None
+
     cpp_binding_name = binding_name
+    zero_success = 'zero or a number <0 for error'
 
     if binding_name == 'clean_removed_points':
         cpp_binding_name = ut.to_camel_case(binding_name)
@@ -232,7 +309,7 @@ def define_flann_bindings(binding_name):
         binding_argnames = [
             'index_ptr',
         ]
-        c_source = standard_csource.format(**locals())
+        c_source = standard_csource
     elif binding_name == 'getType':
         return_type = 'flann_algorithm_t'
         docstr = ut.codeblock(
@@ -243,7 +320,7 @@ def define_flann_bindings(binding_name):
         binding_argnames = [
             'index_ptr',
         ]
-        c_source = standard_csource.format(**locals())
+        c_source = standard_csource
     elif binding_name == 'used_memory':
         return_type = 'int'
         docstr = ut.codeblock(
@@ -273,23 +350,18 @@ def define_flann_bindings(binding_name):
             }}
             '''
         )
+        py_source = ut.codeblock(
+            '''
+            if self.__curindex is None:
+                return 0
+            return flann.used_memory[self.__curindex_type](self.__curindex)
+            ''')
     elif binding_name == 'add_points':
         #return_type = 'void'
         return_type = 'int'
         docstr = ut.codeblock(
             '''
             Adds points to pre-built index.
-
-            Params:
-                index_ptr The index that should be modified
-                dataset = pointer to a data set stored in row major order
-                rows = number of rows (features) in the dataset
-                cols = number of columns in the dataset (feature dimensionality)
-                rebuild_threadhold = reallocs index when it grows by factor of
-                   `rebuild_threshold`. A smaller value results is more space
-                    efficient but less computationally efficient. Must be greater than 1.
-
-            Returns: 0 if success otherwise -1
             ''')
         binding_argnames = [
             'index_ptr',
@@ -298,6 +370,9 @@ def define_flann_bindings(binding_name):
             'cols',  # TODO: can remove
             'rebuild_threshold',
         ]
+        return_doc = '0 if success otherwise -1'
+        cpp_param_doc['points'] = 'pointer to array of points'
+        cpp_param_doc['rebuild_threshold'] = 'reallocs index when it grows by factor of `rebuild_threshold`. A smaller value results is more space efficient but less computationally efficient. Must be greater than 1.'
         c_source = ut.codeblock(
             r'''
             typedef typename Distance::ElementType ElementType;
@@ -316,20 +391,29 @@ def define_flann_bindings(binding_name):
             }}
             '''
         )
+        py_args = ['new_pts', 'rebuild_threshold=2.']
+        py_source = ut.codeblock(
+            '''
+            if new_pts.dtype.type not in allowed_types:
+                raise FLANNException('Cannot handle type: %s' % new_pts.dtype)
+            if new_pts.dtype != self.__curindex_type:
+                raise FLANNException('New points must have the same type')
+            new_pts = ensure_2d_array(new_pts, default_flags)
+            rows = new_pts.shape[0]
+            flann.add_points[self.__curindex_type](self.__curindex, new_pts, rows, rebuild_threshold)
+            return self.__added_data.append(new_pts)
+            ''')
     elif binding_name == 'remove_point':
         #return_type = 'void'
         return_type = 'int'
         docstr = ut.codeblock(
             '''
             Removes a point from the index
-
-            Params:
-                index_ptr = The index that should be modified
-                id = point id to be removed
-
-            Returns: void
             '''
         )
+        return_doc = zero_success
+        cpp_param_doc['point_id'] = 'point id to be removed'
+        cpp_param_doc['index_ptr'] = 'The index that should be modified'
         binding_argnames = [
             'index_ptr',
             'point_id',
@@ -351,24 +435,23 @@ def define_flann_bindings(binding_name):
             }}
             '''
         )
+        py_source = ut.codeblock(
+            '''
+            flann.remove_point[self.__curindex_type](self.__curindex, point_id)
+            self.__removed_ids.append(point_id)
+            ''')
     elif binding_name == 'remove_points':
         return_type = 'void'
         docstr = ut.codeblock(
             '''
             Removes multiple points from the index
-
-            Params:
-                index_ptr = The index that should be modified
-                id_list = list of point ids to be removed
-
-            Returns: void
             '''
         )
-        binding_argnames = [
-            'index_ptr',
-            'id_list',
-            'num',
-        ]
+        return_doc = 'void'
+        cpp_param_doc['index_ptr'] = 'The index that should be modified'
+        cpp_param_doc['id_list'] = 'list of point ids to be removed'
+        cpp_param_doc['num'] = 'number of points in id_list'
+        binding_argnames = ['index_ptr', 'id_list', 'num']
         c_source = ut.codeblock(
             r'''
             typedef typename Distance::ElementType ElementType;
@@ -386,28 +469,30 @@ def define_flann_bindings(binding_name):
             }}
             '''
         )
+        py_source = ut.codeblock(
+            '''
+            id_list = np.array(id_list, dtype=np.int32)
+            num = len(id_list)
+
+            flann.remove_points[self.__curindex_type](self.__curindex, id_list, num)
+            self.__removed_ids.extend(id_list)
+            ''')
+        py_args = ['id_list']
+
     elif binding_name == 'compute_cluster_centers':
         docstr = ut.codeblock(
             r'''
             Clusters the features in the dataset using a hierarchical kmeans clustering approach.
             This is significantly faster than using a flat kmeans clustering for a large number
             of clusters.
-
-            Params:
-                dataset = pointer to a data set stored in row major order
-                rows = number of rows (features) in the dataset
-                cols = number of columns in the dataset (feature dimensionality)
-                clusters = number of cluster to compute
-                result_centers = memory buffer where the output cluster centers are storred
-                index_params = used to specify the kmeans tree parameters (branching factor, max number of iterations to use)
-                flann_params = generic flann parameters
-
-            Returns: number of clusters computed or a number <0 for error. This number can
-                be different than the number of clusters requested, due to the way
-                hierarchical clusters are computed. The number of clusters returned will be
-                the highest number of the form (branch_size-1)*K+1 smaller than the number
-                of clusters requested.
             ''')
+
+        return_doc = 'number of clusters computed or a number <0 for error. This number can be different than the number of clusters requested, due to the way hierarchical clusters are computed. The number of clusters returned will be the highest number of the form (branch_size-1)*K+1 smaller than the number of clusters requested.'
+
+        cpp_param_doc['dataset'] = 'pointer to a data set stored in row major order'
+        cpp_param_doc['clusters'] = 'number of cluster to compute'
+        cpp_param_doc['result_centers'] = 'memory buffer where the output cluster centers are stored'
+        cpp_param_doc['flann_params'] = 'generic flann parameters and index_params used to specify the kmeans tree parameters (branching factor, max number of iterations to use)'
 
         return_type = 'int'
         binding_argnames = ['dataset', 'rows', 'cols', 'clusters', 'result_centers',
@@ -433,31 +518,85 @@ def define_flann_bindings(binding_name):
             }
             '''.replace('{', '{{').replace('}', '}}')
         )
+        py_source = ut.codeblock(
+            '''
+            # First verify the paremeters are sensible.
+
+            if pts.dtype.type not in allowed_types:
+                raise FLANNException('Cannot handle type: %s' % pts.dtype)
+
+            if int(branch_size) != branch_size or branch_size < 2:
+                raise FLANNException('branch_size must be an integer >= 2.')
+
+            branch_size = int(branch_size)
+
+            if int(num_branches) != num_branches or num_branches < 1:
+                raise FLANNException('num_branches must be an integer >= 1.')
+
+            num_branches = int(num_branches)
+
+            if max_iterations is None:
+                max_iterations = -1
+            else:
+                max_iterations = int(max_iterations)
+
+            # init the arrays and starting values
+            pts = ensure_2d_array(pts, default_flags)
+            npts, dim = pts.shape
+            num_clusters = (branch_size - 1) * num_branches + 1
+
+            if pts.dtype.type == np.float64:
+                result = np.empty((num_clusters, dim), dtype=np.float64)
+            else:
+                result = np.empty((num_clusters, dim), dtype=np.float32)
+
+            # set all the parameters appropriately
+
+            self.__ensureRandomSeed(kwargs)
+
+            params = {'iterations': max_iterations,
+                      'algorithm': 'kmeans',
+                      'branching': branch_size,
+                      'random_seed': kwargs['random_seed']}
+
+            self.__flann_parameters.update(params)
+
+            numclusters = flann.compute_cluster_centers[pts.dtype.type](
+                pts, npts, dim, num_clusters, result,
+                pointer(self.__flann_parameters))
+            if numclusters <= 0:
+                raise FLANNException('Error occured during clustering procedure.')
+
+            if dtype is None:
+                return result
+            else:
+                return dtype(result)
+            ''').replace('}', '}}').replace('{', '{{')
+        py_alias = 'hierarchical_kmeans'
+        py_args = 'pts, branch_size, num_branches, max_iterations=None, dtype=None, **kwargs'.split(', ')
     elif binding_name == 'radius_search':
         docstr = ut.codeblock(
             r'''
-            * Performs an radius search using an already constructed index.
-            *
-            * In case of radius search, instead of always returning a predetermined
-            * number of nearest neighbours (for example the 10 nearest neighbours), the
-            * search will return all the neighbours found within a search radius
-            * of the query point.
-            *
-            * The check parameter in the FLANNParameters below sets the level of approximation
-            * for the search by only visiting "checks" number of features in the index
-            * (the same way as for the KNN search). A lower value for checks will give
-            * a higher search speedup at the cost of potentially not returning all the
-            * neighbours in the specified radius.
+            Performs an radius search using an already constructed index.
 
-            Params:
-                index_ptr = the index
-                query1d = query point
-                result_ids = array for storing the indices found (will be modified)
-                dists1d = similar, but for storing distances
-                max_nn = size of arrays result_ids and dists1d
-                radius = search radius (squared radius for euclidian metric)
-                flann_params = params
+            In case of radius search, instead of always returning a predetermined
+            number of nearest neighbours (for example the 10 nearest neighbours), the
+            search will return all the neighbours found within a search radius
+            of the query point.
+
+            The check parameter in the FLANNParameters below sets the level of approximation
+            for the search by only visiting "checks" number of features in the index
+            (the same way as for the KNN search). A lower value for checks will give
+            a higher search speedup at the cost of potentially not returning all the
+            neighbours in the specified radius.
             ''')
+        cpp_param_doc['index_ptr'] = 'the index'
+        cpp_param_doc['query1d'] = 'query point'
+        cpp_param_doc['dists1d'] = 'similar, but for storing distances'
+        cpp_param_doc['result_ids'] = 'array for storing the indices found (will be modified)'
+        cpp_param_doc['max_nn'] = 'size of arrays result_ids and dists1d'
+        cpp_param_doc['radius'] = 'search radius (squared radius for euclidian metric)'
+        return_doc = 'number of neighbors found or <0 for an error'
         return_type = 'int'
         binding_argnames = ['index_ptr', 'query1d', 'result_ids', 'dists1d', 'max_nn',
                             'radius', 'flann_params', ]
@@ -489,25 +628,45 @@ def define_flann_bindings(binding_name):
                 return -1;
             }}
             ''')
+        py_source = ut.codeblock(
+            '''
+            if self.__curindex is None:
+                raise FLANNException(
+                    'build_index(...) method not called first or current index deleted.')
+
+            if query.dtype.type not in allowed_types:
+                raise FLANNException('Cannot handle type: %s' % query.dtype)
+
+            if self.__curindex_type != query.dtype.type:
+                raise FLANNException('Index and query must have the same type')
+
+            npts, dim = self.get_indexed_shape()
+            assert(query.shape[0] == dim), 'data and query must have the same dims'
+
+            result = np.empty(npts, dtype=index_type)
+            if self.__curindex_type == np.float64:
+                dists = np.empty(npts, dtype=np.float64)
+            else:
+                dists = np.empty(npts, dtype=np.float32)
+
+            self.__flann_parameters.update(kwargs)
+
+            nn = flann.radius_search[
+                self.__curindex_type](
+                self.__curindex, query, result, dists, npts, radius,
+                pointer(self.__flann_parameters))
+
+            return (result[0:nn], dists[0:nn])
+            ''')
+        py_alias = 'nn_radius'
+        py_args = 'query, radius, **kwargs'.split(', ')
 
     elif binding_name == 'find_nearest_neighbors_index':
         docstr = ut.codeblock(
             '''
             Searches for nearest neighbors using the index provided
-
-            Params:
-                index_ptr = the index (constructed previously using flann_build_index).
-                testset = pointer to a query set stored in row major order
-                tcount = number of rows (features) in the query dataset (same dimensionality as features in the dataset)
-                result_ids = pointer to matrix for the indices of the nearest neighbors of the testset features in the dataset
-                    (must have tcount number of rows and nn number of columns)
-                dists = pointer to matrix for the distances of the nearest neighbors of the testset features in the dataset
-                    (must have tcount number of rows and 1 column)
-                nn = how many nearest neighbors to return
-                flann_params = generic flann parameters
-
-            Returns: zero or a number <0 for error
             ''')
+        return_doc = zero_success
         return_type = 'int'
         # optional_args = ['Distance d = Distance()']
         binding_argnames = ['index_ptr', 'testset', 'tcount', 'result_ids',
@@ -543,6 +702,53 @@ def define_flann_bindings(binding_name):
         '''
         ).replace('{', '{{').replace('}', '}}')
 
+        py_source = ut.codeblock(
+            '''
+            if self.__curindex is None:
+                raise FLANNException(
+                    'build_index(...) method not called first or current index deleted.')
+
+            if qpts.dtype.type not in allowed_types:
+                raise FLANNException('Cannot handle type: %s' % qpts.dtype)
+
+            if self.__curindex_type != qpts.dtype.type:
+                raise FLANNException('Index and query must have the same type')
+
+            qpts = ensure_2d_array(qpts, default_flags)
+
+            npts, dim = self.get_indexed_shape()
+
+            if qpts.size == dim:
+                qpts.reshape(1, dim)
+
+            nqpts = qpts.shape[0]
+
+            assert qpts.shape[1] == dim, 'data and query must have the same dims'
+            assert npts >= num_neighbors, 'more neighbors than there are points'
+
+            result = np.empty((nqpts, num_neighbors), dtype=index_type)
+            if self.__curindex_type == np.float64:
+                dists = np.empty((nqpts, num_neighbors), dtype=np.float64)
+            else:
+                dists = np.empty((nqpts, num_neighbors), dtype=np.float32)
+
+            self.__flann_parameters.update(kwargs)
+
+            flann.find_nearest_neighbors_index[
+                self.__curindex_type](
+                self.__curindex, qpts, nqpts, result, dists, num_neighbors,
+                pointer(self.__flann_parameters))
+
+            if num_neighbors == 1:
+                return (result.reshape(nqpts), dists.reshape(nqpts))
+            else:
+                return (result, dists)
+            '''
+        )
+
+        py_alias = 'nn_index'
+        py_args = ['qpts', 'num_neighbors=1', '**kwargs']
+
     elif binding_name == 'find_nearest_neighbors':
         c_source = ut.codeblock(
             r'''
@@ -577,20 +783,50 @@ def define_flann_bindings(binding_name):
         docstr = ut.codeblock(
             '''
             Builds an index and uses it to find nearest neighbors.
-
-            Params:
-                dataset = pointer to a data set stored in row major order
-                rows = number of rows (features) in the dataset
-                cols = number of columns in the dataset (feature dimensionality)
-                testset = pointer to a query set stored in row major order
-                tcount = number of rows (features) in the query dataset (same dimensionality as features in the dataset)
-                result_ids = pointer to matrix for the indices of the nearest neighbors of the testset features in the dataset
-                    (must have tcount number of rows and nn number of columns)
-                nn = how many nearest neighbors to return
-                flann_params = generic flann parameters
-
-            Returns: zero or -1 for error
             ''')
+        return_doc = zero_success
+
+        py_source = ut.codeblock(
+            '''
+            if pts.dtype.type not in allowed_types:
+                raise FLANNException('Cannot handle type: %s' % pts.dtype)
+
+            if qpts.dtype.type not in allowed_types:
+                raise FLANNException('Cannot handle type: %s' % pts.dtype)
+
+            if pts.dtype != qpts.dtype:
+                raise FLANNException('Data and query must have the same type')
+
+            pts = ensure_2d_array(pts, default_flags)
+            qpts = ensure_2d_array(qpts, default_flags)
+
+            npts, dim = pts.shape
+            nqpts = qpts.shape[0]
+
+            assert qpts.shape[1] == dim, 'data and query must have the same dims'
+            assert npts >= num_neighbors, 'more neighbors than there are points'
+
+            result = np.empty((nqpts, num_neighbors), dtype=index_type)
+            if pts.dtype == np.float64:
+                dists = np.empty((nqpts, num_neighbors), dtype=np.float64)
+            else:
+                dists = np.empty((nqpts, num_neighbors), dtype=np.float32)
+
+            self.__flann_parameters.update(kwargs)
+
+            flann.find_nearest_neighbors[
+                pts.dtype.type](
+                pts, npts, dim, qpts, nqpts, result, dists, num_neighbors,
+                pointer(self.__flann_parameters))
+
+            if num_neighbors == 1:
+                return (result.reshape(nqpts), dists.reshape(nqpts))
+            else:
+                return (result, dists)
+            ''')
+
+        py_alias = 'nn'
+        py_args = ['pts', 'qpts', 'num_neighbors=1', '**kwargs']
         return_type = 'int'
         binding_argnames = ['dataset', 'rows', 'cols', 'testset', 'tcount',
                             'result_ids', 'dists', 'nn', 'flann_params']
@@ -598,14 +834,11 @@ def define_flann_bindings(binding_name):
     elif binding_name == 'load_index':
         docstr = ut.codeblock(
             '''
-            * Loads an index from a file.
-            *
-            * @param filename File to load the index from.
-            * @param dataset The dataset corresponding to the index.
-            * @param rows Dataset tors
-            * @param cols Dataset columns
-            * @return
+            Loads a previously saved index from a file.
             ''')
+        return_doc = 'index_ptr'
+        cpp_param_doc['dataset'] = 'The dataset corresponding to the index'
+        cpp_param_doc['filename'] = 'File to load the index from'
         c_source_part = ut.codeblock(
             r'''
             Index<Distance>* index = new Index<Distance>(Matrix<typename Distance::ElementType>(dataset,rows,cols), SavedIndexParams(filename), d);
@@ -615,16 +848,45 @@ def define_flann_bindings(binding_name):
         return_type = 'flann_index_t'
         binding_argnames = ['filename', 'dataset', 'rows', 'cols']
         optional_args = ['Distance d = Distance()']
+        py_source = ut.codeblock(
+            '''
+            if pts.dtype.type not in allowed_types:
+                raise FLANNException('Cannot handle type: %s' % pts.dtype)
+
+            pts = ensure_2d_array(pts, default_flags)
+            npts, dim = pts.shape
+
+            if self.__curindex is not None:
+                flann.free_index[self.__curindex_type](
+                    self.__curindex, pointer(self.__flann_parameters))
+                self.__curindex = None
+                self.__curindex_data = None
+                self.__added_data = []
+                self.__curindex_type = None
+
+            self.__curindex = flann.load_index[pts.dtype.type](
+                c_char_p(to_bytes(filename)), pts, npts, dim)
+
+            if self.__curindex is None:
+                raise FLANNException(
+                    ('Error loading the FLANN index with filename=%r.'
+                     ' C++ may have thrown more detailed errors') % (filename,))
+
+            self.__curindex_data = pts
+            self.__added_data = []
+            self.__removed_ids = []
+            self.__curindex_type = pts.dtype.type
+            ''')
+        py_args = ['filename', 'pts']
+
     elif binding_name == 'save_index':
         docstr = ut.codeblock(
             '''
-             * Saves the index to a file. Only the index is saved into the
-             * file, the dataset corresponding to the index is not saved.
-             *
-             * @param index_ptr The index that should be saved
-             * @param filename The filename the index should be saved to
-             * @return Returns 0 on success, negative value on error.
+            Saves the index to a file. Only the index is saved into the file, the dataset corresponding to the index is not saved.
             ''')
+        cpp_param_doc['index_ptr'] = 'The index that should be saved'
+        cpp_param_doc['filename'] = 'The filename the index should be saved to'
+        return_doc = 'Returns 0 on success, negative value on error'
         c_source_part = ut.codeblock(
             r'''
             Index<Distance>* index = (Index<Distance>*)index_ptr;
@@ -634,26 +896,33 @@ def define_flann_bindings(binding_name):
             ''')
         return_type = 'int'
         binding_argnames = ['index_ptr', 'filename']
+        py_alias = None
+        py_args = None
+        py_source = ut.codeblock(
+            '''
+            if self.__curindex is not None:
+                flann.save_index[self.__curindex_type](
+                    self.__curindex, c_char_p(to_bytes(filename)))
+            ''')
+
     elif binding_name == 'build_index':
         docstr = ut.codeblock(
-            """
+            '''
             Builds and returns an index. It uses autotuning if the target_precision field of index_params
             is between 0 and 1, or the parameters specified if it's -1.
+            ''')
+        pydoc = ut.codeblock(
+            '''
+            This builds and internally stores an index to be used for
+            future nearest neighbor matchings.  It erases any previously
+            stored indexes, so use multiple instances of this class to
+            work with multiple stored indices.  Use nn_index(...) to find
+            the nearest neighbors in this index.
 
-            Params:
-                dataset = pointer to a data set stored in row major order
-                rows = number of rows (features) in the dataset
-                cols = number of columns in the dataset (feature dimensionality)
-                speedup = speedup over linear search, estimated if using autotuning, output parameter
-                index_params = index related parameters
-                flann_params = generic flann parameters
-
-            Returns: the newly created index or a number <0 for error
-            """)
-
-        optional_args = ['Distance d = Distance()']
-        return_type = 'flann_index_t'
-        # binding_argnames = ['dataset', 'rows', 'cols', 'speedup', 'flann_params']
+            pts is a 2d numpy array or matrix. All the computation is done
+            in np.float32 type, but pts may be any type that is convertable
+            to np.float32.
+            ''')
         c_source = ut.codeblock(
             r'''
             typedef typename Distance::ElementType ElementType;
@@ -683,20 +952,52 @@ def define_flann_bindings(binding_name):
                 return NULL;
             }
            ''').replace('{', '{{').replace('}', '}}')
+        py_source = ut.codeblock(
+            '''
+            if pts.dtype.type not in allowed_types:
+                raise FLANNException('Cannot handle type: %s' % pts.dtype)
 
+            pts = ensure_2d_array(pts, default_flags)
+            npts, dim = pts.shape
+
+            self.__ensureRandomSeed(kwargs)
+
+            self.__flann_parameters.update(kwargs)
+
+            if self.__curindex is not None:
+                flann.free_index[self.__curindex_type](
+                    self.__curindex, pointer(self.__flann_parameters))
+                self.__curindex = None
+
+            speedup = c_float(0)
+            self.__curindex = flann.build_index[pts.dtype.type](
+                pts, npts, dim, byref(speedup), pointer(self.__flann_parameters))
+            self.__curindex_data = pts
+            self.__curindex_type = pts.dtype.type
+
+            params = dict(self.__flann_parameters)
+            params['speedup'] = speedup.value
+
+            return params
+            ''')
+        # binding_argnames = ['dataset', 'rows', 'cols', 'speedup', 'flann_params']
+        return_doc = 'the newly created index or a number <0 for error'
+        cpp_param_doc['speedup'] = 'speedup over linear search, estimated if using autotuning, output parameter'
+        optional_args = ['Distance d = Distance()']
+        return_type = 'flann_index_t'
+        py_args = ['pts', '**kwargs']
         binding_argnames = ['dataset', 'rows', 'cols', 'speedup', 'flann_params']
     elif binding_name == 'free_index':
         docstr = ut.codeblock(
             '''
             Deletes an index and releases the memory used by it.
-
-            Params:
-                index_ptr = the index (constructed previously using flann_build_index).
-                flann_params = generic flann parameters
-
-            Returns: zero or a number <0 for error
             ''')
-
+        pydoc = ut.codeblock(
+            '''
+            Deletes the current index freeing all the momory it uses.
+            The memory used by the dataset that was indexed is not freed
+            unless there are no other references to those numpy arrays.
+            ''')
         c_source_part = ut.codeblock(
             r'''
             Index<Distance>* index = (Index<Distance>*)index_ptr;
@@ -704,10 +1005,79 @@ def define_flann_bindings(binding_name):
 
             return 0;
             ''')
+        py_source = ut.codeblock(
+            '''
+            self.__flann_parameters.update(kwargs)
+
+            if self.__curindex is not None:
+                flann.free_index[self.__curindex_type](
+                    self.__curindex, pointer(self.__flann_parameters))
+                self.__curindex = None
+                self.__curindex_data = None
+                self.__added_data = []
+                self.__removed_ids = []
+            ''')
+        return_doc = zero_success
         return_type = 'int'
         binding_argnames = ['index_ptr', 'flann_params']
+        cpp_param_doc['flann_params'] = 'generic flann params (only used to specify verbosity)'
+        py_alias = 'delete_index'
+        py_args = ['**kwargs']
+    elif binding_name == 'get_point':
+        docstr = ut.codeblock(
+            '''
+            Gets a point from a given index position.
+            ''')
+        return_doc = 'pointer to datapoint or NULL on miss'
+        binding_argnames = ['index_ptr', 'point_id']
+        cpp_param_doc['point_id'] = 'index of datapoint to get.'
+        return_type = 'Distance::ElementType*'
+    elif binding_name == 'flann_get_distance_order':
+        docstr = ut.codeblock(
+            '''
+            * Gets the distance order in use throughout FLANN (only applicable if minkowski distance
+            * is in use).
+            '''
+        )
+        binding_argnames = []
+        return_type = 'int'
     else:
-        raise NotImplementedError('Unknown binding name %r' % (binding_name,))
+        dictdef = {
+            '_template_new': {
+                'docstr': ut.codeblock(
+                    '''
+                    '''
+                ),
+                'binding_argnames': [],
+                'return_type': 'int',
+            },
+
+            'flann_get_distance_type': {
+                'docstr': ut.codeblock(
+                    '''
+                    '''
+                ),
+                'binding_argnames': [],
+                'return_type': 'int',
+            },
+
+            'flann_log_verbosity': {
+                'docstr': ut.codeblock(
+                    '''
+                     Sets the log level used for all flann functions (unless
+                     specified in FLANNParameters for each call
+                    '''
+                ),
+                'binding_argnames': ['level'],
+                'return_type': 'void',
+            },
+        }
+        if binding_name in dictdef:
+            docstr = dictdef[binding_name].get('docstr', '')
+            binding_argnames = dictdef[binding_name]['binding_argnames']
+            return_type = dictdef[binding_name]['return_type']
+        else:
+            raise NotImplementedError('Unknown binding name %r' % (binding_name,))
 
     if c_source is None:
         if c_source_part is not None:
@@ -750,13 +1120,55 @@ def define_flann_bindings(binding_name):
                 '''
             )
 
+    try:
+        docstr_cpp = docstr[:]
+
+        if 'Params:*' in docstr and len(binding_argnames) > 0:
+            param_docs = ut.dict_take(cpp_param_doc, binding_argnames)
+            cpp_param_docblock = '\n'.join(['%s = %s' % (name, doc) for name, doc in zip(binding_argnames, param_docs)])
+            docstr_cpp = docstr.replace('Params:*', 'Params:\n' + ut.indent(cpp_param_docblock, '    '))
+        if '@Param*' in docstr and len(binding_argnames) > 0:
+            param_docs = ut.dict_take(cpp_param_doc, binding_argnames)
+            cpp_param_docblock = '\n'.join(['* @param %s %s' % (name, doc) for name, doc in zip(binding_argnames, param_docs)])
+            docstr_cpp = docstr.replace('@Param*', ut.indent(cpp_param_docblock, ''))
+        if return_doc is not None:
+            param_docs = ut.dict_take(cpp_param_doc, binding_argnames)
+            cpp_param_docblock = '\n'.join(['%s = %s' % (name, doc) for name, doc in zip(binding_argnames, param_docs)])
+            docstr_cpp += '\n\n' + 'Params:\n' + ut.indent(cpp_param_docblock, '    ')
+            docstr_cpp += '\n\n' + 'Returns: ' + return_doc
+
+        if pydoc is None:
+            docstr_py = docstr[:]
+        else:
+            docstr_py = pydoc[:]
+
+        if py_args:
+            py_param_doc = cpp_param_doc.copy()
+            py_param_doc['pts'] = py_param_doc['dataset'].replace('pointer to ', '')
+            py_param_doc['qpts'] = py_param_doc['testset'].replace('pointer to ', '') + ' (may be a single point)'
+            py_param_doc['num_neighbors'] = py_param_doc['nn']
+            py_param_doc['**kwargs'] = py_param_doc['flann_params']
+            py_args_ = [a.split('=')[0] for a in py_args]
+            param_docs = ut.dict_take(py_param_doc, py_args_, '')
+            # py_types =
+            py_param_docblock = '\n'.join(['%s: %s' % (name, doc) for name, doc in zip(py_args_, param_docs)])
+            docstr_py += '\n\n' + 'Params:\n' + ut.indent(py_param_docblock, '    ')
+    except Exception as ex:
+        ut.printex(ex, keys=['binding_name'])
+        raise
+        pass
+
     binding_def = {
         'cpp_binding_name': cpp_binding_name,
-        'docstr': docstr,
+        'docstr_cpp': docstr_cpp,
+        'docstr_py': docstr_py,
         'return_type': return_type,
         'binding_argnames': binding_argnames,
         'c_source': c_source,
         'optional_args': optional_args,
+        'py_source': py_source,
+        'py_args': py_args,
+        'py_alias': py_alias,
     }
 
     return binding_def
@@ -823,15 +1235,16 @@ def autogen_parts(binding_name=None):
         'flann_index_t'                   : 'FLANN_INDEX',
         'FLANNParameters*'                : 'POINTER(FLANNParameters)',
         'Distance::ResultType*'           : "ndpointer(%(restype)s, flags='aligned, c_contiguous, writeable')",
+        'Distance::ElementType*'          : "ndpointer(%(numpy)s, ndim=2, flags='aligned, c_contiguous')",
         'typename Distance::ElementType*' : "ndpointer(%(numpy)s, ndim=2, flags='aligned, c_contiguous')",
         'typename Distance::ResultType*'  : "ndpointer(%(restype), ndim=2, flags='aligned, c_contiguous, writeable')",
     }
 
     templated_ctype_map = {
         'filename'          : 'char*',
+        'level'             : 'int',
         'rows'              : 'int',
         'cols'              : 'int',
-        #'id_'               : 'int',
         'point_id'          : 'unsigned int',
         'num'               : 'int',
         'max_nn'            : 'int',
@@ -872,20 +1285,36 @@ def autogen_parts(binding_name=None):
             python_ctype_map[key] = simple_c_to_ctypes[val]
 
     binding_def = define_flann_bindings(binding_name)
-    docstr           = binding_def['docstr']
+    docstr_cpp       = binding_def['docstr_cpp']
+    docstr_py       = binding_def['docstr_py']
     cpp_binding_name = binding_def['cpp_binding_name']
     return_type      = binding_def['return_type']
     binding_argnames = binding_def['binding_argnames']
     c_source         = binding_def['c_source']
-    optional_args = binding_def['optional_args']
+    py_source        = binding_def['py_source']
+    optional_args    = binding_def['optional_args']
+    py_alias         = binding_def['py_alias']
+    py_args          = binding_def['py_args']
 
     binding_args = [python_ctype_map[name] + ',  # ' + name for name in binding_argnames]
     binding_args_str = '        ' + '\n        '.join(binding_args)
     callargs = ', '.join(binding_argnames)
-    pycallargs = ', '.join([name for name in binding_argnames if name != 'index_ptr'])
-    pyinputargs = pycallargs  # FIXME
+    pycallargs = ', '.join([name for name in ['self'] + binding_argnames if name != 'index_ptr'])
+
+    if py_args is None:
+        py_args = binding_argnames
+        pyinputargs = pycallargs  # FIXME
+    else:
+        pyinputargs = ', '.join(['self'] + py_args)
 
     pyrestype = simple_c_to_ctypes[return_type]
+
+    if py_alias is None:
+        py_binding_name = binding_name
+    else:
+        py_binding_name = py_alias
+
+    binding_def['py_binding_name'] = py_binding_name
 
     #### flann_ctypes.py
 
@@ -903,20 +1332,35 @@ def autogen_parts(binding_name=None):
     ).format(binding_name=binding_name, binding_args_str=binding_args_str, pyrestype=pyrestype)
 
     #### index.py
+    default_py_source_parts = []
+    if 'pts' in py_args:
+        default_py_source_parts.append(ut.codeblock(
+            '''
+            if pts.dtype.type not in allowed_types:
+                raise FLANNException('Cannot handle type: %s' % pts.dtype)
+            pts = ensure_2d_array(pts, default_flags)
+            '''))
+
+    default_py_source_parts.append(ut.codeblock(
+        '''
+        rows = pts.shape[0]
+        raise NotImplementedError('requires custom implementation')
+        flann.{binding_name}[self.__curindex_type](self.__curindex, {pycallargs})
+        '''
+    ))
+
+    if py_source is None:
+        py_source = '\n'.join(default_py_source_parts)
 
     flann_index_codeblock = ut.codeblock(
         r'''
-        def {binding_name}(self, {pyinputargs}):
-            """''' + ut.indent('\n' + docstr, '            ') + '''
-            """
-            if pts.dtype.type not in allowed_types:
-                raise FLANNException("Cannot handle type: %s" % pts.dtype)
-            pts = ensure_2d_array(pts, default_flags)
-            rows = pts.shape[0]
-            raise NotImplementedError('requires custom implementation')
-            flann.{binding_name}[self.__curindex_type](self.__curindex, {pycallargs})
+        def {py_binding_name}({pyinputargs}):
+            """''' + ut.indent('\n' + docstr_py, '            ') + '''
+            """''' + '\n' + ut.indent(py_source, '            ') + '''
         '''
-    ).format(binding_name=binding_name, pycallargs=pycallargs, pyinputargs=pyinputargs)
+    ).format(binding_name=binding_name, pycallargs=pycallargs,
+             py_binding_name=py_binding_name,
+             pyinputargs=pyinputargs, py_source=py_source)
 
     #### flann.cpp
 
@@ -1031,16 +1475,20 @@ def autogen_parts(binding_name=None):
 
     used_templates = ', '.join(used_template_list)
 
-    print('------')
-    print('flann_cpp_codeblock_fmtstr.format = %s' % (flann_cpp_codeblock_fmtstr,))
-    flann_cpp_codeblock = flann_cpp_codeblock_fmtstr.format(
-        cpp_binding_name=cpp_binding_name,
-        minkowski_option=minkowski_option,
-        binding_name=binding_name,
-        templated_args=templated_args, callargs=callargs,
-        T_typed_sigargs_cpp=T_typed_sigargs_cpp,
-        errorhandle=errorhandle,
-        used_templates=used_templates, return_type=return_type)
+    # print('------')
+    # print('flann_cpp_codeblock_fmtstr.format = %s' % (flann_cpp_codeblock_fmtstr,))
+    try:
+        flann_cpp_codeblock = flann_cpp_codeblock_fmtstr.format(
+            cpp_binding_name=cpp_binding_name,
+            minkowski_option=minkowski_option,
+            binding_name=binding_name,
+            templated_args=templated_args, callargs=callargs,
+            T_typed_sigargs_cpp=T_typed_sigargs_cpp,
+            errorhandle=errorhandle,
+            used_templates=used_templates, return_type=return_type)
+    except KeyError as ex:
+        ut.printex(ex, keys=['binding_name'])
+        raise
 
     dataset_types = [
         '',
@@ -1126,17 +1574,25 @@ def autogen_parts(binding_name=None):
     flann_h_codeblock = ut.codeblock(
         r'''
         /** BEGIN {binding_name}
-        {docstr}
+        {docstr_cpp}
          */
         '''
-    ).format(docstr=docstr, binding_name=binding_name)
+    ).format(docstr_cpp=docstr_cpp, binding_name=binding_name)
     flann_h_codeblock += '\n\n' +  '\n\n'.join(c_header_sigs)
 
     blocks_dict = {}
+    import re
+    flann_index_codeblock = ut.indent(flann_index_codeblock, '    ')
     blocks_dict['flann_ctypes.py'] = flann_ctypes_codeblock
     blocks_dict['index.py'] = flann_index_codeblock
     blocks_dict['flann.h'] = flann_h_codeblock
     blocks_dict['flann.cpp'] = flann_cpp_codeblock
+
+    for key in blocks_dict.keys():
+        blocks_dict[key] = re.sub('\n\s+\n', '\n\n', blocks_dict[key])
+        # , flags=re.MULTILINE)
+        blocks_dict[key] = re.sub('\s\s+\n', '\n', blocks_dict[key])
+        pass
 
     if ut.get_argflag('--py'):
         print('\n\n# ---------------\n\n')
@@ -1159,7 +1615,7 @@ def autogen_parts(binding_name=None):
         print('GOES IN flann.cpp')
         print('\n\n# ---------------\n\n')
         print(flann_cpp_codeblock)
-    return blocks_dict
+    return blocks_dict, binding_def
 
 if __name__ == '__main__':
     """
