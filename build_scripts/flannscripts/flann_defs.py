@@ -3,6 +3,294 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import utool as ut
 
 
+def other_flann_ctypes_diff():
+    header = ut.codeblock(
+        r'''
+        #Copyright 2008-2009  Marius Muja (mariusm@cs.ubc.ca). All rights reserved.
+        #Copyright 2008-2009  David G. Lowe (lowe@cs.ubc.ca). All rights reserved.
+        #
+        #THE BSD LICENSE
+        #
+        #Redistribution and use in source and binary forms, with or without
+        #modification, are permitted provided that the following conditions
+        #are met:
+        #
+        #1. Redistributions of source code must retain the above copyright
+        #   notice, this list of conditions and the following disclaimer.
+        #2. Redistributions in binary form must reproduce the above copyright
+        #   notice, this list of conditions and the following disclaimer in the
+        #   documentation and/or other materials provided with the distribution.
+        #
+        #THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+        #IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+        #OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+        #IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+        #INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+        #NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+        #DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+        #THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+        #(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+        #THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+        #from ctypes import *
+        #from ctypes.util import find_library
+        from numpy import (float32, float64, uint8, int32, require)
+        #import ctypes
+        #import numpy as np
+        from ctypes import (Structure, c_char_p, c_int, c_float, c_uint, c_long,
+                            c_void_p, cdll, POINTER)
+        from numpy.ctypeslib import ndpointer
+        import os
+        import sys
+
+        STRING = c_char_p
+
+
+        class CustomStructure(Structure):
+            """
+                This class extends the functionality of the ctype's structure
+                class by adding custom default values to the fields and a way of translating
+                field types.
+            """
+            _defaults_ = {}
+            _translation_ = {}
+
+            def __init__(self):
+                Structure.__init__(self)
+                self.__field_names = [ f for (f, t) in self._fields_]
+                self.update(self._defaults_)
+
+            def update(self, dict):
+                for k, v in dict.items():
+                    if k in self.__field_names:
+                        setattr(self, k, self.__translate(k, v))
+                    else:
+                        raise KeyError('No such member: ' + k)
+
+            def __getitem__(self, k):
+                if k in self.__field_names:
+                    return self.__translate_back(k, getattr(self, k))
+
+            def __setitem__(self, k, v):
+                if k in self.__field_names:
+                    setattr(self, k, self.__translate(k, v))
+                else:
+                    raise KeyError('No such member: ' + k)
+
+            def keys(self):
+                return self.__field_names
+
+            def __translate(self, k, v):
+                if k in self._translation_:
+                    if v in self._translation_[k]:
+                        return self._translation_[k][v]
+                return v
+
+            def __translate_back(self, k, v):
+                if k in self._translation_:
+                    for tk, tv in self._translation_[k].items():
+                        if tv == v:
+                            return tk
+                return v
+
+
+        class FLANNParameters(CustomStructure):
+            _fields_ = [
+                ('algorithm', c_int),
+                ('checks', c_int),
+                ('eps', c_float),
+                ('sorted', c_int),
+                ('max_neighbors', c_int),
+                ('cores', c_int),
+                ('trees', c_int),
+                ('leaf_max_size', c_int),
+                ('branching', c_int),
+                ('iterations', c_int),
+                ('centers_init', c_int),
+                ('cb_index', c_float),
+                ('target_precision', c_float),
+                ('build_weight', c_float),
+                ('memory_weight', c_float),
+                ('sample_fraction', c_float),
+                ('table_number_', c_uint),
+                ('key_size_', c_uint),
+                ('multi_probe_level_', c_uint),
+                ('log_level', c_int),
+                ('random_seed', c_long),
+            ]
+            _defaults_ = {
+                'algorithm' : 'kdtree',
+                'checks' : 32,
+                'eps' : 0.0,
+                'sorted' : 1,
+                'max_neighbors' : -1,
+                'cores' : 0,
+                'trees' : 1,
+                'leaf_max_size' : 4,
+                'branching' : 32,
+                'iterations' : 5,
+                'centers_init' : 'random',
+                'cb_index' : 0.5,
+                'target_precision' : 0.9,
+                'build_weight' : 0.01,
+                'memory_weight' : 0.0,
+                'sample_fraction' : 0.1,
+                'table_number_': 12,
+                'key_size_': 20,
+                'multi_probe_level_': 2,
+                'log_level' : 'warning',
+                'random_seed' : -1
+            }
+            _translation_ = {
+                'algorithm'     : {'linear'    : 0, 'kdtree'    : 1, 'kmeans'    : 2, 'composite' : 3, 'kdtree_single' : 4, 'hierarchical': 5, 'lsh': 6, 'saved': 254, 'autotuned' : 255, 'default'   : 1},
+                'centers_init'  : {'random'    : 0, 'gonzales'  : 1, 'kmeanspp'  : 2, 'default'   : 0},
+                'log_level'     : {'none'      : 0, 'fatal'     : 1, 'error'     : 2, 'warning'   : 3, 'info'      : 4, 'default'   : 2, 'debug': 5}
+            }
+
+
+        default_flags = ['C_CONTIGUOUS', 'ALIGNED']
+        allowed_types = [ float32, float64, uint8, int32]
+
+        FLANN_INDEX = c_void_p
+
+
+        def load_flann_library():
+
+            root_dir = os.path.abspath(os.path.dirname(__file__))
+
+            tried_paths = []
+
+            libnames = ['libflann.so']
+            libdir = 'lib'
+            if sys.platform == 'win32':
+                libnames = ['flann.dll', 'libflann.dll']
+            elif sys.platform == 'darwin':
+                libnames = ['libflann.dylib']
+
+            while root_dir is not None:
+                for libname in libnames:
+                    try:
+                        libpath = os.path.join(root_dir, libdir, libname)
+                        #print('Trying %s' % (libpath,))
+                        tried_paths.append(libpath)
+                        flannlib = cdll[libpath]
+                        return flannlib
+                    except Exception:
+                        pass
+                    try:
+                        libpath = os.path.join(root_dir, 'build', libdir, libname)
+                        #print('Trying %s' % (libpath,))
+                        tried_paths.append(libpath)
+                        flannlib = cdll[libpath]
+                        return flannlib
+                    except Exception:
+                        pass
+                tmp = os.path.dirname(root_dir)
+                if tmp == root_dir:
+                    root_dir = None
+                else:
+                    root_dir = tmp
+
+            # if we didn't find the library so far, try loading without
+            # a full path as a last resort
+            for libname in libnames:
+                try:
+                    #print('Trying %s' % (libname,))
+                    tried_paths.append(libname)
+                    flannlib = cdll[libname]
+                    return flannlib
+                except:
+                    pass
+
+            return None
+
+        flannlib = load_flann_library()
+        if flannlib is None:
+            raise ImportError('Cannot load dynamic library. Did you compile FLANN?')
+
+
+        class FlannLib(object):
+            pass
+
+        flann = FlannLib()
+
+        type_mappings = ( ('float', 'float32'),
+                          ('double', 'float64'),
+                          ('byte', 'uint8'),
+                          ('int', 'int32') )
+
+
+        def define_functions(fmtstr):
+            try:
+                for type_ in type_mappings:
+                    # Special case for doubles
+                    if type_[0] == 'double':
+                        restype = 'float64'
+                    else:
+                        restype = 'float32'
+
+                    source = fmtstr % {'C': type_[0], 'numpy': type_[1], 'restype': restype}
+                    code = compile(source, '<string>', 'exec')
+                    eval(code)
+            except AttributeError:
+                print('+=========')
+                print('Error compling code')
+                print('+ format string ---------')
+                print(fmtstr)
+                print('+ failing instance ---------')
+                print(source)
+                print('L_________')
+                raise
+        '''
+    )
+
+    footer = ut.codeblock(
+        '''
+        def ensure_2d_array(arr, flags, **kwargs):
+            arr = require(arr, requirements=flags, **kwargs)
+            if len(arr.shape) == 1:
+                arr = arr.reshape(-1, arr.size)
+            return arr
+        '''
+    )
+    return header, footer
+
+
+def indexpy_extras():
+    '''
+    def __init__(self, **kwargs):
+        """
+        Constructor for the class and returns a class that can bind to
+        the flann libraries.  Any keyword arguments passed to __init__
+        override the global defaults given.
+        """
+
+        self.__rn_gen.seed()
+
+        self.__curindex = None
+        self.__curindex_data = None  # pointer to keep the numpy data alive
+        self.__added_data = []  # contained to keep any added numpy data alive
+        self.__removed_ids = []  # contains the point ids that have been removed
+        self.__curindex_type = None
+
+        self.__flann_parameters = FLANNParameters()
+        self.__flann_parameters.update(kwargs)
+
+    def __del__(self):
+        #print('FLANN OBJECT IS DELETED')
+        self.delete_index()
+
+    def get_indexed_shape(self):
+        """ returns the shape of the data being indexed """
+        npts, dim = self.__curindex_data.shape
+        for _extra in self.__added_data:
+            npts += _extra.shape[0]
+        npts -= len(self.__removed_ids)
+        return npts, dim
+    '''
+    pass
+
+
 def define_flann_bindings(binding_name):
     """
     Define the binding names for flann
@@ -25,7 +313,7 @@ def define_flann_bindings(binding_name):
         'flann_params': 'generic flann parameters',
         'index_ptr': 'the index (constructed previously using flann_build_index)',
         'nn': 'how many nearest neighbors to return',
-        'rebuild_threadhold': ut.packtext(
+        'rebuild_threshold': ut.packtext(
             '''reallocs index when it grows by factor of `rebuild_threshold`.
             A smaller value results is more space efficient but less
             computationally efficient. Must be greater than 1.'''),
@@ -149,13 +437,21 @@ def define_flann_bindings(binding_name):
         #return_type = 'void'
         return_type = 'int'
         docstr = 'Adds points to pre-built index.'
-        binding_argnames = [
-            'index_ptr',
-            'points',
-            'rows',
-            'cols',  # TODO: can remove
-            'rebuild_threshold',
-        ]
+        if False:
+            binding_argnames = [
+                'index_ptr',
+                'points',
+                'rows',
+                'cols',  # TODO: can remove
+                'rebuild_threshold',
+            ]
+        else:
+            binding_argnames = [
+                'index_ptr',
+                'points',
+                'rows',
+                'rebuild_threshold',
+            ]
         return_doc = '0 if success otherwise -1'
         py_args = ['new_pts', 'rebuild_threshold=2.']
         cpp_param_doc['points'] = 'pointer to array of points'

@@ -2,6 +2,11 @@
 " References: http://vim.wikia.com/wiki/Syntax_folding_of_Vim_scripts
 
 
+"syn region pythonGoogleDocblock
+"        \ start="^\s*Args:[\n ]*" end="\n\n"
+"  \ contained contains=
+
+
 "syn cluster pythonNoFold contains=pythonStatement,pythonDoctest,pythonConditional,pythonRepeat,pythonOperator,pythonException,pythonInclude,pythonDecorator,pythonFunction,pythonComment,pythonString,pythonRawString,pythonFmtString,pythonUtoolStartBlock,pythonUtoolEndBlock,pythonEscape,pythonTodo,pythonBuiltin,pythonExceptions,pythonSpaceError
 "syn cluster pythonNoFold contains=pythonBuiltin
 " 

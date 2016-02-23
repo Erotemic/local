@@ -211,6 +211,8 @@ noremap <leader>9 9gt
 ":noremap <leader>s :%s/\<<C-r><C-w>\>/
 " Add ss which does the same thing but is specific
 :noremap <leader>ss :%s/\<<C-r><C-w>\>/
+:noremap <leader>sd :'<,'>s/\<\(<C-r><C-w>\)\>/tmpkw['\1']/g<CR>
+
 
 " goto next syntastic error
 :noremap <leader>e :SyntasticCheck<CR> :Errors<CR>

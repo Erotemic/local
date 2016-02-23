@@ -38,19 +38,19 @@ def update_bindings():
     import re
     binding_names = [
         'build_index',
-        # 'used_memory',
-        # 'add_points',
-        # 'remove_point',
+        'used_memory',
+        'add_points',
+        'remove_point',
 
-        # 'compute_cluster_centers',
-        # 'load_index',
-        # 'save_index',
-        # 'find_nearest_neighbors',
+        'compute_cluster_centers',
+        'load_index',
+        'save_index',
+        'find_nearest_neighbors',
 
-        # 'radius_search',
-        # 'remove_points',
-        # 'free_index',
-        # 'find_nearest_neighbors_index',
+        'radius_search',
+        'remove_points',
+        'free_index',
+        'find_nearest_neighbors_index',
 
         # 'size',
         # 'veclen',
@@ -237,13 +237,18 @@ def update_bindings():
             text_dict[key] = '\n'.join(new_line_list)
             lines_dict[key] = new_line_list
         ut.colorprint('L___  GENERATED BINDING %s ___' % (binding_name,), 'yellow')
-    new_text = '\n'.join(lines_dict[key])
-    ut.writeto(ut.augpath(places[key], '.new'), new_text)
-    if ut.get_argflag('--diff'):
-        difftext = ut.get_textdiff(orig_texts[key], new_text,
-                                   num_context_lines=7, ignore_whitespace=True)
-        difftext = ut.get_colored_diff(difftext)
-        print(difftext)
+
+    for key in places:
+        new_text = '\n'.join(lines_dict[key])
+        #ut.writeto(ut.augpath(places[key], '.new'), new_text)
+        ut.writeto(ut.augpath(places[key]), new_text)
+
+    for key in places:
+        if ut.get_argflag('--diff'):
+            difftext = ut.get_textdiff(orig_texts[key], new_text,
+                                       num_context_lines=7, ignore_whitespace=True)
+            difftext = ut.get_colored_diff(difftext)
+            print(difftext)
 
 
 def autogen_parts(binding_name=None):
@@ -435,12 +440,11 @@ def autogen_parts(binding_name=None):
              pyinputargs=pyinputargs, py_source=py_source)
 
     #### flann.cpp
-
-    flann_cpp_code_fmtstr = ut.codeblock(
+    #// {binding_name} BEGIN CPP BINDING
+    #template <typename Distance>
+    #{return_type} __flann_{binding_name}({templated_args})
+    flann_cpp_code_fmtstr_ = ut.codeblock(
         r'''
-        // {binding_name} BEGIN CPP BINDING
-        template <typename Distance>
-        {return_type} __flann_{binding_name}({templated_args})
         {{''' + '\n' + ut.indent(c_source, ' ' * (4 * 3)) + r'''
         }}
         '''
@@ -456,10 +460,8 @@ def autogen_parts(binding_name=None):
     #)
     #type_bindings_fmtstr = implicit_type_bindings_fmtstr
 
-    explicit_type_bindings_fmtstr = ut.codeblock(
+    explicit_type_bindings_part3_fmtstr = ut.codeblock(
         r'''
-        template <{used_templates}>
-        {return_type} _flann_{binding_name}({T_typed_sigargs_cpp})
         {{
             if (flann_distance_type==FLANN_DIST_EUCLIDEAN) {{
                 return __flann_{binding_name}<L2<T> >({callargs});
@@ -489,7 +491,6 @@ def autogen_parts(binding_name=None):
         }}
         '''
     )
-    type_bindings_fmtstr = explicit_type_bindings_fmtstr
 
     # c binding body
     c_bodyblock_fmtstr = ut.codeblock(
@@ -504,7 +505,8 @@ def autogen_parts(binding_name=None):
     #### flann.h
 
     # c binding header
-    c_headersig_fmtstr = 'FLANN_EXPORT {return_type} flann_{binding_name}{signame_type}({T_typed_sigargs2});'
+    #c_headersig_fmtstr = 'FLANN_EXPORT {return_type} flann_{binding_name}{signame_type}({T_typed_sigargs2});'
+    c_headersig_part1_fmtstr = 'FLANN_EXPORT {return_type} flann_{binding_name}{signame_type}('
 
     #### format cpp parts
 
@@ -524,19 +526,37 @@ def autogen_parts(binding_name=None):
         minkowski_option = ', MinkowskiDistance<T>(flann_distance_order)'
     else:
         minkowski_option = ''
-    templated_args = ', '.join(templated_bindings)
-    T_typed_sigargs_cpp = ', '.join(binding_sigargs_cpp)
 
-    flann_cpp_codeblock_fmtstr = flann_cpp_code_fmtstr + '\n\n\n' + type_bindings_fmtstr + '\n'
+    templated_args = ', '.join(templated_bindings)
+    if binding_name == 'remove_point':
+        # HACK
+        templated_args += '_uint'
+    cpp_sig_part1 = '{return_type} __flann_{binding_name}('.format(return_type=return_type, binding_name=binding_name)
+    maxlen = 100
+    cpp_sig_ = ut.packstr(cpp_sig_part1 + templated_args, textwidth=maxlen, breakchars=', ', wordsep=', ', break_words=False, newline_prefix=' ' * len(cpp_sig_part1))
+    cpp_sig = cpp_sig_[:-2] + ')'
+    flann_cpp_code_fmtstr = 'template <typename Distance>\n' + cpp_sig + '\n' + flann_cpp_code_fmtstr_
+    #print(cpp_sig)
+
+    T_typed_sigargs_cpp = ', '.join(binding_sigargs_cpp)
 
     used_template_list = []
     used_template_list.append('typename T')
     if 'typename Distance::ResultType*' in binding_argtypes:
         used_template_list.append('typename R')
+    used_templates = ', '.join(used_template_list)
 
-    if binding_name == 'remove_point':
-        # HACK
-        templated_args += '_uint'
+    type_binding_part1 = 'template <{used_templates}>'.format(used_templates=used_templates)
+    type_binding_part2_ = '{return_type} _flann_{binding_name}('.format(return_type=return_type, binding_name=binding_name)
+
+    maxlen = 100
+    cpp_type_sig_ = ut.packstr(type_binding_part2_ + T_typed_sigargs_cpp, textwidth=maxlen, breakchars=', ', wordsep=', ', break_words=False, newline_prefix=' ' * len(type_binding_part2_))
+    cpp_type_sig = cpp_type_sig_[:-2] + ')'
+    type_binding_part12 = type_binding_part1 + '\n' + cpp_type_sig
+
+    explicit_type_bindings_fmtstr =  type_binding_part12 + '\n' + explicit_type_bindings_part3_fmtstr
+
+    flann_cpp_codeblock_fmtstr = flann_cpp_code_fmtstr + '\n\n\n' + explicit_type_bindings_fmtstr + '\n'
 
     if return_type == 'int':
         errorhandle = 'return -1;'
@@ -545,8 +565,6 @@ def autogen_parts(binding_name=None):
     else:
         errorhandle = 'throw 0;'
 
-    used_templates = ', '.join(used_template_list)
-
     # print('------')
     # print('flann_cpp_codeblock_fmtstr.format = %s' % (flann_cpp_codeblock_fmtstr,))
     try:
@@ -554,8 +572,9 @@ def autogen_parts(binding_name=None):
             cpp_binding_name=cpp_binding_name,
             minkowski_option=minkowski_option,
             binding_name=binding_name,
-            templated_args=templated_args, callargs=callargs,
-            T_typed_sigargs_cpp=T_typed_sigargs_cpp,
+            #templated_args=templated_args,
+            callargs=callargs,
+            #T_typed_sigargs_cpp=T_typed_sigargs_cpp,
             errorhandle=errorhandle,
             used_templates=used_templates, return_type=return_type)
     except KeyError as ex:
@@ -615,6 +634,7 @@ def autogen_parts(binding_name=None):
         binding_sigargs2 = [type_ + ' ' + name for type_, name in
                             zip(binding_argtypes2, binding_argnames)]
         T_typed_sigargs2 = ', '.join(binding_sigargs2)
+        T_typed_sigargs2_nl = ',\n'.join(binding_sigargs2)
         if needstemplate:
             iftemplate = '<{T_type}>'.format(T_type=T_type)
         else:
@@ -630,22 +650,28 @@ def autogen_parts(binding_name=None):
                                               iftemplate=iftemplate,
                                               ifreturns=ifreturns,
                                               return_type=return_type)
-        # Hack for header
-        T_typed_sigargs2 = T_typed_sigargs2.replace('FLANNParameters* flann_params', 'struct FLANNParameters* flann_params')
 
-        header_line = c_headersig_fmtstr.format(signame_type=signame_type,
-                                                T_typed_sigargs2=T_typed_sigargs2,
-                                                binding_name=binding_name,
-                                                return_type=return_type)
+        header_line_part1 = c_headersig_part1_fmtstr.format(signame_type=signame_type,
+                                                            binding_name=binding_name,
+                                                            return_type=return_type)
+        header_line = header_line_part1 + ut.indent(T_typed_sigargs2_nl, ' ' * len(header_line_part1)).lstrip(' ') + ');'
+        # Hack for header
+        header_line = header_line.replace('FLANNParameters* flann_params', 'struct FLANNParameters* flann_params')
+
+        #header_line = c_headersig_fmtstr.format(signame_type=signame_type,
+        #                                        T_typed_sigargs2=T_typed_sigargs2,
+        #                                        binding_name=binding_name,
+        #                                        return_type=return_type)
         c_header_sigs.append(header_line)
         c_body_blocks.append(bodyblock)
 
     flann_cpp_codeblock += '\n' + '\n'.join(c_body_blocks)
-    flann_cpp_codeblock += '\n' + '// {binding_name} END'.format(binding_name=binding_name)
+    #flann_cpp_codeblock += '\n' + '// {binding_name} END'.format(binding_name=binding_name)
 
+    #BEGIN {binding_name}
     flann_h_codeblock = ut.codeblock(
         r'''
-        /** BEGIN {binding_name}
+        /**
         {docstr_cpp}
          */
         '''
