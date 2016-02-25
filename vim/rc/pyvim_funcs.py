@@ -562,6 +562,23 @@ def open_fpath_list(fpath_list, num_hsplits=2):
         print('Can only handle %d' % index)
 
 
+def vim_grep_project(pat, hashid=None):
+    import vim
+    import utool as ut
+    if hashid is None:
+        hashid = ut.hashstr27(pat)
+    print('Grepping for pattern = %r' % (pat,))
+    msg_list = ut.grep_projects([pat], verbose=False, colored=False)
+    fname = 'tmp_grep_' + hashid + '.txt'
+    dpath = ut.get_app_resource_dir('utool')
+    fpath = ut.unixjoin(dpath, fname)
+    #pyvim_funcs.vim_fpath_cmd('split', fpath)
+    vim_fpath_cmd('new', fpath)
+    text = '\n'.join(msg_list)
+    overwrite_text(text)
+    vim.command(":exec ':w'")
+
+
 if __name__ == '__main__':
     """
     CommandLine:

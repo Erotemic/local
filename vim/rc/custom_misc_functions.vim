@@ -655,15 +655,24 @@ word = pyvim_funcs.get_word_at_cursor(url_ok=False)
 #msg_list = ut.grep_projects(['\\b' + re.escape(word) + '\\b'], verbose=False)
 print('Grepping for pattern = %r' % (word,))
 pat = r'\b' + re.escape(word) + r'\b'
-msg_list = ut.grep_projects([pat], verbose=False, colored=False)
-fpath = ut.unixjoin(ut.get_app_resource_dir('utool'), 'tmp_grep_' + word + '.txt')
-#pyvim_funcs.vim_fpath_cmd('split', fpath)
-pyvim_funcs.vim_fpath_cmd('new', fpath)
-text = '\n'.join(msg_list)
-pyvim_funcs.overwrite_text(text)
-vim.command(":exec ':w'")
+pyvim_funcs.vim_grep_project(pat, word)
 endpython
 endfunc
+
+
+func! FUNC_GrepProject(...) 
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool as ut
+import re
+#msg_list = ut.grep_projects(['\\b' + re.escape(word) + '\\b'], verbose=False)
+pat = vim.eval('a:1')
+pyvim_funcs.vim_grep_project(pat)
+endpython
+endfunc
+
+command! -nargs=1 GrepProject call FUNC_GrepProject(<f-args>)<CR>
 
 
 func! PyFormatParagraph() range

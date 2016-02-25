@@ -185,6 +185,10 @@ install_core_extras()
     sudo add-apt-repository ppa:nilarimogard/webupd8
     sudo apt-get update
     sudo apt-get install freshplayerplugin
+
+
+    #http://superuser.com/questions/403664/how-can-i-copy-and-paste-text-out-of-a-remote-vim-to-a-local-vim
+    # 
 }
 
 
