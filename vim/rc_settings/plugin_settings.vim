@@ -113,3 +113,18 @@ silent! unmap!  <leader>t
 let g:vimtweak_focus_transparency=0
 let s:ft=0
 
+
+"-------------------------
+"# Jedi?
+" Prevent insertion of netrwLeftMouse when clicking on GUI vim (bug introduced
+" https://github.com/jrid/vim-jrid/blob/master/vimrc-netrw
+" with later netrw plugin)
+"let g:netrw_mousemaps=0
+
+let g:netrw_altv          = 1
+let g:netrw_fastbrowse    = 2
+let g:netrw_keepdir       = 0
+let g:netrw_liststyle     = 0
+let g:netrw_retmap        = 1
+let g:netrw_silent        = 1
+let g:netrw_special_syntax= 1
