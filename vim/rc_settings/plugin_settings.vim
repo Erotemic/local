@@ -119,7 +119,7 @@ let s:ft=0
 " Prevent insertion of netrwLeftMouse when clicking on GUI vim (bug introduced
 " https://github.com/jrid/vim-jrid/blob/master/vimrc-netrw
 " with later netrw plugin)
-"let g:netrw_mousemaps=0
+let g:netrw_mousemaps=0
 
 let g:netrw_altv          = 1
 let g:netrw_fastbrowse    = 2
