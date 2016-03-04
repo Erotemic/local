@@ -40,11 +40,15 @@ vnoremap ge :call PyFormatParagraph()<CR>
 noremap <leader>ge :call PySelectAndFormatParagraph()<CR>
 :noremap <c-g> :call PySelectAndFormatParagraph()<CR>
 
-:noremap <c-M-B> oimport utool<CR>with utool.embed_on_exception_context:<CR><Esc>
-:noremap <c-b> oimport utool<CR>utool.embed()<CR><Esc>
+":noremap <c-M-B> oimport utool<CR>with utool.embed_on_exception_context:<CR><Esc>
+":noremap <c-b> oimport utool<CR>utool.embed()<CR><Esc>
+:noremap <c-M-B> :call PyMakeWithEmbed()<CR><Esc>
+:noremap <c-b> :call PyMakeEmbed()<CR><Esc>
 
-:inoremap <c-M-B> import utool<CR>with utool.embed_on_exception_context:<CR>
-:inoremap <c-b> import utool<CR>utool.embed()<CR>
+":inoremap <c-M-B> import utool<CR>with utool.embed_on_exception_context:<CR>
+":inoremap <c-b> import utool<CR>utool.embed()<CR>
+:inoremap <c-M-B> <Esc>:call PyMakeWithEmbed()<CR>i
+:inoremap <c-b> <Esc>:call PyMakeEmbed()<CR>i
 
 vnoremap gd :call PyFormatDoctest()<CR>
 vnoremap gu :call PyUnFormatDoctest()<CR>
