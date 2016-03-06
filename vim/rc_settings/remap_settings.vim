@@ -68,6 +68,23 @@ noremap <leader>eg :call GrepProjectWordAtCursor()<CR>
 
 noremap <leader>pv :call PyMakePrintVar()<CR>
 noremap <leader>pl :call PyMakePrintLine()<CR>
+
+" DO line in ipython and RETURN to vim
+noremap  <leader>pd :call CopyGVimToIpythonDev(mode(), 1)<CR>
+vnoremap <leader>pd :call CopyGVimToIpythonDev(visualmode(), 1)<CR>
+
+" Paste to ipython and STAY in ipython
+noremap  <leader>ps :call CopyGVimToIpythonDev(mode(), 0)<CR>
+vnoremap <leader>ps :call CopyGVimToIpythonDev(visualmode(), 0)<CR>
+
+" Re-paste selection
+noremap  <leader>pr :call CopyGVimToIpythonDev('v', 1)<CR>
+
+" Focus on terminal
+noremap  <leader>ft :call FocusTerm()<CR>
+
+"-range PassRange <line1>,<line2>call PrintGivenRange()
+
 " alt-u
 inoremap <M-u> ut.
 inoremap <M-i> import

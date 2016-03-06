@@ -187,6 +187,8 @@ def get_word_in_line_at_col(line, col, nonword_chars=' \t\n\r[](){}:;.,"\'\\/'):
 def find_pyfunc_above_cursor():
     import vim
     import utool as ut
+    ut.ENABLE_COLORS = False
+    ut.util_str.ENABLE_COLORS = False
     ut.util_dbg.COLORED_EXCEPTIONS = False
     # Get text posision
     (row, col) = vim.current.window.cursor
@@ -249,7 +251,6 @@ def get_paragraph_line_range_at_cursor():
 
 # --- Text extractors
 
-
 def get_selected_text(select_at_cursor=False):
     """ make sure the vim function calling this has a range after ()
 
@@ -293,6 +294,8 @@ def get_text_between_lines(lnum1, lnum2, col1=0, col2=sys.maxint - 1):
         text = '\n'.join(lines)
     except Exception:
         import utool as ut
+        ut.ENABLE_COLORS = False
+        ut.util_str.ENABLE_COLORS = False
         ut.util_dbg.COLORED_EXCEPTIONS = False
         print(ut.list_str(lines))
         raise
@@ -387,6 +390,8 @@ def get_current_modulename():
     import vim
     from os.path import dirname
     import utool as ut
+    ut.ENABLE_COLORS = False
+    ut.util_str.ENABLE_COLORS = False
     ut.util_dbg.COLORED_EXCEPTIONS = False
     #ut.rrrr(verbose=False)
     buffer_name = vim.current.buffer.name
@@ -399,6 +404,8 @@ def auto_docstr(**kwargs):
     import imp
     import utool as ut
     ut.util_dbg.COLORED_EXCEPTIONS = False
+    ut.ENABLE_COLORS = False
+    ut.util_str.ENABLE_COLORS = False
     try:
         print("RELOADING UTOOL via imp")
         imp.reload(ut)
@@ -565,6 +572,8 @@ def open_fpath_list(fpath_list, num_hsplits=2):
 def vim_grep_project(pat, hashid=None):
     import vim
     import utool as ut
+    ut.ENABLE_COLORS = False
+    ut.util_str.ENABLE_COLORS = False
     if hashid is None:
         hashid = ut.hashstr27(pat)
     print('Grepping for pattern = %r' % (pat,))
@@ -589,5 +598,7 @@ if __name__ == '__main__':
     import multiprocessing
     multiprocessing.freeze_support()  # for win32
     import utool as ut  # NOQA
+    ut.ENABLE_COLORS = False
+    ut.util_str.ENABLE_COLORS = False
     ut.util_dbg.COLORED_EXCEPTIONS = False
     ut.doctest_funcs()

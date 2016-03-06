@@ -349,6 +349,64 @@ endfu
 command! MYINFOCMD call MYINFO() <C-R>
 
 
+func! FocusTerm(...) range
+python << endpython
+import vim
+#vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool.util_ubuntu
+import utool as ut
+utool.util_ubuntu.XCtrl.do(('focus', 'x-terminal-emulator.X-terminal-emulator'))
+endpython
+endfu
+
+
+func! CopyGVimToIpythonDev(...) range
+python << endpython
+import vim
+#vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool.util_ubuntu
+import utool as ut
+ut.rrrr(0)
+utool.util_ubuntu.rrr(0)
+
+# Hack to determine mode
+mode = vim.eval('a:1')
+return_to_vim = vim.eval('a:2')
+
+if 'v' in mode.lower():
+    text = pyvim_funcs.get_selected_text()
+else:
+    text = pyvim_funcs.get_line_at_cursor()
+
+ut.copy_text_to_clipboard(text)
+if '\n' in text or len(text) > 80:
+    text = '\'%paste\''
+else:
+    import pipes
+    text = pipes.quote(text.lstrip(' '))
+    ('focus', 'GVIM'),
+
+doscript = [
+    ('focus', 'x-terminal-emulator.X-terminal-emulator'),
+    ('type', text), 
+    #('type', '%paste'), 
+    ('key', 'KP_Enter'),
+]
+if return_to_vim == "1":
+    doscript += [
+        ('focus', 'GVIM'),
+    ]
+
+utool.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01)
+#xctrl.send(('type', '%paste'), ('key', 'KP_Enter'))
+#xctrl.focus_window('GVIM')
+#L______________
+endpython
+endfu 
+
+
 func! InsertDocstr() 
 python << endpython
 import vim

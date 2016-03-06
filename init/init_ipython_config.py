@@ -69,7 +69,36 @@ def write_default_ipython_profile():
         #c.InteractiveShellApp.exec_lines.append('import plottool as pt')
         c.InteractiveShellApp.exec_lines.append('from os.path import *')
         c.InteractiveShellApp.exec_lines.append('from six.moves import cPickle as pickle')
-        c.InteractiveShellApp.exec_lines.append('if \'verbose\' not in vars():\\n    verbose = True')
+        #c.InteractiveShellApp.exec_lines.append('if \'verbose\' not in vars():\\n    verbose = True')
+        import utool as ut
+        c.InteractiveShellApp.exec_lines.append(ut.codeblock(
+            """
+            class classproperty(property):
+                def __get__(self, cls, owner):
+                    return classmethod(self.fget).__get__(None, owner)()
+            class vim(object):
+                @classproperty
+                def focus(cls):
+                    import utool.util_ubuntu
+                    utool.util_ubuntu.xctrl.do(('focus', 'GVIM'),)
+                @classproperty
+                def copy(cls):
+                    import utool.util_ubuntu
+                    utool.util_ubuntu.xctrl.do(('focus', 'GVIM'),)
+                    import utool as ut
+                    import IPython
+                    ipy = IPython.get_ipython()
+                    lastline = ipy.history_manager.input_hist_parsed[-2]
+                    ut.copy_text_to_clipboard(lastline)
+                    # import utool as ut
+                    import utool.util_ubuntu
+                    utool.util_ubuntu.xctrl.do(
+                        ('focus', 'GVIM'),
+                        ('key', 'ctrl+v'),
+                        ('focus', 'x-terminal-emulator.X-terminal-emulator')
+                    )
+            """
+        ))
         #c.InteractiveShell.autoindent = True
         #c.InteractiveShell.colors = 'LightBG'
         #c.InteractiveShell.confirm_exit = False
@@ -82,15 +111,9 @@ def write_default_ipython_profile():
     ut.write_to(ipy_config_fpath, ipy_config_text)
 
 
-def main():
-    write_default_ipython_profile()
-
-
 if __name__ == '__main__':
     """
     CommandLine:
         python ~/local/init/init_ipython_config.py
-        python local/init/init_ipython_config.py
-        python init_ipython_config.py
     """
-    main()
+    write_default_ipython_profile()
