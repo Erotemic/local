@@ -77,14 +77,31 @@ let g:syntastic_cpp_remove_include_errors = 1
 "let g:syntastic_c_include_dirs = ['include', '../include']
 "let g:syntastic_c_compiler = 'clang'
 
+"-------------------------
+" PLUGIN: Tagbar
+" https://github.com/majutsushi/tagbar/blob/master/doc/tagbar.txt
+"let g:tagbar_indent = 1
+let g:tagbar_sort=0
+"let g:tagbar_compact = 1
+let g:tagbar_compact = 0
+let g:tagbar_hide_nonpublic=1
+let g:tagbar_autoshowtag = 1
+"let g:tagbar_left = 1
+let g:tagbar_left = 0
+
 
 "-------------------------
 " PLUGIN: Taglist
-"https://justin.abrah.ms/vim/vim_and_python.html
+" https://justin.abrah.ms/vim/vim_and_python.html
 let Tlist_GainFocus_On_ToggleOpen = 1
 let Tlist_Close_On_Select = 0
 let Tlist_Use_Right_Window = 0
 let Tlist_File_Fold_Auto_Close = 1
+"let Tlist_Sort_Type = "name"
+let Tlist_Sort_Type="order"
+let Tlist_Show_One_File=1
+let Tlist_Auto_Update=1
+let Tlist_Auto_Highlight_Tag = 1
 
 "-------------------------
 " PLUGIN: Unimpaired

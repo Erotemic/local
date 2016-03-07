@@ -361,7 +361,7 @@ endpython
 endfu
 
 
-func! CopyGVimToIpythonDev(...) range
+func! CopyGVimToTerminalDev(...) range
 python << endpython
 import vim
 #vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
@@ -375,13 +375,16 @@ utool.util_ubuntu.rrr(0)
 mode = vim.eval('a:1')
 return_to_vim = vim.eval('a:2')
 
-if 'v' in mode.lower():
-    text = pyvim_funcs.get_selected_text()
+if mode == 'word':
+    text = pyvim_funcs.get_word_at_cursor()
 else:
-    text = pyvim_funcs.get_line_at_cursor()
+    if 'v' in mode.lower():
+        text = pyvim_funcs.get_selected_text()
+    else:
+        text = pyvim_funcs.get_line_at_cursor()
 
 ut.copy_text_to_clipboard(text)
-if '\n' in text or len(text) > 80:
+if '\n' in text or len(text) > 20:
     text = '\'%paste\''
 else:
     import pipes

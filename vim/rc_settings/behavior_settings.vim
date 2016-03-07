@@ -29,10 +29,23 @@ else
 endif
 
 " Good Colorschemes
+
+"colorscheme solarized
+colorscheme slate
+set bg=light
+set bg=dark
+let g:solarized_contrast="normal"
+"let g:solarized_contrast="high"
+"let g:solarized_contrast="low"
+let g:solarized_visibility="normal"
+"let g:solarized_visibility="high"
+
 if has("gui_running")
-    colorscheme synic
+    "colorscheme synic
+    let g:solarized_degrade=0
 else
     colorscheme murphy
+    let g:solarized_degrade=1
 endif
 
 " Gray Line Numbering
@@ -54,6 +67,7 @@ set nomousehide
 " Do not open these sort of files
 set wildignore=*.o,*~,*.pyc,*.aux,*.masv,*.bbl,*.bcf,*.blg,*.brf,*.synctex,*.upa,*.upb,*.pdf,*.dvi
 
+"h ttp://vim.wikia.com/wiki/Great_wildmode/wildmenu_and_console_mouse
 set wildmode=longest,list,full
 set wildmenu
 
@@ -142,3 +156,12 @@ function! SyntaxItem()
     return synIDattr(synID(line("."),col("."),1),"name")
 endfunction
 "set statusline+=%{SyntaxItem()}
+"
+"
+
+
+"set statusline=%F%m%r%h%w\ [TYPE=%Y\ %{&ff}]\ \ [%l/%L\ (%p%%)
+"set statusline=%F%m%r%h%w\ [type=%Y\ %{&ff}]\ \ [%l/%L\ (%p%%)
+"set statusline=%f%m%r%h%w\ [type=%Y\ %{&ff}]\ \ [%l/%L\ (%p%%) (%c)
+set statusline=%f%m%r%h%w\ \ [%l/%L\ (%p%%),\ %c]
+
