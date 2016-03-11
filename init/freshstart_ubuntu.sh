@@ -224,6 +224,8 @@ install_fonts()
     7z x master.zip
     sudo cp ~/tmp/open-dyslexic-master/otf/*.otf /usr/share/fonts/opentype/
     sudo fc-cache
+
+    wget http://www.myfontfree.com/zip.php?itnetid=37252&submit=70lcpj0ftroiesv26mvtqkbph3
 }
 
 virtualbox_ubuntu_init()
