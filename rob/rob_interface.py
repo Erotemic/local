@@ -195,8 +195,8 @@ def project_dpaths():
         else:
             raise AssertionError('invalid python version')
         return module
-    __REPOS1__ = import_module_from_fpath('~/local/init/__REPOS1__.py', True)
-    project_list = __REPOS1__.PROJECT_REPOS
+    REPOS1 = import_module_from_fpath('~/local/init/REPOS1.py', True)
+    project_list = REPOS1.PROJECT_REPOS
     return project_list
     #project_list = [
     #    #'~/code/hotspotter',

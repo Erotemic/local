@@ -4,16 +4,16 @@ import sys
 import os
 from six.moves import zip
 from os.path import exists, join, dirname, split, isdir
-import __REPOS1__
+import REPOS1
 import meta_util_git1 as mu  # NOQA
 from meta_util_git1 import get_repo_dirs, get_repo_dname, unixpath  # NOQA
 
-PROJECT_REPOS    = __REPOS1__.PROJECT_REPOS
-IBEIS_REPOS_URLS = __REPOS1__.IBEIS_REPOS_URLS
-CODE_DIR         = __REPOS1__.CODE_DIR
-VIM_REPO_URLS    = __REPOS1__.VIM_REPO_URLS
-BUNDLE_DPATH     = __REPOS1__.BUNDLE_DPATH
-VIM_REPOS_WITH_SUBMODULES = __REPOS1__.VIM_REPOS_WITH_SUBMODULES
+PROJECT_REPOS    = REPOS1.PROJECT_REPOS
+IBEIS_REPOS_URLS = REPOS1.IBEIS_REPOS_URLS
+CODE_DIR         = REPOS1.CODE_DIR
+VIM_REPO_URLS    = REPOS1.VIM_REPO_URLS
+BUNDLE_DPATH     = REPOS1.BUNDLE_DPATH
+VIM_REPOS_WITH_SUBMODULES = REPOS1.VIM_REPOS_WITH_SUBMODULES
 
 
 def gitcmd(repo, command):

@@ -49,9 +49,9 @@ def ensuredir(path):
 
 def ensure_nongit_plugins():
     import utool as ut
-    import __REPOS1__
+    import REPOS1
     BUNDLE_DPATH = util_git1.BUNDLE_DPATH
-    for url in __REPOS1__.VIM_NONGIT_PLUGINS:
+    for url in REPOS1.VIM_NONGIT_PLUGINS:
         fpath = ut.grab_zipped_url(url, download_dir=BUNDLE_DPATH)
         if fpath.endswith('.vba'):
             cmd_ = 'vim ' + fpath + ' -c "so % | q"'

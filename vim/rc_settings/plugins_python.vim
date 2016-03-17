@@ -53,6 +53,7 @@ flake8_errors = [
     'N805', # first argument of a method should be named 'self'
     'N806', # variable in function should be lowercase [N806]
     'N811', # constant name imported as non constant
+    'N813', # camel case
 ] 
 flake8_args_list = [
     #'--max-line-length 80',
