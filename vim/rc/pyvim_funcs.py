@@ -588,6 +588,22 @@ def vim_grep_project(pat, hashid=None):
     vim.command(":exec ':w'")
 
 
+def vim_popup_menu():
+    """ http://stackoverflow.com/questions/13537521/custom-popup-menu-in-vim """
+    import vim
+    import utool as ut
+    vim.command('echohl Title')
+    vim.command("echo 'Code fragments:'")
+    vim.command("echohl None")
+    options = ['foo', 'bar']
+    id_list = ut.chr_range(len(options), base='1')
+    for id_, opt in zip(id_list, options):
+        vim.command("echo '%s. %s'" % (id_, opt))
+    choice = chr(int(vim.eval('getchar()')))
+    print('choice = %r' % (choice,))
+    pass
+
+
 if __name__ == '__main__':
     """
     CommandLine:

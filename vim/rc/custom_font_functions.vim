@@ -1,4 +1,6 @@
-func! ToggleFont(...) 
+
+
+function! ToggleFont(...) 
 python << endpython
 import vim
 def python_toggle_font():
@@ -6,19 +8,14 @@ def python_toggle_font():
     import pyvim_funcs
     hasindex = int(vim.eval('exists("g:myfontindex")')) != 0
     increment = int(vim.eval('a:1'))
-    #print('hasindex = %r' % (hasindex,))
     if hasindex: 
         if increment == 0:
-            # early exit
             return
         orig_myfontindex = int(vim.eval('g:myfontindex'))
     else:
         orig_myfontindex = 0
     myfontindex = orig_myfontindex + increment
     vim.command('let g:myfontindex=%r' % (myfontindex))
-    #print('orig_myfontindex = %r' % (orig_myfontindex,))
-    #print('increment = %r' % (increment,))
-    #print('myfontindex = %r' % (myfontindex,))
     try:
         pyvim_funcs.pyrun_fuzzyfont(myfontindex)
     except Exception as ex:
@@ -26,22 +23,33 @@ def python_toggle_font():
         vim.command(':echom %r' % (msg,))
 python_toggle_font()
 endpython
-":ECHOVAR gfn
-endfu 
+endfunction
 
-fu! SetFuzzyFont(fontid)
+
+function! SetFuzzyFont(fontid)
 python << endpython
 import pyvim_funcs
 request = vim.eval('a:fontid')
 pyvim_funcs.pyrun_fuzzyfont(request)
 endpython
-endfu
+endfunction
 
 
 function! FontDecrease()
     call AdjustFontSize(-1)
 endfunction
 command! FontDecrease call FontDecrease()
+
+
+function! FuncVimPopup()
+python << endpython
+import pyvim_funcs
+import imp
+imp.reload(pyvim_funcs)
+pyvim_funcs.vim_popup_menu()
+endpython
+"http://stackoverflow.com/questions/13537521/custom-popup-menu-in-vim
+endfunction
 
 
 function! FontIncrease()
