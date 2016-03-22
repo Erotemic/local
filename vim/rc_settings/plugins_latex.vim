@@ -171,3 +171,6 @@ endpython
 " There will be lots of stuff in a typical compiler output which will
 " completely fall through the 'efm' parsing. This options sets whether or not
 " you will be shown those lines.
+
+
+" https://caffeinatedcode.wordpress.com/2009/11/16/simple-latex-ctags-and-taglist/

@@ -34,6 +34,7 @@ freshtart_ubuntu_entry_point()
     # TODO UTOOL
     mv ~/.bashrc ~/.bashrc.orig
     mv ~/.profile ~/.profile.orig
+    ln -s ~/local/homelinks/.ctags ~/.ctags
     ln -s ~/local/bashrc.sh ~/.bashrc
     ln -s ~/local/profile.sh ~/.profile 
     ln -s ~/local/config/.pypirc ~/.pypirc 
