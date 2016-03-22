@@ -34,6 +34,22 @@ freshtart_ubuntu_entry_point()
     # TODO UTOOL
     mv ~/.bashrc ~/.bashrc.orig
     mv ~/.profile ~/.profile.orig
+
+
+    # Remove dead symlinks
+    sudo apt-get install symlinks
+    symlinks -d .
+    
+    
+    
+    for f in $(ls -A ~/local/homelinks/); do ln -s ~/local/homelinks/$f ~/.$f; done
+    for f in $(ls -A ~/local/homelinks/); do echo ~/local/homelinks/$f; done
+    for f in $(ls -A); do echo "${f:1:${#f}}" ; done
+    for f in $(ls -A); do git mv $f "${f:1:${#f}}" ; done
+
+    % Link all rc files in homelinks to the homedrive
+    ln -s ~/local/homelinks/.[a-z]* ~/
+
     ln -s ~/local/homelinks/.ctags ~/.ctags
     ln -s ~/local/bashrc.sh ~/.bashrc
     ln -s ~/local/profile.sh ~/.profile 

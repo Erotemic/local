@@ -3,10 +3,10 @@ export QT_ACCESSIBILITY=0
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
     export NCPUS=$(sysctl -n hw.ncpu)
-    source ~/local/bashrc_mac.sh
+    source ~/local/homelinks/helpers/bashrc_mac.sh
 else
     export NCPUS=$(grep -c ^processor /proc/cpuinfo)
-    source ~/local/bashrc_ubuntu.sh
+    source ~/local/homelinks/helpers/bashrc_ubuntu
 fi
 
 export QT_API=pyqt
@@ -40,8 +40,8 @@ fi
 
 #export OMP_NUM_THREADS=7
 
-source ~/local/alias_rc.sh
-source ~/local/git_helpers.sh
+source ~/local/homelinks/helpers/git_helpers
+source ~/local/homelinks/helpers/alias_helpers
 
 update_pip_dists()
 {
@@ -113,3 +113,6 @@ else
 fi
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PYTHON_VENV/lib
+
+# hack
+export UTOOL_DPATH=~/latex/crall-candidacy-2015/
