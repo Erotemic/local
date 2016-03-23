@@ -117,8 +117,10 @@ let Tlist_Sort_Type="order"
 let Tlist_Show_One_File=1
 let Tlist_Auto_Update=1
 let Tlist_Auto_Highlight_Tag = 1
-let Tlist_tex_settings = 'latex;l:labels;s:sections;t:subsections;u:subsubsections'
-set iskeyword=@,48-57,_,-,:,192-255
+let Tlist_tex_settings = 'latex;s:sections;t:subsections;u:subsubsections'
+
+" Only for latex
+"set iskeyword=@,48-57,_,-,:,192-255
 
 
 "-------------------------
