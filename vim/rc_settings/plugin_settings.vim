@@ -82,8 +82,8 @@ let g:syntastic_cpp_remove_include_errors = 1
 " https://github.com/majutsushi/tagbar/blob/master/doc/tagbar.txt
 "let g:tagbar_indent = 1
 let g:tagbar_sort=0
-"let g:tagbar_compact = 1
-let g:tagbar_compact = 0
+let g:tagbar_compact = 1
+"let g:tagbar_compact = 0
 let g:tagbar_hide_nonpublic=1
 let g:tagbar_autoshowtag = 1
 "let g:tagbar_left = 1
@@ -91,19 +91,26 @@ let g:tagbar_left = 0
 
 " http://stackoverflow.com/questions/26145505/using-vims-tagbar-plugin-for-latex-files
 let g:tagbar_type_tex = {
-    \ 'ctagstype' : 'tex',
-    \ 'kinds'     : [
-        \ 's:section',
-        \ 't:subsection',
-        \ 'u:subsubsection',
-        \ 'g:graphics:0:0',
-        \ 'l:labels',
-        \ 'r:refs:1:0',
-        \ 'p:pagerefs:1:0'
-    \ ],
-    \ 'sort'    : 0,
+    \ 'ctagstype' : 'tex2',
 \ }
 
+
+"let g:tagbar_type_tex = {
+"    \ 'ctagstype' : 'tex2',
+"    \ 'kinds' : [
+"        \ 'c:chapters',
+"        \ 's:sections',
+"        \ 'u:subsections',
+"        \ 'b:subsubsections',
+"        \ 'P:paragraphs',
+"        \ 'l:labels:0:0',
+"    \ ],
+"    \ 'sort'    : 0,
+"\ }
+
+"\ 'i:includes:1:0',
+"\ 'p:parts',
+"\ 'G:subparagraphs:0:0',
 
 "-------------------------
 " PLUGIN: Taglist
@@ -117,7 +124,7 @@ let Tlist_Sort_Type="order"
 let Tlist_Show_One_File=1
 let Tlist_Auto_Update=1
 let Tlist_Auto_Highlight_Tag = 1
-let Tlist_tex_settings = 'latex;s:sections;t:subsections;u:subsubsections'
+"let Tlist_tex_settings = 'latex;s:sections;t:subsections;u:subsubsections'
 
 " Only for latex
 "set iskeyword=@,48-57,_,-,:,192-255

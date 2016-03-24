@@ -75,6 +75,13 @@ LATEX_REPOS_URLS, LATEX_REPOS = LATEX_REPO_TUP
 sudo add-apt-repository ppa:pgolm/the-silver-searcher
 sudo apt-get update
 sudo apt-get install the-silver-searcher
+
+
+https://github.com/rentalcustard/exuberant-ctags.git
+cd exuberant-ctags
+./configure
+make -j9
+sudo make install
 """
 
 """

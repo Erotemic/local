@@ -17,28 +17,34 @@ def GROUP(x):
 
 title = 'section'
 
-tks = [
-    ('section', 's'),
-    ('subsection', 't'),
-    ('subsubsection', 'u'),
-]
+#tks = [
+#    ('section', 's'),
+#    ('subsection', 't'),
+#    ('subsubsection', 'u'),
+##]
 
-print('--langdef=tex')
-print('--langmap=tex:.tex')
+#print('--langdef=tex')
+#print('--langmap=tex:.tex')
 # --regex-tex=/\\label\{([^}]*)\}/\1/l,label/
 
 # --regex-tex=/\\label\{([^}]*)\}/\1/l,label/
 # --regex-tex=/^\s*\\section\{([^}]*)\}/\1/s,section/
 # --regex-tex=/^\s*\\subsection\{([^}]*)\}/\1/t,subsection/
-for title, kind in tks:
-    if title == 'section':
-        # exp = '^\s*' + SLASH + title + LCURL + GROUP('.*') + RCURL + NONEXT_BSLASH
-        # ctagline = '--regex-tex=/' + exp + r'/\1/' + kind + ',' + title + '/'
-        # print(ctagline)
-        exp = '^\s*' + SLASH + title + LCURL + GROUP(NOT_LCURL + '*') +  RCURL
-        ctagline = '--regex-tex=/' + exp + r'/\1/' + kind + ',' + title + '/'
-        print(ctagline)
-    else:
-        exp = '^\s*' + SLASH + title + LCURL + GROUP(NOT_LCURL + '*') + RCURL
-        ctagline = '--regex-tex=/' + exp + r'/\1/' + kind + ',' + title + '/'
-        print(ctagline)
+tks = [
+    'chapter',
+    'section',
+    'subsection',
+    'subsubsection',
+    'paragraph'
+]
+LANG = 'tex2'
+for num, title in enumerate(tks):
+    base = '^\s*' + SLASH + title + r'\s*' + LCURL + GROUP('[^~]*') + RCURL
+    regexp_list = [
+        base + '$',
+        base + r'[~]*\\label'
+    ]
+    replpart = '+' + '-' * num + r' \1'
+    kindpart = 'p,' + title
+    for regexp in regexp_list:
+        print('--regex-' + LANG + '=/' + regexp + '/' + replpart + '/' + kindpart + '/' )
