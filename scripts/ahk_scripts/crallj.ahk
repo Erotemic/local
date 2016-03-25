@@ -8,7 +8,7 @@ return
 #SingleInstance force
 
 ;#include %userprofile%\local\ahk_scripts\middle_click.ahk
-#include C:\Users\joncrall\local\ahk_scripts\middle_click.ahk
+#include C:\Users\joncrall\local\scripts\ahk_scripts\middle_click.ahk
 ;#include middle_click.ahk
 ;#include crallj_funcs.ahk
 ;#include ctrl_h.ahk
