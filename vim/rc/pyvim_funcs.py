@@ -39,6 +39,7 @@ def pyrun_fuzzyfont(request):
         r'Mono_Dyslexic:h10:cANSI',
         r'Inconsolata:h10',
         r'monofur:h11',
+        r'OpenDyslexicMono\ 10',
         #r'Mono\ Dyslexic:h10',
         #r'Inconsolata:h11',
         #r'Source_Code_Pro:h11:cANSI',
