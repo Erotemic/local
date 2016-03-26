@@ -3,25 +3,16 @@
 --langdef=tex2
 --langmap=tex2:.tex
 
-
-
---regex-tex2=/^\s*\\chapter\s*\{([^~]*)\}$/+ \1/p,chapter/
---regex-tex2=/^\s*\\chapter\s*\{([^~]*)\}[~]*\\label/+ \1/p,chapter/
---regex-tex2=/^\s*\\section\s*\{([^~]*)\}$/+- \1/p,section/
---regex-tex2=/^\s*\\section\s*\{([^~]*)\}[~]*\\label/+- \1/p,section/
---regex-tex2=/^\s*\\subsection\s*\{([^~]*)\}$/+-- \1/p,subsection/
---regex-tex2=/^\s*\\subsection\s*\{([^~]*)\}[~]*\\label/+-- \1/p,subsection/
---regex-tex2=/^\s*\\subsubsection\s*\{([^~]*)\}$/+--- \1/p,subsubsection/
---regex-tex2=/^\s*\\subsubsection\s*\{([^~]*)\}[~]*\\label/+--- \1/p,subsubsection/
---regex-tex2=/^\s*\\paragraph\s*\{([^~]*)\}$/+---- \1/p,paragraph/
---regex-tex2=/^\s*\\paragraph\s*\{([^~]*)\}[~]*\\label/+---- \1/p,paragraph/
-
 --regex-tex2=/\\label\s*\{([^}]+)\}/\1/l,label/
 --regex-tex2=/\\cref\s*\{([^}]+)\}/\1/r,ref/
 
-#--regex-tex=/^\s*\\chapter\s*\{([^~]*)\}$/CHAP \1/c,chapter/
-#--regex-tex=/^\s*\\chapter\s*\{([^~]*)\}[~]*\\label/CHAP \1/c,chapter/
-#--regex-tex=/^\s*\\section\s*\{([^~]*)\}[~]*\\label/\. \1/s,section/
-#--regex-tex=/^\s*\\subsection\s*\{([^~]*)\}[~]*\\label/\.\. \1/u,subsection/
-#--regex-tex=/^\s*\\subsubsection\s*\{([^~]*)\}[~]*\\label/\.\.\. \1/b,subsubsection/
-#--regex-tex=/^\s*\\paragraph\s*\{([^~]*)\}/\.\.\.\. \1/P,paragraph/
+--regex-tex2=/^\s*\\chapter\s*\{([^~]*)\}$/+ \1/p,chapter/
+--regex-tex2=/^\s*\\chapter\s*\{([^~]*)\}[~]*\\label/+ \1/p,chapter/
+--regex-tex2=/^\s*\\section\s*\{([^~]*)\}$/+-- \1/p,section/
+--regex-tex2=/^\s*\\section\s*\{([^~]*)\}[~]*\\label/+-- \1/p,section/
+--regex-tex2=/^\s*\\subsection\s*\{([^~]*)\}$/+---- \1/p,subsection/
+--regex-tex2=/^\s*\\subsection\s*\{([^~]*)\}[~]*\\label/+---- \1/p,subsection/
+--regex-tex2=/^\s*\\subsubsection\s*\{([^~]*)\}$/+------ \1/p,subsubsection/
+--regex-tex2=/^\s*\\subsubsection\s*\{([^~]*)\}[~]*\\label/+------ \1/p,subsubsection/
+--regex-tex2=/^\s*\\paragraph\s*\{([^~]*)\}$/+-------- \1/p,paragraph/
+--regex-tex2=/^\s*\\paragraph\s*\{([^~]*)\}[~]*\\label/+-------- \1/p,paragraph/

@@ -36,8 +36,9 @@ freshtart_ubuntu_entry_point()
     mv ~/.profile ~/.profile.orig
 
     # Remove dead symlinks
-    #sudo apt-get install symlinks
-    #symlinks -d .
+    cd
+    sudo apt-get install symlinks
+    symlinks -d .
     
     mkdir -p ~/.config
     export HOMELINKS=~/local/homelinks

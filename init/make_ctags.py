@@ -38,13 +38,29 @@ tks = [
     'paragraph'
 ]
 LANG = 'tex2'
+"""
+python ~/local/init/make_ctags.py
+"""
+
+begin_part = ut.codeblock(
+    r'''
+    --exclude=.git
+
+    --langdef=tex2
+    --langmap=tex2:.tex
+
+    --regex-tex2=/\\label\s*\{([^}]+)\}/\1/l,label/
+    --regex-tex2=/\\cref\s*\{([^}]+)\}/\1/r,ref/
+    ''')
+
+print(begin_part + '\n')
 for num, title in enumerate(tks):
     base = '^\s*' + SLASH + title + r'\s*' + LCURL + GROUP('[^~]*') + RCURL
     regexp_list = [
         base + '$',
         base + r'[~]*\\label'
     ]
-    replpart = '+' + '-' * num + r' \1'
+    replpart = '+' + '-' * (2 * num) + r' \1'
     kindpart = 'p,' + title
     for regexp in regexp_list:
         print('--regex-' + LANG + '=/' + regexp + '/' + replpart + '/' + kindpart + '/' )
