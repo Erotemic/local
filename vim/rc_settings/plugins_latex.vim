@@ -76,6 +76,8 @@ let g:Tex_ShowallLines = 0
 let g:tex_comment_nospell= 1
 "Autocomplete off
 let g:Tex_SmartKeyDot=0
+let g:Tex_GotoError=0
+
 
 " Turn of XeLaTeX errors
 set makeprg=texwrapper

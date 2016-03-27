@@ -763,6 +763,17 @@ endpython
 endfunc
 
 
+func! FUNC_UtoolReload(...) 
+python << endpython
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool as ut
+print('reloading utool')
+ut.rrrr(0)
+endpython
+endfunc
+command! UtoolReload call FUNC_UtoolReload()
+
+
 func! FUNC_GrepProject(...) 
 python << endpython
 import vim

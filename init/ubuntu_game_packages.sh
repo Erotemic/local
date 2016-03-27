@@ -19,6 +19,32 @@ install_hearthstone()
     sudo apt-get update
     sudo apt-get install -y wine1.7
     #sudo apt-get install wine -y
+
+
+    # Get .Net
+    #https://github.com/Epix37/Hearthstone-Deck-Tracker/issues/1164
+    wget http://winetricks.googlecode.com/svn/trunk/src/winetricks
+    bash winetricks dotnet45
+
+    #sudo apt-get install mono-complete
+    sudo apt-get install mono-vbnc
+
+    # Hearthstone arena helper
+    # https://github.com/rembound/Arena-Helper#how-to-install
+
+    wget https://github.com/Epix37/Hearthstone-Deck-Tracker/releases/download/v0.13.17/Hearthstone.Deck.Tracker-v0.13.17.zip
+
+
+    cd ~/tmp
+    wget https://github.com/rembound/Arena-Helper/releases
+    wget https://github.com/rembound/Arena-Helper/releases/download/0.6.8/ArenaHelper.v0.6.8.zip
+    7z x Hearthstone.Deck.Tracker-v*.zip
+    ls ./Hearthstone\ Deck\ Tracker/
+    chmod +x ./Hearthstone\ Deck\ Tracker/*.exe
+    mono ./Hearthstone\ Deck\ Tracker/Hearthstone\ Deck\ Tracker.exe
+    "Hearthstone Deck Tracker"
+
+
 }
 
 
