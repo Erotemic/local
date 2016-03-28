@@ -118,40 +118,45 @@ def _sed(r, regexpr, repl, force=False, recursive=False, dpath_list=None):
         ut.sed(regexpr, repl, force=force, recursive=recursive,
                dpath_list=dpath_list, verbose=True)
         return
-    #_grep(r, [repl], dpath_list=dpath_list, recursive=recursive)
-    force = rutil.cast(force, bool)
-    recursive = rutil.cast(recursive, bool)
-    import utool as ut
-    pyext = ut.get_argflag('--pyext')
-    if pyext:
-        include_patterns = ['*.py']
     else:
-        include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h']
-    if dpath_list is None:
-        dpath_list = [os.getcwd()]
-    regexpr = extend_regex(regexpr)
-    #import re
-    print('sed-ing %r' % (dpath_list,))
-    print(' * regular include_patterns : %r' % (include_patterns,))
-    print(' * (orig) regular expression : %r' % (regexpr,))
-    print(' * (origstr) regular expression : %s' % (regexpr,))
-    #regexpr = re.escape(regexpr)
-    print(' * regular expression : %r' % (regexpr,))
-    print(' * (str)regular expression : %s' % (regexpr,))
-    print(' * replacement        : %r' % (repl,))
-    print(' * recursive: %r' % (recursive,))
-    print(' * force: %r' % (force,))
-    if '\x08' in regexpr:
-        print('Remember \\x08 != \\b')
-        print('subsituting for you for you')
-        regexpr = regexpr.replace('\x08', '\\b')
+        #_grep(r, [repl], dpath_list=dpath_list, recursive=recursive)
+        force = rutil.cast(force, bool)
+        recursive = rutil.cast(recursive, bool)
+        import utool as ut
+        pyext = ut.get_argflag('--pyext')
+        if pyext:
+            include_patterns = ['*.py']
+        else:
+            include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h']
+        if ut.get_argflag('--all'):
+            include_patterns = ['*']
+        #if ut.get_argflag('--tex'):
+        include_patterns = ['*.tex']
+        if dpath_list is None:
+            dpath_list = [os.getcwd()]
+        regexpr = extend_regex(regexpr)
+        #import re
+        print('sed-ing %r' % (dpath_list,))
+        print(' * regular include_patterns : %r' % (include_patterns,))
+        print(' * (orig) regular expression : %r' % (regexpr,))
+        print(' * (origstr) regular expression : %s' % (regexpr,))
+        #regexpr = re.escape(regexpr)
         print(' * regular expression : %r' % (regexpr,))
+        print(' * (str)regular expression : %s' % (regexpr,))
+        print(' * replacement        : %r' % (repl,))
+        print(' * recursive: %r' % (recursive,))
+        print(' * force: %r' % (force,))
+        if '\x08' in regexpr:
+            print('Remember \\x08 != \\b')
+            print('subsituting for you for you')
+            regexpr = regexpr.replace('\x08', '\\b')
+            print(' * regular expression : %r' % (regexpr,))
 
-    # Walk through each directory recursively
-    num_changed = 0
-    for fpath in _matching_fnames(dpath_list, include_patterns, recursive=recursive):
-        num_changed += len(__regex_sedfile(fpath, regexpr, repl, force))
-    print('total lines changed = %r' % (num_changed,))
+        # Walk through each directory recursively
+        num_changed = 0
+        for fpath in _matching_fnames(dpath_list, include_patterns, recursive=recursive):
+            num_changed += len(__regex_sedfile(fpath, regexpr, repl, force))
+        print('total lines changed = %r' % (num_changed,))
 
 
 def _grep(r, tofind_list, recursive=True, case_insensitive=True, regex=False,

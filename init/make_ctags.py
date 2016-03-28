@@ -55,10 +55,10 @@ begin_part = ut.codeblock(
 
 print(begin_part + '\n')
 for num, title in enumerate(tks):
-    base = '^\s*' + SLASH + title + r'\s*' + LCURL + GROUP('[^~]*') + RCURL
+    base = '^\s*' + SLASH + title + r'\s*' + LCURL + GROUP('[^:]*') + RCURL
     regexp_list = [
         base + '$',
-        base + r'[~]*\\label'
+        base + r'[:]*\\label'
     ]
     replpart = '+' + '-' * (2 * num) + r' \1'
     kindpart = 'p,' + title

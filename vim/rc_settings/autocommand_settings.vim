@@ -28,7 +28,8 @@ autocmd Filetype tex,latex set spell
 "autocmd Filetype tex,latex set spell spelllang=en_us
 " http://stackoverflow.com/questions/18219444/remove-underscore-as-a-word-separator-in-vim
 autocmd Filetype tex,latex set iskeyword+=_
-autocmd Filetype tex,latex set iskeyword+=@,48-57,_,-,:,192-255
+"autocmd Filetype tex,latex set iskeyword+=@,48-57,_,-,:,192-255
+"autocmd Filetype python set iskeyword-=@,48-57,_,-,:,192-255
 
 "g:tex_isk='48-57,a-z,A-Z,192-255,_
 
