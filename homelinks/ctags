@@ -14,5 +14,5 @@
 --regex-tex2=/^\s*\\subsection\s*\{([^:]*)\}[:]*\\label/+---- \1/p,subsection/
 --regex-tex2=/^\s*\\subsubsection\s*\{([^:]*)\}$/+------ \1/p,subsubsection/
 --regex-tex2=/^\s*\\subsubsection\s*\{([^:]*)\}[:]*\\label/+------ \1/p,subsubsection/
---regex-tex2=/^\s*\\paragraph\s*\{([^:]*)\}$/+-------- \1/p,paragraph/
---regex-tex2=/^\s*\\paragraph\s*\{([^:]*)\}[:]*\\label/+-------- \1/p,paragraph/
+--regex-tex2=/^\s*\\paragraph\s*\{([^:]*)\}$/+-------- \1/P,paragraph/
+--regex-tex2=/^\s*\\paragraph\s*\{([^:]*)\}[:]*\\label/+-------- \1/P,paragraph/
