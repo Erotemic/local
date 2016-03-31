@@ -12,15 +12,15 @@ set encoding=utf8
 ":e ~/local/vim/rc/pyvim_funcs.py
 ":e ~/local/vim/vimfiles/spell/en.utf-8.add
 ":e ~/local/vim/vimfiles/spell/en.latin1.add
+" Syntax is based in:
+" $VIMRUNTIME/syntax
 ":e $VIMRUNTIME/syntax/python.vim
 ":e $VIMRUNTIME/syntax/markdown.vim
 ":e ~/local/init/ensure_vim_plugins.py
 ":e ~/local/vim/rc_settings/remap_settings.vim
 ":e ~/local/vim/rc_settings/plugins_python.vim
 " My plugins are grabbed from
-" ~/local/init/__REPOS1__.py
-" Syntax is based in:
-" $VIMRUNTIME/syntax
+" ~/local/init/REPOS1.py
 " overloading happens in 
 " ~/local/vim/vimfiles/after/syntax
 " Snippets Directory
@@ -41,7 +41,7 @@ def get_disabled_plugins():
     SeeAlso:
         ~/local/init/ensure_vim_plugins.py
         # list of plugins are in
-        ~/local/init/__REPOS1__.py
+        ~/local/init/REPOS1.py
     """
     WIN32 = sys.platform.startswith('win32')
     # Set flag to be false to disable plugin

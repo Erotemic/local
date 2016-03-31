@@ -27,19 +27,37 @@ func! Tex_RunViewLaTeX()
     call Tex_ViewLaTeX()
 endfu
 
-
-let g:Tex_SmartKeyDot=0
 let g:tex_flavor='latex'
 let g:Tex_DefaultTargetFormat='pdf'
-
 "References: http://tex.stackexchange.com/questions/95026/vim-latex-does-not-run-bibtex
 "let g:Tex_MultipleCompileFormats='pdf'
 "let g:Tex_CompileRule_pdf = 'pdflatex -shell-escape --synctex=-1 -src-specials -interaction=nonstopmode $*'
 let g:Tex_MultipleCompileFormats='pdf,bib,pdf'
 let g:Tex_CompileRule_pdf = 'lualatex -shell-escape --synctex=-1 -src-specials -interaction=nonstopmode $*'
-
 " Use main.tex.mainfile to compile
 let g:Tex_UseMakefile = 1
+"let g:Tex_IgnoredWarnings =
+"    \'Underfull'."\n".
+"    \'Overfull'."\n".
+"    \'specifier changed to'."\n".
+"    \'You have requested'."\n".
+"    \'Missing number, treated as zero.'."\n".
+"    \'There were undefined references'."\n".
+"    \'undefined on input'."\n".
+"    \'Citation %.%# undefined'
+let g:Tex_IgnoreLevel = 8
+let g:Tex_IgnoreUnmatched = 1
+let g:Tex_ShowallLines = 0
+" No comment spellcheck
+let g:tex_comment_nospell= 1
+"Autocomplete off
+let g:Tex_SmartKeyDot=0
+let g:Tex_GotoError=0
+" DISABLE <++>
+" http://tex.stackexchange.com/questions/62134/how-to-disable-all-vim-latex-mappings
+let g:Imap_UsePlaceHolders = 0
+let g:Tex_SmartKeyBS = 0
+let g:Tex_SmartKeyQuote = 0
 
 " References for warnings
 "# http://sourceforge.net/p/vim-latex/vim-latex/ci/6607de98f5c05e50956b62f43cd67ac257f7b51f/tree/compiler/tex.vim?diff=841cfca18443ccbb07bbdfffeb9847be6e0f3f1d
@@ -59,26 +77,6 @@ args = '\n'.join(ignore_warnings)
 vim.command('let g:Tex_IgnoredWarnings = "%s"' % args)
 endpython
 
-"let g:Tex_IgnoredWarnings =
-"    \'Underfull'."\n".
-"    \'Overfull'."\n".
-"    \'specifier changed to'."\n".
-"    \'You have requested'."\n".
-"    \'Missing number, treated as zero.'."\n".
-"    \'There were undefined references'."\n".
-"    \'undefined on input'."\n".
-"    \'Citation %.%# undefined'
-let g:Tex_IgnoreLevel = 8
-let g:Tex_IgnoreUnmatched = 1
-let g:Tex_ShowallLines = 0
-
-" No comment spellcheck
-let g:tex_comment_nospell= 1
-"Autocomplete off
-let g:Tex_SmartKeyDot=0
-let g:Tex_GotoError=0
-
-
 " Turn of XeLaTeX errors
 set makeprg=texwrapper
 set errorformat=%f:%l:%c:%m
@@ -96,12 +94,6 @@ endif
 command! LATEXCompileRuleLaTeX :call SetLaTeX()
 command! LATEXCompileRuleXeTeX :call SetXeTeX()
 
-" DISABLE <++>
-" http://tex.stackexchange.com/questions/62134/how-to-disable-all-vim-latex-mappings
-let g:Imap_UsePlaceHolders = 0
-let g:Tex_SmartKeyBS = 0
-let g:Tex_SmartKeyQuote = 0
-let g:Tex_SmartKeyDot = 0
 
 set conceallevel=0
 
