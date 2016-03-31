@@ -27,6 +27,14 @@ func! Tex_RunViewLaTeX()
     call Tex_ViewLaTeX()
 endfu
 
+
+" New LatexBox stuff
+let g:LatexBox_Folding=1
+let g:LatexBox_personal_latexmkrc=1
+let g:LatexBox_latexmk_async = 1
+let g:LatexBox_latexmk_preview_continuously = 0
+
+
 let g:tex_flavor='latex'
 let g:Tex_DefaultTargetFormat='pdf'
 "References: http://tex.stackexchange.com/questions/95026/vim-latex-does-not-run-bibtex
@@ -58,6 +66,12 @@ let g:Tex_GotoError=0
 let g:Imap_UsePlaceHolders = 0
 let g:Tex_SmartKeyBS = 0
 let g:Tex_SmartKeyQuote = 0
+" Cross Platform view rules
+if has("win32") || has("win16")
+    let g:Tex_ViewRule_pdf = 'C:\Program Files (x86)\SumatraPDF\SumatraPDF -reuse-instance -inverse-search "gvim -c \":RemoteOpen +\%l \%f\""'
+else
+    let g:Tex_ViewRule_pdf = 'okular --unique'
+endif
 
 " References for warnings
 "# http://sourceforge.net/p/vim-latex/vim-latex/ci/6607de98f5c05e50956b62f43cd67ac257f7b51f/tree/compiler/tex.vim?diff=841cfca18443ccbb07bbdfffeb9847be6e0f3f1d
@@ -68,26 +82,23 @@ ignore_warnings = [
     'Overfull',
     'specifier changed to',
     'You have requested',
+    'only contains floats'
     'Missing number, treated as zero.',
     'There were undefined references',
     'undefined on input',
     'Citation %.%# undefined',
+    'Unsupported document class',
+    'natbib',
 ] 
-args = '\n'.join(ignore_warnings)
-vim.command('let g:Tex_IgnoredWarnings = "%s"' % args)
+args1 = '\n'.join(ignore_warnings)
+args2 = ','.join(["'%s'" % x for x in ignore_warnings])
+vim.command('let g:Tex_IgnoredWarnings = "%s"' % args1)
+vim.command('let g:LatexBox_ignore_warnings = [%s]' % args2)
 endpython
 
 " Turn of XeLaTeX errors
 set makeprg=texwrapper
 set errorformat=%f:%l:%c:%m
-
-
-" Cross Platform view rules
-if has("win32") || has("win16")
-    let g:Tex_ViewRule_pdf = 'C:\Program Files (x86)\SumatraPDF\SumatraPDF -reuse-instance -inverse-search "gvim -c \":RemoteOpen +\%l \%f\""'
-else
-    let g:Tex_ViewRule_pdf = 'okular --unique'
-endif
 
 
 " Toggle Compile to OpenDyslexic

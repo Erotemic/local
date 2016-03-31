@@ -37,6 +37,7 @@ clean_latex()
     rm *.synctex
     rm main.pdf
     rm main.dvi
+    latexmk -c
 }
 alias ipy='ipython'
 alias ipyk='ipython kernel'
@@ -150,10 +151,10 @@ alias rob='python ~/local/rob/run_rob.py'
 alias rls='rob ls'
 alias er='gvim $prob'
 alias v='gvim'
-alias ebrc='gvim ~/local/bashrc.sh'
-alias ea='gvim ~/local/alias_rc.sh'
+alias ebrc='gvim ~/.bashrc'
+alias ea='gvim ~/local/homelinks/helpers/alias_helpers'
 alias emc='gvim ~/local/modulechanges.sh'
-alias sbrc='source ~/local/bashrc.sh' # Refresh
+alias sbrc='source ~//local/homelinks/bashrc'
 alias todo='gvim ~/Dropbox/Notes/TODO.txt'
 alias ebs='gvim ~/local/build_scripts/'
 

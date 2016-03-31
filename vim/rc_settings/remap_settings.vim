@@ -21,6 +21,7 @@ CMDSWAP : ;
 
 " Map to several leaderkeys with the main being ","
 let mapleader = ","
+let maplocalleader = ","
 noremap \ ,
 ":noremap y "+y
 "CMDUNMAP y y
