@@ -1,0 +1,9 @@
+# 
+
+$pdf_mode = 1;
+$bibtex_use = 2;
+$pdflatex = "lualatex --shell-escape --synctex=-1 -src-specials -interaction=nonstopmode %O %S";
+$pdf_previewer = "start open -a preview %O %S";
+$dvi_mode = $postscript_mode = 0;
+
+@default_files = ("main.tex");
