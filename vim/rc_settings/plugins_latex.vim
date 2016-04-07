@@ -32,7 +32,16 @@ endfu
 let g:LatexBox_Folding=1
 let g:LatexBox_personal_latexmkrc=1
 let g:LatexBox_latexmk_async = 1
+let g:LatexBox_viewer = "okular --unique"
 let g:LatexBox_latexmk_preview_continuously = 0
+
+function! SyncTexForward()
+  " https://www.reddit.com/r/vimplugins/comments/32t0xc/forward_search_with_latexbox/
+  let s:syncfile = LatexBox_GetOutputFile()
+  let execstr = "silent !okular --unique ".s:syncfile."\\#src:".line(".").expand("%\:p").' &'
+  exec execstr
+endfunction
+nnoremap <Localleader>ls :call SyncTexForward()<CR>
 
 
 let g:tex_flavor='latex'
