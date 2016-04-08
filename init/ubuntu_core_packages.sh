@@ -77,6 +77,14 @@ install_core()
 
     sudo apt-get install lm-sensors
     sudo apt-get install hardinfo
+
+
+    # TEK
+    sudo apt-get install libwxbase3.0-0
+    sudo apt-get install libwxgtk3.0-0
+    sudo apt-get install libwxgtk-webview3.0-0
+    sudo apt-get install libwxgtk-media3.0-0
+
     
 }
 
