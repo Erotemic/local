@@ -41,7 +41,7 @@ function! SyncTexForward()
   let execstr = "silent !okular --unique ".s:syncfile."\\#src:".line(".").expand("%\:p").' &'
   exec execstr
 endfunction
-nnoremap <Localleader>ls :call SyncTexForward()<CR>
+nnoremap <localleader>ls :call SyncTexForward()<CR>
 
 
 let g:tex_flavor='latex'
