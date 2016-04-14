@@ -279,37 +279,6 @@ for p in sys.path:
 EOF
 endfu 
 
-func! AuOnReadPatterns(aucmdstr, ...)
-python << EOF
-import vim
-ix = 0
-while True:
-    try:
-        pattern = vim.eval('a:%d' % ix)
-        cmdfmt = ":exec au BufNewFile,BufRead {pattern} {aucmdstr}"
-        cmd = cmdfmt.format(pattern=pattern, aucmdstr=aucmdstr)
-        vim.command(cmd)
-    except Exception:
-        break
-    ix += 1
-EOF
-endfu
-
-func! AuPreWritePatterns(aucmdstr, ...)
-python << EOF
-import vim
-ix = 0
-while True:
-    try:
-        pattern = vim.eval('a:%d' % ix)
-        cmdfmt = ":exec au BufWritePre {pattern} {aucmdstr}"
-        cmdstr = cmdfmt.format(pattern=pattern, aucmdstr=aucmdstr)
-        vim.command(cmdstr)
-    except Exception:
-        break
-    ix += 1
-EOF
-endfu
 
 
 """""""""""""

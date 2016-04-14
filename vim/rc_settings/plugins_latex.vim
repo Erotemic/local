@@ -94,6 +94,8 @@ ignore_warnings = [
     'only contains floats'
     'Missing number, treated as zero.',
     'There were undefined references',
+    'Unused global option',
+    'Marginpar on page',
     'undefined on input',
     'Citation %.%# undefined',
     'Unsupported document class',
