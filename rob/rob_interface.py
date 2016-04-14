@@ -28,6 +28,16 @@ except ImportError:
     pass
 
 
+def make_complete(r):
+    import rob_interface
+    modname = 'rob'
+    testnames = [ut.get_funcname(func) for func in
+                 ut.get_module_owned_functions(rob_interface)]
+    line = 'complete -W "%s" "%s"' % (' '.join(testnames), modname)
+    print('add the following line to your bashrc')
+    print(line)
+
+
 def focus(r, window_name):
     print(robos.EnumWindowTest())
     print(robos.GetForegroundWindow())
@@ -277,6 +287,10 @@ def search(r, *tofind_list):
 
 
 def preprocess_research(input_str):
+    import utool as ut
+    inside = ut.named_field('ref', '.*?')
+    input_str = re.sub(r'\\emph{' + inside + '}', ut.bref_field('ref'), input_str)
+    input_str = re.sub('\s?' + re.escape('---') + '\s?', ', ', input_str)
     input_str = re.sub('\\\\cite{[^}]*}', '', input_str)
     input_str = re.sub('et al.', 'et all', input_str)  # Let rob say et al.
     input_str = re.sub(r'\\r', '', input_str)  # Let rob say et al.
@@ -313,7 +327,7 @@ def process_research_line(line):
     return line
 
 
-def research_clipboard(r, start_line_str=None, rate='3', sentence_mode=True, open_file=False):
+def research_clipboard(r, start_line_str=None, rate='2', sentence_mode=True, open_file=False):
     import utool as ut
     to_speak = ut.get_clipboard()
     #ut.embed()
