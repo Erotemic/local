@@ -72,6 +72,40 @@ endif
    syn region texZone		start="\\begin{[cC]omment}"		end="\\end{[cC]omment}\|%stopzone\>"	contains=@NoSpell,texPythonRegion
    " listings package:
    syn region texZone		start="\\begin{lstlisting}"		end="\\end{lstlisting}\|%stopzone\>"	contains=@NoSpell,texPythonRegion
+   syn region texZone		start="\\begin{minted}"		end="\\end{minted}\|%stopzone\>"	contains=@NoSpell,texPythonRegion
+   if version < 600
+    syn region texZone		start="\\comment\*\=`"			end="`\|%stopzone\>"			contains=@NoSpell,texPythonRegion
+    syn region texZone		start="\\comment\*\=#"			end="#\|%stopzone\>"			contains=@NoSpell,texPythonRegion
+   else
+     if b:tex_stylish
+      syn region texZone		start="\\comment\*\=\z([^\ta-zA-Z@]\)"	end="\z1\|%stopzone\>"			contains=@NoSpell,texPythonRegion
+     else
+      syn region texZone		start="\\comment\*\=\z([^\ta-zA-Z]\)"	end="\z1\|%stopzone\>"			contains=@NoSpell,texPythonRegion
+     endif
+   endif
+  else
+   syn region texZone		start="\\begin{[cC]omment}"		end="\\end{[cC]omment}\|%stopzone\>" contains=texPythonRegion
+   syn region texZone		start="\\begin{minted}"		end="\\end{minted}\|%stopzone\>" contains=texPythonRegion
+   if version < 600
+    syn region texZone		start="\\comment\*\=`"			end="`\|%stopzone\>"  contains=texPythonRegion
+    syn region texZone		start="\\comment\*\=#"			end="#\|%stopzone\>"  contains=texPythonRegion
+   else
+     if b:tex_stylish
+       syn region texZone		start="\\comment\*\=\z([^\ta-zA-Z@]\)"	end="\z1\|%stopzone\>"  contains=texPythonRegion
+     else
+       syn region texZone		start="\\comment\*\=\z([^\ta-zA-Z]\)"	end="\z1\|%stopzone\>"  contains=texPythonRegion
+     endif
+   endif
+  endif
+"endif
+"
+
+" Adapted FROM verbatim zone in $VIMRUNTIME/syntax/tex.vim
+"if s:tex_fast =~ 'v'
+  if exists("g:tex_verbspell") && g:tex_verbspell
+   syn region texZone		start="\\begin{[cC]omment}"		end="\\end{[cC]omment}\|%stopzone\>"	contains=@NoSpell,texPythonRegion
+   " listings package:
+   syn region texZone		start="\\begin{lstlisting}"		end="\\end{lstlisting}\|%stopzone\>"	contains=@NoSpell,texPythonRegion
    if version < 600
     syn region texZone		start="\\comment\*\=`"			end="`\|%stopzone\>"			contains=@NoSpell,texPythonRegion
     syn region texZone		start="\\comment\*\=#"			end="#\|%stopzone\>"			contains=@NoSpell,texPythonRegion
