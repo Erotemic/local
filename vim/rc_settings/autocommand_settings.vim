@@ -110,6 +110,8 @@ autocmd FileType cpp normal zR
 " Use shell syntax for markdown files
 "au BufNewFile,BufRead *.md set ft=sh
 "au BufNewFile,BufRead *.md set ft=markdown
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+"
 "
 "
 ":call AuPreWritePatterns(':%s/\s\+$//e', '*.py', '*.c', '*.cxx', '*.cpp', '*.h', '*.hpp', '*.hxx')

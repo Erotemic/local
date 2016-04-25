@@ -23,18 +23,9 @@ freshstart_ubuntu_entry_point()
     freshstart_ubuntu_entry_point
 }
 
-freshtart_ubuntu_entry_point()
-{ 
-    mkdir -p ~/tmp
-    mkdir -p ~/code
-    cd ~
-    if [ ! -f ~/local ]; then
-        git clone https://github.com/Erotemic/local.git
-    fi
-    # TODO UTOOL
-    mv ~/.bashrc ~/.bashrc.orig
-    mv ~/.profile ~/.profile.orig
 
+ensure_config_symlinks()
+{
     # Remove dead symlinks
     cd
     sudo apt-get install symlinks
@@ -48,6 +39,21 @@ freshtart_ubuntu_entry_point()
     for f in $LINKFILES; do ln -s $HOMELINKS/$f ~/.$f; done
     # Symlink config subdirs
     for f in $CONFIGDIRS; do ln -s $HOMELINKS/config/$f ~/.config/$f; done
+}
+
+freshtart_ubuntu_entry_point()
+{ 
+    mkdir -p ~/tmp
+    mkdir -p ~/code
+    cd ~
+    if [ ! -f ~/local ]; then
+        git clone https://github.com/Erotemic/local.git
+    fi
+    # TODO UTOOL
+    mv ~/.bashrc ~/.bashrc.orig
+    mv ~/.profile ~/.profile.orig
+
+    ensure_config_symlinks
 
     #ln -s ~/local/homelinks/.ctags ~/.ctags
     #ln -s ~/local/bashrc.sh ~/.bashrc

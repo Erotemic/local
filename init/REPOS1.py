@@ -88,6 +88,7 @@ sudo make install
 CommandLine;
     # install vim plugins
     python ~/local/init/ensure_vim_plugins.py
+    python ~/local/init/ensure_vim_plugins.py --pull
     # update vim plugins
 """
 
@@ -106,6 +107,8 @@ VIM_REPO_URLS, VIM_REPOS = repo_list([
     'https://github.com/majutsushi/tagbar.git',
     'https://github.com/honza/vim-snippets.git',
     'https://github.com/altercation/vim-colors-solarized.git',
+    # 'https://github.com/drmingdrmer/vim-syntax-markdown.git',
+    'https://github.com/plasticboy/vim-markdown.git',
 
     'https://github.com/LaTeX-Box-Team/LaTeX-Box.git',
 

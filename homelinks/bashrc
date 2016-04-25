@@ -118,3 +118,11 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PYTHON_VENV/lib
 export UTOOL_DPATH=~/latex/crall-candidacy-2015/
 
 complete -W "gp focus kill project_dpaths sync_clipboard_to grepnr printproc_2 send add_path write_env print_path grepc grepr grep research_clipboard fix_path foo fixpath2 write_rob_pathcache sed reg_disable_automatic_reboot_122614 find write_regfile pykill symlink update_path printproc_ write_path search update_env make_dpath invgrep send_command research ps send_clipboard_to make_complete pref_env print_env create_shortcut info hskill process_research_line write_research find_in_path get_regstr preprocess_research sedr update setup_global sp print_clipboard upenv fix_youtube_names_ccl dump_clipboard" "rob"
+
+set bell-style none
+
+xset -b
+setterm -blength 0
+gconftool-2 --set --type=bool /apps/metacity/general/audible_bell false
+gconftool-2 --get  /apps/metacity/general/audible_bell
+
