@@ -354,3 +354,8 @@ GZ
 PZ
 y
 encounter's
+uint8
+float64
+float32
+NetVLAD
+convolutionally
