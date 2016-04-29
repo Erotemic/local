@@ -14,12 +14,12 @@ endif
 func! SetLaTeX()
     " References: http://vim-latex.sourceforge.net/documentation/latex-suite/customizing-compiling.html
     "let g:Tex_CompileRule_pdf = 'pdflatex -shell-escape --synctex=-1 -src-specials -interaction=nonstopmode $*'
-    let g:Tex_CompileRule_pdf = 'lualatex -shell-escape --synctex=-1 -src-specials -interaction=nonstopmode $*'
+    let g:Tex_CompileRule_pdf = 'lualatex -shell-escape --synctex=-1 -src-specials --output-directory=auxdir -interaction=nonstopmode $*'
 endfu   
 
 " Set open dyslexic
 func! SetXeTeX()
-    let g:Tex_CompileRule_pdf = 'xelatex -shell-escape -interaction=nonstopmode $*'
+    let g:Tex_CompileRule_pdf = 'xelatex -shell-escape --output-directory=auxdir -interaction=nonstopmode $*'
 endfu   
 
 func! Tex_RunViewLaTeX()
@@ -35,6 +35,9 @@ let g:LatexBox_latexmk_async = 1
 let g:LatexBox_viewer = "okular --unique"
 "let g:LatexBox_latexmk_preview_continuously = 1
 let g:LatexBox_latexmk_preview_continuously = 0
+let g:LatexBox_build_dir="auxdir"
+let g:LatexBox_quickfix=2
+"let g:LatexBox_build_dir="auxdir"
 
 function! SyncTexForward()
   " https://www.reddit.com/r/vimplugins/comments/32t0xc/forward_search_with_latexbox/
@@ -51,7 +54,7 @@ let g:Tex_DefaultTargetFormat='pdf'
 "let g:Tex_MultipleCompileFormats='pdf'
 "let g:Tex_CompileRule_pdf = 'pdflatex -shell-escape --synctex=-1 -src-specials -interaction=nonstopmode $*'
 let g:Tex_MultipleCompileFormats='pdf,bib,pdf'
-let g:Tex_CompileRule_pdf = 'lualatex -shell-escape --synctex=-1 -src-specials -interaction=nonstopmode $*'
+let g:Tex_CompileRule_pdf = 'lualatex -shell-escape --synctex=-1 -src-specials --output-directory=auxdir -interaction=nonstopmode $*'
 " Use main.tex.mainfile to compile
 let g:Tex_UseMakefile = 1
 "let g:Tex_IgnoredWarnings =
