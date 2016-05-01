@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# from __future__ import absolute_import, division, print_function, unicode_literals
 import os
 from rob_helpers import *  # NOQA
 import rob_helpers
@@ -287,15 +289,30 @@ def search(r, *tofind_list):
 
 
 def preprocess_research(input_str):
+    """
+    test of an em --- dash
+    test of an em — dash
+    """
     import utool as ut
     inside = ut.named_field('ref', '.*?')
     input_str = re.sub(r'\\emph{' + inside + '}', ut.bref_field('ref'), input_str)
-    input_str = re.sub('\s?' + re.escape('---') + '\s?', ', ', input_str)
+    # input_str = input_str.decode('utf-8')
+    input_str = ut.ensure_unicode(input_str)
+    pause = re.escape(' <break time="300ms"/> ')
+    # pause = ', '
+    emdash = u'\u2014'  #
+    # print('input_str = %r' % (input_str,))
+    # print('emdash = %r' % (emdash,))
+    # print('emdash = %s' % (emdash,))
+    input_str = re.sub('\s?' + re.escape('---') + '\s?', pause, input_str)
+    input_str = re.sub('\s?' + emdash + '\s?', pause, input_str)
+    # print('input_str = %r' % (input_str,))
     input_str = re.sub('\\\\cite{[^}]*}', '', input_str)
     input_str = re.sub('et al.', 'et all', input_str)  # Let rob say et al.
-    input_str = re.sub(r'\\r', '', input_str)  # Let rob say et al.
-    input_str = re.sub(r'\\n', '', input_str)  # Let rob say et al.
-    input_str = re.sub('\\\\', '', input_str)  # Let rob say et al.
+    input_str = re.sub(' i\.e\.', ' i e ' + pause, input_str)  # Let rob say et al.
+    input_str = re.sub(r'\\r', '', input_str)  #
+    input_str = re.sub(r'\\n', '', input_str)  #
+    input_str = re.sub('\\\\', '', input_str)  #
     #input_str = re.sub('[a-z]?[a-z]', 'et all', input_str) # Let rob say et al.
     input_str = re.sub('\\.[^a-zA-Z0-1]+', '.\n', input_str)  # Split the document at periods
     input_str = re.sub('\r\n', '\n', input_str)
@@ -309,7 +326,7 @@ def process_research_line(line):
     line = re.sub('\\[[0-9, ]+\\]', '', line)  # remove numerical citations.
     line = re.sub('- ', '', line)  # Fix Qiqqa output
     line = re.sub('-', ' ', line)  # Remove remaining dashes
-    line = re.sub('[^A-Za-z0-9., ? ]', '', line)  # Remove remaining weird characters
+    # line = re.sub('[^A-Za-z0-9., ? ]', '', line)  # Remove remaining weird characters
     line = re.sub(' *,', ', ', line)  # Fix commas
     line = re.sub(',+', ', ', line)  # Fix commas
     line = re.sub('  *', ' ', line)
@@ -369,9 +386,10 @@ def send_command(r, remote, remote_cmd):
 
 def write_research(r, to_write, rate=-5):
     fname = join(split(__file__)[0], 'to_speak.txt')
-    file = open(fname, 'w')
-    file.write(to_write)
-    file.close()
+    import utool as ut
+    ut.write_to(fname, to_write)
+    # with open(fname, 'w') as file_:
+    #     file_.write(to_write)
 
 
 def research(r, start_line_str=None, rate='3', sentence_mode=True, open_file=False):
