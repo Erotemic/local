@@ -40,6 +40,7 @@ vnoremap ge :call PyFormatParagraph()<CR>
 
 noremap <leader>ge :call PySelectAndFormatParagraph()<CR>
 :noremap <c-g> :call PySelectAndFormatParagraph()<CR>
+:noremap <c-M-G> :call PySelectAndFormatParagraphNoBreak()<CR>
 
 ":noremap <c-M-B> oimport utool<CR>with utool.embed_on_exception_context:<CR><Esc>
 ":noremap <c-b> oimport utool<CR>utool.embed()<CR><Esc>
