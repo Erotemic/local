@@ -1181,3 +1181,25 @@ install_brightness_adjust()
     xrandr --output DVI-I-3 --brightness 0.2
     
 }
+
+trackball(){
+    # http://askubuntu.com/questions/66253/how-to-configure-logitech-marble-trackball
+    # Changes mouse behavior such that 
+    # holding a special button and moving the trackball will scroll.
+    dev="Logitech USB Trackball"
+    we="Evdev Wheel Emulation"
+
+    #--set-int-prop device property format value
+    #xinput set-int-prop "$dev" "$we Button" 8 8
+    #xinput set-int-prop "$dev" "$we" 8 1
+    
+    
+    # --set-prop [--type=atom|float|int] [--format=8|16|32] device property value [...]
+    #     Set the property to the given value(s).  If not specified, the format and type of the property are left as-is.  The
+    #     arguments are interpreted according to the property type.
+    xinput get-feedbacks "$dev"
+    xinput get-button-map "$dev"
+
+    xinput --set-prop --type=int −−format=8 "$dev" "$we Button" 8
+    xinput --set-prop --type=int −−format=8 "$dev" "$we" 1
+}
