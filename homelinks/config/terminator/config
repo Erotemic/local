@@ -8,7 +8,7 @@
 [profiles]
   [[default]]
     use_system_font = False
-    background_darkness = 0.0
+    background_darkness = 0.72
     scrollback_lines = 5000
     background_image = None
     foreground_color = "#ff9bf3"
@@ -16,9 +16,10 @@
     font = Mono Dyslexic 9
     background_color = "#292929"
   [[joncrall]]
-    background_image = None
-    scrollback_lines = 5000
     use_system_font = False
+    background_darkness = 0.81
+    scrollback_lines = 5000
+    background_image = None
     foreground_color = "#ff9bf3"
     scroll_on_output = False
     font = Mono Dyslexic 9
