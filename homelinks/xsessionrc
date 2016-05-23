@@ -1,0 +1,4 @@
+device="Logitech USB Trackball"
+we="Evdev Wheel Emulation"
+xinput set-int-prop "$dev" "$we Button" 8 8
+xinput set-int-prop "$dev" "$we" 8 1
