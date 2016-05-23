@@ -1186,20 +1186,43 @@ trackball(){
     # http://askubuntu.com/questions/66253/how-to-configure-logitech-marble-trackball
     # Changes mouse behavior such that 
     # holding a special button and moving the trackball will scroll.
-    dev="Logitech USB Trackball"
+
+    #MOUSE_ID=$(xinput --list | grep -i -m 1 'mouse' | grep -o 'id=[0-9]\+' | grep -o '[0-9]\+')
+    #STATE1=$(xinput --query-state $MOUSE_ID | grep 'button\[' | sort)
+    #while true; do
+    #    sleep 0.2
+    #    xinput --query-state $MOUSE_ID
+    #    #STATE2=$(xinput --query-state $MOUSE_ID | grep 'button\[' | sort)
+    #    #comm -13 <(echo "$STATE1") <(echo "$STATE2")
+    #    #STATE1=$STATE2
+    #done
+
+    #xinput --list | grep -i -m 1 'trackball' | grep -o 'id=[0-9]\+' | grep -o '[0-9]\+'
+    #xinput --help 2>&1 >/dev/null | grep set-.*-prop
+
+    xinput list-props "$dev"
+
+    device="Logitech USB Trackball"
     we="Evdev Wheel Emulation"
+    xinput set-int-prop "$dev" "$we Button" 8 8
+    xinput set-int-prop "$dev" "$we" 8 1
+
+    # Thise commands dont seemt to work even though set-int-prop is depricated
+    xinput set-prop --type=int  "$device" "$we Button" 8 
+    xinput set-prop --type=int  "$device" "$we" 1
+    #xinput set-prop "$device" --type=int −−format=8 "$we" 1
+    #xinput set-prop "$device" --type=int −−format=8 "$we Button" 8
+    #xinput set-prop "$device" --type=int −−format=8 "$we" 1
 
     #--set-int-prop device property format value
-    #xinput set-int-prop "$dev" "$we Button" 8 8
-    #xinput set-int-prop "$dev" "$we" 8 1
     
     
     # --set-prop [--type=atom|float|int] [--format=8|16|32] device property value [...]
     #     Set the property to the given value(s).  If not specified, the format and type of the property are left as-is.  The
     #     arguments are interpreted according to the property type.
-    xinput get-feedbacks "$dev"
-    xinput get-button-map "$dev"
+    #xinput get-feedbacks "$dev"
+    #xinput query-state "$dev"
+    #xinput list-props "$dev"
+    #xinput get-button-map "$dev"
 
-    xinput --set-prop --type=int −−format=8 "$dev" "$we Button" 8
-    xinput --set-prop --type=int −−format=8 "$dev" "$we" 1
 }
