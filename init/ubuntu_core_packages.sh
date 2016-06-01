@@ -1226,3 +1226,16 @@ trackball(){
     #xinput get-button-map "$dev"
 
 }
+
+
+fix_terminal_control_left(){
+    # Solves the :5D problem
+    # http://ubuntuforums.org/showthread.php?t=1646842
+    # mappings for Ctrl-left-arrow and Ctrl-right-arrow for word moving
+    "\e[1;5C": forward-word
+    "\e[1;5D": backward-word
+    "\e[1;5C": forward-word
+    "\e[1;5D": backward-word
+    "\e\e[C": forward-word
+    "\e\e[D": backward-word
+}
