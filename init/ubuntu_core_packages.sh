@@ -1239,3 +1239,7 @@ fix_terminal_control_left(){
     "\e\e[C": forward-word
     "\e\e[D": backward-word
 }
+
+winestuff(){
+    echo "See ubuntu_game_packages.sh"
+}
