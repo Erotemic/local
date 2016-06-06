@@ -15,6 +15,7 @@
     scroll_on_output = False
     font = Mono Dyslexic 9
     background_color = "#292929"
+    scrollback_infinite = True
   [[joncrall]]
     use_system_font = False
     background_darkness = 0.81

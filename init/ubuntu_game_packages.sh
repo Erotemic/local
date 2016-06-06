@@ -26,7 +26,8 @@ ubuntu_wine_prereqs(){
 
     sudo add-apt-repository ppa:ubuntu-wine/ppa -y
     sudo apt-get update
-    sudo apt-get install -y wine1.7
+    #sudo apt-get install -y wine1.7
+    sudo apt-get install -y wine1.8
     #sudo apt-get install wine -y
 
     # Prevents
@@ -38,6 +39,7 @@ ubuntu_wine_prereqs(){
 
     # Turn on trace debugging
     ls -al  /etc/sysctl.d/10-ptrace.conf
+    cat /etc/sysctl.d/10-ptrace.conf
     # Change value from 1 to 0
     #kernel.yama.ptrace_scope
     sudo gvim /etc/sysctl.d/10-ptrace.conf
@@ -53,9 +55,22 @@ get_latest_winetricks(){
 }
 
 
+remove_wine_stuff(){
+    sudo apt-get remove wine-mono4.5.4
+    sudo apt-get remove playonlinux wine*
+    sudo apt-get remove winbind
+}
+
 new_wine32_install(){
-    # Remove old wine directory
+    # References:
+    # https://forum.winehq.org/viewtopic.php?f=8&t=24145
+    # http://ubuntuforums.org/showthread.php?t=2300076
+    # https://www.bountysource.com/issues/27630898-dotnet30-fails-to-install-on-32-bit-prefix-ubuntu
+    # http://askubuntu.com/questions/783211/cant-install-dotnet45-with-winetricks-on-ubuntu-14-04
+
     #rm -rf ~/cache/winetricks
+
+    # Start fresh with a new wine directory
     rm -rf $HOME/.wine32-dotnet45
 
     # Make new WINEPREFIX 
@@ -64,12 +79,20 @@ new_wine32_install(){
     WINEPREFIX="$HOME/.wine32-dotnet45" 
     WINEARCH=win32
 
+    echo "WINEARCH=$WINEARCH"
+    echo "WINEPREFIX=$WINEPREFIX"
+
+    
+    # Initial configuration of new wine prefix
     wineboot -u
     # Run and exit
     #winecfg
+    ~/tmp/winetricks -q dotnet45 corefonts
 
-    # https://www.bountysource.com/issues/27630898-dotnet30-fails-to-install-on-32-bit-prefix-ubuntu
-    winetricks -q --unattended windowscodecs msxml3 mfc42 dotnet45 corefonts
+    ~/tmp/winetricks -q --unattended windowscodecs msxml3 mfc42
+    ~/tmp/winetricks -q --unattended corefonts
+    ~/tmp/winetricks -q --unattended dotnet45
+    
     
     #bash winetricks -q dotnet30 
     # Had to do a manual download in this process
