@@ -140,7 +140,7 @@ alias lnote='cd ~/latex/crall-lab-notebook'
 alias cvp='cd ~/latex/crall-cvpr-15'
 alias cvpr='cd ~/latex/crall-cvpr-15'
 
-alias vdd='vd ~/data'
+alias vdd='vd ~/work'
 #alias ..="cd .."
 #alias l='ls $LS_OPTIONS -lAhF'
 alias gits='git status'
