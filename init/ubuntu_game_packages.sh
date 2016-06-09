@@ -82,6 +82,7 @@ new_wine32_install(){
     echo "WINEARCH=$WINEARCH"
     echo "WINEPREFIX=$WINEPREFIX"
 
+    echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
     
     # Initial configuration of new wine prefix
     wineboot -u
@@ -104,15 +105,13 @@ new_wine32_install(){
     winecfg
     # Enable virtual desktop under graphics
     mkdir -p ~/.cache/winetricks/msxml3
-
     # Download
     # http://download.cnet.com/Microsoft-XML-Parser-MSXML-3-0-Service-Pack-7-SP7/3000-7241_4-10731613.html
     cp ~/Downloads/msxml3.msi ~/.cache/winetricks/msxml3
 
     #wine --exec ~/.cache/winetricks/msxml3
 
-
-    winetricks dotnet45
+    ~/tmp/winetricks -q dotnet45
 
     bash winetricks dotnet45 corefonts
 }
@@ -130,19 +129,27 @@ dotnet_winetricks(){
 
 install_hearthstone()
 {
-    #https://www.reddit.com/r/hearthstone/comments/23fwzq/tutorial_how_to_play_hearthstone_on_linux_via_wine/
+    export WINEPREFIX="$HOME/.wine32-dotnet45" 
+    export WINEARCH=win32
+    WINEPREFIX="$HOME/.wine32-dotnet45" 
+    WINEARCH=win32
+    # https://www.reddit.com/r/hearthstone/comments/23fwzq/tutorial_how_to_play_hearthstone_on_linux_via_wine/
 
-    #http://www.battle.net/download/getInstallerForGame?os=win&locale=enUS&version=LIVE&gameProgram=HEARTHSTONE
+    # http://www.battle.net/download/getInstallerForGame?os=win&locale=enUS&version=LIVE&gameProgram=HEARTHSTONE
     cd ~/tmp
     wget "http://www.battle.net/download/getInstallerForGame?os=win&locale=enUS&version=LIVE&gameProgram=HEARTHSTONE" -O setup_hearthstone.exe
     utget "http://www.battle.net/download/getInstallerForGame?os=win&locale=enUS&version=LIVE&gameProgram=HEARTHSTONE"
+    chmod +x setup_hearthstone.exe
+
+    wine ~/Downloads/Hearthstone-Setup.exe
+    wine ~/Downloads/Hearthstone-Setup.exe
 
     # http://us.battle.net/hearthstone/en/forum/topic/13595239895
 
     # Get .Net
     #https://github.com/Epix37/Hearthstone-Deck-Tracker/issues/1164
     wget http://winetricks.googlecode.com/svn/trunk/src/winetricks
-    bash winetricks dotnet45
+    bash winetricks dotnet452
 
     #sudo apt-get install mono-complete
     sudo apt-get install mono-vbnc
@@ -150,7 +157,13 @@ install_hearthstone()
     # Hearthstone arena helper
     # https://github.com/rembound/Arena-Helper#how-to-install
 
-    wget https://github.com/Epix37/Hearthstone-Deck-Tracker/releases/download/v0.13.17/Hearthstone.Deck.Tracker-v0.13.17.zip
+    #wget https://github.com/rembound/Arena-Helper/releases/download/0.8.0/ArenaHelper.v0.8.0.zip
+    wget https://github.com/HearthSim/Hearthstone-Deck-Tracker/releases/download/v0.15.3/Hearthstone.Deck.Tracker-v0.15.3.zip
+    rm -rf ~/tmp/Hearthstone\ Deck\ Tracker
+    7z x Hearthstone.Deck.Tracker-v0.15.3.zip
+    chmod +x ~/tmp/Hearthstone\ Deck\ Tracker/Hearthstone\ Deck\ Tracker.exe
+    wine ~/tmp/Hearthstone\ Deck\ Tracker/Hearthstone\ Deck\ Tracker.exe
+    #wget https://github.com/Epix37/Hearthstone-Deck-Tracker/releases/download/v0.13.17/Hearthstone.Deck.Tracker-v0.13.17.zip
 
 
     cd ~/tmp
