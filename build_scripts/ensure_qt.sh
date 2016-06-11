@@ -1,3 +1,14 @@
+
+qt_linux_installer(){
+    # http://www.qt.io/download-open-source/
+    cd ~/tmp
+    wget http://download.qt.io/official_releases/online_installers/qt-unified-linux-x64-online.run
+    chmod +x qt-unified-linux-x64-online.run
+    # Stupid gui based installer
+    ./qt-unified-linux-x64-online.run
+}
+
+
 centos_purge_qt(){
     sudo yum remove -y qt4
     sudo yum remove -y qt4-devel
