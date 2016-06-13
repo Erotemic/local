@@ -54,6 +54,27 @@ get_latest_winetricks(){
     chmod +x ~/tmp/winetricks
 }
 
+linux_arena_tracker(){
+    # https://github.com/supertriodo/Arena-Tracker
+    cd ~/tmp
+    https://github.com/Itseez/opencv/archive/2.4.13.zip
+    7z x opencv-2.4.13.zip
+    mv opencv-2.4.13 ~/code/Arena-Tracker/
+    cd ~/code/Arena-Tracker/opencv-2.4.13
+    mkdir build
+    cd build
+    cmake .. -DCMAKE_INSTALL_PREFIX=/home/joncrall/code/Arena-Tracker/opencv_install
+    make -j9
+    make install
+    mkdir "/home/joncrall/.wine/drive_c/Program Files (x86)/Hearthstone/Logs"
+    touch "/home/joncrall/.wine/drive_c/Program Files (x86)/Hearthstone/Logs/log.config"
+
+    wine "/home/joncrall/.wine/drive_c/Program Files (x86)/Hearthstone/Hearthstone.exe"
+    wine "/home/joncrall/.wine/drive_c/Program Files (x86)/Battle.net/Battle.net.exe"
+    
+    
+}
+
 
 remove_wine_stuff(){
     sudo apt-get remove wine-mono4.5.4
