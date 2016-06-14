@@ -71,6 +71,42 @@ linux_arena_tracker(){
 
     wine "/home/joncrall/.wine/drive_c/Program Files (x86)/Hearthstone/Hearthstone.exe"
     wine "/home/joncrall/.wine/drive_c/Program Files (x86)/Battle.net/Battle.net.exe"
+
+
+    # Hearthstone log dir
+    ~/.wine/drive_c/users/joncrall/Local\ Settings/Application\ Data/Blizzard/Hearthstone/Logs
+    touch ~/.wine/drive_c/users/joncrall/Local\ Settings/Application\ Data/Blizzard/Hearthstone/Logs/log.config
+
+    chmod +x /home/joncrall/code/build-ArenaTracker-Desktop_Qt_5_6_1_GCC_64bit-Debug/ArenaTracker
+    cd ~/code/Arena-Tracker/opencv_install/lib
+    gvim "~/.config/Arena Tracker/Arena Tracker.conf"
+    ~/code/build-ArenaTracker-Desktop_Qt_5_6_1_GCC_64bit-Debug/ArenaTracker
+
+[General]
+autoSize=true
+cardHeight=35
+createGoldenCards=false
+draftLearningMode=false
+drawDisappear=5
+logConfig=/home/joncrall/.wine/drive_c/users/joncrall/Local Settings/Application Data/Blizzard/Hearthstone/Logs/log.config
+logConfig=/home/joncrall/.wine/drive_c/Program Files (x86)/Hearthstone/Logs/log.config
+logsDirPath=/home/joncrall/.wine/drive_c/users/joncrall/Local Settings/Application Data/Blizzard/Hearthstone/Logs
+maxGamesLog=15
+numWindows=2
+password=
+playerEmail=
+pos=@Point(0 0)
+pos2=@Point(0 0)
+showClassColor=true
+showDraftOverlay=true
+showSpellColor=true
+size=@Size(255 600)
+size2=@Size(222 600)
+splitWindow=false
+theme=1
+tooltipScale=10
+transparent=1
+    
     
     
 }
