@@ -198,6 +198,8 @@ install_core_extras()
     mkdir ~/ami    
     sshfs -o idmap=user ibeis-hackathon:/home/ubuntu ~/ami
 
+    sshfs -o idmap=user lev:/ ~/lev
+
 
     # To allow to get the flash package from software center
     #http://askubuntu.com/questions/576562/apt-way-to-get-adobe-flash-player-latest-version-for-linux-not-working

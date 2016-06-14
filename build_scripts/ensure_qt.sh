@@ -9,6 +9,25 @@ qt_linux_installer(){
 }
 
 
+hack_venv_link_qt(){
+    # ewww. hard copy
+    ln -t /home/jason/virtualenv/jason/lib/python2.7/site-packages/PyQt4 $VENV/lib/python2.7/site-packages/PyQt4
+
+    ls /home/jason/virtualenv/jason/lib/python2.7/site-packages/PyQt4
+    ls /usr/lib/python2.7/dist-packages/PyQt4
+    ls /usr/local/lib/python2.7/dist-packages/
+    rm -rf $VIRTUAL_ENV/lib/python2.7/site-packages/PyQt4
+
+    export JASON_QT_DIR=/home/jason/virtualenv/jason/lib/python2.7/site-packages/PyQt4
+    ln -s $JASON_QT_DIR  $VIRTUAL_ENV/lib/python2.7/site-packages/PyQt4 
+
+    python2.7 -c "import PyQt4; print('[test] SUCCESS import PyQt4: %r' % PyQt4)"
+    python2.7 -c "from PyQt4 import QtGui; print('[test] SUCCESS import QtGui: %r' % QtGui)"
+    python2.7 -c "from PyQt4 import QtCore; print('[test] SUCCESS import QtCore: %r' % QtCore)"
+    python2.7 -c "from PyQt4.QtCore import Qt; print('[test] SUCCESS import Qt: %r' % Qt)"
+}
+
+
 centos_purge_qt(){
     sudo yum remove -y qt4
     sudo yum remove -y qt4-devel
