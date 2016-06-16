@@ -197,7 +197,6 @@ install_core_extras()
     sudo apt-get install sshfs -y
     mkdir ~/ami    
     sshfs -o idmap=user ibeis-hackathon:/home/ubuntu ~/ami
-
     sshfs -o idmap=user lev:/ ~/lev
 
 
