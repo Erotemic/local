@@ -99,6 +99,9 @@ install_core()
 
     # Now 
 
+    # for editing desktop sidebar icons
+    sudo apt-get install alacarte
+
     
 }
 
