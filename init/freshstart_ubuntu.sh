@@ -326,7 +326,11 @@ gnome_settings()
     # try and disable password after screensaver lock
     gsettings set org.gnome.desktop.lockdown disable-lock-screen 'true'
     /usr/bin/gsettings set org.gnome.desktop.screensaver lock-enabled false
-    
+
+
+    # http://askubuntu.com/questions/275883/traditional-search-as-you-type-on-newer-nautilus-versions
+    gsettings set org.gnome.nautilus.preferences enable-interactive-search true
+    #gsettings set org.gnome.nautilus.preferences enable-interactive-search false
 
     gconftool-2 --get /apps/gnome-screensaver/lock_enabled 
     
