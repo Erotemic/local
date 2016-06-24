@@ -328,6 +328,7 @@ gnome_settings()
     /usr/bin/gsettings set org.gnome.desktop.screensaver lock-enabled false
 
 
+    # Fix search in nautilus (remove recurison)
     # http://askubuntu.com/questions/275883/traditional-search-as-you-type-on-newer-nautilus-versions
     gsettings set org.gnome.nautilus.preferences enable-interactive-search true
     #gsettings set org.gnome.nautilus.preferences enable-interactive-search false
