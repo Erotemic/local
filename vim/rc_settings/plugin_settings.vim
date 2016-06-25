@@ -80,6 +80,7 @@ let g:syntastic_cpp_remove_include_errors = 1
 "-------------------------
 " PLUGIN: Tagbar
 " https://github.com/majutsushi/tagbar/blob/master/doc/tagbar.txt
+" TODO : https://www.reddit.com/r/vim/comments/1ho5qy/uniteoutline_is_tagbar_on_steroids/
 "let g:tagbar_indent = 1
 let g:tagbar_sort=0
 let g:tagbar_compact = 1
