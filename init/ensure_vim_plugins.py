@@ -61,6 +61,7 @@ def ensure_nongit_plugins():
 
 
 def main():
+    # sudo apt-get install -y exuberant-ctags
     if sys.platform.startswith('win32'):
         try:
             ensure_ctags_win32()
