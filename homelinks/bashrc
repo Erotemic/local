@@ -125,4 +125,4 @@ complete -W "gp focus kill project_dpaths sync_clipboard_to grepnr printproc_2 s
 #gconftool-2 --set --type=bool /apps/metacity/general/audible_bell false
 #gconftool-2 --get  /apps/metacity/general/audible_bell
 
-source ~/.config/ibeis/ibeis_bash_complete.sh
+#source ~/.config/ibeis/ibeis_bash_complete.sh
