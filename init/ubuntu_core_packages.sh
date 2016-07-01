@@ -1,4 +1,8 @@
 
+common_paths()
+{
+    cat ~/local/init/ensure_vim_plugins.py
+}
 #index_opencv_with_ctags()
 #{
 #    #References:
