@@ -107,6 +107,18 @@ freshtart_ubuntu_entry_point()
     ls abs_venv/include
     # //
 
+    # Python3 VENV
+    export PYTHON3_VENV="$HOME/venv3"
+    mkdir -p $PYTHON3_VENV
+    virtualenv-3.4 -p /usr/bin/python3 $PYTHON3_VENV
+    # source $PYTHON3_VENV/bin/activate
+
+    # FIX ISSUE WITH SIP
+    virtualenv --relocatable venv
+    virtualenv --relocatable $HOME/abs_venv
+    ls venv/include
+    ls abs_venv/include
+
     pip install setuptools --upgrade
     pip install six
     pip install jedi
