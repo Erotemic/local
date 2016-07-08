@@ -90,6 +90,11 @@ hyrule_create_users()
     #  New users
     sudo adduser chuck
     sudo usermod -a -G rpi chuck
+
+    sudo adduser andrea
+    sudo usermod -a -G rpi andrea
+
+    Plains0Grevys0Zebras0
 }
 
 create_bare_repos()
