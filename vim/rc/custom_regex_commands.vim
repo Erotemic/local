@@ -12,6 +12,12 @@
 ^\(.*\) *$
 
 
+" Dict to ordered dict
+s/^\( *\)'/\1('/
+s/,$/),/
+s/:/,/
+
+
 "func! ChangeWords(...)
 func :%s/\<\(\)\>//gc
 
@@ -138,4 +144,5 @@ s/\t/    /gc
 
 "  Fix -m ibeis.modname --exec-funcname
 %s/-m ibeis\..* --exec-/-m ibeis --tf /gc
+
 
