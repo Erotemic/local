@@ -109,6 +109,7 @@ freshtart_ubuntu_entry_point()
 
     # Python3 VENV
     sudo pip3 install virtualenv
+    sudo pip3 install virtualenv -U
     export PYTHON3_VENV="$HOME/venv3"
     mkdir -p $PYTHON3_VENV
     virtualenv-3.4 --relocatable -p /usr/bin/python3 $PYTHON3_VENV
