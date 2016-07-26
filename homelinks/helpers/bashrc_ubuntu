@@ -176,7 +176,11 @@ alias say='espeak -v en '
 #alias sumatrapdf='wine "C:\Program Files (x86)\SumatraPDF\SumatraPDF"'
 alias diskutility='palimpsest'
 alias realrm='/bin/rm'
-alias rm='trash-put'
+#alias rm='trash-put'
+alias rm='gvfs-trash'
+alias trash-list='gvfs-ls trash://'
+alias trash-put='gvfs-trash'
+alias trash-empty='gvfs-trash --empty'
 alias viewimage='eog'
 
 #source ~/scripts/install_llvm.sh

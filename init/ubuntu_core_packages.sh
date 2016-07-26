@@ -44,7 +44,8 @@ install_core()
     sudo apt-get install -y exuberant-ctags 
 
     # Trash put
-    sudo apt-get install -y trash-cli
+    #sudo apt-get install -y trash-cli
+    sudo apt-get install -y gvfs-bin
     # make sure you have permission to trash
     #ls -al ~/.local/share/
     #sudo chown -R $USERNAME:$USERNAME ~/.local/share/Trash 
