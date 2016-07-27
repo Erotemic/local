@@ -344,3 +344,4 @@ pyfile()
 #alias rpivpn='sudo openconnect -b vpn.net.rpi.edu -uyour_school_username -ucrallj'
 alias rpivpn='rpivpn.sh'
 #sudo openconnect -b vpn.net.rpi.edu -ucrallj'
+alias lev='lev.sh'
