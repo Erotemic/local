@@ -112,7 +112,7 @@ else
     export PATH=$PATH
 fi
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PYTHON_VENV/lib
+#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PYTHON_VENV/lib
 
 # hack
 #export UTOOL_DPATH=~/latex/crall-candidacy-2015/

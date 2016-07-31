@@ -276,6 +276,7 @@ astyle_cpp()
     export ASTYLE_OPTIONS="--style=ansi --indent=spaces  --indent-classes  --indent-switches  --indent-col1-comments --pad-oper --unpad-paren --delete-empty-lines --add-brackets"
     astyle $ASTYLE_OPTIONS $@
 
+
     #"
     #{
     #'--style=ansi': '-A1',
@@ -328,6 +329,51 @@ tcp()
     cp $1 ../flann/$1
 }
 
+
+
+remove_ld_library_path()
+{
+    # http://stackoverflow.com/questions/370047/what-is-the-most-elegant-way-to-remove-a-path-from-the-path-variable-in-bash
+    #_PATHVAR=$1
+    _VAL=$1
+    _NEW_PATH=$(python -c "import os; path = os.environ['LD_LIBRARY_PATH'].split(os.pathsep); del path[path.index('$_VAL')]; print(os.pathsep.join(path))")
+    export LD_LIBRARY_PATH=$_NEW_PATH
+    #python -c "import os; path = os.environ['LD_LIBRARY_PATH'].split(os.pathsep); print('\n'.join(path))"
+    #python -c "import os; path = os.environ['LD_LIBRARY_PATH'].split(os.pathsep); print(os.pathsep.join(path))"
+}
+
+switch_venv()
+{
+    deactivate
+    # reset LD_LIBRARY_PATH 
+    remove_ld_library_path $PYTHON_VENV/lib
+    export PYTHON_VENV=$1
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PYTHON_VENV/lib
+    source $PYTHON_VENV/bin/activate
+}
+
+
+workon_py2()
+{
+    switch_venv "$HOME/venv"
+    #deactivate
+    ## reset LD_LIBRARY_PATH 
+    #remove_ld_library_path $PYTHON_VENV/lib
+    #export PYTHON_VENV="$HOME/venv"
+    #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PYTHON_VENV/lib
+    #source $PYTHON_VENV/bin/activate
+}
+
+workon_py3()
+{
+    switch_venv "$HOME/venv3"
+    #deactivate
+    ## reset LD_LIBRARY_PATH 
+    #remove_ld_library_path $PYTHON_VENV/lib
+    #export PYTHON_VENV="$HOME/venv3"
+    #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PYTHON_VENV/lib
+    #source $PYTHON_VENV/bin/activate
+}
 
 
 

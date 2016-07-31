@@ -187,16 +187,30 @@ dotnet_winetricks(){
 
 install_hearthstone()
 {
-    export WINEPREFIX="$HOME/.wine32-dotnet45" 
-    export WINEARCH=win32
-    WINEPREFIX="$HOME/.wine32-dotnet45" 
-    WINEARCH=win32
+    #export WINEPREFIX="$HOME/.wine32-dotnet45" 
+    #export WINEARCH=win32
+    #WINEPREFIX="$HOME/.wine32-dotnet45" 
+    #WINEARCH=win32
+    #export WINEPREFIX="$HOME/.wine32-dotnet45" 
+    #export WINEARCH=win32
+    #WINEPREFIX="$HOME/.wine32-dotnet45" 
+    #WINEARCH=win32
+    export WINEPREFIX="$HOME/.wine" 
+    WINEPREFIX="$HOME/.wine" 
     # https://www.reddit.com/r/hearthstone/comments/23fwzq/tutorial_how_to_play_hearthstone_on_linux_via_wine/
 
+    # rm -rf .wine
+    # wineboot -u
+
+    cd ~/tmp
+    rm winetricks
+    wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
+    chmod +x ~/tmp/winetricks
+
     # http://www.battle.net/download/getInstallerForGame?os=win&locale=enUS&version=LIVE&gameProgram=HEARTHSTONE
+    #utget "http://www.battle.net/download/getInstallerForGame?os=win&locale=enUS&version=LIVE&gameProgram=HEARTHSTONE"
     cd ~/tmp
     wget "http://www.battle.net/download/getInstallerForGame?os=win&locale=enUS&version=LIVE&gameProgram=HEARTHSTONE" -O setup_hearthstone.exe
-    utget "http://www.battle.net/download/getInstallerForGame?os=win&locale=enUS&version=LIVE&gameProgram=HEARTHSTONE"
     chmod +x setup_hearthstone.exe
 
     wine ~/Downloads/Hearthstone-Setup.exe
@@ -206,32 +220,41 @@ install_hearthstone()
 
     # Get .Net
     #https://github.com/Epix37/Hearthstone-Deck-Tracker/issues/1164
-    wget http://winetricks.googlecode.com/svn/trunk/src/winetricks
-    bash winetricks dotnet452
+    #bash winetricks dotnet452
+
+    cd "/home/joncrall/.wine/drive_c/Program Files (x86)/Hearthstone"
+    ./Hearthstone.exe
+    # Unhandled exception: unimplemented function api-ms-win-crt-time-l1-1-0.dll._W_Gettnames called in 32-bit code
+    cd "/home/joncrall/.wine/drive_c/Program Files (x86)/Battle.net"
+    ./Battle.net.exe
+    wine "/home/joncrall/.wine/drive_c/Program Files (x86)/Battle.net/Battle.net Launcher.exe"
 
     #sudo apt-get install mono-complete
-    sudo apt-get install mono-vbnc
+    #sudo apt-get install mono-vbnc
 
     # Hearthstone arena helper
     # https://github.com/rembound/Arena-Helper#how-to-install
 
     #wget https://github.com/rembound/Arena-Helper/releases/download/0.8.0/ArenaHelper.v0.8.0.zip
-    wget https://github.com/HearthSim/Hearthstone-Deck-Tracker/releases/download/v0.15.3/Hearthstone.Deck.Tracker-v0.15.3.zip
-    rm -rf ~/tmp/Hearthstone\ Deck\ Tracker
-    7z x Hearthstone.Deck.Tracker-v0.15.3.zip
-    chmod +x ~/tmp/Hearthstone\ Deck\ Tracker/Hearthstone\ Deck\ Tracker.exe
-    wine ~/tmp/Hearthstone\ Deck\ Tracker/Hearthstone\ Deck\ Tracker.exe
-    #wget https://github.com/Epix37/Hearthstone-Deck-Tracker/releases/download/v0.13.17/Hearthstone.Deck.Tracker-v0.13.17.zip
+    #wget https://github.com/HearthSim/Hearthstone-Deck-Tracker/releases/download/v0.15.3/Hearthstone.Deck.Tracker-v0.15.3.zip
+    #rm -rf ~/tmp/Hearthstone\ Deck\ Tracker
+    #7z x Hearthstone.Deck.Tracker-v0.15.3.zip
+    #chmod +x ~/tmp/Hearthstone\ Deck\ Tracker/Hearthstone\ Deck\ Tracker.exe
+    #wine ~/tmp/Hearthstone\ Deck\ Tracker/Hearthstone\ Deck\ Tracker.exe
+    ##wget https://github.com/Epix37/Hearthstone-Deck-Tracker/releases/download/v0.13.17/Hearthstone.Deck.Tracker-v0.13.17.zip
 
 
-    cd ~/tmp
-    wget https://github.com/rembound/Arena-Helper/releases
-    wget https://github.com/rembound/Arena-Helper/releases/download/0.6.8/ArenaHelper.v0.6.8.zip
-    7z x Hearthstone.Deck.Tracker-v*.zip
-    ls ./Hearthstone\ Deck\ Tracker/
-    chmod +x ./Hearthstone\ Deck\ Tracker/*.exe
-    mono ./Hearthstone\ Deck\ Tracker/Hearthstone\ Deck\ Tracker.exe
-    "Hearthstone Deck Tracker"
+    #cd ~/tmp
+    #wget https://github.com/rembound/Arena-Helper/releases
+    #wget https://github.com/rembound/Arena-Helper/releases/download/0.6.8/ArenaHelper.v0.6.8.zip
+    #7z x Hearthstone.Deck.Tracker-v*.zip
+    #ls ./Hearthstone\ Deck\ Tracker/
+    #chmod +x ./Hearthstone\ Deck\ Tracker/*.exe
+    #mono ./Hearthstone\ Deck\ Tracker/Hearthstone\ Deck\ Tracker.exe
+    #"Hearthstone Deck Tracker"
+
+    #https://github.com/Winetricks/winetricks/issues/575
+    #~/tmp/winetricks -q vcrun2015
 
 
 }
