@@ -30,6 +30,14 @@ setup_venv(){
     mkdir $PYTHON_VENV
     virtualenv -p /usr/bin/python2.7 $PYTHON_VENV
 }
+setup_venv3(){
+    sudo pip3 install virtualenv
+    sudo pip3 install virtualenv -U
+    export PYTHON3_VENV="$HOME/venv3"
+    mkdir -p $PYTHON3_VENV
+    virtualenv  -p /usr/bin/python3 $PYTHON3_VENV
+    # source $PYTHON3_VENV/bin/activate
+}
 
 #echo $PYTHON_VENV
 

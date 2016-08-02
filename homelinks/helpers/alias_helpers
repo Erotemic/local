@@ -85,6 +85,7 @@ alias ca='cd ~/latex/crall-candidacy-2015/'
 alias scr='cd ~/scripts'
 # Special navigation
 alias s='git status'
+alias r='git branch -r'
 alias code='cd $CODE_DIR'
 alias co='cd $CODE_DIR'
 alias cv='cd $CODE_DIR/opencv'
