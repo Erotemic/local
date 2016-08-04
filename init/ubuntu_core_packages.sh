@@ -107,6 +107,16 @@ install_core()
     # for editing desktop sidebar icons
     sudo apt-get install alacarte
 
+    # anti-virus 
+    # https://www.upcloud.com/support/scanning-ubuntu-14-04-server-for-malware/
+    sudo apt-get install clamav clamav-daemon
+    sudo freshclam
+    sudo clamscan -r /home
+
+    sudo apt-get install rkhunter
+    
+    
+
     
 }
 
