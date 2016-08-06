@@ -71,7 +71,7 @@ freshtart_ubuntu_entry_point()
     git config --global user.email crallj@rpi.edu
     git config --global push.default current
 
-    sudo apt-get install trash-cli
+    #sudo apt-get install trash-cli
 
     # Vim
     sudo apt-get install -y vim
@@ -82,11 +82,11 @@ freshtart_ubuntu_entry_point()
     sudo apt-get install terminator -y
 
     # Development Environment
-    sudo apt-get install -y gcc g++
+    sudo apt-get install gcc g++  -y
     sudo apt-get install -y gfortran
 
     # Python 
-    sudo apt-get install -y python-dev
+    sudo apt-get install python-dev -y
     sudo apt-get install -y python-tk
     sudo apt-get install python-pip -y
     sudo pip install pip --upgrade

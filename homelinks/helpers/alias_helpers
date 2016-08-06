@@ -212,9 +212,6 @@ alias upp=update_profile
 alias cop=commit_profile
 
 
-alias vimhs='gvim -S ~/vim_hotspotter_session.vim'
-
-
 cls()
 {
     for i in {1..100}
@@ -356,7 +353,7 @@ switch_venv()
 
 workon_py2()
 {
-    switch_venv "$HOME/venv"
+    switch_venv "$HOME/venv2"
     #deactivate
     ## reset LD_LIBRARY_PATH 
     #remove_ld_library_path $PYTHON_VENV/lib
@@ -364,6 +361,7 @@ workon_py2()
     #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PYTHON_VENV/lib
     #source $PYTHON_VENV/bin/activate
 }
+
 
 workon_py3()
 {
@@ -375,6 +373,9 @@ workon_py3()
     #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PYTHON_VENV/lib
     #source $PYTHON_VENV/bin/activate
 }
+
+alias py2env='workon_py2'
+alias py3env='workon_py3'
 
 
 

@@ -38,9 +38,19 @@ install_core()
     # Git
     sudo apt-get install -y git
 
-    # Vim
-    sudo apt-get install -y vim
-    sudo apt-get install -y vim-gtk
+    # Vim / Gvim
+    #sudo apt-get install -y vim
+    #sudo apt-get install -y vim-gtk
+    #sudo apt-get install -y vim-gtk-py2
+    #sudo apt-get remove -y vim
+    #sudo apt-get remove -y vim-gnome
+    #sudo apt-get remove -y vim-gtk-py2
+    # Make python2 work with vim on ubuntu 16.04 for a bit longer
+    # WE WILL SWITH TO PYTHON 3!
+    sudo apt-get install -y vim-gnome-py2
+    sudo update-alternatives --set vim /usr/bin/vim.gnome-py2
+    sudo update-alternatives --set gvim /usr/bin/gvim.gtk-py2
+
     sudo apt-get install -y exuberant-ctags 
 
     # Trash put
@@ -250,7 +260,6 @@ install_evaluating()
     sudo apt-get install nuitka
     nuitka --module ibeis --recurse-directory=ibeis
     nuitka --recurse-all main.py
-    
 }
 
 install_ubuntu_tweak()
@@ -1261,4 +1270,17 @@ fix_terminal_control_left(){
 
 winestuff(){
     echo "See ubuntu_game_packages.sh"
+}
+
+fix_upgrade_1404_to_1604(){
+    # Something was wrong with gcc and I eneded to download this
+    wget http://security.ubuntu.com/ubuntu/pool/main/g/gcc-5/libstdc++6_5.3.1-14ubuntu2.1_i386.deb
+    # Then install it to get gcc libs working well enough
+    sudo dkpg -i libstdc++6_5.3.1-14ubuntu2.1_i386.deb
+
+    # Also need to fix my virtual env
+    # https://www.guyrutenberg.com/2012/05/30/fixing-virtualenv-after-upgrading-your-distributionpython/
+    virtualenv ~/venv
+    virtualenv --system-site-packages ~/venv
+    
 }

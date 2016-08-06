@@ -1,4 +1,13 @@
 
+wine_1_9()
+{
+    sudo add-apt-repository ppa:wine/wine-builds
+    sudo apt-get update
+    sudo apt-get install --install-recommends wine-staging
+    sudo apt-get install winehq-staging
+}
+
+
 ubuntu_wine_prereqs(){
 
     sudo apt-get install dpkg-dev
@@ -13,16 +22,22 @@ ubuntu_wine_prereqs(){
     sudo apt-get install freeglut3-dev
 
     sudo apt-get install python-wxgtk2.8
+    sudo apt-get install python-wxversion
+    sudo apt-get install python-wxpython
+    
     python -c "import wxversion"
     python2.6 -c "import wxversion"
     python3 -c "import wxversion"
 
     sudo pip install --upgrade --trusted-host wxpython.org --pre -f http://wxpython.org/Phoenix/snapshot-builds/ wxPython_Phoenix 
+    sudo -H pip install --upgrade --pre -f http://wxpython.org/Phoenix/snapshot-builds/ --trusted-host wxpython.org wxPython_Phoenix
+    
 
     python -c "import wx; print(wx.VERSION_STRING)"
     
 
     sudo apt-get install playonlinux
+    sudo apt-get remove playonlinux
 
     sudo add-apt-repository ppa:ubuntu-wine/ppa -y
     sudo apt-get update

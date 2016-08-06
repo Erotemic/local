@@ -24,26 +24,29 @@ fi
 export PYTHONPATH=$CODE_DIR/utool:$PYTHONPATH
 export PYTHONPATH=$HOME/local/pyscripts:$PYTHONPATH
 
-export PYTHON_VENV="$HOME/venv"
+
+export PYTHON_VENV="$HOME/venv2"
+#echo $PYTHON_VENV
+# Activate a virtual environment
+if [ -d "$PYTHON_VENV" ]; then
+    source $PYTHON_VENV/bin/activate
+fi
 
 setup_venv(){
-    mkdir $PYTHON_VENV
-    virtualenv -p /usr/bin/python2.7 $PYTHON_VENV
+    export PYTHON2_VENV="$HOME/venv2"
+    mkdir $PYTHON2_VENV
+    virtualenv -p /usr/bin/python2.7 $PYTHON2_VENV 
+    virtualenv --relocatable $PYTHON2_VENV 
 }
 setup_venv3(){
     sudo pip3 install virtualenv
     sudo pip3 install virtualenv -U
     export PYTHON3_VENV="$HOME/venv3"
     mkdir -p $PYTHON3_VENV
-    virtualenv  -p /usr/bin/python3 $PYTHON3_VENV
+    virtualenv -p /usr/bin/python3 $PYTHON3_VENV
+    virtualenv --relocatable $PYTHON3_VENV 
     # source $PYTHON3_VENV/bin/activate
 }
-
-#echo $PYTHON_VENV
-
-if [ -d "$PYTHON_VENV" ]; then
-    source $PYTHON_VENV/bin/activate
-fi
 
 
 #export OMP_NUM_THREADS=7
