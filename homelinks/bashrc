@@ -32,11 +32,16 @@ if [ -d "$PYTHON_VENV" ]; then
     source $PYTHON_VENV/bin/activate
 fi
 
-setup_venv(){
+setup_venv2(){
+    # ENSURE SYSTEM PIP IS SAME AS SYSTEM PYTHON
+    # sudo update-alternatives --set pip /usr/local/bin/pip2.7
+    # sudo rm /usr/local/bin/pip
+    # sudo ln -s /usr/local/bin/pip2.7 /usr/local/bin/pip
+
     export PYTHON2_VENV="$HOME/venv2"
     mkdir $PYTHON2_VENV
     virtualenv -p /usr/bin/python2.7 $PYTHON2_VENV 
-    virtualenv --relocatable $PYTHON2_VENV 
+    #virtualenv --relocatable $PYTHON2_VENV 
 }
 setup_venv3(){
     sudo pip3 install virtualenv

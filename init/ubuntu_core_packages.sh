@@ -974,6 +974,10 @@ video_driver_info(){
     # find info on current video driver 
     # http://ubuntuforums.org/showthread.php?t=1795372 
     lspci  -mm | grep VGA
+
+    # Which video driver is in use
+    # http://askubuntu.com/questions/23238/how-can-i-find-what-video-driver-is-in-use-on-my-system
+    lshw -c video
 }
 
 

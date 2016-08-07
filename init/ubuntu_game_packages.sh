@@ -4,60 +4,12 @@ wine_1_9()
     sudo add-apt-repository ppa:wine/wine-builds
     sudo apt-get update
     sudo apt-get install --install-recommends wine-staging
-    sudo apt-get install winehq-staging
-}
+    #sudo apt-get install winehq-staging
+    sudo apt-get install winehq-devel
 
-
-ubuntu_wine_prereqs(){
-
-    sudo apt-get install dpkg-dev
-    sudo apt-get install libwebkitgtk-dev -y
-    sudo apt-get install libtiff-dev libjpeg-dev
-    sudo apt-get install libgtk2.0-dev
-    sudo apt-get install libgtk2.0-dev -y
-    sudo apt-get install libsdl1.2-dev -y
-    sudo apt-get install libgstreamer-plugins-base0.10-dev -y
-    sudo apt-get install libnotify-dev
-    sudo apt-get install freeglut3
-    sudo apt-get install freeglut3-dev
-
-    sudo apt-get install python-wxgtk2.8
-    sudo apt-get install python-wxversion
-    sudo apt-get install python-wxpython
-    
-    python -c "import wxversion"
-    python2.6 -c "import wxversion"
-    python3 -c "import wxversion"
-
-    sudo pip install --upgrade --trusted-host wxpython.org --pre -f http://wxpython.org/Phoenix/snapshot-builds/ wxPython_Phoenix 
-    sudo -H pip install --upgrade --pre -f http://wxpython.org/Phoenix/snapshot-builds/ --trusted-host wxpython.org wxPython_Phoenix
-    
-
-    python -c "import wx; print(wx.VERSION_STRING)"
-    
-
-    sudo apt-get install playonlinux
-    sudo apt-get remove playonlinux
-
-    sudo add-apt-repository ppa:ubuntu-wine/ppa -y
-    sudo apt-get update
-    #sudo apt-get install -y wine1.7
-    sudo apt-get install -y wine1.8
-    #sudo apt-get install wine -y
-
-    # Prevents
-    # p11-kit: couldn't load module: /usr/lib/i386-linux-gnu/pkcs11/p11-kit-trust.so: 
-    # /usr/lib/i386-linux-gnu/pkcs11/p11-kit-trust.so: cannot open shared object file: No such file or directory
-    sudo apt-get install libp11-kit-gnome-keyring:i386
-    sudo apt-get install winbind
-
-
-    # Turn on trace debugging
-    ls -al  /etc/sysctl.d/10-ptrace.conf
-    cat /etc/sysctl.d/10-ptrace.conf
-    # Change value from 1 to 0
-    #kernel.yama.ptrace_scope
-    sudo gvim /etc/sysctl.d/10-ptrace.conf
+    #sudo apt-get remove winehq-staging
+    #sudo apt-get remove winehq-staging
+    #sudo add-apt-repository --remove ppa:wine/wine-builds
 }
 
 get_latest_winetricks(){
@@ -67,71 +19,42 @@ get_latest_winetricks(){
     rm winetricks
     wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
     chmod +x ~/tmp/winetricks
+    ~/tmp/winetricks update-self
+    sudo cp -v winetricks /usr/local/bin
+    # http://superuser.com/questions/739498/how-to-add-dll-override-to-wine-config-from-command-lin
 }
 
-linux_arena_tracker(){
-    # https://github.com/supertriodo/Arena-Tracker
-    cd ~/tmp
-    https://github.com/Itseez/opencv/archive/2.4.13.zip
-    7z x opencv-2.4.13.zip
-    mv opencv-2.4.13 ~/code/Arena-Tracker/
-    cd ~/code/Arena-Tracker/opencv-2.4.13
-    mkdir build
-    cd build
-    cmake .. -DCMAKE_INSTALL_PREFIX=/home/joncrall/code/Arena-Tracker/opencv_install
-    make -j9
-    make install
-    mkdir "/home/joncrall/.wine/drive_c/Program Files (x86)/Hearthstone/Logs"
-    touch "/home/joncrall/.wine/drive_c/Program Files (x86)/Hearthstone/Logs/log.config"
+reinstall_hearthstone(){
+    # https://www.reddit.com/r/hearthstone/comments/4uspc8/are_other_linux_users_having_problems_with/
+    export WINEPREFIX="$HOME/.wine" 
+    WINEPREFIX="$HOME/.wine" 
+    wineboot -u
 
-    wine "/home/joncrall/.wine/drive_c/Program Files (x86)/Hearthstone/Hearthstone.exe"
-    wine "/home/joncrall/.wine/drive_c/Program Files (x86)/Battle.net/Battle.net.exe"
+    wintricks vcrun2015
 
-
-    # Hearthstone log dir
-    ~/.wine/drive_c/users/joncrall/Local\ Settings/Application\ Data/Blizzard/Hearthstone/Logs
-    touch ~/.wine/drive_c/users/joncrall/Local\ Settings/Application\ Data/Blizzard/Hearthstone/Logs/log.config
-
-    chmod +x /home/joncrall/code/build-ArenaTracker-Desktop_Qt_5_6_1_GCC_64bit-Debug/ArenaTracker
-    cd ~/code/Arena-Tracker/opencv_install/lib
-    cp -r ~/code/Arena-Tracker/opencv_install/lib/* ~/code/build-ArenaTracker-Desktop_Qt_5_6_1_GCC_64bit-Debug
-    gvim "~/.config/Arena Tracker/Arena Tracker.conf"
-    ~/code/build-ArenaTracker-Desktop_Qt_5_6_1_GCC_64bit-Debug/ArenaTracker
-
-    #[General]
-    #autoSize=true
-    #cardHeight=35
-    #createGoldenCards=false
-    #draftLearningMode=false
-    #drawDisappear=5
-    #logConfig=/home/joncrall/.wine/drive_c/users/joncrall/Local Settings/Application Data/Blizzard/Hearthstone/Logs/log.config
-    #logConfig=/home/joncrall/.wine/drive_c/Program Files (x86)/Hearthstone/Logs/log.config
-    #logsDirPath=/home/joncrall/.wine/drive_c/users/joncrall/Local Settings/Application Data/Blizzard/Hearthstone/Logs
-    #maxGamesLog=15
-    #numWindows=2
-    #password=
-    #playerEmail=
-    #pos=@Point(0 0)
-    #pos2=@Point(0 0)
-    #showClassColor=true
-    #showDraftOverlay=true
-    #showSpellColor=true
-    #size=@Size(255 600)
-    #size2=@Size(222 600)
-    #splitWindow=false
-    #theme=1
-    #tooltipScale=10
-    #transparent=1
-        
+    # DOWNLOAD Installer
+    # http://www.battle.net/download/getInstallerForGame?os=win&locale=enUS&version=LIVE&gameProgram=HEARTHSTONE
+    wine ~/Downloads/Hearthstone-Setup.exe
     
+    # Overrides
+    #export WINEDLLOVERRIDES="api-ms-win-crt-runtime-l1-1-0.dll,api-ms-win-crt-stdio-l1-1-0.dll,ucrtbase,vcruntime140"
+    #w_override_dlls disabled "api-ms-win-crt-runtime-l1-1-0.dll,api-ms-win-crt-stdio-l1-1-0.dll,ucrtbase,vcruntime140"
+#    cat > temp-override-dll.reg <<_EOF_
+#REGEDIT4
+
+#[HKEY_CURRENT_USER\Software\Wine\DllOverrides]
+#"api-ms-win-crt-runtime-l1-1-0.dll"=disabled
+#"api-ms-win-crt-stdio-l1-1-0.dll"=disabled
+#"ucrtbase"=disabled
+#"vcruntime140"=disabled
+#_EOF_
+#    #wine cmd /c regedit /S temp-override-dll.reg
+#    wine cmd /c regedit temp-override-dll.reg
+    #winepreopts=(env PULSE_LATENCY_MSEC=60 WINEPREFIX="${wineprefixprefolder}/wine" WINEDLLOVERRIDES="msvcp100=n,b;api-ms-win-crt-runtime-l1-1-0=n,b;api-ms-win-crt-heap-l1-1-0=n,b;api-ms-win-crt-locale-l1-1-0=n,b;api-ms-win-crt-stdio-l1-1-0=n,b;ucrtbase=n,b;vcruntime140=n,b;api-ms-win-crt-convert-l1-1-0=n,b;api-ms-win-crt-time-l1-1-0=n,b;")
+    #winepostopts=(-opengl)
+    #"${winepreopts[@]}" wine start 'C:\users\Public\Desktop\StarCraft II.lnk' "${winepostopts[@]}" 2&>>/dev/null & 
     
-}
 
-
-remove_wine_stuff(){
-    sudo apt-get remove wine-mono4.5.4
-    sudo apt-get remove playonlinux wine*
-    sudo apt-get remove winbind
 }
 
 new_wine32_install(){
@@ -270,8 +193,127 @@ install_hearthstone()
 
     #https://github.com/Winetricks/winetricks/issues/575
     #~/tmp/winetricks -q vcrun2015
+}
 
 
+ubuntu_wine_prereqs(){
+
+    sudo apt-get install dpkg-dev
+    sudo apt-get install libwebkitgtk-dev -y
+    sudo apt-get install libtiff-dev libjpeg-dev
+    sudo apt-get install libgtk2.0-dev
+    sudo apt-get install libgtk2.0-dev -y
+    sudo apt-get install libsdl1.2-dev -y
+    sudo apt-get install libgstreamer-plugins-base0.10-dev -y
+    sudo apt-get install libnotify-dev
+    sudo apt-get install freeglut3
+    sudo apt-get install freeglut3-dev
+
+    sudo apt-get install python-wxgtk2.8
+    sudo apt-get install python-wxversion
+    sudo apt-get install python-wxpython
+    
+    python -c "import wxversion"
+    python2.6 -c "import wxversion"
+    python3 -c "import wxversion"
+
+    sudo pip install --upgrade --trusted-host wxpython.org --pre -f http://wxpython.org/Phoenix/snapshot-builds/ wxPython_Phoenix 
+    sudo -H pip install --upgrade --pre -f http://wxpython.org/Phoenix/snapshot-builds/ --trusted-host wxpython.org wxPython_Phoenix
+    
+
+    python -c "import wx; print(wx.VERSION_STRING)"
+    
+
+    sudo apt-get install playonlinux
+    sudo apt-get remove playonlinux
+
+    sudo add-apt-repository ppa:ubuntu-wine/ppa -y
+    sudo apt-get update
+    #sudo apt-get install -y wine1.7
+    sudo apt-get install -y wine1.8
+    #sudo apt-get install wine -y
+
+    # Prevents
+    # p11-kit: couldn't load module: /usr/lib/i386-linux-gnu/pkcs11/p11-kit-trust.so: 
+    # /usr/lib/i386-linux-gnu/pkcs11/p11-kit-trust.so: cannot open shared object file: No such file or directory
+    sudo apt-get install libp11-kit-gnome-keyring:i386
+    sudo apt-get install winbind
+
+
+    # Turn on trace debugging
+    ls -al  /etc/sysctl.d/10-ptrace.conf
+    cat /etc/sysctl.d/10-ptrace.conf
+    # Change value from 1 to 0
+    #kernel.yama.ptrace_scope
+    sudo gvim /etc/sysctl.d/10-ptrace.conf
+}
+
+linux_arena_tracker(){
+    # https://github.com/supertriodo/Arena-Tracker
+    cd ~/tmp
+    https://github.com/Itseez/opencv/archive/2.4.13.zip
+    7z x opencv-2.4.13.zip
+    mv opencv-2.4.13 ~/code/Arena-Tracker/
+
+    # Build old opencv for arena tracker
+    cd ~/code/Arena-Tracker/opencv-2.4.13
+    mkdir -p build
+    cd build
+    cmake .. -DCMAKE_INSTALL_PREFIX=/home/joncrall/code/Arena-Tracker/opencv_install
+    make -j9
+    make install
+
+    mkdir "/home/joncrall/.wine/drive_c/Program Files (x86)/Hearthstone/Logs"
+    touch "/home/joncrall/.wine/drive_c/Program Files (x86)/Hearthstone/Logs/log.config"
+
+    wine "/home/joncrall/.wine/drive_c/Program Files (x86)/Hearthstone/Hearthstone.exe"
+    wine "/home/joncrall/.wine/drive_c/Program Files (x86)/Battle.net/Battle.net.exe"
+
+
+    # Hearthstone log dir
+    ~/.wine/drive_c/users/joncrall/Local\ Settings/Application\ Data/Blizzard/Hearthstone/Logs
+    touch ~/.wine/drive_c/users/joncrall/Local\ Settings/Application\ Data/Blizzard/Hearthstone/Logs/log.config
+
+    chmod +x /home/joncrall/code/build-ArenaTracker-Desktop_Qt_5_6_1_GCC_64bit-Debug/ArenaTracker
+    cd ~/code/Arena-Tracker/opencv_install/lib
+    cp -r ~/code/Arena-Tracker/opencv_install/lib/* ~/code/build-ArenaTracker-Desktop_Qt_5_6_1_GCC_64bit-Debug
+    gvim "~/.config/Arena Tracker/Arena Tracker.conf"
+    ~/code/build-ArenaTracker-Desktop_Qt_5_6_1_GCC_64bit-Debug/ArenaTracker
+
+    #[General]
+    #autoSize=true
+    #cardHeight=35
+    #createGoldenCards=false
+    #draftLearningMode=false
+    #drawDisappear=5
+    #logConfig=/home/joncrall/.wine/drive_c/users/joncrall/Local Settings/Application Data/Blizzard/Hearthstone/Logs/log.config
+    #logConfig=/home/joncrall/.wine/drive_c/Program Files (x86)/Hearthstone/Logs/log.config
+    #logsDirPath=/home/joncrall/.wine/drive_c/users/joncrall/Local Settings/Application Data/Blizzard/Hearthstone/Logs
+    #maxGamesLog=15
+    #numWindows=2
+    #password=
+    #playerEmail=
+    #pos=@Point(0 0)
+    #pos2=@Point(0 0)
+    #showClassColor=true
+    #showDraftOverlay=true
+    #showSpellColor=true
+    #size=@Size(255 600)
+    #size2=@Size(222 600)
+    #splitWindow=false
+    #theme=1
+    #tooltipScale=10
+    #transparent=1
+        
+    
+    
+}
+
+
+remove_wine_stuff(){
+    sudo apt-get remove wine-mono4.5.4
+    sudo apt-get remove playonlinux wine*
+    sudo apt-get remove winbind
 }
 
 

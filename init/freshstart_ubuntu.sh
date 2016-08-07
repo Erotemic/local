@@ -74,8 +74,11 @@ freshtart_ubuntu_entry_point()
     #sudo apt-get install trash-cli
 
     # Vim
-    sudo apt-get install -y vim
-    sudo apt-get install -y vim-gtk
+    #sudo apt-get install -y vim
+    #sudo apt-get install -y vim-gtk
+    sudo apt-get install -y vim-gnome-py2
+    sudo update-alternatives --set vim /usr/bin/vim.gnome-py2
+    sudo update-alternatives --set gvim /usr/bin/gvim.gtk-py2
     sudo apt-get install -y exuberant-ctags 
 
     # Terminal settings
