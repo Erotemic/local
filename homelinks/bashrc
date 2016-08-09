@@ -107,7 +107,6 @@ fi
 
 # Other program environment variables
 if [[ "$HOSTNAME" == "hyrule"  ]]; then 
-    #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-7.5/targets/x86_64-linux/lib:/usr/local/cuda/lib64:/usr/local/lib
     #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/lib
     #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-7.5/targets/x86_64-linux/lib:/usr/local/lib
     #export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
