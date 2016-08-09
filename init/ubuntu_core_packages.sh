@@ -1310,3 +1310,17 @@ edit_startup_commands()
     #Icon=display
 
 }
+
+make_sshkey(){
+    ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+    ssh-keygen -t rsa -b 4096 
+}
+
+fix_dbus_issues()
+{
+    # http://askubuntu.com/questions/135573/gconf-error-no-d-bus-daemon-running-how-to-reinstall-or-fix
+    sudo chown -R $USER:$USER ~/.dbus
+    # http://askubuntu.com/questions/432604/couldnt-connect-to-accessibility-bus
+    # add to sysvars NO_AT_BRIDGE=1
+    # or use -Y with -X
+}

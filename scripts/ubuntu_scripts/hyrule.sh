@@ -1,1 +1,1 @@
-ssh -X joncrall@hyrule.cs.rpi.edu
+ssh -XY joncrall@hyrule.cs.rpi.edu
