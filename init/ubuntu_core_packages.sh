@@ -1288,3 +1288,25 @@ fix_upgrade_1404_to_1604(){
     virtualenv --system-site-packages ~/venv
     
 }
+
+edit_startup_commands()
+{
+    gvim /etc/rc.local
+    gvim $HOME/.config/autostart
+    gvim /home/joncrall/.config/autostart/update-monitor-position.desktop
+    gvim /home/joncrall/tmp/update-monitor-position
+    gvim /usr/local/sbin/update-monitor-position
+
+    #[Desktop Entry]
+    #Type=Application
+    #Exec=update-monitor-position 5
+    #Hidden=false
+    #NoDisplay=false
+    #X-GNOME-Autostart-enabled=true
+    #Name[en_US]=Update Monitors Position
+    #Name=Update Monitors Position
+    #Comment[en_US]=Force monitors position from monitor.xml
+    #Comment=Force monitors position from monitor.xml
+    #Icon=display
+
+}
