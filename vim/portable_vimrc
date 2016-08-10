@@ -144,7 +144,7 @@ call QUICKOPEN_leader_tvio('7', '~/local/vim/rc/custom_font_functions.vim')
 call QUICKOPEN_leader_tvio('6', '~/code/Lasagne')
 call QUICKOPEN_leader_tvio('8', '~/code/hesaff/src/hesaff.cpp')
 call QUICKOPEN_leader_tvio('9', '~/local/misc/modulechanges.sh')
-call QUICKOPEN_leader_tvio('W', '~/code/ibeis_cnn/ibeis_cnn/netrun.py')
+call QUICKOPEN_leader_tvio('W', '~/code/ibeis_cnn/ibeis_cnn/models/abstract_models.py')
 call QUICKOPEN_leader_tvio('w', '~/code/ibeis/ibeis/web/apis_query.py')
 
 call QUICKOPEN_leader_tvio('0', '~/local/vim/rc/custom_regex_commands.vim')

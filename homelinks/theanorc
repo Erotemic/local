@@ -9,6 +9,9 @@ enable_initial_driver_test = False
 [nvcc]
 fastmath = True
 
+[dnn]
+assume_available = True
+
 #[cuda]
 #root = /usr/local/cuda-7.5
 #[pycuda]
