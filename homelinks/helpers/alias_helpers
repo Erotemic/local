@@ -393,3 +393,9 @@ pyfile()
 alias rpivpn='rpivpn.sh'
 #sudo openconnect -b vpn.net.rpi.edu -ucrallj'
 alias lev='lev.sh'
+
+
+git_remote_sync()
+{
+    gcwip ; ssh lev "cd $(pwd) && git pull" ; ssh hyrule "cd $(pwd) && git pull"
+}
