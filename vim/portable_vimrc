@@ -51,6 +51,8 @@ def get_disabled_plugins():
         (True, 'nerdtree'),
         (True, 'LaTeX-Box'),
         (True, 'vim-markdown'),
+        (True, 'vim-virtualenv'),
+        (True, 'vim-Powerline'),
         (not WIN32, 'syntastic'),
         (not WIN32, 'vim-startify'),
         (not WIN32, 'supertab'),
@@ -144,8 +146,6 @@ call QUICKOPEN_leader_tvio('7', '~/local/vim/rc/custom_font_functions.vim')
 call QUICKOPEN_leader_tvio('6', '~/code/Lasagne')
 call QUICKOPEN_leader_tvio('8', '~/code/hesaff/src/hesaff.cpp')
 call QUICKOPEN_leader_tvio('9', '~/local/misc/modulechanges.sh')
-call QUICKOPEN_leader_tvio('W', '~/code/ibeis_cnn/ibeis_cnn/models/abstract_models.py')
-call QUICKOPEN_leader_tvio('w', '~/code/ibeis/ibeis/web/apis_query.py')
 
 call QUICKOPEN_leader_tvio('0', '~/local/vim/rc/custom_regex_commands.vim')
 call QUICKOPEN_leader_tvio('_', '$VIMRUNTIME/../_vimrc')
@@ -188,7 +188,8 @@ call QUICKOPEN_leader_tvio('m', '~/code/ibeis/ibeis/init/main_helpers.py')
 call QUICKOPEN_leader_tvio('M', '~/code/ibeis/ibeis/main_module.py')
 """"""""""""""
 call QUICKOPEN_leader_tvio('n', '~/code/ibeis/ibeis/algo/Config.py')
-call QUICKOPEN_leader_tvio('N', '~/code/ibeis/ibeis/algo/hots/score_normalization.py')
+"call QUICKOPEN_leader_tvio('N', '~/code/ibeis/ibeis/algo/hots/score_normalization.py')
+call QUICKOPEN_leader_tvio('N', '~/code/ibeis_cnn/ibeis_cnn/custom_layers.py')
 """"""""""""""
 call QUICKOPEN_leader_tvio('o', '~/code/ibeis/ibeis/algo/preproc/preproc_annot.py')
 call QUICKOPEN_leader_tvio('O', '~/code/ibeis/ibeis/algo/preproc/preproc_chip.py')
@@ -212,6 +213,8 @@ call QUICKOPEN_leader_tvio('U', '~/code/utool/utool/util_dev.py')
 call QUICKOPEN_leader_tvio('v', '~/code/vtool/vtool/__init__.py')
 call QUICKOPEN_leader_tvio('V', '~/code/vtool/vtool/spatial_verification.py')
 call QUICKOPEN_leader_tvio('V', '~/code/vtool/vtool/coverage_image.py')
+call QUICKOPEN_leader_tvio('W', '~/code/ibeis_cnn/ibeis_cnn/models/abstract_models.py')
+call QUICKOPEN_leader_tvio('w', '~/code/ibeis/ibeis/web/apis_query.py')
 call QUICKOPEN_leader_tvio('x', '~/code/ibeis/ibeis/viz/interact/interact_name.py')
 call QUICKOPEN_leader_tvio('X', '~/code/ibeis/ibeis/algo/hots/multi_index.py')
 call QUICKOPEN_leader_tvio('y', '~/code/ibeis/ibeis/algo/hots/vsone_pipeline.py')

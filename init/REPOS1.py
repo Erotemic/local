@@ -95,6 +95,7 @@ CommandLine;
 VIM_REPO_URLS, VIM_REPOS = repo_list([
     #'https://github.com/dbarsam/vim-vimtweak.git',
     #'https://github.com/bling/vim-airline.git',
+    'https://github.com/tell-k/vim-autopep8.git',
     'https://github.com/davidhalter/jedi-vim.git',
     'https://github.com/ervandew/supertab.git',
     'https://github.com/mhinz/vim-startify.git',
@@ -109,6 +110,9 @@ VIM_REPO_URLS, VIM_REPOS = repo_list([
     'https://github.com/altercation/vim-colors-solarized.git',
     # 'https://github.com/drmingdrmer/vim-syntax-markdown.git',
     'https://github.com/plasticboy/vim-markdown.git',
+
+    'https://github.com/jmcantrell/vim-virtualenv.git',
+    'https://github.com/Lokaltog/vim-powerline.git',
 
     'https://github.com/LaTeX-Box-Team/LaTeX-Box.git',
 

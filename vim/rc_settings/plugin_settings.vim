@@ -173,3 +173,18 @@ let g:netrw_liststyle     = 0
 let g:netrw_retmap        = 1
 let g:netrw_silent        = 1
 let g:netrw_special_syntax= 1
+
+
+"-------------------------
+"# vim-virutalenv
+"
+let g:virtualenv_directory = $HOME
+let g:virtualenv_auto_activate = 1
+" Add venv to statusline
+set statusline+=\ \%{virtualenv#statusline()} 
+"%{virtualenv#statusline()}
+
+"powerline
+" show line in single buffer
+set laststatus=2
+

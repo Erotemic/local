@@ -74,6 +74,9 @@ def ensure_ssh_url(repo_url):
 
 
 def repo_list(repo_urls, checkout_dir):
+    for url in repo_urls:
+        assert url.count('github.com') <= 1, 'you probably forgot a comma between %r' % (url,)
+
     repo_dirs = get_repo_dirs(repo_urls, checkout_dir)
     if IS_USER:
         repo_urls = [ensure_ssh_url(url) if can_push(url) else url
