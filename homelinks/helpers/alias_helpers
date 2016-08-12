@@ -397,5 +397,10 @@ alias lev='lev.sh'
 
 git_remote_sync()
 {
-    gcwip ; ssh lev "cd $(pwd) && git pull" ; ssh hyrule "cd $(pwd) && git pull"
+    if [[ "$HOSTNAME" == "hyrule"  ]]; then 
+        gcwip ; ssh lev "cd $(pwd) && git pull"
+    else
+        gcwip ; ssh lev "cd $(pwd) && git pull" ; ssh hyrule "cd $(pwd) && git pull"
+    fi
 }
+alias grs='git_remote_sync'
