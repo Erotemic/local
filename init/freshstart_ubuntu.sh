@@ -31,14 +31,34 @@ ensure_config_symlinks()
     sudo apt-get install symlinks
     symlinks -d .
     
-    mkdir -p ~/.config
-    export HOMELINKS=~/local/homelinks
-    export LINKFILES=$(/bin/ls -Ap  $HOMELINKS | grep -v /)
-    export CONFIGDIRS=$(/bin/ls -A $HOMELINKS/config)
+    export HOMELINKS=$HOME/local/homelinks
+
     # Symlink all homelinks files 
-    for f in $LINKFILES; do ln -s $HOMELINKS/$f ~/.$f; done
+    BASEDIR=""
+    #================
+    mkdir -pv $HOME/.$BASEDIR
+    FNAMES=$(/bin/ls -Ap $HOMELINKS/$BASEDIR | grep -v /)
+    echo $FNAMES
+    for f in $FNAMES; do ln -vs $HOMELINKS/$BASEDIR$f $HOME/.$BASEDIR$f; done
+    #================
+
+    # Symlink nautlius scripts
+    BASEDIR="gnome2/nautilus-scripts/"
+    #================
+    mkdir -pv $HOME/.$BASEDIR
+    FNAMES=$(/bin/ls -Ap $HOMELINKS/$BASEDIR | grep -v /)
+    echo $FNAMES
+    for f in $FNAMES; do ln -vs $HOMELINKS/$BASEDIR$f $HOME/.$BASEDIR$f; done
+    #================
+
     # Symlink config subdirs
-    for f in $CONFIGDIRS; do ln -s $HOMELINKS/config/$f ~/.config/$f; done
+    BASEDIR="config/"
+    #================
+    mkdir -pv $HOME/.$BASEDIR
+    DNAMES=$(/bin/ls -A $HOMELINKS/$BASEDIR)
+    echo $DNAMES
+    for d in $DNAMES; do ln -vs $HOMELINKS/$BASEDIR$d $HOME/$BASEDIR$d; done
+    #================
 }
 
 freshtart_ubuntu_entry_point()
@@ -393,6 +413,16 @@ nautilus_settings()
 
     echo "Get Open In Terminal in context menu"
     sudo apt-get install nautilus-open-terminal -y
+
+    # Tree view for nautilus
+    gsettings set org.gnome.nautilus.window-state side-pane-view "tree"
+
+
+    http://askubuntu.com/questions/411430/open-the-parent-folder-of-a-symbolic-link-via-right-click
+
+    
+
+    mkdir -p ~/.gnome2/nautilus-scripts
 }
 
 setup_ibeis()

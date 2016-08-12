@@ -1,0 +1,13 @@
+#!/bin/bash
+if [ -h $NAUTILUS_SCRIPT_SELECTED_FILE_PATHS ]; then
+    var="$(readlink $NAUTILUS_SCRIPT_SELECTED_FILE_PATHS)"
+else
+    zenity --info --text="$(basename "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS") is not a symbolic link"
+    exit 0
+fi
+if [ -d "$var" ]; then
+    var2="$var"
+else
+    var2="$(dirname "$var")"
+fi
+nautilus "$var2"
