@@ -19,11 +19,15 @@ VIM_REPOS_WITH_SUBMODULES = REPOS1.VIM_REPOS_WITH_SUBMODULES
 def gitcmd(repo, command):
     try:
         import utool as ut
-        ut.repocmd(repo, command)
+        repo = ut.Repo(dpath=repo)
+        repo.issue(command)
     except Exception:
         print()
         print("************")
-        print(repo)
+        try:
+            print('repo=%s' % ut.color_text(repo.dpath, 'yellow'))
+        except Exception:
+            print('repo = %r ' % (repo,))
         os.chdir(repo)
         if command.find('git') != 0 and command != 'gcwip':
             command = 'git ' + command
