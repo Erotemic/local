@@ -119,6 +119,10 @@ inoremap <M-y> from import
 noremap <leader>r :source ~/local/vim/portable_vimrc<CR>
 noremap <leader>R :source ~/local/vim/portable_vimrc<CR>
 noremap <leader>rs :syntax sync minlines=500.<CR>
+"noremap <leader>ro :'<,'>s/^\( *\)'/\1('/ <bar> '<,'>s/,$/),/ <bar> '<,'>s/:/,/<CR>
+" First visual tick is handled by visual mode, need to put rest in
+" Dict to ordered dict (single line)
+noremap <leader>ro :s/^\( *\)'/\1('/ <bar> '<,'>s/,$/),/ <bar> '<,'>s/:/,/<CR>
 
 " Find lone double quotes
 ":noremap <leader>"/ :/\([^"]\)"\([^"]\)<CR>

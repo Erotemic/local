@@ -20,6 +20,9 @@ s/:/,/
 " Dict to ordered dict (single line)
 s/^\( *\)'/\1('/ | s/,$/),/ | s/:/,/
 
+'<,'>s/^\( *\)'/\1('/ | '<,'>s/,$/),/ | '<,'>s/:/,/
+
+
 
 "func! ChangeWords(...)
 func :%s/\<\(\)\>//gc
