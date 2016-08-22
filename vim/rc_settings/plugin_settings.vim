@@ -95,6 +95,49 @@ let g:tagbar_type_tex = {
     \ 'ctagstype' : 'tex2',
 \ }
 
+" Remove imports from tagbar
+"\ 'i:imports:1:0',
+let g:tagbar_type_python = {
+    \ 'ctagstype' : 'python',
+    \ 'kinds'     : [
+        \ 'c:classes:0:1',
+        \ 'f:functions:0:1',
+        \ 'm:members:0:1',
+        \ 'v:variables:0:0',
+    \ ],
+    \ 'sro'        : '.',
+    \ 'kind2scope' : {
+        \ 'c' : 'class',
+        \ 'f' : 'function',
+        \ 'm' : 'function',
+    \ },
+    \ 'scope2kind' : {
+        \ 'class'    : 'c',
+        \ 'function' : 'f',
+    \ }
+\ }
+
+"let g:tagbar_type_python = {
+    "\ 'ctagstype' : 'python',
+    "\ 'kinds'     : [
+        "\ {'short' : 'i', 'long' : 'imports',   'fold' : 1, 'stl' : 0},
+        "\ {'short' : 'c', 'long' : 'classes',   'fold' : 0, 'stl' : 1},
+        "\ {'short' : 'f', 'long' : 'functions', 'fold' : 0, 'stl' : 1},
+        "\ {'short' : 'm', 'long' : 'members',   'fold' : 0, 'stl' : 1},
+        "\ {'short' : 'v', 'long' : 'variables', 'fold' : 0, 'stl' : 0}
+    "\ ],
+    "\ 'sro'        : '.',
+    "\ 'kind2scope' : {
+        "\ 'c' : 'class',
+        "\ 'f' : 'function',
+        "\ 'm' : 'function',
+    "\ },
+    "\ 'scope2kind' : {
+        "\ 'class'    : 'c',
+        "\ 'function' : 'f',
+    "\ }
+"\ }
+
 
 "let g:tagbar_type_tex = {
 "    \ 'ctagstype' : 'tex2',
@@ -184,7 +227,10 @@ let g:virtualenv_auto_activate = 1
 set statusline+=\ \%{virtualenv#statusline()} 
 "%{virtualenv#statusline()}
 
+"set statusline+=\ %{g:matchnum}\ matches
+
 "powerline
 " show line in single buffer
 set laststatus=2
+
 
