@@ -445,3 +445,45 @@ ipython_notebook_server()
     #jupyter-notebook --config nbserver_config.py 
     jupyter-notebook --ip="*" --no-browser
 }
+
+two_gpus(){
+    # http://nvidia.custhelp.com/app/answers/detail/a_id/3029/~/using-cuda-and-x
+    echo "foo"
+
+    # Determine PCI-IDS of graphics cards
+    #lspci
+    #nvidia-smi -a
+    nvidia-xconfig --query-gpu-info
+
+    #Section "Device"
+        #Identifier     "Device0"
+        #Driver         "nvidia"
+        #VendorName     "NVIDIA Corporation"
+        #BoardName      "GeForce GTX 670"
+        #BusID          "PCI:1:0:0"
+    #EndSection
+
+
+    #Section "Device"
+        #Identifier     "Device1"
+        #Driver         "nvidia"
+        #VendorName     "NVIDIA Corporation"
+        #BoardName      "GeForce GTX 660"
+        #BusID          "PCI:2:0:0"
+    #EndSection
+
+
+    #Section "Screen"
+        #Identifier     "Screen0"
+        #Device         "Device1"
+        #Monitor        "Monitor0"
+        #DefaultDepth    24
+        #SubSection     "Display"
+            #Depth       24
+        #EndSubSection
+    #EndSection
+
+
+    #https://devtalk.nvidia.com/default/topic/769851/multi-nvidia-gpus-and-xorg-conf-how-to-account-for-pci-bus-busid-change-/
+
+}
