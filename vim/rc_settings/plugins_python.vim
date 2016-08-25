@@ -32,28 +32,28 @@ let g:syntastic_python_checkers=['flake8'] " ignores lines containng # NOQA
 python << endpython
 import vim
 flake8_errors = [
-    'E126', # continuation line hanging-indent
-    'E127', # continuation line over-indented for visual indent
-    'E201', # whitespace after '('
-    'E202', # whitespace before ']'
-    'E203', # whitespace before ', '
-    'E221', # multiple spaces before operator
-    'E222', # multiple spaces after operator
-    'E241', # multiple spaces after ,
-    'E265', # block comment should start with "# "
-    'E271', # multiple spaces after keyword 
-    'E272', # multiple spaces before keyword
-    'E301', # expected 1 blank line, found 0
-    'E501', # line length > 79
-    'W602', # Old reraise syntax
-    'E266', # too many leading '#' for block comment 
-    'N801', # function name should be lowercase [N806]
-    'N802', # function name should be lowercase [N806]
-    'N803', # argument should be lowercase [N806]
-    'N805', # first argument of a method should be named 'self'
-    'N806', # variable in function should be lowercase [N806]
-    'N811', # constant name imported as non constant
-    'N813', # camel case
+    'E126',  # continuation line hanging-indent
+    'E127',  # continuation line over-indented for visual indent
+    'E201',  # whitespace after '('
+    'E202',  # whitespace before ']'
+    'E203',  # whitespace before ', '
+    'E221',  # multiple spaces before operator
+    'E222',  # multiple spaces after operator
+    'E241',  # multiple spaces after ,
+    'E265',  # block comment should start with "# "
+    'E271',  # multiple spaces after keyword
+    'E272',  # multiple spaces before keyword
+    'E301',  # expected 1 blank line, found 0
+    'E501',  # line length > 79
+    'W602',  # Old reraise syntax
+    'E266',  # too many leading '#' for block comment
+    'N801',  # function name should be lowercase [N806]
+    'N802',  # function name should be lowercase [N806]
+    'N803',  # argument should be lowercase [N806]
+    'N805',  # first argument of a method should be named 'self'
+    'N806',  # variable in function should be lowercase [N806]
+    'N811',  # constant name imported as non constant
+    'N813',  # camel case
 ] 
 flake8_args_list = [
     #'--max-line-length 80',

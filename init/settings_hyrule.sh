@@ -455,6 +455,8 @@ two_gpus(){
     #nvidia-smi -a
     nvidia-xconfig --query-gpu-info
 
+    # Had to swap device order
+
     #Section "Device"
         #Identifier     "Device0"
         #Driver         "nvidia"
@@ -486,4 +488,10 @@ two_gpus(){
 
     #https://devtalk.nvidia.com/default/topic/769851/multi-nvidia-gpus-and-xorg-conf-how-to-account-for-pci-bus-busid-change-/
 
+}
+
+ubuntu_will_not_boot_unless_recovery_mode()
+{
+    #https://ubuntuforums.org/showthread.php?t=2268327
+    echo
 }
