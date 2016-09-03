@@ -658,6 +658,19 @@ endpython
 endfunc
 
 
+func! MarkdownPreview() 
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool as ut
+ut.rrrr(verbose=False)
+buffer_name = vim.current.buffer.name
+print('mdview buffer_name = %r' % (buffer_name,))
+os.system('mdview ' + buffer_name + '&')
+endpython
+endfunc
+
+
 func! PyCiteScholarSearch() 
 python << endpython
 import vim
