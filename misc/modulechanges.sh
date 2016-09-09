@@ -670,3 +670,9 @@ def update_1_5_0(db, ibs=None):
     )
     #pass
 EOF
+
+
+# Try and remove these
+rob gp "print, print_, printDBG, rrr, profile = "
+rob gp " *print_\\("
+

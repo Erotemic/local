@@ -150,5 +150,3 @@ s/\t/    /gc
 
 "  Fix -m ibeis.modname --exec-funcname
 %s/-m ibeis\..* --exec-/-m ibeis --tf /gc
-
-
