@@ -38,6 +38,14 @@ install_core()
     # Git
     sudo apt-get install -y git
 
+
+    # latest git
+    sudo add-apt-repository ppa:git-core/ppa -y
+    sudo apt-get update
+    sudo apt-get install git -y
+    git --version
+    
+
     # Vim / Gvim
     #sudo apt-get install -y vim
     #sudo apt-get install -y vim-gtk
@@ -1323,4 +1331,18 @@ fix_dbus_issues()
     # http://askubuntu.com/questions/432604/couldnt-connect-to-accessibility-bus
     # add to sysvars NO_AT_BRIDGE=1
     # or use -Y with -X
+}
+
+
+fix_audio_hyrule(){
+    # constant weird beeping sound
+    # just installed new (second) graphics card
+
+pacmd list-cards
+pacmd set-card-profile 2  output:analog-stereo
+pacmd set-default-sink 2
+   
+# http://askubuntu.com/questions/824481/constant-high-frequency-beep-on-startup-no-other-sound
+
+
 }

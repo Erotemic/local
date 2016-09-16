@@ -53,8 +53,8 @@ endif
 :set number
 if has("gui_running")
     " change line number color
-    ":highlight LineNr guifg=#666644
-    :highlight LineNr guifg=#333333
+    :highlight LineNr guifg=#666644
+    ":highlight LineNr guifg=#333333
 endif
 
 "-------------------------

@@ -127,7 +127,7 @@ def _sed(r, regexpr, repl, force=False, recursive=False, dpath_list=None):
         if pyext:
             include_patterns = ['*.py']
         else:
-            include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h']
+            include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h', '*.pyx', '*.pxi']
         if ut.get_argflag('--all'):
             include_patterns = ['*']
         #if ut.get_argflag('--tex'):
