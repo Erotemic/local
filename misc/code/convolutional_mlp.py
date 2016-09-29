@@ -187,7 +187,7 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=200,
     cost = layer3.negative_log_likelihood(y)
 
     # create a function to compute the mistakes that are made by the model
-    test_model = theano.function([index], layer3.errors(y),
+    temp_model = theano.function([index], layer3.errors(y),
              givens={
                 x: test_set_x[index * batch_size: (index + 1) * batch_size],
                 y: test_set_y[index * batch_size: (index + 1) * batch_size]})
@@ -275,7 +275,7 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=200,
                     best_iter = iter
 
                     # test it on the test set
-                    test_losses = [test_model(i) for i in xrange(n_test_batches)]
+                    test_losses = [temp_model(i) for i in xrange(n_test_batches)]
                     test_score = numpy.mean(test_losses)
                     print(('     epoch %i, minibatch %i/%i, test error of best '
                            'model %f %%') %
