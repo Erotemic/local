@@ -325,7 +325,7 @@ import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool.util_ubuntu
 import utool as ut
-utool.util_ubuntu.XCtrl.do(('focus', 'x-terminal-emulator.X-terminal-emulator'))
+ut.util_ubuntu.XCtrl.do(('focus', 'x-terminal-emulator.X-terminal-emulator'))
 endpython
 endfu
 
@@ -338,7 +338,7 @@ import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool.util_ubuntu
 import utool as ut
 ut.rrrr(0)
-utool.util_ubuntu.rrr(0)
+ut.util_ubuntu.rrr(0)
 
 # Hack to determine mode
 mode = vim.eval('a:1')
@@ -352,26 +352,31 @@ else:
     else:
         text = pyvim_funcs.get_line_at_cursor()
 
+text = ut.unindent(text)
+# Prepare to send text to xdotool
 ut.copy_text_to_clipboard(text)
 if '\n' in text or len(text) > 20:
     text = '\'%paste\''
 else:
     import pipes
     text = pipes.quote(text.lstrip(' '))
-    ('focus', 'GVIM'),
 
+# Build xdtool script
 doscript = [
+    ('remember_window_id', 'ACTIVE_GVIM'),
     ('focus', 'x-terminal-emulator.X-terminal-emulator'),
-    ('type', text), 
-    #('type', '%paste'), 
+    #('type', text), 
+    ('key', 'ctrl+shift+v'),
     ('key', 'KP_Enter'),
 ]
 if return_to_vim == "1":
     doscript += [
-        ('focus', 'GVIM'),
+        #('focus', 'GVIM'),
+        ('focus_id', '$ACTIVE_GVIM'),
     ]
 
-utool.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01)
+# execute script
+ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01, verbose=False)
 #xctrl.send(('type', '%paste'), ('key', 'KP_Enter'))
 #xctrl.focus_window('GVIM')
 #L______________
@@ -383,7 +388,7 @@ func! InsertDocstr()
 python << endpython
 import vim
 #vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
-import utool
+import utool as ut
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 
 if pyvim_funcs.is_module_pythonfile():
@@ -401,7 +406,7 @@ func! InsertKWargsDoc()
 python << endpython
 import vim
 #vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
-import utool
+import utool as ut
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 
 if pyvim_funcs.is_module_pythonfile():
@@ -518,7 +523,7 @@ python << endpython
 # FIXME: Unfinished
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool
+import utool as ut
 
 pyvim_funcs.ensure_normalmode()
 
