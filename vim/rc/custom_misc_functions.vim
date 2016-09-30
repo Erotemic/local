@@ -355,11 +355,12 @@ else:
 text = ut.unindent(text)
 # Prepare to send text to xdotool
 ut.copy_text_to_clipboard(text)
-if '\n' in text or len(text) > 20:
-    text = '\'%paste\''
-else:
-    import pipes
-    text = pipes.quote(text.lstrip(' '))
+if False:
+    if '\n' in text or len(text) > 20:
+        text = '\'%paste\''
+    else:
+        import pipes
+        text = pipes.quote(text.lstrip(' '))
 
 # Build xdtool script
 doscript = [
@@ -369,6 +370,13 @@ doscript = [
     ('key', 'ctrl+shift+v'),
     ('key', 'KP_Enter'),
 ]
+if '\n' in text:
+    # Press enter twice for multiline texts
+    doscript += [
+        ('key', 'KP_Enter'),
+    ]
+    pass
+
 if return_to_vim == "1":
     doscript += [
         #('focus', 'GVIM'),
