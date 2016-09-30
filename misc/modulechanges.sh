@@ -676,3 +676,6 @@ EOF
 rob gp "print, print_, printDBG, rrr, profile = "
 rob gp " *print_\\("
 
+
+# TODO Change testdata to demodata?
+rob sp testdata demodata
