@@ -13,10 +13,7 @@ def setup_extensions():
     sudo pip install jupyter
     sudo pip install ipython-extensions
 
-
-    Jupyter sutup is such a pain
-
-
+    Jupyter setup is such a pain
 
     Graphical Config editor
     https://github.com/ipython-contrib/IPython-notebook-extensions/wiki/config-extension
@@ -26,6 +23,8 @@ def setup_extensions():
 def write_default_ipython_profile():
     """
     CommandLine:
+        python ~/local/init/init_ipython_config.py
+
         python -c "import utool as ut; ut.vd(ut.unixpath('~/.ipython/profile_default'))"
         python -c "import utool as ut; ut.editfile(ut.unixpath('~/.ipython/profile_default/ipython_config.py'))"
 
