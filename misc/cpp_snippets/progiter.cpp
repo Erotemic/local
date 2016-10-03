@@ -11,6 +11,19 @@
 
 class ProgIter 
 {
+
+    /*
+     * Basic Usage
+     
+     N = 10;
+     ProgIter prog = ProgIter(N)
+     prog.begin();
+     for (int i = 0; i < N: i++){
+         prog.mark(i);
+         // dostuff
+     }
+
+     */
 public:
     ProgIter(int nTotal_, const std::string &lbl_)
         : nTotal(nTotal_), lbl(lbl_), flush_freq_sec(2.7182), nbytes_have(0) { }
@@ -65,7 +78,7 @@ public:
         est_sec_remain = (double) (nTotal - i) / iter_per_sec;
         printf("\r %s %d/%d rate=%.2fHz, etr=%ds, total=%ds %s", 
                 lbl.c_str(), i, nTotal, iter_per_sec, (int) est_sec_remain, (int) total_sec, extra);
-        if (sec_since_last > 2.7182)
+        if (sec_since_last > flush_freq_sec)
         {
             fflush(stdout);
         }
