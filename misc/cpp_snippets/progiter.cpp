@@ -8,23 +8,6 @@
 #include <cstdlib>
 #include <cstring>
 
-//#include <assert.h>
-//#include <ctype.h>
-//#include <float.h>
-//#include <limits.h>
-//#include <math.h>
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <string.h>
-
-//#include <algorithm>
-//#include <cmath>
-//#include <cstdlib>
-//#include <limits>
-//#include <float.h>
-//#include <cstring>
-//#include <cassert>
-
 
 class ProgIter 
 {
