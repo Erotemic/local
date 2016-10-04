@@ -72,6 +72,9 @@ let g:syntastic_cpp_check_header = 0
 let g:syntastic_cpp_no_include_search = 1
 let g:syntastic_cpp_no_default_include_dirs =1
 let g:syntastic_cpp_remove_include_errors = 1
+let g:syntastic_cpp_compiler = 'clang++'
+let g:syntastic_cpp_compiler_options = ' -std=c++11 -stdlib=libc++ -lstdc++'
+
 "let g:syntastic_cpp_include_dirs = ['include', '../include']
 "let g:syntastic_cpp_compiler = 'clang++'
 "let g:syntastic_c_include_dirs = ['include', '../include']
