@@ -44,20 +44,46 @@ def get_disabled_plugins():
         ~/local/init/REPOS1.py
     """
     WIN32 = sys.platform.startswith('win32')
+    UNIX = not WIN32
+
+    level0 = 1
+    level1 = 1
+    level2 = 1
+    level3 = 1
+    level4 = 1
+    level5 = 1
+
     # Set flag to be false to disable plugin
     known_plugins = [
-        (True, 'jedi-vim'),
-        (True, 'nerdcommenter'),
-        (True, 'nerdtree'),
-        (True, 'LaTeX-Box'),
-        (True, 'vim-markdown'),
-        (True, 'vim-virtualenv'),
-        (True, 'vim-Powerline'),
-        (not WIN32, 'syntastic'),
-        (not WIN32, 'vim-startify'),
-        (not WIN32, 'supertab'),
-        (False and not WIN32, 'buffergator'),
-        (not WIN32, 'taglist.vim'),  # ctags
+        (level0, 'nerdtree'),
+
+        (level1, 'nerdcommenter'),
+        (level1, 'tagbar'),
+
+        (level2 & UNIX, 'supertab'),
+        (level2 & UNIX, 'vim-startify'),
+
+        (level3 & UNIX & 0, 'syntastic'),
+        (level3, 'jedi-vim'),
+        (level3, 'LaTeX-Box'),
+        (level3, 'vim-markdown'),
+        (level3, 'vim-colors-solarized'),
+
+        (level4, 'ultisnips'),
+        (level4, 'vim-snippets'),
+        (level4, 'vim-powerline'),
+        (level4, 'vim-Powerline'),
+        (level4, 'vim-virtualenv'),
+        (level4, 'vim-autopep8'),
+
+
+        (level5, 'AnsiEsc.vim'),
+        (level5, 'rainbow_parentheses.vim'),
+        (level5, 'closetag.vim'),
+        (level5 & UNIX, 'taglist.vim'),  # ctags
+
+
+        (False & UNIX, 'vim-buffergator'),
         (False, 'vim-ipython'), (False, 'vim-quickopen-tvio'),
         (False, 'vim-fugitive'), (False, 'csv.vim'), (False, 'grep.vim'), 
         (False, 'vim-repeat'), (False, 'Conque-Shell'),
@@ -67,10 +93,22 @@ def get_disabled_plugins():
         (False, 'vim-vimtweak'),
     ] 
     disabled = [name for flag, name in known_plugins if not flag]
+
+    if True:
+        import os
+        enabled = [name for flag, name in known_plugins if flag]
+        all_plugins = set(disabled + enabled)
+        plugin_dirs = set(os.listdir(os.path.expanduser('~/local/vim/vimfiles/bundle')))
+        unregistered_plugins = plugin_dirs - all_plugins
+        if len(unregistered_plugins) > 0:
+            print('Warning: unregistered_plugins = %r' % (unregistered_plugins,))
     return disabled
 
 disabled = get_disabled_plugins()
 disabled_str = '[' + (', '.join(['"%s"' % (name,) for name in disabled])) + ']'
+
+
+#print(disabled_str)
 vim.command('let g:pathogen_disabled = ' + disabled_str)
 endpython
 
@@ -78,7 +116,8 @@ endpython
 "# http://stackoverflow.com/questions/6639786/pathogen-vim-non-default-bundle-directory-location
 :set nocp  " https://github.com/tpope/vim-pathogen/issues/50
 source ~/local/vim/vimfiles/autoload/pathogen.vim
-:call pathogen#runtime_append_all_bundles('bundle')
+":call pathogen#runtime_append_all_bundles('bundle')
+:call pathogen#incubate('bundle/{}')
 execute pathogen#infect()
 call pathogen#helptags()
 "call pathogen#infect()

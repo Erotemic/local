@@ -72,8 +72,9 @@ let g:syntastic_cpp_check_header = 0
 let g:syntastic_cpp_no_include_search = 1
 let g:syntastic_cpp_no_default_include_dirs =1
 let g:syntastic_cpp_remove_include_errors = 1
-let g:syntastic_cpp_compiler = 'clang++'
-let g:syntastic_cpp_compiler_options = ' -std=c++11 -stdlib=libc++ -lstdc++'
+" let g:syntastic_cpp_compiler = 'clang++'
+" let g:syntastic_cpp_compiler_options = ' -std=c++11 -stdlib=libc++ -lstdc++'
+" let g:syntastic_cpp_compiler_options = ' -std=c++11 -stdlib=libc++'
 
 "let g:syntastic_cpp_include_dirs = ['include', '../include']
 "let g:syntastic_cpp_compiler = 'clang++'
@@ -186,18 +187,21 @@ let Tlist_Auto_Highlight_Tag = 1
 " PLUGIN: Buffergator
 " https://github.com/jeetsukumaran/vim-buffergator/blob/master/doc/buffergator.txt
 " Remove mappings that I dont like 
-silent! unmap!  <leader><S-Down>  
-silent! unmap!  <leader><S-Right>  
-silent! unmap!  <leader><S-Up>     
-silent! unmap!  <leader><S-Left>   
-silent! unmap!  <leader><Down>     
-silent! unmap!  <leader><Right>    
-silent! unmap!  <leader><Up>       
-silent! unmap!  <leader><Left>     
-silent! unmap!  <leader>T          
-silent! unmap!  <leader>tc         
-silent! unmap!  <leader>to         
-silent! unmap!  <leader>t          
+if index(g:pathogen_disabled, 'vim-buffergator') < 0
+    echo "BAD"
+    silent! unmap!  <leader><S-Down>  
+    silent! unmap!  <leader><S-Right>  
+    silent! unmap!  <leader><S-Up>     
+    silent! unmap!  <leader><S-Left>   
+    silent! unmap!  <leader><Down>     
+    silent! unmap!  <leader><Right>    
+    silent! unmap!  <leader><Up>       
+    silent! unmap!  <leader><Left>     
+    silent! unmap!  <leader>T          
+    silent! unmap!  <leader>tc         
+    silent! unmap!  <leader>to         
+    silent! unmap!  <leader>t          
+endif 
 " 
 
 " VimTweak
@@ -227,9 +231,10 @@ let g:netrw_special_syntax= 1
 let g:virtualenv_directory = $HOME
 let g:virtualenv_auto_activate = 1
 " Add venv to statusline
-set statusline+=\ \%{virtualenv#statusline()} 
-"%{virtualenv#statusline()}
 
+if exists("*virtualenv#statusline")
+    set statusline+=\ \%{virtualenv#statusline()} 
+endif
 "set statusline+=\ %{g:matchnum}\ matches
 
 "powerline
