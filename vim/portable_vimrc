@@ -63,10 +63,11 @@ def get_disabled_plugins():
         (level2 & UNIX, 'supertab'),
         (level2 & UNIX, 'vim-startify'),
 
-        (level3 & UNIX & 0, 'syntastic'),
+        (level3 & UNIX & 1, 'syntastic'),
         (level3, 'jedi-vim'),
         (level3, 'LaTeX-Box'),
         (level3, 'vim-markdown'),
+        (level3, 'vim-syntax-markdown'),
         (level3, 'vim-colors-solarized'),
 
         (level4, 'ultisnips'),
