@@ -495,3 +495,26 @@ ubuntu_will_not_boot_unless_recovery_mode()
     #https://ubuntuforums.org/showthread.php?t=2268327
     echo
 }
+
+
+fix_sound()
+{
+    # http://askubuntu.com/questions/824481/constant-high-frequency-beep-on-startup-no-other-sound 
+    # https://help.ubuntu.com/community/SoundTroubleshootingProcedure
+
+    # https://bbs.archlinux.org/viewtopic.php?id=198618
+    
+    echo options snd_hda_intel index=1 >> /etc/modprobe.d/alsa-base.conf
+    modprobe -rv snd_hda_intel
+    modprobe -v snd_hda-intel
+
+
+#I'm on Ubuntu 14.04.5 LTS and having a very odd issue. Whenever I boot my computer (about when X starts up) my speakers emit a constant high frequency sound. No other sound plays from any application. This happens on both speaker and headphones. This also happens regardless of if the computer's sound is muted or not. This happens in both the front microphone jack and the back line-out jack. However, the in the back line-out jack there is also a periodic crackling sound. The system did not do this previously. This all started when I installed a second graphics card. All I did to the computer was install an Nvidia GeForce GTX 660 along side my existing GeForce GTX 670. Going back to the original configuration did not change anything.  I've had this problem for almost a month now and I have found no solutions. 
+
+
+
+    
+    
+
+}
+
