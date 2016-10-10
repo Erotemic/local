@@ -258,6 +258,22 @@ freshtart_ubuntu_entry_point()
 }
 
 
+virtualenv_numpy_16()
+{
+    # disable current venv
+    deactivate
+
+    # setup virtual env
+    export PYTHON_VENV="$HOME/_venv_numpy_1.6"
+    mkdir -p $PYTHON_VENV
+    virtualenv -p /usr/bin/python2.7 $PYTHON_VENV
+    source $PYTHON_VENV/bin/activate
+
+    pip install setuptools -U
+    pip install numpy
+}
+
+
 install_python()
 {
     sudo pip install pillow
@@ -268,6 +284,13 @@ install_python()
     #python2.7 -m virtualenv -p /usr/bin/python2.7 venv
     python2.7 -m virtualenv -p /usr/bin/python2.7 venv --system-site-packages
     source ~/venv/bin/activate
+    pip install numpy==1.6.1
+    pip install Cython==0.23.4
+    pip install scipy==0.9.0
+
+    python -c "import numpy; print(numpy.__version__)"
+    cd ~/code/scikit-learn-old-numpy
+    python setup develop
 }
 
 

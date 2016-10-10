@@ -508,11 +508,36 @@ fix_sound()
     modprobe -rv snd_hda_intel
     modprobe -v snd_hda-intel
 
+    # Ubuntu 14.04 always plays a constant high frequency sound
 
 #I'm on Ubuntu 14.04.5 LTS and having a very odd issue. Whenever I boot my computer (about when X starts up) my speakers emit a constant high frequency sound. No other sound plays from any application. This happens on both speaker and headphones. This also happens regardless of if the computer's sound is muted or not. This happens in both the front microphone jack and the back line-out jack. Every so often there is also a buzzing sound. The system did not do this previously. This all started when I installed a second graphics card. All I did to the computer was install an Nvidia GeForce GTX 660 along side my existing GeForce GTX 670. Going back to the original configuration did not change anything.  I've had this problem for almost a month now and I have found no solutions. 
 
+#Other things I have noticed:
+#    * the system seems to recognize when I plug/unplug my headphones by chaning the audio output device in the system sound settings. 
+#    * pavucontrol does not seem to know about the intel sound card that I want to play sound from. It only shows the NVIDIA HDMI options. However, the system sound panel does show both the NVIDIA HDMI and the normal intel jacks. 
+
+# I followed many of the steps in https://help.ubuntu.com/community/SoundTroubleshootingProcedure and was unable to solve the problem. Here is the output of step 3. I greatly appreciate any help. 
 
 
+# http://askubuntu.com/questions/687062/usb-audio-interface-not-showing-device-in-list-for-pulseaudio
+
+#(venv2) joncrall@hyrule:~$ aplay -l | grep card
+#card 0: PCH [HDA Intel PCH], device 0: ALC892 Analog [ALC892 Analog]
+#card 0: PCH [HDA Intel PCH], device 1: ALC892 Digital [ALC892 Digital]
+#card 0: PCH [HDA Intel PCH], device 3: HDMI 0 [HDMI 0]
+#card 0: PCH [HDA Intel PCH], device 7: HDMI 1 [HDMI 1]
+#card 1: NVidia [HDA NVidia], device 3: HDMI 0 [HDMI 0]
+#card 1: NVidia [HDA NVidia], device 7: HDMI 1 [HDMI 1]
+#card 1: NVidia [HDA NVidia], device 8: HDMI 2 [HDMI 2]
+#card 1: NVidia [HDA NVidia], device 9: HDMI 3 [HDMI 3]
+#card 2: NVidia_1 [HDA NVidia], device 3: HDMI 0 [HDMI 0]
+#card 2: NVidia_1 [HDA NVidia], device 7: HDMI 1 [HDMI 1]
+#card 2: NVidia_1 [HDA NVidia], device 8: HDMI 2 [HDMI 2]
+#card 2: NVidia_1 [HDA NVidia], device 9: HDMI 3 [HDMI 3]
+#(venv2) joncrall@hyrule:~$ ^C
+#(venv2) joncrall@hyrule:~$ gksu gedit /etc/pulse/default.pa
+
+#>>> load-module module-alsa-sink device=hw:0
     
     
 

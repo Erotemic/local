@@ -81,7 +81,21 @@ public:
         vsnprintf(this->extra_buffer, this->nbytes_have, format, args);
         va_end(args);
         this->update_measures_wall(i);
+        //default_timer = time.time
+        //# http://www.uqac.ca/flemieux/PRO100/VT100_Escape_Codes.html
+        //# https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_codes
+        //CLEARLINE_EL0 = '\33[0K'
+        //CLEARLINE_EL1 = '\33[1K'
+        //CLEARLINE_EL2 = '\33[2K'
+        //BEFORE_MSG = '\r' + CLEARLINE_EL2
+        //AFTER_MSG = CLEARLINE_EL0
+        //AT_END = '\033[?25h\n'
         //const char* CLEARLINE_EL2 = "\33[2K";
+        //# Erase in-line escape sequences
+        //# ESC = chr(27)
+        //# ESC + '[0K']
+        //# ESC + '[1K']
+        //
         printf("\33[2K\r%s %d/%d rate=%.2fHz, etr=%ds, total=%.2fs %s", 
                 this->lbl.c_str(), i, this->nTotal, this->iter_per_sec, 
                 (int) this->est_sec_remain, (int) this->total_sec, 

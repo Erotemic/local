@@ -18,7 +18,7 @@ set encoding=utf8
 ":e $VIMRUNTIME/syntax/markdown.vim
 ":e ~/local/init/ensure_vim_plugins.py
 ":e ~/local/vim/rc_settings/remap_settings.vim
-":e ~/local/vim/rc_settings/plugins_python.vim
+":e ~/local/vim/rc_settings/plugin_settings.vim
 " My plugins are grabbed from
 " ~/local/init/REPOS1.py
 " overloading happens in 
@@ -76,7 +76,6 @@ def get_disabled_plugins():
         (level4, 'vim-Powerline'),
         (level4, 'vim-virtualenv'),
         (level4, 'vim-autopep8'),
-
 
         (level5, 'AnsiEsc.vim'),
         (level5, 'rainbow_parentheses.vim'),
@@ -138,7 +137,6 @@ source ~/local/vim/rc/custom_tex_functions.vim
 
 "===========Settings==========="
 source ~/local/vim/rc_settings/plugin_settings.vim
-source ~/local/vim/rc_settings/plugins_python.vim
 source ~/local/vim/rc_settings/plugins_latex.vim
 source ~/local/vim/rc_settings/behavior_settings.vim
 source ~/local/vim/rc_settings/remap_funcs.vim
