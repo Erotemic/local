@@ -273,6 +273,11 @@ noremap <leader>9 9gt
 :noremap <leader>qw ciw'<C-r>"'<Esc>
 
 
+" insert a NOQA
+:noremap <leader>n A  # NOQA<Esc>
+":noremap <leader>nq A  # NOQA<Esc>
+
+
 " Macro for surround word with quotes
 let @q=',qw'
 let @r='VG;<c-p>'

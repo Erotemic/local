@@ -399,7 +399,12 @@ alias lev='lev.sh'
 
 git_lev_sync()
 {
-    gcwip ; ssh lev "cd $(pwd) && git pull"
+    # Safe version
+     gcwip ; ssh lev "cd $(pwd) && git pull"
+    
+    # Fast, but unsafe version
+    #gcwip& 
+    #ssh lev "cd $(pwd) && git pull"
 }
 
 git_remote_sync()
