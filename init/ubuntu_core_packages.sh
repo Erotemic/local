@@ -1338,11 +1338,53 @@ fix_audio_hyrule(){
     # constant weird beeping sound
     # just installed new (second) graphics card
 
+aplay -l && arecord -l
+lspci -vvv
+lsmod
+
+    
+
 pacmd list-cards
 pacmd set-card-profile 2  output:analog-stereo
 pacmd set-default-sink 2
    
 # http://askubuntu.com/questions/824481/constant-high-frequency-beep-on-startup-no-other-sound
+# https://answers.launchpad.net/ubuntu/+source/alsa-driver/+question/402824 
 
+ # https://ubuntuforums.org/showthread.php?t=1121805
+sudo apt-get --purge remove linux-sound-base alsa-base alsa-utils
+sudo apt-get install linux-sound-base alsa-base alsa-utils
+sudo apt-get install gdm ubuntu-desktop
+
+# http://www.linuxquestions.org/questions/ubuntu-63/how-to-set-default-sound-card-in-ubuntu-4175480799/
+cat /proc/asound/modules 
+
+
+lspci | grep Audio
+#00:1b.0 Audio device: Intel Corporation 7 Series/C210 Series Chipset Family High Definition Audio Controller (rev 04)
+#01:00.1 Audio device: NVIDIA Corporation GK106 HDMI Audio Controller (rev a1)
+#02:00.1 Audio device: NVIDIA Corporation GK104 HDMI Audio Controller (rev a1)
+
+
+#https://bbs.archlinux.org/viewtopic.php?id=115277
+
+
+# https://help.ubuntu.com/community/OpenSound
+sudo apt-get purge pulseaudio gstreamer0.10-pulseaudio
+sudo dpkg-reconfigure linux-sound-base
+
+
+# http://askubuntu.com/questions/629634/after-reinstall-alsa-and-pulse-audio-system-setting-missing
+sudo apt-get remove --purge alsa-base pulseaudio
+
+sudo apt-get install alsa-base* pulseaudio* pulseaudio-module-bluetooth* pulseaudio-module-x11* 
+unity-control-center* unity-control-center-signon* webaccounts-extension-common* xul-ext-webaccounts*
+indicator-sound* libcanberra-pulse* osspd* osspd-pulseaudio*
+
+# http://techgage.com/news/disabling_nvidias_hdmi_audio_under_linux/
+kerneldirs=(/usr/src/linux-headers-3.13.0-9*)
+cd ${kerneldirs[0]}
+sudo make menuconfig
+D S 
 
 }

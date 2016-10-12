@@ -7,11 +7,20 @@ source ~/local/vim/rc/venv_presource.vim
 set encoding=utf8
 
 " COMMON JUMP TO RC FILES
-" source ~/local/vim/vimfiles/after/syntax/tex.vim
-" source ~/local/vim/vimfiles/after/ftplugin/python/folding.vim 
-":e ~/local/vim/rc/pyvim_funcs.py
+" ~/local/vim/rc/pyvim_funcs.py
+" ~/local/vim/rc/custom_misc_functions.vim  
+" ~/local/vim/rc/custom_py_functions.vim
+" ~/local/vim/rc_settings/plugin_settings.vim
+" ~/local/vim/rc_settings/plugins_latex.vim
+" ~/local/vim/rc_settings/behavior_settings.vim
+" ~/local/vim/rc_settings/remap_funcs.vim
+" ~/local/vim/rc_settings/remap_settings.vim
+" ~/local/vim/rc_settings/autocommand_settings.vim
+
+" Spell Files
 ":e ~/local/vim/vimfiles/spell/en.utf-8.add
 ":e ~/local/vim/vimfiles/spell/en.latin1.add
+
 " Syntax is based in:
 " $VIMRUNTIME/syntax
 ":e $VIMRUNTIME/syntax/python.vim
@@ -19,13 +28,16 @@ set encoding=utf8
 ":e ~/local/init/ensure_vim_plugins.py
 ":e ~/local/vim/rc_settings/remap_settings.vim
 ":e ~/local/vim/rc_settings/plugin_settings.vim
+" source ~/local/vim/vimfiles/after/syntax/tex.vim
+" source ~/local/vim/vimfiles/after/ftplugin/python/folding.vim 
+
 " My plugins are grabbed from
 " ~/local/init/REPOS1.py
 " overloading happens in 
 " ~/local/vim/vimfiles/after/syntax
+
 " Snippets Directory
 " ~/local/vim/vimfiles/UltiSnips/python.snippets
-
 
 "===========PLUGINS==========="
 " PLUGIN: Pathogen
@@ -130,10 +142,7 @@ source ~/local/vim/rc/align.vim
 source ~/local/vim/rc/enable_code_snippets.vim
 source ~/local/vim/rc/custom_font_functions.vim
 source ~/local/vim/rc/custom_misc_functions.vim  
-source ~/local/vim/rc/custom_pep8_functions.vim
-source ~/local/vim/rc/custom_regex_functions.vim
 source ~/local/vim/rc/custom_py_functions.vim
-source ~/local/vim/rc/custom_tex_functions.vim
 
 "===========Settings==========="
 source ~/local/vim/rc_settings/plugin_settings.vim
@@ -264,6 +273,7 @@ call QUICKOPEN_leader_tvio('Y', '~/code/cyth/cyth/cyth_script.py')
 call QUICKOPEN_leader_tvio('z', '~/code/ibeis/ibeis/viz/viz_matches.py')
 call QUICKOPEN_leader_tvio('Z', '~/code/ibeis/ibeis/algo/hots/neighbor_index.py')
 
+
 if has("win32") || has("win16")
     " Try to hack windows to recognize the custom syntax
     " Seems to work. Thank god.
@@ -301,3 +311,22 @@ endfunction
 
 " Call everytime we open a Markdown file
 autocmd BufRead,BufNewFile,BufEnter *.md,*.markdown call MathAndLiquid()
+
+
+" mkdir -p ~/.vim/files/info
+:set viminfo='100,n$HOME/.vim/files/info/viminfo
+let g:startify_bookmarks = ['~/.vimrc', '~/.bashrc']
+python << endpython
+listvars = {
+    'startify_bookmarks': [
+        '~/local/vim/portable_vimrc',
+        '~/.bashrc',
+        '~/code/sklearn/cluster/k_means.py',
+        '~/code/ibeis/ibeis/algo/hots/vsone_pipeline.py',
+        '~/code/vtool/vtool/matching.py'
+    ]
+}
+for varname, list_ in listvars.items():
+    liststr = '[' + ', '.join('"%s"' % v for v in list_) + ']'
+    vim.command('let g:' + varname + ' = ' + liststr)
+endpython
