@@ -196,7 +196,7 @@ def update_bindings():
                     ut.colorprint('FOUND AND REPLACED WITH %s' % (binding_name,), 'yellow')
                     print(ut.highlight_code(rtext2))
                 if not ut.get_argflag('--diff') and not debug:
-                    print(ut.get_colored_diff(ut.difftext(rtext1, rtext2, num_context_lines=7, ignore_whitespace=True)))
+                    print(ut.color_diff_text(ut.difftext(rtext1, rtext2, num_context_lines=7, ignore_whitespace=True)))
             else:
                 # Append to end of the file
                 eof_sentinal = eof_sentinals[key]
@@ -233,7 +233,7 @@ def update_bindings():
                     print(ut.highlight_code(rtext2))
 
                 if not ut.get_argflag('--diff') and not debug:
-                    print(ut.get_colored_diff(ut.difftext(rtext1, rtext2, num_context_lines=7, ignore_whitespace=True)))
+                    print(ut.color_diff_text(ut.difftext(rtext1, rtext2, num_context_lines=7, ignore_whitespace=True)))
             text_dict[key] = '\n'.join(new_line_list)
             lines_dict[key] = new_line_list
         ut.colorprint('L___  GENERATED BINDING %s ___' % (binding_name,), 'yellow')
@@ -247,7 +247,7 @@ def update_bindings():
         if ut.get_argflag('--diff'):
             difftext = ut.get_textdiff(orig_texts[key], new_text,
                                        num_context_lines=7, ignore_whitespace=True)
-            difftext = ut.get_colored_diff(difftext)
+            difftext = ut.color_diff_text(difftext)
             print(difftext)
 
 
