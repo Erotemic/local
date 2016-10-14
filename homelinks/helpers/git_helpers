@@ -1,3 +1,5 @@
+# Git helpers
+
 gg-recover()
 {
     git checkout $(git rev-list -n 1 HEAD -- "$1")^ -- "$1"
@@ -27,3 +29,12 @@ alias ggs=gg-stats
 alias ggp=gg-pull
 alias gs=gg-stats
 alias ggcmd=gg-cmd
+
+alias s='git status'
+alias b='git branch'
+alias r='git branch -r'
+alias gits='git status'
+
+# Git
+alias gcwip='git commit -am "wip" && git push'
+alias gp='git pull'

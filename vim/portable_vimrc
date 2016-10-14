@@ -313,6 +313,15 @@ endfunction
 autocmd BufRead,BufNewFile,BufEnter *.md,*.markdown call MathAndLiquid()
 
 
+python << endpython
+try:
+    import utool as ut
+    if not ut.WIN32:
+        ut.ensuredir(ut.truepath('~/.vim/files/info'))
+except ImportError:
+    pass
+endpython
+
 " mkdir -p ~/.vim/files/info
 :set viminfo='100,n$HOME/.vim/files/info/viminfo
 let g:startify_bookmarks = ['~/.vimrc', '~/.bashrc']

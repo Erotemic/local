@@ -61,11 +61,6 @@ alias wget_all='wget --mirror --no-parent'
 # Convert images
 alias png2jpg='for f in *.png; do ffmpeg -i "$f" "${f%.png}.jpg"; done'
 
-
-# Git
-alias gcwip='git commit -am "wip" && git push'
-alias gp='git pull'
-
 hyrule_get(){
     git clone git@hyrule.cs.rpi.edu:$1
 }
@@ -84,8 +79,6 @@ alias cand='cd ~/latex/crall-candidacy-2015/'
 alias ca='cd ~/latex/crall-candidacy-2015/'
 alias scr='cd ~/scripts'
 # Special navigation
-alias s='git status'
-alias r='git branch -r'
 alias code='cd $CODE_DIR'
 alias co='cd $CODE_DIR'
 alias cv='cd $CODE_DIR/opencv'
@@ -146,7 +139,6 @@ alias cvpr='cd ~/latex/crall-cvpr-15'
 alias vdd='vd ~/work'
 #alias ..="cd .."
 #alias l='ls $LS_OPTIONS -lAhF'
-alias gits='git status'
 
 
 # ROB
@@ -416,3 +408,24 @@ git_remote_sync()
     fi
 }
 alias grs='git_remote_sync'
+
+
+gte()
+{
+    python -m utool.util_ubuntu XCtrl.current_gvim_edit tabe $1
+}
+
+gvs()
+{
+    python -m utool.util_ubuntu XCtrl.current_gvim_edit vs $1
+}
+
+gsp()
+{
+    python -m utool.util_ubuntu XCtrl.current_gvim_edit sp $1
+}
+
+ge()
+{
+    python -m utool.util_ubuntu XCtrl.current_gvim_edit e $1
+}

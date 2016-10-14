@@ -353,38 +353,51 @@ else:
         text = pyvim_funcs.get_line_at_cursor()
 
 text = ut.unindent(text)
-# Prepare to send text to xdotool
 ut.copy_text_to_clipboard(text)
-if False:
-    if '\n' in text or len(text) > 20:
-        text = '\'%paste\''
-    else:
-        import pipes
-        text = pipes.quote(text.lstrip(' '))
+if 0:
+    # Prepare to send text to xdotool
+    ut.copy_text_to_clipboard(text)
+    #if False:
+    #    if '\n' in text or len(text) > 20:
+    #        text = '\'%paste\''
+    #    else:
+    #        import pipes
+    #        text = pipes.quote(text.lstrip(' '))
 
-# Build xdtool script
-doscript = [
-    ('remember_window_id', 'ACTIVE_GVIM'),
-    ('focus', 'x-terminal-emulator.X-terminal-emulator'),
-    #('type', text), 
-    ('key', 'ctrl+shift+v'),
-    ('key', 'KP_Enter'),
-]
-if '\n' in text:
-    # Press enter twice for multiline texts
-    doscript += [
+    # Build xdtool script
+    doscript = [
+        ('remember_window_id', 'ACTIVE_GVIM'),
+        ('focus', 'x-terminal-emulator.X-terminal-emulator'),
+        #('type', text), 
+        ('key', 'ctrl+shift+v'),
         ('key', 'KP_Enter'),
     ]
-    pass
+    if '\n' in text:
+        # Press enter twice for multiline texts
+        doscript += [
+            ('key', 'KP_Enter'),
+        ]
+        pass
 
-if return_to_vim == "1":
-    doscript += [
-        #('focus', 'GVIM'),
-        ('focus_id', '$ACTIVE_GVIM'),
-    ]
+    if return_to_vim == "1":
+        doscript += [
+            #('focus', 'GVIM'),
+            ('focus_id', '$ACTIVE_GVIM'),
+        ]
 
-# execute script
-ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01, verbose=False)
+    # execute script
+    ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=1, verbose=1)
+    #ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01, verbose=1)
+else:
+    ut.util_ubuntu.XCtrl.copy_gvim_to_terminal_script(text,
+        return_to_win=return_to_vim)
+    #ut.util_ubuntu.XCtrl.copy_gvim_to_terminal_script(text,
+    #    return_to_win=return_to_vim, verbose=1, sleeptime=1)
+"""
+print('foobar')
+echo hi2
+"""
+#ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01, verbose=1)
 #xctrl.send(('type', '%paste'), ('key', 'KP_Enter'))
 #xctrl.focus_window('GVIM')
 #L______________
