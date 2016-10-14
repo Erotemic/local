@@ -330,7 +330,7 @@ listvars = {
     'startify_bookmarks': [
         '~/local/vim/portable_vimrc',
         '~/.bashrc',
-        '~/code/sklearn/cluster/k_means.py',
+        '~/code/scikit-learn/sklearn/cluster/k_means.py',
         '~/code/ibeis/ibeis/algo/hots/vsone_pipeline.py',
         '~/code/vtool/vtool/matching.py'
     ]
