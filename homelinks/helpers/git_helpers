@@ -5,10 +5,9 @@ gg-recover()
     git checkout $(git rev-list -n 1 HEAD -- "$1")^ -- "$1"
 }
 
-gg-stats()
+gg-status()
 {
     python ~/local/init/util_git1.py 'git status'
-    python ~/local/init/util_git1.py 'short_status'
     #python -m utool.util_git 
 }
 
@@ -27,9 +26,9 @@ gg-cmd()
     python ~/local/init/util_git1.py $@
 }
 
-alias ggs=gg-stats
+alias ggs=gg-status
 alias ggp=gg-pull
-alias gs=gg-stats
+alias gs=gg-status
 alias ggcmd=gg-cmd
 
 alias s='git status'
@@ -40,3 +39,10 @@ alias gits='git status'
 # Git
 alias gcwip='git commit -am "wip" && git push'
 alias gp='git pull'
+
+gg-short-status()
+{
+    python ~/local/init/util_git1.py 'short_status'
+}
+
+alias ggss=gg-short-status
