@@ -71,28 +71,31 @@ noremap <leader>eg :call GrepProjectWordAtCursor()<CR>
 noremap <leader>pv :call PyMakePrintVar()<CR>
 noremap <leader>pl :call PyMakePrintLine()<CR>
 
-" DO line in ipython and RETURN to vim
-noremap  <leader>pd :call CopyGVimToTerminalDev(mode(), 1)<CR>
-vnoremap <leader>pd :call CopyGVimToTerminalDev(visualmode(), 1)<CR>
 
+" -------- Interactive Editing
+" copy whatever is in clipboard to terminal
+noremap  <leader>z :call CopyGVimToTerminalDev('clipboard', 1)<CR>
+" DO line in ipython and RETURN to vim
 noremap  <leader>a :call CopyGVimToTerminalDev(mode(), 1)<CR>
 vnoremap <leader>a :call CopyGVimToTerminalDev(visualmode(), 1)<CR>
+noremap  <leader>w :call CopyGVimToTerminalDev('word', 1)<CR>
+noremap  <leader>m :call CopyGVimToTerminalDev('word', 1)<CR>
 
+
+"+========= Not so used 
+noremap  <leader>pd :call CopyGVimToTerminalDev(mode(), 1)<CR>
+vnoremap <leader>pd :call CopyGVimToTerminalDev(visualmode(), 1)<CR>
 noremap  <leader>pg vip :call CopyGVimToTerminalDev('v', 1)<CR>
-
 " Paste to ipython and STAY in ipython
 noremap  <leader>ps :call CopyGVimToTerminalDev(mode(), 0)<CR>
 vnoremap <leader>ps :call CopyGVimToTerminalDev(visualmode(), 0)<CR>
-
 " Re-paste selection
 noremap  <leader>pr :call CopyGVimToTerminalDev('v', 1)<CR>
-
 " paste single word / var
 noremap  <leader>pw :call CopyGVimToTerminalDev('word', 1)<CR>
-noremap  <leader>w :call CopyGVimToTerminalDev('word', 1)<CR>
-noremap  <leader>m :call CopyGVimToTerminalDev('word', 1)<CR>
 noremap  1 :call CopyGVimToTerminalDev(mode(), 1)<CR>
 noremap  2 :call CopyGVimToTerminalDev(mode() 1)<CR>
+"L__________ Not so used 
 
 " Focus on terminal
 noremap  <leader>ft :call FocusTerm()<CR>

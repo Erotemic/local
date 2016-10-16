@@ -1,5 +1,87 @@
 
 
+func! CopyGVimToTerminalDev(...) range
+    " Interactive scripting function. Takes part of the file you are editing
+    " and pastes it into a terminal and then returns the editor to focus.
+python << endpython
+import vim
+#vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool.util_ubuntu
+import utool as ut
+ut.rrrr(0)
+ut.util_ubuntu.rrr(0)
+
+# Hack to determine mode
+mode = vim.eval('a:1')
+return_to_vim = vim.eval('a:2')
+
+print('mode = %r' % (mode,))
+if mode == 'clipboard':
+    print('Text is already in clipboard')
+    # Using pyperclip seems to freeze.
+    # Good thing we can access the system clipboard via vim
+    # text = ut.get_clipboard()
+    text = vim.eval('@+')
+    print('got text')
+    print('text = %r' % (text,))
+else:
+    if mode == 'word':
+        text = pyvim_funcs.get_word_at_cursor()
+    else:
+        if 'v' in mode.lower():
+            print('grabbing selected text')
+            text = pyvim_funcs.get_selected_text()
+        else:
+            print('grabbing text at current line')
+            text = pyvim_funcs.get_line_at_cursor()
+    # Prepare to send text to xdotool
+    print('preparing text')
+    text = ut.unindent(text)
+    ut.copy_text_to_clipboard(text)
+    print('copied text to clipboard')
+
+# Build xdtool script
+doscript = [
+    ('remember_window_id', 'ACTIVE_GVIM'),
+    ('focus', 'x-terminal-emulator.X-terminal-emulator'),
+    ('key', 'ctrl+shift+v'),
+    ('key', 'KP_Enter'),
+]
+if '\n' in text:
+    # Press enter twice for multiline texts
+    doscript += [
+        ('key', 'KP_Enter'),
+    ]
+if return_to_vim == "1":
+    doscript += [
+        ('focus_id', '$ACTIVE_GVIM'),
+    ]
+# execute script
+#print(doscript)
+print('Running script')
+#ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01, verbose=1)
+ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01)
+print('Finished script')
+
+# ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=1, verbose=1)
+#else:
+#ut.util_ubuntu.XCtrl.copy_gvim_to_terminal_script(text,
+#    return_to_win=return_to_vim)
+#ut.util_ubuntu.XCtrl.copy_gvim_to_terminal_script(text,
+#    return_to_win=return_to_vim, verbose=1, sleeptime=1)
+"""
+print('foobar')
+echo hi2
+"""
+#ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01, verbose=1)
+#xctrl.send(('type', '%paste'), ('key', 'KP_Enter'))
+#xctrl.focus_window('GVIM')
+#L______________
+endpython
+endfu 
+
+
 
 func! SpellcheckOn()
     :set spell
@@ -328,81 +410,6 @@ import utool as ut
 ut.util_ubuntu.XCtrl.do(('focus', 'x-terminal-emulator.X-terminal-emulator'))
 endpython
 endfu
-
-
-func! CopyGVimToTerminalDev(...) range
-python << endpython
-import vim
-#vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool.util_ubuntu
-import utool as ut
-ut.rrrr(0)
-ut.util_ubuntu.rrr(0)
-
-# Hack to determine mode
-mode = vim.eval('a:1')
-return_to_vim = vim.eval('a:2')
-
-if mode == 'word':
-    text = pyvim_funcs.get_word_at_cursor()
-else:
-    if 'v' in mode.lower():
-        text = pyvim_funcs.get_selected_text()
-    else:
-        text = pyvim_funcs.get_line_at_cursor()
-
-text = ut.unindent(text)
-ut.copy_text_to_clipboard(text)
-if 0:
-    # Prepare to send text to xdotool
-    ut.copy_text_to_clipboard(text)
-    #if False:
-    #    if '\n' in text or len(text) > 20:
-    #        text = '\'%paste\''
-    #    else:
-    #        import pipes
-    #        text = pipes.quote(text.lstrip(' '))
-
-    # Build xdtool script
-    doscript = [
-        ('remember_window_id', 'ACTIVE_GVIM'),
-        ('focus', 'x-terminal-emulator.X-terminal-emulator'),
-        #('type', text), 
-        ('key', 'ctrl+shift+v'),
-        ('key', 'KP_Enter'),
-    ]
-    if '\n' in text:
-        # Press enter twice for multiline texts
-        doscript += [
-            ('key', 'KP_Enter'),
-        ]
-        pass
-
-    if return_to_vim == "1":
-        doscript += [
-            #('focus', 'GVIM'),
-            ('focus_id', '$ACTIVE_GVIM'),
-        ]
-
-    # execute script
-    ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=1, verbose=1)
-    #ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01, verbose=1)
-else:
-    ut.util_ubuntu.XCtrl.copy_gvim_to_terminal_script(text,
-        return_to_win=return_to_vim)
-    #ut.util_ubuntu.XCtrl.copy_gvim_to_terminal_script(text,
-    #    return_to_win=return_to_vim, verbose=1, sleeptime=1)
-"""
-print('foobar')
-echo hi2
-"""
-#ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01, verbose=1)
-#xctrl.send(('type', '%paste'), ('key', 'KP_Enter'))
-#xctrl.focus_window('GVIM')
-#L______________
-endpython
-endfu 
 
 
 func! InsertDocstr() 

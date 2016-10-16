@@ -8,6 +8,8 @@ gg-recover()
 gg-stats()
 {
     python ~/local/init/util_git1.py 'git status'
+    python ~/local/init/util_git1.py 'short_status'
+    #python -m utool.util_git 
 }
 
 gg-pull()
