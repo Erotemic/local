@@ -16,30 +16,34 @@ ut.util_ubuntu.rrr(0)
 mode = vim.eval('a:1')
 return_to_vim = vim.eval('a:2')
 
-print('mode = %r' % (mode,))
+def dprint(msg):
+    if True:
+        print(msg)
+
+dprint('mode = %r' % (mode,))
 if mode == 'clipboard':
-    print('Text is already in clipboard')
+    dprint('Text is already in clipboard')
     # Using pyperclip seems to freeze.
     # Good thing we can access the system clipboard via vim
     # text = ut.get_clipboard()
     text = vim.eval('@+')
-    print('got text')
-    print('text = %r' % (text,))
+    dprint('got text')
+    dprint('text = %r' % (text,))
 else:
     if mode == 'word':
         text = pyvim_funcs.get_word_at_cursor()
     else:
         if 'v' in mode.lower():
-            print('grabbing selected text')
+            dprint('grabbing selected text')
             text = pyvim_funcs.get_selected_text()
         else:
-            print('grabbing text at current line')
+            dprint('grabbing text at current line')
             text = pyvim_funcs.get_line_at_cursor()
     # Prepare to send text to xdotool
-    print('preparing text')
+    dprint('preparing text')
     text = ut.unindent(text)
     ut.copy_text_to_clipboard(text)
-    print('copied text to clipboard')
+    dprint('copied text to clipboard')
 
 # Build xdtool script
 doscript = [
@@ -58,11 +62,11 @@ if return_to_vim == "1":
         ('focus_id', '$ACTIVE_GVIM'),
     ]
 # execute script
-#print(doscript)
-print('Running script')
+#dprint(doscript)
+dprint('Running script')
 #ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01, verbose=1)
 ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01)
-print('Finished script')
+dprint('Finished script')
 
 # ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=1, verbose=1)
 #else:
