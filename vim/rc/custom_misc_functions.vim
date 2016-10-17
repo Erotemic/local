@@ -17,7 +17,7 @@ mode = vim.eval('a:1')
 return_to_vim = vim.eval('a:2')
 
 def dprint(msg):
-    if True:
+    if False:
         print(msg)
 
 dprint('mode = %r' % (mode,))

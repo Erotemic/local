@@ -32,6 +32,7 @@ IBEIS_REPOS_URLS, IBEIS_REPOS = repo_list([
     'https://github.com/zmjjmz/ibeis-flukematch-module.git',
     #'https://github.com/Erotemic/mtgmonte.git',
     'https://github.com/bluemellophone/ibeis_cnn.git',
+    'https://github.com/Erotemic/sandbox_utools.git',
     'https://github.com/Erotemic/plottool.git',
     'https://github.com/Erotemic/vtool.git',
     'https://github.com/Erotemic/utool.git',
