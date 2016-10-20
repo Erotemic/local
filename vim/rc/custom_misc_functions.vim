@@ -19,8 +19,14 @@ return_to_vim = vim.eval('a:2')
 def dprint(msg):
     if False:
         print(msg)
+    if True:
+        with open('debug.txt', 'a') as f:
+            f.write(msg + '\n')
 
+dprint('\n----\nCopyGVimToTerminalDev')
 dprint('mode = %r' % (mode,))
+dprint('return_to_vim = %r' % (return_to_vim,))
+
 if mode == 'clipboard':
     dprint('Text is already in clipboard')
     # Using pyperclip seems to freeze.
