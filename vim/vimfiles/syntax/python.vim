@@ -198,6 +198,7 @@ if !exists("python_no_builtin_highlight")
   syn keyword pythonBuiltin	ascii bytearray bytes exec memoryview
   " non-essential built-in functions; Python 2.6 only
   "syn keyword pythonBuiltin	apply buffer coerce intern
+  syn keyword pythonBuiltin	array
   syn keyword pythonBuiltin	buffer coerce intern
 endif
 

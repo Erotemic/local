@@ -39,9 +39,11 @@ set encoding=utf8
 " Snippets Directory
 " ~/local/vim/vimfiles/UltiSnips/python.snippets
 
+" My custom python syntax
+source ~/local/vim/vimfiles/syntax/python.vim 
+
 "===========PLUGINS==========="
 " PLUGIN: Pathogen
-source ~/local/vim/vimfiles/syntax/python.vim 
 python << endpython
 import sys
 import vim
