@@ -20,7 +20,8 @@ def dprint(msg):
     if False:
         print(msg)
     if True:
-        with open('debug.txt', 'a') as f:
+        from os.path import expanduser
+        with open(expanduser('~/vim-misc-debug.txt', 'a')) as f:
             f.write(msg + '\n')
 
 dprint('\n----\nCopyGVimToTerminalDev')
