@@ -20,6 +20,9 @@ CommandLine:
     cp ../crall-lab-notebook/My_Library_clean.bib .
     cp ../crall-lab-notebook/guts.tex .
     cp ../crall-lab-notebook/.gitignore .
+
+    # ENSURE THAT THE COMPUTER YOU ARE USING HAS ITS id_rsa.pub
+    # ADDED TO THE GIT ACCOUNTs .ssh/authorized_keys file
 '
 echo '1) Ensuring that you have sudo sued first:'
 

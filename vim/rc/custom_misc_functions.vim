@@ -21,7 +21,7 @@ def dprint(msg):
         print(msg)
     if True:
         from os.path import expanduser
-        with open(expanduser('~/vim-misc-debug.txt', 'a')) as f:
+        with open(expanduser('~/vim-misc-debug.txt'), 'a') as f:
             f.write(msg + '\n')
 
 dprint('\n----\nCopyGVimToTerminalDev')
@@ -49,6 +49,7 @@ else:
     # Prepare to send text to xdotool
     dprint('preparing text')
     text = ut.unindent(text)
+    dprint('copying text to clipboard')
     ut.copy_text_to_clipboard(text)
     dprint('copied text to clipboard')
 
