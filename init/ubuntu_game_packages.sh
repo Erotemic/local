@@ -274,10 +274,14 @@ linux_arena_tracker(){
     ~/.wine/drive_c/users/joncrall/Local\ Settings/Application\ Data/Blizzard/Hearthstone/Logs
     touch ~/.wine/drive_c/users/joncrall/Local\ Settings/Application\ Data/Blizzard/Hearthstone/Logs/log.config
 
-    chmod +x /home/joncrall/code/build-ArenaTracker-Desktop_Qt_5_6_1_GCC_64bit-Debug/ArenaTracker
+    # Can edit build Settings to Release mode in project settings
+    # in the qt creator when in the arenatracker project 
+
+    chmod +x /home/joncrall/code/build-ArenaTracker-Desktop_Qt_5_6_1_GCC_64bit-Debug/ArenVaTracker
     cd ~/code/Arena-Tracker/opencv_install/lib
     cp -r ~/code/Arena-Tracker/opencv_install/lib/* ~/code/build-ArenaTracker-Desktop_Qt_5_6_1_GCC_64bit-Debug
-    gvim "~/.config/Arena Tracker/Arena Tracker.conf"
+    cp -r ~/code/Arena-Tracker/opencv_install/lib/* ~/code/build-ArenaTracker-Desktop_Qt_5_6_1_GCC_64bit-Release
+    gvim '~/.config/Arena Tracker/Arena Tracker.conf'
     ~/code/build-ArenaTracker-Desktop_Qt_5_6_1_GCC_64bit-Debug/ArenaTracker
 
     #[General]

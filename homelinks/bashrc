@@ -94,6 +94,11 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/opl/bin/x86-64_linux
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/opl/lib/x86-64_linux/static_pic
 
 
+# For vigra
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VIRTUAL_ENV/lib
+
+
+
 # Add CUDA to the library paths if it exists
 if [ -d "/usr/local/cuda" ]; then
     # Use the symlinked version if available
