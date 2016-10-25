@@ -338,7 +338,67 @@ def insert_codeblock_between_lines(text, row1, row2):
     #ut.insert_block_between_lines(text, row1, row2, vim.buffer, inplace=True)
 
 
-def insert_codeblock_at_cursor(text):
+class DummyVimBuffer(object):
+    def __init__(self, _list):
+        self._list = _list
+
+    def __repr__(self):
+        return repr(self._list)
+
+    def __str__(self):
+        return str(self._list)
+
+    def __delitem__(self, idx):
+        del self._list[idx]
+
+    def __getitem__(self, idx):
+        return self._list[idx]
+
+    def append(self, item):
+        return self._list.extend(item)
+
+
+def dummy_import_vim():
+    vim = ut.DynStruct()
+    vim.current = ut.DynStruct()
+    vim.current.window = ut.DynStruct()
+    vim.current.window.cursor = (0, 0)
+    vim.current.buffer = DummyVimBuffer([
+        'line1',
+        'line2',
+        'line3',
+    ])
+    return vim
+
+
+def _insert_codeblock(vim, text, pos):
+    """
+    vim = dummy_import_vim()
+    text = 'foobar'
+    pos = 0
+    _insert_codeblock(vim, text, pos)
+    print(vim.current.buffer)
+    """
+    lines = [line.encode('utf-8') for line in text.split('\n')]
+    buffer_tail = vim.current.buffer[pos:]  # Original end of the file
+    new_tail = lines + buffer_tail  # Prepend our data
+    del(vim.current.buffer[pos:])  # delete old data
+    print(type(vim.current.buffer))
+    vim.current.buffer.append(new_tail)  # extend new data
+
+
+def insert_codeblock_above_cursor(text):
+    """
+    Inserts code into a vim buffer
+    """
+    import vim
+    (row, col) = vim.current.window.cursor
+    pos = row - 1
+    # Rows are 1 indexed?
+    _insert_codeblock(vim, text, pos)
+
+
+def insert_codeblock_under_cursor(text):
     """
     Inserts code into a vim buffer
     """
@@ -348,7 +408,7 @@ def insert_codeblock_at_cursor(text):
     buffer_tail = vim.current.buffer[row:]  # Original end of the file
     new_tail = lines + buffer_tail  # Prepend our data
     del(vim.current.buffer[row:])  # delete old data
-    vim.current.buffer.append(new_tail)  # append new data
+    vim.current.buffer.append(new_tail)  # extend new data
 
 
 def append_text(text):

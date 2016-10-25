@@ -61,7 +61,8 @@ noremap <leader>ed :call InsertDocstr()<CR>
 noremap <leader>ea :call InsertDocstrOnlyArgs()<CR>
 noremap <leader>ec :call InsertDocstrOnlyCommandLine()<CR>
 noremap <leader>ex :call InsertIBEISExample()<CR>
-noremap <leader>em :call InsertMainPyTest()<CR>
+noremap <leader>em :call InsertPyUtMain()<CR>
+noremap <leader>eh :call InsertPyHeader()<CR>
 "inoremap <leader>d :call InsertDocstr()<CR>
 noremap <leader>el :call PyCiteLookup()<CR>
 "noremap <leader>es :call PyCiteScholarSearch()<CR>

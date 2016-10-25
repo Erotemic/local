@@ -434,7 +434,7 @@ import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 if pyvim_funcs.is_module_pythonfile():
     print('building docstr')
     text = pyvim_funcs.auto_docstr()
-    pyvim_funcs.insert_codeblock_at_cursor(text)
+    pyvim_funcs.insert_codeblock_under_cursor(text)
 else:
     print('current file is not a pythonfile')
 #L______________
@@ -452,7 +452,7 @@ import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 if pyvim_funcs.is_module_pythonfile():
     print('building docstr')
     text = pyvim_funcs.auto_docstr()
-    pyvim_funcs.insert_codeblock_at_cursor(text)
+    pyvim_funcs.insert_codeblock_under_cursor(text)
 else:
     print('current file is not a pythonfile')
 #L______________
@@ -476,7 +476,7 @@ if pyvim_funcs.is_module_pythonfile():
         with_commandline=False,
         with_example=False,
         with_header=False)
-    pyvim_funcs.insert_codeblock_at_cursor(text)
+    pyvim_funcs.insert_codeblock_under_cursor(text)
 else:
     print('current file is not a pythonfile')
 #L______________
@@ -504,7 +504,7 @@ if pyvim_funcs.is_module_pythonfile():
         with_commandline=True,
         with_example=False,
         with_header=False)
-    pyvim_funcs.insert_codeblock_at_cursor(text)
+    pyvim_funcs.insert_codeblock_under_cursor(text)
 else:
     print('current file is not a pythonfile')
 #L______________
@@ -512,7 +512,7 @@ endpython
 endfu 
 
 
-func! InsertMainPyTest() 
+func! InsertPyUtMain() 
 python << endpython
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
@@ -523,7 +523,30 @@ if pyvim_funcs.is_module_pythonfile():
     modpath = vim.current.buffer.name
     modname = ut.get_modname_from_modpath(modpath)
     text = ut.make_default_module_maintest(modname, modpath)
-    pyvim_funcs.insert_codeblock_at_cursor(text)
+    pyvim_funcs.insert_codeblock_under_cursor(text)
+else:
+    print('current file is not a pythonfile')
+#L______________
+endpython
+endfu 
+
+
+func! InsertPyHeader() 
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool as ut
+ut.rrrr(verbose=False)
+pyvim_funcs.ensure_normalmode()
+if pyvim_funcs.is_module_pythonfile():
+    modpath = vim.current.buffer.name
+    modname = ut.get_modname_from_modpath(modpath)
+    text = ut.codeblock(
+        '''
+        # -*- coding: utf-8 -*-
+        from __future__ import print_function, division, absolute_import, unicode_literals
+        ''')
+    pyvim_funcs.insert_codeblock_above_cursor(text)
 else:
     print('current file is not a pythonfile')
 #L______________
@@ -550,7 +573,7 @@ if pyvim_funcs.is_module_pythonfile():
     #    '''
     #)).format(modname=modname)
     text = pyvim_funcs.auto_docstr(with_args=False, with_ret=False)
-    pyvim_funcs.insert_codeblock_at_cursor(text)
+    pyvim_funcs.insert_codeblock_under_cursor(text)
 else:
     print('current file is not a pythonfile')
 #L______________
@@ -570,7 +593,7 @@ pyvim_funcs.ensure_normalmode()
 if pyvim_funcs.is_module_pythonfile():
     print('autopep8ing file')
     text = pyvim_funcs.get_codelines_around_buffer()
-    pyvim_funcs.insert_codeblock_at_cursor(text)
+    pyvim_funcs.insert_codeblock_under_cursor(text)
 else:
     print('current file is not a pythonfile')
 #L______________
@@ -600,7 +623,7 @@ expr = pyvim_funcs.get_expr_at_cursor()
 line = pyvim_funcs.get_line_at_cursor()
 min_indent = ut.get_minimum_indentation(line)
 newline = ' ' * min_indent + "print('{expr} = %r' % ({expr},))".format(expr=expr)
-pyvim_funcs.insert_codeblock_at_cursor(newline)
+pyvim_funcs.insert_codeblock_under_cursor(newline)
 endpython
 endfunc
 
@@ -621,7 +644,7 @@ newtext = '\n'.join([
     indent + 'import utool',
     indent + 'utool.embed()'
 ])
-pyvim_funcs.insert_codeblock_at_cursor(newtext)
+pyvim_funcs.insert_codeblock_under_cursor(newtext)
 endpython
 endfunc
 
@@ -643,7 +666,7 @@ newtext = '\n'.join([
     indent + 'import utool',
     indent + 'with utool.embed_on_exception_context:'
 ])
-pyvim_funcs.insert_codeblock_at_cursor(newtext)
+pyvim_funcs.insert_codeblock_under_cursor(newtext)
 endpython
 endfunc
 
@@ -656,7 +679,7 @@ line = pyvim_funcs.get_line_at_cursor()
 expr = line.strip(' ')
 min_indent = ut.get_minimum_indentation(line)
 newline = ' ' * min_indent + "print('{expr} = %r' % ({expr},))".format(expr=expr)
-pyvim_funcs.insert_codeblock_at_cursor(newline)
+pyvim_funcs.insert_codeblock_under_cursor(newline)
 endpython
 endfunc
 
