@@ -72,6 +72,32 @@ install_vigra()
     #pip install pyVIGRA
 }
 
+install_libdai()
+{
+
+    # Libdai
+    sudo apt-get install g++ make doxygen graphviz libboost-dev libboost-graph-dev libboost-program-options-dev libboost-test-dev -y
+    sudo apt-get install libgmp-dev -y
+    sudo apt-get install cimg-dev -y
+    
+    co
+    git clone https://github.com/dbtsai/libDAI.git
+    cd libDAI
+    # Configure the makefile as in docs
+    cp Makefile.LINUX Makefile.conf
+
+    # WORKAROUNDS:
+    # Add ability to turn off tests 
+    printf '\n# Enable Tests?\nWITH_TESTS=' >> Makefile.ALL
+    sed -i 's/TARGETS:=$(TARGETS) unittests testregression testem/ifdef WITH_TESTS\n    TARGETS:=$(TARGETS) unittests testregression testem\nendif/' Makefile
+    # Need to change the name of -mt libraries on Ubuntu
+    sed -i 's/lboost_program_options-mt/lboost_program_options/' Makefile.conf
+    sed -i 's/lboost_unit_test_framework-mt/lboost_unit_test_framework/' Makefile.conf
+
+    # now we make
+    make -j7
+}
+
 
 install_opengm()
 {
@@ -92,26 +118,70 @@ install_opengm()
         export LOCAL_PREFIX=$($PYEXE -c "import sys; print(sys.prefix)")/local
         export _SUDO=""
     fi
-    #CMAKE_OPTS=""
-    #CMAKE_OPTS="$CMAKE_OPTS -DPYTHON_EXECUTABLE=$PYEXE" 
-    #CMAKE_OPTS="$CMAKE_OPTS -DCMAKE_CXX_FLAGS=-std=c++0x" 
-    #CMAKE_OPTS="$CMAKE_OPTS -DWITH_BOOST=On -DWITH_HDF5=On -DBUILD_PYTHON_WRAPPER=On"
-    #CMAKE_OPTS="$CMAKE_OPTS -DWITH_CPLEX=On -DWITH_OPENMP=On"
-    #CMAKE_OPTS="$CMAKE_OPTS -DWITH_MAXFLOW=On -DWITH_MPLP=On -DWITH_MRF=On -DWITH_MAXFLOW_IBFS=On"
-    #CMAKE_OPTS="$CMAKE_OPTS -DWITH_AD3=On -DWITH_QPBO=On -DWITH_TRWS=On -DWITH_GCO=On -DWITH_CONICBUNDLE=On"
-    #CMAKE_OPTS="$CMAKE_OPTS -DBUILD_EXAMPLES=Off -DWITH_PLANARITY=Off -DWITH_SRMP=Off -DWITH_BLOSSOM5=Off  -DWITH_DAOOPT=Off"
-    #CMAKE_OPTS="$CMAKE_OPTS -DBUILD_TESTING=Off -DBUILD_TUTORIALS=Off"
-    #echo $CMAKE_OPTS
-
     CMAKE_OPTS=""
     CMAKE_OPTS="$CMAKE_OPTS -DPYTHON_EXECUTABLE=$PYEXE" 
-    CMAKE_OPTS="$CMAKE_OPTS -DCMAKE_CXX_FLAGS=-std=c++0x\ -Wno-cpp" 
-    CMAKE_OPTS="$CMAKE_OPTS -DWITH_BOOST=On -DWITH_HDF5=On -DBUILD_PYTHON_WRAPPER=On"
-    CMAKE_OPTS="$CMAKE_OPTS -DWITH_CPLEX=On -DWITH_OPENMP=Off"
-    CMAKE_OPTS="$CMAKE_OPTS -DWITH_MAXFLOW=Off -DWITH_MPLP=Off -DWITH_MRF=Off -DWITH_MAXFLOW_IBFS=Off"
-    CMAKE_OPTS="$CMAKE_OPTS -DWITH_AD3=Off -DWITH_QPBO=Off -DWITH_TRWS=Off -DWITH_GCO=Off -DWITH_CONICBUNDLE=Off"
-    CMAKE_OPTS="$CMAKE_OPTS -DBUILD_EXAMPLES=Off -DWITH_PLANARITY=Off -DWITH_SRMP=Off -DWITH_BLOSSOM5=Off  -DWITH_DAOOPT=Off"
-    CMAKE_OPTS="$CMAKE_OPTS -DBUILD_TESTING=Off -DBUILD_TUTORIALS=Off"
+    #CMAKE_OPTS="$CMAKE_OPTS -DCMAKE_CXX_FLAGS=-std=c++11\ -Wno-cpp" 
+    CMAKE_OPTS="$CMAKE_OPTS -DCMAKE_CXX_FLAGS=-std=c++11"
+    CMAKE_OPTS="$CMAKE_OPTS -DWITH_OPENMP=On"
+    # Python Wrappers
+    CMAKE_OPTS="$CMAKE_OPTS -DBUILD_PYTHON_WRAPPER=On -DWITH_BOOST=On -DWITH_HDF5=On"
+    EXTRA=On
+    #EXTRA=Off
+    # ALGORITHMS
+    # --- NEEDED --
+    # Multicut and ILP Solvers
+    CMAKE_OPTS="$CMAKE_OPTS -DWITH_CPLEX=On"
+
+    # --- DEFAULTED ON IN HYRULE
+    # Alpha Expansion / Alpha Beta Swap
+    CMAKE_OPTS="$CMAKE_OPTS -DWITH_GCO=$EXTRA"
+    # (Incremental Breadth First Search Algorithm)
+    CMAKE_OPTS="$CMAKE_OPTS -DWITH_MAXFLOW=$EXTRA"
+    CMAKE_OPTS="$CMAKE_OPTS -DWITH_MAXFLOW_IBFS=$EXTRA"
+    # Alternating direction dual decomposition
+    CMAKE_OPTS="$CMAKE_OPTS -DWITH_AD3=$EXTRA"
+    # Not sure what this enables yet
+    CMAKE_OPTS="$CMAKE_OPTS -DWITH_CONICBUNDLE=$EXTRA"
+    # MAP Message Passing LP-relaxations
+    CMAKE_OPTS="$CMAKE_OPTS -DWITH_MPLP=$EXTRA"
+    # Markov Random Field minimization
+    CMAKE_OPTS="$CMAKE_OPTS -DWITH_MRF=$EXTRA"
+    # Belief Propogation Algorithms
+    CMAKE_OPTS="$CMAKE_OPTS -DWITH_SRMP=$EXTRA -DWITH_TRWS=$EXTRA"
+    # Quadratic Pseudo-Boolean Optimization (Only available here)
+    CMAKE_OPTS="$CMAKE_OPTS -DWITH_QPBO=$EXTRA"
+
+    # --- Try to turn these on
+    EXTRA2=On
+    # Alternative implementations
+    CMAKE_OPTS="$CMAKE_OPTS -DWITH_LIBDAI=Off"
+    CMAKE_OPTS="$CMAKE_OPTS -DLIBDAI_INCLUDE_DIR=~/code/libDAI/include"
+    CMAKE_OPTS="$CMAKE_OPTS -DLIBDAI_LIBRARY=~/code/libDAI/alldai.o"
+    # Primal/Dual methods for graph cuts (This method requires custom registration)
+    CMAKE_OPTS="$CMAKE_OPTS -DWITH_FASTPD=Off"
+    #CMAKE_OPTS="$CMAKE_OPTS -D_FASTPD_URL="
+    # Distributed AND/OR Optimization
+    CMAKE_OPTS="$CMAKE_OPTS -DWITH_DAOOPT=Off"
+
+    # --- DEFAULTED OFF IN HYRULE
+    # blossom is a maximal matching algorithm
+    CMAKE_OPTS="$CMAKE_OPTS -DWITH_BLOSSOM5=Off"
+    # Alternative to CPLEX
+    CMAKE_OPTS="$CMAKE_OPTS -DWITH_GUROBI=Off"
+    # Not sure what this enables yet
+    CMAKE_OPTS="$CMAKE_OPTS -DWITH_PLANARITY=Off"
+
+    # Others
+    CMAKE_OPTS="$CMAKE_OPTS -DWITH_VIGRA=Off"
+    CMAKE_OPTS="$CMAKE_OPTS -DWITH_MEMINFO=Off"
+
+    # Examples and whatnot
+    FULL=Off
+    #FULL=Off
+    CMAKE_OPTS="$CMAKE_OPTS -DBUILD_EXAMPLES=Off -DBUILD_TESTING=Off -DBUILD_TUTORIALS=Off -DBUILD_DOCS=Off -DBUILD_PYTHON_DOCS=$FULL"
+    # Other Wrappers
+    CMAKE_OPTS="$CMAKE_OPTS -DBUILD_COMMANDLINE=Off -DBUILD_CONVERTER=Off"
+    CMAKE_OPTS="$CMAKE_OPTS -DBUILD_MATLAB_WRAPPER=Off -DWITH_MATLAB=Off"
     echo $CMAKE_OPTS
 
     rm CMakeCache.txt
@@ -141,7 +211,7 @@ install_opengm()
     #python -c "import utool; print(utool.get_system_python_library())"
 
     # Hack into virtualenv
-    #rm -rf $VIRTUAL_ENV/lib/python2.7/site-packages/opengm
+    rrm -rf $VIRTUAL_ENV/lib/python2.7/site-packages/opengm
     #sudo mv /usr/local/lib/python2.7/site-packages/opengm $VIRTUAL_ENV/lib/python2.7/site-packages/
     #sudo chown -R $USER:$USER $VIRTUAL_ENV/lib/python2.7/site-packages/opengm
 
@@ -161,16 +231,6 @@ install_opengm()
     python -m utool.util_dev --exec-search_module --show --mod=opengm --pat=multi
     python -m utool.util_dev --exec-search_module --show --mod=opengm --pat=bayes
     python -m utool.util_dev --exec-search_module --show --mod=opengm --pat=net
-
-    # Libdai
-    sudo apt-get install g++ make doxygen graphviz libboost-dev libboost-graph-dev libboost-program-options-dev libboost-test-dev -y
-    sudo apt-get install libgmp-dev -y
-    sudo apt-get install cimg-dev -y
-    
-    co
-    git clone https://github.com/dbtsai/libDAI.git
-    cp Makefile.LINUX Makefile.conf
-    make -j7
 }
 
 install_cplex()
