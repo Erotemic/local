@@ -94,7 +94,6 @@ endpython
 endfu 
 
 
-
 func! SpellcheckOn()
     :set spell
     :setlocal spell spelllang=en_us
