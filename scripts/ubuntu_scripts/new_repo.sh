@@ -10,16 +10,13 @@ CommandLine:
     git clone git@hyrule.cs.rpi.edu:crall-candidacy-2015
     cd crall-candidacy-2015
     touch main.tex.latexmain
-    cp ../crall-lab-notebook/chapter* .
-    cp ../crall-lab-notebook/main.tex .
-    cp ../crall-lab-notebook/fix_bib.py .
-    cp ../crall-lab-notebook/CrallPramb.tex .
-    cp ../crall-lab-notebook/CrallDef.tex .
-    cp ../crall-lab-notebook/appendix.tex .
-    cp "../crall-lab-notebook/My Library.bib" .
-    cp ../crall-lab-notebook/My_Library_clean.bib .
-    cp ../crall-lab-notebook/guts.tex .
+    cp ../crall-lab-notebook/*.tex .
+    cp ../crall-lab-notebook/*.bib .
     cp ../crall-lab-notebook/.gitignore .
+
+    cd ~/latex/crall-thesis-2017
+    git init
+    git remote add origin git@hyrule.cs.rpi.edu:crall-thesis-2017
 
     # ENSURE THAT THE COMPUTER YOU ARE USING HAS ITS id_rsa.pub
     # ADDED TO THE GIT ACCOUNTs .ssh/authorized_keys file
