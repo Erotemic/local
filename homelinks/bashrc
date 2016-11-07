@@ -40,17 +40,32 @@ setup_venv2(){
 
     export PYTHON2_VENV="$HOME/venv2"
     mkdir $PYTHON2_VENV
-    virtualenv -p /usr/bin/python2.7 $PYTHON2_VENV 
-    #virtualenv --relocatable $PYTHON2_VENV 
+    python2 -m virtualenv -p /usr/bin/python2.7 $PYTHON2_VENV 
+    #python2 -m virtualenv --relocatable $PYTHON2_VENV 
 }
 setup_venv3(){
-    sudo pip3 install virtualenv
-    sudo pip3 install virtualenv -U
+    # Ensure PIP, setuptools, and virtual are on the SYSTEM
+    sudo curl https://bootstrap.pypa.io/get-pip.py | sudo python3
+    sudo pip3 install pip setuptools virtualenv -U
+
     export PYTHON3_VENV="$HOME/venv3"
     mkdir -p $PYTHON3_VENV
-    virtualenv -p /usr/bin/python3 $PYTHON3_VENV
-    virtualenv --relocatable $PYTHON3_VENV 
+    python3 -m virtualenv -p /usr/bin/python3 $PYTHON3_VENV
+    python3 -m virtualenv --relocatable $PYTHON3_VENV 
     # source $PYTHON3_VENV/bin/activate
+
+    # Now ensure the correct pip is installed locally
+    pip --version
+    # should be for 3.x
+}
+setupt_venvpypy(){
+
+    export PYPY_VENV="$HOME/venvpypy"
+    mkdir -p $PYPY_VENV
+    virtualenv-3.4 -p /usr/bin/pypy $PYPY_VENV 
+
+    pypy -m ensurepip
+    sudo apt-get install pypy-pip
 }
 
 

@@ -367,6 +367,18 @@ workon_py3()
     #source $PYTHON_VENV/bin/activate
 }
 
+workon_pypy()
+{
+    switch_venv "$HOME/venvpypy"
+    #deactivate
+    ## reset LD_LIBRARY_PATH 
+    #remove_ld_library_path $PYTHON_VENV/lib
+    #export PYTHON_VENV="$HOME/venv3"
+    #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PYTHON_VENV/lib
+    #source $PYTHON_VENV/bin/activate
+}
+
+
 alias py2env='workon_py2'
 alias py3env='workon_py3'
 
