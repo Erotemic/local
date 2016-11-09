@@ -49,6 +49,39 @@ python << endpython
 import sys
 import vim
 
+import utool as ut
+
+
+#def attrinfo(basename, base, attrname):
+#    attr = getattr(base, attrname)
+#    print('\n------')
+#    print('%s.%s: %r' % (basename, attrname, attr))
+#    print('type(%s.%s): %r' % (basename, attrname, type(attr)))
+#    print('dir(%s.%s): %r' % (basename, attrname, dir(attr)))
+#
+#print('\n\n VIM BASE')
+#print('vim = %r' % (vim,))
+#print('type(vim) = %r' % (type(vim),))
+#print('dir(vim) = %r' % (dir(vim),))
+#
+#print('\n\n VIM CURRENT')
+#attrinfo('vim', vim, 'current')
+#attrinfo('vim.current', vim.current, 'tabpage')
+#attrinfo('vim.current', vim.current, 'line')
+#attrinfo('vim.current', vim.current, 'window')
+#attrinfo('vim.current', vim.current, 'range')
+#
+#attrinfo('vim.current', vim.current, 'buffer')
+#
+#attrinfo('vim.current.buffer', vim.current.buffer, 'number')
+#attrinfo('vim.current.buffer', vim.current.buffer, 'name')
+#attrinfo('vim.current.buffer', vim.current.buffer, 'options')
+#attrinfo('vim.current.buffer', vim.current.buffer, 'range')
+#attrinfo('vim.current.buffer', vim.current.buffer, 'valid')
+#attrinfo('vim.current.buffer', vim.current.buffer, 'vars')
+#attrinfo('vim.current.buffer', vim.current.buffer, 'mark')
+
+
 def get_disabled_plugins():
     """
     Returns a list of disabled plugin names
@@ -233,6 +266,7 @@ call QUICKOPEN_leader_tvio('h', '~/code/ibeis/ibeis/algo/hots/pipeline.py')
 call QUICKOPEN_leader_tvio('i', '~/code/ibeis/ibeis/__init__.py')
 call QUICKOPEN_leader_tvio('I', '~/code/ibeis/ibeis/other/dbinfo.py')
 call QUICKOPEN_leader_tvio('j', '~/code/ibeis/ibeis/dbio/export_subset.py')
+call QUICKOPEN_leader_tvio('J', '~/local/vim/vimfiles/bundle/jedi-vim/jedi_vim.py')
 "call QUICKOPEN_leader_tvio('k', '~/code/ibeis/ibeis/algo/hots/chip_match.py')
 call QUICKOPEN_leader_tvio('K', '~/code/ibeis-flukematch-module/ibeis_flukematch/plugin.py')
 call QUICKOPEN_leader_tvio('k', '~/code/ibeis/ibeis/algo/smk/smk_pipeline.py')
