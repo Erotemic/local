@@ -94,8 +94,8 @@ vnoremap <leader>ps :call CopyGVimToTerminalDev(visualmode(), 0)<CR>
 noremap  <leader>pr :call CopyGVimToTerminalDev('v', 1)<CR>
 " paste single word / var
 noremap  <leader>pw :call CopyGVimToTerminalDev('word', 1)<CR>
-noremap  1 :call CopyGVimToTerminalDev(mode(), 1)<CR>
-noremap  2 :call CopyGVimToTerminalDev(mode() 1)<CR>
+"noremap  1 :call CopyGVimToTerminalDev(mode(), 1)<CR>
+"noremap  2 :call CopyGVimToTerminalDev(mode() 1)<CR>
 "L__________ Not so used 
 
 " Focus on terminal
