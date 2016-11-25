@@ -1128,3 +1128,16 @@ fix_audio_hyrule(){
     sudo make menuconfig
     D S 
 }
+
+setup_ssh_server()
+{
+    sudo apt-get install -y openssh-server
+
+    sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.factory-defaults
+    sudo chmod a-w /etc/ssh/sshd_config.factory-defaults
+
+    # Make changes
+    sudo gvim /etc/ssh/sshd_config
+
+    sudo restart ssh || sudo systemctl restart ssh
+}

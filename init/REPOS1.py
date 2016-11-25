@@ -64,10 +64,9 @@ LOCAL_URLS, LOCAL_REPOS = repo_list([
 
 
 LATEX_REPO_TUP = repo_list([
-    # 'git@hyrule.cs.rpi.edu.com:crall-lab-notebook.git',
-    # 'git@hyrule.cs.rpi.edu.com:crall-candidacy-2015.git',
-    'git@hyrule.cs.rpi.edu.com:crall-candidacy-2015.git',
-
+    # 'git@hyrule.cs.rpi.edu:crall-lab-notebook.git',
+    # 'git@hyrule.cs.rpi.edu:crall-candidacy-2015.git',
+    'git@hyrule.cs.rpi.edu:crall-thesis-2017.git',
 ], LATEX_DIR)
 LATEX_REPOS_URLS, LATEX_REPOS = LATEX_REPO_TUP
 

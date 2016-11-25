@@ -1,5 +1,6 @@
 import utool as ut
-import pipes
+# import pipes
+
 
 def send_public_key_to_server(username, server):
     """
@@ -20,8 +21,9 @@ def send_public_key_to_server(username, server):
 
     public_key = ut.read_from(ut.truepath('~/.ssh/id_rsa.pub'))
     fmtstr = 'ssh {user}@{server} "{remote_cmdstr}"'
-    remote_cmdstr = 'echo {public_key} >> ~{username}/.ssh/authorized_keys'.format(public_key=public_key.replace(r'\', r'\\'), username=username)
-    sshcmdstr = fmtstr.format(server=server, user=user, remote_cmdstr=remote_cmdstr)
+    remote_cmdstr = 'echo {public_key} >> ~{username}/.ssh/authorized_keys'.format(public_key=public_key.replace(
+        '\\', '\\\\'), username=username)
+    sshcmdstr = fmtstr.format(server=server, remote_cmdstr=remote_cmdstr)
     ut.copy_text_to_clipboard(sshcmdstr)
     print('You need to run the command in your clipboard')
 #ut.cmd(sshcmdstr)
