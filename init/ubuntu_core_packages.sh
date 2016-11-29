@@ -1139,5 +1139,20 @@ setup_ssh_server()
     # Make changes
     sudo gvim /etc/ssh/sshd_config
 
-    sudo restart ssh || sudo systemctl restart ssh
+    msudo restart ssh || sudo systemctl restart ssh
+}
+
+
+latest_vim(){
+    co
+    git clone https://github.com/vim/vim.git
+    mkdir tmpinstall
+    ./configure --enable-gui=gtk2 --enable-pythoninterp=yes \
+        --with-vim-name=vim-8 \
+        --with-ex-name=ex-8 \
+        --with-view-name=view-8 
+    #--prefix=/home/joncrall/code/vim/tmpinstall
+    make -j9
+    sudo make install
+    ls tmpinstall/bin/
 }

@@ -158,10 +158,17 @@ alias cmd=bash
 
 
 alias gvim=gvim_ubuntu_hack 
-gvim_ubuntu_hack()
-{
-    /usr/bin/gvim -f $@ 2> /dev/null &
-}
+if [ -d "$PYTHON_VENV" ]; then
+    gvim_ubuntu_hack()
+    {
+        /usr/local/bin/gvim-8 -f $@ 2> /dev/null &
+    }
+else
+    gvim_ubuntu_hack()
+    {
+        /usr/bin/gvim -f $@ 2> /dev/null &
+    }
+fi
 
 
 alias resetftp='/etc/init.d/vsftpd restart'
