@@ -39,6 +39,12 @@ clean_latex()
     rm *.synctex
     rm main.pdf
     rm main.dvi
+
+    rm *.fdb_latexmk
+    rm *.fls
+    rm *.lof
+    rm *.toc
+
     latexmk -c
 }
 alias ipy='ipython'

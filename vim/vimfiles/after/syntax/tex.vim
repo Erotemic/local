@@ -37,7 +37,7 @@ if filereadable(s:pythonpath)
  unlet! b:current_syntax
  exe "syn include @texPythonScript ".s:pythonpath
  "if exists("g:vimsyn_folding") && g:vimsyn_folding =~ 'P'
- if g:tex_fold_enabled && has("folding")
+ if exists("g:tex_fold_enabled") && g:tex_fold_enabled && has("folding")
   " Match python << endpython
   syn region texPythonRegion fold matchgroup=texScriptDelim start=+py\%[thon]3\=\s*<<\s*\z(.*\)$+ end=+^[ ]*\z1$+	contains=@NoSpell,@texPythonScript
   syn region texPythonRegion fold matchgroup=texScriptDelim start=+py\%[thon]3\=\s*<<\s*$+ end=+\.$+		contains=@NoSpell,@texPythonScript
