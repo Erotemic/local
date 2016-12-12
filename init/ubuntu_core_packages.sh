@@ -1156,3 +1156,11 @@ latest_vim(){
     sudo make install
     ls tmpinstall/bin/
 }
+
+
+beyond_compare(){
+    wget http://www.scootersoftware.com/bcompare-4.1.9.21719_amd64.deb
+    sudo apt-get update
+    sudo apt-get install gdebi-core
+    sudo gdebi bcompare-4.1.9.21719_amd64.deb
+}

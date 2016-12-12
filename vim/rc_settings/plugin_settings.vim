@@ -80,6 +80,19 @@ let g:tagbar_autoshowtag = 1
 "let g:tagbar_left = 1
 let g:tagbar_left = 0
 
+
+" Tagbar for Markdown
+" https://github.com/majutsushi/tagbar/issues/70
+let g:tagbar_type_markdown = {
+            \ 'ctagstype' : 'markdown',
+            \ 'kinds' : [
+                \ 'h:headings',
+                \ 'l:links',
+                \ 'i:images'
+            \ ],
+    \ "sort" : 0
+\ }
+
 " http://stackoverflow.com/questions/26145505/using-vims-tagbar-plugin-for-latex-files
 let g:tagbar_type_tex = {
     \ 'ctagstype' : 'tex2',

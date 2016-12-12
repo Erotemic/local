@@ -93,6 +93,8 @@ CommandLine;
 """
 
 VIM_REPO_URLS, VIM_REPOS = repo_list([
+    'https://github.com/chrisbra/unicode.vim.git',
+
     #'https://github.com/dbarsam/vim-vimtweak.git',
     #'https://github.com/bling/vim-airline.git',
     'https://github.com/tell-k/vim-autopep8.git',

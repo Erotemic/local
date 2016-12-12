@@ -4,4 +4,5 @@
 #xrandr --output DVI-I-3 --brightness .3
 
 #sudo apt-get install redshift
-redshift -O 2500 -b .5
+#redshift -O 2500 -b .5
+redshift -O 2200 -b .4
