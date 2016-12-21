@@ -669,6 +669,29 @@ pyvim_funcs.insert_codeblock_under_cursor(newtext)
 endpython
 endfunc
 
+
+func! PyMakeTimerit() 
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool as ut
+expr = pyvim_funcs.get_expr_at_cursor()
+line = pyvim_funcs.get_line_at_cursor()
+min_indent = ut.get_minimum_indentation(line)
+if line.strip().endswith(':'):
+    min_indent += 4
+indent = (' ' * min_indent)
+if line.strip().startswith('>>>'):
+    indent += '>>> '
+newtext = '\n'.join([
+    indent + 'import utool',
+    indent + 'for timer in utool.Timerit(10):',
+    indent + indent +  'with timer:',
+])
+pyvim_funcs.insert_codeblock_under_cursor(newtext)
+endpython
+endfunc
+
 func! PyMakePrintLine() 
 python << endpython
 import vim
