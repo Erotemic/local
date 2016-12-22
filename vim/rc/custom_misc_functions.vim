@@ -249,63 +249,6 @@ endpython
 endfu
 
 
-func! OpenControllerParts()
-"pyfile pyvim_funcs.py
-python << endpython
-import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-fpath_list = [
-    '~/code/ibeis/ibeis/control/manual_annot_funcs.py',
-    '~/code/ibeis/ibeis/control/manual_dependant_funcs.py',
-    '~/code/ibeis/ibeis/control/manual_ibeiscontrol_funcs.py',
-    '~/code/ibeis/ibeis/control/manual_image_funcs.py',
-    '~/code/ibeis/ibeis/control/manual_lblannot_funcs.py',
-    '~/code/ibeis/ibeis/control/manual_lblimage_funcs.py',
-    '~/code/ibeis/ibeis/control/manual_lbltype_funcs.py',
-    '~/code/ibeis/ibeis/control/manual_meta_funcs.py',
-    '~/code/ibeis/ibeis/control/manual_name_species_funcs.py',
-    '~/code/ibeis/ibeis/control/_autogen_featweight_funcs.py',
-    ]
-pyvim_funcs.open_fpath_list(fpath_list, num_hsplits=2)
-endpython
-endfu
-command! Tocontrolparts call OpenControllerParts()
-
-
-func! TabOpenDev()
-python << endpython
-import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-fpath_list = [
-        '~/code/ibeis/README.md',
-        '~/code/ibeis/dev.py',
-        '~/code/ibeis/ibeis/control/IBEISControl.py',
-    ]
-pyvim_funcs.open_fpath_list(fpath_list, num_hsplits=3)
-endpython
-endfu
-command! Todev call TabOpenDev()
-
-
-func! TabOpenHotsPipeline()
-python << endpython
-import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-fpath_list = [
-        '~/code/ibeis/ibeis/model/hots/query_request.py',
-        '~/code/ibeis/ibeis/model/hots/neighbor_index.py',
-        '~/code/ibeis/ibeis/model/hots/multi_index.py',
-        '~/code/ibeis/ibeis/model/hots/score_normalization.py',
-        #'~/code/ibeis/ibeis/model/hots/pipeline.py',
-        #'~/code/ibeis/ibeis/model/hots/match_chips4.py',
-        #'~/code/ibeis/ibeis/control/manual_annot_funcs.py',
-    ]
-pyvim_funcs.open_fpath_list(fpath_list, num_hsplits=2)
-endpython
-endfu
-command! Tohotspipeline call TabOpenHotsPipeline()
-
-
 func! TabOpenVimRC()
 python << endpython
 import vim
@@ -336,23 +279,6 @@ pyvim_funcs.open_fpath_list(fpath_list, num_hsplits=2)
 endpython
 endfu
 command! Toautogen call TabOpenAutogen()
-
-
-""""""""""""""""""""""""""""""""""
-
-func! TabOpenCyth()
-python << endpython
-import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-fpath_list = [
-        '~/code/cyth/cyth/cyth_pragmas.py',
-        '~/code/vtool/vtool/keypoint.py',
-        '~/code/vtool/vtool/spatial_verification.py',
-    ]
-pyvim_funcs.open_fpath_list(fpath_list, num_hsplits=3)
-endpython
-endfu
-command! Tocyth call TabOpenCyth()
 
 
 """"""""""""""""""""""""""""""""""
@@ -530,8 +456,10 @@ endpython
 endfu 
 
 
-func! InsertPyHeader() 
+func! InsertPyHeader(...) 
 python << endpython
+mode = vim.eval('(a:0 >= 1) ? a:1 : 0')
+
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
@@ -540,11 +468,13 @@ pyvim_funcs.ensure_normalmode()
 if pyvim_funcs.is_module_pythonfile():
     modpath = vim.current.buffer.name
     modname = ut.get_modname_from_modpath(modpath)
-    text = ut.codeblock(
-        '''
-        # -*- coding: utf-8 -*-
-        from __future__ import print_function, division, absolute_import, unicode_literals
-        ''')
+    lines = [
+    '# -*- coding: utf-8 -*-',
+    'from __future__ import print_function, division, absolute_import, unicode_literals',
+    ]
+    if mode == 'script':
+        lines.insert(0, '#!/usr/bin/env python')
+    text = '\n'.join(lines)
     pyvim_funcs.insert_codeblock_above_cursor(text)
 else:
     print('current file is not a pythonfile')
