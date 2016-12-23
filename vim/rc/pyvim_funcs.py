@@ -13,7 +13,7 @@ FIXME:
     the indexing is messed up because some places row2 means the last line,
     instead of the last line you dont want
 """
-#from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 from os.path import expanduser
 import sys
 
@@ -284,6 +284,8 @@ def get_selected_text(select_at_cursor=False):
 def get_text_between_lines(lnum1, lnum2, col1=0, col2=sys.maxint - 1):
     import vim
     lines = vim.eval('getline({}, {})'.format(lnum1, lnum2))
+    import utool as ut
+    lines = ut.ensure_unicode_strlist(lines)
     try:
         if len(lines) == 0:
             pass
