@@ -437,6 +437,48 @@ endpython
 endfu 
 
 
+func! IPythonImportAll()
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool as ut
+import utool.util_ubuntu
+ut.rrrr(verbose=False)
+
+return_to_vim = True
+
+if pyvim_funcs.is_module_pythonfile():
+    modpath = vim.current.buffer.name
+    modname = ut.get_modname_from_modpath(modpath)
+    text = "from {} import *".format(modname)
+    # Prepare to send text to xdotool
+    text = ut.unindent(text)
+    ut.copy_text_to_clipboard(text)
+    # Build xdtool script
+    doscript = [
+        ('remember_window_id', 'ACTIVE_GVIM'),
+        ('focus', 'x-terminal-emulator.X-terminal-emulator'),
+        ('key', 'ctrl+shift+v'),
+        ('key', 'KP_Enter'),
+    ]
+    if '\n' in text:
+        # Press enter twice for multiline texts
+        doscript += [
+            ('key', 'KP_Enter'),
+        ]
+    if return_to_vim:
+        doscript += [
+            ('focus_id', '$ACTIVE_GVIM'),
+        ]
+    ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01)
+else:
+    print('current file is not a pythonfile')
+#L______________
+endpython
+endfu 
+
+
+
 func! InsertPyUtMain() 
 python << endpython
 import vim
@@ -549,9 +591,8 @@ import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
 expr = pyvim_funcs.get_expr_at_cursor()
-line = pyvim_funcs.get_line_at_cursor()
-min_indent = ut.get_minimum_indentation(line)
-newline = ' ' * min_indent + "print('{expr} = %r' % ({expr},))".format(expr=expr)
+indent = pyvim_funcs.get_cursor_py_indent()
+newline = indent + "print('{expr} = %r' % ({expr},))".format(expr=expr)
 pyvim_funcs.insert_codeblock_under_cursor(newline)
 endpython
 endfunc
@@ -561,14 +602,7 @@ python << endpython
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
-expr = pyvim_funcs.get_expr_at_cursor()
-line = pyvim_funcs.get_line_at_cursor()
-min_indent = ut.get_minimum_indentation(line)
-if line.strip().endswith(':'):
-    min_indent += 4
-indent = (' ' * min_indent)
-if line.strip().startswith('>>>'):
-    indent += '>>> '
+indent = pyvim_funcs.get_cursor_py_indent()
 newtext = '\n'.join([
     indent + 'import utool',
     indent + 'utool.embed()'
@@ -583,14 +617,7 @@ python << endpython
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
-expr = pyvim_funcs.get_expr_at_cursor()
-line = pyvim_funcs.get_line_at_cursor()
-min_indent = ut.get_minimum_indentation(line)
-if line.strip().endswith(':'):
-    min_indent += 4
-indent = (' ' * min_indent)
-if line.strip().startswith('>>>'):
-    indent += '>>> '
+indent = pyvim_funcs.get_cursor_py_indent()
 newtext = '\n'.join([
     indent + 'import utool',
     indent + 'with utool.embed_on_exception_context:'
@@ -605,18 +632,11 @@ python << endpython
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
-expr = pyvim_funcs.get_expr_at_cursor()
-line = pyvim_funcs.get_line_at_cursor()
-min_indent = ut.get_minimum_indentation(line)
-if line.strip().endswith(':'):
-    min_indent += 4
-indent = (' ' * min_indent)
-if line.strip().startswith('>>>'):
-    indent += '>>> '
+indent = pyvim_funcs.get_cursor_py_indent()
 newtext = '\n'.join([
     indent + 'import utool',
     indent + 'for timer in utool.Timerit(10):',
-    indent + indent +  'with timer:',
+    indent + '    with timer:',
 ])
 pyvim_funcs.insert_codeblock_under_cursor(newtext)
 endpython
@@ -629,8 +649,8 @@ import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
 line = pyvim_funcs.get_line_at_cursor()
 expr = line.strip(' ')
-min_indent = ut.get_minimum_indentation(line)
-newline = ' ' * min_indent + "print('{expr} = %r' % ({expr},))".format(expr=expr)
+indent = pyvim_funcs.get_cursor_py_indent()
+newline = indent + "print('{expr} = %r' % ({expr},))".format(expr=expr)
 pyvim_funcs.insert_codeblock_under_cursor(newline)
 endpython
 endfunc

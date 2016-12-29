@@ -127,8 +127,38 @@ def get_line_at_cursor():
     import vim
     buf = vim.current.buffer
     (row, col) = vim.current.window.cursor
-    line = buf[row - 1]  # Original end of the file
+    line = buf[row - 1]
     return line
+
+
+def get_first_nonempty_line_after_cursor():
+    import vim
+    buf = vim.current.buffer
+    (row, col) = vim.current.window.cursor
+    for i in range(len(buf) - row):
+        line = buf[row + i]
+        if line:
+            return line
+
+
+def get_cursor_py_indent():
+    """
+    checks current and next line for indentation
+    """
+    import utool as ut
+    # Check current line for cues
+    curr_line = get_line_at_cursor()
+    curr_indent = ut.get_minimum_indentation(curr_line)
+    if curr_line.strip().endswith(':'):
+        curr_indent += 4
+    # Check next line for cues
+    next_line = get_first_nonempty_line_after_cursor()
+    next_indent = ut.get_minimum_indentation(next_line)
+    min_indent = max(curr_indent, next_indent)
+    indent = (' ' * min_indent)
+    if curr_line.strip().startswith('>>>'):
+        indent += '>>> '
+    return indent
 
 
 def get_word_at_cursor(url_ok=False):
