@@ -130,7 +130,8 @@ noremap <leader>rs :syntax sync minlines=500.<CR>
 "noremap <leader>ro :'<,'>s/^\( *\)'/\1('/ <bar> '<,'>s/,$/),/ <bar> '<,'>s/:/,/<CR>
 " First visual tick is handled by visual mode, need to put rest in
 " Dict to ordered dict (single line)
-noremap <leader>ro :s/^\( *\)'/\1('/ <bar> '<,'>s/,$/),/ <bar> '<,'>s/:/,/<CR>
+"noremap <leader>ro :s/^\( *\)'/\1('/ <bar> '<,'>s/,$/),/ <bar> '<,'>s/:/,/<CR>
+noremap <leader>ro :s/^\( *\)\([^ ]\)/\1(\2/ <bar> '<,'>s/,$/),/ <bar> '<,'>s/:/,/<CR>
 
 " Find lone double quotes
 ":noremap <leader>"/ :/\([^"]\)"\([^"]\)<CR>

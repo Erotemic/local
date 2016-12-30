@@ -149,12 +149,20 @@ def get_cursor_py_indent():
     # Check current line for cues
     curr_line = get_line_at_cursor()
     curr_indent = ut.get_minimum_indentation(curr_line)
+    if curr_line is None:
+        next_line = ''
     if curr_line.strip().endswith(':'):
         curr_indent += 4
     # Check next line for cues
     next_line = get_first_nonempty_line_after_cursor()
+    if next_line is None:
+        next_line = ''
     next_indent = ut.get_minimum_indentation(next_line)
-    min_indent = max(curr_indent, next_indent)
+    if next_indent <= curr_indent + 8:
+        # hack for overindented lines
+        min_indent = max(curr_indent, next_indent)
+    else:
+        min_indent = curr_indent
     indent = (' ' * min_indent)
     if curr_line.strip().startswith('>>>'):
         indent += '>>> '
