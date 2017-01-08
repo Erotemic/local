@@ -27,12 +27,26 @@ def speak(r, to_speak, rate=-5):
     print('[robos.speak()] Speaking at rate ' + str(rate) + ':\n\n ')
     print(ts4)
     print('-----------')
+    cmd_parts = ['espeak']
+    # Interpret SSML markup
+    cmd_parts += ['-m']
+    # Speed in words per minute
+    if rate == '3':
+        cmd_parts += ['-s', '240']
+    elif rate == '2':
+        cmd_parts += ['-s', '220']
+    else:
+        cmd_parts += ['-s', str(200 + int(rate))]
+    # Amplitude
+    cmd_parts += ['-a', '10']
+    # Pitch adjustment
+    cmd_parts += ['-p', '80']
+    cmd_parts += [ts4]
     #pause = ['-g', '1']  # pause between words (10ms) units
     #speed = ['-s', '175']  # 80 to 450 wpm #def 175
     #pitch = ['-p', '50']
     #stdout = ['--stdout']
-    proc = subprocess.Popen(['espeak', '-m', '-s', '220', '-a', '10', '-p', '80', ts4],
-                            stdout=subprocess.PIPE,
+    proc = subprocess.Popen(cmd_parts, stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE)
     output = proc.communicate()
     return output

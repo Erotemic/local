@@ -181,6 +181,14 @@ install_hearthstone()
     #wine ~/tmp/Hearthstone\ Deck\ Tracker/Hearthstone\ Deck\ Tracker.exe
     ##wget https://github.com/Epix37/Hearthstone-Deck-Tracker/releases/download/v0.13.17/Hearthstone.Deck.Tracker-v0.13.17.zip
 
+    # Autobuild arena tracker
+    cd ~/code/Arena-Tracker
+    git pull --rebase
+    qmake ArenaTracker.pro -r -spec linux-g++
+    cd ~/code/build-ArenaTracker-Desktop_Qt_5_6_1_GCC_64bit-Release
+    make -j9
+    
+
 
     #cd ~/tmp
     #wget https://github.com/rembound/Arena-Helper/releases
