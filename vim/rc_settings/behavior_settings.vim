@@ -32,13 +32,13 @@ endif
 
 "colorscheme solarized
 colorscheme slate
-set bg=light
 set bg=dark
 let g:solarized_contrast="normal"
+let g:solarized_visibility="normal"
+"set bg=light
 "let g:solarized_contrast="high"
 "let g:solarized_contrast="low"
 "let g:solarized_bold=1
-let g:solarized_visibility="normal"
 "let g:solarized_visibility="high"
 
 if has("gui_running")
