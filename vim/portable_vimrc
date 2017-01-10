@@ -129,6 +129,10 @@ def get_disabled_plugins():
         (level5, 'rainbow_parentheses.vim'),
         (level5, 'closetag.vim'),
         (level5, 'unicode.vim'),
+        (level5, 'gruvbox'),
+        (level5, 'badwolf'),
+        (level5, 'codeschool-vim-theme'),
+        (level5, 'phd'),
         (level5 & UNIX, 'taglist.vim'),  # ctags
 
 
@@ -150,7 +154,8 @@ def get_disabled_plugins():
         plugin_dirs = set(os.listdir(os.path.expanduser('~/local/vim/vimfiles/bundle')))
         unregistered_plugins = plugin_dirs - all_plugins
         if len(unregistered_plugins) > 0:
-            print('Warning: unregistered_plugins = %r' % (unregistered_plugins,))
+            print('Warning: portable_vimrc found unregistered plugin(s) = %r' %
+                (unregistered_plugins,))
     return disabled
 
 disabled = get_disabled_plugins()

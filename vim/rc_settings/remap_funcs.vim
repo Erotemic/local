@@ -1,5 +1,3 @@
-
-"
 " Write all maps to files
 " :redir >> ~/mymaps.txt
 " :map

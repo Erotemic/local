@@ -11,8 +11,8 @@
 "useful funcs for leaderkeys
 " Remap COLOn colon to semicolon (in normal and visual mode)
 
-:noremap <F9> <s-v>
-:noremap <F10> <s-v>
+noremap <F9> <s-v>
+noremap <F10> <s-v>
 
 ":call PythonInvert()
 ":call TeckInvert()
@@ -39,19 +39,21 @@ vnoremap ge :call PyFormatParagraph()<CR>
 ":noremap <c-g> vip:call PyFormatParagraph()<CR>
 
 noremap <leader>ge :call PySelectAndFormatParagraph()<CR>
-:noremap <c-g> :call PySelectAndFormatParagraph()<CR>
-:noremap <c-M-G> :call PySelectAndFormatParagraphNoBreak()<CR>
+noremap <c-g> :call PySelectAndFormatParagraph()<CR>
+noremap <c-M-G> :call PySelectAndFormatParagraphNoBreak()<CR>
 
 ":noremap <c-M-B> oimport utool<CR>with utool.embed_on_exception_context:<CR><Esc>
 ":noremap <c-b> oimport utool<CR>utool.embed()<CR><Esc>
-:noremap <c-M-B> :call PyMakeWithEmbed()<CR><Esc>
-:noremap <c-b> :call PyMakeEmbed()<CR><Esc>
-:noremap <m-b> :call PyMakeTimerit()<CR><Esc>
+noremap <c-b> :call PyMakeEmbed()<CR><Esc>
+noremap <c-M-B> :call PyMakeWithEmbed(mode())<CR><Esc>
+vnoremap <c-M-B> :call PyMakeWithEmbed(visualmode())<CR><Esc>
+noremap <m-b> :call PyMakeTimerit(mode())<CR><Esc>
+vnoremap <m-b> :call PyMakeTimerit(visualmode())<CR><Esc>
 
-":inoremap <c-M-B> import utool<CR>with utool.embed_on_exception_context:<CR>
-":inoremap <c-b> import utool<CR>utool.embed()<CR>
-:inoremap <c-M-B> <Esc>:call PyMakeWithEmbed()<CR>i
-:inoremap <c-b> <Esc>:call PyMakeEmbed()<CR>i
+"inoremap <c-M-B> import utool<CR>with utool.embed_on_exception_context:<CR>
+"inoremap <c-b> import utool<CR>utool.embed()<CR>
+inoremap <c-M-B> <Esc>:call PyMakeWithEmbed()<CR>i
+inoremap <c-b> <Esc>:call PyMakeEmbed()<CR>i
 
 vnoremap gd :call PyFormatDoctest()<CR>
 vnoremap gu :call PyUnFormatDoctest()<CR>
@@ -63,8 +65,8 @@ noremap <leader>ea :call InsertDocstrOnlyArgs()<CR>
 noremap <leader>ec :call InsertDocstrOnlyCommandLine()<CR>
 noremap <leader>ex :call InsertIBEISExample()<CR>
 noremap <leader>em :call InsertPyUtMain()<CR>
-noremap <leader>eh :call InsertPyHeader()<CR>
-noremap <leader>eH :call InsertPyHeader('script')<CR>
+noremap <leader>eh :call PyInsertHeader()<CR>
+noremap <leader>eH :call PyInsertHeader('script')<CR>
 "inoremap <leader>d :call InsertDocstr()<CR>
 noremap <leader>el :call PyCiteLookup()<CR>
 "noremap <leader>es :call PyCiteScholarSearch()<CR>
@@ -112,13 +114,13 @@ inoremap <M-u> ut.
 inoremap <M-i> import
 inoremap <M-y> from import
 
-:noremap <c-d> :call InsertDocstr()<CR>
-:noremap <c-1> :call InsertDocstr()<CR>
-:inoremap <c-1> :call InsertDocstr()<CR>
+noremap <c-d> :call InsertDocstr()<CR>
+noremap <c-1> :call InsertDocstr()<CR>
+inoremap <c-1> :call InsertDocstr()<CR>
 
-:noremap <c-e> :call InsertDocstr()<CR>
-:inoremap <c-2> :call AutoPep8Block()<CR>
-:noremap <c-2> :call AutoPep8Block()<CR>
+noremap <c-e> :call InsertDocstr()<CR>
+inoremap <c-2> :call AutoPep8Block()<CR>
+noremap <c-2> :call AutoPep8Block()<CR>
 ":inoremap <c-d> :call InsertDocstr()<CR>
 
 " Hotkey: <leader>rrr Reload the vimrc
@@ -134,18 +136,18 @@ noremap <leader>ro :s/^\( *\)\([^ ]\)/\1(\2/ <bar> '<,'>s/,$/),/ <bar> '<,'>s/:/
 
 " Find lone double quotes
 ":noremap <leader>"/ :/\([^"]\)"\([^"]\)<CR>
-:noremap <leader>"/ :/\([^"]\)\@<="\([^"]\)\@=<CR>
-:noremap <leader>s' :%s/\([^"]\)"\([^"]\)/\1'\2/gc<CR>
+noremap <leader>"/ :/\([^"]\)\@<="\([^"]\)\@=<CR>
+noremap <leader>s' :%s/\([^"]\)"\([^"]\)/\1'\2/gc<CR>
 
 
 " for python doctests
-:inoremap ,,, >>> 
-:noremap <leader>> :s/^\( *[^ ].*\)\([^ ]\)>>>/\1\2/g<CR>
+inoremap ,,, >>> 
+noremap <leader>> :s/^\( *[^ ].*\)\([^ ]\)>>>/\1\2/g<CR>
 ":noremap <leader>> :'<,'>s/^\( *[^ ].*\)\([^ ]\)>>>/\1\2/g<CR>
 
 
 " Search in non-doctests
-:noremap <leader>/ :/\(^.*>>> .*\)\@<!
+noremap <leader>/ :/\(^.*>>> .*\)\@<!
 ":noremap <leader>/ :/\(^.*>>>\)\@!
 
 " Function Keys
@@ -153,30 +155,30 @@ noremap <leader>ro :s/^\( *\)\([^ ]\)/\1(\2/ <bar> '<,'>s/,$/),/ <bar> '<,'>s/:/
 " === F1 ===
 " Search
 "remap F1 to search for word under cursor
-:call FKeyFuncMap('<F1>', '*')
+call FKeyFuncMap('<F1>', '*')
 " custom command for opening setupfiles
-:noremap  <leader><F1> :call OpenSetups()<CR>
+noremap  <leader><F1> :call OpenSetups()<CR>
 
 " === F2 ===
-:call FKeyFuncMap('<F2>', ':call PythonRevert()<CR>')
-:call FKeyFuncMap('<F3>', ':call PythonInvert()<CR>')
+call FKeyFuncMap('<F2>', ':call PythonRevert()<CR>')
+call FKeyFuncMap('<F3>', ':call PythonInvert()<CR>')
 
 " === F3 ===
-:call FKeyFuncMap('<c-F2>', ':call NumberLineRevert()<CR>')
-:call FKeyFuncMap('<c-F3>', ':call NumberLineInvert()<CR>')
+call FKeyFuncMap('<c-F2>', ':call NumberLineRevert()<CR>')
+call FKeyFuncMap('<c-F3>', ':call NumberLineInvert()<CR>')
 " === F4 ===
 "http://vim.1045645.n5.nabble.com/How-to-map-two-commands-on-one-key-td1162164.html
-:noremap <F4> :call ToggleFont(1) <Bar> redraw <Bar> call FUNC_ECHOVAR("gfn")<CR>
-:noremap <S-F4> :call ToggleFont(-1) <Bar> redraw <Bar> call FUNC_ECHOVAR("gfn")<CR>
+noremap <F4> :call ToggleFont(1) <Bar> redraw <Bar> call FUNC_ECHOVAR("gfn")<CR>
+noremap <S-F4> :call ToggleFont(-1) <Bar> redraw <Bar> call FUNC_ECHOVAR("gfn")<CR>
 ":noremap <C-F4> <Esc>:tabclose<CR>
 
 " === F5, 6, 7
-:noremap <F5> :call ViewDirectory()<CR>
-:noremap <F6> :call CmdHere()<CR>
+noremap <F5> :call ViewDirectory()<CR>
+noremap <F6> :call CmdHere()<CR>
 
 "vim-latex-suit overwrites f5, give it an alt
-:noremap <F8> :call Tex_RunViewLaTeX()<CR>
-:noremap <F12> :call ToggleAlpha()<CR>
+noremap <F8> :call Tex_RunViewLaTeX()<CR>
+noremap <F12> :call ToggleAlpha()<CR>
 
 
 " Remap Alt+q to escape
@@ -259,30 +261,30 @@ noremap <leader>9 9gt
 " Search and replace under cursor
 ":noremap <leader>s :%s/\<<C-r><C-w>\>/
 " Add ss which does the same thing but is specific
-:noremap <leader>ss :%s/\<<C-r><C-w>\>/
-:noremap <leader>sd :'<,'>s/\<\(<C-r><C-w>\)\>/tmpkw['\1']/g<CR>
+noremap <leader>ss :%s/\<<C-r><C-w>\>/
+noremap <leader>sd :'<,'>s/\<\(<C-r><C-w>\)\>/tmpkw['\1']/g<CR>
 
 
 " goto next syntastic error
-:noremap <leader>e :SyntasticCheck<CR> :Errors<CR>
-:noremap <C-T> :NERDTree<CR>
+noremap <leader>e :SyntasticCheck<CR> :Errors<CR>
+noremap <C-T> :NERDTree<CR>
 
-:noremap <leader>. :NERDTree<CR>
+noremap <leader>. :NERDTree<CR>
 
 
 " RESIZE VSPLIT
-:noremap <leader>+ :30winc ><CR>
-:noremap <leader>_ :30winc <<CR>
-:noremap <leader>= :FontIncrease<CR>
-:noremap <leader>- :FontDecrease<CR>
+noremap <leader>+ :30winc ><CR>
+noremap <leader>_ :30winc <<CR>
+noremap <leader>= :FontIncrease<CR>
+noremap <leader>- :FontDecrease<CR>
 
 
 "Surround word with quotes
-:noremap <leader>qw ciw'<C-r>"'<Esc>
+noremap <leader>qw ciw'<C-r>"'<Esc>
 
 
 " insert a NOQA
-:noremap <leader>n A  # NOQA<Esc>
+noremap <leader>n A  # NOQA<Esc>
 ":noremap <leader>nq A  # NOQA<Esc>
 
 
@@ -308,7 +310,7 @@ map Q gq
 inoremap <C-U> <C-G>u<C-U>
 
 " Remap execute macro from @ to \
-:nmap <leader>2 @
+nmap <leader>2 @
 
 " Define Macros
 let @q=',qw'

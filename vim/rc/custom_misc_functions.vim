@@ -1,3 +1,7 @@
+"""
+" SeeAlso; 
+"     ~/local/vim/rc_settings/remap_settings.vim
+"""
 
 
 func! CopyGVimToTerminalDev(...) range
@@ -70,25 +74,136 @@ if return_to_vim == "1":
         ('focus_id', '$ACTIVE_GVIM'),
     ]
 # execute script
-#dprint(doscript)
 dprint('Running script')
-#ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01, verbose=1)
 ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01)
 dprint('Finished script')
+#L______________
+endpython
+endfu 
 
-# ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=1, verbose=1)
-#else:
-#ut.util_ubuntu.XCtrl.copy_gvim_to_terminal_script(text,
-#    return_to_win=return_to_vim)
-#ut.util_ubuntu.XCtrl.copy_gvim_to_terminal_script(text,
-#    return_to_win=return_to_vim, verbose=1, sleeptime=1)
-"""
-print('foobar')
-echo hi2
-"""
-#ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01, verbose=1)
-#xctrl.send(('type', '%paste'), ('key', 'KP_Enter'))
-#xctrl.focus_window('GVIM')
+
+func! IPythonImportAll()
+    " Imports global variables from current module into IPython session
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool as ut
+import utool.util_ubuntu
+ut.rrrr(verbose=False)
+
+return_to_vim = True
+
+if pyvim_funcs.is_module_pythonfile():
+    modpath = vim.current.buffer.name
+    modname = ut.get_modname_from_modpath(modpath)
+    lines = []
+    if not ut.check_module_installed(modname):
+        lines.append('import sys')
+        lines.append('sys.path.append(%r)' % (dirname(modpath),))
+    lines.append("from {} import *".format(modname))
+    # Add private and protected functions
+    func_names = ut.parse_function_names(ut.readfrom(modpath, verbose=False))
+    private_funcs = [name for name in func_names if name.startswith('_')]
+    if len(private_funcs) > 0:
+        lines.append("from {} import {}".format(
+            modname, ', '.join(private_funcs)))
+    # Prepare to send text to xdotool
+    text = ut.unindent('\n'.join(lines))
+    ut.copy_text_to_clipboard(text)
+    # Build xdtool script
+    doscript = [
+        ('remember_window_id', 'ACTIVE_GVIM'),
+        ('focus', 'x-terminal-emulator.X-terminal-emulator'),
+        ('key', 'ctrl+shift+v'),
+        ('key', 'KP_Enter'),
+    ]
+    if '\n' in text:
+        # Press enter twice for multiline texts
+        doscript += [
+            ('key', 'KP_Enter'),
+        ]
+    if return_to_vim:
+        doscript += [
+            ('focus_id', '$ACTIVE_GVIM'),
+        ]
+    ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01)
+else:
+    print('current file is not a pythonfile')
+#L______________
+endpython
+endfu 
+
+
+
+func! InsertPyUtMain() 
+    " Imports a python __main__ block 
+python << endpython
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool as ut
+ut.rrrr(verbose=False)
+pyvim_funcs.ensure_normalmode()
+if pyvim_funcs.is_module_pythonfile():
+    modpath = vim.current.buffer.name
+    modname = ut.get_modname_from_modpath(modpath)
+    text = ut.make_default_module_maintest(modname, modpath)
+    pyvim_funcs.insert_codeblock_under_cursor(text)
+else:
+    print('current file is not a pythonfile')
+#L______________
+endpython
+endfu 
+
+
+func! PyInsertHeader(...) 
+    " Imports a standard python header
+python << endpython
+mode = vim.eval('(a:0 >= 1) ? a:1 : 0')
+
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool as ut
+ut.rrrr(verbose=False)
+pyvim_funcs.ensure_normalmode()
+if pyvim_funcs.is_module_pythonfile():
+    modpath = vim.current.buffer.name
+    modname = ut.get_modname_from_modpath(modpath)
+    lines = []
+    if mode == 'script':
+        lines += ['#!/usr/bin/env python']
+    lines += [
+        '# -*- coding: utf-8 -*-',
+        'from __future__ import print_function, division, absolute_import, unicode_literals',
+    ]
+    if mode == 'utool':
+        lines += [
+            'import utool as ut'
+            'print, rrr, profile = ut.inject2(__name__)'
+        ]
+    text = '\n'.join(lines)
+    pyvim_funcs.insert_codeblock_above_cursor(text)
+else:
+    print('current file is not a pythonfile')
+#L______________
+endpython
+endfu 
+
+
+func! AutoPep8Block() 
+python << endpython
+# FIXME: Unfinished
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool as ut
+
+pyvim_funcs.ensure_normalmode()
+
+if pyvim_funcs.is_module_pythonfile():
+    print('autopep8ing file')
+    text = pyvim_funcs.get_codelines_around_buffer()
+    pyvim_funcs.insert_codeblock_under_cursor(text)
+else:
+    print('current file is not a pythonfile')
 #L______________
 endpython
 endfu 
@@ -437,104 +552,6 @@ endpython
 endfu 
 
 
-func! IPythonImportAll()
-python << endpython
-import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool as ut
-import utool.util_ubuntu
-ut.rrrr(verbose=False)
-
-return_to_vim = True
-
-if pyvim_funcs.is_module_pythonfile():
-    modpath = vim.current.buffer.name
-    modname = ut.get_modname_from_modpath(modpath)
-    lines = []
-    if not ut.check_module_installed(modname):
-        lines.append('import sys')
-        lines.append('sys.path.append(%r)' % (dirname(modpath),))
-    lines.append("from {} import *".format(modname))
-    # Add private and protected functions
-    func_names = ut.parse_function_names(ut.readfrom(modpath, verbose=False))
-    private_funcs = [name for name in func_names if name.startswith('_')]
-    if len(private_funcs) > 0:
-        lines.append("from {} import {}".format(
-            modname, ', '.join(private_funcs)))
-    # Prepare to send text to xdotool
-    text = ut.unindent('\n'.join(lines))
-    ut.copy_text_to_clipboard(text)
-    # Build xdtool script
-    doscript = [
-        ('remember_window_id', 'ACTIVE_GVIM'),
-        ('focus', 'x-terminal-emulator.X-terminal-emulator'),
-        ('key', 'ctrl+shift+v'),
-        ('key', 'KP_Enter'),
-    ]
-    if '\n' in text:
-        # Press enter twice for multiline texts
-        doscript += [
-            ('key', 'KP_Enter'),
-        ]
-    if return_to_vim:
-        doscript += [
-            ('focus_id', '$ACTIVE_GVIM'),
-        ]
-    ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01)
-else:
-    print('current file is not a pythonfile')
-#L______________
-endpython
-endfu 
-
-
-
-func! InsertPyUtMain() 
-python << endpython
-import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool as ut
-ut.rrrr(verbose=False)
-pyvim_funcs.ensure_normalmode()
-if pyvim_funcs.is_module_pythonfile():
-    modpath = vim.current.buffer.name
-    modname = ut.get_modname_from_modpath(modpath)
-    text = ut.make_default_module_maintest(modname, modpath)
-    pyvim_funcs.insert_codeblock_under_cursor(text)
-else:
-    print('current file is not a pythonfile')
-#L______________
-endpython
-endfu 
-
-
-func! InsertPyHeader(...) 
-python << endpython
-mode = vim.eval('(a:0 >= 1) ? a:1 : 0')
-
-import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool as ut
-ut.rrrr(verbose=False)
-pyvim_funcs.ensure_normalmode()
-if pyvim_funcs.is_module_pythonfile():
-    modpath = vim.current.buffer.name
-    modname = ut.get_modname_from_modpath(modpath)
-    lines = [
-    '# -*- coding: utf-8 -*-',
-    'from __future__ import print_function, division, absolute_import, unicode_literals',
-    ]
-    if mode == 'script':
-        lines.insert(0, '#!/usr/bin/env python')
-    text = '\n'.join(lines)
-    pyvim_funcs.insert_codeblock_above_cursor(text)
-else:
-    print('current file is not a pythonfile')
-#L______________
-endpython
-endfu 
-
-
 func! InsertIBEISExample() 
 python << endpython
 import vim
@@ -554,26 +571,6 @@ if pyvim_funcs.is_module_pythonfile():
     #    '''
     #)).format(modname=modname)
     text = pyvim_funcs.auto_docstr(with_args=False, with_ret=False)
-    pyvim_funcs.insert_codeblock_under_cursor(text)
-else:
-    print('current file is not a pythonfile')
-#L______________
-endpython
-endfu 
-
-
-func! AutoPep8Block() 
-python << endpython
-# FIXME: Unfinished
-import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool as ut
-
-pyvim_funcs.ensure_normalmode()
-
-if pyvim_funcs.is_module_pythonfile():
-    print('autopep8ing file')
-    text = pyvim_funcs.get_codelines_around_buffer()
     pyvim_funcs.insert_codeblock_under_cursor(text)
 else:
     print('current file is not a pythonfile')
@@ -612,6 +609,7 @@ python << endpython
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
+
 indent = pyvim_funcs.get_cursor_py_indent()
 newtext = '\n'.join([
     indent + 'import utool',
@@ -622,33 +620,45 @@ endpython
 endfunc
 
 
-func! PyMakeWithEmbed() 
+func! PyMakeWithEmbed(...) range
 python << endpython
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
+
+mode = vim.eval('a:1')
+
 indent = pyvim_funcs.get_cursor_py_indent()
 newtext = '\n'.join([
     indent + 'import utool',
     indent + 'with utool.embed_on_exception_context:'
 ])
-pyvim_funcs.insert_codeblock_under_cursor(newtext)
+if 'v' in mode.lower():
+    newtext += '\n' + ut.indent(pyvim_funcs.get_selected_text())
+    pyvim_funcs.insert_codeblock_over_selection(newtext)
+else:
+    pyvim_funcs.insert_codeblock_under_cursor(newtext)
 endpython
 endfunc
 
 
-func! PyMakeTimerit() 
+func! PyMakeTimerit(...) range
 python << endpython
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
+mode = vim.eval('a:1')
 indent = pyvim_funcs.get_cursor_py_indent()
 newtext = '\n'.join([
     indent + 'import utool',
     indent + 'for timer in utool.Timerit(10):',
     indent + '    with timer:',
 ])
-pyvim_funcs.insert_codeblock_under_cursor(newtext)
+if 'v' in mode.lower():
+    newtext += '\n' + ut.indent(pyvim_funcs.get_selected_text(), ' ' * 8)
+    pyvim_funcs.insert_codeblock_over_selection(newtext)
+else:
+    pyvim_funcs.insert_codeblock_under_cursor(newtext)
 endpython
 endfunc
 

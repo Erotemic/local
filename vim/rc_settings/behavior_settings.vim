@@ -31,11 +31,17 @@ endif
 " Good Colorschemes
 
 "colorscheme solarized
-colorscheme slate
+"colorscheme slate
+"colorscheme gruvbox
+"colorscheme phd
+colorscheme badwolf
+"colorscheme codeschool
+"colorscheme murphy
+"set bg=light
 set bg=dark
+
 let g:solarized_contrast="normal"
 let g:solarized_visibility="normal"
-"set bg=light
 "let g:solarized_contrast="high"
 "let g:solarized_contrast="low"
 "let g:solarized_bold=1
