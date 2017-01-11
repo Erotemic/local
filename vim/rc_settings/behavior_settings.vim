@@ -57,11 +57,11 @@ endif
 
 " Show a vertical line on column 80
 if exists('+colorcolumn')
-  "highlight ColorColumn guibg=DarkSlateGray
   " background is currently gray15
   highlight ColorColumn guibg=gray18
   highlight ColorColumn ctermbg=darkgrey
-  set colorcolumn=81
+  " See Autocommands for setting the colorcolumn
+  "set colorcolumn=81
 endif
 
 " Turn on line numbering

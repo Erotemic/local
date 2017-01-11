@@ -3,8 +3,67 @@
 " UNDOO ALL AUTOCOMMANDS
 "au!
 
+func! AuOnReadPatterns(aucmdstr, ...)
+python << endpython
+# Executes pre-read `aucmdstr` on files matching `pattern`
+import vim
+aucmdstr = vim.eval('a:aucmdstr')
+N = int(vim.eval('a:0'))
+for ix in range(1, N + 1):
+    pattern = vim.eval('a:%d' % ix)
+    cmdfmt = "au BufNewFile,BufRead {pattern} {aucmdstr}"
+    cmd = cmdfmt.format(pattern=pattern, aucmdstr=aucmdstr)
+    vim.command(cmd)
+endpython
+endfu
+
+func! AuPreWritePatterns(aucmdstr, ...)
+python << endpython
+# Executes pre-write `aucmdstr` on files matching `pattern`
+import vim
+aucmdstr = vim.eval('a:aucmdstr')
+N = int(vim.eval('a:0'))
+for ix in range(1, N + 1):
+    pattern = vim.eval('a:%d' % ix)
+    cmdfmt = "au BufWritePre {pattern} {aucmdstr}"
+    cmdstr = cmdfmt.format(pattern=pattern, aucmdstr=aucmdstr)
+    vim.command(cmdstr)
+endpython
+endfu
+
+
+func! AuFileType(aucmdstr, ...)
+python << endpython
+# Executes `aucmdstr` on `filtypes`
+import vim
+aucmdstr = vim.eval('a:aucmdstr')
+N = int(vim.eval('a:0'))
+for ix in range(1, N + 1):
+    filetype = vim.eval('a:%d' % ix)
+    cmdfmt = "au FileType {filetype} {aucmdstr}"
+    cmdstr = cmdfmt.format(filetype=filetype, aucmdstr=aucmdstr)
+    vim.command(cmdstr)
+endpython
+endfu
+
+" Associate extensions with vim filetypes
+:call AuOnReadPatterns('set ft=cpp', '*.txx')
+:call AuOnReadPatterns('set ft=python', '*.py.tpl')
+:call AuOnReadPatterns('set ft=markdown', '*.md')
+:call AuOnReadPatterns('set ft=cmake', '*.poly', '*.node', '.ele')
+:call AuOnReadPatterns('set ft=cython', '*.pyx', '.pxd')
+:call AuOnReadPatterns('set ft=Autohotkey', '*.ahk')
+
 " e supresses errors  if  nonthing is found
 au SwapExists * let v:swapchoice = 'e'
+
+if exists('+colorcolumn')
+    :call AuFileType('setlocal colorcolumn=', 'text', 'markdown', 'latex')
+    :call AuFileType('setlocal colorcolumn=81', 'python', 'vim', 'cpp')
+    "au FileType text setlocal colorcolumn=
+    "au FileType python setlocal colorcolumn=81
+    "au FileType vim setlocal colorcolumn=81
+endif
 
 " Python indenting, folding, etc...
 "au FileType python set omnifunc=pythoncomplete#Complete
@@ -25,45 +84,7 @@ autocmd Filetype tex,latex setlocal spell
 " http://stackoverflow.com/questions/18219444/remove-underscore-as-a-word-separator-in-vim
 autocmd Filetype tex,latex setlocal iskeyword+=_
 
-func! AuOnReadPatterns(aucmdstr, ...)
-python << endpython
-import vim
-ix = 0
-while True:
-    try:
-        pattern = vim.eval('a:%d' % ix)
-        cmdfmt = ":exec au BufNewFile,BufRead {pattern} {aucmdstr}"
-        cmd = cmdfmt.format(pattern=pattern, aucmdstr=aucmdstr)
-        vim.command(cmd)
-    except Exception:
-        break
-    ix += 1
-endpython
-endfu
-
-func! AuPreWritePatterns(aucmdstr, ...)
-python << endpython
-import vim
-ix = 0
-while True:
-    try:
-        pattern = vim.eval('a:%d' % ix)
-        cmdfmt = ":exec au BufWritePre {pattern} {aucmdstr}"
-        cmdstr = cmdfmt.format(pattern=pattern, aucmdstr=aucmdstr)
-        vim.command(cmdstr)
-    except Exception:
-        break
-    ix += 1
-endpython
-endfu
-
-:call AuOnReadPatterns('set ft=cpp', '*.txx')
-:call AuOnReadPatterns('set ft=python', '*.py.tpl')
-:call AuOnReadPatterns('set ft=cmake', '*.poly', '*.node', '.ele')
-:call AuOnReadPatterns('set ft=cython', '*.pyx', '.pxd')
-:call AuOnReadPatterns('set ft=Autohotkey', '*.ahk')
-
-" Reference http://stackoverflow.com/questions/6671199/gvim-long-multiline-string-highlighting
+" Reference http://stackoverflow.com/questions/6671199/vim-multiline-highlight
 :call AuOnReadPatterns('syntax sync minlines=500', '*.py')
 
 
@@ -88,8 +109,9 @@ au BufWritePre *.py :%s///e
 "au BufNewFile,BufRead *.txx  set ft=cpp
 "au BufNewFile,BufRead *.poly set ft=cmake
 "au BufNewFile,BufRead *.pyx  set ft=cython
-au BufNewFile,BufRead *.spec set ft=python
-au BufNewFile,BufRead *.py.tpl set ft=python
+"au BufNewFile,BufRead *.spec set ft=python
+"au BufNewFile,BufRead *.py.tpl set ft=python
+"au BufNewFile,BufRead *.md set ft=markdown
 "au BufNewFile,BufRead *.node set ft=cmake
 "au BufNewFile,BufRead *.ele  set ft=cmake
 "au BufNewFile,BufRead *.ahk, set ft=Autohotkey
@@ -97,7 +119,7 @@ au BufNewFile,BufRead *.py.tpl set ft=python
 "au BufRead,BufNewFile *.conf setfiletype vidtkconf
 "
 au FileType cpp setlocal foldmethod=syntax
-autocmd FileType cpp normal zR
+au FileType cpp normal zR
 "autocmd FileType cpp if getfsize(@%) > 200 | set foldmethod=syntax | endif
 "autocmd FileType cpp if getfsize(@%) > 200 | normal zR | endif
 
@@ -106,14 +128,6 @@ autocmd FileType cpp normal zR
 "au InsertLeave * hi Cursor guibg=red
 "au InsertEnter * hi Cursor guibg=green
 
-
-" Use shell syntax for markdown files
-"au BufNewFile,BufRead *.md set ft=sh
-"au BufNewFile,BufRead *.md set ft=markdown
-autocmd BufNewFile,BufReadPost *.md set filetype=markdown
-"
-"
-"
 ":call AuPreWritePatterns(':%s/\s\+$//e', '*.py', '*.c', '*.cxx', '*.cpp', '*.h', '*.hpp', '*.hxx')
 ":call AuCmdPatterns('set ft=vidtkconf', '*.conf')
 "au BufWritePre *.py :%s/\t/    /g
@@ -134,46 +148,3 @@ autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 "g:tex_isk='48-57,a-z,A-Z,192-255,_
 "au FileType python call PythonInvert()
 "au FileType python set textwidth=80
-"
-
-
-"function! GetPythonTextWidth()
-"    " http://stackoverflow.com/questions/4027222/vim-use-shorter-textwidth-in-comments-and-docstrings
-"    if !exists('g:python_normal_text_width')
-"        let normal_text_width = 79
-"    else
-"        let normal_text_width = g:python_normal_text_width
-"    endif
-
-"    if !exists('g:python_comment_text_width')
-"        let comment_text_width = 72
-"    else
-"        let comment_text_width = g:python_comment_text_width
-"    endif
-
-"    let cur_syntax = synIDattr(synIDtrans(synID(line("."), col("."), 0)), "name")
-"    if cur_syntax == "Comment"
-"        return comment_text_width
-"    elseif cur_syntax == "String"
-"        " Check to see if we're in a docstring
-"        let lnum = line(".")
-"        while lnum >= 1 && (synIDattr(synIDtrans(synID(lnum, col([lnum, "$"]) - 1, 0)), "name") == "String" || match(getline(lnum), '\v^\s*$') > -1)
-"            if match(getline(lnum), "\\('''\\|\"\"\"\\)") > -1
-"                " Assume that any longstring is a docstring
-"                return comment_text_width
-"            endif
-"            let lnum -= 1
-"        endwhile
-"    endif
-
-"    return normal_text_width
-"endfunction
-
-"augroup pep8
-"    au!
-"    autocmd CursorMoved,CursorMovedI * :if &ft == 'python' | :exe 'setlocal textwidth='.GetPythonTextWidth() | :endif
-"augroup END
-
-
-"autocmd BufRead,BufNewFile *.tex setlocal textwidth=72
-
