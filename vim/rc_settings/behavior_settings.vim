@@ -31,13 +31,13 @@ endif
 " Good Colorschemes
 
 "colorscheme solarized
-"colorscheme slate
+colorscheme slate
 "colorscheme gruvbox
 "colorscheme phd
 colorscheme badwolf
 "colorscheme codeschool
 "colorscheme murphy
-"set bg=light
+set bg=light  " setting this first causes slate to look nicer
 set bg=dark
 
 let g:solarized_contrast="normal"

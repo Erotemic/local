@@ -49,10 +49,15 @@ endfu
 " Associate extensions with vim filetypes
 :call AuOnReadPatterns('set ft=cpp', '*.txx')
 :call AuOnReadPatterns('set ft=python', '*.py.tpl')
-:call AuOnReadPatterns('set ft=markdown', '*.md')
 :call AuOnReadPatterns('set ft=cmake', '*.poly', '*.node', '.ele')
 :call AuOnReadPatterns('set ft=cython', '*.pyx', '.pxd')
 :call AuOnReadPatterns('set ft=Autohotkey', '*.ahk')
+":call AuOnReadPatterns('set ft=markdown', '*.md')
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+
+let g:markdown_syntax_conceal = 0
+let g:markdown_fenced_languages = ['html', 'python', 'bash=sh']
+
 
 " e supresses errors  if  nonthing is found
 au SwapExists * let v:swapchoice = 'e'
