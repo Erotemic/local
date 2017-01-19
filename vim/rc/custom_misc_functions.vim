@@ -102,11 +102,16 @@ if pyvim_funcs.is_module_pythonfile():
         lines.append('sys.path.append(%r)' % (dirname(modpath),))
     lines.append("from {} import *".format(modname))
     # Add private and protected functions
-    func_names = ut.parse_function_names(ut.readfrom(modpath, verbose=False))
-    private_funcs = [name for name in func_names if name.startswith('_')]
-    if len(private_funcs) > 0:
-        lines.append("from {} import {}".format(
-            modname, ', '.join(private_funcs)))
+    try:
+        sourcecode = ut.readfrom(modpath, verbose=False)
+        func_names = ut.parse_function_names(sourcecode)
+        private_funcs = [name for name in func_names if name.startswith('_')]
+        if len(private_funcs) > 0:
+            lines.append("from {} import {}".format(
+                modname, ', '.join(private_funcs)))
+    except Exception as ex:
+        ut.printex(ex, 'ast parsing failed', tb=True)
+        print('ast parsing failed')
     # Prepare to send text to xdotool
     text = ut.unindent('\n'.join(lines))
     ut.copy_text_to_clipboard(text)
