@@ -150,3 +150,19 @@ s/\t/    /gc
 
 "  Fix -m ibeis.modname --exec-funcname
 %s/-m ibeis\..* --exec-/-m ibeis --tf /gc
+
+
+
+" Python to C++ translation
+
+s/if \(.*\):/if (\1) {/
+s/\(\w\) is None\>/\1 == NULL/
+s/elif/else if/
+s/else:/else {/g
+s/\([^{}]\)$/\1;/g
+
+s/'/"/g
+
+
+s/\(\w\+\)\.key/KEY(\1\)/
+s/\(\w\+\)\.value/VALUE(\1\)/
