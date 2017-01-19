@@ -1164,3 +1164,19 @@ beyond_compare(){
     sudo apt-get install gdebi-core
     sudo gdebi bcompare-4.1.9.21719_amd64.deb
 }
+
+install_banish404(){
+    #http://askubuntu.com/questions/65911/how-can-i-fix-a-404-error-when-using-a-ppa-or-updating-my-package-lists
+    # Get rid of failing packages when running apt-get update
+    #sudo add-apt-repository ppa:fossfreedom/packagefixes
+    #sudo apt-get update
+    #sudo apt-get install banish404
+
+    cd ~/tmp
+    wget https://launchpad.net/~fossfreedom/+archive/packagefixes/+files/banish404_0.1-4_all.deb
+    sudo dpkg -i banish404_0.1-4_all.deb
+
+    sudo add-apt-repository --remove http://ppa.launchpad.net/boost-latest/ppa/ubuntu
+    sudo add-apt-repository --remove http://ppa.launchpad.net/fossfreedom/packagefixes/ubuntu
+    sudo add-apt-repository --remove http://ppa.launchpad.net/tualatrix/ppa/ubuntu
+}

@@ -115,7 +115,8 @@ VIM_REPO_URLS, VIM_REPOS = repo_list([
     'https://github.com/honza/vim-snippets.git',
     'https://github.com/altercation/vim-colors-solarized.git',
     # 'https://github.com/drmingdrmer/vim-syntax-markdown.git',
-    'https://github.com/plasticboy/vim-markdown.git',
+    # 'https://github.com/plasticboy/vim-markdown.git',
+    'https://github.com/tpope/vim-markdown.git',
 
     'https://github.com/jmcantrell/vim-virtualenv.git',
     'https://github.com/Lokaltog/vim-powerline.git',
@@ -132,7 +133,6 @@ VIM_REPO_URLS, VIM_REPOS = repo_list([
     #'https://github.com/honza/vim-snippets.git',
 
     'https://github.com/SirVer/ultisnips.git',
-    'https://github.com/tpope/vim-markdown.git',
     'https://github.com/Erotemic/vim-quickopen-tvio.git',
     'https://github.com/docunext/closetag.vim.git',
 
