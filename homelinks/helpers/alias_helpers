@@ -112,7 +112,8 @@ alias mtg='cd $CODE_DIR/mtgmonte/'
 
 # https://github.com/pypa/virtualenv/issues/355
 # ['/usr/local/lib/python2.7/dist-packages', '/usr/lib/python2.7/dist-packages']
-alias pysite='cd $(python -c "import site; print(site.getsitepackages()[0])")'
+#alias pysite='cd $(python -c "import site; print(site.getsitepackages()[0])")'
+alias pysite='cd $(python -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_lib())")'
 #alias vrc='cd $(python -c "import site; print(site.getsitepackages()[0]))"'
 
 
