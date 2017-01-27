@@ -57,28 +57,28 @@ let g:Tex_MultipleCompileFormats='pdf,bib,pdf'
 let g:Tex_CompileRule_pdf = 'lualatex -shell-escape --synctex=-1 -src-specials --output-directory=auxdir -interaction=nonstopmode $*'
 " Use main.tex.mainfile to compile
 let g:Tex_UseMakefile = 1
-"let g:Tex_IgnoredWarnings =
-"    \'Underfull'."\n".
-"    \'Overfull'."\n".
-"    \'specifier changed to'."\n".
-"    \'You have requested'."\n".
-"    \'Missing number, treated as zero.'."\n".
-"    \'There were undefined references'."\n".
-"    \'undefined on input'."\n".
-"    \'Citation %.%# undefined'
 let g:Tex_IgnoreLevel = 8
 let g:Tex_IgnoreUnmatched = 1
 let g:Tex_ShowallLines = 0
+
+"let g:Tex_UseMakefile = 0
+"let g:Tex_IgnoreLevel = 0
+"let g:Tex_IgnoreUnmatched = 0
+"let g:Tex_ShowallLines = 1
+
 " No comment spellcheck
 let g:tex_comment_nospell= 1
+
 "Autocomplete off
 let g:Tex_SmartKeyDot=0
 let g:Tex_GotoError=0
+
 " DISABLE <++>
 " http://tex.stackexchange.com/questions/62134/how-to-disable-all-vim-latex-mappings
 let g:Imap_UsePlaceHolders = 0
 let g:Tex_SmartKeyBS = 0
 let g:Tex_SmartKeyQuote = 0
+
 " Cross Platform view rules
 if has("win32") || has("win16")
     let g:Tex_ViewRule_pdf = 'C:\Program Files (x86)\SumatraPDF\SumatraPDF -reuse-instance -inverse-search "gvim -c \":RemoteOpen +\%l \%f\""'
@@ -110,18 +110,27 @@ args2 = ','.join(["'%s'" % x for x in ignore_warnings])
 vim.command('let g:Tex_IgnoredWarnings = "%s"' % args1)
 vim.command('let g:LatexBox_ignore_warnings = [%s]' % args2)
 endpython
+"let g:Tex_IgnoredWarnings =
+"    \'Underfull'."\n".
+"    \'Overfull'."\n".
+"    \'specifier changed to'."\n".
+"    \'You have requested'."\n".
+"    \'Missing number, treated as zero.'."\n".
+"    \'There were undefined references'."\n".
+"    \'undefined on input'."\n".
+"    \'Citation %.%# undefined'
 
 " Turn of XeLaTeX errors
-set makeprg=texwrapper
-set errorformat=%f:%l:%c:%m
+"set makeprg=texwrapper
+"set errorformat=%f:%l:%c:%m
+"set conceallevel=0
 
 
 " Toggle Compile to OpenDyslexic
-command! LATEXCompileRuleLaTeX :call SetLaTeX()
-command! LATEXCompileRuleXeTeX :call SetXeTeX()
+"command! LATEXCompileRuleLaTeX :call SetLaTeX()
+"command! LATEXCompileRuleXeTeX :call SetXeTeX()
 
 
-set conceallevel=0
 
 "-------------------------
 "PLUGIN: Synstastic General
@@ -152,45 +161,3 @@ ccktex_args_list = [
 args = ' '.join(ccktex_args_list)
 #vim.command('let g:syntastic_tex_chktex_args = "%s"' % args)
 endpython
-
-
-":inoremap <leader>* \item 
-" http://mirrors.ctan.org/install/macros/latex/contrib/mathtools.tds.zip
-
-
-" Initialize
-"func! LatexInitialize()
-"    ":set textwidth=80
-"    ":set spell
-"    ":setlocal spell spelllang=en_us
-"    ":call SetFontMonoDyslexic()
-"    "set wildignore=*.o, *~, *.pyc, *.pyo, *.aux, *.masv, *.bbl, *.bcf, *.blg, *.brf, *.synctex, *.upa, *.upb, *.pdf, *.out, *.log
-"    "set wildignore=*.o, *.pyc, *.pyo, *.aux, *.masv, *.bbl, *.bcf, *.blg, *.brf, *.synctex, *.upa, *.upb, *.pdf, *.out, *.log
-"    "let NERDTreeIgnore = ['\.o$', '\~$', '\.pyc$',  '\.pyo$', '\.aux$', '\.masv$', '\.bbl$', '\.bcf$', '\.blg$', '\.brf$', '\.synctex$', '\.upa$', '\.upb$', '\.pdf$', '\.out$', '\.log', '\.latexmain', '\.bib', '\.shelf', 'README.md', 'LICENSE']
-"    "let NERDTreeIgnore = ['\.o$', '\~$', '\.pyc$',  '\.pyo$', '\.aux$', '\.masv$', '\.bbl$', '\.bcf$', '\.blg$', '\.brf$', '\.synctex$', '\.upa$', '\.upb$', '\.pdf$', '\.out$', '\.log', '\.shelf', 'README.md', 'LICENSE', '\.glo$', '\.toc$', '\.xdy$']
-"endfu
-"
-"
-"
-"
-"
-" Turn off LATEX code folding
-":let Tex_FoldedSections=""
-":let Tex_FoldedEnvironments=""
-":let Tex_FoldedMisc=""
-
-
-
-
-" ============================================================================== " Customization of 'efm':  {{{
-" This section contains the customization variables which the user can set.
-" g:Tex_IgnoredWarnings: This variable contains a seperated list of
-" patterns which will be ignored in the TeX compiler's output.
-" This is the number of warnings in the g:Tex_IgnoredWarnings string which
-" will be ignored.
-" There will be lots of stuff in a typical compiler output which will
-" completely fall through the 'efm' parsing. This options sets whether or not
-" you will be shown those lines.
-
-
-" https://caffeinatedcode.wordpress.com/2009/11/16/simple-latex-ctags-and-taglist/

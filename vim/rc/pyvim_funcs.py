@@ -238,7 +238,8 @@ def find_pyfunc_above_cursor():
 
 def is_paragraph_end(line_):
     # Hack, par_marker_list should be an argument
-    striped_line = line_.strip()
+    import utool as ut
+    striped_line = ut.ensure_unicode(line_.strip())
     isblank = striped_line == ''
     if isblank:
         return True
@@ -249,7 +250,7 @@ def is_paragraph_end(line_):
         '% ---',
     ]
     return any(striped_line.startswith(marker)
-                 for marker in par_marker_list)
+               for marker in par_marker_list)
 
 
 def find_paragraph_end(row_, direction=1):
