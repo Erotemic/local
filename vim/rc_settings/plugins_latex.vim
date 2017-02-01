@@ -67,7 +67,9 @@ let g:Tex_ShowallLines = 0
 "let g:Tex_ShowallLines = 1
 
 " No comment spellcheck
+let g:tex_nospell= 0
 let g:tex_comment_nospell= 1
+
 
 "Autocomplete off
 let g:Tex_SmartKeyDot=0

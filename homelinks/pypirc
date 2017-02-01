@@ -1,6 +1,7 @@
 # References:
 #    https://packaging.python.org/en/latest/distributing.html#uploading-your-project-to-pypi
 #    http://peterdowns.com/posts/first-time-with-pypi.html
+#    https://pythonhosted.org/an_example_pypi_project/setuptools.html#intermezzo-pypirc-file-and-gpg
 # CommandLine:
 #     git tag 1.1.0.dev1 -m "tarball tag 1.1.0.dev1"
 #     git push --tags origin master

@@ -74,6 +74,8 @@ hyrule_create_users()
     sudo adduser guest
     # Add group
     sudo groupadd ibeis
+    sudo usermod -a -G sudo jason
+    sudo usermod -a -G ibeis jason
     sudo usermod -a -G rpi joncrall
     sudo groupadd rpi
     sudo usermod -a -G rpi jason

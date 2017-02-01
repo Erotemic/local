@@ -190,3 +190,45 @@ syn match texInputFile		"\\url{.\{-}}"	contains=texStatement,texInputCurlies,tex
 " also from vim.vim
 hi def link texScriptDelim	Comment
 hi def link texEmbedError	texError
+
+
+
+
+
+
+"""""""""""""""""
+"Add in custom conceal unicode lines
+" Conceal mode support (supports set cole=2) {{{1
+if !exists("g:tex_conceal")
+    let s:tex_conceal= 'abdmgsS'
+else
+    let s:tex_conceal= g:tex_conceal
+endif
+
+if has("conceal") && &enc == 'utf-8'
+    " Math Symbols {{{2
+    " (many of these symbols were contributed by Björn Winckler)
+    if s:tex_conceal =~# 'm'
+      let s:texMathListExtra=[
+        \ ['union'		, '∪'],
+        \ ['Union'		, '∪'],
+        \ ['bigcup'		, '∪'],
+        \ ['isect'		, '∩'],
+        \ ['Isect'		, '∩'],
+        \ ['bigcap'		, '∩'],
+        \]
+        "\ ['Union'		, '⋃'],
+        "\ ['bigcup'		, '⋃'],
+        "\ ['Isect'		, '⋂'],
+        "\ ['bigcap'		, '⋂'],
+
+        for texmath in s:texMathListExtra
+            if texmath[0] =~# '\w$'
+                exe "syn match texMathSymbol '\\\\".texmath[0]."\\>' contained conceal cchar=".texmath[1]
+            else
+                exe "syn match texMathSymbol '\\\\".texmath[0]."' contained conceal cchar=".texmath[1]
+            endif
+        endfor
+
+    endif
+endif

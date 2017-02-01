@@ -121,6 +121,7 @@ alias pysite='cd $(python -c "import distutils.sysconfig; print(distutils.syscon
 alias pydist='cd $CODE_DIR/pyrf/'
 
 alias ya='cd $CODE_DIR/yael'
+alias ub='cd $CODE_DIR/ubelt'
 alias ut='cd $CODE_DIR/utool'
 alias uts='cd $CODE_DIR/utool/utool/util_scripts'
 alias vt='cd $CODE_DIR/vtool'
