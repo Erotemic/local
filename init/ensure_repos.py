@@ -13,6 +13,7 @@ if __name__ == '__main__':
     if '--nocheck' not in sys.argv:
         # Checkout IBEIS repos out if they don't exist
         # util_git1.checkout_repos(ibeis_repo_urls, ibeis_repo_dirs)
+        util_git1.checkout_repos(*REPOS1.CODE_REPO_TUP)
         util_git1.checkout_repos(*REPOS1.LATEX_REPO_TUP)
     if '--pull' in sys.argv:
         # Pull IBEIS repos

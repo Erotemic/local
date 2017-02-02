@@ -36,6 +36,7 @@ IBEIS_REPOS_URLS, IBEIS_REPOS = repo_list([
     'https://github.com/Erotemic/plottool.git',
     'https://github.com/Erotemic/vtool.git',
     'https://github.com/Erotemic/utool.git',
+    'https://github.com/Erotemic/ubelt.git',
     'https://github.com/Erotemic/dtool.git',
     'https://github.com/Erotemic/ibeis.git',
 
@@ -56,6 +57,8 @@ TPL_REPOS_URLS, TPL_REPOS = repo_list([
 
 CODE_REPO_URLS = TPL_REPOS_URLS + IBEIS_REPOS_URLS
 CODE_REPOS = TPL_REPOS + IBEIS_REPOS
+
+CODE_REPO_TUP = CODE_REPO_URLS, CODE_REPOS
 
 
 LOCAL_URLS, LOCAL_REPOS = repo_list([
