@@ -518,6 +518,22 @@ install_clang()
 {
     sudo apt-get install clang-3.5
     sudo apt-get install libstdc++-4.8-dev
+
+    # Set clang as default C compiler
+    sudo update-alternatives --install /usr/bin/cc cc /usr/bin/clang-3.5 100
+    sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++-3.5 100
+
+
+    # Create alias for proper clang version
+    CLANG_VERSION=3.5
+    CLANG_VERSION_PRIORITY=$(python -c "print(int(100 * $CLANG_VERSION))")
+    echo "CLANG_VERSION=$CLANG_VERSION"
+    echo "CLANG_VERSION_PRIORITY=$CLANG_VERSION_PRIORITY"
+    sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-$CLANG_VERSION $CLANG_VERSION_PRIORITY \
+        --slave /usr/bin/clang++ clang++ /usr/bin/clang++-$CLANG_VERSION \
+        --slave /usr/bin/clang-check clang-check /usr/bin/clang-check-$CLANG_VERSION \
+        --slave /usr/bin/clang-query clang-query /usr/bin/clang-query-$CLANG_VERSION \
+        --slave /usr/bin/clang-rename clang-rename /usr/bin/clang-rename-$CLANG_VERSION
 }
 
 

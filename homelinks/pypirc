@@ -21,6 +21,7 @@ index-servers=
 [pypi]
 repository = https://pypi.python.org/pypi
 username = erotemic
+#password = 
 # Need to actually put password in here when uploading. 
 # make sure to take it out afterwords
 # https://bugs.python.org/issue18454
