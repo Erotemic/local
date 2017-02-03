@@ -41,12 +41,14 @@ endfunction
 command! FontDecrease call FontDecrease()
 
 
-function! FuncVimPopup()
+function! FontMenu()
 python << endpython
 import pyvim_funcs
 import imp
 imp.reload(pyvim_funcs)
-pyvim_funcs.vim_popup_menu()
+known_fonts = pyvim_funcs.available_fonts()
+request = pyvim_funcs.vim_popup_menu(known_fonts)
+pyvim_funcs.pyrun_fuzzyfont(request)
 endpython
 "http://stackoverflow.com/questions/13537521/custom-popup-menu-in-vim
 endfunction

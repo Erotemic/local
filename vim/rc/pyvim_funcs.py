@@ -18,28 +18,12 @@ from os.path import expanduser
 import sys
 
 
-def pyrun_fuzzyfont(request):
-    """
-    Sets a font from an index or a string
-    """
-    import vim
-    import sys
-    import six
-    from operator import itemgetter
-
-    def vimprint(message):
-        #print('message = %r' % (message,))
-        # this doesnt even work #vim.command(':silent !echom %r' % message)
-        # vim.command(':echom %r' % message)
-        pass
-    vimprint('--- Called Fuzyzfont ---')
-
-    #print('request = %r' % (request,))
+def available_fonts():
     win32_fonts = [
         r'Mono_Dyslexic:h10:cANSI',
         r'Inconsolata:h10',
-        r'monofur:h11',
         r'OpenDyslexicMono\ 10',
+        # r'monofur:h11',
         #r'Mono\ Dyslexic:h10',
         #r'Inconsolata:h11',
         #r'Source_Code_Pro:h11:cANSI',
@@ -60,7 +44,9 @@ def pyrun_fuzzyfont(request):
         r'Inconsolata\ Medium\ 11',
         r'MonoDyslexic\ 9.4',
         r'OpenDyslexicMono\ 10',
-        r'monofur\ 11',
+        r'FreeMono\ Bold\ 10',
+        # r'monofur\ 11',
+        # r'EversonMono',
     ]
     #linux_extended = [
     #    r'MonoDyslexic\ 10',
@@ -78,6 +64,25 @@ def pyrun_fuzzyfont(request):
         known_fonts = win32_fonts
     else:
         known_fonts = linux_fonts
+    return known_fonts
+
+
+def pyrun_fuzzyfont(request):
+    """
+    Sets a font from an index or a string
+    """
+    import vim
+    import six
+    from operator import itemgetter
+
+    def vimprint(message):
+        #print('message = %r' % (message,))
+        # this doesnt even work #vim.command(':silent !echom %r' % message)
+        # vim.command(':echom %r' % message)
+        pass
+    vimprint('--- Called Fuzyzfont ---')
+
+    known_fonts = available_fonts()
 
     vimprint('numfonts=%r' % (len(known_fonts)))
     vimprint('request=%r %r' % (type(request), request))
@@ -690,20 +695,25 @@ def vim_grep_project(pat, hashid=None):
     vim.command(":exec ':w'")
 
 
-def vim_popup_menu():
+def vim_popup_menu(options):
     """ http://stackoverflow.com/questions/13537521/custom-popup-menu-in-vim """
     import vim
     import utool as ut
     vim.command('echohl Title')
     vim.command("echo 'Code fragments:'")
     vim.command("echohl None")
-    options = ['foo', 'bar']
     id_list = ut.chr_range(len(options), base='1')
     for id_, opt in zip(id_list, options):
         vim.command("echo '%s. %s'" % (id_, opt))
+    vim.command("echo 'Enter the number of your choice '")
     choice = chr(int(vim.eval('getchar()')))
     print('choice = %r' % (choice,))
-    pass
+    try:
+        chosen = options[int(choice) - 1]
+    except TypeError:
+        chosen = None
+    print('chosen = %r' % (chosen,))
+    return chosen
 
 
 if __name__ == '__main__':

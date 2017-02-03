@@ -28,6 +28,7 @@ gtk2/gnome2/gtk3
 make -j9
 sudo make install
 
+ls -al /usr/local/bin/*vim*
 ls tmpinstall/bin/
 
 /usr/local/bin/gvim-8 --version

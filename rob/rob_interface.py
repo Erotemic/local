@@ -6,7 +6,10 @@ import rob_helpers
 from datetime import datetime  # NOQA
 import robos
 import re
-from itertools import izip
+try:
+    from itertools import izip as zip
+except ImportError:
+    pass
 from os.path import split
 import shutil
 import platform
@@ -745,6 +748,6 @@ def send(r, keys, pause=.05):
 def find_in_path(r, pattern):
     PATH = os.environ['PATH'].split(os.pathsep)
     fpaths_list = [os.listdir(dpath) for dpath in PATH]
-    for dpath, fpaths_list in izip(PATH, fpaths_list):
+    for dpath, fpaths_list in zip(PATH, fpaths_list):
         for x in fnmatch.filter(fpaths_list, 'msvcr90.dll'):
             print('Found %r in %r' % (x, dpath))
