@@ -5,8 +5,6 @@
 
 # Unix aliases
 
-alias activate_py3env='source ~/py3env/bin/activate'
-
 alias pytree='tree -P "*.py" --dirsfirst'
 alias ls='ls --color --human-readable --group-directories-first --hide="*.pyc" --hide="*.pyo"'
 alias pygrep='grep -r --include "*.py"'
@@ -345,52 +343,38 @@ remove_ld_library_path()
 
 switch_venv()
 {
-    deactivate
-    # reset LD_LIBRARY_PATH 
-    remove_ld_library_path $PYTHON_VENV/lib
-    export PYTHON_VENV=$1
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PYTHON_VENV/lib
-    source $PYTHON_VENV/bin/activate
+    NEW_VENV=$1
+    OLD_VENV=$VIRTUAL_ENV
+    if [ "$OLD_VENV" != "" ]; then
+        # reset LD_LIBRARY_PATH 
+        remove_ld_library_path $OLD_VENV/lib
+        deactivate
+    fi
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$NEW_VENV/lib
+    source $NEW_VENV/bin/activate
 }
 
 
 workon_py2()
 {
     switch_venv "$HOME/venv2"
-    #deactivate
-    ## reset LD_LIBRARY_PATH 
-    #remove_ld_library_path $PYTHON_VENV/lib
-    #export PYTHON_VENV="$HOME/venv"
-    #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PYTHON_VENV/lib
-    #source $PYTHON_VENV/bin/activate
 }
 
 
 workon_py3()
 {
     switch_venv "$HOME/venv3"
-    #deactivate
-    ## reset LD_LIBRARY_PATH 
-    #remove_ld_library_path $PYTHON_VENV/lib
-    #export PYTHON_VENV="$HOME/venv3"
-    #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PYTHON_VENV/lib
-    #source $PYTHON_VENV/bin/activate
 }
 
 workon_pypy()
 {
     switch_venv "$HOME/venvpypy"
-    #deactivate
-    ## reset LD_LIBRARY_PATH 
-    #remove_ld_library_path $PYTHON_VENV/lib
-    #export PYTHON_VENV="$HOME/venv3"
-    #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PYTHON_VENV/lib
-    #source $PYTHON_VENV/bin/activate
 }
 
 
-alias py2env='workon_py2'
-alias py3env='workon_py3'
+alias activate_py2='workon_py2'
+alias activate_py3='workon_py3'
+alias activate_pypy='workon_pypy'
 
 
 

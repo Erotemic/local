@@ -1,5 +1,9 @@
 #!/bin/sh
 export QT_ACCESSIBILITY=0
+export QT_API=pyqt
+
+# I don't know why this is populated to begin with
+unset VIRTUAL_ENV
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
     export NCPUS=$(sysctl -n hw.ncpu)
@@ -8,8 +12,6 @@ else
     export NCPUS=$(grep -c ^processor /proc/cpuinfo)
     source ~/local/homelinks/helpers/bashrc_ubuntu
 fi
-
-export QT_API=pyqt
 
 
 # My standard environment variables
@@ -21,16 +23,24 @@ else
     export CODE_DIR=~/code
 fi
 
+
+source ~/local/homelinks/helpers/git_helpers
+source ~/local/homelinks/helpers/alias_helpers
+
 export PYTHONPATH=$CODE_DIR/utool:$PYTHONPATH
 export PYTHONPATH=$HOME/local/pyscripts:$PYTHONPATH
 
+#workon_py2
+workon_py3
+#workon_pypy
 
-export PYTHON_VENV="$HOME/venv2"
+
+#export PYTHON_VENV="$HOME/venv2"
 #echo $PYTHON_VENV
 # Activate a virtual environment
-if [ -d "$PYTHON_VENV" ]; then
-    source $PYTHON_VENV/bin/activate
-fi
+#if [ -d "$PYTHON_VENV" ]; then
+#    source $PYTHON_VENV/bin/activate
+#fi
 
 setup_venv2(){
     # ENSURE SYSTEM PIP IS SAME AS SYSTEM PYTHON
@@ -71,9 +81,6 @@ setupt_venvpypy(){
 
 #export OMP_NUM_THREADS=7
 
-source ~/local/homelinks/helpers/git_helpers
-source ~/local/homelinks/helpers/alias_helpers
-
 update_pip_dists()
 {
     sudo pip install pyinstaller --upgrade
@@ -110,7 +117,8 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/opl/lib/x86-64_linux/stati
 
 
 # For vigra
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VIRTUAL_ENV/lib
+# Taken care of in workon_pyX
+#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VIRTUAL_ENV/lib
 
 
 

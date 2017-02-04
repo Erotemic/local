@@ -107,7 +107,7 @@ fi
 
 #sudo ssh-agent ~/.ssh/id_rsa
 
-# TODO: Let ROB handle these
+# DEPRICATE
 # some more ls aliases
 export name=Hyrule
 export platform=linux2
