@@ -2,9 +2,19 @@
 export QT_ACCESSIBILITY=0
 export QT_API=pyqt
 
-# WHERE THE HELL IS THIS SET?
-#echo "PATH(bashrc) = $PATH"
-export PATH="/home/joncrall/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+#echo << EOF
+## There are a few places where environment variables are set before .bashrc
+## They are:
+## /etc/environment
+## /etc/bash.bashrc
+#EOF 
+
+#echo "PATH(pre-bashrc) = $PATH"
+#export PATH=""
+#export PATH="$PATH:~/bin"
+#export PATH="$PATH:/usr/local/sbin:/usr/local/bin"
+#export PATH="$PATH:/usr/sbin:/usr/bin:/sbin:/bin"
+#export PATH="$PATH:/usr/games:/usr/local/games:/snap/bin"
 
 # I don't know why this is populated to begin with
 
@@ -91,19 +101,13 @@ if [[ "$HOSTNAME" == "hyrule"  ]]; then
     #export TOMCAT_DIR=$CODE_DIR/Wildbook/tmp/apache-tomcat-8.0.24
     #export TOMCAT_HOME=$TOMCAT_DIR
     #export CATALINA_HOME=$TOMCAT_DIR
-    export PATH=/usr/local/texlive/2015/bin/x86_64-linux:$PATH
+    export TEXLIVE_BIN=$(echo /usr/local/texlive/*/bin/x86_64-linux)
 elif [[ "$HOSTNAME" == "dozer"  ]]; then 
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-6.5/lib64:/usr/local/lib
     export PATH=$PATH:/usr/local/cuda-6.5/bin
 elif [[ "$HOSTNAME" == "Ooo"  ]]; then 
-    #export UTOOL_NO_PYRF=True
-    export UTOOL_NO_PYRF=False
-    export UTOOL_NO_CNN=False
     export THEANO_FLAGS="device=cpu"
-
-    export PATH=$PATH:/opt/gurobi650/linux64/bin
-    #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/gurobi650/linux64/lib
-    export PATH=/usr/local/texlive/2015/bin/x86_64-linux:$PATH
+    export TEXLIVE_BIN=$(echo /usr/local/texlive/*/bin/x86_64-linux)
 else
     # These paths are likely to be true on other machines as weel
     #export PATH=$PATH:/usr/local/cuda/bin
@@ -112,8 +116,12 @@ else
     export PATH=$PATH
 fi
 
-#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PYTHON_VENV/lib
-# hack
+#echo "TEXLIVE_BIN=$TEXLIVE_BIN"
+
+if [ -d "$TEXLIVE_BIN" ]; then
+    export PATH=$TEXLIVE_BIN:$PATH
+fi
+
 #export UTOOL_DPATH=~/latex/crall-candidacy-2015/
 
 complete -W "gp focus kill project_dpaths sync_clipboard_to grepnr printproc_2 send add_path write_env print_path grepc grepr grep research_clipboard fix_path foo fixpath2 write_rob_pathcache sed reg_disable_automatic_reboot_122614 find write_regfile pykill symlink update_path printproc_ write_path search update_env make_dpath invgrep send_command research ps send_clipboard_to make_complete pref_env print_env create_shortcut info hskill process_research_line write_research find_in_path get_regstr preprocess_research sedr update setup_global sp print_clipboard upenv fix_youtube_names_ccl dump_clipboard" "rob"
@@ -124,3 +132,5 @@ complete -W "gp focus kill project_dpaths sync_clipboard_to grepnr printproc_2 s
 #gconftool-2 --set --type=bool /apps/metacity/general/audible_bell false
 #gconftool-2 --get  /apps/metacity/general/audible_bell
 #source ~/.config/ibeis/ibeis_bash_complete.sh
+
+#echo "PATH(post-bashrc) = $PATH"

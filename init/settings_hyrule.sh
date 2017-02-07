@@ -22,6 +22,10 @@ hyrule_setup_sshd()
 EOL'
     # Cheeck to see if its running
     ps -A | grep sshd
+
+    # small change to default sshd_config
+    # Allow authorized keys
+    sudo sed -i 's/#AuthorizedKeysFile\t%h\/.ssh\/authorized_keys/AuthorizedKeysFile\t%h\/.ssh\/authorized_keys/' /etc/ssh/sshd_config
 }
 
 hyrule_setup_static_ip(){
@@ -85,25 +89,27 @@ hyrule_create_users()
     #sudo visudo
     sudo adduser jason
     sudo adduser git
-    sudo adduser hendrik
-    sudo adduser guest
     # Add group
     sudo groupadd ibeis
     sudo groupadd rpi
     sudo usermod -a -G sudo jason
     sudo usermod -a -G ibeis jason
+    sudo usermod -a -G ibeis joncrall
     sudo usermod -a -G rpi joncrall
     sudo usermod -a -G rpi jason
-    sudo usermod -a -G rpi joncrall
-    sudo usermod -a -G rpi hendrik
-    sudo usermod -a -G rpi zack
-    sudo usermod -a -G rpi guest
     # Delete user
     #sudo deluser --remove-home newuser
     #sudo chown -R joncrall:rpi *
     #umask 002 work
     #chgrp rpi work
     #chmod g+s work
+
+    sudo usermod -a -G rpi hendrik
+    sudo usermod -a -G rpi zack
+    sudo usermod -a -G rpi guest
+    sudo adduser hendrik
+    sudo adduser guest
+    
     #  New users
     sudo adduser chuck
     sudo usermod -a -G rpi chuck
@@ -157,11 +163,12 @@ hyrule_setup_groups()
 
 setup_gitserver()
 {
+    sudo adduser git
     # Set git user password
     sudo passwd git
     # Become git
-    su git
-    cd
+    sudo su git
+    cd ~git
     # Make .ssh dir
     mkdir .ssh
     # add authorized keys
@@ -174,55 +181,34 @@ setup_gitserver()
     sudo chown -R git:git ~git/.ssh
 }
 
+reinstate_gitserver_backup()
+{
+    # Copy over backup of home folder
+    sudo cp -TRv /media/joncrall/Store/homeback/git/ ~git
+
+    # Inspection
+    sudo ls -al ~git/.ssh
+    sudo ls -al ~git
+    
+    # Fix permissions
+    sudo chmod 700 ~git/.ssh
+    sudo chmod 600 ~git/.ssh/authorized_keys
+    sudo chown -R git:git ~git/*
+    sudo chown -R git:git ~git/.bash*
+    sudo chown -R git:git ~git/.cache*
+
+}
+
 
 make_newrepo()
 {
     sudo /home/joncrall/scripts//new_repo.sh crall-cvpr-15
     lt
     git clone git@hyrule.cs.rpi.edu:crall-cvpr-15.git
-
     ####
     #cp .gitignore ../crall-cvpr-15/
     #cp ~/Dropbox/CVPR\ Paper/*.tex .
 }
-
-recover_backup()
-{
-    export BACKUPLOCAL="/media/joncrall/HADES/local"
-    cd "$BACKUPLOCAL"
-    export BACKUPHOME="/media/joncrall/SeagateBackup/sep14bak/home"
-    cd "$BACKUPHOME/joncrall/.ssh"
-    # Recover ssh keys
-    mkdir ~/.ssh
-    cp -r * ~/.ssh
-    cd ~/.ssh
-    #cd ~/.ssh
-    #cp -r "$BACKUPHOME/.ssh" .
-    #mv .ssh/* .
-    #rm -rf  ~/.ssh/.ssh
-    #
-    # Restore user home directories
-    export BACKUPHOME="/media/joncrall/SeagateBackup/sep14bak/home"
-    cd $BACKUPHOME/hendrik
-    sudo cp -r * "/home/hendrik/" 
-    #
-    # Restore fstab
-    export BACKUPETC="/media/joncrall/SeagateBackup/sep14bak/etc"
-    cd "$BACKUPETC"
-
-    # Restore some repos
-    export BACKUPHOME="/media/joncrall/SeagateBackup/sep14bak/home"
-    cd "$BACKUPHOME/joncrall"
-    cp -rv $BACKUPHOME/joncrall/code/hotspotter ~/code/hotspotter
-    cp -rv $BACKUPHOME/joncrall/latex ~/latex
-    cp -rv $BACKUPHOME/joncrall/Pictures/* ~/Pictures
-    cp -rv $BACKUPHOME/joncrall/Documents/* ~/Documents
-    
-    export BACKUPHOME="/media/joncrall/SeagateBackup/sep14bak/home"
-    sudo cp -rv $BACKUPHOME/git/* ~git
-    sudo cp -rv $BACKUPHOME/joncrall/code/gnome-shell-grid ~joncrall/code/
-}
-
 
 fix_monitor_positions()
 {
@@ -396,71 +382,9 @@ sudo restart cups
 add_ipynb_mimetypes(){
     # https://termueske.wordpress.com/2015/03/16/a-hack-for-ipython-notebook/
 
-    python -m utool.util_ubuntu --exec-add_new_mimetype_association --mime-name=ipynb+json --ext=.ipynb --exe-fpath=jupyter-notebook --force
-
-    #sudo sh -c 'cat > /usr/local/bin/ipynb << EOL
-    ##!/bin/bash
-    #netstat -tln |grep "8902"
-    ## if not found - equals to 1, start it
-    #if [ \$? -eq 1 ]
-    #then
-    #jupyter-notebook / --no-browser --port=8902 &
-    #sleep .5
-    #fi
-    #xdg-open http://localhost:8902/notebooks\$1
-    #'
-    #sudo chmod +x /usr/local/bin/ipynb 
-
-
-    #<?xml version="1.0" encoding="UTF-8"?>
-    #<mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>
-    #    <mime-type type="application/x-ipynb+json">
-    #        <comment>IPython Notebook</comment>
-    #        <glob pattern="*.ipynb"/>
-    #    </mime-type>
-    #</mime-info>
-
-    #import utool as ut
-    #ut.util_ubuntu.add_new_mimetype_association(ext, exe_fpath, mime_name)
-}
-
-
-ipython_notebook_server()
-{
-    # References: http://www.akadia.com/services/ssh_test_certificate.html
-    #openssl genrsa -des3 -out server.key 1024
-    #openssl req -new -key server.key -out server.csr
-    #cp server.key server.key.org
-    #openssl rsa -in server.key.org -out server.key
-    #openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
-    #jupyter-notebook --no-browser --certfile=server.crt
-
-    # References: https://ipython.org/ipython-doc/1/interactive/public_server.html
-    #openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout mycert.pem -out mycert.pem
-    #jupyter-notebook --no-browser --certfile=mycert.pem
-
-    # References: http://jupyter-notebook.readthedocs.org/en/latest/public_server.html
-#    openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout mycert.key -out mycert.pem
-
-#    jupyter-notebook --generate-config --help
-#    jupyter-notebook --config
-
-#    sh -c 'cat > nbserver_config.py << EOL
-## Notebook configuration for public notebook server
-#c = get_config()
-
-## Set options for certfile, ip, password, and toggle off browser auto-opening
-##c.NotebookApp.certfile = "mycert.pem"
-## Set ip to "*" to bind on all interfaces (ips) for the public server
-#c.NotebookApp.ip = "*"
-#c.NotebookApp.open_browser = False
-
-## It is a good idea to set a known, fixed port for server access
-#c.NotebookApp.port = 9999
-#EOL'
-    #jupyter-notebook --config nbserver_config.py --certfile=mycert.pem
-    #jupyter-notebook --config nbserver_config.py 
-    jupyter-notebook --ip="*" --no-browser
+    python -m utool.util_ubuntu --exec-add_new_mimetype_association \
+        --mime-name=ipynb+json \
+        --ext=.ipynb --exe-fpath=jupyter-notebook --force
 }
 
 two_gpus(){
@@ -507,56 +431,81 @@ two_gpus(){
 
 }
 
-ubuntu_will_not_boot_unless_recovery_mode()
+
+freshtart_ubuntu_entry_point()
 {
-    #https://ubuntuforums.org/showthread.php?t=2268327
-    echo
+    #ln -s ~/local/homelinks/.ctags ~/.ctags
+    #ln -s ~/local/bashrc.sh ~/.bashrc
+    #ln -s ~/local/profile.sh ~/.profile 
+    #ln -s ~/local/config/.pypirc ~/.pypirc 
+    #ln -s ~/local/config/.theanorc ~/.theanorc 
+    #ln -s ~/local/config/.theanorc ~/.theanorc 
+    #mkdir -p ~/.config/terminator
+    #ln -s ~/local/config/terminator_config ~/.config/terminator/config
+    #
+
+    #export PYTHON_VENV="$HOME/venv"
+    #mkdir -p $PYTHON_VENV
+    #virtualenv -p /usr/bin/python2.7 $PYTHON_VENV
+    #virtualenv -p /usr/bin/python2.7 $HOME/abs_venv --always-copy
+    #source $PYTHON_VENV/bin/activate
+
+    # FIX ISSUE WITH SIP
+    #virtualenv --relocatable venv
+    #virtualenv --relocatable $HOME/abs_venv
+    #ls venv/include
+    #ls abs_venv/include
+    # //
+
+    # Python3 VENV
+    #sudo pip3 install virtualenv
+    #sudo pip3 install virtualenv -U
+    #export PYTHON3_VENV="$HOME/venv3"
+    #mkdir -p $PYTHON3_VENV
+    #virtualenv -p /usr/bin/python3 $PYTHON3_VENV
+    # source $PYTHON3_VENV/bin/activate
+
+    # FIX ISSUE WITH SIP
+    #virtualenv --relocatable venv
+    #virtualenv --relocatable $HOME/abs_venv
+    #ls venv/include
+}
+    #ls abs_venv/include
+
+
+virtualenv_numpy_16()
+{
+    # disable current venv
+    deactivate
+
+    # setup virtual env
+    export PYTHON_VENV="$HOME/_venv_numpy_1.6"
+    mkdir -p $PYTHON_VENV
+    virtualenv -p /usr/bin/python2.7 $PYTHON_VENV
+    source $PYTHON_VENV/bin/activate
+
+    pip install setuptools -U
+    pip install numpy
 }
 
 
-fix_sound()
+install_python()
 {
-    # http://askubuntu.com/questions/824481/constant-high-frequency-beep-on-startup-no-other-sound 
-    # https://help.ubuntu.com/community/SoundTroubleshootingProcedure
+    sudo pip install pillow
+    # Virtual Environment 
+    cd
+    mkdir -p venv
+    sudo pip2.7 install virtualenv
+    #python2.7 -m virtualenv -p /usr/bin/python2.7 venv
+    python2.7 -m virtualenv -p /usr/bin/python2.7 venv --system-site-packages
+    source ~/venv/bin/activate
+    pip install numpy==1.6.1
+    pip install Cython==0.23.4
+    pip install scipy==0.9.0
 
-    # https://bbs.archlinux.org/viewtopic.php?id=198618
-    
-    echo options snd_hda_intel index=1 >> /etc/modprobe.d/alsa-base.conf
-    modprobe -rv snd_hda_intel
-    modprobe -v snd_hda-intel
-
-    # Ubuntu 14.04 always plays a constant high frequency sound
-
-#I'm on Ubuntu 14.04.5 LTS and having a very odd issue. Whenever I boot my computer (about when X starts up) my speakers emit a constant high frequency sound. No other sound plays from any application. This happens on both speaker and headphones. This also happens regardless of if the computer's sound is muted or not. This happens in both the front microphone jack and the back line-out jack. Every so often there is also a buzzing sound. The system did not do this previously. This all started when I installed a second graphics card. All I did to the computer was install an Nvidia GeForce GTX 660 along side my existing GeForce GTX 670. Going back to the original configuration did not change anything.  I've had this problem for almost a month now and I have found no solutions. 
-
-#Other things I have noticed:
-#    * the system seems to recognize when I plug/unplug my headphones by chaning the audio output device in the system sound settings. 
-#    * pavucontrol does not seem to know about the intel sound card that I want to play sound from. It only shows the NVIDIA HDMI options. However, the system sound panel does show both the NVIDIA HDMI and the normal intel jacks. 
-
-# I followed many of the steps in https://help.ubuntu.com/community/SoundTroubleshootingProcedure and was unable to solve the problem. Here is the output of step 3. I greatly appreciate any help. 
-
-
-# http://askubuntu.com/questions/687062/usb-audio-interface-not-showing-device-in-list-for-pulseaudio
-
-#(venv2) joncrall@hyrule:~$ aplay -l | grep card
-#card 0: PCH [HDA Intel PCH], device 0: ALC892 Analog [ALC892 Analog]
-#card 0: PCH [HDA Intel PCH], device 1: ALC892 Digital [ALC892 Digital]
-#card 0: PCH [HDA Intel PCH], device 3: HDMI 0 [HDMI 0]
-#card 0: PCH [HDA Intel PCH], device 7: HDMI 1 [HDMI 1]
-#card 1: NVidia [HDA NVidia], device 3: HDMI 0 [HDMI 0]
-#card 1: NVidia [HDA NVidia], device 7: HDMI 1 [HDMI 1]
-#card 1: NVidia [HDA NVidia], device 8: HDMI 2 [HDMI 2]
-#card 1: NVidia [HDA NVidia], device 9: HDMI 3 [HDMI 3]
-#card 2: NVidia_1 [HDA NVidia], device 3: HDMI 0 [HDMI 0]
-#card 2: NVidia_1 [HDA NVidia], device 7: HDMI 1 [HDMI 1]
-#card 2: NVidia_1 [HDA NVidia], device 8: HDMI 2 [HDMI 2]
-#card 2: NVidia_1 [HDA NVidia], device 9: HDMI 3 [HDMI 3]
-#(venv2) joncrall@hyrule:~$ ^C
-#(venv2) joncrall@hyrule:~$ gksu gedit /etc/pulse/default.pa
-
-#>>> load-module module-alsa-sink device=hw:0
-    
-    
-
+    python -c "import numpy; print(numpy.__version__)"
+    cd ~/code/scikit-learn-old-numpy
+    python setup develop
 }
+
 

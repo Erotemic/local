@@ -83,15 +83,6 @@ freshtart_ubuntu_entry_point()
     source ~/local/init/freshstart_ubuntu.sh
     ensure_config_symlinks
 
-    #ln -s ~/local/homelinks/.ctags ~/.ctags
-    #ln -s ~/local/bashrc.sh ~/.bashrc
-    #ln -s ~/local/profile.sh ~/.profile 
-    #ln -s ~/local/config/.pypirc ~/.pypirc 
-    #ln -s ~/local/config/.theanorc ~/.theanorc 
-    #ln -s ~/local/config/.theanorc ~/.theanorc 
-    #mkdir -p ~/.config/terminator
-    #ln -s ~/local/config/terminator_config ~/.config/terminator/config
-    #
     ln -s ~/local/scripts/ubuntu_scripts ~/scripts
     source ~/.bashrc
 
@@ -133,33 +124,6 @@ freshtart_ubuntu_entry_point()
     #setup_venv2
     setup_venv3
     source ~/venv3/bin/activate
-
-    #export PYTHON_VENV="$HOME/venv"
-    #mkdir -p $PYTHON_VENV
-    #virtualenv -p /usr/bin/python2.7 $PYTHON_VENV
-    #virtualenv -p /usr/bin/python2.7 $HOME/abs_venv --always-copy
-    #source $PYTHON_VENV/bin/activate
-
-    # FIX ISSUE WITH SIP
-    #virtualenv --relocatable venv
-    #virtualenv --relocatable $HOME/abs_venv
-    #ls venv/include
-    #ls abs_venv/include
-    # //
-
-    # Python3 VENV
-    #sudo pip3 install virtualenv
-    #sudo pip3 install virtualenv -U
-    #export PYTHON3_VENV="$HOME/venv3"
-    #mkdir -p $PYTHON3_VENV
-    #virtualenv -p /usr/bin/python3 $PYTHON3_VENV
-    # source $PYTHON3_VENV/bin/activate
-
-    # FIX ISSUE WITH SIP
-    #virtualenv --relocatable venv
-    #virtualenv --relocatable $HOME/abs_venv
-    #ls venv/include
-    #ls abs_venv/include
 
     pip install setuptools --upgrade
     pip install six
@@ -328,42 +292,6 @@ install_chrome()
 }
 
 
-virtualenv_numpy_16()
-{
-    # disable current venv
-    deactivate
-
-    # setup virtual env
-    export PYTHON_VENV="$HOME/_venv_numpy_1.6"
-    mkdir -p $PYTHON_VENV
-    virtualenv -p /usr/bin/python2.7 $PYTHON_VENV
-    source $PYTHON_VENV/bin/activate
-
-    pip install setuptools -U
-    pip install numpy
-}
-
-
-install_python()
-{
-    sudo pip install pillow
-    # Virtual Environment 
-    cd
-    mkdir -p venv
-    sudo pip2.7 install virtualenv
-    #python2.7 -m virtualenv -p /usr/bin/python2.7 venv
-    python2.7 -m virtualenv -p /usr/bin/python2.7 venv --system-site-packages
-    source ~/venv/bin/activate
-    pip install numpy==1.6.1
-    pip install Cython==0.23.4
-    pip install scipy==0.9.0
-
-    python -c "import numpy; print(numpy.__version__)"
-    cd ~/code/scikit-learn-old-numpy
-    python setup develop
-}
-
-
 install_fonts()
 {
     sudo apt-get -y install nautilus-dropbox
@@ -402,7 +330,7 @@ customize_sudoers()
     sudo cat /etc/sudoers > ~/tmp/sudoers.next  
     sed -i 's/^Defaults.*env_reset/Defaults    env_reset, timestamp_timeout=480/' ~/tmp/sudoers.next 
     # Copy over the new sudoers file
-    visudo -c -f ~/tmp/sudoers.next
+    sudo visudo -c -f ~/tmp/sudoers.next
     if [ "$?" -eq "0" ]; then
         sudo cp ~/tmp/sudoers.next /etc/sudoers
     fi 
@@ -446,8 +374,7 @@ gnome_settings()
     #gconftool-2 -a "/apps/gnome-terminal/profiles/Default" 
     #gsettings set org.gnome.desktop.lockdown disable-lock-screen 'true'
     #sudo -u gdm gconftool-2 --type=bool --set /desktop/gnome/sound/event_sounds false
-
-    sudo apt-get install -y gnome-tweak-tool
+    #sudo apt-get install -y gnome-tweak-tool
 
     gconftool-2 --set "/apps/gnome-terminal/profiles/Default/background_color" --type string "#1111111"
     gconftool-2 --set "/apps/gnome-terminal/profiles/Default/foreground_color" --type string "#FFFF6999BBBB"
@@ -456,7 +383,7 @@ gnome_settings()
 
     # try and disable password after screensaver lock
     gsettings set org.gnome.desktop.lockdown disable-lock-screen 'true'
-    /usr/bin/gsettings set org.gnome.desktop.screensaver lock-enabled false
+    gsettings set org.gnome.desktop.screensaver lock-enabled false
 
 
     # Fix search in nautilus (remove recurison)
@@ -465,12 +392,9 @@ gnome_settings()
     #gsettings set org.gnome.nautilus.preferences enable-interactive-search false
 
     gconftool-2 --get /apps/gnome-screensaver/lock_enabled 
-    
     gconftool-2 --get /desktop/gnome/sound/event_sounds
 
-    sudo apt-get install nautilus-open-terminal
-    # TODO:
-    # echo out the .config/terminator/config file
+    #sudo apt-get install nautilus-open-terminal
 }
 
 
@@ -505,16 +429,14 @@ nautilus_settings()
     sudo sed -i "s/enabled=true/enabled=false/" /etc/xdg/user-dirs.conf
     xdg-user-dirs-gtk-update
 
-    echo "Get Open In Terminal in context menu"
-    sudo apt-get install nautilus-open-terminal -y
+    #echo "Get Open In Terminal in context menu"
+    #sudo apt-get install nautilus-open-terminal -y
 
     # Tree view for nautilus
     gsettings set org.gnome.nautilus.window-state side-pane-view "tree"
 
 
-    http://askubuntu.com/questions/411430/open-the-parent-folder-of-a-symbolic-link-via-right-click
-
-    
+    #http://askubuntu.com/questions/411430/open-the-parent-folder-of-a-symbolic-link-via-right-click
 
     mkdir -p ~/.gnome2/nautilus-scripts
 }
@@ -542,25 +464,4 @@ setup_ibeis()
     export IBEIS_WORK_DIR="$(python -c 'import ibeis; print(ibeis.get_workdir())')"
     echo $IBEIS_WORK_DIR
     ln -s $IBEIS_WORK_DIR  work
-}
-
-setup_sshd()
-{  
-    # This is Hyrule Specific
-
-    # small change to default sshd_config
-    sudo sed -i 's/#AuthorizedKeysFile\t%h\/.ssh\/authorized_keys/AuthorizedKeysFile\t%h\/.ssh\/authorized_keys/' /etc/ssh/sshd_config
-}
-
-dosetup_virtual()
-{
-    customize_sudoers
-    source ~/local/init/ubuntu_core_packages.sh
-    gnome_settings
-    nautilus_settings
-}
-
-extrafix()
-{
-    chmod og-w ~/.python-eggs
 }

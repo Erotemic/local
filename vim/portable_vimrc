@@ -13,6 +13,7 @@ let g:markdown_fenced_languages = ['html', 'python', 'bash=sh']
 " ~/local/vim/rc/custom_py_functions.vim
 " ~/local/vim/rc_settings/plugin_settings.vim
 " ~/local/vim/rc_settings/plugins_latex.vim
+" ~/local/vim/rc_settings/plugins_latex2.vim
 " ~/local/vim/rc_settings/behavior_settings.vim
 " ~/local/vim/rc_settings/remap_funcs.vim
 " ~/local/vim/rc_settings/remap_settings.vim
@@ -246,7 +247,8 @@ call QUICKOPEN_leader_tvio('J', '~/local/vim/vimfiles/bundle/jedi-vim/jedi_vim.p
 "call QUICKOPEN_leader_tvio('k', '~/code/ibeis/ibeis/algo/hots/chip_match.py')
 call QUICKOPEN_leader_tvio('K', '~/code/ibeis-flukematch-module/ibeis_flukematch/plugin.py')
 call QUICKOPEN_leader_tvio('k', '~/code/ibeis/ibeis/algo/smk/smk_pipeline.py')
-call QUICKOPEN_leader_tvio('l', '~/latex/crall-thesis-2017/main.tex')
+"call QUICKOPEN_leader_tvio('l', '~/latex/crall-thesis-2017/main.tex')
+call QUICKOPEN_leader_tvio('l', '~/latex/crall-iccv-2017/main.tex')
 call QUICKOPEN_leader_tvio('L', '~/latex/crall-thesis-2017/sec-3-4-expt.tex')
 call QUICKOPEN_leader_tvio('m', '~/code/ibeis/ibeis/init/main_helpers.py')
 call QUICKOPEN_leader_tvio('M', '~/code/ibeis/ibeis/main_module.py')

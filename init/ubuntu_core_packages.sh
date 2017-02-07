@@ -1,35 +1,7 @@
-
-
 common_paths()
 {
     cat ~/local/init/ensure_vim_plugins.py
 }
-#index_opencv_with_ctags()
-#{
-#    #References:
-#    #    http://sourceforge.net/p/ctags/mailman/message/20916991/
-#    ctags -R -ICVAPI --c++-kinds=+p --fields=+iaS --extra=+q --language-force=c++ /usr/include/opencv/
-#}
-#clean_for_upgrade()
-#{
-#    # msg: Please free at least an additional 68,3 M of disk space on '/boot'. Empty your trash and remove temporary packages of former installations using 'sudo apt-get clean'.
-#    # References: http://askubuntu.com/questions/495941/software-updater-needs-more-disk-space
-#    ubuntu-tweak
-#}
-
-#setup_ibeis()
-#{
-#    source ~/local/init/freshstart_ubuntu.sh
-#}
-
-#ypackin()
-#{
-#    sudo pip install $*
-#}
-#packin()
-#{
-#    sudo apt-get install -y $*
-#}
 
 
 install_core()
@@ -38,7 +10,6 @@ install_core()
     sudo apt-get upgrade -y
     # Git
     sudo apt-get install -y git
-
 
     # latest git
     sudo add-apt-repository ppa:git-core/ppa -y
@@ -76,22 +47,21 @@ install_core()
     #sudo ls -al ~/.local/share/Trash/info
     
     # Commonly used and frequently forgotten
-    sudo apt-get install -y gparted
-    sudo apt-get install -y htop
-    sudo apt-get install -y tree
+    sudo apt-get install -y wmctrl xsel xdotool xclip
+    sudo apt-get install -y xclip
+    sudo apt-get install -y gparted htop tree
+    sudo apt-get install -y tmux astyle
+    sudo apt-get install -y synaptic okular
     sudo apt-get install -y openssh-server
-    sudo apt-get install -y tmux
-    sudo apt-get install -y synaptic
-    sudo apt-get install -y astyle
-    sudo apt-get install -y valgrind
-    #sudo apt-get install -y screen
 
-    # 
-    sudo apt_get install libhighgui2.4
-    sudo apt_get install libcv2.4
-    sudo apt_get install libcvaux-dev
-    sudo apt_get install opencv-doc
+    sudo apt-get install p7zip-full -y
+    sudo apt-get install graphviz -y
+    sudo apt-get install imagemagick -y
 
+    #sudo apt_get install libhighgui2.4
+    #sudo apt_get install libcv2.4
+    #sudo apt_get install libcvaux-dev
+    #sudo apt_get install opencv-doc
 
     # sqlite db  editor
     #sudo apt-get install sqliteman
@@ -99,10 +69,22 @@ install_core()
     #References: http://stackoverflow.com/questions/7454796/taglist-exuberant-ctags-not-found-in-path
     sudo apt-get install -y hdfview
 
+    # for editing desktop sidebar icons
+    sudo apt-get install alacarte
+
+    # anti-virus 
+    # https://www.upcloud.com/support/scanning-ubuntu-14-04-server-for-malware/
+    sudo apt-get install clamav clamav-daemon
+    sudo freshclam
+    sudo clamscan -r /home
+
+    sudo apt-get install rkhunter
+}
+
+truely_ero_setup()
+{
     sudo apt-get install lm-sensors
     sudo apt-get install hardinfo
-
-
     # TEK truely ergonomic keyboard setup
     # Link for TEK 229 Need to switch for 209
     # https://trulyergonomic.com/store/layout-designer--configurator--reprogrammable--truly-ergonomic-mechanical-keyboard/#KTo7PD0+P0BBQkNERUw5394rNR4fICEi4yMkJSYnLS4xOBQaCBUXTBwYDBITLzDhBBYHCQorCw0ODzPl4B0bBhkFKhEQNjc05OfiSktOTSwoLFBSUU/mRQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAX2BhAAAAAAAAAAAAAAAAXF1eVlcAAAAAAAAAAABZWltVAAAAAAAAAAAAYgBjVAAAAAAAAAAAWCsAAAAAAACTAQAMAiMBAAwBigEADAIhAQAMAZQBAAwBkgEADAGDAQAMALYBAAwAzQEADAC1AQAMAOIBAAwA6gEADADpAQAMALhJAEYAAAAAAEitR64AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACk6Ozw9Pj9AQUJDREVMOd/eKzUeHyAhImQjJCUmJy4qLzAUGggVF0wcGAwSEzQx4wQWBwkKLQsNDg8z5+EdGwYZBSoREDY3OOXg4kpLTk0sKCxQUlFP5uQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAF9gYQAAAAAAAAAAAAAAAFxdXlZXAAAAAAAAAAAAWVpbVQAAAAAAAAAAAGIAY1QAAAAAAAAAAFgrAAAAAAAAkwEADAIjAQAMAYoBAAwCIQEADAGUAQAMAZIBAAwBgwEADAC2AQAMAM0BAAwAtQEADADiAQAMAOoBAAwA6QEADAC4SQBGAAAAAABIrUeuAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
@@ -123,27 +105,7 @@ install_core()
 
     # Now 
 
-    # for editing desktop sidebar icons
-    sudo apt-get install alacarte
-
-    # anti-virus 
-    # https://www.upcloud.com/support/scanning-ubuntu-14-04-server-for-malware/
-    sudo apt-get install clamav clamav-daemon
-    sudo freshclam
-    sudo clamscan -r /home
-
-    sudo apt-get install rkhunter
-    
-    
-
-    
 }
-
-#install_synergy()
-#{
-#    sudo apt-get install synergy -y
-#}
-
 
 install_dropbox()
 {
@@ -190,7 +152,8 @@ install_zotero()
 install_core_extras()
 {
     # Not commonly used but frequently forgotten
-    sudo apt-get install -y okular
+    sudo apt-get install -y valgrind
+    #sudo apt-get install -y screen
     sudo apt-get install -y synaptic
     sudo apt-get install -y gitg
     sudo apt-get install -y sysstat
@@ -199,13 +162,9 @@ install_core_extras()
     sudo apt-get install -y remmina 
     sudo apt-get install expect -y
 
-    
 
     sudo apt-get install -y filezilla
 
-
-    sudo apt-get install graphviz -y
-    sudo apt-get install imagemagick -y
     sudo apt-get install python-pydot -y
 
     sudo apt-get install dia-gnome -y
@@ -216,7 +175,6 @@ install_core_extras()
     sudo apt-get install fluxgui -y
 
     # 7zip
-    sudo apt-get install p7zip-full
 
     # Make vlc default app
     # http://askubuntu.com/questions/91701/how-to-set-vlc-as-default-video-player
@@ -323,33 +281,7 @@ install_vpn()
 install_latex()
 {
     echo 'latex'
-
     # Latex (ubuntu uses texlive 2013, use something more recent)
-    #sudo apt-get install -y texlive
-    #sudo apt-get install -y texlive
-    #sudo apt-get install -y texlive-base 
-    #sudo apt-get install -y texlive-extra-utils
-    #sudo apt-get install -y texlive-binaries
-    #sudo apt-get install -y texlive-latex-base
-    #sudo apt-get install -y texlive-latex-extra
-    #sudo apt-get install -y texlive-latex-recommended
-    #sudo apt-get install -y texlive-math-extra
-    #sudo apt-get install -y texlive-science
-    #sudo apt-get install -y texlive-bibtex-extra
-    #sudo apt-get install -y texlive-fonts-extra
-    #sudo apt-get install -y texlive-generic-recommended
-
-    #sudo apt-get install -y xindy
-
-    #sudo apt-get remove texlive-generic-extra
-    #sudo apt-get install texlive-bibtex-extra -y
-    #sudo apt-get install texlive-full -y
-
-    # references
-    # http://askubuntu.com/questions/207442/how-to-add-open-terminal-here-to-nautilus-context-menu
-    #sudo apt-get install nautilus-open-terminal
-
-
     sudo apt-get purge texlive
     sudo apt-get purge texlive-base
     sudo apt-get purge pgf
@@ -359,10 +291,6 @@ install_latex()
     cd ~/tmp
     wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
     tar xzvf install-tl-unx.tar.gz
-    #7z x install-tl-unx.tar.gz
-    #7z x install-tl-unx.tar
-    #rm install-tl-unx.tar
-    #cd ~/tmp/install-tl-20150902/
     cd install-tl-*
     #export TEXLIVE_INSTALL_PREFIX=/opt/texlive
     #export TEXDIR=/opt/texlive
@@ -372,6 +300,8 @@ install_latex()
     # Installed to /usr/local/texlive/2015/
     # Need to add /usr/local/texlive/2015/bin/x86_64-linux to the PATH
     #python -m utool.util_cplat --exec-get-path-dirs:0
+
+    sudo apt-get install latexmk
 }
 
 
@@ -465,17 +395,6 @@ install_xlib()
     sudo apt-get install -y xdotool
 }
 
-#pip_upgrade()
-#{
-#     sudo pip install numpy --upgrade
-#     sudo pip install Cython --upgrade
-#     sudo pip install scipy --upgrade
-#     sudo pip install pyzmq --upgrade
-#     sudo pip install matplotlib --upgrade
-#     sudo pip install scikit-learn --upgrade
-#     sudo pip install ipython --upgrade
-#}
-
 install_virtualbox()
 {
     # References: https://www.virtualbox.org/wiki/Linux_Downloads
@@ -568,35 +487,6 @@ python /dev/fd/42 $@
 }
 
 
-install_workrave()
-{
-    # DOENT BUILD RIGHT
-    sudo apt-get install libxtst-dev -y
-    sudo apt-get install libxss-dev -y
-    sudo apt-get install python-cheetah -y
-    sudo apt-get install gnome-core-devel -y
-    exec 42<<'__PYSCRIPT__'
-import utool as ut
-import os
-from os.path import join
-zipped_url = 'http://sourceforge.net/projects/workrave/files/workrave/1.10/workrave-1.10.tar.gz'
-unzipped_fpath = ut.grab_zipped_url(zipped_url)
-ut.vd(unzipped_fpath)
-os.chdir(unzipped_fpath)
-ut.cmd('./configure')
-ut.cmd('make')
-
-install_prefix = ut.unixpath('~')
-for dname in ['bin', 'doc', 'man', 'share']:
-    install_dst = join(install_prefix, dname)
-    install_src = join(unzipped_fpath, dname)
-    ut.copy(install_src, install_dst)
-print(unzipped_fpath)
-__PYSCRIPT__
-python /dev/fd/42 $@
-
-}
-
 install_numba()
 {
     # References: http://askubuntu.com/questions/588688/importerror-no-module-named-llvmlite-binding
@@ -661,15 +551,6 @@ secure_ssl_pip()
     pip install ndg-httpsclient
     pip install pyopenssl
 }
-
-
-#install_lyx()
-#{
-#    # Useless because it can't convert .tex to .lyx well
-#    sudo add-apt-repository ppa:lyx-devel/release
-#    sudo apt-get update
-#    sudo apt-get install lyx -y
-#}
 
 
 install_screen_capture()
@@ -823,33 +704,6 @@ fix_gnome3_workspaces_multimonior()
 }
 
 
-install_pydio(){
-    gvim   /etc/apt/sources.list
-sudo sh -c 'cat >>  /etc/apt/sources.list  << EOL
-
-# pydio manual stuff
-deb http://dl.ajaxplorer.info/repos/apt stable main
-deb-src http://dl.ajaxplorer.info/repos/apt stable main
-EOL'
-wget -O - http://dl.ajaxplorer.info/repos/charles@ajaxplorer.info.gpg.key | sudo apt-key add -
-
-sudo apt-get update
-sudo apt-get install pydio
-
-
-cd ~/tmp
-wget http://downloads.sourceforge.net/project/ajaxplorer/pydio-sync/java/0.8.4/PydioSync-0.8.4-Linux-x86_64-Jars.zip
-7z x PydioSync-0.8.4-Linux-x86_64-Jars.zip
-
-cd ~/tmp
-wget https://pyd.io/resources/pydio6/data/public/pydiosync-linux-1-0-2-targz?dl=true\&file=/1e481dfadf/PydioSync-Linux-v1.0.2.tar.gz
-cp pydiosync-linux-1-0-2-targz\?dl\=true\&file\=%2F1e481dfadf%2FPydioSync-Linux-v1.0.2.tar.gz PydioSync-Linux-v1.0.2.tar.gz
-7z xz pydiosync-linux-1-0-2-targz\?dl\=true\&file\=%2F1e481dfadf%2FPydioSync-Linux-v1.0.2.tar.gz
-7z xzvf PydioSync-Linux-v1.0.2.tar.gz
-7z x PydioSync-Linux-v1.0.2.tar -o Pydio
-}
-
-
 git_and_hg()
 {
     # References:
@@ -898,8 +752,8 @@ video_driver_info(){
 
 utool_settings()
 {
-        # Add ability to open ipython notebooks via double click
-        python -m utool.util_ubuntu --exec-add_new_mimetype_association --mime-name=ipynb+json --ext=.ipynb --exe-fpath=jupyter-notebook --force
+    # Add ability to open ipython notebooks via double click
+    python -m utool.util_ubuntu --exec-add_new_mimetype_association --mime-name=ipynb+json --ext=.ipynb --exe-fpath=jupyter-notebook --force
     update-desktop-database ~/.local/share/applications
     update-mime-database ~/.local/share/mime
 }
@@ -1000,18 +854,6 @@ winestuff(){
     echo "See ubuntu_game_packages.sh"
 }
 
-fix_upgrade_1404_to_1604(){
-    # Something was wrong with gcc and I eneded to download this
-    wget http://security.ubuntu.com/ubuntu/pool/main/g/gcc-5/libstdc++6_5.3.1-14ubuntu2.1_i386.deb
-    # Then install it to get gcc libs working well enough
-    sudo dkpg -i libstdc++6_5.3.1-14ubuntu2.1_i386.deb
-
-    # Also need to fix my virtual env
-    # https://www.guyrutenberg.com/2012/05/30/fixing-virtualenv-after-upgrading-your-distributionpython/
-    virtualenv ~/venv
-    virtualenv --system-site-packages ~/venv
-    
-}
 
 edit_startup_commands()
 {
@@ -1032,7 +874,6 @@ edit_startup_commands()
     #Comment[en_US]=Force monitors position from monitor.xml
     #Comment=Force monitors position from monitor.xml
     #Icon=display
-
 }
 
 make_sshkey(){
@@ -1110,6 +951,7 @@ fix_audio_hyrule(){
 
 setup_ssh_server()
 {
+    # See hyrule specific version
     sudo apt-get install -y openssh-server
 
     sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.factory-defaults
@@ -1119,43 +961,4 @@ setup_ssh_server()
     sudo gvim /etc/ssh/sshd_config
 
     msudo restart ssh || sudo systemctl restart ssh
-}
-
-
-latest_vim(){
-    co
-    git clone https://github.com/vim/vim.git
-    mkdir tmpinstall
-    ./configure --enable-gui=gtk2 --enable-pythoninterp=yes \
-        --with-vim-name=vim-8 \
-        --with-ex-name=ex-8 \
-        --with-view-name=view-8 
-    #--prefix=/home/joncrall/code/vim/tmpinstall
-    make -j9
-    sudo make install
-    ls tmpinstall/bin/
-}
-
-
-beyond_compare(){
-    wget http://www.scootersoftware.com/bcompare-4.1.9.21719_amd64.deb
-    sudo apt-get update
-    sudo apt-get install gdebi-core
-    sudo gdebi bcompare-4.1.9.21719_amd64.deb
-}
-
-install_banish404(){
-    #http://askubuntu.com/questions/65911/how-can-i-fix-a-404-error-when-using-a-ppa-or-updating-my-package-lists
-    # Get rid of failing packages when running apt-get update
-    #sudo add-apt-repository ppa:fossfreedom/packagefixes
-    #sudo apt-get update
-    #sudo apt-get install banish404
-
-    cd ~/tmp
-    wget https://launchpad.net/~fossfreedom/+archive/packagefixes/+files/banish404_0.1-4_all.deb
-    sudo dpkg -i banish404_0.1-4_all.deb
-
-    sudo add-apt-repository --remove http://ppa.launchpad.net/boost-latest/ppa/ubuntu
-    sudo add-apt-repository --remove http://ppa.launchpad.net/fossfreedom/packagefixes/ubuntu
-    sudo add-apt-repository --remove http://ppa.launchpad.net/tualatrix/ppa/ubuntu
 }

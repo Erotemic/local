@@ -43,7 +43,7 @@ def available_fonts():
         r'Inconsolata\ Medium\ 9',
         r'Inconsolata\ Medium\ 11',
         r'MonoDyslexic\ 9.4',
-        r'OpenDyslexicMono\ 10',
+        # r'OpenDyslexicMono\ 10',
         r'FreeMono\ Bold\ 10',
         # r'monofur\ 11',
         # r'EversonMono',

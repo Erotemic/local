@@ -192,7 +192,9 @@ hyhspull()
 }
 
 # Reload profile
-alias rrr='source ~/.profile'
+# FIXME if I work on a mac
+#alias rrr='source ~/.profile'
+alias rrr='source ~/.bashrc'
 update_profile()
 {
     pushd .

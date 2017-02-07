@@ -1,6 +1,21 @@
 # Tutorials
 #http://feeding.cloud.geek.nz/posts/setting-up-raid-on-existing/
 
+
+resetup_raid_after_os_reinstall()
+{
+    # https://ubuntuforums.org/showthread.php?t=2002217
+    # if you reinstalled your OS you just need to tell the system about the
+    # raid to get things working again
+    sudo apt-get install gdisk mdadm rsync -y
+    # Simply scan for your preconfigured raid
+    sudo mdadm --assemble --scan 
+    # Mount the RAID (temporary. modify fstab to automount)
+    sudo mount /dev/md0 /media/raid
+    # Modify fstab so RAID auto-mounts at startup
+    echo "/dev/md0    /media/raid       ext4  defaults     1  2" >> /etc/fstab
+}
+
 #=================
 # Install prereqs
 #-----------------
@@ -8,7 +23,7 @@
 sudo apt-get install gdisk -y
 # raid managment tool
 sudo apt-get install mdadm -y
-sudo apt-get install rsync
+sudo apt-get install rsync -y
 sudo apt-get install initramfs-tools
 #=================
 
@@ -90,10 +105,14 @@ sudo mdadm --stop /dev/md0
 # Format the RAID
 sudo mkfs.ext4 -v -m .1 -b 4096 -E stride=32,stripe-width=64 /dev/md0 
 
-# Mount the RAID (dont forget to modify fstab)
+# Create mountpoint for the RAID
 sudo mkdir /media/raid
 sudo chown joncrall:joncrall /media/raid
+
+# Mount the RAID (temporary. modify fstab to automount)
 sudo mount /dev/md0 /media/raid
+
+# Modify fstab so RAID auto-mounts at startup
 echo "/dev/md0    /media/raid       ext4  defaults     1  2" >> /etc/fstab
 
 # Stop Rebuild
