@@ -171,9 +171,10 @@ endpython
 :set nocp  " https://github.com/tpope/vim-pathogen/issues/50
 source ~/local/vim/vimfiles/autoload/pathogen.vim
 ":call pathogen#runtime_append_all_bundles('bundle')
-:call pathogen#incubate('bundle/{}')
-execute pathogen#infect()
-call pathogen#helptags()
+":call pathogen#incubate('bundle/{}')
+:call pathogen#infect('bundle/{}')
+"execute pathogen#infect()
+"call pathogen#helptags()
 "call pathogen#infect()
 syntax on
 filetype plugin indent on
@@ -357,15 +358,10 @@ endfunction
 " Call everytime we open a Markdown file
 autocmd BufRead,BufNewFile,BufEnter *.md,*.markdown call MathAndLiquid()
 
+"if has("unix")
+"    execute "!mkdir -p ~/.vim/files/info"
+"endif
 
-python << endpython
-try:
-    import utool as ut
-    if not ut.WIN32:
-        ut.ensuredir(ut.truepath('~/.vim/files/info'))
-except ImportError:
-    pass
-endpython
 
 " mkdir -p ~/.vim/files/info
 :set viminfo='100,n$HOME/.vim/files/info/viminfo

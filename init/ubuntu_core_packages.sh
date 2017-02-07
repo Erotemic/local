@@ -1,4 +1,5 @@
 
+
 common_paths()
 {
     cat ~/local/init/ensure_vim_plugins.py
@@ -394,10 +395,10 @@ install_python()
     sudo pip install guppy
 
     #https://github.com/rogerbinns/apsw/releases/download/3.8.6-r1/apsw-3.8.6-r1.win32-py2.7.exe
-    sudo apt-get install libsqlite3-dev 
-    sudo apt-get install sqlite3
-    sudo apt-get install libsqlite3
-    sudo apt-get install python-apsw
+    sudo apt-get install -y libsqlite3-dev 
+    sudo apt-get install -y sqlite3
+    sudo apt-get install -y libsqlite3
+    sudo apt-get install -y python-apsw
     #sudo pip install apsw
 
 
@@ -424,7 +425,7 @@ install_hdf5()
 
 install_cuda_prereq()
 {
-	sudo apt-get install -y libprotobuf-dev
+    sudo apt-get install -y libprotobuf-dev
     sudo apt-get install -y libleveldb-dev 
     sudo apt-get install -y libsnappy-dev 
     sudo apt-get install -y libboost-all-dev 
@@ -704,44 +705,6 @@ encryprtion()
     sudo add-apt-repository ppa:stefansundin/truecrypt
     sudo apt-get update
     sudo apt-get install truecrypt
-}
-
-
-setup_python3()
-{
-    sudo apt-get install python3-dev 
-    sudo apt-get install python3-pip 
-
-    sudo easy_install3 pip
-    sudo pip3 install lockfile
-    sudo pip3 install flask
-    sudo pip3 install numpy
-    sudo pip3 install scipy
-    sudo pip3 install Pillow
-    sudo pip3 install matplotlib
-    sudo pip3 install statsmodels
-    ut
-    sudo python3 setup.py develop
-    vt
-    sudo python3 setup.py develop
-    pt
-    sudo python3 setup.py develop
-    gt
-    sudo python3 setup.py develop
-    dt
-    sudo python3 setup.py develop
-    # setup pyflann3
-    hes
-    sudo python3 setup.py develop
-
-    sudo pip install git+https://github.com/pwaller/pyfiglet
-
-    python3 -c "import vtool"
-
-    # set pip to python2.7
-    sudo -H pip2.7 install pip -U --force-reinstall
-    #ls -al /usr/local/bin/pip
-    
 }
 
 

@@ -48,16 +48,18 @@ def ensuredir(path):
 
 
 def ensure_nongit_plugins():
-    import utool as ut
-    import REPOS1
-    BUNDLE_DPATH = util_git1.BUNDLE_DPATH
-    for url in REPOS1.VIM_NONGIT_PLUGINS:
-        fpath = ut.grab_zipped_url(url, download_dir=BUNDLE_DPATH)
-        if fpath.endswith('.vba'):
-            cmd_ = 'vim ' + fpath + ' -c "so % | q"'
-            ut.cmd(cmd_)
-        print('url = %r' % (url,))
-        pass
+    try:
+        import utool as ut
+        import REPOS1
+        BUNDLE_DPATH = util_git1.BUNDLE_DPATH
+        for url in REPOS1.VIM_NONGIT_PLUGINS:
+            fpath = ut.grab_zipped_url(url, download_dir=BUNDLE_DPATH)
+            if fpath.endswith('.vba'):
+                cmd_ = 'vim ' + fpath + ' -c "so % | q"'
+                ut.cmd(cmd_)
+            print('url = %r' % (url,))
+    except ImportError:
+        print('Cant do nongit plugins without utool')
 
 
 def main():

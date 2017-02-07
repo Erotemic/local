@@ -127,7 +127,7 @@ VIM_REPO_URLS, VIM_REPOS = repo_list([
 
     'https://github.com/LaTeX-Box-Team/LaTeX-Box.git',
 
-    'https://github.com/tpope/vim-fugitive.git',
+    # 'https://github.com/tpope/vim-fugitive.git',
 
     #'https://github.com/ggreer/the_silver_searcher.git'  # Ag
     # FOR SNIP MATE

@@ -1,10 +1,13 @@
 hyrule_setup_sshd()
 {  
     # This is Hyrule Specific
+    sudo apt-get install openssh-server -y
+    sudo service ssh status
 
     # small change to default sshd_config
     sudo sed -i 's/#Banner \/etc\/issue.net/Banner \/etc\/issue.net/' /etc/ssh/sshd_config
-    sudo restart ssh
+    sudo service ssh restart
+    #sudo restart ssh
     cat /etc/issue.net 
     sudo sh -c 'cat >> /etc/issue.net << EOL
     
@@ -19,7 +22,9 @@ hyrule_setup_sshd()
 EOL'
     # Cheeck to see if its running
     ps -A | grep sshd
+}
 
+hyrule_setup_static_ip(){
     cat /etc/network/interfaces
     sudo sh -c 'cat >> /etc/network/interfaces << EOL
 #Static IP Address
@@ -35,10 +40,21 @@ iface eth0 inet static
 EOL'
     cat /etc/network/interfaces
 
+    # Name of eth0 changed to eno1 in Ubuntu 16.04
+    sudo sed -i 's/eth0/eno1/' /etc/network/interfaces
+
+    sudo ip addr flush eno1
+    sudo systemctl restart networking.service
+
     #http://www.blackmoreops.com/2013/11/25/how-to-fix-wired-network-interface-device-not-managed-error/
     #http://askubuntu.com/questions/71159/network-manager-says-device-not-managed
     sudo sed -i 's/^managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
     sudo service network-manager restart
+
+    # Test
+    ping hyrule.cs.rpi.edu
+
+    ssh localhost
 }
 
 
@@ -68,16 +84,15 @@ hyrule_create_users()
     # Grant sudoers
     #sudo visudo
     sudo adduser jason
-    sudo adduser hendrik
-    sudo adduser zack
     sudo adduser git
+    sudo adduser hendrik
     sudo adduser guest
     # Add group
     sudo groupadd ibeis
+    sudo groupadd rpi
     sudo usermod -a -G sudo jason
     sudo usermod -a -G ibeis jason
     sudo usermod -a -G rpi joncrall
-    sudo groupadd rpi
     sudo usermod -a -G rpi jason
     sudo usermod -a -G rpi joncrall
     sudo usermod -a -G rpi hendrik

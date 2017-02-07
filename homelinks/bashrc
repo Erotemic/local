@@ -2,12 +2,15 @@
 export QT_ACCESSIBILITY=0
 export QT_API=pyqt
 
+# WHERE THE HELL IS THIS SET?
+#echo "PATH(bashrc) = $PATH"
+export PATH="/home/joncrall/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+
 # I don't know why this is populated to begin with
-unset VIRTUAL_ENV
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
     export NCPUS=$(sysctl -n hw.ncpu)
-    source ~/local/homelinks/helpers/bashrc_mac.sh
+    #source ~/local/homelinks/helpers/bashrc_mac.sh
 else
     export NCPUS=$(grep -c ^processor /proc/cpuinfo)
     source ~/local/homelinks/helpers/bashrc_ubuntu
@@ -27,64 +30,14 @@ fi
 source ~/local/homelinks/helpers/git_helpers
 source ~/local/homelinks/helpers/alias_helpers
 
-export PYTHONPATH=$CODE_DIR/utool:$PYTHONPATH
-export PYTHONPATH=$HOME/local/pyscripts:$PYTHONPATH
 
+unset VIRTUAL_ENV
 #workon_py2
 workon_py3
 #workon_pypy
 
 
-#export PYTHON_VENV="$HOME/venv2"
-#echo $PYTHON_VENV
-# Activate a virtual environment
-#if [ -d "$PYTHON_VENV" ]; then
-#    source $PYTHON_VENV/bin/activate
-#fi
-
-setup_venv2(){
-    # ENSURE SYSTEM PIP IS SAME AS SYSTEM PYTHON
-    # sudo update-alternatives --set pip /usr/local/bin/pip2.7
-    # sudo rm /usr/local/bin/pip
-    # sudo ln -s /usr/local/bin/pip2.7 /usr/local/bin/pip
-
-    export PYTHON2_VENV="$HOME/venv2"
-    mkdir $PYTHON2_VENV
-    python2 -m virtualenv -p /usr/bin/python2.7 $PYTHON2_VENV 
-    #python2 -m virtualenv --relocatable $PYTHON2_VENV 
-}
-setup_venv3(){
-    # Ensure PIP, setuptools, and virtual are on the SYSTEM
-    sudo curl https://bootstrap.pypa.io/get-pip.py | sudo python3
-    sudo pip3 install pip setuptools virtualenv -U
-
-    export PYTHON3_VENV="$HOME/venv3"
-    mkdir -p $PYTHON3_VENV
-    python3 -m virtualenv -p /usr/bin/python3 $PYTHON3_VENV
-    python3 -m virtualenv --relocatable $PYTHON3_VENV 
-    # source $PYTHON3_VENV/bin/activate
-
-    # Now ensure the correct pip is installed locally
-    pip --version
-    # should be for 3.x
-}
-setupt_venvpypy(){
-
-    export PYPY_VENV="$HOME/venvpypy"
-    mkdir -p $PYPY_VENV
-    virtualenv-3.4 -p /usr/bin/pypy $PYPY_VENV 
-
-    pypy -m ensurepip
-    sudo apt-get install pypy-pip
-}
-
-
 #export OMP_NUM_THREADS=7
-
-update_pip_dists()
-{
-    sudo pip install pyinstaller --upgrade
-}
  
 permit_erotemic_gitrepo()
 { 
@@ -104,22 +57,18 @@ export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 
 # If IBM CPLEX is installed
 export CPLEX_PREFIX=/opt/ibm/ILOG/CPLEX_Studio_Community1263
-export PATH=$PATH:$CPLEX_PREFIX/cplex/bin/x86-64_linux/
-export PATH=$PATH:$CPLEX_PREFIX/opl/oplide/
-export PATH=$PATH:$CPLEX_PREFIX/cplex/include/
-export PATH=$PATH:$CPLEX_PREFIX/opl/include/
-export PATH=$PATH:$CPLEX_PREFIX/opl/
+if [ -d "$CPLEX_PREFIX" ]; then
+    export PATH=$PATH:$CPLEX_PREFIX/cplex/bin/x86-64_linux/
+    export PATH=$PATH:$CPLEX_PREFIX/opl/oplide/
+    export PATH=$PATH:$CPLEX_PREFIX/cplex/include/
+    export PATH=$PATH:$CPLEX_PREFIX/opl/include/
+    export PATH=$PATH:$CPLEX_PREFIX/opl/
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/cplex/lib/x86-64_linux/static_pic
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/cplex/bin/x86-64_linux/
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/opl/bin/x86-64_linux
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/opl/lib/x86-64_linux/static_pic
-
-
-# For vigra
-# Taken care of in workon_pyX
-#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VIRTUAL_ENV/lib
-
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/cplex/lib/x86-64_linux/static_pic
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/cplex/bin/x86-64_linux/
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/opl/bin/x86-64_linux
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/opl/lib/x86-64_linux/static_pic
+fi
 
 
 # Add CUDA to the library paths if it exists
@@ -164,7 +113,6 @@ else
 fi
 
 #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PYTHON_VENV/lib
-
 # hack
 #export UTOOL_DPATH=~/latex/crall-candidacy-2015/
 
@@ -175,5 +123,4 @@ complete -W "gp focus kill project_dpaths sync_clipboard_to grepnr printproc_2 s
 #setterm -blength 0
 #gconftool-2 --set --type=bool /apps/metacity/general/audible_bell false
 #gconftool-2 --get  /apps/metacity/general/audible_bell
-
 #source ~/.config/ibeis/ibeis_bash_complete.sh

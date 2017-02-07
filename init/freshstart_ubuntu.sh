@@ -5,8 +5,13 @@ entry_prereq_git_and_local()
     cd ~
 
     # Fix ssh keys if you have them
+    ls -al ~/.ssh
     chmod 700 ~/.ssh
     chmod 600 ~/.ssh/authorized_keys
+    chmod 600 ~/.ssh/known_hosts
+    chmod 600 ~/.ssh/config
+    chmod 400 ~/.ssh/id_rsa*
+
 
     # If local does not exist
     if [ ! -f ~/local ]; then
@@ -28,7 +33,7 @@ ensure_config_symlinks()
 {
     # Remove dead symlinks
     cd
-    sudo apt-get install symlinks
+
     symlinks -d .
     
     export HOMELINKS=$HOME/local/homelinks
@@ -57,7 +62,7 @@ ensure_config_symlinks()
     mkdir -pv $HOME/.$BASEDIR
     DNAMES=$(/bin/ls -A $HOMELINKS/$BASEDIR)
     echo $DNAMES
-    for d in $DNAMES; do ln -vs $HOMELINKS/$BASEDIR$d $HOME/$BASEDIR$d; done
+    for d in $DNAMES; do ln -vs $HOMELINKS/$BASEDIR$d $HOME/.$BASEDIR$d; done
     #================
 }
 
@@ -73,6 +78,9 @@ freshtart_ubuntu_entry_point()
     mv ~/.bashrc ~/.bashrc.orig
     mv ~/.profile ~/.profile.orig
 
+    sudo apt-get install symlinks -y
+
+    source ~/local/init/freshstart_ubuntu.sh
     ensure_config_symlinks
 
     #ln -s ~/local/homelinks/.ctags ~/.ctags
@@ -96,9 +104,9 @@ freshtart_ubuntu_entry_point()
     # Vim
     #sudo apt-get install -y vim
     #sudo apt-get install -y vim-gtk
-    sudo apt-get install -y vim-gnome-py2
-    sudo update-alternatives --set vim /usr/bin/vim.gnome-py2
-    sudo update-alternatives --set gvim /usr/bin/gvim.gtk-py2
+    #sudo apt-get install -y vim-gnome-py2
+    #sudo update-alternatives --set vim /usr/bin/vim.gnome-py2
+    #sudo update-alternatives --set gvim /usr/bin/gvim.gtk-py2
     sudo apt-get install -y exuberant-ctags 
 
     # Terminal settings
@@ -107,55 +115,64 @@ freshtart_ubuntu_entry_point()
     # Development Environment
     sudo apt-get install gcc g++  -y
     sudo apt-get install -y gfortran
+    sudo apt-get install -y build-essential 
+    sudo apt-get install -y python-dev
+    sudo apt-get install -y python3-dev 
+
+    sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 10
 
     # Python 
-    sudo apt-get install python-dev -y
-    sudo apt-get install -y python-tk
-    sudo apt-get install python-pip -y
-    sudo pip install pip --upgrade
-    sudo pip install virtualenv
-    sudo pip install virtualenv --upgrade
+    #sudo apt-get install python-dev -y
+    #sudo apt-get install -y python-tk
+    #sudo apt-get install python-pip -y
+    #sudo pip install pip --upgrade
+    #sudo pip install virtualenv
+    #sudo pip install virtualenv --upgrade
 
     # setup virtual env
-    export PYTHON_VENV="$HOME/venv"
-    mkdir -p $PYTHON_VENV
-    virtualenv -p /usr/bin/python2.7 $PYTHON_VENV
-    virtualenv -p /usr/bin/python2.7 $HOME/abs_venv --always-copy
-    source $PYTHON_VENV/bin/activate
+    #setup_venv2
+    setup_venv3
+    source ~/venv3/bin/activate
+
+    #export PYTHON_VENV="$HOME/venv"
+    #mkdir -p $PYTHON_VENV
+    #virtualenv -p /usr/bin/python2.7 $PYTHON_VENV
+    #virtualenv -p /usr/bin/python2.7 $HOME/abs_venv --always-copy
+    #source $PYTHON_VENV/bin/activate
 
     # FIX ISSUE WITH SIP
-    virtualenv --relocatable venv
-    virtualenv --relocatable $HOME/abs_venv
-    ls venv/include
-    ls abs_venv/include
+    #virtualenv --relocatable venv
+    #virtualenv --relocatable $HOME/abs_venv
+    #ls venv/include
+    #ls abs_venv/include
     # //
 
     # Python3 VENV
-    sudo pip3 install virtualenv
-    sudo pip3 install virtualenv -U
-    export PYTHON3_VENV="$HOME/venv3"
-    mkdir -p $PYTHON3_VENV
-    virtualenv -p /usr/bin/python3 $PYTHON3_VENV
+    #sudo pip3 install virtualenv
+    #sudo pip3 install virtualenv -U
+    #export PYTHON3_VENV="$HOME/venv3"
+    #mkdir -p $PYTHON3_VENV
+    #virtualenv -p /usr/bin/python3 $PYTHON3_VENV
     # source $PYTHON3_VENV/bin/activate
 
     # FIX ISSUE WITH SIP
-    virtualenv --relocatable venv
-    virtualenv --relocatable $HOME/abs_venv
-    ls venv/include
-    ls abs_venv/include
+    #virtualenv --relocatable venv
+    #virtualenv --relocatable $HOME/abs_venv
+    #ls venv/include
+    #ls abs_venv/include
 
     pip install setuptools --upgrade
     pip install six
     pip install jedi
     pip install ipython
-    pip install pep8
-    pip install autopep8
-    pip install flake8
-    pip install pylint
-    pip install line_profiler
+    pip install pep8 autopep8 flake8 pylint line_profiler
 
     mkdir -p ~/local/vim/vimfiles/bundle
+
     source ~/local/vim/init_vim.sh
+    ln -s ~/local/vim/vimfiles ~/.vim
+    #mkdir ~/.vim_tmp
+    echo "source ~/local/vim/portable_vimrc" > ~/.vimrc
     python ~/local/init/ensure_vim_plugins.py
 
     source ~/local/init/ubuntu_core_packages.sh
@@ -165,7 +182,7 @@ freshtart_ubuntu_entry_point()
     if [ ! -f ~/utool ]; then
         git clone git@github.com:Erotemic/utool.git
         cd utool
-        python setup.py develop
+        pip install -e .
     fi
 
     # Get latex docs
@@ -258,6 +275,59 @@ freshtart_ubuntu_entry_point()
 }
 
 
+
+setup_venv2(){
+    # ENSURE SYSTEM PIP IS SAME AS SYSTEM PYTHON
+    # sudo update-alternatives --set pip /usr/local/bin/pip2.7
+    # sudo rm /usr/local/bin/pip
+    # sudo ln -s /usr/local/bin/pip2.7 /usr/local/bin/pip
+    sudo apt-get install curl -y
+    sudo curl https://bootstrap.pypa.io/get-pip.py | sudo python2
+    sudo pip2 install pip setuptools virtualenv -U
+
+    export PYTHON2_VENV="$HOME/venv2"
+    mkdir $PYTHON2_VENV
+    python2 -m virtualenv -p /usr/bin/python2.7 $PYTHON2_VENV 
+    #python2 -m virtualenv --relocatable $PYTHON2_VENV 
+}
+
+setup_venv3(){
+    # Ensure PIP, setuptools, and virtual are on the SYSTEM
+    sudo apt-get install curl -y
+    sudo curl https://bootstrap.pypa.io/get-pip.py | sudo python3
+    sudo pip3 install pip setuptools virtualenv -U
+
+    export PYTHON3_VENV="$HOME/venv3"
+    mkdir -p $PYTHON3_VENV
+    python3 -m virtualenv -p /usr/bin/python3 $PYTHON3_VENV
+    python3 -m virtualenv --relocatable $PYTHON3_VENV 
+    # source $PYTHON3_VENV/bin/activate
+
+    # Now ensure the correct pip is installed locally
+    #pip3 --version
+    # should be for 3.x
+}
+setupt_venvpypy(){
+
+    export PYPY_VENV="$HOME/venvpypy"
+    mkdir -p $PYPY_VENV
+    virtualenv-3.4 -p /usr/bin/pypy $PYPY_VENV 
+
+    pypy -m ensurepip
+    sudo apt-get install pypy-pip
+}
+
+install_chrome()
+{
+    # Google PPA
+    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+    sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+    sudo apt-get update
+    # Google Chrome
+    sudo apt-get install -y google-chrome-stable 
+}
+
+
 virtualenv_numpy_16()
 {
     # disable current venv
@@ -296,6 +366,7 @@ install_python()
 
 install_fonts()
 {
+    sudo apt-get -y install nautilus-dropbox
     sudo cp ~/Dropbox/Fonts/*.ttf /usr/share/fonts/truetype/
     sudo cp ~/Dropbox/Fonts/*.otf /usr/share/fonts/opentype/
     sudo fc-cache

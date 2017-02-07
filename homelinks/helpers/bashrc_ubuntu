@@ -124,7 +124,7 @@ export PYQTDESIGNERPATH=/home/joncrall/Dropbox/Settings/PyQt4/plugins/designer/p
 export VIMFILES=~/.vim
 export IPYTHONDIR=~/.ipython
 export LATEX='~/latex/'
-export SITE_PACKAGES=/usr/local/lib/python2.7/dist-packages/
+#export SITE_PACKAGES=/usr/local/lib/python2.7/dist-packages/
 
 export CC=gcc
 export CXX=g++
@@ -132,7 +132,7 @@ export CXX=g++
 # MY PATH
 #export PATH=$PATH:~/scripts/:/usr/local/MATLAB/R2013a/bin
 export PATH=~/bin:$PATH:~/scripts/
-export PYTHONPATH=$PYTHONPATH
+#export PYTHONPATH=$PYTHONPATH
 export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgocnfig:/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
 
 #export mothers=/data/work/HSDB_
@@ -158,10 +158,10 @@ alias cmd=bash
 
 
 alias gvim=gvim_ubuntu_hack 
-if [ -d "$PYTHON_VENV" ]; then
+if [ -f ~/bin/gvim ]; then
     gvim_ubuntu_hack()
     {
-        /usr/local/bin/gvim-8 -f $@ 2> /dev/null &
+        ~/bin/gvim -f $@ 2> /dev/null &
     }
 else
     gvim_ubuntu_hack()
