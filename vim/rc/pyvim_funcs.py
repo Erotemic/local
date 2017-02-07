@@ -325,7 +325,7 @@ def get_selected_text(select_at_cursor=False):
     return text
 
 
-def get_text_between_lines(lnum1, lnum2, col1=0, col2=sys.maxint - 1):
+def get_text_between_lines(lnum1, lnum2, col1=0, col2=sys.maxsize - 1):
     import vim
     lines = vim.eval('getline({}, {})'.format(lnum1, lnum2))
     import utool as ut

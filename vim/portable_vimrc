@@ -45,42 +45,20 @@ source ~/local/vim/vimfiles/syntax/python.vim
 
 "===========PLUGINS==========="
 " PLUGIN: Pathogen
-python << endpython
+
+if has('python')
+    command! -nargs=1 Python2or3 python <args>
+elseif has('python3')
+    command! -nargs=1 Python2or3 python3 <args>
+else
+    echo "Error: Requires Vim compiled with +python or +python3"
+    finish
+endif
+
+Python2or3 << EOF
 import sys
+import os
 import vim
-
-import utool as ut
-
-
-#def attrinfo(basename, base, attrname):
-#    attr = getattr(base, attrname)
-#    print('\n------')
-#    print('%s.%s: %r' % (basename, attrname, attr))
-#    print('type(%s.%s): %r' % (basename, attrname, type(attr)))
-#    print('dir(%s.%s): %r' % (basename, attrname, dir(attr)))
-#
-#print('\n\n VIM BASE')
-#print('vim = %r' % (vim,))
-#print('type(vim) = %r' % (type(vim),))
-#print('dir(vim) = %r' % (dir(vim),))
-#
-#print('\n\n VIM CURRENT')
-#attrinfo('vim', vim, 'current')
-#attrinfo('vim.current', vim.current, 'tabpage')
-#attrinfo('vim.current', vim.current, 'line')
-#attrinfo('vim.current', vim.current, 'window')
-#attrinfo('vim.current', vim.current, 'range')
-#
-#attrinfo('vim.current', vim.current, 'buffer')
-#
-#attrinfo('vim.current.buffer', vim.current.buffer, 'number')
-#attrinfo('vim.current.buffer', vim.current.buffer, 'name')
-#attrinfo('vim.current.buffer', vim.current.buffer, 'options')
-#attrinfo('vim.current.buffer', vim.current.buffer, 'range')
-#attrinfo('vim.current.buffer', vim.current.buffer, 'valid')
-#attrinfo('vim.current.buffer', vim.current.buffer, 'vars')
-#attrinfo('vim.current.buffer', vim.current.buffer, 'mark')
-
 
 def get_disabled_plugins():
     """
@@ -93,48 +71,41 @@ def get_disabled_plugins():
     """
     WIN32 = sys.platform.startswith('win32')
     UNIX = not WIN32
-
-    level0 = 1
-    level1 = 1
-    level2 = 1
-    level3 = 1
-    level4 = 1
-    level5 = 1
+    flag = True
 
     # Set flag to be false to disable plugin
     known_plugins = [
-        (level0, 'nerdtree'),
+        (flag, 'nerdtree'),
 
-        (level1, 'nerdcommenter'),
-        (level1, 'tagbar'),
+        (flag, 'nerdcommenter'),
+        (flag, 'tagbar'),
 
-        (level2 & UNIX, 'supertab'),
-        (level2 & UNIX, 'vim-startify'),
+        (flag & UNIX, 'supertab'),
+        (flag & UNIX, 'vim-startify'),
 
-        (level3 & UNIX, 'syntastic'),
-        (level3, 'jedi-vim'),
-        (level3, 'LaTeX-Box'),
-        (level3, 'vim-markdown'),
-        (level3, 'vim-syntax-markdown'),
-        (level3, 'vim-colors-solarized'),
+        (flag & UNIX, 'syntastic'),
+        (flag, 'jedi-vim'),
+        (flag, 'LaTeX-Box'),
+        (flag, 'vim-markdown'),
+        (flag, 'vim-syntax-markdown'),
+        (flag, 'vim-colors-solarized'),
 
-        (level4, 'ultisnips'),
-        (level4, 'vim-snippets'),
-        (level4, 'vim-powerline'),
-        (level4, 'vim-Powerline'),
-        (level4, 'vim-virtualenv'),
-        (level4, 'vim-autopep8'),
+        (flag, 'ultisnips'),
+        (flag, 'vim-snippets'),
+        (flag, 'vim-powerline'),
+        (flag, 'vim-Powerline'),
+        (flag, 'vim-virtualenv'),
+        (flag, 'vim-autopep8'),
 
-        (level5, 'AnsiEsc.vim'),
-        (level5, 'rainbow_parentheses.vim'),
-        (level5, 'closetag.vim'),
-        (level5, 'unicode.vim'),
-        (level5, 'gruvbox'),
-        (level5, 'badwolf'),
-        (level5, 'codeschool-vim-theme'),
-        (level5, 'phd'),
-        (level5 & UNIX, 'taglist.vim'),  # ctags
-
+        (flag, 'AnsiEsc.vim'),
+        (flag, 'rainbow_parentheses.vim'),
+        (flag, 'closetag.vim'),
+        (flag, 'unicode.vim'),
+        (flag, 'gruvbox'),
+        (flag, 'badwolf'),
+        (flag, 'codeschool-vim-theme'),
+        (flag, 'phd'),
+        (flag & UNIX, 'taglist.vim'),  # ctags
 
         (False & UNIX, 'vim-buffergator'),
         (False, 'vim-ipython'), (False, 'vim-quickopen-tvio'),
@@ -148,7 +119,6 @@ def get_disabled_plugins():
     disabled = [name for flag, name in known_plugins if not flag]
 
     if True:
-        import os
         enabled = [name for flag, name in known_plugins if flag]
         all_plugins = set(disabled + enabled)
         plugin_dirs = set(os.listdir(os.path.expanduser('~/local/vim/vimfiles/bundle')))
@@ -161,10 +131,8 @@ def get_disabled_plugins():
 disabled = get_disabled_plugins()
 disabled_str = '[' + (', '.join(['"%s"' % (name,) for name in disabled])) + ']'
 
-
-#print(disabled_str)
 vim.command('let g:pathogen_disabled = ' + disabled_str)
-endpython
+EOF
 
 ":ECHOVAR runtimepath
 "# http://stackoverflow.com/questions/6639786/pathogen-vim-non-default-bundle-directory-location
@@ -366,7 +334,7 @@ autocmd BufRead,BufNewFile,BufEnter *.md,*.markdown call MathAndLiquid()
 " mkdir -p ~/.vim/files/info
 :set viminfo='100,n$HOME/.vim/files/info/viminfo
 let g:startify_bookmarks = ['~/.vimrc', '~/.bashrc']
-python << endpython
+Python2or3 << EOF
 listvars = {
     'startify_bookmarks': [
         '~/local/vim/portable_vimrc',
@@ -379,4 +347,4 @@ listvars = {
 for varname, list_ in listvars.items():
     liststr = '[' + ', '.join('"%s"' % v for v in list_) + ']'
     vim.command('let g:' + varname + ' = ' + liststr)
-endpython
+EOF

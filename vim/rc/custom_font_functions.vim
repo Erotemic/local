@@ -1,7 +1,7 @@
 
 
 function! ToggleFont(...) 
-python << endpython
+Python2or3 << endpython3
 import vim
 def python_toggle_font():
     import vim
@@ -22,16 +22,16 @@ def python_toggle_font():
         msg = 'error in togglefont(%r): %r %s' % (myfontindex, type(ex), str(ex),)
         vim.command(':echom %r' % (msg,))
 python_toggle_font()
-endpython
+endpython3
 endfunction
 
 
 function! SetFuzzyFont(fontid)
-python << endpython
+Python2or3 << endpython3
 import pyvim_funcs
 request = vim.eval('a:fontid')
 pyvim_funcs.pyrun_fuzzyfont(request)
-endpython
+endpython3
 endfunction
 
 
@@ -42,14 +42,14 @@ command! FontDecrease call FontDecrease()
 
 
 function! FontMenu()
-python << endpython
+Python2or3 << endpython3
 import pyvim_funcs
 import imp
 imp.reload(pyvim_funcs)
 known_fonts = pyvim_funcs.available_fonts()
 request = pyvim_funcs.vim_popup_menu(known_fonts)
 pyvim_funcs.pyrun_fuzzyfont(request)
-endpython
+endpython3
 "http://stackoverflow.com/questions/13537521/custom-popup-menu-in-vim
 endfunction
 
@@ -62,7 +62,7 @@ command! FontIncrease call FontIncrease()
 " NEW QUICK INCREASE FONT STUFF
 function! AdjustFontSize(amount)
 let oldgfn=&gfn
-python << endpython
+Python2or3 << endpython3
 def pyrun_adjust_size():
     import vim
     import sys
@@ -109,7 +109,7 @@ def pyrun_adjust_size():
     vimprint(new_gfn)
     vim.command('set gfn=' + new_gfn)
 pyrun_adjust_size()
-endpython
+endpython3
     "                     part1       part2      part3
     "let font_pattern = '^\(.*\):h\([0-9][0-9]*\)\(.*$\)'
     "let min_sz = 6

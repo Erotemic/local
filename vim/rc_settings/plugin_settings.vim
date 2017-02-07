@@ -2,7 +2,7 @@
 " PLUGIN: NERDTree 
 
 func! NERD_TREE_WITH_BAT()
-python << endpython
+Python2or3 << EOF
 import vim
 def nerdtree_withbat():
     # Define ignored suffixes
@@ -43,7 +43,7 @@ def nerdtree_withbat():
     #print(nerdtree_ignore_cmd)
     vim.command(nerdtree_ignore_cmd)
 nerdtree_withbat()
-endpython
+EOF
 "let NERDTreeIgnore = ['\.o$', '\~$', '\.pyc$',  '\.pyo$', '\.aux$', '\.masv$', '\.bbl$', '\.bcf$', '\.blg$', '\.brf$', '\.synctex$', '\.upa$', '\.upb$', '\.pdf$', '\.out$', '\.log', '\.latexmain', '\.bib', '\.shelf', 'README.md', 'LICENSE']
 endfu
 
@@ -283,7 +283,7 @@ let g:syntastic_python_checkers=['flake8'] " ignores lines containng # NOQA
 " SCRIPTING VIM IN PYTHON 
 " http://orestis.gr/blog/2008/08/10/scripting-vim-with-python/
 
-python << endpython
+Python2or3 << EOF
 import vim
 flake8_errors = [
     'E126',  # continuation line hanging-indent
@@ -316,7 +316,7 @@ flake8_args_list = [
 ]
 flake8_args = ' '.join(flake8_args_list)
 vim.command('let g:syntastic_python_flake8_args = "%s"' % flake8_args)
-endpython
+EOF
 
 
 

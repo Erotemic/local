@@ -1,13 +1,20 @@
 """
 " SeeAlso; 
 "     ~/local/vim/rc_settings/remap_settings.vim
+"
 """
+
+Python2or3 << EOF
+"""
+%s/^python << /Python2or3 << /gc
+"""
+EOF
 
 
 func! CopyGVimToTerminalDev(...) range
     " Interactive scripting function. Takes part of the file you are editing
     " and pastes it into a terminal and then returns the editor to focus.
-python << endpython
+Python2or3 << EOF
 import vim
 #vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
@@ -78,13 +85,13 @@ dprint('Running script')
 ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01)
 dprint('Finished script')
 #L______________
-endpython
+EOF
 endfu 
 
 
 func! IPythonImportAll()
     " Imports global variables from current module into IPython session
-python << endpython
+Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
@@ -135,14 +142,14 @@ if pyvim_funcs.is_module_pythonfile():
 else:
     print('current file is not a pythonfile')
 #L______________
-endpython
+EOF
 endfu 
 
 
 
 func! InsertPyUtMain() 
     " Imports a python __main__ block 
-python << endpython
+Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
@@ -156,13 +163,13 @@ if pyvim_funcs.is_module_pythonfile():
 else:
     print('current file is not a pythonfile')
 #L______________
-endpython
+EOF
 endfu 
 
 
 func! PyInsertHeader(...) 
     " Imports a standard python header
-python << endpython
+Python2or3 << EOF
 mode = vim.eval('(a:0 >= 1) ? a:1 : 0')
 
 import vim
@@ -190,12 +197,12 @@ if pyvim_funcs.is_module_pythonfile():
 else:
     print('current file is not a pythonfile')
 #L______________
-endpython
+EOF
 endfu 
 
 
 func! AutoPep8Block() 
-python << endpython
+Python2or3 << EOF
 # FIXME: Unfinished
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
@@ -210,7 +217,7 @@ if pyvim_funcs.is_module_pythonfile():
 else:
     print('current file is not a pythonfile')
 #L______________
-endpython
+EOF
 endfu 
 
 
@@ -318,13 +325,13 @@ endfu
 
 
 func! EnsureCustomPyModPath()
-python << endpython
+Python2or3 << EOF
 import sys
 from os.path import expanduser
 path = expanduser('~/local/vim/rc')
 if path not in sys.path:
     sys.path.append(path)
-endpython
+EOF
 endfu
 
 call EnsureCustomPyModPath()
@@ -332,7 +339,7 @@ call EnsureCustomPyModPath()
 
 func! OpenSetups()
 "pyfile pyvim_funcs.py
-python << endpython
+Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 fpath_list = [
@@ -346,12 +353,12 @@ fpath_list = [
         '~/code/plottool/setup.py',
     ]
 pyvim_funcs.open_fpath_list(fpath_list, num_hsplits=2)
-endpython
+EOF
 endfu
 
 
 func! OpenGitIgnores()
-python << endpython
+Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 fpath_list = [
@@ -365,12 +372,12 @@ fpath_list = [
         '~/code/plottool/.gitignore',
     ]
 pyvim_funcs.open_fpath_list(fpath_list, num_hsplits=2)
-endpython
+EOF
 endfu
 
 
 func! TabOpenVimRC()
-python << endpython
+Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 fpath_list = [
@@ -380,7 +387,7 @@ fpath_list = [
         #'~/local/vim/rc/pyvim_funcs.py',
     ]
 pyvim_funcs.open_fpath_list(fpath_list, num_hsplits=3)
-endpython
+EOF
 endfu
 command! Tovimrc call TabOpenVimRC()
 
@@ -388,7 +395,7 @@ command! Tovimrc call TabOpenVimRC()
 """"""""""""""""""""""""""""""""""
 
 func! TabOpenAutogen()
-python << endpython
+Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 fpath_list = [
@@ -396,7 +403,7 @@ fpath_list = [
         '~/code/utool/utool/util_autogen.py',
     ]
 pyvim_funcs.open_fpath_list(fpath_list, num_hsplits=2)
-endpython
+EOF
 endfu
 command! Toautogen call TabOpenAutogen()
 
@@ -458,19 +465,19 @@ command! MYINFOCMD call MYINFO() <C-R>
 
 
 func! FocusTerm(...) range
-python << endpython
+Python2or3 << EOF
 import vim
 #vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool.util_ubuntu
 import utool as ut
 ut.util_ubuntu.XCtrl.do(('focus', 'x-terminal-emulator.X-terminal-emulator'))
-endpython
+EOF
 endfu
 
 
 func! InsertDocstr() 
-python << endpython
+Python2or3 << EOF
 import vim
 #vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
 import utool as ut
@@ -483,12 +490,12 @@ if pyvim_funcs.is_module_pythonfile():
 else:
     print('current file is not a pythonfile')
 #L______________
-endpython
+EOF
 endfu 
 
 
 func! InsertKWargsDoc() 
-python << endpython
+Python2or3 << EOF
 import vim
 #vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
 import utool as ut
@@ -501,12 +508,12 @@ if pyvim_funcs.is_module_pythonfile():
 else:
     print('current file is not a pythonfile')
 #L______________
-endpython
+EOF
 endfu 
 
 
 func! InsertDocstrOnlyArgs() 
-python << endpython
+Python2or3 << EOF
 import vim
 #vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
 import utool as ut
@@ -525,12 +532,12 @@ if pyvim_funcs.is_module_pythonfile():
 else:
     print('current file is not a pythonfile')
 #L______________
-endpython
+EOF
 endfu 
 
 
 func! InsertDocstrOnlyCommandLine() 
-python << endpython
+Python2or3 << EOF
 import vim
 #vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
 import utool as ut
@@ -553,12 +560,12 @@ if pyvim_funcs.is_module_pythonfile():
 else:
     print('current file is not a pythonfile')
 #L______________
-endpython
+EOF
 endfu 
 
 
 func! InsertIBEISExample() 
-python << endpython
+Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
@@ -580,7 +587,7 @@ if pyvim_funcs.is_module_pythonfile():
 else:
     print('current file is not a pythonfile')
 #L______________
-endpython
+EOF
 endfu 
 
 
@@ -598,7 +605,7 @@ endfu
 
 
 func! PyMakePrintVar() 
-python << endpython
+Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
@@ -606,11 +613,11 @@ expr = pyvim_funcs.get_expr_at_cursor()
 indent = pyvim_funcs.get_cursor_py_indent()
 newline = indent + "print('{expr} = %r' % ({expr},))".format(expr=expr)
 pyvim_funcs.insert_codeblock_under_cursor(newline)
-endpython
+EOF
 endfunc
 
 func! PyMakeEmbed() 
-python << endpython
+Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
@@ -621,12 +628,12 @@ newtext = '\n'.join([
     indent + 'utool.embed()'
 ])
 pyvim_funcs.insert_codeblock_under_cursor(newtext)
-endpython
+EOF
 endfunc
 
 
 func! PyMakeWithEmbed(...) range
-python << endpython
+Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
@@ -643,12 +650,12 @@ if 'v' in mode.lower():
     pyvim_funcs.insert_codeblock_over_selection(newtext)
 else:
     pyvim_funcs.insert_codeblock_under_cursor(newtext)
-endpython
+EOF
 endfunc
 
 
 func! PyMakeTimerit(...) range
-python << endpython
+Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
@@ -664,11 +671,11 @@ if 'v' in mode.lower():
     pyvim_funcs.insert_codeblock_over_selection(newtext)
 else:
     pyvim_funcs.insert_codeblock_under_cursor(newtext)
-endpython
+EOF
 endfunc
 
 func! PyMakePrintLine() 
-python << endpython
+Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
@@ -677,12 +684,12 @@ expr = line.strip(' ')
 indent = pyvim_funcs.get_cursor_py_indent()
 newline = indent + "print('{expr} = %r' % ({expr},))".format(expr=expr)
 pyvim_funcs.insert_codeblock_under_cursor(newline)
-endpython
+EOF
 endfunc
 
 
 func! PyOpenFileUnderCursor() 
-python << endpython
+Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
@@ -699,11 +706,11 @@ else:
         print(word)
     # TODO: infer modules from the context with jedi perhaps
 
-endpython
+EOF
 endfunc
 
 func! PyCiteLookup() 
-python << endpython
+Python2or3 << EOF
 """
 SeeAlso:
     ~/local/vim/rc_settings/remap_settings.vim
@@ -719,12 +726,12 @@ title = bibtex_dict[word]['title'].replace('{', '').replace('}', '')
 ut.copy_text_to_clipboard(title)
 print(title)
 #print(repr(word))
-endpython
+EOF
 endfunc
 
 
 func! MarkdownPreview() 
-python << endpython
+Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
@@ -732,12 +739,12 @@ ut.rrrr(verbose=False)
 buffer_name = vim.current.buffer.name
 print('mdview buffer_name = %r' % (buffer_name,))
 os.system('mdview ' + buffer_name + '&')
-endpython
+EOF
 endfunc
 
 
 func! PyCiteScholarSearch() 
-python << endpython
+Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
@@ -758,12 +765,12 @@ url = baseurl + suffix
 print(title)
 ut.open_url_in_browser(url, 'google-chrome')
 #webbrowser.open(url)
-endpython
+EOF
 endfunc
 
 
 func! SmartSearchWordAtCursor() 
-python << endpython
+Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
@@ -790,12 +797,12 @@ else:
 #ut.open_url_in_browser(url, 'windows-default')
 ut.open_url_in_browser(url, 'google-chrome')
 #webbrowser.open(url)
-endpython
+EOF
 endfunc
 
 
 func! GrepProjectWordAtCursor() 
-python << endpython
+Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
@@ -806,23 +813,23 @@ word = pyvim_funcs.get_word_at_cursor(url_ok=False)
 print('Grepping for pattern = %r' % (word,))
 pat = r'\b' + re.escape(word) + r'\b'
 pyvim_funcs.vim_grep_project(pat, word)
-endpython
+EOF
 endfunc
 
 
 func! FUNC_UtoolReload(...) 
-python << endpython
+Python2or3 << EOF
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
 print('reloading utool')
 ut.rrrr(0)
-endpython
+EOF
 endfunc
 command! UtoolReload call FUNC_UtoolReload()
 
 
 func! FUNC_GrepProject(...) 
-python << endpython
+Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
@@ -830,14 +837,14 @@ import re
 #msg_list = ut.grep_projects(['\\b' + re.escape(word) + '\\b'], verbose=False)
 pat = vim.eval('a:1')
 pyvim_funcs.vim_grep_project(pat)
-endpython
+EOF
 endfunc
 
 command! -nargs=1 GrepProject call FUNC_GrepProject(<f-args>)<CR>
 
 
 func! PyFormatParagraph() range
-python << endpython
+Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
@@ -846,13 +853,13 @@ text = pyvim_funcs.get_selected_text(select_at_cursor=False)
 ##wrapped_text = ut.format_single_paragraph_sentences(text)
 wrapped_text = ut.format_multiple_paragraph_sentences(text)
 pyvim_funcs.insert_codeblock_over_selection(wrapped_text)
-endpython
+EOF
 endfunc
 
 
 func! SortLinesByFloat() range
 '<,'>!sort -n -k 2
-"python << endpython
+"Python2or3 << EOF
 "import vim
 "import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 "text = pyvim_funcs.get_selected_text(select_at_cursor=False)
@@ -864,7 +871,7 @@ endfunc
 
 
 func! PySelectAndFormatParagraph() 
-python << endpython
+Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
@@ -876,12 +883,12 @@ text = ut.ensure_unicode(text)
 #wrapped_text = ut.format_multiple_paragraph_sentences(text, max_width=100)
 wrapped_text = ut.format_multiple_paragraph_sentences(text, max_width=80)
 pyvim_funcs.insert_codeblock_between_lines(wrapped_text, row1, row2)
-endpython
+EOF
 endfunc
 
 
 func! PySelectAndFormatParagraphNoBreak() 
-python << endpython
+Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
@@ -892,30 +899,30 @@ text = pyvim_funcs.get_text_between_lines(row1, row2)
 text = ut.ensure_unicode(text)
 wrapped_text = ut.format_multiple_paragraph_sentences(text, max_width=None)
 pyvim_funcs.insert_codeblock_between_lines(wrapped_text, row1, row2)
-endpython
+EOF
 endfunc
 
 
 func! PyFormatDoctest() range
-python << endpython
+Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
 text = pyvim_funcs.get_selected_text()
 formated_text = ut.format_text_as_docstr(text)
 pyvim_funcs.insert_codeblock_over_selection(formated_text)
-endpython
+EOF
 endfunc
 
 func! PyUnFormatDoctest() range
-python << endpython
+Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
 text = pyvim_funcs.get_selected_text()
 formated_text = ut.unformat_text_as_docstr(text)
 pyvim_funcs.insert_codeblock_over_selection(formated_text)
-endpython
+EOF
 endfunc
 
 

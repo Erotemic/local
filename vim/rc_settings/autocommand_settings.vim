@@ -4,7 +4,7 @@
 "au!
 
 func! AuOnReadPatterns(aucmdstr, ...)
-python << endpython
+Python2or3 << endpython3
 # Executes pre-read `aucmdstr` on files matching `pattern`
 import vim
 aucmdstr = vim.eval('a:aucmdstr')
@@ -14,11 +14,11 @@ for ix in range(1, N + 1):
     cmdfmt = "au BufNewFile,BufRead {pattern} {aucmdstr}"
     cmd = cmdfmt.format(pattern=pattern, aucmdstr=aucmdstr)
     vim.command(cmd)
-endpython
+endpython3
 endfu
 
 func! AuPreWritePatterns(aucmdstr, ...)
-python << endpython
+Python2or3 << endpython3
 # Executes pre-write `aucmdstr` on files matching `pattern`
 import vim
 aucmdstr = vim.eval('a:aucmdstr')
@@ -28,12 +28,12 @@ for ix in range(1, N + 1):
     cmdfmt = "au BufWritePre {pattern} {aucmdstr}"
     cmdstr = cmdfmt.format(pattern=pattern, aucmdstr=aucmdstr)
     vim.command(cmdstr)
-endpython
+endpython3
 endfu
 
 
 func! AuFileType(aucmdstr, ...)
-python << endpython
+Python2or3 << endpython3
 # Executes `aucmdstr` on `filtypes`
 import vim
 aucmdstr = vim.eval('a:aucmdstr')
@@ -43,7 +43,7 @@ for ix in range(1, N + 1):
     cmdfmt = "au FileType {filetype} {aucmdstr}"
     cmdstr = cmdfmt.format(filetype=filetype, aucmdstr=aucmdstr)
     vim.command(cmdstr)
-endpython
+endpython3
 endfu
 
 " Associate extensions with vim filetypes

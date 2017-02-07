@@ -33,8 +33,8 @@ command! -range PEP8ALIGNDICT <line1>,<line2>call PEP8ALIGNDICT()<CR>
 
 " PYTHON IN VIM
 func! OpenSetups()
-"http://orestis.gr/blog/2008/08/10/scripting-vim-with-python/
-python << endpython
+" http://orestis.gr/blog/2008/08/10/scripting-vim-with-python/
+python3 << endpython3
 import vim
 vim.command(":exec comand stuff")
 vim.command(":set nofoldenable")
@@ -42,7 +42,7 @@ vim.command(":set nofoldenable")
 #vim.eval - evaluate a vim expression and return the result
 #vim.current.window.cursor - get the cursor position as (row, col) (row is 1-based, col is 0-based)
 #vim.current.buffer - a list of the lines in the current buffer (0-based, unfortunately)
-endpython
+endpython3
 endfu
 
 

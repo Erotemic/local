@@ -90,7 +90,7 @@ endif
 
 " References for warnings
 "# http://sourceforge.net/p/vim-latex/vim-latex/ci/6607de98f5c05e50956b62f43cd67ac257f7b51f/tree/compiler/tex.vim?diff=841cfca18443ccbb07bbdfffeb9847be6e0f3f1d
-python << endpython
+Python2or3 << EOF
 import vim
 ignore_warnings = [
     'Underfull',
@@ -111,7 +111,7 @@ args1 = '\n'.join(ignore_warnings)
 args2 = ','.join(["'%s'" % x for x in ignore_warnings])
 vim.command('let g:Tex_IgnoredWarnings = "%s"' % args1)
 vim.command('let g:LatexBox_ignore_warnings = [%s]' % args2)
-endpython
+EOF
 "let g:Tex_IgnoredWarnings =
 "    \'Underfull'."\n".
 "    \'Overfull'."\n".
@@ -153,7 +153,7 @@ let g:syntastic_tex_checkers=['chktex']
 " SCRIPTING VIM IN PYTHON 
 " http://orestis.gr/blog/2008/08/10/scripting-vim-with-python/
 
-python << endpython
+Python2or3 << EOF
 import vim
 latex_errors = [
 ] 
@@ -162,4 +162,4 @@ ccktex_args_list = [
 ]
 args = ' '.join(ccktex_args_list)
 #vim.command('let g:syntastic_tex_chktex_args = "%s"' % args)
-endpython
+EOF
