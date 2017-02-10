@@ -217,6 +217,8 @@ if has("conceal") && &enc == 'utf-8'
         \ ['Isect'		, '∩'],
         \ ['bigcap'		, '∩'],
         \]
+        "\ ['oedge'		, 'δ⁺'],
+        "\ ['iedge'		, 'δ⁻'],
         "\ ['Union'		, '⋃'],
         "\ ['bigcup'		, '⋃'],
         "\ ['Isect'		, '⋂'],
@@ -230,5 +232,26 @@ if has("conceal") && &enc == 'utf-8'
             endif
         endfor
 
+      "let s:texMathListDoubleExtra=[
+      "  \ ['oedge', 'δ', '⁺'],
+      "  \ ['iedge', 'δ', '⁻'],
+      "\]
+      "for texmath in s:texMathListDoubleExtra
+      "    exe "syn match ".texmath[0]."Part1 contained '\\\\' conceal cchar=".texmath[1]
+      "    exe "syn match ".texmath[0]."Part2 contained '".texmath[0]."' conceal cchar=".texmath[2]
+      "    exe "syn match texMathSymbol '\\\\".texmath[0]."' contains=".texmath[0]."Part1,".texmath[0]."Part2"
+      "endfor
+      "" Replaces using multiple characters
+      "syn match OEdgePart1 contained "\\" conceal cchar=δ
+      "syn match OEdgePart2 contained "oedge" conceal cchar=⁺
+      "syn match texMathSymbol "\\oedge" contains=OEdgePart1,OEdgePart2
+
+      "" Replaces using multiple characters
+      "syn match IEdgePart1 contained "\\" conceal cchar=δ
+      "syn match IEdgePart2 contained "iedge" conceal cchar=⁺
+      "syn match texMathSymbol "\\iedge" contains=IEdgePart1,IEdgePart2
+
+      syn match texMathSymbol "\\where" contained conceal cchar=∣
+      syn match texMathSymbol "\\given" contained conceal cchar=∣
     endif
 endif
