@@ -24,11 +24,10 @@ let g:LatexBox_latexmk_async = 1
 let g:LatexBox_viewer = "okular --unique"
 "let g:LatexBox_latexmk_preview_continuously = 1
 let g:LatexBox_latexmk_preview_continuously = 0
-let g:LatexBox_build_dir="auxdir"
 let g:LatexBox_quickfix=2
 "let g:LatexBox_build_dir="auxdir"
 
-
+ 
 function! SyncTexForward()
   " https://www.reddit.com/r/vimplugins/comments/32t0xc/forward_search_with_latexbox/
   let s:syncfile = LatexBox_GetOutputFile()

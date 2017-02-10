@@ -81,7 +81,7 @@ install_core()
     sudo apt-get install rkhunter
 }
 
-truely_ero_setup()
+truely_ergonomic_keyboard_setup()
 {
     sudo apt-get install lm-sensors
     sudo apt-get install hardinfo
@@ -102,9 +102,7 @@ truely_ero_setup()
     wget http://security.ubuntu.com/ubuntu/pool/universe/w/wxwidgets3.0/libwxgtk-webview3.0-0_3.0.2-1_amd64.deb
     sudo dpkg -i libwx*.deb
     sudo ./tek
-
     # Now 
-
 }
 
 install_dropbox()
@@ -118,19 +116,22 @@ install_dropbox()
 
 install_zotero()
 {
-    # Zotero
-    #sudo add-apt-repository ppa:smathot/cogscinl
-    #sudo apt-get update
-    #sudo apt-get install -y zotero-standalone 
-    #python -c "import ssl; print ssl.OPENSSL_VERSION"
-
-    #python3 -c "import utool; print(utool.grab_file_url(\"$@\", spoof=True))"
-    #python3 -c "import utool; print(utool.grab_file_url(\"https://download.zotero.org/standalone/4.0.26.3/Zotero-4.0.26.3_linux-x86_64.tar.bz2\", spoof=True))"
-    
-
+    # Find the most recent release URL
+    export ZOTERO_URL=$(python -c "
+    from bs4 import BeautifulSoup
+    import requests
+    url = 'https://www.zotero.org/download/'
+    html = requests.get(url).content
+    soup = BeautifulSoup(html, 'html.parser')
+    tags = [h for h in soup.find_all('a') if 'Download' in h.text and 'Linux 64-bit' in h.text]
+    href = tags[0].get('href')
+    print(href)
+    ")
+    echo "ZOTERO_URL=$ZOTERO_URL"
+    #https://download.zotero.org/standalone/4.0.29.10/Zotero-4.0.29.10_linux-x86_64.tar.bz2
     cd ~/tmp
-    wget https://download.zotero.org/standalone/4.0.28/Zotero-4.0.28_linux-x86_64.tar.bz2
-    utarbz2 Zotero-4.0.*_linux-x86_64.tar.bz2
+    wget $ZOTERO_URL
+    utarbz2 Zotero-*_linux-x86_64.tar.bz2
     sudo cp -r Zotero_linux-x86_64 /opt/zotero
     # Change permissions so zotero can automatically update itself
     sudo chown -R root:$USER /opt/zotero
