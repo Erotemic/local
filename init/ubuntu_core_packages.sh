@@ -963,3 +963,9 @@ setup_ssh_server()
 
     msudo restart ssh || sudo systemctl restart ssh
 }
+
+
+automount_drives(){
+    # https://help.ubuntu.com/community/Fstab
+    sudo blkid
+}
