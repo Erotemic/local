@@ -8,24 +8,24 @@
 
 --regex-tex2=/^\s*\\chapter\s*\{([^:]*)\}$/+ \1/p,chapter/
 --regex-tex2=/^\s*\\chapter\s*\{([^:]*)\}[:]*\\label/+ \1/p,chapter/
---regex-tex2=/^\s*\\section\s*\{([^:]*)\}$/+-- \1/p,section/
---regex-tex2=/^\s*\\section\s*\{([^:]*)\}[:]*\\label/+-- \1/p,section/
---regex-tex2=/^\s*\\subsection\s*\{([^:]*)\}$/+---- \1/p,subsection/
---regex-tex2=/^\s*\\subsection\s*\{([^:]*)\}[:]*\\label/+---- \1/p,subsection/
---regex-tex2=/^\s*\\subsubsection\s*\{([^:]*)\}$/+------ \1/p,subsubsection/
---regex-tex2=/^\s*\\subsubsection\s*\{([^:]*)\}[:]*\\label/+------ \1/p,subsubsection/
---regex-tex2=/^\s*\\paragraph\s*\{([^:]*)\}$/+-------- \1/P,paragraph/
---regex-tex2=/^\s*\\paragraph\s*\{([^:]*)\}[:]*\\label/+-------- \1/P,paragraph/
+--regex-tex2=/^\s*\\section\s*\{([^:]*)\}$/+-* \1/p,section/
+--regex-tex2=/^\s*\\section\s*\{([^:]*)\}[:]*\\label/+-* \1/p,section/
+--regex-tex2=/^\s*\\subsection\s*\{([^:]*)\}$/+---* \1/p,subsection/
+--regex-tex2=/^\s*\\subsection\s*\{([^:]*)\}[:]*\\label/+---* \1/p,subsection/
+--regex-tex2=/^\s*\\subsubsection\s*\{([^:]*)\}$/+-----* \1/p,subsubsection/
+--regex-tex2=/^\s*\\subsubsection\s*\{([^:]*)\}[:]*\\label/+-----* \1/p,subsubsection/
+--regex-tex2=/^\s*\\paragraph\s*\{([^:]*)\}$/+-------* \1/P,paragraph/
+--regex-tex2=/^\s*\\paragraph\s*\{([^:]*)\}[:]*\\label/+-------* \1/P,paragraph/
 
 
 
 --langdef=markdown
 --langmap=markdown:.md
 --regex-markdown=/^#[ \t]*([^#]*)$/+ \1/h,header,Markdown Headers/
---regex-markdown=/^##[ \t]*([^#]*)$/+-- \1/h,header,Markdown Headers/
---regex-markdown=/^###[ \t]*([^#]*)$/+---- \1/h,header,Markdown Headers/
---regex-markdown=/^####[ \t]*([^#]*)$/+------ \1/h,header,Markdown Headers/
---regex-markdown=/^#####[ \t]*([^#]*)$/+-------- \1/h,header,Markdown Headers/
---regex-markdown=/^######[ \t]*([^#]*)$/+---------- \1/h,header,Markdown Headers/
+--regex-markdown=/^##[ \t]*([^#]*)$/+-* \1/h,header,Markdown Headers/
+--regex-markdown=/^###[ \t]*([^#]*)$/+---* \1/h,header,Markdown Headers/
+--regex-markdown=/^####[ \t]*([^#]*)$/+-----* \1/h,header,Markdown Headers/
+--regex-markdown=/^#####[ \t]*([^#]*)$/+-------* \1/h,header,Markdown Headers/
+--regex-markdown=/^######[ \t]*([^#]*)$/+---------* \1/h,header,Markdown Headers/
 --regex-markdown=/\[([^\[]+)\]\(([^\)]+)\)/\1/l,link,Markdown Links/
 --regex-markdown=/!\[\]\(.*[\/ ](.*\.[a-z]{3})\)/\1/i,image,Markdown Image/

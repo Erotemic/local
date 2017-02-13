@@ -96,6 +96,7 @@ import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
 import utool.util_ubuntu
+from os.path import dirname
 ut.rrrr(verbose=False)
 
 return_to_vim = True
