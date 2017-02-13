@@ -134,3 +134,8 @@ complete -W "gp focus kill project_dpaths sync_clipboard_to grepnr printproc_2 s
 #source ~/.config/ibeis/ibeis_bash_complete.sh
 
 #echo "PATH(post-bashrc) = $PATH"
+
+#clean_pathvar PATH
+#clean_pathvar LD_LIBRARY_PATH
+export PATH=$(clean_pathvar PATH)
+export LD_LIBRARY_PATH=$(clean_pathvar LD_LIBRARY_PATH)

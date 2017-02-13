@@ -334,13 +334,36 @@ tcp()
 
 remove_ld_library_path()
 {
-    # http://stackoverflow.com/questions/370047/what-is-the-most-elegant-way-to-remove-a-path-from-the-path-variable-in-bash
-    #_PATHVAR=$1
-    _VAL=$1
-    _NEW_PATH=$(python -c "import os; path = os.environ['LD_LIBRARY_PATH'].split(os.pathsep); del path[path.index('$_VAL')]; print(os.pathsep.join(path))")
-    export LD_LIBRARY_PATH=$_NEW_PATH
-    #python -c "import os; path = os.environ['LD_LIBRARY_PATH'].split(os.pathsep); print('\n'.join(path))"
-    #python -c "import os; path = os.environ['LD_LIBRARY_PATH'].split(os.pathsep); print(os.pathsep.join(path))"
+# http://stackoverflow.com/questions/370047/what-is-the-most-elegant-way-to-remove-a-path-from-the-path-variable-in-bash
+#_PATHVAR=$1
+_VAL=$1
+_NEW_PATH=$(python -c "
+import os
+val = '$_VAL'
+path = os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
+newpath = [p for p in path if p and p != val]
+print(os.pathsep.join(newpath))
+")
+export LD_LIBRARY_PATH=$_NEW_PATH
+#python -c "import os; path = os.environ['LD_LIBRARY_PATH'].split(os.pathsep); print('\n'.join(path))"
+#python -c "import os; path = os.environ['LD_LIBRARY_PATH'].split(os.pathsep); print(os.pathsep.join(path))"
+}
+
+clean_pathvar()
+{
+# clean_pathvar LD_LIBRARY_PATH
+# clean_pathvar PATH
+python -c "
+import os
+parts = os.environ['$1'].split(os.pathsep)
+seen = set([])
+fixed = []
+for p in parts:
+    if p and p not in seen:
+        seen.add(p)
+        fixed.append(p)
+print(os.pathsep.join(fixed))
+"
 }
 
 switch_venv()
@@ -349,9 +372,11 @@ switch_venv()
     OLD_VENV=$VIRTUAL_ENV
     if [ "$OLD_VENV" != "" ]; then
         # reset LD_LIBRARY_PATH 
+        remove_ld_library_path $OLD_VENV/local/lib
         remove_ld_library_path $OLD_VENV/lib
         deactivate
     fi
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$NEW_VENV/local/lib
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$NEW_VENV/lib
     source $NEW_VENV/bin/activate
 }
