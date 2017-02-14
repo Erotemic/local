@@ -149,6 +149,8 @@ source ~/local/vim/vimfiles/autoload/pathogen.vim
 syntax on
 filetype plugin indent on
 
+"call virtualenv#activate('venv3')
+
 
 " PLUGIN: External non-plugin source files
 source ~/local/vim/rc/align.vim

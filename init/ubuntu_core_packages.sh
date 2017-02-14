@@ -292,7 +292,7 @@ install_latex()
     cd ~/tmp
     wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
     tar xzvf install-tl-unx.tar.gz
-    cd install-tl-*
+    cd ~/tmp/install-tl-*
     #export TEXLIVE_INSTALL_PREFIX=/opt/texlive
     #export TEXDIR=/opt/texlive
     chmod +x install-tl
@@ -303,6 +303,21 @@ install_latex()
     #python -m utool.util_cplat --exec-get-path-dirs:0
 
     sudo apt-get install latexmk
+
+    # Support for utf8
+    #sudo tlmgr install euenc
+     
+    # Fix TL2016 bug
+    # https://www.tug.org/pipermail/tex-live/2016-June/038678.html
+    #http://tex.stackexchange.com/questions/27982/what-are-texlives-four-different-texmf-folders
+    file /usr/local/texlive/2016/texmf-dist/tex/latex/algorithm2e/algorithm2e.sty
+    cat /usr/local/texlive/2016/texmf-dist/tex/latex/algorithm2e/algorithm2e.sty
+    ls -al /usr/local/texlive/2016/texmf-dist/tex/latex/algorithm2e/algorithm2e.sty
+    sudo cp /usr/local/texlive/2016/texmf-dist/tex/latex/algorithm2e/algorithm2e.sty algorithm2e.sty.backup
+    #sudo cp algorithm2e.sty.backup /usr/local/texlive/2016/texmf-dist/tex/latex/algorithm2e/algorithm2e.sty
+    iconv -f ISO-8859-1 -t UTF-8//TRANSLIT algorithm2e.sty.backup -o ~/latex/crall-iccv-2017/algorithm3e.sty
+    file ~/latex/crall-iccv-2017/algorithm3e.sty
+    
 }
 
 

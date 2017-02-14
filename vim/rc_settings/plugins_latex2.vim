@@ -7,7 +7,8 @@ hi Conceal guibg=Black guifg=Orange
 let b:tex_stylish = 1
 "set ft=tex
 
-
+" Other settings are contained in
+" ~/.latexmkrc
 
 " For latex tex_conceal
 let g:tex_superscripts= '[0-9a-zA-W.,:;+-<>/()=]'
