@@ -114,7 +114,7 @@ cd ~/tmp
 wget $PYQT_URL/$PYQT_SNAPSHOT.tar.gz
 tar xzvf $PYQT_SNAPSHOT.tar.gz 
 cd ~/tmp/$PYQT_SNAPSHOT
-python configure.py --help 
+#python configure.py --help 
 python configure.py --confirm-license --no-designer-plugin \
     -debug \
     --qmake=$VIRTUAL_ENV/local/qt/bin/qmake \
