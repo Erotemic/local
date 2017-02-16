@@ -341,11 +341,11 @@ sudo apt-get install hplip
 
 # USE THE SYSTEM PRINTER INSTEAD
 system-config-printer
+# hit add printer, select network, and then find XeroxPhaser63000DN
+
 # or use the CPUS web interface at
 http://localhost:631
-
 # This by itself doesnt seem to work 
-
 sudo sh -c 'cat >> /etc/cups/printers.conf << EOL
 <DefaultPrinter Xerox-Phaser-6300DN>
 UUID urn:uuid:fa12f4f5-4401-3be7-7c43-e1583d40f019

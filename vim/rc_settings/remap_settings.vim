@@ -87,6 +87,7 @@ noremap  <leader>w :call CopyGVimToTerminalDev('word', 1)<CR>
 noremap  <leader>m :call CopyGVimToTerminalDev('word', 1)<CR>
 
 noremap  <leader>M :call IPythonImportAll()<CR>
+noremap  <leader>x :call IPyFixEmbedGlobals()<CR>
 
 "+========= Not so used 
 noremap  <leader>pd :call CopyGVimToTerminalDev(mode(), 1)<CR>
@@ -104,8 +105,8 @@ noremap  <leader>pw :call CopyGVimToTerminalDev('word', 1)<CR>
 "L__________ Not so used 
 
 " Focus on terminal
-noremap  <leader>ft :call FocusTerm()<CR>
-noremap  <leader>pt :call FocusTerm()<CR>
+"noremap  <leader>ft :call FocusTerm()<CR>
+"noremap  <leader>pt :call FocusTerm()<CR>
 
 "-range PassRange <line1>,<line2>call PrintGivenRange()
 

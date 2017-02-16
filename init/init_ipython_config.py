@@ -39,27 +39,29 @@ def write_default_ipython_profile():
         # STARTBLOCK
         c = get_config()  # NOQA
         c.InteractiveShellApp.exec_lines = []
-        future_line = (
-            'from __future__ import absolute_import, division, print_function, with_statement, unicode_literals')
-        c.InteractiveShellApp.exec_lines.append(future_line)
-        # Fix sip versions
-        try:
-            import sip
-            # http://stackoverflow.com/questions/21217399/pyqt4-qtcore-qvariant-object-instead-of-a-string
-            sip.setapi('QVariant', 2)
-            sip.setapi('QString', 2)
-            sip.setapi('QTextStream', 2)
-            sip.setapi('QTime', 2)
-            sip.setapi('QUrl', 2)
-            sip.setapi('QDate', 2)
-            sip.setapi('QDateTime', 2)
-            if hasattr(sip, 'setdestroyonexit'):
-                sip.setdestroyonexit(False)  # This prevents a crash on windows
-        except ImportError as ex:
-            pass
-        except ValueError as ex:
-            print('Warning: Value Error: %s' % str(ex))
-            pass
+        import six
+        if six.PY2:
+            future_line = (
+                'from __future__ import absolute_import, division, print_function, with_statement, unicode_literals')
+            c.InteractiveShellApp.exec_lines.append(future_line)
+            # Fix sip versions
+            try:
+                import sip
+                # http://stackoverflow.com/questions/21217399/pyqt4-qtcore-qvariant-object-instead-of-a-string
+                sip.setapi('QVariant', 2)
+                sip.setapi('QString', 2)
+                sip.setapi('QTextStream', 2)
+                sip.setapi('QTime', 2)
+                sip.setapi('QUrl', 2)
+                sip.setapi('QDate', 2)
+                sip.setapi('QDateTime', 2)
+                if hasattr(sip, 'setdestroyonexit'):
+                    sip.setdestroyonexit(False)  # This prevents a crash on windows
+            except ImportError as ex:
+                pass
+            except ValueError as ex:
+                print('Warning: Value Error: %s' % str(ex))
+                pass
         c.InteractiveShellApp.exec_lines.append('%load_ext autoreload')
         c.InteractiveShellApp.exec_lines.append('%autoreload 2')
         #c.InteractiveShellApp.exec_lines.append('%pylab qt4')

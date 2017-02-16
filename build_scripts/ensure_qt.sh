@@ -1,3 +1,4 @@
+# See init_qt5 for new version
 
 qt_linux_installer(){
     # http://www.qt.io/download-open-source/

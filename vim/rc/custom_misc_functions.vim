@@ -4,11 +4,27 @@
 "
 """
 
+
+func! IPyFixEmbedGlobals(...) range
 Python2or3 << EOF
-"""
-%s/^python << /Python2or3 << /gc
-"""
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool.util_ubuntu
+import utool as ut
+ut.rrrr(0)
+ut.util_ubuntu.rrr(0)
+ut.copy_text_to_clipboard('ut.fix_embed_globals()')
+doscript = [
+    ('remember_window_id', 'ACTIVE_GVIM'),
+    ('focus', 'x-terminal-emulator.X-terminal-emulator'),
+    ('key', 'ctrl+shift+v'),
+    ('key', 'KP_Enter'),
+    ('focus_id', '$ACTIVE_GVIM'),
+]
+ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01)
+#L______________
 EOF
+endfu 
 
 
 func! CopyGVimToTerminalDev(...) range
