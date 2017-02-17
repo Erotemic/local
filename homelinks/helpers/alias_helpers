@@ -467,3 +467,8 @@ ge()
 {
     python -m utool.util_ubuntu XCtrl.current_gvim_edit e $1
 }
+
+mylayout(){
+python -m utool.util_ubuntu XCtrl.move_window GVIM special2
+python -m utool.util_ubuntu XCtrl.move_window joncrall special2
+}

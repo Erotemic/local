@@ -109,8 +109,10 @@ freshtart_ubuntu_entry_point()
     sudo apt-get install -y build-essential 
     sudo apt-get install -y python-dev
     sudo apt-get install -y python3-dev 
+    sudo apt-get install python3-tk -y
+    sudo apt-get install python-tk -y
 
-    sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 10
+    #sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 10
 
     # Python 
     #sudo apt-get install python-dev -y
