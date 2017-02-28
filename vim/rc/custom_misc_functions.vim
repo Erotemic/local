@@ -329,12 +329,7 @@ else
   au! BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
 endif
 endfunction
-
-"perl -pi -e 's/[[:^ascii:]]//g' wiki_scale_list.py
-
-fu! FUNC_REPLACE_BACKSLASH()
-    :s/\\/\//g
-endfu
+command! TextWidthLineOn call FUNC_TextWidthLineOn()
 
 
 """"""""""""""""""""""""""""""""""
@@ -391,39 +386,6 @@ fpath_list = [
 pyvim_funcs.open_fpath_list(fpath_list, num_hsplits=2)
 EOF
 endfu
-
-
-func! TabOpenVimRC()
-Python2or3 << EOF
-import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-fpath_list = [
-        '~/local/vim/portable_vimrc',
-        '~/local/vim/rc_settings/remap_settings.vim',
-        '~/local/vim/rc/custom_misc_functions.vim',
-        #'~/local/vim/rc/pyvim_funcs.py',
-    ]
-pyvim_funcs.open_fpath_list(fpath_list, num_hsplits=3)
-EOF
-endfu
-command! Tovimrc call TabOpenVimRC()
-
-
-""""""""""""""""""""""""""""""""""
-
-func! TabOpenAutogen()
-Python2or3 << EOF
-import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-fpath_list = [
-        '~/code/utool/utool/util_inspect.py',
-        '~/code/utool/utool/util_autogen.py',
-    ]
-pyvim_funcs.open_fpath_list(fpath_list, num_hsplits=2)
-EOF
-endfu
-command! Toautogen call TabOpenAutogen()
-
 
 """"""""""""""""""""""""""""""""""
 
@@ -606,19 +568,6 @@ else:
 #L______________
 EOF
 endfu 
-
-
-func! ReloadVIMRC()
-    source ~/local/vim/portable_vimrc
-endfu
-
-
-"func! GetSelectedText()
-"  normal gv"xy
-"  let result = getreg("x")
-"  normal gv
-"  return result
-"endfunc
 
 
 func! PyMakePrintVar() 
@@ -849,14 +798,10 @@ func! FUNC_GrepProject(...)
 Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool as ut
-import re
-#msg_list = ut.grep_projects(['\\b' + re.escape(word) + '\\b'], verbose=False)
 pat = vim.eval('a:1')
 pyvim_funcs.vim_grep_project(pat)
 EOF
 endfunc
-
 command! -nargs=1 GrepProject call FUNC_GrepProject(<f-args>)<CR>
 
 
@@ -942,21 +887,11 @@ pyvim_funcs.insert_codeblock_over_selection(formated_text)
 EOF
 endfunc
 
-
-" ========= Functions ========= "
-"command! TextWidthMarkerOn call FUNC_TextWidthMarkerOn()
-" Textwidth command
-"command! TextWidth80 set textwidth=80
-command! TextWidthLineOn call FUNC_TextWidthLineOn()
-
 "-------------------------
 command! HexmodeOn :%!xxd
 command! HexmodeOff :%!xxd -r 
 "-------------------------
 
-command! Bufloadpy :args *.py
-"command! SAVESESSION :mksession ~/mysession.vim
-"command! LOADSESSION :mksession ~/mysession.vim
-
-"command! SAVEHSSESSION :mksession ~/vim_hotspotter_session.vim
-"command! LOADHSSESSION :source ~/vim_hotspotter_session.vim
+" http://vim.wikia.com/wiki/View_text_file_in_two_columns
+:noremap <silent> <Leader>b :<C-u>let @z=&so<CR>:set so=0 noscb<CR>:bo vs<CR>Ljzt:setl scb<CR><C-w>p:setl scb<CR>:let &so=@z<CR>
+"command! TwoColumnEdit :<C-u>let @z=&so<CR>:set so=0 noscb<CR>:bo vs<CR>Ljzt:setl scb<CR><C-w>p:setl scb<CR>:let &so=@z<CR>
