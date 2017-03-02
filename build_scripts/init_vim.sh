@@ -22,14 +22,28 @@ help(){
 
 #make distclean
 
+
+# Check version of gtk
+dpkg -l libgtk* | grep -e '^i' | grep -e 'libgtk-*[0-9]'
+pkg-config --modversion gtk+-3.0
+
+sudo apt-get update
+sudo apt-get install libgtk-3-0
+
+
+
+#CFLAGS="$CFLAG -O3"
 deactivate
 make distclean
+
+# GUI options:
+#auto/no/gtk2/gnome2/gtk3/motif/athena/neXtaw/photon/carbon
 
 ./configure \
     --prefix=$HOME \
     --enable-pythoninterp=no \
     --enable-python3interp=yes \
-    --enable-gui=gtk2
+    --enable-gui=gtk3
 
     #--with-vim-name=vim-8 \
     #--with-ex-name=ex-8 \
