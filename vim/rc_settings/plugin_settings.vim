@@ -298,6 +298,7 @@ flake8_errors = [
     'E271',  # multiple spaces after keyword
     'E272',  # multiple spaces before keyword
     'E301',  # expected 1 blank line, found 0
+    'E305',  # expected 1 blank line after class / func
     'E306',  # expected 1 blank line before func
     #'E402',  # moduel import not at top
     'E501',  # line length > 79
