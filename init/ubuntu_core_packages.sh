@@ -140,14 +140,36 @@ install_zotero()
 
     python -m utool.util_ubuntu --exec-make_application_icon --exe=/opt/zotero/zotero --icon=/opt/zotero/chrome/icons/default/main-window.ico -w
 
-    # Need to do tools->Add-Ons->(setting icon)->Add from file
+    # Install Better-Bibtex AddOn
+    # Find the lastest version
+    export LATEXT_BETTER_BIB_XPI=$(python -c "
+    from bs4 import BeautifulSoup
+    import requests, re
+    url = 'https://github.com/retorquere/zotero-better-bibtex/releases/latest/'
+    html = requests.get(url).content
+    soup = BeautifulSoup(html, 'html.parser')
+    #pat = r'zotero-better-bibtex-.*.xpi'
+    pat = r'.xpi'
+    tags = [h for h in soup.find_all('a') if '.xpi' in h.text]
+    href = tags[0].get('href')
+    print('https://github.com' + href)
+    ")
+    echo "LATEXT_BETTER_BIB_XPI=$LATEXT_BETTER_BIB_XPI"
+
+    # Need to do tools->Add-Ons->(setting icon)->Install Addon from file
     # view citation key
-    https://github.com/ZotPlus/zotero-better-bibtex
-    https://github.com/ZotPlus/zotero-better-bibtex/releases/download/1.6.30/zotero-better-bibtex-1.6.30.xpi
+    cd ~/tmp
+    wget $LATEXT_BETTER_BIB_XPI
+
+    #https://github.com/ZotPlus/zotero-better-bibtex
+    # Find the lastest XPI
+    #https://github.com/retorquere/zotero-better-bibtex/releases/latest
+    # Download the XPI
+    #https://github.com/ZotPlus/zotero-better-bibtex/releases/download/1.6.30/zotero-better-bibtex-1.6.30.xpi
     # others...
-    http://www.rtwilson.com/academic/autozotbib
-    http://www.rtwilson.com/academic/autozotbib.xpi
-    https://addons.mozilla.org/en-US/firefox/addon/zotero-scholar-citations/
+    #http://www.rtwilson.com/academic/autozotbib
+    #http://www.rtwilson.com/academic/autozotbib.xpi
+    #https://addons.mozilla.org/en-US/firefox/addon/zotero-scholar-citations/
 }
 
 install_core_extras()
