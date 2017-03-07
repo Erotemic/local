@@ -247,10 +247,11 @@ setup_venv2(){
     # sudo update-alternatives --set pip /usr/local/bin/pip2.7
     # sudo rm /usr/local/bin/pip
     # sudo ln -s /usr/local/bin/pip2.7 /usr/local/bin/pip
-    sudo apt-get install curl -y
-    sudo curl https://bootstrap.pypa.io/get-pip.py | sudo python2
+    if [ ! -f $(which pip2) ]; then
+        sudo apt-get install curl -y
+        sudo curl https://bootstrap.pypa.io/get-pip.py | sudo python2
+    fi
     sudo pip2 install pip setuptools virtualenv -U
-
     export PYTHON2_VENV="$HOME/venv2"
     mkdir $PYTHON2_VENV
     python2 -m virtualenv -p /usr/bin/python2.7 $PYTHON2_VENV 
@@ -259,8 +260,10 @@ setup_venv2(){
 
 setup_venv3(){
     # Ensure PIP, setuptools, and virtual are on the SYSTEM
-    sudo apt-get install curl -y
-    sudo curl https://bootstrap.pypa.io/get-pip.py | sudo python3
+    if [ ! -f $(which pip3) ]; then
+        sudo apt-get install curl -y
+        sudo curl https://bootstrap.pypa.io/get-pip.py | sudo python3
+    fi
     sudo pip3 install pip setuptools virtualenv -U
 
     export PYTHON3_VENV="$HOME/venv3"
