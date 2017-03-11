@@ -376,6 +376,7 @@ switch_venv()
         remove_ld_library_path $OLD_VENV/lib
         deactivate
     fi
+    # local/lib might be a hack... not sure
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$NEW_VENV/local/lib
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$NEW_VENV/lib
     source $NEW_VENV/bin/activate

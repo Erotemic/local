@@ -2,6 +2,9 @@
 export QT_ACCESSIBILITY=0
 export QT_API=pyqt
 
+#export PYTHONWARNINGS="once"
+#export PYTHONWARNINGS="default"
+
 #echo << EOF
 ## There are a few places where environment variables are set before .bashrc
 ## They are:
