@@ -1,16 +1,21 @@
+# Three step process
+# 1) Build and install Qt5
+# 2) Build and install sip
+# 3) Build and install PyQt5
+
 # https://wiki.qt.io/Building_Qt_5_from_Git
-http://download.qt.io/official_releases/qt/5.8/5.8.0/single/qt-everywhere-opensource-src-5.8.0.tar.gz
+# http://download.qt.io/official_releases/qt/5.8/5.8.0/single/qt-everywhere-opensource-src-5.8.0.tar.gz
+# Build Qt5 by itself
 
 sudo apt-get build-dep qt5-default
 sudo apt-get install libxcb-xinerama0-dev 
 sudo apt-get install flex bison gperf libicu-dev libxslt-dev ruby
 
-
 #================================================================
 cd ~/code
 git clone https://code.qt.io/qt/qt5.git
 #git clone https://github.com/qt/qt5.git
-cd qt5
+cd ~/code/qt5
 ./init-repository --module-subset=default,-qtwebkit,-qtwebkit-examples,-qtwebengine 
 #git checkout 5.9
 #git submodule update --init
@@ -35,13 +40,14 @@ git submodule update
 make -j9
 make install
 
-
 ls $VIRTUAL_ENV/local/qt
 ls $VIRTUAL_ENV/local/qt/lib
 
 
 #================================================================
 # Still no github for sip
+
+python -m pip install bs4
 export SIP_VERSION=$(python -c "
 import bs4
 import requests
@@ -54,19 +60,27 @@ for a in soup.find_all('a'):
         print(href[len(prefix):-1])
         break
 ")
+export SOABI=$(python -c "from distutils import sysconfig; print(sysconfig.get_config_vars().get('SOABI', 'py2'))")
 export SIP_URL=http://sourceforge.net/projects/pyqt/files/sip/sip-$SIP_VERSION
 export SIP_SNAPSHOT=sip-$SIP_VERSION
 export INCLUDE_DIR=$(echo $VIRTUAL_ENV/include/python*)
 export SITE_PACKAGES_DIR=$(python -c "import utool as ut; print(ut.get_site_packages_dir())")
+export NCPUS=$(grep -c ^processor /proc/cpuinfo)
+echo "SOABI=$SOABI"
+echo "SIP_SNAPSHOT=$SIP_SNAPSHOT"
+echo "SIP_URL=$SIP_URL"
 echo "INCLUDE_DIR=$INCLUDE_DIR"
 echo "SITE_PACKAGES_DIR=$SITE_PACKAGES_DIR"
-cd ~/tmp
-rm -rf $SIP_SNAPSHOT
+
+# make a directory for this specific build version
+mkdir -p ~/tmp/sip-$SOABI
+cd ~/tmp/sip-$SOABI
+#rm -rf $SIP_SNAPSHOT
 wget $SIP_URL/$SIP_SNAPSHOT.tar.gz
 tar xzfv $SIP_SNAPSHOT.tar.gz
 
-cd ~/tmp/$SIP_SNAPSHOT
-python configure.py --help
+cd ~/tmp/sip-$SOABI/$SIP_SNAPSHOT
+#python configure.py --help
 mkdir $VIRTUAL_ENV/local/share/sip
 python configure.py --debug \
     --incdir=$VIRTUAL_ENV/local/include \
@@ -75,13 +89,12 @@ python configure.py --debug \
     --pyidir=$SITE_PACKAGES_DIR \
     --destdir=$SITE_PACKAGES_DIR
 
-make -j9
+make -j$NCPUS 
 make install
 #--sysroot=$VIRTUAL_ENV 
-make -j$NCPUS 
 # Need to fix virtualenv problem with a symlinked python include directory
 # before this command will work.
-make install
+#make install
 python -c "import sip; print('[test] Python can import sip')"
 python -c "import sip; print('sip.__file__=%r' % (sip.__file__,))"
 python -c "import sip; print('sip.SIP_VERSION=%r' % (sip.SIP_VERSION,))"
@@ -103,20 +116,29 @@ for a in soup.find_all('a'):
         print(href[len(prefix):-1])
         break
 ")
+export SOABI=$(python -c "from distutils import sysconfig; print(sysconfig.get_config_vars().get('SOABI', 'py2'))")
 export PYQT_URL=http://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-$PYQT_VERSION
 export PYQT_SNAPSHOT=PyQt5_gpl-$PYQT_VERSION
 export INCLUDE_DIR=$(echo $VIRTUAL_ENV/include/python*)
+export NCPUS=$(grep -c ^processor /proc/cpuinfo)
+echo "SOABI=$SOABI"
 echo "INCLUDE_DIR=$INCLUDE_DIR"
 echo "PYQT_VERSION=$PYQT_VERSION"
 echo "PYQT_URL=$PYQT_URL"
 echo "PYQT_SNAPSHOT=$PYQT_SNAPSHOT"
-cd ~/tmp
+
+# make a directory for this specific build version
+mkdir -p ~/tmp/pyqt-$SOABI
+cd ~/tmp/pyqt-$SOABI
 wget $PYQT_URL/$PYQT_SNAPSHOT.tar.gz
 tar xzvf $PYQT_SNAPSHOT.tar.gz 
-cd ~/tmp/$PYQT_SNAPSHOT
-#python configure.py --help 
-python configure.py --confirm-license --no-designer-plugin \
-    -debug \
+cd ~/tmp/pyqt-$SOABI/$PYQT_SNAPSHOT
+
+python configure.py --help 
+
+ls $VIRTUAL_ENV/local/qt/bin
+
+python configure.py --confirm-license --no-designer-plugin --debug \
     --qmake=$VIRTUAL_ENV/local/qt/bin/qmake \
     --sip-incdir=$VIRTUAL_ENV/local/include \
     --sip=$VIRTUAL_ENV/local/bin/sip
@@ -125,6 +147,9 @@ python configure.py --confirm-license --no-designer-plugin \
 #--target-py-version=2.7
 make -j$NCPUS 
 make install
+
+ls ~/venv3_5/lib/python3.5/site-packages/PyQt5
+ls ~/venv3_7/lib/python3.7/site-packages/PyQt5
 
 python -c "import PyQt5; print('[test] SUCCESS import PyQt5: %r' % PyQt5)"
 python -c "from PyQt5 import QtGui; print('[test] SUCCESS import QtGui: %r' % QtGui)"

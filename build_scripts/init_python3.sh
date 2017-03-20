@@ -231,3 +231,56 @@ python -c "import plottool"
 python -c "import guitool"
 
 python setup.py develop
+
+
+#----------
+# NEW INSTRUCTIONS WRITTEN AT 3.7
+
+# Need certain libs 
+sudo apt-get install libbz2-dev # for bz2
+sudo apt-get install libssl-dev # for _ssl
+sudo apt-get install libsqlite3-dev # for sqlite
+sudo apt-get install libreadline6-dev # for readline,  _curses,  _curses_panel
+sudo apt-get install libgdbm-dev  # for gdmb
+
+
+cd ~/code
+git clone https://github.com/python/cpython.git
+
+export NCPUS=$(grep -c ^processor /proc/cpuinfo)
+export PREFIX=$HOME/.local
+cd ~/code/cpython
+./configure --prefix=$PREFIX --exec-prefix=$PREFIX --enable-shared
+make -j$NCPUS
+#make test
+make install
+
+#python -c "import bz2; print(bz2.__file__)"
+
+# ENSURE THAT YOUR PREFIX IS IN THE PATHS
+#export LD_LIBRARY_PATH="$PREFIX/lib:$LD_LIBRARY_PATH"
+#export PATH="$PREFIX/bin:$PATH"
+ 
+~/.local/bin/python3 --version
+
+
+# setup_venv37
+export PREFIX=$HOME/.local
+export PYTHON3_VENV="$HOME/venv3_7"
+mkdir -p $PYTHON3_VENV
+#~/.local/bin/python3 -m venv --system-site-packages --symlinks $PYTHON3_VENV
+$PREFIX/bin/python3 -m pip install virtualenv
+$PREFIX/bin/python3 -m virtualenv $PYTHON3_VENV
+ln -s $PYTHON3_VENV ~/venv3 
+
+# Maybe venv/virtualenv should symlink the library module to the venv dir
+# HACK: lets do it ourselves
+# TODO: find a better way of getting the python shared library location
+export PYVERSION=$($PREFIX/bin/python3 -c "import sys; print(sys.version[0:3])")
+export PYLIBRARY=$PREFIX/lib/libpython$(echo $PYVERSION)m.so
+export PYLIBRARY=$PREFIX/lib/libpython$(echo $PYVERSION)m.so
+
+echo $PYLIBRARY
+echo $PYTHON3_VENV
+ln -s $PYLIBRARY $PYTHON3_VENV/lib/
+

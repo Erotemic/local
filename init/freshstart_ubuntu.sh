@@ -258,6 +258,15 @@ setup_venv2(){
     #python2 -m virtualenv --relocatable $PYTHON2_VENV 
 }
 
+setup_venv37(){
+    # Make sure you install 3.7 to ~/.local from source
+    export PYTHON3_VENV="$HOME/venv3_7"
+    mkdir -p $PYTHON3_VENV
+    ~/.local/bin/python3 -m venv $PYTHON3_VENV
+    ln -s $PYTHON3_VENV ~/venv3 
+
+}
+
 setup_venv3(){
     # Ensure PIP, setuptools, and virtual are on the SYSTEM
     if [ ! -f $(which pip3) ]; then

@@ -366,6 +366,18 @@ print(os.pathsep.join(fixed))
 "
 }
 
+
+deactivate_venv()
+{
+    OLD_VENV=$VIRTUAL_ENV
+    if [ "$OLD_VENV" != "" ]; then
+        # reset LD_LIBRARY_PATH 
+        remove_ld_library_path $OLD_VENV/local/lib
+        remove_ld_library_path $OLD_VENV/lib
+        deactivate
+    fi
+}
+
 switch_venv()
 {
     NEW_VENV=$1
@@ -380,6 +392,11 @@ switch_venv()
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$NEW_VENV/local/lib
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$NEW_VENV/lib
     source $NEW_VENV/bin/activate
+}
+
+workon_pysys()
+{
+    deactivate_venv
 }
 
 

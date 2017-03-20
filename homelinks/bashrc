@@ -2,6 +2,9 @@
 export QT_ACCESSIBILITY=0
 export QT_API=pyqt
 
+export LD_LIBRARY_PATH="$HOME/.local/lib:$LD_LIBRARY_PATH"
+export PATH="$HOME/.local/bin:$PATH"
+
 #export PYTHONWARNINGS="once"
 #export PYTHONWARNINGS="default"
 
