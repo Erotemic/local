@@ -2,9 +2,6 @@
 export QT_ACCESSIBILITY=0
 export QT_API=pyqt
 
-export LD_LIBRARY_PATH="$HOME/.local/lib:$LD_LIBRARY_PATH"
-export PATH="$HOME/.local/bin:$PATH"
-
 #export PYTHONWARNINGS="once"
 #export PYTHONWARNINGS="default"
 
@@ -31,6 +28,19 @@ else
     export NCPUS=$(grep -c ^processor /proc/cpuinfo)
     source ~/local/homelinks/helpers/bashrc_ubuntu
 fi
+
+export CC=gcc
+export CXX=g++
+
+export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgocnfig:/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
+
+export PATH=$PATH:~/scripts
+
+export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+export PATH=~/bin:$PATH
+
+#export LD_LIBRARY_PATH=~/.local/lib:$LD_LIBRARY_PATH
+#export PATH=~/.local/bin:$PATH
 
 
 # My standard environment variables
@@ -67,9 +77,6 @@ permit_erotemic_gitrepo()
 
 # set history to not ignore leading whitespace
 export HISTCONTROL=
-
-
-export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 
 # If IBM CPLEX is installed
 export CPLEX_PREFIX=/opt/ibm/ILOG/CPLEX_Studio_Community1263
@@ -125,7 +132,7 @@ fi
 #echo "TEXLIVE_BIN=$TEXLIVE_BIN"
 
 if [ -d "$TEXLIVE_BIN" ]; then
-    export PATH=$TEXLIVE_BIN:$PATH
+    export PATH=$PATH:$TEXLIVE_BIN
 fi
 
 #export UTOOL_DPATH=~/latex/crall-candidacy-2015/

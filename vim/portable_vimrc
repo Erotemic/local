@@ -139,10 +139,12 @@ EOF
 ":ECHOVAR runtimepath
 "# http://stackoverflow.com/questions/6639786/pathogen-vim-non-default-bundle-directory-location
 :set nocp  " https://github.com/tpope/vim-pathogen/issues/50
+
 source ~/local/vim/vimfiles/autoload/pathogen.vim
+:call pathogen#infect('bundle/{}')
+
 ":call pathogen#runtime_append_all_bundles('bundle')
 ":call pathogen#incubate('bundle/{}')
-:call pathogen#infect('bundle/{}')
 "execute pathogen#infect()
 "call pathogen#helptags()
 "call pathogen#infect()

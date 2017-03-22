@@ -374,6 +374,9 @@ deactivate_venv()
         # reset LD_LIBRARY_PATH 
         remove_ld_library_path $OLD_VENV/local/lib
         remove_ld_library_path $OLD_VENV/lib
+        # Hack for personal symlinks
+        remove_ld_library_path ~/venv3/local/lib
+        remove_ld_library_path ~/venv3/lib
         deactivate
     fi
 }
@@ -389,8 +392,10 @@ switch_venv()
         deactivate
     fi
     # local/lib might be a hack... not sure
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$NEW_VENV/local/lib
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$NEW_VENV/lib
+    #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$NEW_VENV/local/lib
+    #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$NEW_VENV/lib
+    export LD_LIBRARY_PATH=$NEW_VENV/local/lib:$LD_LIBRARY_PATH
+    export LD_LIBRARY_PATH=$NEW_VENV/lib:$LD_LIBRARY_PATH
     source $NEW_VENV/bin/activate
 }
 

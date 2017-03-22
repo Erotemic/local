@@ -119,21 +119,15 @@ export prob_interface=~/local/rob/ROB/rob_interface.py
 export prob=~/local/rob/rob_interface.py
 export prob_dir=~/local/rob
 
-export PYQTDESIGNERPATH=/home/joncrall/Dropbox/Settings/PyQt4/plugins/designer/python
-
 export VIMFILES=~/.vim
 export IPYTHONDIR=~/.ipython
 export LATEX='~/latex/'
 #export SITE_PACKAGES=/usr/local/lib/python2.7/dist-packages/
 
-export CC=gcc
-export CXX=g++
 
 # MY PATH
 #export PATH=$PATH:~/scripts/:/usr/local/MATLAB/R2013a/bin
-export PATH=~/bin:$PATH:~/scripts/
 #export PYTHONPATH=$PYTHONPATH
-export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgocnfig:/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
 
 #export mothers=/data/work/HSDB_
 export VIEW_CMD=nautilus
