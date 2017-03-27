@@ -416,6 +416,11 @@ workon_py3()
     switch_venv "$HOME/venv3"
 }
 
+workon_py37()
+{
+    switch_venv "$HOME/venv3_7"
+}
+
 workon_pypy()
 {
     switch_venv "$HOME/venvpypy"

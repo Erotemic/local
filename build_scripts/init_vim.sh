@@ -65,6 +65,20 @@ make distclean
     --enable-python3interp=yes \
     --enable-gui=gtk3
 
+
+vim_python37_version(){
+    make distclean
+    ./configure \
+        --prefix=$HOME/.local \
+        --enable-pythoninterp=no \
+        --enable-python3interp=yes \
+        --with-python3-config-dir=$(python3.7-config --configdir) \
+        --enable-gui=gtk3
+    cat src/auto/config.mk 
+    cat src/auto/config.mk | grep PYTHON3
+    make -j9
+    ./src/vim -u NONE --cmd "source test.vim"
+}
     #--prefix=$HOME/.local \
     #--exec-prefix=$HOME/.local \
     #--with-vim-name=vim-8 \
@@ -79,7 +93,7 @@ cat src/auto/config.mk | grep PYTHON3
 # Build
 make -j9
 # Test
-~/code/vim/src/vim
+~/code/vim/src/vim -u NONE
 #~/code/vim/src/vim --version
 # Install
 make install

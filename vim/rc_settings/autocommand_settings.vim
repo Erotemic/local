@@ -48,6 +48,7 @@ endfu
 
 " Associate extensions with vim filetypes
 :call AuOnReadPatterns('set ft=cpp', '*.txx')
+:call AuOnReadPatterns('set ft=tex', '*.tex')
 :call AuOnReadPatterns('set ft=python', '*.py.tpl')
 :call AuOnReadPatterns('set ft=cmake', '*.poly', '*.node', '.ele')
 :call AuOnReadPatterns('set ft=cython', '*.pyx', '.pxd')
@@ -63,7 +64,7 @@ let g:markdown_fenced_languages = ['html', 'python', 'bash=sh']
 au SwapExists * let v:swapchoice = 'e'
 
 if exists('+colorcolumn')
-    :call AuFileType('setlocal colorcolumn=', 'text', 'markdown', 'latex')
+    :call AuFileType('setlocal colorcolumn=', 'text', 'markdown', 'latex', 'tex')
     :call AuFileType('setlocal colorcolumn=81', 'python', 'vim', 'cpp')
     "au FileType text setlocal colorcolumn=
     "au FileType python setlocal colorcolumn=81

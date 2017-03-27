@@ -1,3 +1,0 @@
-#!/bin/bash
-apt-get install xdotool
-apt-get install xvkbd

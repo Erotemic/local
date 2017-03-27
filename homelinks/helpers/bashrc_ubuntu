@@ -112,12 +112,12 @@ fi
 export name=Hyrule
 export platform=linux2
 export CLOUD=~/Dropbox
-export code=~/code
-export latex=~/latex
-export pvimrc=~/local/vim/portable_vimrc
-export prob_interface=~/local/rob/ROB/rob_interface.py
-export prob=~/local/rob/rob_interface.py
-export prob_dir=~/local/rob
+#export code=~/code
+#export latex=~/latex
+#export pvimrc=~/local/vim/portable_vimrc
+#export prob_interface=~/local/rob/ROB/rob_interface.py
+#export prob=~/local/rob/rob_interface.py
+#export prob_dir=~/local/rob
 
 export VIMFILES=~/.vim
 export IPYTHONDIR=~/.ipython
@@ -165,8 +165,8 @@ else
 fi
 
 
-alias resetftp='/etc/init.d/vsftpd restart'
-alias noip='/usr/local/bin/noip2'
+#alias resetftp='/etc/init.d/vsftpd restart'
+#alias noip='/usr/local/bin/noip2'
 
 alias say='espeak -v en '
 

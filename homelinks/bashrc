@@ -12,14 +12,13 @@ export QT_API=pyqt
 ## /etc/bash.bashrc
 #EOF 
 
+# I don't know why this is populated to begin with
 #echo "PATH(pre-bashrc) = $PATH"
 #export PATH=""
 #export PATH="$PATH:~/bin"
 #export PATH="$PATH:/usr/local/sbin:/usr/local/bin"
 #export PATH="$PATH:/usr/sbin:/usr/bin:/sbin:/bin"
 #export PATH="$PATH:/usr/games:/usr/local/games:/snap/bin"
-
-# I don't know why this is populated to begin with
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
     export NCPUS=$(sysctl -n hw.ncpu)
@@ -29,18 +28,20 @@ else
     source ~/local/homelinks/helpers/bashrc_ubuntu
 fi
 
-export CC=gcc
-export CXX=g++
+#export CC=gcc
+#export CXX=g++
 
-export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgocnfig:/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
+export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig:$PKG_CONFIG_PATH
 
-export PATH=$PATH:~/scripts
-
+export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
 export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 export PATH=~/bin:$PATH
 
+#export PKG_CONFIG_PATH=~/.local/lib/pkgconfig:$PKG_CONFIG_PATH
 #export LD_LIBRARY_PATH=~/.local/lib:$LD_LIBRARY_PATH
 #export PATH=~/.local/bin:$PATH
+
+export PATH=$PATH:~/scripts
 
 
 # My standard environment variables
@@ -129,26 +130,17 @@ else
     export PATH=$PATH
 fi
 
-#echo "TEXLIVE_BIN=$TEXLIVE_BIN"
 
 if [ -d "$TEXLIVE_BIN" ]; then
-    export PATH=$PATH:$TEXLIVE_BIN
+    #export PATH=$PATH:$TEXLIVE_BIN
+    export PATH=$TEXLIVE_BIN:$PATH
 fi
 
 #export UTOOL_DPATH=~/latex/crall-candidacy-2015/
 
 complete -W "gp focus kill project_dpaths sync_clipboard_to grepnr printproc_2 send add_path write_env print_path grepc grepr grep research_clipboard fix_path foo fixpath2 write_rob_pathcache sed reg_disable_automatic_reboot_122614 find write_regfile pykill symlink update_path printproc_ write_path search update_env make_dpath invgrep send_command research ps send_clipboard_to make_complete pref_env print_env create_shortcut info hskill process_research_line write_research find_in_path get_regstr preprocess_research sedr update setup_global sp print_clipboard upenv fix_youtube_names_ccl dump_clipboard" "rob"
 
-#set bell-style none
-#xset -b
-#setterm -blength 0
-#gconftool-2 --set --type=bool /apps/metacity/general/audible_bell false
-#gconftool-2 --get  /apps/metacity/general/audible_bell
 #source ~/.config/ibeis/ibeis_bash_complete.sh
 
-#echo "PATH(post-bashrc) = $PATH"
-
-#clean_pathvar PATH
-#clean_pathvar LD_LIBRARY_PATH
 export PATH=$(clean_pathvar PATH)
 export LD_LIBRARY_PATH=$(clean_pathvar LD_LIBRARY_PATH)

@@ -250,7 +250,15 @@ git clone https://github.com/python/cpython.git
 export NCPUS=$(grep -c ^processor /proc/cpuinfo)
 export PREFIX=$HOME/.local
 cd ~/code/cpython
-./configure --prefix=$PREFIX --exec-prefix=$PREFIX --enable-shared
+#./configure --prefix=$PREFIX --exec-prefix=$PREFIX --enable-shared
+
+./configure --prefix=$PREFIX --exec-prefix=$PREFIX \
+    --enable-shared --enable-ipv6 --enable-loadable-sqlite-extensions --with-fpectl \
+    --with-dbmliborder=bdb:gdbm --with-computed-gotos --with-ensurepip --with-threads \
+    'CFLAGS=-g -fstack-protector-strong -Wformat -Werror=format-security ' \
+    'LDFLAGS=-Wl,-Bsymbolic-functions -Wl,-z,relro' \
+    'CPPFLAGS=-Wdate-time -D_FORTIFY_SOURCE=2' 
+
 make -j$NCPUS
 #make test
 make install
@@ -284,3 +292,7 @@ echo $PYLIBRARY
 echo $PYTHON3_VENV
 ln -s $PYLIBRARY $PYTHON3_VENV/lib/
 
+
+# ensure that python it symlinked
+
+ln -s $PREFIX/bin/python3 $PREFIX/bin/python
