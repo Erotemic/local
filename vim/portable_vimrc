@@ -358,3 +358,12 @@ for varname, list_ in listvars.items():
     liststr = '[' + ', '.join('"%s"' % v for v in list_) + ']'
     vim.command('let g:' + varname + ' = ' + liststr)
 EOF
+
+
+
+" HACK
+highlight POSGroup guifg=green | highlight NEGGroup guifg=red | highlight INCGroup guifg=yellow | highlight UNRGroup guifg=purple
+:call matchadd('POSGroup', 'POSTV', 0, 500)
+:call matchadd('NEGGroup', 'NEGTV', 0, 501)
+:call matchadd('INCGroup', 'INCMP', 0, 502)
+:call matchadd('UNRGroup', 'UNREV', 0, 503)
