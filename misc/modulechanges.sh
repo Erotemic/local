@@ -679,3 +679,19 @@ rob gp " *print_\\("
 
 # TODO Change testdata to demodata?
 rob sp testdata demodata
+
+
+rob sp ibeis.algo.hots.graph_iden ibeis.algo.graph_iden.core
+rob sp ibeis.algo.hots.sim_graph_iden ibeis.algo.graph_iden.sim_graph_iden
+rob sp ibeis.algo.hots.demo ibeis.algo.graph_iden.demo
+from ibeis.algo.hots import graph
+rob sp "from ibeis.algo.hots import graph" "from ibeis.algo.graph_iden import graph"
+rob sp "graph_iden_depmixin" "dep_mixins"
+rob sp "sim_graph_iden" "simulate"
+rob sp "dep_mixins" "_dep_mixins"
+rob sp "graph_iden_new" "core2"
+rob sp "demo_graph_iden" "demo"
+rob sp "graph_iden_mixins" "mixin_helpers"
+rob sp "graph_iden_utils" "nx_utils"
+rob sp "dyngraph" "nx_dynamic_graph"
+rob sp "demo_graph_iden" "demo"

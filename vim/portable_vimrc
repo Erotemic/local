@@ -245,8 +245,8 @@ call QUICKOPEN_leader_tvio('F', '~/code/ibeis/ibeis/init/filter_annots.py')
 call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/inspect_gui.py')
 call QUICKOPEN_leader_tvio('G', '~/code/ibeis/ibeis/gui/newgui.py')
 """"""""""""""
-call QUICKOPEN_leader_tvio('H', '~/code/ibeis/ibeis/algo/hots/match_chips4.py')
-call QUICKOPEN_leader_tvio('h', '~/code/ibeis/ibeis/algo/hots/graph_iden.py')
+call QUICKOPEN_leader_tvio('H', '~/code/ibeis/ibeis/algo/hots/pipeline.py')
+call QUICKOPEN_leader_tvio('h', '~/code/ibeis/ibeis/algo/graph/core.py')
 """"""""""""""
 call QUICKOPEN_leader_tvio('i', '~/code/ibeis/ibeis/__init__.py')
 call QUICKOPEN_leader_tvio('I', '~/code/ibeis/ibeis/other/dbinfo.py')
@@ -274,7 +274,7 @@ call QUICKOPEN_leader_tvio('P', '~/code/plottool/plottool/draw_func2.py')
 call QUICKOPEN_leader_tvio('q', '~/code/ibeis/ibeis/algo/hots/query_request.py')
 call QUICKOPEN_leader_tvio('Q', '~/code/ibeis/ibeis/algo/hots/hots_query_result.py')
 """"""""""""""
-call QUICKOPEN_leader_tvio('r', '~/code/ibeis/ibeis/expt/experiment_storage.py')
+call QUICKOPEN_leader_tvio('r', '~/code/ibeis/ibeis/algo/graph/core.py')
 call QUICKOPEN_leader_tvio('R', '~/code/ibeis/README.md')
 "call QUICKOPEN_leader_tvio('s', '~/code/ibeis/ibeis/scripts/gen_cand_expts.py')
 "call QUICKOPEN_leader_tvio('s', '~/code/ibeis/ibeis/scripts/specialdraw.py')
@@ -362,9 +362,9 @@ EOF
 
 
 
-" HACK
-highlight POSGroup guifg=green | highlight NEGGroup guifg=red | highlight INCGroup guifg=yellow | highlight UNRGroup guifg=purple
-:call matchadd('POSGroup', 'POSTV', 0, 500)
-:call matchadd('NEGGroup', 'NEGTV', 0, 501)
-:call matchadd('INCGroup', 'INCMP', 0, 502)
-:call matchadd('UNRGroup', 'UNREV', 0, 503)
+"" HACK
+"highlight POSGroup guifg=green | highlight NEGGroup guifg=red | highlight INCGroup guifg=yellow | highlight UNRGroup guifg=purple
+":call matchadd('POSGroup', 'POSTV', 0, 500)
+":call matchadd('NEGGroup', 'NEGTV', 0, 501)
+":call matchadd('INCGroup', 'INCMP', 0, 502)
+":call matchadd('UNRGroup', 'UNREV', 0, 503)
