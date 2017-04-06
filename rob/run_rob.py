@@ -4,10 +4,11 @@ import platform
 import signal
 import rob_settings
 import rob_interface  # NOQA
-from rob_interface import *  # NOQA
+from rob_helpers import ens
+# from rob_interface import *  # NOQA
 
 
-class ROB:
+class ROB(object):
     def __init__(r):
         r.computer_name = platform.node()
         r.d = rob_settings.ROB_Directories()

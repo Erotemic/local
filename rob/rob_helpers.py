@@ -60,7 +60,6 @@ def scp(src, dst):
     call(['scp', src, dst])
 
 
-
 def call(cmdstr):
     import shlex
     if isinstance(cmdstr, str):
