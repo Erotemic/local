@@ -359,6 +359,11 @@ def get_codelines_around_buffer(rows_before=0, rows_after=10):
 # --- INSERT TEXT CODE
 
 
+def move_cursor(row, col=0):
+    import vim
+    vim.command('cal cursor({},{})'.format(row, col))
+
+
 def insert_codeblock_over_selection(text):
     import vim
     buf = vim.current.buffer

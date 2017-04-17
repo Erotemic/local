@@ -832,19 +832,41 @@ func! SortLinesByFloat() range
 endfunc
 
 
-func! PySelectAndFormatParagraph() 
+func! PySelectAndFormatParagraph(...) 
 Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
 #ut.rrrr(0)
+nargs = int(vim.eval('a:0'))
+# Simulate kwargs with cfgdict-like strings
+default_kwargs = {
+    'max_width': 80,
+    'myprefix': True,
+    'sentence_break': True,
+}
+if nargs == 1:
+    cfgstr = vim.eval('a:1')
+    cfgdict = ut.parse_cfgstr3(cfgstr)
+    kwargs = ut.update_existing(default_kwargs, cfgdict, assert_exists=True)
+else:
+    kwargs = default_kwargs
 ut.rrrr(0)
+
+# Remember curor location as best as possible
+(row, col) = vim.current.window.cursor
+
 row1, row2 = pyvim_funcs.get_paragraph_line_range_at_cursor()
 text = pyvim_funcs.get_text_between_lines(row1, row2)
 text = ut.ensure_unicode(text)
+
 #wrapped_text = ut.format_multiple_paragraph_sentences(text, max_width=100)
-wrapped_text = ut.format_multiple_paragraph_sentences(text, max_width=80)
+wrapped_text = ut.format_multiple_paragraph_sentences(text, **kwargs)
 pyvim_funcs.insert_codeblock_between_lines(wrapped_text, row1, row2)
+
+# Reset cursor position as best as possible
+pyvim_funcs.move_cursor(row, col)
+
 EOF
 endfunc
 
