@@ -39,7 +39,7 @@ vnoremap ge :call PyFormatParagraph()<CR>
 ":noremap <c-g> vip:call PyFormatParagraph()<CR>
 
 noremap <leader>ge :call PySelectAndFormatParagraph()<CR>
-noremap <c-g> :call PySelectAndFormatParagraph()<CR>
+noremap <c-g> :call PySelectAndFormatParagraph('max_width=115')<CR>
 noremap <c-f> :call PySelectAndFormatParagraph('max_width=115,myprefix=False,sentence_break=False')<CR>
 noremap <c-M-G> :call PySelectAndFormatParagraphNoBreak()<CR>
 
