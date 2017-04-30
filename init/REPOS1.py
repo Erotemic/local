@@ -120,6 +120,7 @@ VIM_REPO_URLS, VIM_REPOS = repo_list([
     'https://github.com/altercation/vim-colors-solarized.git',
     # 'https://github.com/drmingdrmer/vim-syntax-markdown.git',
     # 'https://github.com/plasticboy/vim-markdown.git',
+    'https://github.com/google/vim-searchindex.git',
     'https://github.com/tpope/vim-markdown.git',
 
     'https://github.com/jmcantrell/vim-virtualenv.git',

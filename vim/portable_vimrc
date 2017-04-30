@@ -85,6 +85,7 @@ def get_disabled_plugins():
 
         (flag & UNIX, 'supertab'),
         (flag & UNIX, 'vim-startify'),
+        (flag, 'vim-searchindex'),
 
         (flag & UNIX, 'syntastic'),
         (flag, 'jedi-vim'),
