@@ -108,12 +108,14 @@ VIM_REPO_URLS, VIM_REPOS = repo_list([
     'https://github.com/scrooloose/nerdcommenter.git',
     'https://github.com/scrooloose/nerdtree.git',
     'https://github.com/scrooloose/syntastic.git',
-    'https://github.com/kien/rainbow_parentheses.vim.git',
+    # 'https://github.com/kien/rainbow_parentheses.vim.git',
     #'https://github.com/fholgado/minibufexpl.vim.git',
+
     'https://github.com/sjl/badwolf.git',
-    'https://github.com/morhetz/gruvbox.git',
-    'https://github.com/29decibel/codeschool-vim-theme.git',
-    'https://github.com/vim-scripts/phd.git',
+    # 'https://github.com/morhetz/gruvbox.git',
+    # 'https://github.com/29decibel/codeschool-vim-theme.git',
+    # 'https://github.com/vim-scripts/phd.git',
+
     'https://github.com/vim-scripts/taglist.vim.git',  # ctags
     'https://github.com/majutsushi/tagbar.git',
     'https://github.com/honza/vim-snippets.git',
@@ -138,14 +140,13 @@ VIM_REPO_URLS, VIM_REPOS = repo_list([
     #'https://github.com/honza/vim-snippets.git',
 
     'https://github.com/SirVer/ultisnips.git',
-    'https://github.com/Erotemic/vim-quickopen-tvio.git',
-    'https://github.com/docunext/closetag.vim.git',
+    # 'https://github.com/Erotemic/vim-quickopen-tvio.git',
+    # 'https://github.com/docunext/closetag.vim.git',
 
-    'https://github.com/jeetsukumaran/vim-buffergator.git',
+    # 'https://github.com/jeetsukumaran/vim-buffergator.git',
 
     'https://github.com/vim-scripts/AnsiEsc.vim.git',
-
-    'https://github.com/ivanov/vim-ipython.git',
+    # 'https://github.com/ivanov/vim-ipython.git',
 
     #'https://github.com/terryma/vim-multiple-cursors.git',
     #'https://github.com/tpope/vim-repeat.git',

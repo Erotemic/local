@@ -35,7 +35,7 @@ endif
 " Good Colorschemes
 
 "colorscheme solarized
-colorscheme slate
+"colorscheme slate
 "colorscheme gruvbox
 "colorscheme phd
 colorscheme badwolf

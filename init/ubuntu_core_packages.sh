@@ -3,7 +3,6 @@ common_paths()
     cat ~/local/init/ensure_vim_plugins.py
 }
 
-
 install_core()
 {
     sudo apt-get update -y 

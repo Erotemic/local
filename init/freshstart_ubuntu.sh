@@ -308,19 +308,38 @@ install_chrome()
 
 install_fonts()
 {
+    # Download fonts
     sudo apt-get -y install nautilus-dropbox
-    sudo cp ~/Dropbox/Fonts/*.ttf /usr/share/fonts/truetype/
-    sudo cp ~/Dropbox/Fonts/*.otf /usr/share/fonts/opentype/
-    sudo fc-cache
 
     mkdir -p ~/tmp 
     cd ~/tmp
     wget https://github.com/antijingoist/open-dyslexic/archive/master.zip
     7z x master.zip
-    sudo cp ~/tmp/open-dyslexic-master/otf/*.otf /usr/share/fonts/opentype/
-    sudo fc-cache
 
-    wget http://www.myfontfree.com/zip.php?itnetid=37252&submit=70lcpj0ftroiesv26mvtqkbph3
+    wget https://downloads.sourceforge.net/project/cm-unicode/cm-unicode/0.7.0/cm-unicode-0.7.0-ttf.tar.xz
+    7z x cm-unicode-0.7.0-ttf.tar.xz && 7z x cm-unicode-0.7.0-ttf.tar && rm cm-unicode-0.7.0-ttf.tar
+
+    export _SUDO ""
+    export FONT_DIR=$HOME/.fonts
+
+    #export _SUDO sudo
+    #export FONT_DIR=/usr/share/fonts
+
+    export TTF_FONT_DIR=$FONT_DIR/truetype
+    export OTF_FONT_DIR=$FONT_DIR/truetype
+
+    mkdir -p $TTF_FONT_DIR
+    mkdir -p $OTF_FONT_DIR
+
+    $_SUDO cp -v ~/Dropbox/Fonts/*.ttf $TTF_FONT_DIR/
+    $_SUDO cp -v ~/Dropbox/Fonts/*.otf $OTF_FONT_DIR/
+    $_SUDO cp -v ~/tmp/open-dyslexic-master/otf/*.otf $OTF_FONT_DIR/
+    $_SUDO cp -v ~/tmp/cm-unicode-0.7.0/*.ttf $TTF_FONT_DIR/
+
+    $_SUDO fc-cache -f -v
+
+    # Delete matplotlib cache if you install new fonts
+    rm ~/.cache/matplotlib/fontList*
 }
 
 virtualbox_ubuntu_init()
