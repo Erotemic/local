@@ -19,7 +19,7 @@ let g:tex_subscripts= '[0-9ABCabcdehijklmnoprstuvx,+-/().]'
 let g:concellevel=2
 
 " New LatexBox stuff
-let g:LatexBox_Folding=1
+let g:LatexBox_Folding=0
 let g:LatexBox_personal_latexmkrc=1
 let g:LatexBox_latexmk_async = 1
 let g:LatexBox_viewer = "okular --unique"

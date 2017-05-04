@@ -154,3 +154,10 @@ au FileType cpp normal zR
 "g:tex_isk='48-57,a-z,A-Z,192-255,_
 "au FileType python call PythonInvert()
 "au FileType python set textwidth=80
+"
+
+
+" Make latex files a bit more responsive
+" https://bbs.archlinux.org/viewtopic.php?id=111647
+au FileType tex :NoMatchParen
+au FileType tex setlocal nocursorline
