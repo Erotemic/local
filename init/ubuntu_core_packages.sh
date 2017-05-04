@@ -3,6 +3,25 @@ common_paths()
     cat ~/local/init/ensure_vim_plugins.py
 }
 
+
+custom_tmux() 
+{
+    sudo apt-get install autotools-dev automake libevent-dev libncurses5-dev
+    co
+    git clone https://github.com/tmux/tmux.git
+    cd tmux
+    sh autogen.sh
+    ./configure --prefix=$HOME
+    make -j9
+    make install
+
+    # Install plugin manager
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+    ln -vs $HOME/local/homelinks/tmux.conf $HOME/.tmux.conf
+}
+
+
 install_core()
 {
     sudo apt-get update -y 
