@@ -686,8 +686,13 @@ import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
 word = pyvim_funcs.get_word_at_cursor()
 # HACK: custom current bibtex file
-bib_fpath = ut.truepath('~/latex/crall-candidacy-2015/My_Library_clean.bib')
-bibtex_dict = ut.get_bibtex_dict(bib_fpath)
+bib_fpath = ut.truepath('~/latex/crall-thesis-2017/My_Library_clean.bib')
+
+import bibtexparser
+from bibtexparser import bparser
+parser = bparser.BibTexParser(ignore_nonstandard_types=False)
+bibtex_dict = parser.parse(ut.read_from(bib_fpath), partial=False).get_entry_dict()
+#bibtex_dict = ut.get_bibtex_dict(bib_fpath)
 title = bibtex_dict[word]['title'].replace('{', '').replace('}', '')
 ut.copy_text_to_clipboard(title)
 print(title)
@@ -717,9 +722,15 @@ import utool as ut
 ut.rrrr(verbose=False)
 word = pyvim_funcs.get_word_at_cursor()
 # HACK: custom current bibtex file
-bib_fpath = ut.truepath('~/latex/crall-candidacy-2015/My_Library_clean.bib')
-bibtex_dict = ut.get_bibtex_dict(bib_fpath)
-title = bibtex_dict[word]['title'].replace('{', '').replace('}', '')
+bib_fpath = ut.truepath('~/latex/crall-thesis-2017/My_Library_clean.bib')
+
+import bibtexparser
+from bibtexparser import bparser
+parser = bparser.BibTexParser(ignore_nonstandard_types=False)
+bibtex_dict = parser.parse(ut.read_from(bib_fpath), partial=False).get_entry_dict()
+
+#bibtex_dict = ut.get_bibtex_dict(bib_fpath)
+#title = bibtex_dict[word]['title'].replace('{', '').replace('}', '').
 ut.copy_text_to_clipboard(title)
 # scholar search
 baseurl = r'https://scholar.google.com/scholar?hl=en&q='
@@ -748,9 +759,15 @@ if ut.is_url(word):
     url = word
     print(url)
 else:
-    _fpath = '~/latex/crall-candidacy-2015/My_Library_clean.bib'
+    _fpath = '~/latex/crall-thesis-2017/My_Library_clean.bib'
     bib_fpath = ut.truepath(_fpath)
-    bibtex_dict = ut.get_bibtex_dict(bib_fpath)
+    #bibtex_dict = ut.get_bibtex_dict(bib_fpath)
+
+    import bibtexparser
+    from bibtexparser import bparser
+    parser = bparser.BibTexParser(ignore_nonstandard_types=False)
+    bibtex_dict = parser.parse(ut.read_from(bib_fpath), partial=False).get_entry_dict()
+
     title = bibtex_dict[word]['title'].replace('{', '').replace('}', '')
     ut.copy_text_to_clipboard(title)
     # scholar search

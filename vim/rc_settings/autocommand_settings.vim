@@ -46,6 +46,10 @@ for ix in range(1, N + 1):
 endpython3
 endfu
 
+
+
+
+
 " Associate extensions with vim filetypes
 :call AuOnReadPatterns('set ft=cpp', '*.txx')
 :call AuOnReadPatterns('set ft=tex', '*.tex')
@@ -54,7 +58,7 @@ endfu
 :call AuOnReadPatterns('set ft=cython', '*.pyx', '.pxd')
 :call AuOnReadPatterns('set ft=Autohotkey', '*.ahk')
 ":call AuOnReadPatterns('set ft=markdown', '*.md')
-autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+au BufNewFile,BufReadPost *.md set filetype=markdown
 
 let g:markdown_syntax_conceal = 0
 let g:markdown_fenced_languages = ['html', 'python', 'bash=sh']
@@ -86,9 +90,13 @@ au FileType cpp setlocal cinkeys-=0#
 au FileType cpp setlocal smartindent
 
 " Latex
-autocmd Filetype tex,latex setlocal spell
+au Filetype tex,latex setlocal spell
 " http://stackoverflow.com/questions/18219444/remove-underscore-as-a-word-separator-in-vim
-autocmd Filetype tex,latex setlocal iskeyword+=_
+au Filetype tex,latex setlocal iskeyword+=_
+" Make latex files a bit more responsive
+" https://bbs.archlinux.org/viewtopic.php?id=111647
+au FileType tex :NoMatchParen
+au FileType tex setlocal nocursorline
 
 " Reference http://stackoverflow.com/questions/6671199/vim-multiline-highlight
 :call AuOnReadPatterns('syntax sync minlines=500', '*.py')
@@ -110,7 +118,7 @@ au BufWritePre *.py :%s///e
 "au BufWritePre *.hxx :%s/\s\+$//e
 
 " =========== OLD ==============
-"autocmd FileType c,cpp,java,php,ruby,python autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
+"au FileType c,cpp,java,php,ruby,python au BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
 
 "au BufNewFile,BufRead *.txx  set ft=cpp
 "au BufNewFile,BufRead *.poly set ft=cmake
@@ -126,8 +134,8 @@ au BufWritePre *.py :%s///e
 "
 au FileType cpp setlocal foldmethod=syntax
 au FileType cpp normal zR
-"autocmd FileType cpp if getfsize(@%) > 200 | set foldmethod=syntax | endif
-"autocmd FileType cpp if getfsize(@%) > 200 | normal zR | endif
+"au FileType cpp if getfsize(@%) > 200 | set foldmethod=syntax | endif
+"au FileType cpp if getfsize(@%) > 200 | normal zR | endif
 
 
 "au CursorMoved * call WordHighlightFun()
@@ -144,20 +152,14 @@ au FileType cpp normal zR
 
 " Save folds between runs 
 " http://vim.wikia.com/wiki/VimTip991
-"autocmd BufWinLeave *.* mkview
-"autocmd BufWinEnter *.* silent loadview 
+"au BufWinLeave *.* mkview
+"au BufWinEnter *.* silent loadview 
 "
 "au BufNewFile,BufRead *.tex call LatexInitialize() 
-"autocmd Filetype tex,latex set spell spelllang=en_us
-"autocmd Filetype tex,latex set iskeyword+=@,48-57,_,-,:,192-255
-"autocmd Filetype python set iskeyword-=@,48-57,_,-,:,192-255
+"au Filetype tex,latex set spell spelllang=en_us
+"au Filetype tex,latex set iskeyword+=@,48-57,_,-,:,192-255
+"au Filetype python set iskeyword-=@,48-57,_,-,:,192-255
 "g:tex_isk='48-57,a-z,A-Z,192-255,_
 "au FileType python call PythonInvert()
 "au FileType python set textwidth=80
 "
-
-
-" Make latex files a bit more responsive
-" https://bbs.archlinux.org/viewtopic.php?id=111647
-au FileType tex :NoMatchParen
-au FileType tex setlocal nocursorline
