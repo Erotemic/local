@@ -183,7 +183,7 @@ def get_word_at_cursor(url_ok=False):
     if url_ok:
         nonword_chars = ' \t\n\r{},"\'\\'
     else:
-        nonword_chars = ' \t\n\r[](){}:;.,"\'\\/'
+        nonword_chars = ' \t\n\r[](){}:;.,"\'\\/='
     word = get_word_in_line_at_col(line, col, nonword_chars)
     return word
 

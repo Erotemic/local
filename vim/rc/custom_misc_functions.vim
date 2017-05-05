@@ -628,8 +628,8 @@ import utool as ut
 mode = vim.eval('a:1')
 indent = pyvim_funcs.get_cursor_py_indent()
 newtext = '\n'.join([
-    indent + 'import utool',
-    indent + 'for timer in utool.Timerit(10):',
+    indent + 'import ubelt',
+    indent + 'for timer in ubelt.Timerit(10):',
     indent + '    with timer:',
 ])
 if 'v' in mode.lower():
