@@ -159,6 +159,12 @@ for streak in ub.ProgIter(streaks, 'squashing'):
     new_head = repo.commit('HEAD')
 
 if False:
+    # Copy temp branch back over original
+    repo.git.checkout(orig_branch_name)
+    repo.git.reset(temp_branchname, hard=True)
+    repo.git.branch(D=temp_branchname)
+
+if False:
     repo.git.checkout(orig_branch_name)
     repo.git.branch(D=temp_branchname)
     break
