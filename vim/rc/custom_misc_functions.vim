@@ -934,3 +934,10 @@ command! HexmodeOff :%!xxd -r
 " http://vim.wikia.com/wiki/View_text_file_in_two_columns
 :noremap <silent> <Leader>b :<C-u>let @z=&so<CR>:set so=0 noscb<CR>:bo vs<CR>Ljzt:setl scb<CR><C-w>p:setl scb<CR>:let &so=@z<CR>
 "command! TwoColumnEdit :<C-u>let @z=&so<CR>:set so=0 noscb<CR>:bo vs<CR>Ljzt:setl scb<CR><C-w>p:setl scb<CR>:let &so=@z<CR>
+
+
+
+"https://vi.stackexchange.com/questions/8378/dump-the-output-of-internal-vim-command-into-buffer
+"command! -nargs=+ -complete=command Redir let s:reg = @@ | redir @"> | silent execute <q-args> | redir END | new | pu | 1,2d_ | let @@ = s:reg
+" INSTEAD USE
+" put = execute('au')

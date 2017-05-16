@@ -1,7 +1,14 @@
 " au autocommand
+"
+" to dump all autocommands into current buffer
+" put = execute('au')
+" vim myau.vim -c "put = execute('au MyVimRC')"
+" vim myau.vim -c "put = execute('au PostMyVimRC')"
 
 " UNDOO ALL AUTOCOMMANDS
 "au!
+
+:augroup MyVimRC
 
 func! AuOnReadPatterns(aucmdstr, ...)
 Python2or3 << endpython3
@@ -11,7 +18,7 @@ aucmdstr = vim.eval('a:aucmdstr')
 N = int(vim.eval('a:0'))
 for ix in range(1, N + 1):
     pattern = vim.eval('a:%d' % ix)
-    cmdfmt = "au BufNewFile,BufRead {pattern} {aucmdstr}"
+    cmdfmt = "au MyVimRC BufNewFile,BufRead {pattern} {aucmdstr}"
     cmd = cmdfmt.format(pattern=pattern, aucmdstr=aucmdstr)
     vim.command(cmd)
 endpython3
@@ -25,7 +32,7 @@ aucmdstr = vim.eval('a:aucmdstr')
 N = int(vim.eval('a:0'))
 for ix in range(1, N + 1):
     pattern = vim.eval('a:%d' % ix)
-    cmdfmt = "au BufWritePre {pattern} {aucmdstr}"
+    cmdfmt = "au MyVimRC BufWritePre {pattern} {aucmdstr}"
     cmdstr = cmdfmt.format(pattern=pattern, aucmdstr=aucmdstr)
     vim.command(cmdstr)
 endpython3
@@ -34,13 +41,13 @@ endfu
 
 func! AuFileType(aucmdstr, ...)
 Python2or3 << endpython3
-# Executes `aucmdstr` on `filtypes`
+# Executes `aucmdstr` on `filetype`
 import vim
 aucmdstr = vim.eval('a:aucmdstr')
 N = int(vim.eval('a:0'))
 for ix in range(1, N + 1):
     filetype = vim.eval('a:%d' % ix)
-    cmdfmt = "au FileType {filetype} {aucmdstr}"
+    cmdfmt = "au MyVimRC FileType {filetype} {aucmdstr}"
     cmdstr = cmdfmt.format(filetype=filetype, aucmdstr=aucmdstr)
     vim.command(cmdstr)
 endpython3
@@ -58,17 +65,17 @@ endfu
 :call AuOnReadPatterns('set ft=cython', '*.pyx', '.pxd')
 :call AuOnReadPatterns('set ft=Autohotkey', '*.ahk')
 ":call AuOnReadPatterns('set ft=markdown', '*.md')
-au BufNewFile,BufReadPost *.md set filetype=markdown
+au MyVimRC BufNewFile,BufReadPost *.md set filetype=markdown
 
 let g:markdown_syntax_conceal = 0
 let g:markdown_fenced_languages = ['html', 'python', 'bash=sh']
 
 
 " e supresses errors  if  nonthing is found
-au SwapExists * let v:swapchoice = 'e'
+au MyVimRC SwapExists * let v:swapchoice = 'e'
 
 if exists('+colorcolumn')
-    :call AuFileType('setlocal colorcolumn=', 'text', 'markdown', 'latex', 'tex')
+    :call AuFileType('setlocal colorcolumn=', 'text', 'markdown', 'tex')
     :call AuFileType('setlocal colorcolumn=81', 'python', 'vim', 'cpp')
     "au FileType text setlocal colorcolumn=
     "au FileType python setlocal colorcolumn=81
@@ -77,36 +84,41 @@ endif
 
 " Python indenting, folding, etc...
 "au FileType python set omnifunc=pythoncomplete#Complete
-au FileType python setlocal nosmartindent
-au FileType python filetype indent on
-au FileType python setlocal foldmethod=indent
-au FileType python setlocal foldnestmax=3
-au FileType python setlocal nospell
+au MyVimRC FileType python setlocal nosmartindent
+au MyVimRC FileType python filetype indent on
+au MyVimRC FileType python setlocal foldmethod=indent
+au MyVimRC FileType python setlocal foldnestmax=3
+au MyVimRC FileType python setlocal nospell
+
+au MyVimRC FileType vim setlocal nospell
 
 " C++ indenting, folding, etc...
-au FileType cpp setlocal cino=i-s
-au FileType cpp setlocal cinkeys=0{,0},0),:,!^F,o,O,e
-au FileType cpp setlocal cinkeys-=0#
-au FileType cpp setlocal smartindent
+au MyVimRC FileType cpp setlocal cino=i-s
+au MyVimRC FileType cpp setlocal cinkeys=0{,0},0),:,!^F,o,O,e
+au MyVimRC FileType cpp setlocal cinkeys-=0#
+au MyVimRC FileType cpp setlocal smartindent
 
 " Latex
-au Filetype tex,latex setlocal spell
-" http://stackoverflow.com/questions/18219444/remove-underscore-as-a-word-separator-in-vim
-au Filetype tex,latex setlocal iskeyword+=_
+
 " Make latex files a bit more responsive
 " https://bbs.archlinux.org/viewtopic.php?id=111647
-au FileType tex :NoMatchParen
-au FileType tex setlocal nocursorline
+"au MyVimRC FileType tex :NoMatchParen
+"au MyVimRC FileType tex setlocal nocursorline
+
+" http://stackoverflow.com/questions/18219444/remove-underscore-as-a-word-separator-in-vim
+au MyVimRC Filetype tex setlocal iskeyword+=_
+
+au MyVimRC Filetype tex setlocal spell
 
 " Reference http://stackoverflow.com/questions/6671199/vim-multiline-highlight
-:call AuOnReadPatterns('syntax sync minlines=500', '*.py')
+":call AuOnReadPatterns('syntax sync minlines=500', '*.py')
 
 
 " Prewrite Modifications
 " Remove trailing whitespace
 ":call AuPreWritePatterns(':%s/  *$//e', '*.py', '*.c', '*.cxx', '*.cpp', '*.h', '*.hpp', '*.hxx')
-au BufWritePre *.py :%s/\s\+$//e
-au BufWritePre *.py :%s///e
+au MyVimRC BufWritePre *.py :%s/\s\+$//e
+au MyVimRC BufWritePre *.py :%s///e
 
 
 "au! BufWritePre *.py :%s/\s\+$//e
@@ -132,8 +144,8 @@ au BufWritePre *.py :%s///e
 ""Read vidtk config files as vidtk config file
 "au BufRead,BufNewFile *.conf setfiletype vidtkconf
 "
-au FileType cpp setlocal foldmethod=syntax
-au FileType cpp normal zR
+au MyVimRC FileType cpp setlocal foldmethod=syntax
+au MyVimRC FileType cpp normal zR
 "au FileType cpp if getfsize(@%) > 200 | set foldmethod=syntax | endif
 "au FileType cpp if getfsize(@%) > 200 | normal zR | endif
 
@@ -156,10 +168,12 @@ au FileType cpp normal zR
 "au BufWinEnter *.* silent loadview 
 "
 "au BufNewFile,BufRead *.tex call LatexInitialize() 
-"au Filetype tex,latex set spell spelllang=en_us
-"au Filetype tex,latex set iskeyword+=@,48-57,_,-,:,192-255
+"au Filetype tex set spell spelllang=en_us
+"au Filetype tex set iskeyword+=@,48-57,_,-,:,192-255
 "au Filetype python set iskeyword-=@,48-57,_,-,:,192-255
 "g:tex_isk='48-57,a-z,A-Z,192-255,_
 "au FileType python call PythonInvert()
 "au FileType python set textwidth=80
-"
+
+
+:augroup PostMyVimRC

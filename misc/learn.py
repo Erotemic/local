@@ -45,6 +45,8 @@ def pandas_merge():
 
 def ewma():
     import plottool as pt
+    import ubelt as ub
+    import numpy as np
     pt.qtensure()
 
     # Investigate the span parameter
@@ -99,20 +101,79 @@ def ewma():
     alpha = 2 / (span + 1)
     at_time_n = (1 - alpha) ** n
     from sympy.solvers.inequalities import solve_univariate_inequality
+
+    def eval_expr(span_value, n_value):
+        return np.array([at_time_n.subs(span, span_value).subs(n, n_)
+                         for n_ in n_value], dtype=np.float)
+
+    eval_expr(20, np.arange(20))
+
+    def linear(x, a, b):
+        return a * x + b
+
+    def sigmoidal_4pl(x, a, b, c, d):
+        return d + (a - d) / (1 + (x / c) ** b)
+
+    def exponential(x, a, b, c):
+        return a + b * np.exp(-c * x)
+
+    import scipy.optimize
+
     # Determine how to choose span, such that you get to .01 from 1
     # in n timesteps
-    thresh_to_slope = []
+    thresh_to_span_to_n = []
+    thresh_to_n_to_span = []
+    for thresh in ub.ProgIter([.0001, .001, .01, .1, .2, .3, .4, .5]):
+        print('')
+        test_vals = sorted([2, 3, 4, 5, 6])
+        n_to_span = []
+        for n_value in ub.ProgIter(test_vals):
+            # In n iterations I want to choose a span that the expression go
+            # less than a threshold
+            constraint = at_time_n.subs(n, n_value) < thresh
+            solution = solve_univariate_inequality(constraint, span)
+            try:
+                lowbound = np.ceil(float(solution.args[0].lhs))
+                highbound = np.floor(float(solution.args[1].rhs))
+                assert lowbound <= highbound
+                span_value = lowbound
+            except AttributeError:
+                span_value = np.floor(float(solution.rhs))
+            n_to_span.append((n_value, span_value))
 
-    for thresh in ut.ProgIter([.0001, .001, .01, .1, .2, .3, .4, .5]):
-        d = []
-        for s in range(5, 1000, 100):
-            a = solve_univariate_inequality(at_time_n.subs(span, s) < thresh, n)
-            d.append(a.lhs)
-        slope = np.diff(d).mean()
+        # Given a threshold, find a minimum number of steps
+        # that brings you up to that threshold given a span
+        test_vals = sorted(set(list(range(2, 1000, 50)) + [2, 3, 4, 5, 6]))
+        span_to_n = []
+        for span_value in ub.ProgIter(test_vals):
+            constraint = at_time_n.subs(span, span_value) < thresh
+            solution = solve_univariate_inequality(constraint, n)
+            n_value = solution.lhs
+            span_to_n.append((span_value, n_value))
+
+        thresh_to_n_to_span.append((thresh, n_to_span))
+        thresh_to_span_to_n.append((thresh, span_to_n))
+
+    thresh_to_params = []
+    for thresh, span_to_n in thresh_to_span_to_n:
+        xdata, ydata = [np.array(_, dtype=np.float) for _ in zip(*span_to_n)]
+
+        p0 = (1 / np.diff((ydata - ydata[0])[1:]).mean(), ydata[0])
+        func = linear
+        popt, pcov = scipy.optimize.curve_fit(func, xdata, ydata, p0)
+        # popt, pcov = scipy.optimize.curve_fit(exponential, xdata, ydata)
+
+        if False:
+            yhat = func(xdata, *popt)
+            pt.figure(fnum=1, doclf=True)
+            pt.plot(xdata, ydata, label='measured')
+            pt.plot(xdata, yhat, label='predicteed')
+            pt.legend()
+        # slope = np.diff(ydata).mean()
         # pt.plot(d)
-        thresh_to_slope.append((thresh, slope))
+        thresh_to_params.append((thresh, popt))
 
-    pt.plt.plot(*zip(*thresh_to_slope), 'x-')
+    # pt.plt.plot(*zip(*thresh_to_slope), 'x-')
 
     # for thresh=.01, we get a rough line with slop ~2.302,
     # for thresh=.5, we get a line with slop ~34.66
