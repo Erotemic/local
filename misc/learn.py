@@ -107,6 +107,12 @@ def ewma():
     alpha = 2 / (span + 1)
     thresh_expr = (1 - alpha) ** n
     thresh_expr = base ** n
+    n_expr = sym.ceiling(sym.log(thresh) / sym.log(1 - 2/(span + 1)))
+
+
+    sym.pprint(sym.simplify(thresh_expr))
+    sym.pprint(sym.simplify(n_expr)))
+    print(sym.latex(sym.simplify(n_expr)))
 
     def calc_n(span, thresh):
         return np.log(thresh) / np.log(1 - 2 / (span + 1))
