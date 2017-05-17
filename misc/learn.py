@@ -77,19 +77,23 @@ def ewma():
         current = (alpha * x) + (1 - alpha) * current
         mave += [current]
 
-    pt.figure(fnum=1, doclf=True)
-    pt.plot(data)
-    pt.plot(mave)
+    if False:
+        pt.figure(fnum=1, doclf=True)
+        pt.plot(data)
+        pt.plot(mave)
 
     np.where(np.array(mave) < 1e-1)
 
     import sympy as sym
 
     # span, alpha, n = sym.symbols('span, alpha, n')
-    alpha = sym.symbols('alpha', real=True, nonnegative=True, finite=True)
     n = sym.symbols('n', integer=True, nonnegative=True, finite=True)
     span = sym.symbols('span', integer=True, nonnegative=True, finite=True)
+    thresh = sym.symbols('thresh', real=True, nonnegative=True, finite=True)
     # alpha = 2 / (span + 1)
+
+    a, b, c = sym.symbols('a, b, c', real=True, nonnegative=True, finite=True)
+    sym.solve(sym.Eq(b ** a, c), a)
 
     current = 1
     x = 0
@@ -98,12 +102,52 @@ def ewma():
         current = (alpha * x) + (1 - alpha) * current
         steps.append(current)
 
+    alpha = sym.symbols('alpha', real=True, nonnegative=True, finite=True)
+    base = sym.symbols('base', real=True, finite=True)
     alpha = 2 / (span + 1)
-    at_time_n = (1 - alpha) ** n
+    thresh_expr = (1 - alpha) ** n
+    thresh_expr = base ** n
+
+    def calc_n(span, thresh):
+        return np.log(thresh) / np.log(1 - 2 / (span + 1))
+
+    def calc_thresh_val(n, span):
+        alpha = 2 / (span + 1)
+        return (1 - alpha) ** n
+
+    span = np.arange(2, 200)
+    n_frac = calc_n(span, thresh=.5)
+    n = np.ceil(n_frac)
+    calc_val(n, span)
+
+    pt.figure(fnum=1, doclf=True)
+    ydatas = ut.odict([
+        ('thresh=%f' % thresh, np.ceil(calc_n(span, thresh=thresh)))
+        for thresh in [1e-3, .01, .1, .2, .3, .4, .5]
+
+    ])
+    pt.multi_plot(span, ydatas,
+                  xlabel='span',
+                  ylabel='n iters to acheive thresh',
+                  marker='',
+                  # num_xticks=len(span),
+                  fnum=1)
+    pt.gca().set_aspect('equal')
+
+
+    def both_sides(eqn, func):
+        return sym.Eq(func(eqn.lhs), func(eqn.rhs))
+
+    eqn = sym.Eq(thresh_expr, thresh)
+    n_expr = sym.solve(eqn, n)[0].subs(base, (1 - alpha)).subs(alpha, (2 / (span + 1)))
+
+    eqn = both_sides(eqn, lambda x: sym.log(x, (1 - alpha)))
+    lhs = eqn.lhs
+
     from sympy.solvers.inequalities import solve_univariate_inequality
 
     def eval_expr(span_value, n_value):
-        return np.array([at_time_n.subs(span, span_value).subs(n, n_)
+        return np.array([thresh_expr.subs(span, span_value).subs(n, n_)
                          for n_ in n_value], dtype=np.float)
 
     eval_expr(20, np.arange(20))
@@ -123,14 +167,14 @@ def ewma():
     # in n timesteps
     thresh_to_span_to_n = []
     thresh_to_n_to_span = []
-    for thresh in ub.ProgIter([.0001, .001, .01, .1, .2, .3, .4, .5]):
+    for thresh_value in ub.ProgIter([.0001, .001, .01, .1, .2, .3, .4, .5]):
         print('')
         test_vals = sorted([2, 3, 4, 5, 6])
         n_to_span = []
         for n_value in ub.ProgIter(test_vals):
             # In n iterations I want to choose a span that the expression go
             # less than a threshold
-            constraint = at_time_n.subs(n, n_value) < thresh
+            constraint = thresh_expr.subs(n, n_value) < thresh_value
             solution = solve_univariate_inequality(constraint, span)
             try:
                 lowbound = np.ceil(float(solution.args[0].lhs))
@@ -146,16 +190,16 @@ def ewma():
         test_vals = sorted(set(list(range(2, 1000, 50)) + [2, 3, 4, 5, 6]))
         span_to_n = []
         for span_value in ub.ProgIter(test_vals):
-            constraint = at_time_n.subs(span, span_value) < thresh
+            constraint = thresh_expr.subs(span, span_value) < thresh_value
             solution = solve_univariate_inequality(constraint, n)
             n_value = solution.lhs
             span_to_n.append((span_value, n_value))
 
-        thresh_to_n_to_span.append((thresh, n_to_span))
-        thresh_to_span_to_n.append((thresh, span_to_n))
+        thresh_to_n_to_span.append((thresh_value, n_to_span))
+        thresh_to_span_to_n.append((thresh_value, span_to_n))
 
     thresh_to_params = []
-    for thresh, span_to_n in thresh_to_span_to_n:
+    for thresh_value, span_to_n in thresh_to_span_to_n:
         xdata, ydata = [np.array(_, dtype=np.float) for _ in zip(*span_to_n)]
 
         p0 = (1 / np.diff((ydata - ydata[0])[1:]).mean(), ydata[0])
@@ -171,15 +215,15 @@ def ewma():
             pt.legend()
         # slope = np.diff(ydata).mean()
         # pt.plot(d)
-        thresh_to_params.append((thresh, popt))
+        thresh_to_params.append((thresh_value, popt))
 
     # pt.plt.plot(*zip(*thresh_to_slope), 'x-')
 
-    # for thresh=.01, we get a rough line with slop ~2.302,
-    # for thresh=.5, we get a line with slop ~34.66
+    # for thresh_value=.01, we get a rough line with slop ~2.302,
+    # for thresh_value=.5, we get a line with slop ~34.66
 
-    # if we want to get to 0 in n timesteps, with a thresh of
-    # choose span=f(thresh) * (n + 2))
+    # if we want to get to 0 in n timesteps, with a thresh_value of
+    # choose span=f(thresh_value) * (n + 2))
     # f is some inverse exponential
 
     # 0.0001, 460.551314197147
@@ -202,4 +246,4 @@ def ewma():
     # f(.5) * (n - 1)
 
     # f(
-    solve_rational_inequalities(at_time_n < .01, n)
+    solve_rational_inequalities(thresh_expr < .01, n)
