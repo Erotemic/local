@@ -16,7 +16,7 @@ let g:tex_subscripts= '[0-9ABCabcdehijklmnoprstuvx,+-/().]'
 
 
 " Always do conceal
-let g:concellevel=2
+"let g:concellevel=2
 
 " New LatexBox stuff
 let g:LatexBox_Folding=0

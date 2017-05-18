@@ -23,6 +23,7 @@ def pandas_merge():
     b = pd.DataFrame.from_dict(
         {'x': [1, 0], 'y': [2, 0], 'z': [3, 0], 'q': [4, 0]}, orient='index')
     a = a.rename(columns={0: 'foo', 1: 'bar'})
+
     b = b.rename(columns={0: 'foo', 1: 'bar'})
     new = pd.merge(a, b, how='outer', on=x.columns.tolist(),
                    left_index=True, right_index=True)
@@ -107,15 +108,17 @@ def ewma():
     alpha = 2 / (span + 1)
     thresh_expr = (1 - alpha) ** n
     thresh_expr = base ** n
-    n_expr = sym.ceiling(sym.log(thresh) / sym.log(1 - 2/(span + 1)))
-
+    n_expr = sym.ceiling(sym.log(thresh) / sym.log(1 -  2 / (span + 1)))
 
     sym.pprint(sym.simplify(thresh_expr))
-    sym.pprint(sym.simplify(n_expr)))
+    sym.pprint(sym.simplify(n_expr))
     print(sym.latex(sym.simplify(n_expr)))
 
+    # def calc_n2(span, thresh):
+    #     return np.log(thresh) / np.log(1 - 2 / (span + 1))
+
     def calc_n(span, thresh):
-        return np.log(thresh) / np.log(1 - 2 / (span + 1))
+        return np.log(thresh) / np.log((span - 1) / (span + 1))
 
     def calc_thresh_val(n, span):
         alpha = 2 / (span + 1)

@@ -199,6 +199,9 @@ hi def link texEmbedError	texError
 """""""""""""""""
 "Add in custom conceal unicode lines
 " Conceal mode support (supports set cole=2) {{{1
+"
+" See: ~/share/vim/vim80/syntax/tex.vim
+"
 if !exists("g:tex_conceal")
     let s:tex_conceal= 'abdmgsS'
 else
@@ -210,6 +213,8 @@ if has("conceal") && &enc == 'utf-8'
     " (many of these symbols were contributed by Björn Winckler)
     if s:tex_conceal =~# 'm'
       let s:texMathListExtra=[
+        \ ['percent'    , '%'],
+        \ ['teq'		, '꞊'],
         \ ['union'		, '∪'],
         \ ['Union'		, '∪'],
         \ ['bigcup'		, '∪'],
@@ -224,9 +229,14 @@ if has("conceal") && &enc == 'utf-8'
         "\ ['Isect'		, '⋂'],
         "\ ['bigcap'		, '⋂'],
 
+        " Not allowed to match any other letters but numbers are ok
+        "let s:negLookAhead="\\([a-zA-Z]\\)\\@!"
+
         for texmath in s:texMathListExtra
             if texmath[0] =~# '\w$'
-                exe "syn match texMathSymbol '\\\\".texmath[0]."\\>' contained conceal cchar=".texmath[1]
+                "exe "syn match texMathSymbol '\\\\".texmath[0]."".s:negLookAhead."' contained conceal cchar=".texmath[1]
+                "exe "syn match texMathSymbol '\\\\".texmath[0]."\\>' contained conceal cchar=".texmath[1]
+                exe "syn match texMathSymbol '\\\\".texmath[0]."\\(\\a\\)\\@!' contained conceal cchar=".texmath[1]
             else
                 exe "syn match texMathSymbol '\\\\".texmath[0]."' contained conceal cchar=".texmath[1]
             endif
