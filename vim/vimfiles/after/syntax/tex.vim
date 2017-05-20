@@ -215,6 +215,7 @@ if has("conceal") && &enc == 'utf-8'
       let s:texMathListExtra=[
         \ ['percent'    , '%'],
         \ ['teq'		, '꞊'],
+        \ ['eqv'		, '≡'],
         \ ['union'		, '∪'],
         \ ['Union'		, '∪'],
         \ ['bigcup'		, '∪'],
