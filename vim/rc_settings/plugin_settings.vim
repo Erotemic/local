@@ -278,6 +278,7 @@ let g:syntastic_always_populate_loc_list = 1
 
 "-------------------------
 " PLUGIN: Syntastic Python
+" SyntasticInfo
 let g:syntastic_python_checkers=['flake8'] " ignores lines containng # NOQA
 
 " SCRIPTING VIM IN PYTHON 
