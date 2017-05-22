@@ -1,24 +1,15 @@
 import os
 import git
+import email.utils
 import ubelt as ub
 
 repo = git.Repo(os.getcwd())
 orig_branch_name = repo.active_branch.name
 
 head = repo.commit('HEAD')
-
-# Find a chain of commits starting at the HEAD
-chain = []
-commit = head
-while len(commit.parents) == 1:
-    chain.append(commit)
-    commit = commit.parents[0]
-
-if len(chain) == 0:
-    raise ValueError('No continuous commits exist')
+valid_authors = {'joncrall'}
 
 
-# Find contiguous streaks
 class Streak(ub.NiceRepr):
     def __init__(self, child, streak):
         self.child = child
@@ -53,38 +44,63 @@ class Streak(ub.NiceRepr):
     def stop(self):
         return self._streak[0]
 
-streaks = []
-streak_ids = []
 
-valid_authors = {'joncrall'}
+def find_chain(head, valid_authors):
+    # Find a chain of commits starting at the HEAD all from the same author
+    chain = []
+    commit = head
+    while len(commit.parents) == 1:
+        if commit.author.name not in valid_authors:
+            break
+        chain.append(commit)
+        commit = commit.parents[0]
+    return chain
 
-def continues_streak(streak, commit):
-    if commit.author.name not in valid_authors:
-        return False
-    if len(streak) == 0:
-        return True
-    if streak.start.message == commit.message:
-        date1 = streak.start.authored_datetime.date()
-        date2 = commit.authored_datetime.date()
-        if date1 == date2:
+
+def find_streaks(chain, valid_authors):
+    if len(chain) == 0:
+        raise ValueError('No continuous commits exist')
+
+    # Find contiguous streaks
+    streaks = []
+    streak_ids = []
+
+    def continues_streak(streak, commit):
+        if commit.author.name not in valid_authors:
+            return False
+        if len(streak) == 0:
             return True
-    return False
+        if streak.start.message == commit.message:
+            date1 = streak.start.authored_datetime.date()
+            date2 = commit.authored_datetime.date()
+            if date1 == date2:
+                return True
+        return False
 
-LEN_THRESH = 2
-child = None
-streak = Streak(child, [])
-for commit in chain:
-    if continues_streak(streak, commit):
-        streak.append(commit)
-    else:
-        # Streak is broken
-        if len(streak) < LEN_THRESH:
-            streak_ids.extend([None] * max(1, len(streak)))
+    LEN_THRESH = 2
+    child = None
+    streak = Streak(child, [])
+    for commit in chain:
+        if continues_streak(streak, commit):
+            streak.append(commit)
         else:
-            streaks.append(streak)
-            streak_ids.extend([len(streaks)] * len(streak))
-        child = commit
-        streak = Streak(child, [])
+            # Streak is broken
+            if len(streak) < LEN_THRESH:
+                streak_ids.extend([None] * max(1, len(streak)))
+            else:
+                streaks.append(streak)
+                streak_ids.extend([len(streaks)] * len(streak))
+            child = commit
+            streak = Streak(child, [])
+    return streaks
+
+
+chain = find_chain(head, valid_authors)
+print('Found chain of length %r' % (len(chain)))
+
+streaks = find_streaks(chain, valid_authors)
+print('Found %r streaks' % (len(streaks)))
+
 
 temp_branchname = repo.active_branch.name + '-squash-temp'
 
@@ -105,7 +121,6 @@ except git.GitCommandError as ex:
 assert repo.active_branch.name == temp_branchname
 
 ISO_8601 = '%Y-%m-%d %H:%M:%S %z'
-import email.utils
 
 new_head = head
 
@@ -164,7 +179,8 @@ if False:
     repo.git.reset(temp_branchname, hard=True)
     repo.git.branch(D=temp_branchname)
 
+    # Need to force push back to server
+
 if False:
     repo.git.checkout(orig_branch_name)
     repo.git.branch(D=temp_branchname)
-    break
