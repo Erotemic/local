@@ -3,6 +3,30 @@ common_paths()
     cat ~/local/init/ensure_vim_plugins.py
 }
 
+install_languagetool(){
+
+# https://www.languagetool.org/
+
+cd ~/tmp
+wget https://www.languagetool.org/download/LanguageTool-3.7.zip
+7z x LanguageTool-3.7.zip
+
+mkdir -p ~/opt
+mv LanguageTool-3.7 ~/opt/
+
+cd ~/opt/LanguageTool-3.7/
+cd ~/bin
+echo '
+#!/bin/sh
+java -jar ~/opt/LanguageTool-3.7/languagetool-commandline.jar $@
+' > langtool
+chmod +x langtool
+
+
+langtool --help
+langtool --disable WHITESPACE_RULE,EN_QUOTES,EN_UNPAIRED_BRACKETS chapter1-intro.tex
+}
+
 
 custom_tmux() 
 {

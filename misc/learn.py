@@ -256,3 +256,53 @@ def ewma():
 
     # f(
     solve_rational_inequalities(thresh_expr < .01, n)
+
+
+def mean_decrease_impurity():
+    '''
+    N = num training examples
+
+    t = node
+    t.num = number of training samples at t
+
+    t.p = t.num / N  = fraction of training samples at t
+
+    p_L = t.left.num / t.num
+    p_R = t.right.num / t.num
+
+    i(t) = impurity / entropy class labels at the node
+
+    ∆i(t) = impurity decrease at the node
+    ∆i(t) = i(t) − p_L * i(tL) − p_R * i(tR)
+    t.∆i t.delta_i = ∆i(t)
+
+    # importance of feature dimension j in tree m
+    # This is the weighted impurity decrease of all nodes using that feature in m
+    MDI(j, m) = sum(p(t) * ∆i(s, t) for t in m if t.feature = j)
+    MDI(j, m) = sum(t.p * t.∆i for t in m if t.feature = j)
+
+    MDI(feat, tree) = sum(node.p * node.delta_i for node in tree if node.feature = feat)
+
+    '''
+    import sympy as sym
+    n, nL, nR, N, i, iR, iL = sym.symbols('n, n_L, n_R, N, i, iR, iL')
+
+    p = n / N
+    pL = nL / N
+    pR = nR / N
+
+    wL = nL / n
+    wR = nL / n
+
+    delta_i1 = i - (wL * iL + wR * iR)
+    delta_i2 = p * i - (pL * iL + pR * iR)
+
+    print('Real Delta ∆i(t)')
+    sym.pprint(sym.simplify(delta_i1))
+
+    print('')
+    print('Alt Delta ∆i(t)')
+    sym.pprint(delta_i2 * N / n)
+    sym.pprint(sym.simplify(delta_i2 * N / n))
+
+    sym.pprint(sym.simplify((p * i - (pL * iL + pR * iR)) / p))
