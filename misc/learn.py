@@ -306,3 +306,211 @@ def mean_decrease_impurity():
     sym.pprint(sym.simplify(delta_i2 * N / n))
 
     sym.pprint(sym.simplify((p * i - (pL * iL + pR * iR)) / p))
+
+
+def chunked_search():
+    """
+    Computational complexity of building one kd-tree and searching vs building
+    many and searching.
+
+
+    --------------------------------
+    Normal Running Time:
+        Indexing:
+            D⋅log(D⋅p)
+        Query:
+            Q⋅log(D⋅p)
+    --------------------------------
+
+    --------------------------------
+    Chunked Running Time:
+        Indexing:
+                 ⎛D⋅p⎞
+            D⋅log⎜───⎟
+                 ⎝ C ⎠
+        Query:
+                   ⎛D⋅p⎞
+            C⋅Q⋅log⎜───⎟
+                   ⎝ C ⎠
+    --------------------------------
+
+    Conclusion: chunking provides a tradeoff in running time.
+    It can make indexing, faster, but it makes query-time slower.  However, it
+    does allow for partial database search, which can speed up response time of
+    queries. It can also short-circuit itself once a match has been found.
+    """
+    import sympy as sym
+    import utool as ut
+    ceil = sym.ceiling
+    ceil = ut.identity
+    log = sym.log
+
+    #
+    # ====================
+    # Define basic symbols
+    # ====================
+
+    # Number of database and query annotations
+    n_dannots, n_qannots = sym.symbols('D, Q')
+
+    # Average number of descriptors per annotation
+    n_vecs_per_annot = sym.symbols('p')
+
+    # Size of the shortlist to rerank
+    n_rr = sym.symbols('L')
+
+    # The number of chunks
+    C = sym.symbols('C')
+
+    #
+    # ===============================================
+    # Define helper functions and intermediate values
+    # ===============================================
+    n_dvecs = n_vecs_per_annot * n_dannots
+
+    # Could compute the maximum average matches something gets
+    # but for now just hack it
+    fmatch = sym.Function('fmatch')
+    n_fmatches = fmatch(n_vecs_per_annot)
+
+    # The complexity of spatial verification is roughly that of SVD
+    # SV_fn = lambda N: N ** 3  # NOQA
+    SV_fn = sym.Function('SV')
+    SV = SV_fn(n_fmatches)
+
+    class KDTree(object):
+        # A bit of a simplification
+        n_trees = sym.symbols('T')
+        params = {n_trees}
+
+        @classmethod
+        def build(self, N):
+            return N * log(N) * self.n_trees
+
+        @classmethod
+        def search(self, N):
+            # This is average case
+            return log(N) * self.n_trees
+
+    Indexer = KDTree
+
+    def sort(N):
+        return N * log(N)
+
+    #
+    # ========================
+    # Define normal complexity
+    # ========================
+
+    # The computational complexity of the normal hotspotter pipeline
+    normal = {}
+    normal['indexing'] = Indexer.build(n_dvecs)
+    normal['search'] = n_vecs_per_annot * Indexer.search(n_dvecs)
+    normal['rerank'] = (SV * n_rr)
+    normal['query'] = (normal['search'] + normal['rerank']) * n_qannots
+    normal['total'] = normal['indexing'] + normal['query']
+
+    n_cannots = ceil(n_dannots / C)
+    n_cvecs = n_vecs_per_annot * n_cannots
+
+    # How many annots should be re-ranked in each chunk?
+    # _n_rr_chunk = sym.Max(n_rr / C * log(n_rr / C), 1)
+    # _n_rr_chunk = n_rr / C
+    _n_rr_chunk = n_rr
+
+    _index_chunk = Indexer.build(n_cvecs)
+    _search_chunk = n_vecs_per_annot * Indexer.search(n_cvecs)
+    chunked = {}
+    chunked['indexing'] = C * _index_chunk
+    chunked['search'] = C * _search_chunk
+    # Cost to rerank in every chunk and then merge chunks into a single list
+    chunked['rerank'] = C * (SV * _n_rr_chunk) + sort(C * _n_rr_chunk)
+    chunked['query'] = (chunked['search'] + chunked['rerank']) * n_qannots
+    chunked['total'] = chunked['indexing'] + chunked['query']
+
+    typed_steps = {
+        'normal': normal,
+        'chunked': chunked,
+    }
+
+    #
+    # ===============
+    # Inspect results
+    # ===============
+
+    # Symbols that will not go to infinity
+    const_symbols = {
+        n_rr,
+        n_vecs_per_annot
+    }.union(Indexer.params)
+
+    def measure_num(n_steps, step, type_):
+        print('nsteps(%s %s)' % (step, type_,))
+        sym.pprint(n_steps)
+
+    def measure_order(n_steps, step, type_):
+        print('O(%s %s)' % (step, type_,))
+        limiting = [
+            (s, sym.oo)
+            for s in n_steps.free_symbols - const_symbols
+        ]
+        step_order = sym.Order(n_steps, *limiting)
+        sym.pprint(step_order.args[0])
+
+    measure_dict = {
+        'num': measure_num,
+        'order': measure_order,
+    }
+
+    # Different methods for choosing C
+    C_methods = ut.odict([
+        ('none', C),
+        ('const', 512),
+        ('linear', n_dannots / 512),
+        ('log', log(n_dannots)),
+    ])
+
+    # ---
+    # What to measure?
+    # ---
+
+    steps  = [
+        'indexing',
+        'query'
+    ]
+    types_ = ['normal', 'chunked']
+    measures = [
+        # 'num',
+        'order'
+    ]
+    C_method_keys = [
+        'none'
+        # 'const'
+    ]
+
+    grid = ut.odict([
+        ('step', steps),
+        ('measure', measures),
+        ('k', C_method_keys),
+        ('type_', types_),
+    ])
+
+    last = None
+
+    for params in ut.all_dict_combinations(grid):
+        type_ = params['type_']
+        step = params['step']
+        k = params['k']
+        # now = k
+        now = step
+        if last != now:
+            print('=========')
+            print('\n\n=========')
+        last = now
+        print('')
+        print(ut.repr2(params, stritems=True))
+        measure_fn = measure_dict[params['measure']]
+        info = typed_steps[type_]
+        n_steps = info[step]
+        n_steps = n_steps.subs(C, C_methods[k])
+        measure_fn(n_steps, step, type_)
