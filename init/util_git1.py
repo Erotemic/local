@@ -89,7 +89,7 @@ if __name__ == '__main__':
     varargs2 = []
     for a in varargs:
         # hack
-        if a == '!!':
+        if a == '==':
             break
         varargs2.append(a)
 

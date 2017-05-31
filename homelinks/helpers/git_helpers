@@ -7,18 +7,18 @@ gg-recover()
 
 gg-status()
 {
-    python ~/local/init/util_git1.py 'git status'
+    python ~/local/init/util_git1.py 'git status' !! $@
     #python -m utool.util_git 
 }
 
 gg-pull()
 {
-    python ~/local/init/util_git1.py 'git pull'
+    python ~/local/init/util_git1.py 'git pull' !! $@
 }
 
 gg-push()
 {
-    python ~/local/init/util_git1.py 'git push' $@
+    python ~/local/init/util_git1.py 'git push' !! $@
 }
 
 gg-cmd()
