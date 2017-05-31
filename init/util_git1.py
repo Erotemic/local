@@ -19,9 +19,7 @@ VIM_REPOS_WITH_SUBMODULES = REPOS1.VIM_REPOS_WITH_SUBMODULES
 def gitcmd(repo, command):
     try:
         import utool as ut
-        repo_ = ut.Repo(dpath=repo)
-        repo_.issue(command)
-    except Exception:
+    except ImportError:
         print()
         print("************")
         try:
@@ -33,12 +31,15 @@ def gitcmd(repo, command):
             command = 'git ' + command
         os.system(command)
         print("************")
+    else:
+        repo_ = ut.Repo(dpath=repo)
+        repo_.issue(command)
 
 
 def gg_command(command):
     """ Runs a command on all of your PROJECT_REPOS """
     for repo in PROJECT_REPOS:
-        if exists(repo):
+        if exists(repo) and exists(join(repo, '.git')):
             gitcmd(repo, command)
 
 
