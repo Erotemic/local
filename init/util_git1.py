@@ -85,6 +85,13 @@ def is_gitrepo(repo_dir):
 
 
 if __name__ == '__main__':
-    command = ' '.join(sys.argv[1:])
+    varargs = sys.argv[1:]
+    varargs2 = []
+    for a in varargs:
+        if a == '!!':
+            break
+        varargs2.append(a)
+
+    command = ' '.join(varargs2)
     # Apply command to all repos
     gg_command(command)
