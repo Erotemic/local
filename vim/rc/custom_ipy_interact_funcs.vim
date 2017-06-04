@@ -16,63 +16,79 @@ ut.util_ubuntu.rrr(0)
 mode = vim.eval('a:1')
 return_to_vim = vim.eval('a:2')
 
+DEBUG_STDOUT = False
+DEBUG_FILE = False
+DEBUG = DEBUG_FILE or DEBUG_STDOUT
+
 def dprint(msg):
-    if False:
+    if DEBUG_STDOUT or DEBUG_FILE:
+        import time
+        stamp = str(time.time())
+        msg = stamp + ' ' + msg
+
+    if DEBUG_STDOUT:
         print(msg)
-    if True:
-        from os.path import expanduser
-        with open(expanduser('~/vim-misc-debug.txt'), 'a') as f:
-            f.write(msg + '\n')
 
-dprint('\n----\nCopyGVimToTerminalDev')
-dprint('mode = %r' % (mode,))
-dprint('return_to_vim = %r' % (return_to_vim,))
+    if DEBUG_FILE:
+        file.write(msg + '\n')
 
-if mode == 'clipboard':
-    dprint('Text is already in clipboard')
-    # Using pyperclip seems to freeze.
-    # Good thing we can access the system clipboard via vim
-    # text = ut.get_clipboard()
-    text = vim.eval('@+')
-    dprint('got text')
-    dprint('text = %r' % (text,))
-else:
-    if mode == 'word':
-        text = pyvim_funcs.get_word_at_cursor()
+def _context_func(file=None):
+    dprint('\n----\nCopyGVimToTerminalDev')
+    dprint('mode = %r' % (mode,))
+    dprint('return_to_vim = %r' % (return_to_vim,))
+
+    if mode == 'clipboard':
+        dprint('Text is already in clipboard')
+        # Using pyperclip seems to freeze.
+        # text = ut.get_clipboard()
+        # Access clipboard via vim instead
+        text = vim.eval('@+')
+        dprint('got text')
+        dprint('text = %r' % (text,))
     else:
-        if 'v' in mode.lower():
-            dprint('grabbing selected text')
-            text = pyvim_funcs.get_selected_text()
+        if mode == 'word':
+            text = pyvim_funcs.get_word_at_cursor()
         else:
-            dprint('grabbing text at current line')
-            text = pyvim_funcs.get_line_at_cursor()
-    # Prepare to send text to xdotool
-    dprint('preparing text')
-    text = ut.unindent(text)
-    dprint('copying text to clipboard')
-    ut.copy_text_to_clipboard(text)
-    dprint('copied text to clipboard')
+            if 'v' in mode.lower():
+                dprint('grabbing selected text')
+                text = pyvim_funcs.get_selected_text()
+            else:
+                dprint('grabbing text at current line')
+                text = pyvim_funcs.get_line_at_cursor()
+        # Prepare to send text to xdotool
+        dprint('preparing text')
+        text = ut.unindent(text)
+        dprint('copying text to clipboard')
+        ut.copy_text_to_clipboard(text)
+        dprint('copied text to clipboard')
 
-# Build xdtool script
-doscript = [
-    ('remember_window_id', 'ACTIVE_GVIM'),
-    ('focus', 'x-terminal-emulator.X-terminal-emulator'),
-    ('key', 'ctrl+shift+v'),
-    ('key', 'KP_Enter'),
-]
-if '\n' in text:
-    # Press enter twice for multiline texts
-    doscript += [
+    # Build xdtool script
+    doscript = [
+        ('remember_window_id', 'ACTIVE_GVIM'),
+        ('focus', 'x-terminal-emulator.X-terminal-emulator'),
+        ('key', 'ctrl+shift+v'),
         ('key', 'KP_Enter'),
     ]
-if return_to_vim == "1":
-    doscript += [
-        ('focus_id', '$ACTIVE_GVIM'),
-    ]
-# execute script
-dprint('Running script')
-ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01)
-dprint('Finished script')
+    if '\n' in text:
+        # Press enter twice for multiline texts
+        doscript += [
+            ('key', 'KP_Enter'),
+        ]
+    if return_to_vim == "1":
+        doscript += [
+            ('focus_id', '$ACTIVE_GVIM'),
+        ]
+    # execute script
+    dprint('Running script')
+    ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01, file=file, verbose=DEBUG)
+    dprint('Finished script')
+
+if DEBUG_STDOUT:
+    from os.path import expanduser
+    with open(expanduser('~/vim-misc-debug.txt'), 'a') as file:
+        _context_func(file)
+else:
+    _context_func()
 #L______________
 EOF
 endfu 
@@ -168,5 +184,3 @@ import utool as ut
 ut.util_ubuntu.XCtrl.do(('focus', 'x-terminal-emulator.X-terminal-emulator'))
 EOF
 endfu
-
-

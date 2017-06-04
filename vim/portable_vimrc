@@ -16,7 +16,6 @@ let g:markdown_fenced_languages = ['html', 'python', 'bash=sh']
 " ~/local/vim/rc_settings/plugins_latex.vim
 " ~/local/vim/rc_settings/plugins_latex2.vim
 " ~/local/vim/rc_settings/behavior_settings.vim
-" ~/local/vim/rc_settings/remap_funcs.vim
 " ~/local/vim/rc_settings/remap_settings.vim
 " ~/local/vim/rc_settings/autocommand_settings.vim
 
