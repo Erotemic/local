@@ -10,6 +10,7 @@ let g:markdown_fenced_languages = ['html', 'python', 'bash=sh']
 " COMMON JUMP TO RC FILES
 " ~/local/vim/rc/pyvim_funcs.py
 " ~/local/vim/rc/custom_misc_functions.vim  
+" ~/local/vim/rc/custom_ipy_interact_funcs.vim
 " ~/local/vim/rc/custom_py_functions.vim
 " ~/local/vim/rc_settings/plugin_settings.vim
 " ~/local/vim/rc_settings/plugins_latex.vim
@@ -162,6 +163,7 @@ source ~/local/vim/rc/align.vim
 source ~/local/vim/rc/enable_code_snippets.vim
 source ~/local/vim/rc/custom_font_functions.vim
 source ~/local/vim/rc/custom_misc_functions.vim  
+source ~/local/vim/rc/custom_ipy_interact_funcs.vim  
 source ~/local/vim/rc/custom_py_functions.vim
 
 "===========Settings==========="

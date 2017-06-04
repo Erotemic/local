@@ -353,6 +353,7 @@ install_latex()
 
     #texlive 2015
     # https://www.tug.org/texlive/acquire-netinstall.html
+    mkdir -p ~/tmp
     cd ~/tmp
     wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
     tar xzvf install-tl-unx.tar.gz
@@ -364,6 +365,8 @@ install_latex()
     # cd /usr/local/texlive/2015/bin/x86_64-linux
     # Installed to /usr/local/texlive/2015/
     # Need to add /usr/local/texlive/2015/bin/x86_64-linux to the PATH
+    # In my second time doing this I'm trying adding symlinks to local files instead
+    # lets see if that works...
     #python -m utool.util_cplat --exec-get-path-dirs:0
 
     sudo apt-get install latexmk
