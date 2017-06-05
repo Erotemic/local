@@ -121,7 +121,7 @@ noremap  <leader>pr :call CopyGVimToTerminalDev('v', 1)<CR>
 noremap  <leader>pw :call CopyGVimToTerminalDev('word', 1)<CR>
 
 " Focus on terminal
-"noremap  <leader>ft :call FocusTerm()<CR>
+noremap  <leader>ft :call FocusTerm()<CR>
 "noremap  <leader>pt :call FocusTerm()<CR>
 
 " Hotkey:
