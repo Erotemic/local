@@ -290,6 +290,11 @@ ut.rrrr(verbose=False)
 word = pyvim_funcs.get_word_at_cursor(url_ok=True)
 # HACK: custom current bibtex file
 
+if word.startswith('<') and word.endswith('>`_'):
+    print('word = %r' % (word,))
+    word = word[1:-3]
+    print('word = %r' % (word,))
+
 if ut.is_url(word):
     url = word
     print(url)
