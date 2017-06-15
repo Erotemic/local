@@ -85,17 +85,6 @@ def escape(string, char):
     return string.replace(char, '\\' + char)
 
 
-def unique(in_list):
-    # keeps things in order
-    seen = set()
-    out_list = []
-    for item in in_list:
-        if item not in seen:
-            seen.add(item)
-            out_list.append(item)
-    return out_list
-
-
 def dircheck(dname):
     if not os.path.exists(dname):
         os.makedirs(dname)

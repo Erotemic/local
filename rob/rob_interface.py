@@ -2,6 +2,9 @@
 # from __future__ import absolute_import, division, print_function, unicode_literals
 import os
 from rob_helpers import *  # NOQA
+from rob_helpers import call
+from six.moves import input
+import sys
 import rob_helpers
 from datetime import datetime  # NOQA
 import robos
@@ -34,6 +37,7 @@ except ImportError:
 
 
 def make_complete(r):
+    import utool as ut
     import rob_interface
     modname = 'rob'
     testnames = [ut.get_funcname(func) for func in
@@ -279,13 +283,14 @@ def find(r, *tofind_list):
 
 
 def search(r, *tofind_list):
+    import utool as ut
     dpath = os.getcwd()
     print('Searching %s for %r' % (dpath, tofind_list))
     num_found = 0
     for root, dname_list, fname_list in os.walk(dpath):
         for name in fname_list + dname_list:
             name_ = name.lower()
-            if find_in_list(name_, tofind_list, all):
+            if ut.find_in_list(name_, tofind_list, all):
                 print(os.path.join(root, name_))
                 num_found += 1
     print(' * num_found=%d' % (num_found))
@@ -335,6 +340,22 @@ def process_research_line(line):
     line = re.sub('  *', ' ', line)
     line = re.sub('  *', ' ', line)
     line = re.sub('NBNN', 'Naive Bayes Nearest Neighbor', line)
+    if True:
+        try:
+            import utool as ut
+            nesting = ut.parse_nestings(line)
+            transformed = []
+            for item in nesting:
+                if item[0] == 'curl' and item[1][1][1].startswith('displaystyle'):
+                    # Skip the wiki displaystyle
+                    pass
+                else:
+                    transformed.append(item)
+            line = ut.recombine_nestings(transformed)
+        except Exception:
+            pass
+        # For wiki formatting
+    line = re.sub('\\bdisplaystyle\\b', '', line)
     line = re.sub('\\(i\\)', '1)', line)
     line = re.sub('\\(ii\\)', '2)', line)
     line = re.sub('\\(iii\\)', '3)', line)
@@ -402,8 +423,9 @@ def research(r, start_line_str=None, rate='3', sentence_mode=True, open_file=Fal
         return
     if open_file is True:
         os.system(fname)
-    f = open(fname, mode='rb')
-    input_str = preprocess_research(f.read())
+    import utool as ut
+
+    input_str = preprocess_research(ut.readfrom(fname))
     if sentence_mode:
         input_str = input_str.replace('\n', ' ').replace('. ', '.\n')
         input_str = re.sub('  *', ' ', input_str)
@@ -414,7 +436,7 @@ def research(r, start_line_str=None, rate='3', sentence_mode=True, open_file=Fal
     if start_line_str is None:
         try:
             start_page = 0
-            start_line = int(raw_input('Did you forget the start line?'))
+            start_line = int(input('Did you forget the start line?'))
         except Exception:
             pass
     elif start_line_str.find('page') != -1:
@@ -585,17 +607,6 @@ def write_env(r):
     rob_helpers.view_directory(write_dir)
 
 
-#def unique_ordered(list1, list2, *args):
-#    seen_ = set([])
-#    unique_list = []
-#    for item in itertools.chain(list1, list2, *args):
-#        if item in seen_:
-#            continue
-#        seen_.add(item)
-#        unique_list.append(item)
-#    return unique_list
-
-
 def write_path(r):
     """
     Writes a script to update the PATH variable into the sync registry
@@ -671,8 +682,9 @@ def fix_path(r):
     """ Removes duplicates from the path Variable """
     PATH_SEP = os.path.pathsep
     pathstr = robos.get_env_var('PATH')
+    import utool as ut
 
-    pathlist = unique(pathstr.split(PATH_SEP))
+    pathlist = ut.unique(pathstr.split(PATH_SEP))
 
     new_path = ''
     failed_bit = False
@@ -685,12 +697,12 @@ def fix_path(r):
             print('PATH=%s has a envvar. Not checking existance' % p)
             new_path = new_path + p + PATH_SEP
         else:
-            print('PATH=%s does not exist!!' % s)
+            print('PATH=%s does not exist!!' % p)
             failed_bit = True
     #remove trailing semicolons
 
     if failed_bit:
-        ans = raw_input('Should I overwrite the path? yes/no?')
+        ans = input('Should I overwrite the path? yes/no?')
         if ans == 'yes':
             failed_bit = False
 
@@ -724,7 +736,8 @@ def create_shortcut(r, what, where=''):
     if where == '':
         target = what + '.lnk'
     else:
-        dircheck(where)
+        import utool as ut
+        ut.ensuredir(where)
         base_what = os.path.basename(what)
         if len(base_what) > 0:
             if base_what[-1] in ['"', "'"]:
@@ -746,6 +759,7 @@ def send(r, keys, pause=.05):
 
 
 def find_in_path(r, pattern):
+    import fnmatch
     PATH = os.environ['PATH'].split(os.pathsep)
     fpaths_list = [os.listdir(dpath) for dpath in PATH]
     for dpath, fpaths_list in zip(PATH, fpaths_list):
