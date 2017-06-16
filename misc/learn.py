@@ -44,6 +44,207 @@ def pandas_merge():
                            left_index=True, right_index=True, copy=False)
 
 
+def iters_until_threshold():
+    """
+    How many iterations of ewma until you hit the
+    poisson / biniomal threshold
+    """
+    import numpy as np
+    import utool as ut
+    import sympy as sym
+    i = sym.symbols('i', integer=True, nonnegative=True, finite=True)
+    # mu_i = sym.symbols('mu_i', integer=True, nonnegative=True, finite=True)
+    span = sym.symbols('s', integer=True, nonnegative=True, finite=True)  # NOQA
+    thresh = sym.symbols('thresh', real=True, nonnegative=True, finite=True)  # NOQA
+    alpha = sym.symbols('alpha', real=True, nonnegative=True, finite=True)  # NOQA
+    c_alpha = sym.symbols('c_alpha', real=True, nonnegative=True, finite=True)
+    # patience
+    a = sym.symbols('a', real=True, nonnegative=True, finite=True)
+
+    available_subs = {
+        a: 20,
+        span: a,
+        alpha: 2 / (span + 1),
+        c_alpha: (1 - alpha),
+    }
+
+    def dosubs(expr, d=available_subs):
+        expr1 = expr.subs(d)
+        if expr == expr1:
+            return expr1
+        else:
+            return dosubs(expr1, d=d)
+
+    # mu is either the support for the poisson distribution
+    # or is is the p in the binomial distribution
+    # It is updated at timestep i based on ewma, assuming each incoming responce is 0
+    mu_0 = 1.0
+    mu_i = c_alpha ** i
+
+    # Estimate probability that any event will happen in the next `a` reviews
+    # at time `i`.
+    poisson_i = 1 - sym.exp(-mu_i * a)
+    binom_i = 1 - (1 - mu_i) ** a
+
+    # Expand probabilities to be a function of i, span, and a
+    part = ut.delete_dict_keys(available_subs.copy(), [a, span])
+    mu_i = dosubs(mu_i, d=part)
+    poisson_i = dosubs(poisson_i, d=part)
+    binom_i = dosubs(binom_i, d=part)
+
+    if True:
+        # ewma of mu at time i if review is always not label-changing (meaningful)
+        mu_1 = c_alpha * mu_0  # NOQA
+        mu_2 = c_alpha * mu_1  # NOQA
+
+    if True:
+        i_vals = np.arange(0, 100)
+        mu_vals = np.array([dosubs(mu_i).subs({i: i_}).evalf() for i_ in i_vals])  # NOQA
+        binom_vals = np.array([dosubs(binom_i).subs({i: i_}).evalf() for i_ in i_vals])  # NOQA
+        poisson_vals = np.array([dosubs(poisson_i).subs({i: i_}).evalf() for i_ in i_vals])  # NOQA
+
+        # Find how many iters it actually takes my expt to terminate
+        thesis_draft_thresh = np.exp(-2)
+        np.where(mu_vals < thesis_draft_thresh)[0]
+        np.where(binom_vals < thesis_draft_thresh)[0]
+        np.where(poisson_vals < thesis_draft_thresh)[0]
+
+    sym.pprint(sym.simplify(mu_i))
+    sym.pprint(sym.simplify(binom_i))
+    sym.pprint(sym.simplify(poisson_i))
+
+    # Find the thresholds that force termination after `a` reviews have passed
+    # do this by setting i=a
+    poisson_thresh = binom_i.subs({i: a})
+    binom_thresh = poisson_i.subs({i: a})
+
+    sym.pprint(sym.simplify(poisson_thresh))
+    sym.pprint(sym.simplify(binom_thresh))
+
+    sym.pprint(sym.simplify(poisson_thresh.subs({span: a})))
+
+    S, A = np.meshgrid(np.arange(1, 200, 5), np.arange(1, 200, 5))
+    import plottool as pt
+    poisson_zflat = []
+    for sval, aval in zip(S.ravel(), A.ravel()):
+        poisson_zval = float(poisson_thresh.subs({a: aval, span: sval}).evalf())
+        poisson_zflat.append(poisson_zval)
+    poisson_zdata = np.array(poisson_zflat).reshape(A.shape)
+    fig = pt.figure(fnum=1, doclf=True)
+    pt.plot_surface3d(S, A, poisson_zdata, xlabel='s', ylabel='a',
+                      zlabel='poisson', mode='wire', contour=True,
+                      title='poisson3d')
+    fig.savefig('poisson3d.png', dpi=300)
+
+    binom_zflat = []
+    for sval, aval in zip(S.ravel(), A.ravel()):
+        binom_zval = float(binom_thresh.subs({a: aval, span: sval}).evalf())
+        binom_zflat.append(binom_zval)
+    binom_zdata = np.array(binom_zflat).reshape(A.shape)
+    fig = pt.figure(fnum=2, doclf=True)
+    pt.plot_surface3d(S, A, binom_zdata, xlabel='s', ylabel='a',
+                      zlabel='binom', mode='wire', contour=True,
+                      title='binom3d')
+    fig.savefig('binom3d.png', dpi=300)
+
+    # Find point on the surface that achieves a reasonable threshold
+
+    sym.solve(sym.Eq(binom_thresh.subs({span: 50}), .05))
+
+    # Sympy can't solve this
+    # sym.solve(sym.Eq(poisson_thresh.subs({span: 50}), .05))
+    # Find a numerical solution
+
+    def find_binom_numerical(**kwargs):
+        def binom_func(aval, sval):
+            return float(binom_thresh.subs({span: sval, a: aval}).evalf())
+        def make_minimizer(target, **kwargs):
+            binom_partial = ut.partial(binom_func, **kwargs)
+            def min_binom(*args):
+                return (target - binom_partial(*args)) ** 2
+            return min_binom
+        import scipy.optimize
+        assert bool('aval' in kwargs) != bool('sval' in kwargs), 'specify only one'
+        x0 = kwargs.get('aval', kwargs.get('sval'))
+        func = make_minimizer(**kwargs)
+        result = scipy.optimize.minimize(func, x0=x0)
+        if not result.success:
+            print('\n')
+            print(result)
+            print('\n')
+        return result.x[0]
+
+    def find_poisson_numerical(**kwargs):
+        def poisson_func(aval, sval):
+            return float(poisson_thresh.subs({span: sval, a: aval}).evalf())
+        def make_minimizer(target, **kwargs):
+            poisson_partial = ut.partial(poisson_func, **kwargs)
+            def min_poisson(*args):
+                return (target - poisson_partial(*args)) ** 2
+            return min_poisson
+        import scipy.optimize
+        assert bool('aval' in kwargs) != bool('sval' in kwargs), 'specify only one'
+        x0 = kwargs.get('aval', kwargs.get('sval'))
+        func = make_minimizer(**kwargs)
+        result = scipy.optimize.minimize(func, x0=x0)
+        if not result.success:
+            print('\n')
+            print(result)
+            print('\n')
+        return result.x[0]
+
+    target_poisson_plots = {}
+    for target in ut.ProgIter([.001, .01, .05, .1, .135], bs=False, freq=1):
+        poisson_avals = []
+        poisson_svals = np.arange(1, 19)
+        for sval in ut.ProgIter(poisson_svals, 'poisson', freq=1):
+            aval = find_poisson_numerical(target=target, sval=sval)
+            poisson_avals.append(aval)
+        target_poisson_plots[target] = (poisson_svals, poisson_avals)
+
+    fig = pt.figure(fnum=3)
+    for target, dat in target_poisson_plots.items():
+        pt.plt.plot(*dat, label='prob={}'.format(target))
+    pt.gca().set_xlabel('s')
+    pt.gca().set_ylabel('a')
+    pt.legend()
+    pt.gca().set_title('poisson')
+    fig.savefig('numerical_poisson.png', dpi=300)
+
+    target_binom_plots = {}
+    for target in ut.ProgIter([.001, .01, .05, .1, .135], bs=False, freq=1):
+        binom_avals = []
+        binom_svals = np.arange(1, 19)
+        for sval in ut.ProgIter(binom_svals, 'binom', freq=1):
+            aval = find_binom_numerical(target=target, sval=sval)
+            binom_avals.append(aval)
+        target_binom_plots[target] = (binom_svals, binom_avals)
+
+    fig = pt.figure(fnum=4)
+    for target, dat in target_binom_plots.items():
+        pt.plt.plot(*dat, label='prob={}'.format(target))
+    pt.gca().set_xlabel('s')
+    pt.gca().set_ylabel('a')
+    pt.legend()
+    pt.gca().set_title('binom')
+    fig.savefig('numerical_binom.png', dpi=300)
+
+    mu_i.subs({span: 75, a: 75}).evalf()
+    poisson_thresh.subs({span: 75, a: 75}).evalf()
+
+    sval = 50
+    for target, dat in target_poisson_plots.items():
+        slope = np.median(np.diff(dat[1]))
+        aval = int(np.ceil(sval * slope))
+        thresh = float(poisson_thresh.subs({span: sval, a: aval}).evalf())
+        print('aval={}, sval={}, thresh={}, target={}'.format(aval, sval, thresh, target))
+
+    for target, dat in target_binom_plots.items():
+        slope = np.median(np.diff(dat[1]))
+        aval = int(np.ceil(sval * slope))
+        pass
+
+
 def ewma():
     import plottool as pt
     import ubelt as ub
@@ -107,7 +308,7 @@ def ewma():
     base = sym.symbols('base', real=True, finite=True)
     alpha = 2 / (span + 1)
     thresh_expr = (1 - alpha) ** n
-    thresh_expr = base ** n
+    thresthresh_exprh_expr = base ** n
     n_expr = sym.ceiling(sym.log(thresh) / sym.log(1 -  2 / (span + 1)))
 
     sym.pprint(sym.simplify(thresh_expr))
@@ -127,7 +328,7 @@ def ewma():
     span = np.arange(2, 200)
     n_frac = calc_n(span, thresh=.5)
     n = np.ceil(n_frac)
-    calc_val(n, span)
+    calc_thresh_val(n, span)
 
     pt.figure(fnum=1, doclf=True)
     ydatas = ut.odict([
