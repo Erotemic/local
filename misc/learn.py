@@ -169,66 +169,60 @@ def iters_until_threshold():
     # sym.solve(sym.Eq(binom_thresh.subs({s: 50}), .05))
     # sym.solve(sym.Eq(poisson_thresh.subs({s: 50}), .05))
     # Find a numerical solution
+    def solve_numeric(expr, target, want, fixed, method=None, bounds=None):
+        """
+        Args:
+            expr (Expr): symbolic expression
+            target (float): numberic value
+            fixed (dict): fixed values of the symbol
 
-    # def numerical_solver(expr, target, **kw):
-    #     """
-    #     expr = poisson_thresh
-    #     expr.free_symbols
-    #     """
-    #     def sym_func(fixed):
-    #         return float(expr.subs(fixed).evalf())
-    #     def make_minimizer(target, **kwargs):
-    #         binom_partial = ut.partial(binom_func, **kwargs)
-    #         def min_binom(*args):
-    #             return (target - binom_partial(*args)) ** 2
-    #         return min_binom
+        expr = poisson_thresh
+        expr.free_symbols
+        fixed = {s: 10}
 
-    def find_binom_numerical(**kwargs):
-        def binom_func(aval, sval):
-            return float(binom_thresh.subs({s: sval, a: aval}).evalf())
-        def make_minimizer(target, **kwargs):
-            binom_partial = ut.partial(binom_func, **kwargs)
-            def min_binom(*args):
-                return (target - binom_partial(*args)) ** 2
-            return min_binom
+        solve_numeric(poisson_thresh, .05, {s: 30}, method=None)
+        solve_numeric(poisson_thresh, .05, {s: 30}, method='Nelder-Mead')
+        solve_numeric(poisson_thresh, .05, {s: 30}, method='BFGS')
+        """
         import scipy.optimize
-        assert bool('aval' in kwargs) != bool('sval' in kwargs), 'specify only one'
-        x0 = kwargs.get('aval', kwargs.get('sval'))
-        func = make_minimizer(**kwargs)
-        result = scipy.optimize.minimize(func, x0=x0)
+        # Find the symbol you want to solve for
+        want_symbols = expr.free_symbols - set(fixed.keys())
+        # TODO: can probably extend this to multiple params
+        assert len(want_symbols) == 1, 'specify all but one var'
+        assert want == list(want_symbols)[0]
+        fixed_expr = expr.subs(fixed)
+        def func(a1):
+            expr_value = float(fixed_expr.subs({want: a1}).evalf())
+            return (expr_value - target) ** 2
+        # if method is None:
+        #     method = 'Nelder-Mead'
+        #     method = 'Newton-CG'
+        #     method = 'BFGS'
+        # Use one of the other params the startin gpoing
+        a1 = list(fixed.values())[0]
+        result = scipy.optimize.minimize(func, x0=a1, method=method, bounds=bounds)
         if not result.success:
             print('\n')
             print(result)
             print('\n')
-        return result.x[0]
+        return result
 
-    def find_poisson_numerical(**kwargs):
-        def poisson_func(aval, sval):
-            return float(poisson_thresh.subs({s: sval, a: aval}).evalf())
-        def make_minimizer(target, **kwargs):
-            poisson_partial = ut.partial(poisson_func, **kwargs)
-            def min_poisson(*args):
-                return (target - poisson_partial(*args)) ** 2
-            return min_poisson
-        import scipy.optimize
-        assert bool('aval' in kwargs) != bool('sval' in kwargs), 'specify only one'
-        x0 = kwargs.get('aval', kwargs.get('sval'))
-        func = make_minimizer(**kwargs)
-        result = scipy.optimize.minimize(func, x0=x0)
-        if not result.success:
-            print('\n')
-            print(result)
-            print('\n')
-        return result.x[0]
+    # Numeric measurments of thie line
+
+    thresh_vals = [.001, .01, .05, .1, .135]
+    svals = np.arange(1, 100)
 
     target_poisson_plots = {}
-    for target in ut.ProgIter([.001, .01, .05, .1, .135], bs=False, freq=1):
+    for target in ut.ProgIter(thresh_vals, bs=False, freq=1):
         poisson_avals = []
-        poisson_svals = np.arange(1, 19)
-        for sval in ut.ProgIter(poisson_svals, 'poisson', freq=1):
-            aval = find_poisson_numerical(target=target, sval=sval)
+        for sval in ut.ProgIter(svals, 'poisson', freq=1):
+            expr = poisson_thresh
+            fixed = {s: sval}
+            want = a
+            aval = solve_numeric(expr, target, want, fixed,
+                                 method='Nelder-Mead').x[0]
             poisson_avals.append(aval)
-        target_poisson_plots[target] = (poisson_svals, poisson_avals)
+        target_poisson_plots[target] = (svals, poisson_avals)
 
     fig = pt.figure(fnum=3)
     for target, dat in target_poisson_plots.items():
@@ -240,13 +234,12 @@ def iters_until_threshold():
     fig.savefig('numerical_poisson.png', dpi=300)
 
     target_binom_plots = {}
-    for target in ut.ProgIter([.001, .01, .05, .1, .135], bs=False, freq=1):
+    for target in ut.ProgIter(thresh_vals, bs=False, freq=1):
         binom_avals = []
-        binom_svals = np.arange(1, 19)
-        for sval in ut.ProgIter(binom_svals, 'binom', freq=1):
-            aval = find_binom_numerical(target=target, sval=sval)
+        for sval in ut.ProgIter(svals, 'binom', freq=1):
+            aval = solve_numeric(binom_thresh, target, a, {s: sval}, method='Nelder-Mead').x[0]
             binom_avals.append(aval)
-        target_binom_plots[target] = (binom_svals, binom_avals)
+        target_binom_plots[target] = (svals, binom_avals)
 
     fig = pt.figure(fnum=4)
     for target, dat in target_binom_plots.items():
@@ -256,6 +249,48 @@ def iters_until_threshold():
     pt.legend()
     pt.gca().set_title('binom')
     fig.savefig('numerical_binom.png', dpi=300)
+
+    # ----
+    if True:
+
+        fig = pt.figure(fnum=5, doclf=True)
+        s_vals = [10, 20, 30, 40, 50]
+        for sval in s_vals:
+            pp = poisson_thresh.subs({s: sval})
+            # pp_da1 = sym.diff(pp, a)
+            # pp_da2 = sym.diff(pp_da1, a)
+            # pp_da3 = sym.diff(pp_da2, a)
+
+            a_vals = np.arange(2, 200)
+            pp_vals = np.array([float(pp.subs({a: aval}).evalf()) for aval in a_vals])  # NOQA
+            # pp_da1_vals = np.array([float(pp_da1.subs({a: aval}).evalf()) for aval in a_vals])  # NOQA
+            # div_vals = np.array([float(pp.subs({a: aval}).evalf()) * aval for aval in a_vals])  # NOQA
+            # pp_da2_vals = np.array([float(pp_da2.subs({a: aval}).evalf()) for aval in a_vals])  # NOQA
+            # pp_da3_vals = np.array([float(pp_da3.subs({a: aval}).evalf()) for aval in a_vals])  # NOQA
+
+            nrows = 1
+
+            pt.plot(a_vals, pp_vals, label='s=%r' % (sval,))
+        pt.legend()
+        pt.gca().set_xlabel('a')
+        pt.gca().set_ylabel('poisson prob after a reviews')
+
+            # pt.figure(fnum=5, pnum=(nrows, 1, 2))
+            # pt.plot(a_vals, pp_da1_vals, label='1st deriv')
+            # pt.legend()
+
+            # pt.figure(fnum=5, pnum=(nrows, 1, 3))
+            # # pt.plot(a_vals, pp_da2_vals, label='2nd deriv')
+            # pt.plot(a_vals, div_vals, label='div')
+            # pt.legend()
+
+            # pt.figure(fnum=5, pnum=(nrows, 1, 4))
+            # pt.plot(a_vals, pp_da3_vals, label='3nd deriv')
+            # pt.legend()
+
+
+    #---------------------
+    # Plot out a table
 
     mu_i.subs({s: 75, a: 75}).evalf()
     poisson_thresh.subs({s: 75, a: 75}).evalf()
@@ -271,6 +306,45 @@ def iters_until_threshold():
         slope = np.median(np.diff(dat[1]))
         aval = int(np.ceil(sval * slope))
         pass
+
+    # def find_binom_numerical(**kwargs):
+    #     def binom_func(aval, sval):
+    #         return float(binom_thresh.subs({s: sval, a: aval}).evalf())
+    #     def make_minimizer(target, **kwargs):
+    #         binom_partial = ut.partial(binom_func, **kwargs)
+    #         def min_binom(*args):
+    #             return (target - binom_partial(*args)) ** 2
+    #         return min_binom
+    #     import scipy.optimize
+    #     assert bool('aval' in kwargs) != bool('sval' in kwargs), 'specify only one'
+    #     x0 = kwargs.get('aval', kwargs.get('sval'))
+    #     func = make_minimizer(**kwargs)
+    #     result = scipy.optimize.minimize(func, x0=x0)
+    #     if not result.success:
+    #         print('\n')
+    #         print(result)
+    #         print('\n')
+    #     return result.x[0]
+
+    # def find_poisson_numerical(**kwargs):
+    #     def poisson_func(aval, sval):
+    #         return float(poisson_thresh.subs({s: sval, a: aval}).evalf())
+    #     def make_minimizer(target, **kwargs):
+    #         poisson_partial = ut.partial(poisson_func, **kwargs)
+    #         def min_poisson(*args):
+    #             return (target - poisson_partial(*args)) ** 2
+    #         return min_poisson
+    #     import scipy.optimize
+    #     assert bool('aval' in kwargs) != bool('sval' in kwargs), 'specify only one'
+    #     x0 = kwargs.get('aval', kwargs.get('sval'))
+    #     func = make_minimizer(**kwargs)
+    #     result = scipy.optimize.minimize(func, x0=x0)
+    #     if not result.success:
+    #         print('\n')
+    #         print(result)
+    #         print('\n')
+    #     return result.x[0]
+
 
 
 def ewma():
