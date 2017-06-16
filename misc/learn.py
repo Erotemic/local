@@ -46,15 +46,30 @@ def pandas_merge():
 
 def iters_until_threshold():
     """
-    How many iterations of ewma until you hit the
-    poisson / biniomal threshold
+    How many iterations of ewma until you hit the poisson / biniomal threshold
+
+    This establishes a principled way to choose the threshold for the refresh
+    criterion in my thesis. There are paramters --- moving parts --- that we
+    need to work with: `a` the patience, `s` the span, and `mu` our ewma.
+
+    `s` is a span paramter indicating how far we look back.
+
+    `mu` is the average number of label-changing reviews in roughly the last
+    `s` manual decisions.
+
+    These numbers are used to estimate the probability that any of the next `a`
+    manual decisions will be label-chanigng. When that probability falls below
+    a threshold we terminate. The goal is to choose `a`, `s`, and the threshold
+    `t`, such that the probability will fall below the threshold after a maximum
+    of `a` consecutive non-label-chaning reviews. IE we want to tie the patience
+    paramter (how far we look ahead) to how far we actually are willing to go.
     """
     import numpy as np
     import utool as ut
     import sympy as sym
     i = sym.symbols('i', integer=True, nonnegative=True, finite=True)
     # mu_i = sym.symbols('mu_i', integer=True, nonnegative=True, finite=True)
-    span = sym.symbols('s', integer=True, nonnegative=True, finite=True)  # NOQA
+    s = sym.symbols('s', integer=True, nonnegative=True, finite=True)  # NOQA
     thresh = sym.symbols('thresh', real=True, nonnegative=True, finite=True)  # NOQA
     alpha = sym.symbols('alpha', real=True, nonnegative=True, finite=True)  # NOQA
     c_alpha = sym.symbols('c_alpha', real=True, nonnegative=True, finite=True)
@@ -63,12 +78,13 @@ def iters_until_threshold():
 
     available_subs = {
         a: 20,
-        span: a,
-        alpha: 2 / (span + 1),
+        s: a,
+        alpha: 2 / (s + 1),
         c_alpha: (1 - alpha),
     }
 
     def dosubs(expr, d=available_subs):
+        """ recursive expression substitution """
         expr1 = expr.subs(d)
         if expr == expr1:
             return expr1
@@ -86,8 +102,8 @@ def iters_until_threshold():
     poisson_i = 1 - sym.exp(-mu_i * a)
     binom_i = 1 - (1 - mu_i) ** a
 
-    # Expand probabilities to be a function of i, span, and a
-    part = ut.delete_dict_keys(available_subs.copy(), [a, span])
+    # Expand probabilities to be a function of i, s, and a
+    part = ut.delete_dict_keys(available_subs.copy(), [a, s])
     mu_i = dosubs(mu_i, d=part)
     poisson_i = dosubs(poisson_i, d=part)
     binom_i = dosubs(binom_i, d=part)
@@ -121,13 +137,13 @@ def iters_until_threshold():
     sym.pprint(sym.simplify(poisson_thresh))
     sym.pprint(sym.simplify(binom_thresh))
 
-    sym.pprint(sym.simplify(poisson_thresh.subs({span: a})))
+    sym.pprint(sym.simplify(poisson_thresh.subs({s: a})))
 
     S, A = np.meshgrid(np.arange(1, 200, 5), np.arange(1, 200, 5))
     import plottool as pt
     poisson_zflat = []
     for sval, aval in zip(S.ravel(), A.ravel()):
-        poisson_zval = float(poisson_thresh.subs({a: aval, span: sval}).evalf())
+        poisson_zval = float(poisson_thresh.subs({a: aval, s: sval}).evalf())
         poisson_zflat.append(poisson_zval)
     poisson_zdata = np.array(poisson_zflat).reshape(A.shape)
     fig = pt.figure(fnum=1, doclf=True)
@@ -138,7 +154,7 @@ def iters_until_threshold():
 
     binom_zflat = []
     for sval, aval in zip(S.ravel(), A.ravel()):
-        binom_zval = float(binom_thresh.subs({a: aval, span: sval}).evalf())
+        binom_zval = float(binom_thresh.subs({a: aval, s: sval}).evalf())
         binom_zflat.append(binom_zval)
     binom_zdata = np.array(binom_zflat).reshape(A.shape)
     fig = pt.figure(fnum=2, doclf=True)
@@ -149,15 +165,27 @@ def iters_until_threshold():
 
     # Find point on the surface that achieves a reasonable threshold
 
-    sym.solve(sym.Eq(binom_thresh.subs({span: 50}), .05))
-
     # Sympy can't solve this
-    # sym.solve(sym.Eq(poisson_thresh.subs({span: 50}), .05))
+    # sym.solve(sym.Eq(binom_thresh.subs({s: 50}), .05))
+    # sym.solve(sym.Eq(poisson_thresh.subs({s: 50}), .05))
     # Find a numerical solution
+
+    # def numerical_solver(expr, target, **kw):
+    #     """
+    #     expr = poisson_thresh
+    #     expr.free_symbols
+    #     """
+    #     def sym_func(fixed):
+    #         return float(expr.subs(fixed).evalf())
+    #     def make_minimizer(target, **kwargs):
+    #         binom_partial = ut.partial(binom_func, **kwargs)
+    #         def min_binom(*args):
+    #             return (target - binom_partial(*args)) ** 2
+    #         return min_binom
 
     def find_binom_numerical(**kwargs):
         def binom_func(aval, sval):
-            return float(binom_thresh.subs({span: sval, a: aval}).evalf())
+            return float(binom_thresh.subs({s: sval, a: aval}).evalf())
         def make_minimizer(target, **kwargs):
             binom_partial = ut.partial(binom_func, **kwargs)
             def min_binom(*args):
@@ -176,7 +204,7 @@ def iters_until_threshold():
 
     def find_poisson_numerical(**kwargs):
         def poisson_func(aval, sval):
-            return float(poisson_thresh.subs({span: sval, a: aval}).evalf())
+            return float(poisson_thresh.subs({s: sval, a: aval}).evalf())
         def make_minimizer(target, **kwargs):
             poisson_partial = ut.partial(poisson_func, **kwargs)
             def min_poisson(*args):
@@ -229,14 +257,14 @@ def iters_until_threshold():
     pt.gca().set_title('binom')
     fig.savefig('numerical_binom.png', dpi=300)
 
-    mu_i.subs({span: 75, a: 75}).evalf()
-    poisson_thresh.subs({span: 75, a: 75}).evalf()
+    mu_i.subs({s: 75, a: 75}).evalf()
+    poisson_thresh.subs({s: 75, a: 75}).evalf()
 
     sval = 50
     for target, dat in target_poisson_plots.items():
         slope = np.median(np.diff(dat[1]))
         aval = int(np.ceil(sval * slope))
-        thresh = float(poisson_thresh.subs({span: sval, a: aval}).evalf())
+        thresh = float(poisson_thresh.subs({s: sval, a: aval}).evalf())
         print('aval={}, sval={}, thresh={}, target={}'.format(aval, sval, thresh, target))
 
     for target, dat in target_binom_plots.items():
