@@ -139,29 +139,48 @@ def iters_until_threshold():
 
     sym.pprint(sym.simplify(poisson_thresh.subs({s: a})))
 
-    S, A = np.meshgrid(np.arange(1, 200, 5), np.arange(1, 200, 5))
+    def taud(coeff):
+        return coeff * 360
+
+    if 'poisson_cache' not in vars():
+        poisson_cache = {}
+        binom_cache = {}
+
+    S, A = np.meshgrid(np.arange(1, 150, 1), np.arange(0, 150, 1))
+
     import plottool as pt
-    poisson_zflat = []
-    for sval, aval in zip(S.ravel(), A.ravel()):
-        poisson_zval = float(poisson_thresh.subs({a: aval, s: sval}).evalf())
-        poisson_zflat.append(poisson_zval)
-    poisson_zdata = np.array(poisson_zflat).reshape(A.shape)
+    SA_coords = list(zip(S.ravel(), A.ravel()))
+    for sval, aval in ut.ProgIter(SA_coords):
+        if (sval, aval) not in poisson_cache:
+            poisson_cache[(sval, aval)] = float(poisson_thresh.subs({a: aval, s: sval}).evalf())
+    poisson_zdata = np.array(
+        [poisson_cache[(sval, aval)] for sval, aval in SA_coords]).reshape(A.shape)
     fig = pt.figure(fnum=1, doclf=True)
+    pt.gca().set_axis_off()
     pt.plot_surface3d(S, A, poisson_zdata, xlabel='s', ylabel='a',
+                      rstride=3, cstride=3,
                       zlabel='poisson', mode='wire', contour=True,
                       title='poisson3d')
-    fig.savefig('poisson3d.png', dpi=300)
+    pt.gca().set_zlim(0, 1)
+    pt.gca().view_init(elev=taud(1 / 16), azim=taud(5 / 8))
+    fig.set_size_inches(10, 6)
+    fig.savefig('a-s-t-poisson3d.png', dpi=300, bbox_inches=pt.extract_axes_extents(fig, combine=True))
 
-    binom_zflat = []
-    for sval, aval in zip(S.ravel(), A.ravel()):
-        binom_zval = float(binom_thresh.subs({a: aval, s: sval}).evalf())
-        binom_zflat.append(binom_zval)
-    binom_zdata = np.array(binom_zflat).reshape(A.shape)
+    for sval, aval in ut.ProgIter(SA_coords):
+        if (sval, aval) not in binom_cache:
+            binom_cache[(sval, aval)] = float(binom_thresh.subs({a: aval, s: sval}).evalf())
+    binom_zdata = np.array(
+        [binom_cache[(sval, aval)] for sval, aval in SA_coords]).reshape(A.shape)
     fig = pt.figure(fnum=2, doclf=True)
+    pt.gca().set_axis_off()
     pt.plot_surface3d(S, A, binom_zdata, xlabel='s', ylabel='a',
+                      rstride=3, cstride=3,
                       zlabel='binom', mode='wire', contour=True,
                       title='binom3d')
-    fig.savefig('binom3d.png', dpi=300)
+    pt.gca().set_zlim(0, 1)
+    pt.gca().view_init(elev=taud(1 / 16), azim=taud(5 / 8))
+    fig.set_size_inches(10, 6)
+    fig.savefig('a-s-t-binom3d.png', dpi=300, bbox_inches=pt.extract_axes_extents(fig, combine=True))
 
     # Find point on the surface that achieves a reasonable threshold
 
@@ -231,7 +250,8 @@ def iters_until_threshold():
     pt.gca().set_ylabel('a')
     pt.legend()
     pt.gca().set_title('poisson')
-    fig.savefig('numerical_poisson.png', dpi=300)
+    fig.set_size_inches(5, 3)
+    fig.savefig('a-vs-s-poisson.png', dpi=300, bbox_inches=pt.extract_axes_extents(fig, combine=True))
 
     target_binom_plots = {}
     for target in ut.ProgIter(thresh_vals, bs=False, freq=1):
@@ -248,46 +268,67 @@ def iters_until_threshold():
     pt.gca().set_ylabel('a')
     pt.legend()
     pt.gca().set_title('binom')
-    fig.savefig('numerical_binom.png', dpi=300)
+    fig.set_size_inches(5, 3)
+    fig.savefig('a-vs-s-binom.png', dpi=300, bbox_inches=pt.extract_axes_extents(fig, combine=True))
 
     # ----
     if True:
 
         fig = pt.figure(fnum=5, doclf=True)
-        s_vals = [10, 20, 30, 40, 50]
+        s_vals = [1, 2, 3, 10, 20, 30, 40, 50]
         for sval in s_vals:
             pp = poisson_thresh.subs({s: sval})
-            # pp_da1 = sym.diff(pp, a)
-            # pp_da2 = sym.diff(pp_da1, a)
-            # pp_da3 = sym.diff(pp_da2, a)
 
-            a_vals = np.arange(2, 200)
+            a_vals = np.arange(0, 200)
             pp_vals = np.array([float(pp.subs({a: aval}).evalf()) for aval in a_vals])  # NOQA
-            # pp_da1_vals = np.array([float(pp_da1.subs({a: aval}).evalf()) for aval in a_vals])  # NOQA
-            # div_vals = np.array([float(pp.subs({a: aval}).evalf()) * aval for aval in a_vals])  # NOQA
-            # pp_da2_vals = np.array([float(pp_da2.subs({a: aval}).evalf()) for aval in a_vals])  # NOQA
-            # pp_da3_vals = np.array([float(pp_da3.subs({a: aval}).evalf()) for aval in a_vals])  # NOQA
-
-            nrows = 1
 
             pt.plot(a_vals, pp_vals, label='s=%r' % (sval,))
         pt.legend()
         pt.gca().set_xlabel('a')
         pt.gca().set_ylabel('poisson prob after a reviews')
+        fig.set_size_inches(5, 3)
+        fig.savefig('a-vs-thresh-poisson.png', dpi=300, bbox_inches=pt.extract_axes_extents(fig, combine=True))
 
-            # pt.figure(fnum=5, pnum=(nrows, 1, 2))
-            # pt.plot(a_vals, pp_da1_vals, label='1st deriv')
-            # pt.legend()
+        fig = pt.figure(fnum=6, doclf=True)
+        s_vals = [1, 2, 3, 10, 20, 30, 40, 50]
+        for sval in s_vals:
+            pp = binom_thresh.subs({s: sval})
+            a_vals = np.arange(0, 200)
+            pp_vals = np.array([float(pp.subs({a: aval}).evalf()) for aval in a_vals])  # NOQA
+            pt.plot(a_vals, pp_vals, label='s=%r' % (sval,))
+        pt.legend()
+        pt.gca().set_xlabel('a')
+        pt.gca().set_ylabel('binom prob after a reviews')
+        fig.set_size_inches(5, 3)
+        fig.savefig('a-vs-thresh-binom.png', dpi=300, bbox_inches=pt.extract_axes_extents(fig, combine=True))
 
-            # pt.figure(fnum=5, pnum=(nrows, 1, 3))
-            # # pt.plot(a_vals, pp_da2_vals, label='2nd deriv')
-            # pt.plot(a_vals, div_vals, label='div')
-            # pt.legend()
+        # -------
 
-            # pt.figure(fnum=5, pnum=(nrows, 1, 4))
-            # pt.plot(a_vals, pp_da3_vals, label='3nd deriv')
-            # pt.legend()
+        fig = pt.figure(fnum=5, doclf=True)
+        a_vals = [1, 2, 3, 10, 20, 30, 40, 50]
+        for aval in a_vals:
+            pp = poisson_thresh.subs({a: aval})
+            s_vals = np.arange(1, 200)
+            pp_vals = np.array([float(pp.subs({s: sval}).evalf()) for sval in s_vals])  # NOQA
+            pt.plot(s_vals, pp_vals, label='a=%r' % (aval,))
+        pt.legend()
+        pt.gca().set_xlabel('s')
+        pt.gca().set_ylabel('poisson prob')
+        fig.set_size_inches(5, 3)
+        fig.savefig('s-vs-thresh-poisson.png', dpi=300, bbox_inches=pt.extract_axes_extents(fig, combine=True))
 
+        fig = pt.figure(fnum=5, doclf=True)
+        a_vals = [1, 2, 3, 10, 20, 30, 40, 50]
+        for aval in a_vals:
+            pp = binom_thresh.subs({a: aval})
+            s_vals = np.arange(1, 200)
+            pp_vals = np.array([float(pp.subs({s: sval}).evalf()) for sval in s_vals])  # NOQA
+            pt.plot(s_vals, pp_vals, label='a=%r' % (aval,))
+        pt.legend()
+        pt.gca().set_xlabel('s')
+        pt.gca().set_ylabel('binom prob')
+        fig.set_size_inches(5, 3)
+        fig.savefig('s-vs-thresh-binom.png', dpi=300, bbox_inches=pt.extract_axes_extents(fig, combine=True))
 
     #---------------------
     # Plot out a table
