@@ -173,12 +173,13 @@ for streak in ub.ProgIter(streaks, 'squashing'):
     # Maintain the new head with squashed commits in its history
     new_head = repo.commit('HEAD')
 
-if False:
+if True:
     # Copy temp branch back over original
     repo.git.checkout(orig_branch_name)
     repo.git.reset(temp_branchname, hard=True)
     repo.git.branch(D=temp_branchname)
 
+    print('Finished. Now you should force push the branch back to the server')
     # Need to force push back to server
 
 if False:
