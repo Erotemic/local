@@ -344,7 +344,7 @@ def get_text_between_lines(lnum1, lnum2, col1=0, col2=sys.maxsize - 1):
         ut.ENABLE_COLORS = False
         ut.util_str.ENABLE_COLORS = False
         ut.util_dbg.COLORED_EXCEPTIONS = False
-        print(ut.list_str(lines))
+        print(ut.repr2(lines))
         raise
     return text
 

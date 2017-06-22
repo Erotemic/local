@@ -461,7 +461,7 @@ class Drive(object):
         biggest_nbytes = ut.take(drive.fpath_bytes_list, sel)
         biggest_files = ut.take(drive.fpath_list, sel)
         biginfo_list = list(zip(map(ut.byte_str2, biggest_nbytes), biggest_files))
-        print(ut.list_str(biginfo_list, strvals=True))
+        print(ut.repr2(biginfo_list, strvals=True))
 
     def biggest_dirs(drive):
         print('Biggest Dirs in %r' % (drive,))
@@ -475,7 +475,7 @@ class Drive(object):
         biggest_nbytes = ut.take(dpath_nbytes_list, sel)
         biggest_dpaths = ut.take(dpath_list, sel)
         biginfo_list = list(zip(map(ut.byte_str2, biggest_nbytes), biggest_dpaths))
-        print(ut.list_str(biginfo_list, strvals=True))
+        print(ut.repr2(biginfo_list, strvals=True))
         pass
 
     def fix_duplicates(drive):
@@ -524,12 +524,12 @@ class Drive(object):
             hist_ = ut.dict_hist(coupled_dirs)
             coupled_idxs = ut.list_argsort(hist_.values())[::-1]
             most_coupled = ut.take(list(hist_.keys()), coupled_idxs[0:100])
-            print('Coupled fpaths: ' + ut.list_str(most_coupled, nl=True))
+            print('Coupled fpaths: ' + ut.repr2(most_coupled, nl=True))
         print('%d unique files are duplicated' % (len(unflat_sizes),))
-        #print('Duplicate sizes: ' + ut.list_str(unflat_sizes[0:10], nl=True))
-        #print('Duplicate fpaths: ' + ut.list_str(unflat_fpaths[0:10], nl=True))
-        #print('Duplicate fpaths: ' + ut.list_str(unflat_fpaths[0::5], nl=True))
-        print('Duplicate fpaths: ' + ut.list_str(unflat_fpaths, nl=True))
+        #print('Duplicate sizes: ' + ut.repr2(unflat_sizes[0:10], nl=True))
+        #print('Duplicate fpaths: ' + ut.repr2(unflat_fpaths[0:10], nl=True))
+        #print('Duplicate fpaths: ' + ut.repr2(unflat_fpaths[0::5], nl=True))
+        print('Duplicate fpaths: ' + ut.repr2(unflat_fpaths, nl=True))
         # Find duplicate directories
         dpath_list = list(drive.dpath_to_fidx.keys())
         fidxs_list = ut.dict_take(drive.dpath_to_fidx, drive.dpath_list)
@@ -570,11 +570,11 @@ class Drive(object):
         if not all(valid_flags):
             print('Filtered windows links %r / %r' % (
                 len(empty_dpaths) - sum(valid_flags), len(empty_dpaths)))
-            #print(ut.list_str(empty_dpaths[0:10]))
+            #print(ut.repr2(empty_dpaths[0:10]))
             empty_dpaths = ut.compress(empty_dpaths, valid_flags)
 
         print('Found %r / %r empty_dpaths' % (len(empty_dpaths), len(drive.dpath_list)))
-        print(ut.list_str(empty_dpaths[0:10]))
+        print(ut.repr2(empty_dpaths[0:10]))
 
         # Ensure actually still empty
         current_contents = [ut.glob(d, with_dirs=False)
@@ -600,7 +600,7 @@ class Drive(object):
         is_actually_empty = [len(fs) == 0 for fs in base_current_contents]
         not_really_empty = ut.compress(base_empty_dirs, ut.not_list(is_actually_empty))
         print('%d dirs are not actually empty' % (len(not_really_empty),))
-        print('not_really_empty = %s' % (ut.list_str(not_really_empty[0:10]),))
+        print('not_really_empty = %s' % (ut.repr2(not_really_empty[0:10]),))
         truly_empty_dirs = ut.compress(base_empty_dirs, is_actually_empty)
 
         def list_all(dpath):
@@ -624,8 +624,8 @@ class Drive(object):
             ]
         # Ensure actually still empty (with recursive checks for hidden files)
         print('truly_empty_dirs1[::5] = %s' % (
-            ut.list_str(truly_empty_dirs1[0::5], strvals=True),))
-        #print('truly_empty_dirs1 = %s' % (ut.list_str(truly_empty_dirs1, strvals=True),))
+            ut.repr2(truly_empty_dirs1[0::5], strvals=True),))
+        #print('truly_empty_dirs1 = %s' % (ut.repr2(truly_empty_dirs1, strvals=True),))
 
         if not dryrun:
             # FIX PART
@@ -685,7 +685,7 @@ class Drive(object):
                 len(drive.fpath_list) - sum(fpath_exists_list),
                 len(drive.fpath_list)))
             removed_fpaths = ut.compress(drive.fpath_list, ut.not_list(fpath_exists_list))
-            print('removed_fpaths = %s' % (ut.list_str(removed_fpaths),))
+            print('removed_fpaths = %s' % (ut.repr2(removed_fpaths),))
         if all(dpath_exists_list):
             print('No change in dpath structure')
         else:
@@ -695,7 +695,7 @@ class Drive(object):
             removed_dpaths = ut.compress(
                 drive.dpath_list,
                 ut.not_list(dpath_exists_list))
-            print('removed_dpaths = %s' % (ut.list_str(removed_dpaths),))
+            print('removed_dpaths = %s' % (ut.repr2(removed_dpaths),))
 
         drive.fpath_list = ut.compress(drive.fpath_list, fpath_exists_list)
         drive.dpath_list = ut.compress(drive.dpath_list, dpath_exists_list)
