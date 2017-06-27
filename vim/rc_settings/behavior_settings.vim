@@ -79,7 +79,11 @@ endif
 "-------------------------
 set nobackup
 set nowritebackup
-set autochdir
+
+"set autochdir
+" better version of autochdir that changes cwd to be at the current file
+autocmd BufEnter * silent! lcd %:p:h
+
 set noswapfile
 "Windows symlink problems
 set backupcopy=yes
