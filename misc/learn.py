@@ -70,7 +70,7 @@ def iters_until_threshold():
     i = sym.symbols('i', integer=True, nonnegative=True, finite=True)
     # mu_i = sym.symbols('mu_i', integer=True, nonnegative=True, finite=True)
     s = sym.symbols('s', integer=True, nonnegative=True, finite=True)  # NOQA
-    thresh = sym.symbols('thresh', real=True, nonnegative=True, finite=True)  # NOQA
+    thresh = sym.symbols('tau', real=True, nonnegative=True, finite=True)  # NOQA
     alpha = sym.symbols('alpha', real=True, nonnegative=True, finite=True)  # NOQA
     c_alpha = sym.symbols('c_alpha', real=True, nonnegative=True, finite=True)
     # patience
@@ -131,10 +131,19 @@ def iters_until_threshold():
 
     # Find the thresholds that force termination after `a` reviews have passed
     # do this by setting i=a
-    poisson_thresh = binom_i.subs({i: a})
-    binom_thresh = poisson_i.subs({i: a})
+    poisson_thresh = poisson_i.subs({i: a})
+    binom_thresh = binom_i.subs({i: a})
 
-    sym.pprint(sym.simplify(poisson_thresh))
+    print('Poisson thresh')
+    print(sym.latex(sym.Eq(thresh, poisson_thresh)))
+    print(sym.latex(sym.Eq(thresh, sym.simplify(poisson_thresh))))
+
+    poisson_thresh.subs({a: 115, s: 30}).evalf()
+
+    sym.pprint(sym.Eq(thresh, poisson_thresh))
+    sym.pprint(sym.Eq(thresh, sym.simplify(poisson_thresh)))
+
+    print('Binomial thresh')
     sym.pprint(sym.simplify(binom_thresh))
 
     sym.pprint(sym.simplify(poisson_thresh.subs({s: a})))
