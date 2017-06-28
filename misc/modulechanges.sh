@@ -695,3 +695,12 @@ rob sp "graph_iden_mixins" "mixin_helpers"
 rob sp "graph_iden_utils" "nx_utils"
 rob sp "dyngraph" "nx_dynamic_graph"
 rob sp "demo_graph_iden" "demo"
+
+
+
+rob sp "infr.queue_params\\['pos_redun'\\]" "infr.params['redun.pos']" True
+rob sp "infr.queue_params\\['neg_redun'\\]" "infr.params['redun.neg']" True
+
+rob sp "infr.enable_auto_prioritize_nonpos" "infr.params['autoreview.prioritize_nonpos']" True
+rob sp "infr.enable_attr_update" "infr.params['inference.update_attrs']" True
+

@@ -33,31 +33,43 @@ def process_args(r, argv):
         if len(argv) == 1:
             if cmd_name == 'help':
                 cmd_name = 'info'
-            cmd = cmd_name + '(r)'
+            # cmd = cmd_name + '(r)'
         else:
             args = argv[1:]
-            if cmd_name == 'write_research':
-                print("WRITING RESEARCH")
-                arg_str = ',"' + (' '.join(args)).replace('"', '').replace('\'', '') + '"'
-                print(arg_str)
-            elif cmd_name == 'speak':
-                rate_of_speach = -5
-                if is_string_int(args[-1]):
-                    rate_of_speach = int(args[-1])
-                    args[-1] = ''
+            # if cmd_name == 'write_research':
+            #     print("WRITING RESEARCH")
+            #     arg_str = ',"' + (' '.join(args)).replace('"', '').replace('\'', '') + '"'
+            #     print(arg_str)
+            # elif cmd_name == 'speak':
+            #     rate_of_speach = -5
+            #     if is_string_int(args[-1]):
+            #         rate_of_speach = int(args[-1])
+            #         args[-1] = ''
 
-                arg_str = "," + ens(' '.join(args), '"') + "," + str(rate_of_speach)
-                #arg_str = arg_str + ', -5'
-            else:
-                arg_str = ''
-                for a in args:
-                    arg_str = arg_str + ', \'' + a + '\''
-                #arg_str = ','.join(args)
-            cmd = cmd_name + '(r' + arg_str + ' )'
-        print('R.O.B. is evaling: \n    ' + cmd)
+            #     arg_str = "," + ens(' '.join(args), '"') + "," + str(rate_of_speach)
+            #     #arg_str = arg_str + ', -5'
+            # else:
+            #     arg_str = ''
+            #     for a in args:
+            #         arg_str = arg_str + ', \'' + a + '\''
+            #     #arg_str = ','.join(args)
+            # cmd = cmd_name + '(r' + arg_str + ' )'
+
+        class dummy_r(object):
+            def __repr__(self):
+                return 'r'
+
+        func = getattr(rob_interface, cmd_name)
+        import utool as ut
+        print('R.O.B. is evaling: ')
+        print('    ' + ut.func_str(func, (dummy_r(),) + tuple(args)))
         print("__________________________________")
-        print(rob_interface.__dict__[cmd_name])
-        ret = eval('rob_interface.' + cmd)
+        print()
+
+        ret = func(r, *args)
+        # py_command = 'rob_interface.' + cmd
+        # print('py_command = %r' % (py_command,))
+        # ret = eval(py_command)
         if ret is not None:
             print(ret)
 
