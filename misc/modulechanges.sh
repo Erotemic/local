@@ -703,4 +703,10 @@ rob sp "infr.queue_params\\['neg_redun'\\]" "infr.params['redun.neg']" True
 
 rob sp "infr.enable_auto_prioritize_nonpos" "infr.params['autoreview.prioritize_nonpos']" True
 rob sp "infr.enable_attr_update" "infr.params['inference.update_attrs']" True
+rob sp "infr.enable_autoreview" "infr.params['autoreview.enabled']" True
+rob sp "infr.enable_fixredun" "infr.params['redun.enforce_pos']" True
+rob sp "infr.enable_inference" "infr.params['inference.enabled']" True
+rob sp "infr.enable_redundancy" "infr.params['redun.enabled']" True
+
+rob sp "infr.classifiers" "infr.verifiers" True
 
