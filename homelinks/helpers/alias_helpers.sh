@@ -140,10 +140,6 @@ alias ibv='cd $CODE_DIR/ibeis/ibeis/view'
 alias iba='cd $CODE_DIR/ibeis/ibeis/algo'
 alias ibs='cd $CODE_DIR/ibeis/ibeis/scripts'
 alias ibg='cd $CODE_DIR/ibeis/ibeis/gui'
-alias hshs='cd $CODE_DIR/hotspotter/hotspotter'
-alias hshsviz='cd $CODE_DIR/hotspotter/hsviz'
-alias hshscom='cd $CODE_DIR/hotspotter/hscom'
-alias hshsgui='cd $CODE_DIR/hotspotter/hsgui'
 alias hes='cd $CODE_DIR/hesaff'
 alias work='cd ~/work'
 alias mtest='cd ~/work/PZ_MTEST/_ibsdb'
@@ -338,73 +334,117 @@ tcp()
     cp $1 ../flann/$1
 }
 
+pathvar_print(){
+# pathvar_print LD_LIBRARY_PATH
+# pathvar_print PATH
+_VAR=$1
+python -c "
+if __name__ == '__main__':
+    import os
+    pathvar = os.environ['$_VAR'].split(os.pathsep)
+    print('\n'.join(pathvar))
+"
+}
+complete -W "PATH LD_LIBRARY_PATH" "pathvar_print"
 
 
-remove_ld_library_path()
+pathvar_clean()
+{
+# pathvar_clean LD_LIBRARY_PATH
+# pathvar_clean PATH
+_VAR=$1
+python -c "
+if __name__ == '__main__':
+    import os
+    parts = os.environ['$_VAR'].split(os.pathsep)
+    seen = set([])
+    fixed = []
+    for p in parts:
+        if p and p not in seen:
+            seen.add(p)
+            fixed.append(p)
+    print(os.pathsep.join(fixed))
+"
+}
+complete -W "PATH LD_LIBRARY_PATH" "pathvar_clean"
+
+pathvar_remove()
+{
+# pathvar_clean LD_LIBRARY_PATH
+# pathvar_clean PATH
+_VAR=$1
+_VAL=$2
+python -c "
+if __name__ == '__main__':
+    import os
+    from os.path import expanduser, abspath
+    val = abspath(expanduser('$_VAL'))
+    oldpathvar = os.environ['$_VAR'].split(os.pathsep)  
+    newpathvar = [p for p in oldpathvar if p and abspath(p) != val]
+    print(os.pathsep.join(newpathvar))
+"
+}
+complete -W "PATH LD_LIBRARY_PATH" "pathvar_remove"
+
+
+
+
+remove_ld_library_path_entry()
+{
+# http://stackoverflow.com/questions/370047/what-is-the-most-elegant-way-to-remove-a-path-from-the-path-variable-in-bash
+export LD_LIBRARY_PATH=$(pathvar_remove LD_LIBRARY_PATH $1)
+}
+
+remove_path_entry()
 {
 # http://stackoverflow.com/questions/370047/what-is-the-most-elegant-way-to-remove-a-path-from-the-path-variable-in-bash
 #_PATHVAR=$1
-_VAL=$1
-_NEW_PATH=$(python -c "
-import os
-val = '$_VAL'
-path = os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
-newpath = [p for p in path if p and p != val]
-print(os.pathsep.join(newpath))
-")
-export LD_LIBRARY_PATH=$_NEW_PATH
-#python -c "import os; path = os.environ['LD_LIBRARY_PATH'].split(os.pathsep); print('\n'.join(path))"
-#python -c "import os; path = os.environ['LD_LIBRARY_PATH'].split(os.pathsep); print(os.pathsep.join(path))"
+#
+export PATH=$(pathvar_remove PATH $1)
 }
 
-clean_pathvar()
-{
-# clean_pathvar LD_LIBRARY_PATH
-# clean_pathvar PATH
-python -c "
-import os
-parts = os.environ['$1'].split(os.pathsep)
-seen = set([])
-fixed = []
-for p in parts:
-    if p and p not in seen:
-        seen.add(p)
-        fixed.append(p)
-print(os.pathsep.join(fixed))
-"
+
+debug_paths(){
+    python -c "import os; path = os.environ['LD_LIBRARY_PATH'].split(os.pathsep); print('\n'.join(path))"
+    python -c "import os; path = os.environ['PATH'].split(os.pathsep); print('\n'.join(path))"
+
+    python -c "import os; path = os.environ['LD_LIBRARY_PATH'].split(os.pathsep); print(os.pathsep.join(path))"
 }
+
 
 
 deactivate_venv()
 {
     OLD_VENV=$VIRTUAL_ENV
+    echo "deactivate_venv OLD_VENV=$OLD_VENV"
     if [ "$OLD_VENV" != "" ]; then
-        # reset LD_LIBRARY_PATH 
-        remove_ld_library_path $OLD_VENV/local/lib
-        remove_ld_library_path $OLD_VENV/lib
-        # Hack for personal symlinks
-        remove_ld_library_path ~/venv3/local/lib
-        remove_ld_library_path ~/venv3/lib
         deactivate
+        # reset LD_LIBRARY_PATH 
+        remove_ld_library_path_entry $OLD_VENV/local/lib
+        remove_ld_library_path_entry $OLD_VENV/lib
+        remove_path_entry $OLD_VENV/bin
     fi
+    # Hack for personal symlinks.  I'm not sure why these are populated
+    remove_ld_library_path_entry ~/venv3/local/lib
+    remove_ld_library_path_entry ~/venv3/lib
+    remove_path_entry ~/venv3/bin
 }
 
-switch_venv()
+workon_py()
 {
     NEW_VENV=$1
-    OLD_VENV=$VIRTUAL_ENV
-    if [ "$OLD_VENV" != "" ]; then
-        # reset LD_LIBRARY_PATH 
-        remove_ld_library_path $OLD_VENV/local/lib
-        remove_ld_library_path $OLD_VENV/lib
-        deactivate
+    if [ -d $NEW_VENV ]; then
+        # Ensure the old env is deactivated
+        deactivate_venv
+
+        # Activate the new venv
+        export LD_LIBRARY_PATH=$NEW_VENV/local/lib:$LD_LIBRARY_PATH
+        export LD_LIBRARY_PATH=$NEW_VENV/lib:$LD_LIBRARY_PATH
+        source $NEW_VENV/bin/activate
+        echo "activated NEW_VENV=$NEW_VENV"
+    else
+        echo "new venv doesn't exist"
     fi
-    # local/lib might be a hack... not sure
-    #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$NEW_VENV/local/lib
-    #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$NEW_VENV/lib
-    export LD_LIBRARY_PATH=$NEW_VENV/local/lib:$LD_LIBRARY_PATH
-    export LD_LIBRARY_PATH=$NEW_VENV/lib:$LD_LIBRARY_PATH
-    source $NEW_VENV/bin/activate
 }
 
 workon_pysys()
@@ -415,30 +455,24 @@ workon_pysys()
 
 workon_py2()
 {
-    switch_venv "$HOME/venv2"
+    workon_py "$HOME/venv2"
 }
 
 
 workon_py3()
 {
-    switch_venv "$HOME/venv3"
+    workon_py "$HOME/venv3"
 }
 
 workon_py37()
 {
-    switch_venv "$HOME/venv3_7"
+    workon_py "$HOME/venv3_7"
 }
 
 workon_pypy()
 {
-    switch_venv "$HOME/venvpypy"
+    workon_py "$HOME/venvpypy"
 }
-
-
-alias activate_py2='workon_py2'
-alias activate_py3='workon_py3'
-alias activate_pypy='workon_pypy'
-
 
 
 alias dmsg=dmesg

@@ -1,4 +1,8 @@
 #!/bin/sh
+
+# DEBUG WHERE SOMETHING CAME FROM
+#set -x
+
 export QT_ACCESSIBILITY=0
 export QT_API=pyqt
 
@@ -19,14 +23,6 @@ export QT_API=pyqt
 #export PATH="$PATH:/usr/local/sbin:/usr/local/bin"
 #export PATH="$PATH:/usr/sbin:/usr/bin:/sbin:/bin"
 #export PATH="$PATH:/usr/games:/usr/local/games:/snap/bin"
-
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    export NCPUS=$(sysctl -n hw.ncpu)
-    #source ~/local/homelinks/helpers/bashrc_mac.sh
-else
-    export NCPUS=$(grep -c ^processor /proc/cpuinfo)
-    source ~/local/homelinks/helpers/bashrc_ubuntu
-fi
 
 #export CC=gcc
 #export CXX=g++
@@ -53,15 +49,17 @@ else
     export CODE_DIR=~/code
 fi
 
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    export NCPUS=$(sysctl -n hw.ncpu)
+    #source ~/local/homelinks/helpers/bashrc_mac.sh
+else
+    export NCPUS=$(grep -c ^processor /proc/cpuinfo)
+    source ~/local/homelinks/helpers/bashrc_ubuntu
+fi
 
+source ~/local/homelinks/helpers/alias_helpers.sh
 source ~/local/homelinks/helpers/git_helpers
-source ~/local/homelinks/helpers/alias_helpers
 
-
-unset VIRTUAL_ENV
-#workon_py2
-workon_py3
-#workon_pypy
 
 
 #export OMP_NUM_THREADS=7
@@ -142,5 +140,29 @@ complete -W "gp focus kill project_dpaths sync_clipboard_to grepnr printproc_2 s
 
 #source ~/.config/ibeis/ibeis_bash_complete.sh
 
-export PATH=$(clean_pathvar PATH)
-export LD_LIBRARY_PATH=$(clean_pathvar LD_LIBRARY_PATH)
+export PATH=$(pathvar_clean PATH)
+export LD_LIBRARY_PATH=$(pathvar_clean LD_LIBRARY_PATH)
+
+
+# https://unix.stackexchange.com/questions/813/how-to-determine-where-an-environment-variable-came-from 
+debug(){
+    sudo grep -r VIRTUAL_ENV /etc
+    grep -r VIRTUAL_ENV ~/local
+    grep -r VIRTUAL_ENV ~
+
+    pathvar_print PATH
+}
+#echo "CURRENT VIRTAL_ENV=$VIRTUAL_ENV"
+# I DO NOT KNOW WHY VIRTUAL_ENV IS POPULATED AT THIS POINT
+# UNSET IT AND TRY TO RECOVER FROM THE DAMAGE
+unset VIRTUAL_ENV
+
+# Clean paths again before workon stuff happens
+export PATH=$(pathvar_clean PATH)
+export LD_LIBRARY_PATH=$(pathvar_clean LD_LIBRARY_PATH)
+
+#env
+#workon_py2
+workon_py3
+#workon_pypy
+#deactivate_venv

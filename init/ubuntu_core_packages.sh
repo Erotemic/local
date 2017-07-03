@@ -1051,3 +1051,11 @@ automount_drives(){
     # https://help.ubuntu.com/community/Fstab
     sudo blkid
 }
+
+
+razer_mouse(){
+    #http://www.webupd8.org/2016/06/configure-razer-mice-in-linux-with.html
+    sudo add-apt-repository ppa:nilarimogard/webupd8
+    sudo apt update
+    sudo apt install razercfg qrazercfg
+}
