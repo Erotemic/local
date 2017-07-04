@@ -259,7 +259,7 @@ call QUICKOPEN_leader_tvio('J', '~/local/vim/vimfiles/bundle/jedi-vim/jedi_vim.p
 call QUICKOPEN_leader_tvio('K', '~/code/ibeis-flukematch-module/ibeis_flukematch/plugin.py')
 call QUICKOPEN_leader_tvio('k', '~/code/ibeis/ibeis/algo/smk/smk_pipeline.py')
 call QUICKOPEN_leader_tvio('l', '~/latex/crall-thesis-2017/main.tex')
-call QUICKOPEN_leader_tvio('L', '~/latex/crall-iccv-2017/main.tex')
+call QUICKOPEN_leader_tvio('L', '~/latex/crall-iccvw-2017/main.tex')
 "call QUICKOPEN_leader_tvio('L', '~/latex/crall-thesis-2017/sec-3-4-expt.tex')
 call QUICKOPEN_leader_tvio('m', '~/code/ibeis/ibeis/init/main_helpers.py')
 call QUICKOPEN_leader_tvio('M', '~/code/ibeis/ibeis/main_module.py')
