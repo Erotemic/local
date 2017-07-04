@@ -87,7 +87,7 @@ alias vfb='cd ~/local/vim/vimfiles/bundle'
 alias lb='cd ~/latex/crall-lab-notebook/'
 alias lt='cd ~/latex/'
 alias ca='cd ~/latex/crall-thesis-2017/'
-alias ic='cd ~/latex/crall-iccv-2017/'
+alias ic='cd ~/latex/crall-iccvw-2017/'
 alias scr='cd ~/scripts'
 # Special navigation
 alias code='cd $CODE_DIR'

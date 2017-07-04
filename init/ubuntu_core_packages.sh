@@ -1054,8 +1054,14 @@ automount_drives(){
 
 
 razer_mouse(){
-    #http://www.webupd8.org/2016/06/configure-razer-mice-in-linux-with.html
+    # http://www.webupd8.org/2016/06/configure-razer-mice-in-linux-with.html
     sudo add-apt-repository ppa:nilarimogard/webupd8
     sudo apt update
     sudo apt install razercfg qrazercfg
+    
+    # https://terrycain.github.io/razer-drivers/#ubuntu
+    sudo add-apt-repository ppa:terrz/razerutils
+    sudo apt update
+    sudo apt install python3-razer razer-kernel-modules-dkms razer-daemon razer-doc
+    
 }
