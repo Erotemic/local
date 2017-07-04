@@ -46,3 +46,30 @@ gg-short-status()
 }
 
 alias ggss=gg-short-status
+
+
+git_lev_sync()
+{
+    # Safe version
+     gcwip ; ssh lev "cd $(pwd) && git pull"
+    
+    # Fast, but unsafe version
+    #gcwip& 
+    #ssh lev "cd $(pwd) && git pull"
+}
+
+git_hyrule_sync()
+{
+    # Safe version
+     gcwip ; ssh hyrule "cd $(pwd) && git pull"
+}
+
+git_remote_sync()
+{
+    if [[ "$HOSTNAME" == "hyrule"  ]]; then 
+        gcwip ; ssh lev "cd $(pwd) && git pull"
+    else
+        gcwip ; ssh lev "cd $(pwd) && git pull" ; ssh hyrule "cd $(pwd) && git pull"
+    fi
+}
+alias grs='git_remote_sync'

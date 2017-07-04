@@ -491,33 +491,6 @@ alias rpivpn='rpivpn.sh'
 alias lev='lev.sh'
 
 
-git_lev_sync()
-{
-    # Safe version
-     gcwip ; ssh lev "cd $(pwd) && git pull"
-    
-    # Fast, but unsafe version
-    #gcwip& 
-    #ssh lev "cd $(pwd) && git pull"
-}
-
-git_hyrule_sync()
-{
-    # Safe version
-     gcwip ; ssh hyrule "cd $(pwd) && git pull"
-}
-
-git_remote_sync()
-{
-    if [[ "$HOSTNAME" == "hyrule"  ]]; then 
-        gcwip ; ssh lev "cd $(pwd) && git pull"
-    else
-        gcwip ; ssh lev "cd $(pwd) && git pull" ; ssh hyrule "cd $(pwd) && git pull"
-    fi
-}
-alias grs='git_remote_sync'
-
-
 gte()
 {
     python -m utool.util_ubuntu XCtrl.current_gvim_edit tabe $1

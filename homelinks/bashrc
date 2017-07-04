@@ -57,8 +57,8 @@ else
     source ~/local/homelinks/helpers/bashrc_ubuntu
 fi
 
-source ~/local/homelinks/helpers/alias_helpers.sh
 source ~/local/homelinks/helpers/git_helpers
+source ~/local/homelinks/helpers/alias_helpers.sh
 
 
 
