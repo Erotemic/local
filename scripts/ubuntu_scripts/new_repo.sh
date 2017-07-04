@@ -1,9 +1,12 @@
 #!/bin/sh
 echo '
 CommandLine:
-    sudo new_repo.sh <reponame>
+    new_repo.sh <reponame>
 
-    sudo ~joncrall/local/scripts/ubuntu_scripts/new_repo.sh <reponame>
+    # Then it will ask you for a sudo password
+    # Then it will ask you if you want to clone
+
+    ~joncrall/local/scripts/ubuntu_scripts/new_repo.sh <reponame>
     git clone git@hyrule.cs.rpi.edu:<reponame>
 
     sudo ~joncrall/local/scripts/ubuntu_scripts/new_repo.sh crall-candidacy-2015
