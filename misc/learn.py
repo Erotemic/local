@@ -3,6 +3,11 @@ Script that lets me play with things I'm learning
 """
 
 
+def pandas_reorder(df, part):
+    import utool as ut
+    df = df.reindex_axis(ut.partial_order(df.columns, part), axis=1)
+
+
 def pandas_merge():
     import pandas as pd
     x = pd.DataFrame.from_dict(
