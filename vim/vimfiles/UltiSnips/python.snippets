@@ -10,6 +10,10 @@ snip.rv = t[1]
 `,))
 endsnippet
 
+#snippet pv "prints a variable " b
+#print('${1:varname} = {}'.format(`!p snip.rv = t[1]`))
+#endsnippet
+
 #global !p
 #def fraction(a, b):
 #    try:

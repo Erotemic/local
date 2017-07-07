@@ -227,7 +227,8 @@ import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
 expr = pyvim_funcs.get_expr_at_cursor()
 indent = pyvim_funcs.get_cursor_py_indent()
-newline = indent + "print('{expr} = %r' % ({expr},))".format(expr=expr)
+#newline = indent + "print('{expr} = %r' % ({expr},))".format(expr=expr)
+newline = indent + "print('{expr} = {{!r}}'.format({expr}))".format(expr=expr)
 pyvim_funcs.insert_codeblock_under_cursor(newline)
 EOF
 endfunc
