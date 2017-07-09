@@ -8,6 +8,35 @@ def pandas_reorder(df, part):
     df = df.reindex_axis(ut.partial_order(df.columns, part), axis=1)
 
 
+def pass_futures_between_process():
+    from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+    import time
+
+    def job1():
+        try:
+            ex2 = ThreadPoolExecutor()
+            time.sleep(2)
+            f2 = ex2.submit(job2)
+        finally:
+            ex2.shutdown(wait=False)
+        return f2
+
+    def job2():
+        time.sleep(2)
+        return 'done'
+
+    try:
+        ex1 = ProcessPoolExecutor()
+        f1 = ex1.submit(job1)
+    finally:
+        ex1.shutdown(wait=False)
+
+    print('f1 = {!r}'.format(f1))
+    f2 = f1.result()
+    print('f1 = {!r}'.format(f1))
+    print('f2 = {!r}'.format(f2))
+
+
 def pandas_merge():
     import pandas as pd
     x = pd.DataFrame.from_dict(
@@ -399,7 +428,6 @@ def iters_until_threshold():
     #         print(result)
     #         print('\n')
     #     return result.x[0]
-
 
 
 def ewma():
