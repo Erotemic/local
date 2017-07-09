@@ -101,6 +101,10 @@ freshtart_ubuntu_entry_point()
     sudo apt-get install -y exuberant-ctags 
 
     # Terminal settings
+    #sudo apt-get install terminator -y
+
+    sudo add-apt-repository ppa:gnome-terminator
+    sudo apt-get update
     sudo apt-get install terminator -y
 
     # Development Environment
