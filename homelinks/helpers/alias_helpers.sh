@@ -8,7 +8,7 @@
 alias pytree='tree -P "*.py" --dirsfirst'
 alias ls='ls --color --human-readable --group-directories-first --hide="*.pyc" --hide="*.pyo"'
 alias pygrep='grep -r --include "*.py"'
-alias clean_python='rm -rf *.pyc && rm -rf *.pyo'
+alias clean_python='find . -iname *.pyc -delete & find . -iname *.pyo -delete'
 
 #clean_python(){
 #    # Recursively delete compiled python files
@@ -163,7 +163,7 @@ alias rls='rob ls'
 alias er='gvim $prob'
 alias v='gvim'
 alias ebrc='gvim ~/.bashrc'
-alias ea='gvim ~/local/homelinks/helpers/alias_helpers'
+alias ea='gvim ~/local/homelinks/helpers/alias_helpers.sh'
 alias emc='gvim ~/local/modulechanges.sh'
 alias sbrc='source ~//local/homelinks/bashrc'
 alias todo='gvim ~/Dropbox/Notes/TODO.txt'
