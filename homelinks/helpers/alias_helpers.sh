@@ -416,7 +416,7 @@ debug_paths(){
 deactivate_venv()
 {
     OLD_VENV=$VIRTUAL_ENV
-    echo "deactivate_venv OLD_VENV=$OLD_VENV"
+    # echo "deactivate_venv OLD_VENV=$OLD_VENV"
     if [ "$OLD_VENV" != "" ]; then
         deactivate
         # reset LD_LIBRARY_PATH 
@@ -441,10 +441,9 @@ workon_py()
         export LD_LIBRARY_PATH=$NEW_VENV/local/lib:$LD_LIBRARY_PATH
         export LD_LIBRARY_PATH=$NEW_VENV/lib:$LD_LIBRARY_PATH
         source $NEW_VENV/bin/activate
-        echo "activated NEW_VENV=$NEW_VENV"
-    else
-        echo "new venv doesn't exist"
+        # echo "activated NEW_VENV=$NEW_VENV"
     fi
+        # echo "new venv doesn't exist"
 }
 
 workon_pysys()
