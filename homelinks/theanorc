@@ -6,8 +6,8 @@ int_division = raise
 print_active_device = False
 enable_initial_driver_test = False
 
-[nvcc]
-fastmath = True
+# [nvcc]
+# fastmath = True
 
 [dnn]
 assume_available = True
