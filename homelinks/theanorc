@@ -1,16 +1,16 @@
-#[global]
-#floatX = float32
-#device = cuda
-#openmp = True
-#int_division = raise
-#print_active_device = False
-#enable_initial_driver_test = False
+[global]
+floatX = float32
+device = gpu0
+openmp = True
+int_division = raise
+print_active_device = False
+enable_initial_driver_test = False
 
-# [nvcc]
-# fastmath = True
+[nvcc]
+fastmath = True
 
-#[dnn]
-#assume_available = True
+[dnn]
+assume_available = True
 
 #[cuda]
 #root = /usr/local/cuda-7.5
