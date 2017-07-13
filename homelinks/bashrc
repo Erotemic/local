@@ -122,6 +122,8 @@ elif [[ "$HOSTNAME" == "dozer"  ]]; then
 elif [[ "$HOSTNAME" == "Ooo"  ]]; then 
     export THEANO_FLAGS="device=cpu"
     export TEXLIVE_BIN=$(echo /usr/local/texlive/*/bin/x86_64-linux)
+elif [[ "$HOSTNAME" == "Leviathan"  ]]; then 
+    export THEANO_FLAGS='floatX=float32,device=cuda'
 else
     # These paths are likely to be true on other machines as weel
     #export PATH=$PATH:/usr/local/cuda/bin
