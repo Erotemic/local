@@ -2,6 +2,9 @@
 
 # DEBUG WHERE SOMETHING CAME FROM
 #set -x
+if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
+    source /etc/profile.d/vte.sh
+fi
 
 export QT_ACCESSIBILITY=0
 export QT_API=pyqt

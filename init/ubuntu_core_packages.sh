@@ -1065,3 +1065,12 @@ razer_mouse(){
     sudo apt install python3-razer razer-kernel-modules-dkms razer-daemon razer-doc
     
 }
+
+tilix(){
+    # http://www.webupd8.org/2016/07/terminix-now-available-in-ppa-for.html
+    sudo add-apt-repository ppa:webupd8team/terminix -y
+    sudo apt update
+    sudo apt install tilix -y
+    # https://gnunn1.github.io/tilix-web/manual/vteconfig/
+
+}

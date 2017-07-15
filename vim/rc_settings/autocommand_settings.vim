@@ -108,7 +108,7 @@ au MyVimRC FileType cpp setlocal smartindent
 " http://stackoverflow.com/questions/18219444/remove-underscore-as-a-word-separator-in-vim
 au MyVimRC Filetype tex setlocal iskeyword+=_
 au MyVimRC Filetype tex setlocal spell
-au MyVimRC Filetype tex setlocal conceallevel=2
+au MyVimRC Filetype tex setlocal conceallevel=0
 
 " Reference http://stackoverflow.com/questions/6671199/vim-multiline-highlight
 ":call AuOnReadPatterns('syntax sync minlines=500', '*.py')
