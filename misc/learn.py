@@ -900,3 +900,85 @@ def chunked_search():
         n_steps = info[step]
         n_steps = n_steps.subs(C, C_methods[k])
         measure_fn(n_steps, step, type_)
+
+
+def num_particles():
+    # https://www.youtube.com/watch?v=lpj0E0a0mlU
+    import pint
+    ureg = pint.UnitRegistry()
+    percent = 1 / 100
+    # ro_water = 1 * ureg.gram * (ureg.cm ** -3)
+
+    # Energy density of the universe
+    ro_crit = 8.64E-30  * ureg.gram * (ureg.cm ** -3)
+
+    # fraction of energy stored in baryons
+    omega_b = 0.0485
+
+    # radius of observable universe
+    L = 4.38E28 * ureg.cm
+
+    # (93 * 1000000000 * ureg.lightyear).to_base_units()
+    # L.to_base_units()
+
+    # mass of proton/neutron
+    m_p = ureg.proton_mass
+
+    # volume of the universe
+    import numpy as np
+    volume_universe = ((4 * np.pi / 3) * L ** 3)
+
+    # total energy stored in baryons
+    E_baryons = (omega_b * ro_crit * volume_universe)
+
+    # number of baryons
+    N_baryons = E_baryons / m_p
+
+    # 75% hyrdogen, 25% helium
+    hyrogen_b_mass = 1 * ureg.proton_mass
+    helium_b_mass = 2 * ureg.neutron_mass + 2 * ureg.proton_mass
+
+    hydrogen_mass = 1 * ureg.electron_mass + 1 * ureg.proton_mass
+    helium_mass = 2 * ureg.electron_mass + 2 * ureg.proton_mass + 2 * ureg.neutron_mass
+
+    mass_part = .25 * helium_mass + .75 * hydrogen_mass
+
+    # ureg.define('up_quark = 1')
+    # ureg.define('down_quark = 1')
+    # ureg.up_quark
+
+    # ureg.define('proton = 2 * up_quark + 2 * down_quark')
+    # ureg.dumb
+
+    down_quark = up_quark = 1
+    n_quarks_proton = 2 * up_quark + 1 * down_quark
+    n_quarks_neutron = 1 * up_quark + 2 * down_quark
+
+    n_quarks_helium = n_quarks_neutron * 2 + 2 * n_quarks_proton
+    n_electrons_helsum = n_quarks_neutron * 2 + 2 * n_quarks_proton
+    n_quarks_hyrogen = n_quarks_proton
+
+    n_quarks_hyrogen * 3 + n_quarks_helium * 1
+
+    hyrogen_b_mass * .75 + helium_b_mass * .25
+
+    # count number of quarks to get 26/7
+    N_particles = 26 / 7 * N_baryons
+
+    human_mass = 70 * ureg.kg
+    N_particles_in_human = 1.46E29
+
+    N_humans_max = N_particles / N_particles_in_human
+
+    earth_mass = 5.97E27 * ureg.gram
+    N_humans_earth = earth_mass / human_mass
+
+    N_humans_now = 7.5E9
+
+    # population growth rate percent
+    r = pop_growth = 1.11 * percent
+    # N_humans_max / N_humans_now = np.exp(r * T)
+    n_years = 1 / r * np.log(N_humans_max / N_humans_now)
+
+
+    n_years = 1 / r * np.log(N_humans_earth / N_humans_now)
