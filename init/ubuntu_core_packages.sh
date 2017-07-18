@@ -666,9 +666,9 @@ encryprtion()
     # Try OTFE
     sudo apt-get install cryptmount
 
-    sudo add-apt-repository ppa:stefansundin/truecrypt
+    sudo add-apt-repository ppa:stefansundin/truecrypt -y
     sudo apt-get update
-    sudo apt-get install truecrypt
+    sudo apt-get install truecrypt -y
 }
 
 
