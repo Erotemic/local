@@ -23,9 +23,9 @@ BUNDLE_DPATH = unixpath('~/local/vim/vimfiles/bundle')
 
 # Non local project repos
 IBEIS_REPOS_URLS, IBEIS_REPOS = repo_list([
-    #'https://github.com/bluemellophone/pyrf.git',
-    #'https://github.com/bluemellophone/detecttools.git',
-    #'https://github.com/bluemellophone/pydarknet.git',
+    'https://github.com/bluemellophone/pyrf.git',
+    'https://github.com/bluemellophone/detecttools.git',
+    'https://github.com/bluemellophone/pydarknet.git',
     #'https://github.com/hjweide/pygist.git',
     'https://github.com/Erotemic/hesaff.git',
     'https://github.com/Erotemic/guitool.git',
