@@ -1,4 +1,5 @@
 [global_config]
+  enabled_plugins = LaunchpadCodeURLHandler, APTURLHandler, LaunchpadBugURLHandler
   inactive_color_offset = 1.0
   suppress_multiple_term_dialog = True
 [keybindings]
@@ -27,6 +28,7 @@
     scrollback_lines = 5000
     use_system_font = False
   [[New Profile]]
+    background_image = None
   [[joncrall]]
     background_color = "#292929"
     background_darkness = 0.81
