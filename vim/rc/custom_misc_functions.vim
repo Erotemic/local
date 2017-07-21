@@ -447,6 +447,30 @@ endfunc
 "-------------------------
 command! HexmodeOn :%!xxd
 command! HexmodeOff :%!xxd -r 
+
+
+func! PyResize(...) 
+Python2or3 << EOF
+import vim
+percent = float(vim.eval('a:1'))
+
+dim = float(vim.eval('winheight(0)'))
+frac = float(percent / 100.0)
+newdim = dim * frac
+newdim = max(1, int(newdim))
+
+cmd = 'resize {}'.format(newdim)
+print('cmd = {!r}'.format(cmd))
+vim.command(cmd)
+
+EOF
+endfunc
+
+command! MinimizeSplit resize 10<CR>
+command! MaximizeSplit resize 117<CR>
+
+"command! MinimizeSplit call PyResize(20)<CR>
+"command! MaximizeSplit call PyResize(100)<CR>
 "-------------------------
 
 " http://vim.wikia.com/wiki/View_text_file_in_two_columns
