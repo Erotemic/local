@@ -1074,3 +1074,15 @@ tilix(){
     # https://gnunn1.github.io/tilix-web/manual/vteconfig/
 
 }
+
+
+ooo_harddrives()
+{
+    # https://ubuntuforums.org/showthread.php?t=2327837
+
+    # Show all devices wheter or not they are mounted 
+    lsblk 
+
+    # had to reboot before ESATA was recognized
+}
+

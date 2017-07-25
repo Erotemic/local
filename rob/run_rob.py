@@ -28,6 +28,7 @@ def is_string_int(string):
 
 
 def process_args(r, argv):
+    args = tuple()
     if len(argv) > 0:
         cmd_name = argv[0]
         if len(argv) == 1:

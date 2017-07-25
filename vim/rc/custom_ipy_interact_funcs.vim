@@ -117,11 +117,15 @@ if pyvim_funcs.is_module_pythonfile():
     # Add private and protected functions
     try:
         sourcecode = ut.readfrom(modpath, verbose=False)
+        # TODO get classes and whatnot
         func_names = ut.parse_function_names(sourcecode)
-        private_funcs = [name for name in func_names if name.startswith('_')]
-        if len(private_funcs) > 0:
+        if '__all__' in sourcecode:
+            extra_names = func_names
+        else:
+            extra_names = [name for name in func_names if name.startswith('_')]
+        if len(extra_names) > 0:
             lines.append("from {} import {}".format(
-                modname, ', '.join(private_funcs)))
+                modname, ', '.join(extra_names)))
     except Exception as ex:
         ut.printex(ex, 'ast parsing failed', tb=True)
         print('ast parsing failed')
