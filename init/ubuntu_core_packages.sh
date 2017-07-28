@@ -1084,6 +1084,7 @@ ooo_harddrives()
     lsblk 
 
     # had to reboot before ESATA was recognized
+    # https://www.icc-usa.com/raid-calculator
 
 }
 

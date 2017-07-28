@@ -1,5 +1,5 @@
 # Tutorials
-#http://feeding.cloud.geek.nz/posts/setting-up-raid-on-existing/
+# http://feeding.cloud.geek.nz/posts/setting-up-raid-on-existing/
 
 
 resetup_raid_after_os_reinstall()

@@ -305,8 +305,11 @@ else:
 
     import bibtexparser
     from bibtexparser import bparser
-    parser = bparser.BibTexParser(ignore_nonstandard_types=False)
-    bibtex_dict = parser.parse(ut.read_from(bib_fpath), partial=False).get_entry_dict()
+    parser = bparser.BibTexParser()
+    parser.ignore_nonstandard_types = True
+    bib_text = ut.read_from(bib_fpath)
+    bibtex_db = parser.parse(bib_text)
+    bibtex_dict = bibtex_db.get_entry_dict()
 
     title = bibtex_dict[word]['title'].replace('{', '').replace('}', '')
     ut.copy_text_to_clipboard(title)
@@ -316,10 +319,9 @@ else:
     url = baseurl + suffix
     print(title)
 #import webbrowser
-#ut.open_url_in_browser(url, 'windows-default')
+#webbrowser.open(url)
 #ut.open_url_in_browser(url, 'windows-default')
 ut.open_url_in_browser(url, 'google-chrome')
-#webbrowser.open(url)
 EOF
 endfunc
 
