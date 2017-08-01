@@ -135,3 +135,7 @@ cat /proc/mdstat
 
 ln -s /raid /media/raid 
 cp -r /data/* .
+
+
+# https://ubuntuforums.org/showthread.php?t=1820073
+/sbin/mdadm --monitor --mail=erotemic@gmail.com /dev/md0
