@@ -3,6 +3,32 @@
 #http://docs.nvidia.com/cuda/cuda-getting-started-guide-for-linux/index.html#package-manager-installation
 
 
+init_cuda_with_deb_pkg(){
+    # First download the deb from https://developer.nvidia.com/cuda-downloads
+    sudo dpkg -i ~/Downloads/cuda-repo-ubuntu1604-8-0-local-ga2_8.0.61-1_amd64.deb
+    sudo apt-get update
+    sudo apt-get install cuda
+}
+
+
+init_cudnn(){
+    # Download the DEB packages from nvidia
+    # https://developer.nvidia.com/rdp/cudnn-download
+
+    # runtime
+    sudo dpkg -i ~/Downloads/libcudnn6_6.0.21-1+cuda8.0_amd64.deb
+    # dev
+    sudo dpkg -i ~/Downloads/libcudnn6-dev_6.0.21-1+cuda8.0_amd64.deb
+    # doc
+    sudo dpkg -i ~/Downloads/libcudnn6-doc_6.0.21-1+cuda8.0_amd64.deb
+
+    sudo apt-get update
+
+    #cd ~/tmp
+    #tar -xvzf ~/Downloads/cudnn-8.0-linux-x64-v6.0.tgz
+}
+
+
 oldcudastuff(){
     sudo apt-get install libxi-dev libxmu-dev freeglut3-dev build-essential binutils-gold
 

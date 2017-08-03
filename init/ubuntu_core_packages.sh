@@ -63,15 +63,8 @@ install_core()
     # Vim / Gvim
     #sudo apt-get install -y vim
     #sudo apt-get install -y vim-gtk
-    #sudo apt-get install -y vim-gtk-py2
     #sudo apt-get remove -y vim
     #sudo apt-get remove -y vim-gnome
-    #sudo apt-get remove -y vim-gtk-py2
-    # Make python2 work with vim on ubuntu 16.04 for a bit longer
-    # WE WILL SWITH TO PYTHON 3!
-    sudo apt-get install -y vim-gnome-py2
-    sudo update-alternatives --set vim /usr/bin/vim.gnome-py2
-    sudo update-alternatives --set gvim /usr/bin/gvim.gtk-py2
 
     sudo apt-get install -y exuberant-ctags 
 
@@ -99,11 +92,6 @@ install_core()
     sudo apt-get install p7zip-full -y
     sudo apt-get install graphviz -y
     sudo apt-get install imagemagick -y
-
-    #sudo apt_get install libhighgui2.4
-    #sudo apt_get install libcv2.4
-    #sudo apt_get install libcvaux-dev
-    #sudo apt_get install opencv-doc
 
     # sqlite db  editor
     #sudo apt-get install sqliteman
@@ -165,10 +153,13 @@ install_zotero()
     url = 'https://www.zotero.org/download/'
     html = requests.get(url).content
     soup = BeautifulSoup(html, 'html.parser')
-    tags = [h for h in soup.find_all('a') if 'Download' in h.text and 'Linux 64-bit' in h.text]
+    #tags = [h for h in soup.find_all('a') if 'Download' in h.text and 'Linux 64-bit' in h.text]
+    tags = [h for h in soup.find_all('a') if 'Download' in h.text]
     href = tags[0].get('href')
     print(href)
     ")
+    # Zotero 5 broke this
+    export ZOTERO_URL="https://www.zotero.org/download/client/dl?channel=release&platform=linux-x86_64&version=5.0.7"
     echo "ZOTERO_URL=$ZOTERO_URL"
     #https://download.zotero.org/standalone/4.0.29.10/Zotero-4.0.29.10_linux-x86_64.tar.bz2
     cd ~/tmp
@@ -217,15 +208,12 @@ install_zotero()
 install_core_extras()
 {
     # Not commonly used but frequently forgotten
-    sudo apt-get install -y valgrind
-    #sudo apt-get install -y screen
-    sudo apt-get install -y synaptic
-    sudo apt-get install -y gitg
+    sudo apt-get install -y valgrind synaptic vlc gitg expect
     sudo apt-get install -y sysstat
-    sudo apt-get install -y vlc
     sudo apt-get install -y subversion
     sudo apt-get install -y remmina 
-    sudo apt-get install expect -y
+
+    #sudo apt-get install -y screen
 
 
     sudo apt-get install -y filezilla
@@ -339,6 +327,8 @@ install_vpn()
 
     sudo openconnect -b vpn.net.rpi.edu -uyour_school_username -ucrallj
     alias rpivpn='sudo openconnect -b vpn.net.rpi.edu -uyour_school_username -ucrallj'
+
+    sudo apt-get install network-manager-openvpn-gnome
     
 }
 
@@ -391,21 +381,21 @@ install_latex()
 install_python()
 {
     # Python
-    sudo apt-get install python-qt4
-    sudo apt-get install python-pip
-    sudo apt-get install -y python-tk
-    sudo pip install virtualenv
-    sudo pip install jedi
-    sudo pip install pep8
-    sudo pip install autopep8
-    sudo pip install flake8
-    sudo pip install pylint
-    sudo pip install line_profiler
-    #sudo pip install Xlib
-    sudo pip install requests
-    sudo pip install objgraph
-    sudo pip install memory_profiler
-    sudo pip install guppy
+    #apt-get install python-qt4
+    #apt-get install python-pip
+    #apt-get install -y python-tk
+    pip install virtualenv
+    pip install jedi
+    pip install pep8
+    pip install autopep8
+    pip install flake8
+    pip install pylint
+    pip install line_profiler
+    # pip install Xlib
+    pip install requests
+    pip install objgraph
+    pip install memory_profiler
+    pip install guppy
 
     #https://github.com/rogerbinns/apsw/releases/download/3.8.6-r1/apsw-3.8.6-r1.win32-py2.7.exe
     sudo apt-get install -y libsqlite3-dev 
@@ -1032,7 +1022,7 @@ fix_audio_hyrule(){
     D S 
 }
 
-setup_ssh_server()
+old_setup_ssh_server()
 {
     # See hyrule specific version
     sudo apt-get install -y openssh-server
@@ -1046,10 +1036,24 @@ setup_ssh_server()
     msudo restart ssh || sudo systemctl restart ssh
 }
 
+setup_ssh_server() {
+    # This works for any computer and makes the computer name appear in bubble text on login
+    sudo apt-get install openssh-server -y
+    sudo service ssh status
+    # small change to default sshd_config
+    sudo sed -i 's/#Banner \/etc\/issue.net/Banner \/etc\/issue.net/' /etc/ssh/sshd_config
+    sudo service ssh restart
+    #sudo restart ssh
+    cat /etc/issue.net 
+    COMP_BUBBLE=$(python -c "import utool as ut; print(ut.bubbletext(ut.get_computer_name()))")
+    #sh -c "echo \"$COMP_BUBBLE\" > tmp.txt" && cat tmp.txt && rm tmp.txt
+    sudo sh -c "echo \"$COMP_BUBBLE\" >> /etc/issue.net"
+    # Cheeck to see if its running
+    ps -A | grep sshd
 
-automount_drives(){
-    # https://help.ubuntu.com/community/Fstab
-    sudo blkid
+    # small change to default sshd_config
+    # Allow authorized keys
+    sudo sed -i 's/#AuthorizedKeysFile\t%h\/.ssh\/authorized_keys/AuthorizedKeysFile\t%h\/.ssh\/authorized_keys/' /etc/ssh/sshd_config
 }
 
 
@@ -1074,17 +1078,3 @@ tilix(){
     # https://gnunn1.github.io/tilix-web/manual/vteconfig/
 
 }
-
-
-ooo_harddrives()
-{
-    # https://ubuntuforums.org/showthread.php?t=2327837
-
-    # Show all devices wheter or not they are mounted 
-    lsblk 
-
-    # had to reboot before ESATA was recognized
-    # https://www.icc-usa.com/raid-calculator
-
-}
-

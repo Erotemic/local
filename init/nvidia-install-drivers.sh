@@ -59,6 +59,8 @@ install_cuda_prereq()
 
 install_cuda()
 {
+    # SEE init_cuda.sh
+
     # Get the cuda 6.5 deb file
     mkdir -p ~/tmp
     cd ~/tmp

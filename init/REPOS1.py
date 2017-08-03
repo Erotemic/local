@@ -11,7 +11,7 @@ from meta_util_git1 import set_userid, unixpath, repo_list
 
 
 set_userid(userid='Erotemic',
-           owned_computers=['Hyrule', 'BakerStreet', 'Ooo'],
+           owned_computers=['Hyrule', 'BakerStreet', 'Ooo', 'calculex'],
            permitted_repos=['pyrf', 'detecttools', 'pygist'])
 
 # USER DEFINITIONS

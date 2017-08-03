@@ -1,16 +1,18 @@
 # Download latest by parsing webpage
-import utool as ut
 from os.path import join
 # from six.moves import urllib  #NOQA
-import urllib2
+import requests
 headers = { 'User-Agent' : 'Mozilla/5.0' }
-req = urllib2.Request(r'https://cmake.org/download/', None, headers)
-page = urllib2.urlopen(req)
-page_str = page.read()
-page_str = ut.ensure_unicode(page_str)
+
+html = requests.get(r'https://cmake.org/download/').content
+page_str = ut.ensure_unicode(html)
+
+# req = urllib2.Request(r'https://cmake.org/download/', None, headers)
+# page = urllib2.urlopen(req)
+# import utool as ut
 
 next = False
-lines = page_str.split('\n')
+lines = page_str.split('\\n')
 for index, x in enumerate(lines):
     if next:
         print(x)
@@ -23,6 +25,7 @@ for index, x in enumerate(lines):
 url = url.replace('.sh', '.tar.gz')
 cmake_unzipped_fpath = ut.grab_zipped_url(url)
 install_prefix = ut.unixpath('~')
+
 for dname in ['bin', 'doc', 'man', 'share']:
     install_dst = join(install_prefix, dname)
     install_src = join(cmake_unzipped_fpath, dname)

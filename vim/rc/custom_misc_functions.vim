@@ -33,7 +33,8 @@ function! CmdHere()
     if has("win32") || has("win16")
         silent !cmd /c start cmd
     else
-        silent !gnome-terminal .
+        "silent !gnome-terminal .
+        silent !terminator --working-directory=.&
     endif
     redraw!
 endfunction

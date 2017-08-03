@@ -1,3 +1,6 @@
+
+#DEPRICATE
+
 source init_bashrc_symlinks.sh
 
 git config --global user.name joncrall
