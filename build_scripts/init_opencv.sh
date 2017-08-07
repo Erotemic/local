@@ -132,3 +132,29 @@ python -c "import cv2; print(cv2.__file__)"
 # Check if we have contrib modules
 python -c "import cv2; print(cv2.xfeatures2d)"
 # ENDBLOCK
+
+
+remove_venv_opencv()
+{
+
+    LOCAL_PREFIX=$VIRTUAL_ENV
+    echo "LOCAL_PREFIX=$LOCAL_PREFIX"
+
+    # This removes the raw files but does not delete links or empty directories
+    make uninstall
+
+    # Remove the dead symlinks
+    symlinks -rd $LOCAL_PREFIX
+
+    # Remove the empty dirs
+    find $LOCAL_PREFIX -empty -type d -delete
+
+    #sudo rm -rf $LOCAL_PREFIX/opencv*
+    #sudo rm -rf $LOCAL_PREFIX/include/opencv
+    #sudo rm -rf $LOCAL_PREFIX/include/opencv2
+    #sudo rm -rf $LOCAL_PREFIX/lib/libopencv*
+    #sudo rm -rf $LOCAL_PREFIX/lib/pkgconfig/opencv.pc
+    #sudo rm -rf /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/cv2.so
+    #sudo rm -rf /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/cv.py
+    #sudo rm -rf /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/cv2.pyd
+}

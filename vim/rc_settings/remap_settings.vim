@@ -37,9 +37,9 @@ noremap <leader>qw ciw'<C-r>"'<Esc>
 " File navigation
 noremap <C-T> :NERDTree<CR>
 noremap <leader>. :NERDTree<CR>
-noremap <leader>j :NERDTreeToggle<CR>
+noremap <leader>h :NERDTreeToggle<CR>
 "noremap <leader>h :Tlist<CR>
-noremap <leader>h :Tagbar<CR>
+noremap <leader>j :Tagbar<CR>
 
 
 " Text formatting

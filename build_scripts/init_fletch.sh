@@ -60,41 +60,55 @@ PYTHON_PACKAGES_PATH=$PYTHON_PACKAGES_PATH
 "
 
 
-DEFAULT_FLAG=On
-
-
 mkdir -p $BUILD_DIR
 (cd $BUILD_DIR && cmake -G "Unix Makefiles" \
     -D CMAKE_BUILD_TYPE=RELEASE \
     -D CMAKE_INSTALL_PREFIX=$LOCAL_PREFIX \
-    -D fletch_ENABLE_ALL_PACKAGES=On \
-    -D fletch_BUILD_WITH_PYTHON=On \
-    -D fletch_BUILD_WITH_MATLAB=Off \
-    -D fletch_BUILD_WITH_CUDA=On \
-    -D fletch_BUILD_WITH_CUDNN=On \
+    -D fletch_ENABLE_ALL_PACKAGES=True \
+    -D fletch_BUILD_WITH_PYTHON=True \
+    -D fletch_BUILD_WITH_MATLAB=False \
+    -D fletch_BUILD_WITH_CUDA=False \
+    -D fletch_BUILD_WITH_CUDNN=False \
+    -D OpenCV_SELECT_VERSION=3.2.0 \
+    -D VTK_SELECT_VERSION=8.0.0 \
+    -D fletch_PYTHON_VERSION=3.5 \
     -D PYTHON_EXECUTABLE=$PYTHON_EXECUTABLE \
     -D PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR \
     -D PYTHON_LIBRARY=$PYTHON_LIBRARY \
-    -D fletch_ENABLE_Boost=$DEFAULT_FLAG \
-    -D fletch_ENABLE_Caffe=$DEFAULT_FLAG \
-    -D fletch_ENABLE_Ceres=$DEFAULT_FLAG \
-    -D fletch_ENABLE_Eigen=$DEFAULT_FLAG \
-    -D fletch_ENABLE_FFmpeg=$DEFAULT_FLAG \
-    -D fletch_ENABLE_HDF5=$DEFAULT_FLAG \
-    -D fletch_ENABLE_ITK=$DEFAULT_FLAG \
-    -D fletch_ENABLE_OpenBLAS=$DEFAULT_FLAG \
-    -D fletch_ENABLE_Protobuf=$DEFAULT_FLAG \
-    -D fletch_ENABLE_ITK=$(($DEFAULT_FLAG && 0)) \
-    -D fletch_ENABLE_OpenCV=On \
-    -D fletch_ENABLE_OpenCV_contrib=On \
-    -D fletch_ENABLE_VTK=On \
-    -D fletch_ENABLE_Qt=On \
-    -D fletch_ENABLE_libxml2=On \
-    -D fletch_ENABLE_libtiff=On \
-    -D OpenCV_SELECT_VERSION=3.1.0 \
-    -D VTK_SELECT_VERSION=6.2.0 \
-    -D fletch_PYTHON_VERSION=3.5 \
-    -D fletch_ENABLE_libjpeg-turbo=On \
+    -D fletch_ENABLE_Boost=True \
+    -D fletch_ENABLE_Caffe=True \
+    -D fletch_ENABLE_Ceres=True \
+    -D fletch_ENABLE_Eigen=True \
+    -D fletch_ENABLE_FFmpeg=True \
+    -D fletch_ENABLE_GeographicLib=True \
+    -D fletch_ENABLE_GFlags=True \
+    -D fletch_ENABLE_GLog=True \
+    -D fletch_ENABLE_HDF5=True \
+    -D fletch_ENABLE_ITK=FALSE \
+    -D fletch_ENABLE_jom=True \
+    -D fletch_ENABLE_LevelDB=True \
+    -D fletch_ENABLE_libjpeg-turbo=True \
+    -D fletch_ENABLE_libjson=True \
+    -D fletch_ENABLE_libkml=True \
+    -D fletch_ENABLE_libtiff=True \
+    -D fletch_ENABLE_libxml2=True \
+    -D fletch_ENABLE_LMDB=True \
+    -D fletch_ENABLE_log4cplus=True \
+    -D fletch_ENABLE_OpenBLAS=True \
+    -D fletch_ENABLE_OpenCV=True \
+    -D fletch_ENABLE_OpenCV_contrib=True \
+    -D fletch_ENABLE_PNG=True \
+    -D fletch_ENABLE_PROJ4=True \
+    -D fletch_ENABLE_Protobuf=True \
+    -D fletch_ENABLE_Qt=True \
+    -D fletch_ENABLE_shapelib=True \
+    -D fletch_ENABLE_Snappy=True \
+    -D fletch_ENABLE_SuiteSparse=True \
+    -D fletch_ENABLE_TinyXML=True \
+    -D fletch_ENABLE_VTK=True \
+    -D fletch_ENABLE_VXL=True \
+    -D fletch_ENABLE_yasm=True \
+    -D fletch_ENABLE_ZLib=True \
     $REPO_DIR)
 # Did Cmake fail?
 CMAKE_EXITCODE=$?

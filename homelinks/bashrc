@@ -159,10 +159,17 @@ debug(){
 
     pathvar_print PATH
 }
+
 #echo "CURRENT VIRTAL_ENV=$VIRTUAL_ENV"
-# I DO NOT KNOW WHY VIRTUAL_ENV IS POPULATED AT THIS POINT
-# UNSET IT AND TRY TO RECOVER FROM THE DAMAGE
-unset VIRTUAL_ENV
+if [ "$VIRTUAL_ENV" == "" ]; then
+    # For some reason VIRTUAL_ENV is initialized as "", so unset it
+    unset VIRTUAL_ENV
+    # Use this venv for initialization
+    workon_py3
+else
+    # On reload use the same venv you were in
+    workon_py $VIRTUAL_ENV
+fi
 
 # Clean paths again before workon stuff happens
 export PATH=$(pathvar_clean PATH)
@@ -170,6 +177,5 @@ export LD_LIBRARY_PATH=$(pathvar_clean LD_LIBRARY_PATH)
 
 #env
 #workon_py2
-workon_py3
 #workon_pypy
 #deactivate_venv

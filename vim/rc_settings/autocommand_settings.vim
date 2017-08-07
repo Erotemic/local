@@ -54,9 +54,6 @@ endpython3
 endfu
 
 
-
-
-
 " Associate extensions with vim filetypes
 :call AuOnReadPatterns('set ft=cpp', '*.txx')
 :call AuOnReadPatterns('set ft=tex', '*.tex')
@@ -97,6 +94,8 @@ au MyVimRC FileType cpp setlocal cino=i-s
 au MyVimRC FileType cpp setlocal cinkeys=0{,0},0),:,!^F,o,O,e
 au MyVimRC FileType cpp setlocal cinkeys-=0#
 au MyVimRC FileType cpp setlocal smartindent
+au MyVimRC Filetype cpp setlocal shiftwidth=2
+au MyVimRC Filetype cpp setlocal tabstop=2
 
 " Latex
 
@@ -109,6 +108,11 @@ au MyVimRC FileType cpp setlocal smartindent
 au MyVimRC Filetype tex setlocal iskeyword+=_
 au MyVimRC Filetype tex setlocal spell
 au MyVimRC Filetype tex setlocal conceallevel=0
+
+
+" CMAKE
+au MyVimRC Filetype cmake setlocal shiftwidth=2
+au MyVimRC Filetype cmake setlocal tabstop=2
 
 " Reference http://stackoverflow.com/questions/6671199/vim-multiline-highlight
 ":call AuOnReadPatterns('syntax sync minlines=500', '*.py')
