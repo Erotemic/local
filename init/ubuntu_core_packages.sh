@@ -95,6 +95,7 @@ install_core()
 
     # sqlite db  editor
     #sudo apt-get install sqliteman
+    sudo apt-get install -y postgresql
     sudo apt-get install -y sqlitebrowser 
     #References: http://stackoverflow.com/questions/7454796/taglist-exuberant-ctags-not-found-in-path
     sudo apt-get install -y hdfview
@@ -1077,4 +1078,20 @@ tilix(){
     sudo apt install tilix -y
     # https://gnunn1.github.io/tilix-web/manual/vteconfig/
 
+}
+
+
+add_ssh_authorized_pubkey()
+{
+    # This is for adding a pubkey on a remote machine
+    mkdir -p ~/.ssh
+    
+    # MANUAL: append the contents of 
+    local:~/.ssh/is_rsa 
+    to 
+    remote:~/.ssh/authorized_keys
+
+    # Fix permissions
+    chmod 700 ~/.ssh
+    chmod 600 ~/.ssh/authorized_keys
 }

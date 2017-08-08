@@ -55,6 +55,10 @@ ensure_config_symlinks()
     if [ "$(which symlinks)" == "" ]; then
         # Program to remove dead symlinks
         sudo apt-get install symlinks -y
+        if [ "$(which symlinks)" == "" ]; then
+            # bypass symlinks
+            alias symlinks=echo "bypass symlinks not installed"
+        fi
     fi
 
     # TODO: make symbolic links relative to the home directory
@@ -729,6 +733,17 @@ setup_development_environment(){
     # sudo apt-get autoremove
 }
 
+
+local_apt(){
+    #--------
+    # apt-get without root permissions
+    PKG_NAME=tmux
+    apt download $PKG_NAME
+    PKG_DEB=$(echo $PKG_NAME*.deb)
+    # Cant get this to work
+    dpkg -i $PKG_DEB --force-not-root --root=$HOME 
+    #--------
+}
 
 
 setup_venv2(){

@@ -5,6 +5,26 @@ import os
 from os.path import dirname  # NOQA
 import sys
 
+def disable_packages():
+    if pkgname == 'OpenBLAS':
+        """
+
+        PKGNAME=OpenBLAS
+        PKGNAME=Zlib
+
+        find build/src/ -iname CMakeCache.txt -delete
+        rm -rf build/src/$PKGNAME*
+        rm -rf build/tmp/$PKGNAME*
+
+        rm -rf ${CMAKE_BUILD_DIR}/build/src/${PKGNAME}*
+        rm -rf ${CMAKE_BUILD_DIR}/build/tmp/${PKGNAME}*
+
+        REMOVE CMAKE VARS ${PKGNAME}_*
+        """
+        cmake_build_dir =
+        pass
+    pass
+
 
 def kwiver():
     import utool as ut
@@ -31,7 +51,6 @@ def kwiver():
         ''')
 
 
-
 def rebase_python3_support():
     import utool as ut
     ut.codeblock(
@@ -40,9 +59,9 @@ def rebase_python3_support():
         cd ~/code/fletch
         git checkout master
         # blow away old branch
-        git branch -D dev/pre-python3-support
+        git branch -D tmp/pre-python3-support
         # Recreate the branch
-        git checkout -b dev/pre-python3-support
+        git checkout -b tmp/pre-python3-support
         # Merge all prereqs into this branch
         git merge dev/find_numpy dev/update-openblas-0.2.20 dev/update-opencv dev/update-vtk dev/update-caffe --no-edit
         # or could do it one at a time, but w/e
@@ -55,7 +74,7 @@ def rebase_python3_support():
         git checkout dev/python3-support
 
         # Find the oldest merge branch after master
-        # This should be the old dev/pre-python3-support
+        # This should be the old tmp/pre-python3-support
         OLD_MERGE_POINT=$(python -c "import sys; print(sys.argv[-1])" $(git rev-list --min-parents=2 HEAD ^master))
         # Check to make sure its the merge point
         git log -n 1 $OLD_MERGE_POINT
@@ -64,8 +83,8 @@ def rebase_python3_support():
         # Find the most recent merge
         # echo $(python -c "import sys; print(sys.argv[-1])" $(git rev-list --min-parents=1 HEAD ^master))
 
-        git checkout dev/pre-python3-support
-        git checkout -b dev/rebased-python3-support
+        git checkout tmp/pre-python3-support
+        git checkout -b tmp/rebased-python3-support
 
         # These should be the relevant python3 commits
         git log $OLD_MERGE_POINT..dev/python3-support
@@ -73,20 +92,20 @@ def rebase_python3_support():
         # Move all the relevant python3-support commits onto the new pre-python3-support
         git cherry-pick $OLD_MERGE_POINT..dev/python3-support
 
-        git rebase --onto dev/rebased-python3-support $OLD_MERGE_POINT
+        git rebase --onto tmp/rebased-python3-support $OLD_MERGE_POINT
 
         git checkout dev/python3-support
-        git reset --hard dev/rebased-python3-support
+        git reset --hard tmp/rebased-python3-support
 
         git push --force
 
-        git checkout dev/pre-python3-support
+        git checkout tmp/pre-python3-support
         git push --force
 
         cd ~/code/fletch-expt
         git checkout master
         git branch -D dev/python3-support
-        git branch -D dev/pre-python3-support
+        git branch -D tmp/pre-python3-support
 
         git checkout dev/python3-support
 
@@ -95,8 +114,8 @@ def rebase_python3_support():
 
         # git checkout dev/python3-support
 
-        # git merge --strategy-option=theirs dev/pre-python3-support
-        # git rebase -i --strategy-option=theirs dev/pre-python3-support
+        # git merge --strategy-option=theirs tmp/pre-python3-support
+        # git rebase -i --strategy-option=theirs tmp/pre-python3-support
 
 
         # ENDBLOCK bash

@@ -1,6 +1,172 @@
 #!/bin/bash
 
 
+test_fletch_branch()
+{
+    BRANCH="test/update-opencv-3.3"
+    mkdir -p $HOME/dash/$BRANCH
+    REPO_DIR=$HOME/dash/$BRANCH/fletch
+    git clone -b $BRANCH https://github.com/Erotemic/fletch.git $REPO_DIR
+    git checkout $BRANCH
+    git pull
+
+    workon_py2
+
+    echo REPO_DIR = $REPO_DIR
+    mkdir -p $REPO_DIR/build
+    cd $REPO_DIR/build 
+    cmake -G "Unix Makefiles" \
+        -D fletch_BUILD_WITH_PYTHON=On \
+        -D fletch_ENABLE_ALL_PACKAGES=On \
+        $REPO_DIR
+}
+
+update_symbolic_rebases()
+{
+    symbolic_rebase -e master -b test/update-opencv-3.3 -d="dev/update-opencv"
+
+    BASE=master 
+    BRANCH=test/update-opencv-3.3 
+    DEPENDS="test/update-opencv"
+    symbolic_rebase $BASE $BRANCH $DEPENDS
+        
+    #BASE=master
+    #BRANCH=dev/python3-support
+    #DEPENDS=dev/find_numpy dev/update-openblas-0.2.20 dev/update-opencv dev/update-vtk dev/update-caffe
+    symbolic_rebase master dev/python3-support \
+        dev/find_numpy dev/update-openblas-0.2.20 dev/update-opencv dev/update-vtk dev/update-caffe
+}
+
+# delete remote branch
+#git push origin --delete test/upate-opencv
+
+symbolic_rebase_clean(){
+    git checkout master
+    git reset --hard source/master
+
+    git checkout $BASE
+    git branch -D $BRANCH
+    git branch -D $PRE_BRANCH
+    
+    git branch -D new/$PRE_BRANCH
+    git push origin --delete new/$PRE_BRANCH
+
+    git branch -D tmp/pre/test/update-opencv-3.3
+    git push origin --delete test/update-opencv-3.3
+}
+
+symbolic_rebase(){
+    #BASE=$1
+    #BRANCH=$2
+    #DEPENDS=$@
+
+    PRE_BRANCH=pre/$BRANCH
+
+    echo "
+    BASE = $BASE
+    BRANCH = $BRANCH
+    DEPENDS = $DEPENDS
+    PRE_BRANCH = $PRE_BRANCH
+    "
+
+    cd ~/code/fletch
+    
+    # $? == 0 means local branch with <branch-name> exists.
+    git rev-parse --verify $BRANCH
+    if [ $? == 0 ]; then
+        echo "Branch exists"
+        BRANCH_EXISTS=1
+    else
+        echo "Branch does not exist"
+        BRANCH_EXISTS=0
+    fi
+
+    if [ $BRANCH_EXISTS == 0 ]; then
+        # Starting from the base
+        git checkout $BASE
+        # Create the pre-branch off of the base
+        git checkout -b $PRE_BRANCH
+        # Merge all prereqs into the pre-branch
+        git merge $DEPENDS --no-edit
+
+        # Create the new "symbolic" branch to work on
+        git checkout -b $BRANCH
+    else
+        # TODO: case where nothing happens and PRE_BRANCH == BRANCH
+
+        # Starting from the base
+        git checkout $BASE
+        # Remember the hash of the old pre-branch
+        OLD_PRE_BRANCH=$(git rev-parse $PRE_BRANCH)
+
+        # Create a new pre-branch
+        git checkout -b new/$PRE_BRANCH
+
+        # Merge all prereqs into the tmp/pre branch
+        git merge $DEPENDS --no-edit
+
+        # Create a new post-branch
+        git checkout -b new/$BRANCH
+
+        # verify this looks good
+        # git log $OLD_PRE_BRANCH..$BRANCH
+        # git log --pretty=format:"%H" $OLD_PRE_BRANCH..$BRANCH
+
+        # Cherry-pick the changes after the old pre-branch onto the new one
+        git cherry-pick $OLD_PRE_BRANCH..$BRANCH
+
+        # Overwrite old branches with the new ones
+        git checkout $PRE_BRANCH
+        git reset new/$PRE_BRANCH --hard 
+
+        git checkout $BRANCH
+        git reset new/$BRANCH --hard 
+
+        # remote the temporary new branches
+        git branch -D new/$BRANCH
+        git branch -D new/$PRE_BRANCH
+    fi
+
+    ## backup the existing branch
+    #git checkout $BRANCH
+    #git checkout -b tmp/bak/$BRANCH
+
+    ## Checkout a rebased verion we will do the work on
+    #git checkout -b tmp/rebased/$BRANCH
+
+    ##PRE_BRANCH=tmp/pre/$BRANCH
+    ###git log -1 --pretty=format:"%H"
+    ##git rev-parse $PRE_BRANCH
+    ##git rev-parse $BRANCH
+
+    #OLD_PRE_BRANCH_COMMIT=
+
+    ## Find the oldest merge branch after master
+    ## This should be the old tmp/pre branch
+    #OLD_MERGE_POINT=$(python -c "import sys; print(sys.argv[-1])" $(git rev-list --min-parents=2 HEAD ^$BASE))
+    ## Check to make sure its the merge point
+    #git log -n 1 $OLD_MERGE_POINT
+    #echo "OLD_MERGE_POINT = \"$OLD_MERGE_POINT\""
+
+    ## These should be the relevant existing commits on the symbolic branch
+    #git log $OLD_MERGE_POINT..$BRANCH
+
+    ## Move all the relevant existing commits onto the new tmp/pre branch
+    #git cherry-pick $OLD_MERGE_POINT..$BRANCH
+
+    ## Now make the original branch point to this commit
+    #git checkout $BRANCH
+    #git reset --hard tmp/rebased-python3-support
+}
+
+
+git clone https://github.com/Erotemic/fletch.git ~/code/fletch
+
+
+cd ~/code/fletch
+git checkout dev/python3-support
+
+
 PYTHON_EXECUTABLE=$(which python)
 PY_VERSION=$(python -c "import sys; info = sys.version_info; print('{}.{}'.format(info.major, info.minor))")
 PLAT_NAME=$(python -c "import setuptools, distutils; print(distutils.util.get_platform())")
@@ -58,6 +224,17 @@ PYTHON_LIBRARY=$PYTHON_LIBRARY
 PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR
 PYTHON_PACKAGES_PATH=$PYTHON_PACKAGES_PATH
 "
+
+
+mkdir -p $BUILD_DIR
+cd $BUILD_DIR
+cmake -G "Unix Makefiles" \
+    -D fletch_ENABLE_ALL_PACKAGES=True \
+    -D fletch_BUILD_WITH_PYTHON=True \
+    -D fletch_BUILD_WITH_MATLAB=False \
+    -D fletch_BUILD_WITH_CUDA=False \
+    -D fletch_BUILD_WITH_CUDNN=False \
+    $REPO_DIR
 
 
 mkdir -p $BUILD_DIR
