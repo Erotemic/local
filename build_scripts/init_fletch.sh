@@ -37,7 +37,24 @@ test_fletch_branch_31()
     FLETCH_BRANCH="test/update-opencv-3.3"
     FLETCH_BUILD_SUFFIX="-3-1"
     FLETCH_CMAKE_ARGS="-D OpenCV_SELECT_VERSION=3.1.0 -D fletch_ENABLE_Qt=Off -D fletch_ENABLE_VTK=Off"
-    test_fletch_py2_branch
+    test_fletch_branch
+}
+
+test_fletch_branch_python3()
+{
+
+    source ~/local/build_scripts/init_fletch.sh
+    FLETCH_ENABLE_ALL="On"
+    FLETCH_REBUILD="On"
+    TEST_KWIVER="On"
+    FLETCH_PYTHON_VENV=3
+    FLETCH_BRANCH="dev/python3-support"
+    FLETCH_BUILD_SUFFIX="-py3"
+    NCPUS=1
+    FLETCH_CMAKE_ARGS="\
+        -D OpenCV_SELECT_VERSION=3.3.0 -D fletch_ENABLE_Qt=Off \
+        -D fletch_ENABLE_VTK=Off -D fletch_BUILD_WITH_PYTHON=On"
+    test_fletch_branch
 }
 
 test_fletch_branch_33()
@@ -53,7 +70,7 @@ test_fletch_branch_33()
     FLETCH_CMAKE_ARGS="\
         -D OpenCV_SELECT_VERSION=3.3.0 -D fletch_ENABLE_Qt=Off \
         -D fletch_ENABLE_VTK=Off -D fletch_BUILD_WITH_PYTHON=On"
-    test_fletch_py2_branch
+    test_fletch_branch
 
     source ~/local/build_scripts/init_fletch.sh
     FLETCH_ENABLE_ALL="Off"
@@ -67,7 +84,7 @@ test_fletch_branch_33()
         -D OpenCV_SELECT_VERSION=3.3.0 -D fletch_ENABLE_OpenCV=On \
         -D fletch_ENABLE_FFmpeg=On -D fletch_ENABLE_Qt=Off \
         -D fletch_ENABLE_VTK=Off -D fletch_BUILD_WITH_PYTHON=On"
-    test_fletch_py2_branch 
+    test_fletch_branch 
 }
 
 
@@ -82,19 +99,19 @@ test_fletch_master()
     FLETCH_BRANCH="master"
     FLETCH_BUILD_SUFFIX="-ffmpeg-only"
     FLETCH_CMAKE_ARGS="-D fletch_ENABLE_FFmpeg=On"
-    test_fletch_py2_branch
+    test_fletch_branch
 
     FLETCH_REBUILD="On"
     FLETCH_BRANCH="dev/update-ffmpeg-3.3.3"
     FLETCH_BUILD_SUFFIX="-ffmpeg-only-3.3"
     FLETCH_CMAKE_ARGS="-D fletch_ENABLE_FFmpeg=On -D FFMpeg_SELECT_VERSION=3.3.3"
-    test_fletch_py2_branch 
+    test_fletch_branch 
     ldd install/lib/libavcodec.so
 
     FLETCH_BRANCH="dev/update-ffmpeg-3.3.3"
     FLETCH_BUILD_SUFFIX="-ffmpeg-only-2.6"
     FLETCH_CMAKE_ARGS="-D fletch_ENABLE_FFmpeg=On -D FFMpeg_SELECT_VERSION=2.6.2"
-    test_fletch_py2_branch 
+    test_fletch_branch 
     ldd install/lib/libavcodec.so
 
     rm -rf build/src/FFmpeg-stamp/
@@ -104,7 +121,7 @@ test_fletch_master()
 }
 
 
-test_fletch_py2_branch()
+test_fletch_branch()
 {
     "
     source ~/local/build_scripts/init_fletch.sh
