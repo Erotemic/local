@@ -191,6 +191,8 @@ test_fletch_py2_branch()
             $KWIVER_REPO_DIR
 
         make -j$NCPUS
+
+        ctest
     fi
 }
 
@@ -205,7 +207,7 @@ update_symbolic_rebases()
         
     BASE=master
     BRANCH=dev/python3-support
-    DEPENDS="dev/find_numpy dev/update-openblas-0.2.20 test/update-opencv-3.3 dev/update-vtk dev/update-caffe dev/update-ffmpeg-3.3.3"
+    DEPENDS="dev/find_numpy dev/update-openblas-0.2.20 dev/update-vtk dev/update-caffe dev/update-ffmpeg-3.3.3 test/update-opencv-3.3"
 
     symbolic_rebase --base=master --branch=dev/python3-support --depends="$DEPENDS"
 

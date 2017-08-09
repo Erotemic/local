@@ -204,6 +204,7 @@ freshtart_ubuntu_entry_point()
     git config --global user.email jon.crall@kitware.com
     git config --global push.default current
 
+    git config --global rerere.enabled true
     git config --global alias.co checkout
 
 

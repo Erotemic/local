@@ -87,43 +87,64 @@ else
     OLD_PRE_BRANCH_HASH=$(git rev-parse $PRE_BRANCH)
     OLD_BRANCH_HASH=$(git rev-parse $BRANCH)
 
-    # Starting from the base
-    git checkout $BASE
+    # TODO: assert pre-hash exists
 
     if [ "$OLD_BRANCH_HASH" == "$OLD_PRE_BRANCH_HASH" ]; then
         # TODO: case where nothing happens and PRE_BRANCH == BRANCH
         echo "TODO"
     else
+        # Starting from the base
+        git checkout $BASE
+
         # Create a new pre-branch
         git checkout -b new/$PRE_BRANCH
 
         # Merge all prereqs into the tmp/pre branch
-        git merge $DEPENDS --no-edit
+        git merge $DEPENDS -Xignore-all-space --no-edit
+        MERGE_SUCCESS=$?
+        if [ $MERGE_SUCCESS != 0 ]; then
+            # TODO: check that merge went smoothly
+            echo "MERGE FAILED"
+            #git checkout $BASE
+            echo "Need to clean up:
+                Ensure git rerere is enabled
+                Then fix the conflict and commit
+                Then reset the state, and try the merge again.
+                It should happen automatically this time.
 
-        # TODO: check that merge went smoothly
+                git merge --abort
 
-        # Create a new post-branch
-        git checkout -b new/$BRANCH
+                git checkout $BASE
+                git branch -D new/$PRE_BRANCH
+            "
+        else
+            # Create a new post-branch
+            git checkout -b new/$BRANCH
 
-        # verify this looks good
-        # git log $OLD_PRE_BRANCH_HASH..$BRANCH
-        # git log --pretty=format:"%H" $OLD_PRE_BRANCH_HASH..$BRANCH
+            # verify this looks good
+            git log $OLD_PRE_BRANCH_HASH...$BRANCH
+            git log $OLD_PRE_BRANCH_HASH...$BRANCH
+            # git log --pretty=format:"%H" $OLD_PRE_BRANCH_HASH..$BRANCH
 
-        # Cherry-pick the changes after the old pre-branch onto the new one
-        git cherry-pick $OLD_PRE_BRANCH_HASH..$BRANCH
+            # Cherry-pick the changes after the old pre-branch onto the new one
+            git cherry-pick $OLD_PRE_BRANCH_HASH..$BRANCH
+            CHERRY_PICK_SUCCESS=$?
+            if [ $CHERRY_PICK_SUCCESS != 0 ]; then
+                pass
+            else
+                # TODO: check that cherry-pick went smoothly
+                NEW_PRE_BRANCH_HASH=$(git rev-parse new/$PRE_BRANCH)
+                NEW_BRANCH_HASH=$(git rev-parse new/$BRANCH)
 
-        # TODO: check that cherry-pick went smoothly
+                # Overwrite old branches with the new ones
+                git checkout $PRE_BRANCH && git reset $NEW_PRE_BRANCH_HASH --hard 
+                git checkout $BRANCH && git reset $NEW_BRANCH_HASH --hard 
 
-        NEW_PRE_BRANCH_HASH=$(git rev-parse new/$PRE_BRANCH)
-        NEW_BRANCH_HASH=$(git rev-parse new/$BRANCH)
-
-        # Overwrite old branches with the new ones
-        git checkout $PRE_BRANCH && git reset $NEW_PRE_BRANCH_HASH --hard 
-        git checkout $BRANCH && git reset $NEW_BRANCH_HASH --hard 
-
-        # remote the temporary new branches
-        git branch -D new/$BRANCH
-        git branch -D new/$PRE_BRANCH
+                # remote the temporary new branches
+                git branch -D new/$BRANCH
+                git branch -D new/$PRE_BRANCH
+            fi
+        fi
     fi
 fi
 
