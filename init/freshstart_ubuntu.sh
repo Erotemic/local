@@ -204,6 +204,9 @@ freshtart_ubuntu_entry_point()
     git config --global user.email jon.crall@kitware.com
     git config --global push.default current
 
+    git config --global alias.co checkout
+
+
     #sudo apt-get install trash-cli
     sudo apt-get install -y exuberant-ctags 
 

@@ -3,8 +3,9 @@
   inactive_color_offset = 1.0
   suppress_multiple_term_dialog = True
 [keybindings]
-  new_terminator = <Primary><Shift>n
-  new_window = None
+  go_next = None
+  new_terminator = None
+  new_window = <Primary><Shift>n
   split_horiz = <Primary><Shift>i
   split_vert = <Primary><Shift>e
 [layouts]

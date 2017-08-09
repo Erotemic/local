@@ -214,8 +214,8 @@ install_core_extras()
     sudo apt-get install -y subversion
     sudo apt-get install -y remmina 
 
-    #sudo apt-get install -y screen
 
+    #sudo apt-get install -y screen
 
     sudo apt-get install -y filezilla
 
@@ -630,8 +630,8 @@ secure_ssl_pip()
 install_screen_capture()
 {
     #sudo apt-get install recordmydesktop gtk-recordmydesktop
-    sudo add-apt-repository ppa:obsproject/obs-studio
-    sudo apt-get update && sudo apt-get install obs-studio
+    sudo add-apt-repository ppa:obsproject/obs-studio -y
+    sudo apt-get update && sudo apt-get install obs-studio -y
 }
 
 

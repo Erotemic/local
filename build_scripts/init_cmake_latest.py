@@ -1,30 +1,50 @@
 # Download latest by parsing webpage
+import os
 from os.path import join
-# from six.moves import urllib  #NOQA
+import glob
 import requests
-headers = { 'User-Agent' : 'Mozilla/5.0' }
 
 html = requests.get(r'https://cmake.org/download/').content
-page_str = ut.ensure_unicode(html)
+page_str = html.decode('utf8')
 
+# from six.moves import urllib  #NOQA
+# headers = { 'User-Agent' : 'Mozilla/5.0' }
 # req = urllib2.Request(r'https://cmake.org/download/', None, headers)
 # page = urllib2.urlopen(req)
 # import utool as ut
 
+# https://cmake.org/files/v3.9/cmake-3.9.0-Linux-x86_64.tar.gz
+
 next = False
-lines = page_str.split('\\n')
+lines = page_str.split('\n')
 for index, x in enumerate(lines):
     if next:
         print(x)
+        if 'Linux' not in x:
+            next = False
+            continue
         import parse
         url_suffix = parse.parse('{foo}href="{href}"{other}', x)['href']
         url = r'https://cmake.org' + url_suffix
+        print('url_suffix = {!r}'.format(url_suffix))
+        print('url.replace = {!r}'.format(url.replace))
         break
-    if 'Linux x86_64' in x:
+    if '<td>Linux x86_64</td>' in x:
+        print('x = {!r}'.format(x))
+        print('NEXT')
         next = True
 url = url.replace('.sh', '.tar.gz')
-cmake_unzipped_fpath = ut.grab_zipped_url(url)
-install_prefix = ut.unixpath('~')
+
+install_prefix = os.path.expanduser('~')
+tmpdir = join(install_prefix, 'tmp')
+os.makedirs(tmpdir, exist_ok=True)
+os.chdir(tmpdir)
+
+# cmake_unzipped_fpath = ut.grab_zipped_url(url)
+os.system('wget ' + url)
+os.system('tar -xf cmake-*.tar.gz')
+
+cmake_unzipped_fpath = sorted(glob.glob('cmake-*'))[0]
 
 for dname in ['bin', 'doc', 'man', 'share']:
     install_dst = join(install_prefix, dname)
@@ -35,6 +55,8 @@ for dname in ['bin', 'doc', 'man', 'share']:
     from os.path import dirname
     cmd = str('cp -r "' + install_src + '" "' + dirname(install_dst) + '"')
     print(cmd)
-    ut.cmd(cmd)
+    os.system(cmd)
+
+    # ut.cmd(cmd)
     #os.system(cmd)
 print(cmake_unzipped_fpath)

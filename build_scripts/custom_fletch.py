@@ -192,6 +192,7 @@ def generate_and_make(repo_dpath, **kwargs):
         if cmake_retcode == 0:
             os.system('make -j9')
 
+
 if __name__ == '__main__':
     r"""
     CommandLine:
