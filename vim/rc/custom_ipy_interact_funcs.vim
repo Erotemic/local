@@ -120,7 +120,8 @@ if pyvim_funcs.is_module_pythonfile():
         # TODO get classes and whatnot
         func_names = ut.parse_function_names(sourcecode)
         if '__all__' in sourcecode:
-            extra_names = func_names
+            import_names = ut.parse_import_names(sourcecode)
+            extra_names = func_names + import_names
         else:
             extra_names = [name for name in func_names if name.startswith('_')]
         if len(extra_names) > 0:
