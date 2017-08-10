@@ -206,6 +206,7 @@ freshtart_ubuntu_entry_point()
 
     git config --global core.editor "vim"
     git config --global rerere.enabled true
+    git config core.fileMode false
     git config --global alias.co checkout
 
 

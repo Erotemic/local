@@ -5,28 +5,28 @@ test_fletch_branch-opencv-3-1()
 {
     FLETCH_BRANCH="test/update-opencv-3.3"
     mkdir -p $HOME/dash/$FLETCH_BRANCH
-    FLETCH_REPO_DIR=$HOME/dash/$FLETCH_BRANCH/fletch
-    git clone -b $FLETCH_BRANCH https://github.com/Erotemic/fletch.git $FLETCH_REPO_DIR
+    FLETCH_SOURCE_DIR=$HOME/dash/$FLETCH_BRANCH/fletch
+    git clone -b $FLETCH_BRANCH https://github.com/Erotemic/fletch.git $FLETCH_SOURCE_DIR
     git checkout $FLETCH_BRANCH
     git reset origin/$FLETCH_BRANCH --hard
     git pull
 
     workon_py2
 
-    echo FLETCH_REPO_DIR = $FLETCH_REPO_DIR
-    mkdir -p $FLETCH_REPO_DIR/build
-    cd $FLETCH_REPO_DIR/build 
-    rm -rf $FLETCH_REPO_DIR/build/*
+    echo FLETCH_SOURCE_DIR = $FLETCH_SOURCE_DIR
+    mkdir -p $FLETCH_SOURCE_DIR/build
+    cd $FLETCH_SOURCE_DIR/build 
+    rm -rf $FLETCH_SOURCE_DIR/build/*
     cmake -G "Unix Makefiles" \
         -D fletch_BUILD_WITH_PYTHON=On \
         -D fletch_ENABLE_ALL_PACKAGES=On \
-        $FLETCH_REPO_DIR
+        $FLETCH_SOURCE_DIR
 
     # Disable building really big repos
     cmake -G "Unix Makefiles" \
         -D fletch_ENABLE_Qt=Off \
         -D fletch_ENABLE_VTK=Off \
-        $FLETCH_REPO_DIR
+        $FLETCH_SOURCE_DIR
 
     make
 }
@@ -54,6 +54,21 @@ test_fletch_branch_python3()
     FLETCH_CMAKE_ARGS="\
         -D OpenCV_SELECT_VERSION=3.3.0 -D fletch_ENABLE_Qt=Off \
         -D fletch_ENABLE_VTK=Off -D fletch_BUILD_WITH_PYTHON=On"
+    test_fletch_branch
+
+
+    source ~/local/build_scripts/init_fletch.sh
+    FLETCH_ENABLE_ALL="On"
+    FLETCH_REBUILD="On"
+    TEST_KWIVER="On"
+    FLETCH_PYTHON_VENV=2
+    FLETCH_BRANCH="dev/python3-support"
+    FLETCH_BUILD_SUFFIX="-py2"
+    NCPUS=1
+    FLETCH_CMAKE_ARGS="\
+        -D OpenCV_SELECT_VERSION=3.3.0 -D fletch_ENABLE_Qt=Off \
+        -D fletch_ENABLE_VTK=Off -D fletch_BUILD_WITH_PYTHON=On \
+        -D fletch_PYTHON_VERSION=2"
     test_fletch_branch
 }
 
@@ -89,6 +104,22 @@ test_fletch_branch_33()
 
 
 test_fletch_master()
+{
+    source ~/local/build_scripts/init_fletch.sh
+    FLETCH_ENABLE_ALL="On"
+    FLETCH_REBUILD="Off"
+    FLETCH_PYTHON_VENV=2
+    TEST_KWIVER="On"
+
+    FLETCH_BRANCH="master"
+    FLETCH_BUILD_SUFFIX="-nogui"
+    FLETCH_CMAKE_ARGS="-D fletch_ENABLE_VTK=Off -D fletch_ENABLE_Qt=Off"
+    FLETCH_MAKE_EXTRA="TARGET=HASWELL"
+    test_fletch_branch
+}
+
+
+test_fletch_ffmpeg()
 {
     source ~/local/build_scripts/init_fletch.sh
     FLETCH_ENABLE_ALL="Off"
@@ -134,13 +165,23 @@ test_fletch_branch()
     FLETCH_ENABLE_ALL = $FLETCH_ENABLE_ALL
     FLETCH_REBUILD = $FLETCH_REBUILD
     FLETCH_PYTHON_VENV = $FLETCH_PYTHON_VENV
+    NCPUS = $NCPUS
     "
 
-    FLETCH_REPO_DIR=$HOME/dash/$FLETCH_BRANCH/fletch
+    FLETCH_DASHBORD_ROOT=$HOME/dash/fletch/$FLETCH_BRANCH
+    FLETCH_SOURCE_DIR=$FLETCH_DASHBORD_ROOT/fletch
+    FLETCH_BINARY_DIR=$FLETCH_SOURCE_DIR/build$FLETCH_BUILD_SUFFIX
 
-    mkdir -p $HOME/dash/$FLETCH_BRANCH
-    git clone -b $FLETCH_BRANCH https://github.com/Erotemic/fletch.git $FLETCH_REPO_DIR
-    cd $FLETCH_REPO_DIR
+    echo " 
+    FLETCH_DASHBORD_ROOT = $FLETCH_DASHBORD_ROOT
+    FLETCH_SOURCE_DIR = $FLETCH_SOURCE_DIR
+    FLETCH_BINARY_DIR = $FLETCH_BINARY_DIR
+    FLETCH_CMAKE_ARGS = $FLETCH_CMAKE_ARGS
+    "
+
+    mkdir -p $FLETCH_DASHBORD_ROOT
+    git clone -b $FLETCH_BRANCH https://github.com/Erotemic/fletch.git $FLETCH_SOURCE_DIR
+    cd $FLETCH_SOURCE_DIR
     git checkout $FLETCH_BRANCH
     git fetch origin
     git reset origin/$FLETCH_BRANCH --hard
@@ -151,16 +192,10 @@ test_fletch_branch()
         workon_py3
     fi
 
-    echo " 
-    FLETCH_REPO_DIR = $FLETCH_REPO_DIR
-    FLETCH_CMAKE_ARGS = $FLETCH_CMAKE_ARGS
-    "
-
-    FLETCH_BUILD_DIR=$FLETCH_REPO_DIR/build$FLETCH_BUILD_SUFFIX
-    mkdir -p $FLETCH_BUILD_DIR
-    cd $FLETCH_BUILD_DIR 
+    mkdir -p $FLETCH_BINARY_DIR
+    cd $FLETCH_BINARY_DIR 
     if [ "$FLETCH_REBUILD" == "On" ]; then
-        rm -rf $FLETCH_BUILD_DIR/*
+        rm -rf $FLETCH_BINARY_DIR/*
     fi
 
     if [ "$FLETCH_ENABLE_ALL" == "On" ]; then
@@ -168,36 +203,84 @@ test_fletch_branch()
         cmake -G "Unix Makefiles" \
             -D fletch_ENABLE_ALL_PACKAGES=On \
             $FLETCH_CMAKE_ARGS \
-            $FLETCH_REPO_DIR
+            $FLETCH_SOURCE_DIR
     fi 
 
     # then disable packages as needed
     cmake -G "Unix Makefiles" \
         $FLETCH_CMAKE_ARGS \
-        $FLETCH_REPO_DIR
+        $FLETCH_SOURCE_DIR
 
-    make -j$NCPUS
+    make -j$NCPUS $FLETCH_MAKE_EXTRA
 
     if [ "$TEST_KWIVER" == "On" ]; then
-        # TEST WITH KWIVER
-        #KWIVER_BRANCH=release
+
         KWIVER_BRANCH=master
-        KWIVER_REPO_DIR=$HOME/dash/$KWIVER_BRANCH/kwiver
-        mkdir -p $HOME/dash/$KWIVER_BRANCH
-        git clone -b $KWIVER_BRANCH https://github.com/Erotemic/kwiver.git $KWIVER_REPO_DIR
+        #if [ "False" == "On" ]; then
+        #    KWIVER_REPO_DIR=$HOME/dash/$KWIVER_BRANCH/kwiver
+        #    # TEST WITH KWIVER
+        #    #KWIVER_BRANCH=release
+        #    mkdir -p $HOME/dash/$KWIVER_BRANCH
+        #    git clone -b $KWIVER_BRANCH https://github.com/Erotemic/kwiver.git $KWIVER_REPO_DIR
 
-        cd $KWIVER_REPO_DIR
-        git checkout $KWIVER_BRANCH
-        git fetch origin
-        git reset origin/$KWIVER_BRANCH --hard
+        #    cd $KWIVER_REPO_DIR
+        #    git checkout $KWIVER_BRANCH
+        #    git fetch origin
+        #    git reset origin/$KWIVER_BRANCH --hard
 
-        KWIVER_BUILD_DIR=$KWIVER_REPO_DIR/build/$FLETCH_BRANCH/$SUFFIX
-        mkdir -p $KWIVER_BUILD_DIR
-        cd $KWIVER_BUILD_DIR
-        rm -rf $KWIVER_BUILD_DIR/*
+        #    KWIVER_BUILD_DIR=$KWIVER_REPO_DIR/build/$FLETCH_BRANCH/$FLETCH_BUILD_SUFFIX
+        #    mkdir -p $KWIVER_BUILD_DIR
+        #    cd $KWIVER_BUILD_DIR
+        #    rm -rf $KWIVER_BUILD_DIR/*
 
-        cmake -G "Unix Makefiles" \
-            -D fletch_DIR:PATH=$FLETCH_BUILD_DIR \
+        #    cmake -G "Unix Makefiles" \
+        #        -D fletch_DIR:PATH=$FLETCH_BINARY_DIR \
+        #        -D KWIVER_ENABLE_ARROWS=On \
+        #        -D KWIVER_ENABLE_TRACK_ORACLE=On \
+        #        -D KWIVER_ENABLE_SPROKIT=On \
+        #        -D KWIVER_ENABLE_PROCESSES=On \
+        #        -D KWIVER_ENABLE_TESTS=On \
+        #        -D KWIVER_ENABLE_LOG4CPLUS=On \
+        #        -D KWIVER_ENABLE_TOOLS=On \
+        #        $KWIVER_REPO_DIR
+        #    make -j$NCPUS
+        #    ctest 
+        #fi
+
+        # References:
+        # https://cmake.org/Wiki/CMake_Scripting_Of_CTest
+        CTEST_BUILD_NAME="Linux-C++ fletch-$FLETCH_BRANCH$FLETCH_BUILD_SUFFIX kwiver-$KWIVER_BRANCH"
+        CTEST_DASHBOARD_ROOT=$HOME/dash/kwiver/$KWIVER_BRANCH
+
+        kwiver_binary_name="kwiver/build/$FLETCH_BRANCH/$FLETCH_BUILD_SUFFIX"
+        kwiver_source_name="kwiver"
+        KWIVER_BINARY_DIR="$CTEST_DASHBOARD_ROOT/$kwiver_binary_name"
+        KWIVER_SOURCE_DIR="$CTEST_DASHBOARD_ROOT/$kwiver_source_name"
+
+        mkdir -p $CTEST_DASHBOARD_ROOT
+        cd $CTEST_DASHBOARD_ROOT
+        cp ~/code/kwiver/CMake/dashboard-scripts/KWIVER_common.cmake $CTEST_DASHBOARD_ROOT
+        source ~/local/build_scripts/init_fletch.sh
+
+        # Dump ctest script
+        echo "$(codeblock "
+        # Client maintainer: me@mydomain.net
+        set(dashboard_git_branch $KWIVER_BRANCH)
+        set(dashboard_model Experimental)
+        # set(dashboard_no_submit On)
+        set(dashboard_source_name $kwiver_source_name)
+        set(dashboard_binary_name \"$kwiver_binary_name\")
+        set(CTEST_SITE \"$HOSTNAME\")
+        set(CTEST_DASHBOARD_ROOT \"$CTEST_DASHBOARD_ROOT\")
+        set(CTEST_BUILD_FLAGS -j$NCPUS)
+        set(CTEST_BUILD_NAME \"$CTEST_BUILD_NAME\")
+        set(CTEST_CONFIGURATION_TYPE Release)
+        set(CTEST_CMAKE_GENERATOR \"Unix Makefiles\")
+        set(CTEST_SOURCE_DIRECTORY \\\"${KWIVER_SOURCE_DIR}\\\")
+        set(CTEST_BINARY_DIRECTORY \\\"${KWIVER_BINARY_DIR}\\\")
+        set(CTEST_CONFIGURE_COMMAND \"\${CMAKE_COMMAND} \
+            -G \\\\\"\${CTEST_CMAKE_GENERATOR}\\\\\" \
+            -D fletch_DIR:PATH=$FLETCH_BINARY_DIR \
             -D KWIVER_ENABLE_ARROWS=On \
             -D KWIVER_ENABLE_TRACK_ORACLE=On \
             -D KWIVER_ENABLE_SPROKIT=On \
@@ -205,11 +288,18 @@ test_fletch_branch()
             -D KWIVER_ENABLE_TESTS=On \
             -D KWIVER_ENABLE_LOG4CPLUS=On \
             -D KWIVER_ENABLE_TOOLS=On \
-            $KWIVER_REPO_DIR
+            \\\\\"\${CTEST_SOURCE_DIRECTORY}\\\\\" \
+            \")
+        include(\"\${CTEST_SCRIPT_DIRECTORY}/KWIVER_common.cmake\")
+        ")" > $CTEST_DASHBOARD_ROOT/my_dashboard.cmake
 
-        make -j$NCPUS
+        # Ugggg, paths
+        $CTEST_DASHBOARD_ROOT/setup_KWIVER.sh
 
-        ctest
+        $KWIVER_BINARY_DIR/bin/pipeline_runner -p </path/to/kwiver/source>/sprokit/pipelines/number_flow.pipe
+        
+
+        ctest -S $CTEST_DASHBOARD_ROOT/my_dashboard.cmake -VV
     fi
 }
 
@@ -393,6 +483,15 @@ main(){
 
     codeblock()
     {
+        # Usage:
+        # 
+        # >>> echo "$(codeblock "
+        # ...     a long
+        # ...     multiline string.
+        # ...     this is the last line that will be considered.
+        # ...     ")"
+        # 
+
         # Prevents python indentation errors in bash
         python -c "from textwrap import dedent; print(dedent('''$1''').strip('\n'))"
         #python -c "import utool as ut; print(ut.codeblock('''$1'''))"

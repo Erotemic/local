@@ -516,3 +516,18 @@ mylayout(){
 python -m utool.util_ubuntu XCtrl.move_window GVIM special2
 python -m utool.util_ubuntu XCtrl.move_window joncrall special2
 }
+
+
+codeblock()
+{
+    # Usage:
+    # 
+    # >>> echo "$(codeblock "
+    # ...     a long
+    # ...     multiline string.
+    # ...     this is the last line that will be considered.
+    # ...     ")"
+    # 
+    # Prevents python indentation errors in bash
+    python -c "from textwrap import dedent; print(dedent('''$1''').strip('\n'))"
+}
