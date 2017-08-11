@@ -87,12 +87,21 @@ else
     OLD_PRE_BRANCH_HASH=$(git rev-parse $PRE_BRANCH)
     OLD_BRANCH_HASH=$(git rev-parse $BRANCH)
 
-    # TODO: assert pre-hash exists
 
-    if [ "$OLD_BRANCH_HASH" == "$OLD_PRE_BRANCH_HASH" ]; then
+    if [ "$OLD_PRE_BRANCH_HASH" == "$PRE_BRANCH" ]; then
+        # TODO: assert pre-hash exists
+        echo "TODO assert pre-hash doesnt exists"
+        CAN_CONTINUE="False"
+    elif [ "$OLD_BRANCH_HASH" == "$OLD_PRE_BRANCH_HASH" ]; then
         # TODO: case where nothing happens and PRE_BRANCH == BRANCH
-        echo "TODO"
+        echo "TODO already at prebranch == branch"
+        CAN_CONTINUE="False"
     else
+        echo "symbolicly rebasing between old hashes $OLD_PRE_BRANCH_HASH $OLD_BRANCH_HASH"
+        CAN_CONTINUE="True"
+    fi
+
+    if [ "$CAN_CONTINUE" == "True" ]; then
         # Starting from the base
         git checkout $BASE
 
@@ -102,6 +111,8 @@ else
         # Merge all prereqs into the tmp/pre branch
         git merge $DEPENDS -Xignore-all-space --no-edit
         MERGE_SUCCESS=$?
+        echo "MERGE_SUCCESS = $MERGE_SUCCESS (0 means success)"
+
         if [ $MERGE_SUCCESS != 0 ]; then
             # TODO: check that merge went smoothly
             echo "MERGE FAILED"
@@ -122,13 +133,17 @@ else
             git checkout -b new/$BRANCH
 
             # verify this looks good
-            git log $OLD_PRE_BRANCH_HASH...$BRANCH
-            git log $OLD_PRE_BRANCH_HASH...$BRANCH
-            # git log --pretty=format:"%H" $OLD_PRE_BRANCH_HASH..$BRANCH
+            git log --pretty=oneline $OLD_PRE_BRANCH_HASH...$OLD_BRANCH_HASH
+            #git log $OLD_PRE_BRANCH_HASH...$BRANCH
+            #git log --pretty=format:"%H" $OLD_PRE_BRANCH_HASH..$BRANCH
+            #gitk $BRANCH $OLD_PRE_BRANCH_HASH
+            #gitk $OLD_BRANCH_HASH $OLD_PRE_BRANCH_HASH
 
             # Cherry-pick the changes after the old pre-branch onto the new one
-            git cherry-pick $OLD_PRE_BRANCH_HASH..$BRANCH
+            git cherry-pick $OLD_PRE_BRANCH_HASH..$OLD_BRANCH_HASH
             CHERRY_PICK_SUCCESS=$?
+            echo "CHERRY_PICK_SUCCESS = $CHERRY_PICK_SUCCESS (0 means success)"
+
             if [ $CHERRY_PICK_SUCCESS != 0 ]; then
                 pass
             else

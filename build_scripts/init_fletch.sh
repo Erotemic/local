@@ -31,46 +31,88 @@ test_fletch_branch-opencv-3-1()
     make
 }
 
-test_fletch_branch_31()
+
+test_fletch_master()
 {
+    source ~/local/build_scripts/init_fletch.sh
+    FLETCH_ENABLE_ALL="On"
+    FLETCH_REBUILD="Off"
     FLETCH_PYTHON_VENV=2
-    FLETCH_BRANCH="test/update-opencv-3.3"
-    FLETCH_BUILD_SUFFIX="-3-1"
-    FLETCH_CMAKE_ARGS="-D OpenCV_SELECT_VERSION=3.1.0 -D fletch_ENABLE_Qt=Off -D fletch_ENABLE_VTK=Off"
+    TEST_KWIVER="On"
+
+    FLETCH_BRANCH="master"
+    FLETCH_BUILD_SUFFIX="-nogui"
+    FLETCH_CMAKE_ARGS="\
+        -D fletch_BUILD_WITH_PYTHON=On \
+        -D fletch_ENABLE_VTK=Off -D fletch_ENABLE_Qt=Off \
+    "
+    if [ "$HOSTNAME" == "calculex" ]; then
+        FLETCH_MAKE_EXTRA="TARGET=HASWELL"
+        NCPUS=8
+    else
+        NCPUS=3
+    fi
     test_fletch_branch
 }
 
 test_fletch_branch_python3()
 {
-
+    # Python3 branch with (mostly) old (stable) versions enabled
     source ~/local/build_scripts/init_fletch.sh
     FLETCH_ENABLE_ALL="On"
     FLETCH_REBUILD="On"
     TEST_KWIVER="On"
-    FLETCH_PYTHON_VENV=3
     FLETCH_BRANCH="dev/python3-support"
-    FLETCH_BUILD_SUFFIX="-py3"
-    NCPUS=1
+    FLETCH_PYTHON_VENV=2
+    FLETCH_BUILD_SUFFIX="-stable"
+    NCPUS=3
     FLETCH_CMAKE_ARGS="\
-        -D OpenCV_SELECT_VERSION=3.3.0 -D fletch_ENABLE_Qt=Off \
-        -D fletch_ENABLE_VTK=Off -D fletch_BUILD_WITH_PYTHON=On"
+        -D fletch_BUILD_WITH_PYTHON=On \
+        -D fletch_PYTHON_VERSION=$FLETCH_PYTHON_VENV \
+        -D FFmpeg_SELECT_VERSION=2.6.2 \
+        -D OpenCV_SELECT_VERSION=3.1.0 \
+        -D VTK_SELECT_VERSION=6.2 \
+        -D fletch_ENABLE_Qt=Off -D fletch_ENABLE_VTK=Off \
+    "
     test_fletch_branch
 
+    # Python3 branch with (mostly) new versions enabled
+    source ~/local/build_scripts/init_fletch.sh
+    FLETCH_BUILD_SUFFIX="-new-ocvff"
+    NCPUS=3
+    FLETCH_CMAKE_ARGS="\
+        -D fletch_BUILD_WITH_PYTHON=On \
+        -D fletch_PYTHON_VERSION=$FLETCH_PYTHON_VENV \
+        -D FFmpeg_SELECT_VERSION=3.3.3 \
+        -D OpenCV_SELECT_VERSION=3.3.0 \
+        -D VTK_SELECT_VERSION=6.2 \
+        -D fletch_ENABLE_Qt=Off -D fletch_ENABLE_VTK=Off \
+    "
+    test_fletch_branch
+}
 
+test_fletch_vtk()
+{
+    # Python3 branch with (mostly) old (stable) versions enabled
     source ~/local/build_scripts/init_fletch.sh
     FLETCH_ENABLE_ALL="On"
     FLETCH_REBUILD="On"
     TEST_KWIVER="On"
     FLETCH_PYTHON_VENV=2
     FLETCH_BRANCH="dev/python3-support"
-    FLETCH_BUILD_SUFFIX="-py2"
-    NCPUS=1
+    FLETCH_BUILD_SUFFIX="-stable"
+    NCPUS=3
     FLETCH_CMAKE_ARGS="\
-        -D OpenCV_SELECT_VERSION=3.3.0 -D fletch_ENABLE_Qt=Off \
-        -D fletch_ENABLE_VTK=Off -D fletch_BUILD_WITH_PYTHON=On \
-        -D fletch_PYTHON_VERSION=2"
+        -D fletch_BUILD_WITH_PYTHON=On \
+        -D fletch_PYTHON_VERSION=$FLETCH_PYTHON_VENV \
+        -D FFmpeg_SELECT_VERSION=3.3.3 \
+        -D OpenCV_SELECT_VERSION=3.3.0 \
+        -D VTK_SELECT_VERSION=6.2 \
+        -D fletch_ENABLE_Qt=Off -D fletch_ENABLE_VTK=Off \
+    "
     test_fletch_branch
 }
+
 
 test_fletch_branch_33()
 {
@@ -100,22 +142,6 @@ test_fletch_branch_33()
         -D fletch_ENABLE_FFmpeg=On -D fletch_ENABLE_Qt=Off \
         -D fletch_ENABLE_VTK=Off -D fletch_BUILD_WITH_PYTHON=On"
     test_fletch_branch 
-}
-
-
-test_fletch_master()
-{
-    source ~/local/build_scripts/init_fletch.sh
-    FLETCH_ENABLE_ALL="On"
-    FLETCH_REBUILD="Off"
-    FLETCH_PYTHON_VENV=2
-    TEST_KWIVER="On"
-
-    FLETCH_BRANCH="master"
-    FLETCH_BUILD_SUFFIX="-nogui"
-    FLETCH_CMAKE_ARGS="-D fletch_ENABLE_VTK=Off -D fletch_ENABLE_Qt=Off"
-    FLETCH_MAKE_EXTRA="TARGET=HASWELL"
-    test_fletch_branch
 }
 
 
@@ -257,14 +283,17 @@ test_fletch_branch()
         KWIVER_BINARY_DIR="$CTEST_DASHBOARD_ROOT/$kwiver_binary_name"
         KWIVER_SOURCE_DIR="$CTEST_DASHBOARD_ROOT/$kwiver_source_name"
 
+        # Clone even though ctest will do it
+        git clone -b $KWIVER_BRANCH https://github.com/Erotemic/kwiver.git $KWIVER_SOURCE_DIR
+
         mkdir -p $CTEST_DASHBOARD_ROOT
         cd $CTEST_DASHBOARD_ROOT
-        cp ~/code/kwiver/CMake/dashboard-scripts/KWIVER_common.cmake $CTEST_DASHBOARD_ROOT
+        cp $KWIVER_SOURCE_DIR/CMake/dashboard-scripts/KWIVER_common.cmake $CTEST_DASHBOARD_ROOT
         source ~/local/build_scripts/init_fletch.sh
 
         # Dump ctest script
         echo "$(codeblock "
-        # Client maintainer: me@mydomain.net
+        cmake_minimum_required(VERSION 2.8.2 FATAL_ERROR)
         set(dashboard_git_branch $KWIVER_BRANCH)
         set(dashboard_model Experimental)
         # set(dashboard_no_submit On)
@@ -290,31 +319,102 @@ test_fletch_branch()
             -D KWIVER_ENABLE_TOOLS=On \
             \\\\\"\${CTEST_SOURCE_DIRECTORY}\\\\\" \
             \")
-        include(\"\${CTEST_SCRIPT_DIRECTORY}/KWIVER_common.cmake\")
+
+        # Helper macro to write initial cache
+        macro(write_cache)
+          set(cache_build_type \"\")
+          set(cache_make_program \"\")
+          if(CTEST_CMAKE_GENERATOR MATCHES \"Make\")
+            set(cache_build_type \"CMAKE_BUILD_TYPE:STRING=\\${CTEST_CONFIGURATION_TYPE}\")
+            if(CMAKE_MAKE_PROGRAM)
+              set(cache_make_program \"CMAKE_MAKE_PROGRAM:FILEPATH=\\${CMAKE_MAKE_PROGRAM}\")
+            endif()
+          endif()
+          file(WRITE \"\${CTEST_BINARY_DIRECTORY}/CMakeCache.txt\" \"
+        SITE:STRING=\${CTEST_SITE}
+        BUILDNAME:STRING=\${CTEST_BUILD_NAME}
+        CTEST_TEST_CTEST:BOOL=\${CTEST_TEST_CTEST}
+        CTEST_USE_LAUNCHERS:BOOL=\${CTEST_USE_LAUNCHERS}
+        DART_TESTING_TIMEOUT:STRING=\${CTEST_TEST_TIMEOUT}
+        GIT_EXECUTABLE:FILEPATH=\${CTEST_GIT_COMMAND}
+        \${cache_build_type}
+        \${cache_make_program}
+        \${dashboard_cache}
+        \")
+        endmacro(write_cache)
+
+        #ctest_empty_binary_directory(\"\${CTEST_BINARY_DIRECTORY}\")
+
+        ctest_start(\${dashboard_model})
+        message(\"Reset cache cache...\")
+        write_cache()
+        ctest_update(RETURN_VALUE count)
+        message(\"Found \${count} changed files\")
+
+        message(\"Configure step\")
+        ctest_configure()
+
+        message(\"Read custom files step\")
+        ctest_read_custom_files(\"\${CTEST_BINARY_DIRECTORY}\")
+
+        message(\"Build step\")
+        ctest_build()
+
+        # version of setup_KWIVER.sh
+        set(CTEST_ENVIRONMENT 
+            \"VG_PLUGIN_PATH=\${CTEST_BINARY_DIRECTORY}\"
+            \"PATH=\${CTEST_BINARY_DIRECTORY}/bin:\$PATH\"
+            \"LD_LIBRARY_PATH=\${CTEST_BINARY_DIRECTORY}/lib:\$LD_LIBRARY_PATH\"
+            \"KWIVER_PLUGIN_PATH=\${CTEST_BINARY_DIRECTORY}/lib/modules:\${CTEST_BINARY_DIRECTORY}/lib/sprokit:\$KWIVER_PLUGIN_PATH\"
+            \"VG_PLUGIN_PATH=\${CTEST_BINARY_DIRECTORY}\"
+            \"LD_LIBRARY_PATH=$FLETCH_BINARY_DIR/install/lib:\$LD_LIBRARY_PATH\"
+            \"VITAL_LOGGER_FACTORY=\${CTEST_BINARY_DIRECTORY}/lib/modules/vital_log4cplus_logger\"
+            \"LOG4CPLUS_CONFIGURATION=\${CTEST_BINARY_DIRECTORY}/log4cplus.properties\"
+        )
+
+        message(\"Test step\")
+        ctest_test(\${CTEST_TEST_ARGS})
+        #ctest_coverage()
+        #ctest_memcheck()
+
+        message(\"Submit step\")
+        ctest_submit()
+
+        #include(\"\${CTEST_SCRIPT_DIRECTORY}/KWIVER_common.cmake\")
         ")" > $CTEST_DASHBOARD_ROOT/my_dashboard.cmake
 
-        # Ugggg, paths
-        $CTEST_DASHBOARD_ROOT/setup_KWIVER.sh
-
-        $KWIVER_BINARY_DIR/bin/pipeline_runner -p </path/to/kwiver/source>/sprokit/pipelines/number_flow.pipe
-        
-
+        cd $CTEST_DASHBOARD_ROOT
         ctest -S $CTEST_DASHBOARD_ROOT/my_dashboard.cmake -VV
+
+        # Ugggg, paths
+        cd $KWIVER_BINARY_DIR
+        source $KWIVER_BINARY_DIR/setup_KWIVER.sh
+        $KWIVER_BINARY_DIR/bin/pipeline_runner -p $KWIVER_SOURCE_DIR/sprokit/pipelines/number_flow.pipe
+        $KWIVER_BINARY_DIR/bin/pipeline_runner -p number_flow.pipe
+        
+        cd $KWIVER_BINARY_DIR
+        bin/pipeline_runner -p $KWIVER_SOURCE_DIR/sprokit/pipelines/number_flow.pipe
+        cat numbers.txt
     fi
 }
 
 update_symbolic_rebases()
 {
+
+    #symbolic_rebase(){
+    # See ~/local/scripts/ubuntu_scripts/symbolic_rebase.sh
+    #}
+    
     symbolic_rebase -e master -b test/update-opencv-3.3 -d="dev/update-openblas-0.2.20 test/update-opencv dev/update-ffmpeg-3.3.3"
 
     BASE=master 
     BRANCH=test/update-opencv-3.3 
-    DEPENDS="dev/update-openblas-0.2.20 test/update-opencv dev/update-ffmpeg-3.3.3"
+    DEPENDS="dev/update-openblas-0.2.20 dev/update-opencv dev/update-ffmpeg-3.3.3"
     symbolic_rebase $BASE $BRANCH $DEPENDS
         
     BASE=master
     BRANCH=dev/python3-support
-    DEPENDS="dev/find_numpy dev/update-openblas-0.2.20 dev/update-vtk dev/update-caffe dev/update-ffmpeg-3.3.3 test/update-opencv-3.3"
+    DEPENDS="dev/find_numpy dev/update-caffe dev/update-ffmpeg-3.3.3 dev/update-openblas-0.2.20 dev/update-opencv dev/update-vtk"
 
     symbolic_rebase --base=master --branch=dev/python3-support --depends="$DEPENDS"
 
@@ -339,11 +439,6 @@ symbolic_rebase_clean(){
     git branch -D tmp/pre/test/update-opencv-3.3
     git push origin --delete test/update-opencv-3.3
 }
-
-
-#symbolic_rebase(){
-# See ~/local/scripts/ubuntu_scripts/symbolic_rebase.sh
-#}
 
 main(){
 
