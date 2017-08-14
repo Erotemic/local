@@ -1,36 +1,41 @@
 #!/bin/bash
-
-
-test_fletch_branch-opencv-3-1()
+update_symbolic_rebases()
 {
-    FLETCH_BRANCH="test/update-opencv-3.3"
-    mkdir -p $HOME/dash/$FLETCH_BRANCH
-    FLETCH_SOURCE_DIR=$HOME/dash/$FLETCH_BRANCH/fletch
-    git clone -b $FLETCH_BRANCH https://github.com/Erotemic/fletch.git $FLETCH_SOURCE_DIR
-    git checkout $FLETCH_BRANCH
-    git reset origin/$FLETCH_BRANCH --hard
-    git pull
 
-    workon_py2
+    #symbolic_rebase(){
+    # See ~/local/scripts/ubuntu_scripts/symbolic_rebase.sh
+    #}
+    
+    symbolic_rebase -e master -b test/update-opencv-3.3 -d="dev/update-openblas-0.2.20 test/update-opencv dev/update-ffmpeg-3.3.3"
 
-    echo FLETCH_SOURCE_DIR = $FLETCH_SOURCE_DIR
-    mkdir -p $FLETCH_SOURCE_DIR/build
-    cd $FLETCH_SOURCE_DIR/build 
-    rm -rf $FLETCH_SOURCE_DIR/build/*
-    cmake -G "Unix Makefiles" \
-        -D fletch_BUILD_WITH_PYTHON=On \
-        -D fletch_ENABLE_ALL_PACKAGES=On \
-        $FLETCH_SOURCE_DIR
-
-    # Disable building really big repos
-    cmake -G "Unix Makefiles" \
-        -D fletch_ENABLE_Qt=Off \
-        -D fletch_ENABLE_VTK=Off \
-        $FLETCH_SOURCE_DIR
-
-    make
+    BASE=master 
+    BRANCH=test/update-opencv-3.3 
+    DEPENDS="dev/update-openblas-0.2.20 dev/update-opencv dev/update-ffmpeg-3.3.3"
+    symbolic_rebase $BASE $BRANCH $DEPENDS
+        
+    BASE=master
+    BRANCH=dev/python3-support
+    DEPENDS="dev/find_numpy dev/update-caffe dev/update-ffmpeg-3.3.3 dev/update-openblas-0.2.20 dev/update-opencv dev/update-vtk"
+    ~/scripts/symbolic_rebase.sh --base=master --branch=dev/python3-support --depends="$DEPENDS"
 }
 
+# delete remote branch
+#git push origin --delete test/upate-opencv
+
+symbolic_rebase_clean(){
+    git checkout master
+    git reset --hard source/master
+
+    git checkout $BASE
+    git branch -D $BRANCH
+    git branch -D $PRE_BRANCH
+    
+    git branch -D new/$PRE_BRANCH
+    git push origin --delete new/$PRE_BRANCH
+
+    git branch -D tmp/pre/test/update-opencv-3.3
+    git push origin --delete test/update-opencv-3.3
+}
 
 test_fletch_master()
 {
@@ -48,7 +53,7 @@ test_fletch_master()
     "
     if [ "$HOSTNAME" == "calculex" ]; then
         FLETCH_MAKE_EXTRA="TARGET=HASWELL"
-        NCPUS=8
+        NCPUS=3
     else
         NCPUS=3
     fi
@@ -60,7 +65,7 @@ test_fletch_branch_python3()
     # Python3 branch with (mostly) old (stable) versions enabled
     source ~/local/build_scripts/init_fletch.sh
     FLETCH_ENABLE_ALL="On"
-    FLETCH_REBUILD="On"
+    FLETCH_REBUILD="Off"
     TEST_KWIVER="On"
     FLETCH_BRANCH="dev/python3-support"
     FLETCH_PYTHON_VENV=2
@@ -71,7 +76,6 @@ test_fletch_branch_python3()
         -D fletch_PYTHON_VERSION=$FLETCH_PYTHON_VENV \
         -D FFmpeg_SELECT_VERSION=2.6.2 \
         -D OpenCV_SELECT_VERSION=3.1.0 \
-        -D VTK_SELECT_VERSION=6.2 \
         -D fletch_ENABLE_Qt=Off -D fletch_ENABLE_VTK=Off \
     "
     test_fletch_branch
@@ -85,7 +89,6 @@ test_fletch_branch_python3()
         -D fletch_PYTHON_VERSION=$FLETCH_PYTHON_VENV \
         -D FFmpeg_SELECT_VERSION=3.3.3 \
         -D OpenCV_SELECT_VERSION=3.3.0 \
-        -D VTK_SELECT_VERSION=6.2 \
         -D fletch_ENABLE_Qt=Off -D fletch_ENABLE_VTK=Off \
     "
     test_fletch_branch
@@ -176,6 +179,39 @@ test_fletch_ffmpeg()
 
     cat ../CMake/External_FFmpeg.cmake
 }
+
+
+test_fletch_branch-opencv-3-1()
+{
+    FLETCH_BRANCH="test/update-opencv-3.3"
+    mkdir -p $HOME/dash/$FLETCH_BRANCH
+    FLETCH_SOURCE_DIR=$HOME/dash/$FLETCH_BRANCH/fletch
+    git clone -b $FLETCH_BRANCH https://github.com/Erotemic/fletch.git $FLETCH_SOURCE_DIR
+    git checkout $FLETCH_BRANCH
+    git reset origin/$FLETCH_BRANCH --hard
+    git pull
+
+    workon_py2
+
+    echo FLETCH_SOURCE_DIR = $FLETCH_SOURCE_DIR
+    mkdir -p $FLETCH_SOURCE_DIR/build
+    cd $FLETCH_SOURCE_DIR/build 
+    rm -rf $FLETCH_SOURCE_DIR/build/*
+    cmake -G "Unix Makefiles" \
+        -D fletch_BUILD_WITH_PYTHON=On \
+        -D fletch_ENABLE_ALL_PACKAGES=On \
+        $FLETCH_SOURCE_DIR
+
+    # Disable building really big repos
+    cmake -G "Unix Makefiles" \
+        -D fletch_ENABLE_Qt=Off \
+        -D fletch_ENABLE_VTK=Off \
+        $FLETCH_SOURCE_DIR
+
+    make
+}
+
+
 
 
 test_fletch_branch()
@@ -343,7 +379,9 @@ test_fletch_branch()
         \")
         endmacro(write_cache)
 
-        #ctest_empty_binary_directory(\"\${CTEST_BINARY_DIRECTORY}\")
+        if (\"$FLETCH_ENABLE_ALL\" STREQUAL \"On\")
+            ctest_empty_binary_directory(\"\${CTEST_BINARY_DIRECTORY}\")
+        endif()
 
         ctest_start(\${dashboard_model})
         message(\"Reset cache cache...\")
@@ -360,16 +398,19 @@ test_fletch_branch()
         message(\"Build step\")
         ctest_build()
 
+
         # version of setup_KWIVER.sh
+        # FIXME: this should be handled by kwiver, not us
         set(CTEST_ENVIRONMENT 
             \"VG_PLUGIN_PATH=\${CTEST_BINARY_DIRECTORY}\"
             \"PATH=\${CTEST_BINARY_DIRECTORY}/bin:\$PATH\"
-            \"LD_LIBRARY_PATH=\${CTEST_BINARY_DIRECTORY}/lib:\$LD_LIBRARY_PATH\"
+            \"LD_LIBRARY_PATH=\${CTEST_BINARY_DIRECTORY}/lib:$FLETCH_BINARY_DIR/install/lib:\$LD_LIBRARY_PATH\"
             \"KWIVER_PLUGIN_PATH=\${CTEST_BINARY_DIRECTORY}/lib/modules:\${CTEST_BINARY_DIRECTORY}/lib/sprokit:\$KWIVER_PLUGIN_PATH\"
-            \"VG_PLUGIN_PATH=\${CTEST_BINARY_DIRECTORY}\"
-            \"LD_LIBRARY_PATH=$FLETCH_BINARY_DIR/install/lib:\$LD_LIBRARY_PATH\"
             \"VITAL_LOGGER_FACTORY=\${CTEST_BINARY_DIRECTORY}/lib/modules/vital_log4cplus_logger\"
+            \"KWIVER_DEFAULT_LOG_LEVEL=debug\"
             \"LOG4CPLUS_CONFIGURATION=\${CTEST_BINARY_DIRECTORY}/log4cplus.properties\"
+            \"PYTHONPATH=\${CTEST_BINARY_DIRECTORY}/lib/python2.7/site-packages:\$PYTHONPATH\"
+            \"SPROKIT_PYTHON_MODULES=kwiver.processes\"
         )
 
         message(\"Test step\")
@@ -394,52 +435,9 @@ test_fletch_branch()
         
         cd $KWIVER_BINARY_DIR
         bin/pipeline_runner -p $KWIVER_SOURCE_DIR/sprokit/pipelines/number_flow.pipe
-        cat numbers.txt
+        #cat numbers.txt
     fi
 }
-
-update_symbolic_rebases()
-{
-
-    #symbolic_rebase(){
-    # See ~/local/scripts/ubuntu_scripts/symbolic_rebase.sh
-    #}
-    
-    symbolic_rebase -e master -b test/update-opencv-3.3 -d="dev/update-openblas-0.2.20 test/update-opencv dev/update-ffmpeg-3.3.3"
-
-    BASE=master 
-    BRANCH=test/update-opencv-3.3 
-    DEPENDS="dev/update-openblas-0.2.20 dev/update-opencv dev/update-ffmpeg-3.3.3"
-    symbolic_rebase $BASE $BRANCH $DEPENDS
-        
-    BASE=master
-    BRANCH=dev/python3-support
-    DEPENDS="dev/find_numpy dev/update-caffe dev/update-ffmpeg-3.3.3 dev/update-openblas-0.2.20 dev/update-opencv dev/update-vtk"
-
-    symbolic_rebase --base=master --branch=dev/python3-support --depends="$DEPENDS"
-
-    symbolic_rebase.sh --base=master --branch=dev/python3-support \
-        --depends="dev/find_numpy dev/update-openblas-0.2.20 dev/update-opencv dev/update-vtk dev/update-caffe"
-}
-
-# delete remote branch
-#git push origin --delete test/upate-opencv
-
-symbolic_rebase_clean(){
-    git checkout master
-    git reset --hard source/master
-
-    git checkout $BASE
-    git branch -D $BRANCH
-    git branch -D $PRE_BRANCH
-    
-    git branch -D new/$PRE_BRANCH
-    git push origin --delete new/$PRE_BRANCH
-
-    git branch -D tmp/pre/test/update-opencv-3.3
-    git push origin --delete test/update-opencv-3.3
-}
-
 main(){
 
     git clone https://github.com/Erotemic/fletch.git ~/code/fletch
