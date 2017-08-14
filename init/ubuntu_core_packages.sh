@@ -665,11 +665,39 @@ encryprtion()
 
 install_xrdp_remote_desktop()
 {
+    # Installs an Remote Desktop RDP server
+
+    # --- SERVER ---
+    # Install xrdp server
+    sudo apt-get install xrdp -y
+
+    # Install an alternative desktop (apparently gnome-fallback has issues)
+    sudo apt-get install mate-core mate-desktop-environment mate-notification-daemon
+
+    # In Ubuntu 16.04 you have to modify /etc/xrdp/startwm.sh
+    # References:
+    #     https://askubuntu.com/questions/680413/14-04-3-xrdp-gnome-session-session-ubuntu-2d-not-work
+
+
+    cat ~/.xsession 
+    echo gnome-session --session=gnome-fallback > ~/.xsession
+    
+
+
+    # --- CLIENT ---
+    # Update REMINA on the client to the latest and greatest
+    sudo apt-add-repository ppa:remmina-ppa-team/remmina-next -y
+    sudo apt-get update -y
+    sudo apt-get install remmina remmina-plugin-rdp libfreerdp-plugins-standard -y
+
+
+    # ----OLD---
+    # http://c-nergy.be/blog/?p=9962
+    # https://docs.microsoft.com/en-us/azure/virtual-machines/linux/classic/remote-desktop
     # http://scarygliders.net/2011/11/17/x11rdp-ubuntu-11-10-gnome-3-xrdp-customization-new-hotness/
     # http://askubuntu.com/questions/445485/ubuntu-14-server-and-xrdp
     # http://askubuntu.com/questions/499088/ubuntu-14-x-with-xfce4-session-desktop-terminates-abruptly/499180#499180
     # http://askubuntu.com/questions/449785/ubuntu-14-04-xrdp-grey 
-    sudo apt-get install xrdp -y
     sudo /etc/init.d/xrdp start
     sudo /etc/init.d/xrdp stop
 
