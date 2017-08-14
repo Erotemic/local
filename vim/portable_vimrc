@@ -264,7 +264,8 @@ call QUICKOPEN_leader_tvio('L', '~/latex/crall-iccvw-2017/main.tex')
 call QUICKOPEN_leader_tvio('m', '~/code/ibeis/ibeis/init/main_helpers.py')
 call QUICKOPEN_leader_tvio('M', '~/code/ibeis/ibeis/main_module.py')
 """"""""""""""
-call QUICKOPEN_leader_tvio('n', '~/code/ibeis/ibeis/algo/Config.py')
+"call QUICKOPEN_leader_tvio('n', '~/code/ibeis/ibeis/algo/Config.py')
+call QUICKOPEN_leader_tvio('n', '~/code/networkx/networkx/algorithms/connectivity')
 "call QUICKOPEN_leader_tvio('N', '~/code/ibeis/ibeis/algo/hots/score_normalization.py')
 call QUICKOPEN_leader_tvio('N', '~/code/ibeis_cnn/ibeis_cnn/custom_layers.py')
 """"""""""""""

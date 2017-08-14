@@ -14,8 +14,36 @@ FIXME:
     instead of the last line you dont want
 """
 from __future__ import absolute_import, division, print_function, unicode_literals
-from os.path import expanduser
+from os.path import expanduser, exists
 import sys
+
+
+def get_bibtex_dict():
+    import utool as ut
+    # HACK: custom current bibtex file
+    possible_bib_fpaths = [
+        ut.truepath('./My_Library_clean.bib'),
+        #ut.truepath('~/latex/crall-thesis-2017/My_Library_clean.bib'),
+    ]
+
+    bib_fpath = None
+    for bib_fpath_ in possible_bib_fpaths:
+        if exists(bib_fpath_):
+            bib_fpath = bib_fpath_
+            break
+
+    if bib_fpath is None:
+        raise Exception('cant find bibtex file')
+
+    # import bibtexparser
+    from bibtexparser import bparser
+    parser = bparser.BibTexParser()
+    parser.ignore_nonstandard_types = True
+    bib_text = ut.read_from(bib_fpath)
+    bibtex_db = parser.parse(bib_text)
+    bibtex_dict = bibtex_db.get_entry_dict()
+
+    return bibtex_dict
 
 
 def available_fonts():

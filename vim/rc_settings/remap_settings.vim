@@ -306,7 +306,6 @@ let@e=':Align ='
 "inoremap <c-b> import utool<CR>utool.embed()<CR>
 "noremap <leader>/ /\c
 "inoremap <leader>d :call InsertDocstr()<CR>
-"noremap <leader>es :call PyCiteScholarSearch()<CR>
 "L__________ Not so used 
 "noremap  1 :call CopyGVimToTerminalDev(mode(), 1)<CR>
 "noremap  2 :call CopyGVimToTerminalDev(mode() 1)<CR>
