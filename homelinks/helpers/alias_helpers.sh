@@ -421,11 +421,19 @@ deactivate_venv()
     OLD_VENV=$VIRTUAL_ENV
     # echo "deactivate_venv OLD_VENV=$OLD_VENV"
     if [ "$OLD_VENV" != "" ]; then
-        deactivate
-        # reset LD_LIBRARY_PATH 
-        remove_ld_library_path_entry $OLD_VENV/local/lib
-        remove_ld_library_path_entry $OLD_VENV/lib
-        remove_path_entry $OLD_VENV/bin
+        #if [ -n "$(type -t rvm)" ] && [ "$(type -t rvm)" = function ]; then
+        #    echo rvm is a function; 
+        #else
+        #    echo rvm is NOT a function;
+        #fi
+        if [ -n "$(type -t deactivate)" ] && [ "$(type -t deactivate)" = function ]; then
+            # deactivate bash function exists
+            deactivate
+            # reset LD_LIBRARY_PATH 
+            remove_ld_library_path_entry $OLD_VENV/local/lib
+            remove_ld_library_path_entry $OLD_VENV/lib
+            remove_path_entry $OLD_VENV/bin
+        fi
     fi
     # Hack for personal symlinks.  I'm not sure why these are populated
     remove_ld_library_path_entry ~/venv3/local/lib
