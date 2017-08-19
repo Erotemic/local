@@ -1124,7 +1124,6 @@ add_ssh_authorized_pubkey()
     chmod 600 ~/.ssh/authorized_keys
 }
 
-
 fix_wacom(){
     # https://ubuntuforums.org/showthread.php?t=1656089
 
@@ -1150,4 +1149,18 @@ fix_wacom(){
     for wacom_dev in "${WACOM_DEVICES[@]}"; do 
         xsetwacom --set "$wacom_dev" Rotate half
     done
+
+mount_android()
+{
+    # http://www.mysolutions.it/mounting-your-mtp-androids-sd-card-on-ubuntu/
+    sudo apt-get install mtpfs mtp-tools -y
+
+    sudo mkdir /media/droid
+    sudo chmod 775 /media/droid
+    sudo mtpfs -o allow_other /media/droid
+
+    sudo apt-get install jmtpfs
+
+    sudo jmtpfs /media/droid
+    fusermount -u /media/droid
 }
