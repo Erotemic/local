@@ -1124,6 +1124,32 @@ add_ssh_authorized_pubkey()
     chmod 600 ~/.ssh/authorized_keys
 }
 
+fix_wacom(){
+    # https://ubuntuforums.org/showthread.php?t=1656089
+
+    xinput --list | grep Wacom
+    xsetwacom --list devices
+    xsetwacom --list parameters
+    
+    #xsetwacom --get "Wacom Bamboo 16FG 4x5 Pen stylus" all
+
+    # Set pen devices to only use the first monitor
+    WACOM_PEN_DEVICES=("Wacom Bamboo 16FG 4x5 Pen stylus"
+                       "Wacom Bamboo 16FG 4x5 Pen eraser")
+    for wacom_dev in "${WACOM_PEN_DEVICES[@]}"; do 
+        xsetwacom --set "$wacom_dev" MapToOutput HEAD-0
+    done
+
+    # Invert the y-axis so I can use it "upside-down"
+    WACOM_DEVICES=("Wacom Bamboo 16FG 4x5 Pen stylus"
+                   "Wacom Bamboo 16FG 4x5 Pen eraser"        
+                   "Wacom Bamboo 16FG 4x5 Finger touch"      
+                   "Wacom Bamboo 16FG 4x5 Pad pad"
+                   )
+    for wacom_dev in "${WACOM_DEVICES[@]}"; do 
+        xsetwacom --set "$wacom_dev" Rotate half
+    done
+
 mount_android()
 {
     # http://www.mysolutions.it/mounting-your-mtp-androids-sd-card-on-ubuntu/
