@@ -102,6 +102,7 @@ import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
 import utool.util_ubuntu
 from os.path import dirname
+from os.path import basename, splitext
 ut.rrrr(verbose=False)
 
 return_to_vim = True
@@ -110,9 +111,16 @@ if pyvim_funcs.is_module_pythonfile():
     modpath = vim.current.buffer.name
     modname = ut.get_modname_from_modpath(modpath)
     lines = []
-    if not ut.check_module_installed(modname):
+    try:
+        needs_path = not ut.check_module_installed(modname)
+    except Exception:
+        needs_path = True
+
+    if needs_path:
+        modname = splitext(basename(modpath))[0]
         lines.append('import sys')
         lines.append('sys.path.append(%r)' % (dirname(modpath),))
+
     lines.append("from {} import *".format(modname))
     # Add private and protected functions
     try:

@@ -54,7 +54,9 @@ noremap <c-M-G> :call PySelectAndFormatParagraphNoBreak()<CR>
 " Quick reference jumping
 noremap <leader>el :call PyCiteLookup()<CR>
 noremap <leader>es :call SmartSearchWordAtCursor()<CR>
-noremap <leader>eg :call GrepProjectWordAtCursor()<CR>
+noremap <leader>eg :call GrepWordAtCursor('normal')<CR>
+noremap <leader>ep :call GrepWordAtCursor('project')<CR>
+"noremap <leader>egg :call GrepWordAtCursor('normal')<CR>
 
 " Python Debugging Snippets
 noremap  <c-b>   :call PyMakeEmbed()<CR><Esc>
@@ -83,8 +85,8 @@ inoremap <c-2> :call AutoPep8Block()<CR>
 noremap <c-2> :call AutoPep8Block()<CR>
 
 " Misc python snippets
-noremap <leader>pv :call PyMakePrintVar()<CR>
-noremap <leader>pl :call PyMakePrintLine()<CR>
+noremap <leader>pv :call MakePrintVar()<CR>
+noremap <leader>pl :call MakePrintLine()<CR>
 " insert a NOQA
 noremap <leader>n A  # NOQA<Esc>
 " Change dictionary body to ordered dictionary
@@ -188,8 +190,11 @@ map <c-h> <c-w>h
 
 " In split window
 " In vsplit-split window
-noremap <leader>gi :wincmd f<CR> 
-noremap gi :wincmd f<CR> 
+noremap <leader>gi :call SplitFileAtCursor()<CR>
+noremap gi :call SplitFileAtCursor()<CR>
+
+"noremap <leader>gi :wincmd f<CR> 
+"noremap gi :wincmd f<CR> 
 noremap <leader>go :call PyOpenFileUnderCursor()<CR>
 
 nnoremap <leader>p :call Tex_RunViewLaTeX()<CR>

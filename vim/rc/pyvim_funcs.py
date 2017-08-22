@@ -14,7 +14,7 @@ FIXME:
     instead of the last line you dont want
 """
 from __future__ import absolute_import, division, print_function, unicode_literals
-from os.path import expanduser, exists
+from os.path import expanduser, exists, join, isdir
 import sys
 
 
@@ -491,12 +491,14 @@ def insert_codeblock_under_cursor(text):
 
 
 def append_text(text):
+    """ Appends to existing text in the current buffer with new text """
     import vim
     lines = text.split('\n')
     vim.current.buffer.append(lines)
 
 
 def overwrite_text(text):
+    """ Overwrites existing text in the current buffer with new text """
     import vim
     lines = text.split('\n')
     del (vim.current.buffer[:])
@@ -504,6 +506,12 @@ def overwrite_text(text):
 
 
 # --- Docstr Stuff
+
+
+def get_current_fpath():
+    import vim
+    fpath = vim.current.buffer.name
+    return fpath
 
 
 def is_module_pythonfile():
@@ -519,6 +527,15 @@ def is_module_pythonfile():
         print('  * ext = %r' % (ext,))
         print('  * ispyfile = %r' % (ispyfile,))
     return ispyfile
+
+
+def get_current_filetype():
+    import vim
+    # from os.path import splitext
+    # modpath = vim.current.buffer.name
+    # ext = splitext(modpath)[1]
+    filetype = vim.eval('&ft')
+    return filetype
 
 
 def get_current_modulename():
@@ -616,9 +633,32 @@ def auto_docstr(**kwargs):
     return text
 
 
-def vim_fpath_cmd(cmd, fpath, nofoldenable=True):
+def vim_fpath_cmd(cmd, fpath, nofoldenable=False):
+    """
+    Execs new splits / tabs / etc
+
+    Weird this wont work with directories:
+        https://superuser.com/questions/1243344/vim-wont-split-open-a-directory-from-python-but-it-works-interactively
+
+    /home
+
+    Args:
+        cmd: can be: split, vsplit, tabe
+    """
     import vim
-    vim.command(":exec ':{cmd} {fpath}'".format(cmd=cmd, fpath=expanduser(fpath)))
+    fpath = expanduser(fpath)
+    if not exists(fpath):
+        print("FPATH DOES NOT EXIST")
+    # command = '{cmd} {fpath}'.format(cmd=cmd, fpath=fpath)
+    if isdir(fpath):
+        if cmd.startswith('sp'):
+            command = ':Hexplore {fpath}'.format(fpath=fpath)
+        else:
+            raise NotImplementedError('implement fpath cmd for me')
+    else:
+        command = ":exec ':{cmd} {fpath}'".format(cmd=cmd, fpath=fpath)
+    # print('command = {!r}\n'.format(command))
+    vim.command(command)
     if nofoldenable:
         vim.command(":set nofoldenable")
 
@@ -709,23 +749,60 @@ def open_fpath_list(fpath_list, num_hsplits=2):
         print('Can only handle %d' % index)
 
 
-def vim_grep_project(pat, hashid=None):
+def vim_grep(pat, mode='normal', hashid=None):
     import vim
     import utool as ut
     ut.ENABLE_COLORS = False
     ut.util_str.ENABLE_COLORS = False
     if hashid is None:
-        hashid = ut.hashstr27(pat)
+        hashid = ut.hash_data(pat)
     print('Grepping for pattern = %r' % (pat,))
-    msg_list = ut.grep_projects([pat], verbose=False, colored=False)
+
+    if mode == 'normal':
+        grep_tup = ut.grep([pat], verbose=False)
+        reflags = 0
+        (found_fpath_list, found_lines_list, found_lxs_list) = grep_tup
+        regex_list = [pat]
+        _exprs_flags = [ut.util_regex.extend_regex2(expr, reflags)
+                        for expr in regex_list]
+        extended_regex_list = ut.take_column(_exprs_flags, 0)
+        grep_result = ut.GrepResult(found_fpath_list, found_lines_list,
+                                    found_lxs_list, extended_regex_list,
+                                    reflags=reflags)
+        import os
+        text = '\n'.join([
+            'Greping Directory "{}"'.format(os.getcwd()),
+            'tofind_list={}'.format(ut.repr2(extended_regex_list)),
+            grep_result.make_resultstr(colored=False),
+            '=============',
+            'found_fpath_list = {}'.format(ut.repr2(found_fpath_list, nl=1))
+        ])
+    elif mode == 'project':
+        msg_list = ut.grep_projects([pat], verbose=False, colored=False)
+        text = '\n'.join(msg_list)
+    else:
+        raise KeyError('unknown pyvim_funcs.vim_grep mode={}'.format(mode))
+
     fname = 'tmp_grep_' + hashid + '.txt'
-    dpath = ut.get_app_resource_dir('utool')
-    fpath = ut.unixjoin(dpath, fname)
-    #pyvim_funcs.vim_fpath_cmd('split', fpath)
+    dpath = ut.ensure_app_cache_dir('pyvim_funcs')
+    fpath = join(dpath, fname)
+
+    # Display the text in a new vim split
     vim_fpath_cmd('new', fpath)
-    text = '\n'.join(msg_list)
     overwrite_text(text)
     vim.command(":exec ':w'")
+
+
+def vim_argv(defaults=None):
+    import vim
+    nargs = int(vim.eval('a:0'))
+    argv = [vim.eval('a:{}'.format(i + 1)) for i in range(nargs)]
+    if defaults is not None:
+        # fill the remaining unspecified args with defaults
+        n_remain = len(defaults) - len(argv)
+        remain = defaults[-n_remain:]
+        argv += remain
+    return argv
 
 
 def vim_popup_menu(options):

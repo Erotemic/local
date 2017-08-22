@@ -1,5 +1,5 @@
 # FIXME: breaks in the case that {varname} should be set to FALSE whenever it
-# is not relevant. Currently, if its cached value is true it will stil use it.
+# is not relevant. Currently, if its cached value is true it will still use it.
 
 
 function(advanced_option varname docstring default is_relevant)

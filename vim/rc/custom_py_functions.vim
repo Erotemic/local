@@ -60,7 +60,12 @@ pyvim_funcs.ensure_normalmode()
 if pyvim_funcs.is_module_pythonfile():
     modpath = vim.current.buffer.name
     modname = ut.get_modname_from_modpath(modpath)
-    text = ut.make_default_module_maintest(modname, modpath)
+    test_code = ut.codeblock(
+        r'''
+        import pytest
+        pytest.main([__file__, '--doctest-modules'])
+        ''')
+    text = ut.make_default_module_maintest(modname, modpath, test_code=test_code)
     pyvim_funcs.insert_codeblock_under_cursor(text)
 else:
     print('current file is not a pythonfile')
@@ -220,19 +225,6 @@ EOF
 endfu 
 
 
-func! PyMakePrintVar() 
-Python2or3 << EOF
-import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool as ut
-expr = pyvim_funcs.get_expr_at_cursor()
-indent = pyvim_funcs.get_cursor_py_indent()
-#newline = indent + "print('{expr} = %r' % ({expr},))".format(expr=expr)
-newline = indent + "print('{expr} = {{!r}}'.format({expr}))".format(expr=expr)
-pyvim_funcs.insert_codeblock_under_cursor(newline)
-EOF
-endfunc
-
 func! PyMakeEmbed() 
 Python2or3 << EOF
 import vim
@@ -290,20 +282,6 @@ else:
     pyvim_funcs.insert_codeblock_under_cursor(newtext)
 EOF
 endfunc
-
-func! PyMakePrintLine() 
-Python2or3 << EOF
-import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool as ut
-line = pyvim_funcs.get_line_at_cursor()
-expr = line.strip(' ')
-indent = pyvim_funcs.get_cursor_py_indent()
-newline = indent + "print('{expr} = %r' % ({expr},))".format(expr=expr)
-pyvim_funcs.insert_codeblock_under_cursor(newline)
-EOF
-endfunc
-
 
 func! PyOpenFileUnderCursor() 
 Python2or3 << EOF

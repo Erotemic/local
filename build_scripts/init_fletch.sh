@@ -60,21 +60,36 @@ test_fletch_master()
     test_fletch_branch
 }
 
+test_fletch_configure()
+{
+    FLETCH_SOURCE_DIR=$HOME/code/fletch
+    BINARY_DIR=$HOME/code/fletch/build-testconfigure
+    rm -rf $BINARY_DIR
+    mkdir -p $BINARY_DIR
+
+    # Make sure configure happens with no errors, then do bigger tests
+    cd $BINARY_DIR
+    cmake -G "Unix Makefiles" \
+        -D fletch_BUILD_WITH_PYTHON=On \
+        -D fletch_ENABLE_ALL_PACKAGES=On \
+        $FLETCH_SOURCE_DIR
+}
+
 test_fletch_branch_python3()
 {
     # Python3 branch with (mostly) old (stable) versions enabled
     source ~/local/build_scripts/init_fletch.sh
     FLETCH_ENABLE_ALL="On"
-    FLETCH_REBUILD="Off"
+    FLETCH_REBUILD="On"
     TEST_KWIVER="On"
     FLETCH_BRANCH="dev/python3-support"
     FLETCH_PYTHON_VENV=2
     FLETCH_BUILD_SUFFIX="-stable"
-    NCPUS=3
+    NCPUS=5
     FLETCH_CMAKE_ARGS="\
         -D fletch_BUILD_WITH_PYTHON=On \
         -D fletch_PYTHON_VERSION=$FLETCH_PYTHON_VENV \
-        -D FFmpeg_SELECT_VERSION=2.6.2 \
+        -D FFMpeg_SELECT_VERSION=2.6.2 \
         -D OpenCV_SELECT_VERSION=3.1.0 \
         -D fletch_ENABLE_Qt=Off -D fletch_ENABLE_VTK=Off \
     "
@@ -83,11 +98,11 @@ test_fletch_branch_python3()
     # Python3 branch with (mostly) new versions enabled
     source ~/local/build_scripts/init_fletch.sh
     FLETCH_BUILD_SUFFIX="-new-ocvff"
-    NCPUS=3
+    NCPUS=5
     FLETCH_CMAKE_ARGS="\
         -D fletch_BUILD_WITH_PYTHON=On \
         -D fletch_PYTHON_VERSION=$FLETCH_PYTHON_VENV \
-        -D FFmpeg_SELECT_VERSION=3.3.3 \
+        -D FFMpeg_SELECT_VERSION=3.3.3 \
         -D OpenCV_SELECT_VERSION=3.3.0 \
         -D fletch_ENABLE_Qt=Off -D fletch_ENABLE_VTK=Off \
     "
@@ -108,7 +123,7 @@ test_fletch_vtk()
     FLETCH_CMAKE_ARGS="\
         -D fletch_BUILD_WITH_PYTHON=On \
         -D fletch_PYTHON_VERSION=$FLETCH_PYTHON_VENV \
-        -D FFmpeg_SELECT_VERSION=3.3.3 \
+        -D FFMpeg_SELECT_VERSION=3.3.3 \
         -D OpenCV_SELECT_VERSION=3.3.0 \
         -D VTK_SELECT_VERSION=6.2 \
         -D fletch_ENABLE_Qt=Off -D fletch_ENABLE_VTK=Off \
@@ -212,8 +227,6 @@ test_fletch_branch-opencv-3-1()
 }
 
 
-
-
 test_fletch_branch()
 {
     "
@@ -272,6 +285,11 @@ test_fletch_branch()
     cmake -G "Unix Makefiles" \
         $FLETCH_CMAKE_ARGS \
         $FLETCH_SOURCE_DIR
+    CMAKE_GENERATE_SUCCESS=$?
+    echo "CMAKE_GENERATE_SUCCESS = $CMAKE_GENERATE_SUCCESS (0 means success)"
+    if [ CMAKE_GENERATE_SUCCESS != 0 ]; then
+        return 1
+    fi
 
     make -j$NCPUS $FLETCH_MAKE_EXTRA
 

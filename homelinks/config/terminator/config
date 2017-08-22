@@ -20,7 +20,7 @@
 [plugins]
 [profiles]
   [[default]]
-    background_color = "#292929"
+    background_color = "#120a0a"
     background_darkness = 0.72
     background_image = None
     font = Ubuntu Mono 10

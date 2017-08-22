@@ -87,7 +87,6 @@ else
     OLD_PRE_BRANCH_HASH=$(git rev-parse $PRE_BRANCH)
     OLD_BRANCH_HASH=$(git rev-parse $BRANCH)
 
-
     if [ "$OLD_PRE_BRANCH_HASH" == "$PRE_BRANCH" ]; then
         # TODO: assert pre-hash exists
         echo "TODO assert pre-hash doesnt exists"
@@ -109,10 +108,55 @@ else
         git checkout -b new/$PRE_BRANCH
 
         # Merge all prereqs into the tmp/pre branch
-        git merge $DEPENDS -Xignore-all-space --no-edit
+        #MERGE_SUCCESS=false
+        #git merge $DEPENDS -Xignore-all-space --no-edit && MERGE_SUCCESS=true
+
+        # Try individual merge one at a time
+        # While there are still things to do
+        deparr=($DEPENDS) 
+        while [ ${#deparr[@]} -eq 0 ]
+        do
+            item=${deparr[0]}
+            deparr=("${deparr[@]:1}")  # basically a pop
+            echo "merge item=$item"
+            if [ "$item" == "" ]; then
+                echo "We are done"
+                break
+            else
+                RERERE_SUCCESS=false
+                MERGE_SUCCESS=false
+                git merge $item --no-ff -Xignore-all-space --no-edit --rerere-autoupdate && MERGE_SUCCESS=true
+                [ "$(git rerere diff)" == "" ] && RERERE_SUCCESS=true 
+
+                echo "
+                MERGE_SUCCESS = $MERGE_SUCCESS
+                RERERE_SUCCESS = $RERERE_SUCCESS
+                "
+
+                # Auto merge git rerere things
+                # https://stackoverflow.com/questions/18003917/git-rerere-does-not-auto-commit-autoupdated-merge-resolutions
+                if [ $MERGE_SUCCESS == true ]; then 
+                    echo "normal merge success of $item"
+                elif [ $RERERE_SUCCESS == true ]; then 
+                    echo "rerere merge success"
+                    git commit -a --no-edit
+                else
+                    echo "merge failed"
+                    $(exit 1)
+                    break
+                fi
+            fi
+            # Hack: Fix release notes
+            #pysed -r '^<<<<<<< .*\n' '' Doc/release-notes/1.1.0.txt -w
+            #pysed -r '^=======\n' '' Doc/release-notes/1.1.0.txt -w
+            #pysed -r '^>>>>>>> .*\n' '' Doc/release-notes/1.1.0.txt -w
+            #cat Doc/release-notes/1.1.0.txt
+            #git add Doc/release-notes/1.1.0.txt
+            #git commit -am "merged release notes"
+        done
+
         MERGE_SUCCESS=$?
         echo "MERGE_SUCCESS = $MERGE_SUCCESS (0 means success)"
-
         if [ $MERGE_SUCCESS != 0 ]; then
             # TODO: check that merge went smoothly
             echo "MERGE FAILED"
@@ -140,7 +184,21 @@ else
             #gitk $OLD_BRANCH_HASH $OLD_PRE_BRANCH_HASH
 
             # Cherry-pick the changes after the old pre-branch onto the new one
-            git cherry-pick $OLD_PRE_BRANCH_HASH..$OLD_BRANCH_HASH
+            git cherry-pick $OLD_PRE_BRANCH_HASH..$OLD_BRANCH_HASH --rerere-autoupdate
+            # Auto merge git rerere things
+            # https://stackoverflow.com/questions/18003917/git-rerere-does-not-auto-commit-autoupdated-merge-resolutions
+            if [[ $(git rerere diff) ]]
+            then
+                echo "Rerere cherry-pick merge success"
+                git commit -a --no-edit
+            else
+                echo "Rerere cherry-pick merge failed"
+                $(exit 1)
+            fi
+
+            #git log --pretty=oneline 466934535f97481afadb4cbede2fda25ce295a37..fcc37a6a4df4e5be84fb3a2d73017114e570ae2d
+            #git cherry-pick fcc37a6a4df4e5be84fb3a2d73017114e570ae2d
+
             CHERRY_PICK_SUCCESS=$?
             echo "CHERRY_PICK_SUCCESS = $CHERRY_PICK_SUCCESS (0 means success)"
 
