@@ -9,6 +9,7 @@ let g:markdown_fenced_languages = ['html', 'python', 'bash=sh']
 
 " COMMON JUMP TO RC FILES
 " ~/local/vim/rc/pyvim_funcs.py
+" ~/local/vim/rc/pyvim_funcs.py
 " ~/local/vim/rc/custom_misc_functions.vim  
 " ~/local/vim/rc/custom_ipy_interact_funcs.vim
 " ~/local/vim/rc/custom_py_functions.vim
@@ -93,11 +94,11 @@ def get_disabled_plugins():
         (flag, 'LaTeX-Box'),
         (flag, 'vim-markdown'),
         (flag, 'vim-syntax-markdown'),
-        (flag, 'vim-colors-solarized'),
+        (False, 'vim-colors-solarized'),
 
         (flag, 'ultisnips'),
         (flag, 'vim-snippets'),
-        (flag, 'vim-powerline'),
+        (False, 'vim-powerline'),
         (flag, 'vim-virtualenv'),
         (flag, 'vim-autopep8'),
 
@@ -295,8 +296,7 @@ call QUICKOPEN_leader_tvio('T', '~/code/ibeis/ibeis/tag_funcs.py')
 call QUICKOPEN_leader_tvio('u', '~/code/utool/utool/__init__.py')
 call QUICKOPEN_leader_tvio('U', '~/code/utool/utool/util_dev.py')
 "call QUICKOPEN_leader_tvio('v', '~/code/vtool/vtool/__init__.py')
-call QUICKOPEN_leader_tvio('V', '~/code/vtool/vtool/spatial_verification.py')
-call QUICKOPEN_leader_tvio('V', '~/code/vtool/vtool/coverage_image.py')
+call QUICKOPEN_leader_tvio('V', '~/code/vtool/vtool/__init__.py')
 call QUICKOPEN_leader_tvio('W', '~/code/ibeis_cnn/ibeis_cnn/models/abstract_models.py')
 call QUICKOPEN_leader_tvio('w', '~/code/ibeis/ibeis/web/apis_query.py')
 call QUICKOPEN_leader_tvio('x', '~/code/ibeis/ibeis/viz/interact/interact_name.py')
@@ -308,9 +308,14 @@ call QUICKOPEN_leader_tvio('Z', '~/code/ibeis/ibeis/algo/hots/neighbor_index.py'
 
 
 call QUICKOPEN_leader_tvio('l', '~/code/VIAME/plugins')
-call QUICKOPEN_leader_tvio('k', '~/code/VIAME/packages/kwiver/sprokit')
+call QUICKOPEN_leader_tvio('s', '~/code/VIAME/packages/kwiver/sprokit')
+call QUICKOPEN_leader_tvio('v', '~/code/VIAME/packages/kwiver/vital')
+call QUICKOPEN_leader_tvio('a', '~/code/VIAME/packages/kwiver/arrows')
+call QUICKOPEN_leader_tvio('k', '~/code/VIAME/packages/kwiver')
 call QUICKOPEN_leader_tvio('a', '~/code/VIAME/packages/')
 call QUICKOPEN_leader_tvio('c', '~/code/VIAME/plugins/camtrawl/camtrawl_pipeline_def.py')
+call QUICKOPEN_leader_tvio('8', '~/local/misc/kwiver_places.sh')
+call QUICKOPEN_leader_tvio('y', '~/local/misc/kwiver_places.sh')
 
 
 if has("win32") || has("win16")

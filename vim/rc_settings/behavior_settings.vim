@@ -189,7 +189,9 @@ endfunction
 "set statusline=%F%m%r%h%w\ [TYPE=%Y\ %{&ff}]\ \ [%l/%L\ (%p%%)
 "set statusline=%F%m%r%h%w\ [type=%Y\ %{&ff}]\ \ [%l/%L\ (%p%%)
 "set statusline=%f%m%r%h%w\ [type=%Y\ %{&ff}]\ \ [%l/%L\ (%p%%) (%c)
-set statusline=%f%m%r%h%w\ \ [%l/%L\ (%p%%),\ %c]
+"set statusline=%f%m%r%h%w\ \ [%l/%L\ (%p%%),\ %c]
+set statusline=%f%m%r%h%w\ \ %F\ \ [%l/%L\ (%p%%),\ %c]
+
 "set statusline+=\ %{virtualenv#statusline()}
 
 "-------------------------

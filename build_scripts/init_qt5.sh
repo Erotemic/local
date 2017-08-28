@@ -7,9 +7,10 @@
 # http://download.qt.io/official_releases/qt/5.8/5.8.0/single/qt-everywhere-opensource-src-5.8.0.tar.gz
 # Build Qt5 by itself
 
-sudo apt-get build-dep qt5-default
-sudo apt-get install libxcb-xinerama0-dev 
-sudo apt-get install flex bison gperf libicu-dev libxslt-dev ruby
+sudo apt-get build-dep qt5-default -y
+sudo apt-get install libxcb-xinerama0-dev  -y
+sudo apt-get install flex bison gperf libicu-dev libxslt-dev ruby -y
+sudo apt-get install libssl-dev -y
 
 #================================================================
 cd ~/code
@@ -21,6 +22,8 @@ cd ~/code/qt5
 #git submodule update --init
 git submodule update
 
+./configure --help
+
 ./configure -prefix $VIRTUAL_ENV/local/qt \
     -debug \
     -confirm-license -opensource \
@@ -31,13 +34,13 @@ git submodule update
     -skip qttools \
     -skip qttranslations \
     -skip qtconnectivity \
-    -skip qtwebkit \
     -skip qtserialport \
-    -skip qtwebkit-examples \
     -skip qtenginio \
     -developer-build
+    #-skip qtwebkit \
+    #-skip qtwebkit-examples \
 
-make -j9
+make -j5
 make install
 
 ls $VIRTUAL_ENV/local/qt
@@ -138,18 +141,30 @@ python configure.py --help
 
 ls $VIRTUAL_ENV/local/qt/bin
 
+#QtWebSockets, QtWebChannel,
+#These PyQt5 modules will be built: QtCore, QtGui, QtMultimedia,
+#QtMultimediaWidgets, QtNetwork, QtOpenGL, QtPrintSupport, QtQml, QtQuick,
+#QtSql, QtSvg, QtTest, QtWidgets, QtXml, QtXmlPatterns, QtDBus,
+#_QOpenGLFunctions_2_0, _QOpenGLFunctions_2_1, _QOpenGLFunctions_4_1_Core,
+#QtSensors, QtX11Extras, QtPositioning, QtQuickWidgets, QtWebSockets,
+#QtWebChannel, QtLocation.
+
+
 python configure.py --confirm-license --no-designer-plugin --debug \
     --qmake=$VIRTUAL_ENV/local/qt/bin/qmake \
     --sip-incdir=$VIRTUAL_ENV/local/include \
-    --sip=$VIRTUAL_ENV/local/bin/sip
+    --sip=$VIRTUAL_ENV/local/bin/sip \
+    --disable=QtWebChannel \
+    --disable=QtWebSockets \
+    --disable=QtNetwork 
+
 
 #--sip-incdir=$INCLUDE_DIR 
 #--target-py-version=2.7
 make -j$NCPUS 
 make install
 
-ls ~/venv3_5/lib/python3.5/site-packages/PyQt5
-ls ~/venv3_7/lib/python3.7/site-packages/PyQt5
+ls ~/venv3/lib/python3.5/site-packages/PyQt5
 
 python -c "import PyQt5; print('[test] SUCCESS import PyQt5: %r' % PyQt5)"
 python -c "from PyQt5 import QtGui; print('[test] SUCCESS import QtGui: %r' % QtGui)"

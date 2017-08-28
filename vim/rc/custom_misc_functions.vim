@@ -222,6 +222,25 @@ endfunc
 command! UtoolReload call FUNC_UtoolReload()
 
 
+func! CopyCurrentFpath()
+Python2or3 << EOF
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool as ut
+fpath = pyvim_funcs.get_current_fpath()
+if not ut.WIN32:
+    homedir = ut.truepath('~')
+    if fpath.startswith(homedir):
+        fpath = '~' + fpath[len(homedir):]
+
+
+print('fpath = {!r}'.format(fpath))
+ut.copy_text_to_clipboard(fpath)
+EOF
+endfunc
+
+
+
 func! PyCiteLookup() 
 Python2or3 << EOF
 """
@@ -331,9 +350,9 @@ def find_and_open_path(path):
         return 
 
     # Search downwards for relative paths
+    candidates = []
     if not os.path.isabs(path):
         limit = {'~', os.path.expanduser('~')}
-        candidates = []
         prev = None
         curr = os.getcwd()
         while curr != prev and prev not in limit:

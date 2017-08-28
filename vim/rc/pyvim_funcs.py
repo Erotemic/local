@@ -652,7 +652,7 @@ def vim_fpath_cmd(cmd, fpath, nofoldenable=False):
     # command = '{cmd} {fpath}'.format(cmd=cmd, fpath=fpath)
     if isdir(fpath):
         if cmd.startswith('sp'):
-            command = ':Hexplore {fpath}'.format(fpath=fpath)
+            command = ':Hexplore! {fpath}'.format(fpath=fpath)
         else:
             raise NotImplementedError('implement fpath cmd for me')
     else:
