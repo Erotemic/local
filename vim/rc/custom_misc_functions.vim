@@ -310,7 +310,7 @@ EOF
 endfunc
 
 
-func! SplitFileAtCursor(...) 
+func! OpenFileAtCursor(...) 
 
 Python2or3 << EOF
 import vim
@@ -321,23 +321,27 @@ from os.path import exists, expanduser
 ut.rrrr(verbose=False)
 
 
-argv = pyvim_funcs.vim_argv(defaults=['project'])
+argv = pyvim_funcs.vim_argv(defaults=['split'])
 mode = argv[0]
 
 path = pyvim_funcs.get_word_at_cursor(url_ok=True)
-print('path = {!r}'.format(path))
+verbose = 0
 
-def try_split(path):
+if verbose:
+    print('path = {!r}'.format(path))
+
+def try_open(path):
     # base = '/home/joncrall/code/VIAME/packages/kwiver/sprokit/src/bindings/python/sprokit/pipeline'
     # base = '/home'
     if exists(path):
-        print('EXISTS path = {!r}\n'.format(path))
-        pyvim_funcs.vim_fpath_cmd('split', path)
+        if verbose:
+            print('EXISTS path = {!r}\n'.format(path))
+        pyvim_funcs.open_fpath(path, mode=mode)
         return True
 
 def find_and_open_path(path):
     path = expanduser(path)
-    if try_split(path):
+    if try_open(path):
         return 
 
     # path = 'sprokit/pipeline/pipeline.h'
@@ -346,7 +350,7 @@ def find_and_open_path(path):
         
     if path.startswith('<') and path.endswith('>'):
         path = path[1:-1]
-    if try_split(path):
+    if try_open(path):
         return 
 
     # Search downwards for relative paths
@@ -361,14 +365,26 @@ def find_and_open_path(path):
             prev = curr
             curr = os.path.split(curr)[0]
     candidates += os.environ['PATH'].split(os.sep)
-    result = ut.search_candidate_paths(candidates, [path])
+    result = ut.search_candidate_paths(candidates, [path], verbose=verbose)
     if result is not None:
         path = result
 
-    if try_split(path):
+    if try_open(path):
         return 
     else:
-        print('COULD NOT FIND PATH')
+        filetype = pyvim_funcs.get_current_filetype()
+        if True or filetype in {'py', 'pyx'}:
+            try:
+                path = ut.get_modpath_from_modname(path)
+                print('rectified module to path = {!r}'.format(path))
+            except Exception as ex:
+                if True or filetype in {'py', 'pyx'}:
+                    print(ex)
+                    return
+            if try_open(path):
+                return
+        #vim.command('echoerr "Could not find path={}"'.format(path))
+        print('Could not find path={}'.format(path))
 
 find_and_open_path(path)
 

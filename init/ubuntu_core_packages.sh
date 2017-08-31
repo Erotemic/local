@@ -1164,3 +1164,11 @@ mount_android()
     sudo jmtpfs /media/droid
     fusermount -u /media/droid
 }
+
+install_octave(){
+
+    sudo add-apt-repository ppa:octave/stable -y
+    sudo apt-get update -y
+    sudo apt-get install octave -y
+
+}

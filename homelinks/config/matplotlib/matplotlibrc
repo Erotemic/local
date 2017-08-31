@@ -1,4 +1,4 @@
 # http://matplotlib.org/users/customizing.html
 
-backend      : qt4agg
-backend.qt4 : PyQt4
+backend     : qt5agg
+backend.qt5 : PyQt5

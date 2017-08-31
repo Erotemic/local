@@ -12,6 +12,8 @@ sudo apt-get install libxcb-xinerama0-dev  -y
 sudo apt-get install flex bison gperf libicu-dev libxslt-dev ruby -y
 sudo apt-get install libssl-dev -y
 
+python -m pip install bs4
+
 #================================================================
 cd ~/code
 git clone https://code.qt.io/qt/qt5.git
@@ -50,7 +52,6 @@ ls $VIRTUAL_ENV/local/qt/lib
 #================================================================
 # Still no github for sip
 
-python -m pip install bs4
 export SIP_VERSION=$(python -c "
 import bs4
 import requests
@@ -69,11 +70,13 @@ export SIP_SNAPSHOT=sip-$SIP_VERSION
 export INCLUDE_DIR=$(echo $VIRTUAL_ENV/include/python*)
 export SITE_PACKAGES_DIR=$(python -c "import utool as ut; print(ut.get_site_packages_dir())")
 export NCPUS=$(grep -c ^processor /proc/cpuinfo)
-echo "SOABI=$SOABI"
-echo "SIP_SNAPSHOT=$SIP_SNAPSHOT"
-echo "SIP_URL=$SIP_URL"
-echo "INCLUDE_DIR=$INCLUDE_DIR"
-echo "SITE_PACKAGES_DIR=$SITE_PACKAGES_DIR"
+echo "
+    SOABI             = $SOABI
+    SIP_SNAPSHOT      = $SIP_SNAPSHOT
+    SIP_URL           = $SIP_URL
+    INCLUDE_DIR       = $INCLUDE_DIR
+    SITE_PACKAGES_DIR = $SITE_PACKAGES_DIR
+"
 
 # make a directory for this specific build version
 mkdir -p ~/tmp/sip-$SOABI
@@ -124,11 +127,13 @@ export PYQT_URL=http://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-$PYQT_VERS
 export PYQT_SNAPSHOT=PyQt5_gpl-$PYQT_VERSION
 export INCLUDE_DIR=$(echo $VIRTUAL_ENV/include/python*)
 export NCPUS=$(grep -c ^processor /proc/cpuinfo)
-echo "SOABI=$SOABI"
-echo "INCLUDE_DIR=$INCLUDE_DIR"
-echo "PYQT_VERSION=$PYQT_VERSION"
-echo "PYQT_URL=$PYQT_URL"
-echo "PYQT_SNAPSHOT=$PYQT_SNAPSHOT"
+echo "
+    SOABI         = $SOABI
+    INCLUDE_DIR   = $INCLUDE_DIR
+    PYQT_VERSION  = $PYQT_VERSION
+    PYQT_URL      = $PYQT_URL
+    PYQT_SNAPSHOT = $PYQT_SNAPSHOT
+"
 
 # make a directory for this specific build version
 mkdir -p ~/tmp/pyqt-$SOABI
@@ -171,6 +176,13 @@ python -c "from PyQt5 import QtGui; print('[test] SUCCESS import QtGui: %r' % Qt
 python -c "from PyQt5 import QtWidgets; print('[test] SUCCESS import QtWidgets: %r' % QtWidgets)"
 python -c "from PyQt5 import QtCore; print('[test] SUCCESS import QtCore: %r' % QtCore)"
 python -c "from PyQt5.QtCore import Qt; print('[test] SUCCESS import Qt: %r' % Qt)"
+
+test_tools()
+{
+    python -c "import guitool"
+    python -m plottool
+
+}
 
 remove_sip()
 {
