@@ -633,17 +633,21 @@ def auto_docstr(**kwargs):
     return text
 
 
-def vim_fpath_cmd(cmd, fpath, nofoldenable=False):
+def open_fpath(fpath, mode='e', nofoldenable=False):
     """
     Execs new splits / tabs / etc
 
-    Weird this wont work with directories:
+    Weird this wont work with directories (on my machine):
         https://superuser.com/questions/1243344/vim-wont-split-open-a-directory-from-python-but-it-works-interactively
 
-    /home
-
     Args:
-        cmd: can be: split, vsplit, tabe
+        fpath : file path to open
+        mode: how to open the new file
+            (valid options: split, vsplit, tabe, e, new, ...)
+
+    Ignore:
+        ~/.bashrc
+        ~/code
     """
     import vim
     fpath = expanduser(fpath)
@@ -651,14 +655,20 @@ def vim_fpath_cmd(cmd, fpath, nofoldenable=False):
         print("FPATH DOES NOT EXIST")
     # command = '{cmd} {fpath}'.format(cmd=cmd, fpath=fpath)
     if isdir(fpath):
-        if cmd.startswith('sp'):
-            command = ':Hexplore {fpath}'.format(fpath=fpath)
+        # Hack around directory problem
+        if mode.startswith('e'):
+            command = ':Explore! {fpath}'.format(fpath=fpath)
+        elif mode.startswith('sp'):
+            command = ':Hexplore! {fpath}'.format(fpath=fpath)
+        elif mode.startswith('vs'):
+            command = ':Vexplore! {fpath}'.format(fpath=fpath)
         else:
             raise NotImplementedError('implement fpath cmd for me')
     else:
-        command = ":exec ':{cmd} {fpath}'".format(cmd=cmd, fpath=fpath)
+        command = ":exec ':{mode} {fpath}'".format(mode=mode, fpath=fpath)
     # print('command = {!r}\n'.format(command))
     vim.command(command)
+
     if nofoldenable:
         vim.command(":set nofoldenable")
 
@@ -699,10 +709,6 @@ def ensure_normalmode():
     #vim.command("ESC")
 
 
-def open_fpath(fpath, mode='e'):
-    vim_fpath_cmd(mode, fpath)
-
-
 def open_fpath_list(fpath_list, num_hsplits=2):
     """
     Very hacky function to nicely open a bunch of files
@@ -717,23 +723,23 @@ def open_fpath_list(fpath_list, num_hsplits=2):
     try:
         assert index < len(fpath_list)
         # First file opens new tab
-        vim_fpath_cmd('tabe', fpath_list[index])
+        open_fpath(fpath_list[index], mode='tabe')
         index += 1
 
         # Second file opens a vsplit
         assert index < len(fpath_list)
-        vim_fpath_cmd('vsplit', fpath_list[index])
+        open_fpath(fpath=fpath_list[index], mode='vsplit')
         index += 1
 
         if num_hsplits == 3:
             assert index < len(fpath_list)
-            vim_fpath_cmd('vsplit', fpath_list[index])
+            open_fpath(fpath=fpath_list[index], mode='vsplit')
             index += 1
 
         # The next 3 splits are horizontal splits
         for index in range(index, index + 3):
             assert index < len(fpath_list)
-            vim_fpath_cmd('split', fpath_list[index])
+            open_fpath(fpath=fpath_list[index], mode='split')
 
         # Move to the left screen
         vim.command(":exec ':wincmd l'")
@@ -741,7 +747,7 @@ def open_fpath_list(fpath_list, num_hsplits=2):
         # Continue doing horizontal splits
         for index in range(index, index + 3):
             assert index < len(fpath_list)
-            vim_fpath_cmd('split', fpath_list[index])
+            open_fpath(fpath=fpath_list[index], mode='split')
     except AssertionError:
         pass
     if index < len(fpath_list):
@@ -788,7 +794,7 @@ def vim_grep(pat, mode='normal', hashid=None):
     fpath = join(dpath, fname)
 
     # Display the text in a new vim split
-    vim_fpath_cmd('new', fpath)
+    open_fpath(fpath=fpath, mode='new')
     overwrite_text(text)
     vim.command(":exec ':w'")
 

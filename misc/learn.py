@@ -1,6 +1,51 @@
+# -*- coding: utf-8 -*-
 """
 Script that lets me play with things I'm learning
 """
+from __future__ import absolute_import, division, print_function, unicode_literals
+
+
+def orient_bbox():
+    import sympy as sym
+    sin, cos = sym.sin, sym.cos
+    θ = sym.symbols('θ')
+    cx, cy = sym.symbols('cx, cy')
+    w, h = sym.symbols('w, h')
+    R = sym.Matrix([
+        [cos(θ), -sin(θ), 0],
+        [sin(θ),  cos(θ), 0],
+        [0, 0, 1]
+    ])
+
+    T = sym.Matrix([
+        [ 1,  0, cx],
+        [ 0,  1, cy],
+        [0, 0, 1]
+    ])
+
+    # assuming the bbox is at the origin, the top right corner is half the
+    # width and height
+    half_size = sym.Matrix([w / 2, h / 2, 1])
+
+    # rotate this corner point and then translate it to the center of world
+    # coords
+
+    top_right = half_size
+    top_left = half_size.multiply_elementwise(sym.Matrix([-1, 1, 1]))
+    bot_left = half_size.multiply_elementwise(sym.Matrix([-1, -1, 1]))
+    bot_right = half_size.multiply_elementwise(sym.Matrix([1, -1, 1]))
+
+    T.dot(R.dot(top_right))
+
+    print(T.dot(R.dot(top_right)))
+    print(T.dot(R.dot(top_left)))
+    print(T.dot(R.dot(bot_left)))
+    print(T.dot(R.dot(bot_right)))
+
+    # [cx - h*sin(θ)/2 + w*cos(θ)/2, cy + h*cos(θ)/2 + w*sin(θ)/2, 1]
+    # [cx - h*sin(θ)/2 - w*cos(θ)/2, cy + h*cos(θ)/2 - w*sin(θ)/2, 1]
+    # [cx + h*sin(θ)/2 - w*cos(θ)/2, cy - h*cos(θ)/2 - w*sin(θ)/2, 1]
+    # [cx + h*sin(θ)/2 + w*cos(θ)/2, cy - h*cos(θ)/2 + w*sin(θ)/2, 1]
 
 
 def pandas_reorder(df, part):

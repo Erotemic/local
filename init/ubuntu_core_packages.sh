@@ -1200,3 +1200,10 @@ python_keyring()
 
     python -c "import keyring.util.platform_; print(keyring.util.platform_.config_root())"
 }
+
+install_octave(){
+
+    sudo add-apt-repository ppa:octave/stable -y
+    sudo apt-get update -y
+    sudo apt-get install octave -y
+}

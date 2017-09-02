@@ -106,6 +106,8 @@ vnoremap <leader>a :call CopyGVimToTerminalDev(visualmode(), 1)<CR>
 noremap  <leader>w :call CopyGVimToTerminalDev('word', 1)<CR>
 noremap  <leader>m :call CopyGVimToTerminalDev('word', 1)<CR>
 
+noremap <leader>C :call CopyCurrentFpath()<Esc>
+
 noremap  <leader>M :call IPythonImportAll()<CR>
 noremap  <leader>x :call IPyFixEmbedGlobals()<CR>
 
@@ -188,14 +190,17 @@ map <c-h> <c-w>h
 
 " Open file under cursor
 
-" In split window
-" In vsplit-split window
-noremap <leader>gi :call SplitFileAtCursor()<CR>
-noremap gi :call SplitFileAtCursor()<CR>
+" In current v/split or new tab
+noremap <leader>go :call OpenFileAtCursor("e")<CR>
+noremap <leader>gf :call OpenFileAtCursor("e")<CR>
+noremap <leader>gi :call OpenFileAtCursor("split")<CR>
+noremap <leader>gv :call OpenFileAtCursor("vsplit")<CR>
+noremap <leader>gv :call OpenFileAtCursor("vsplit")<CR>
+noremap <leader>gt :call OpenFileAtCursor("tabe")<CR>
+noremap gi :call OpenFileAtCursor("split")<CR>
 
 "noremap <leader>gi :wincmd f<CR> 
 "noremap gi :wincmd f<CR> 
-noremap <leader>go :call PyOpenFileUnderCursor()<CR>
 
 nnoremap <leader>p :call Tex_RunViewLaTeX()<CR>
 nmap <C-P> :call Tex_RunViewLaTeX() <CR>

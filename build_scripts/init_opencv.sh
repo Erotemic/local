@@ -2,6 +2,13 @@
 
 # Partially generated using ibeis ./super_setup.py --dump 
 
+prereqs(){
+    sudo apt-get install libblas-dev liblapack-dev
+    sudo apt-get install libopenblas-dev
+}
+
+
+
 
 # ===============================================
 # Configure variables based on the current system 
@@ -84,7 +91,6 @@ mkdir -p $BUILD_DIR
     -D PYTHON_DEFAULT_EXECUTABLE="$PYTHON_EXECUTABLE" \
     -D PYTHON3_PACKAGES_PATH=$PYTHON3_PACKAGES_PATH \
     -D CMAKE_INSTALL_PREFIX=$LOCAL_PREFIX \
-    -D OPENCV_EXTRA_MODULES_PATH=$REPO_DIR/opencv_contrib/modules \
     -D WITH_CUDA=Off \
     -D BUILD_opencv_dnn=Off \
     -D BUILD_opencv_dnn_modern=Off \
@@ -92,6 +98,7 @@ mkdir -p $BUILD_DIR
     -D WITH_CUDA=Off \
     -D WITH_MATLAB=Off \
     $REPO_DIR
+    #-D OPENCV_EXTRA_MODULES_PATH=$REPO_DIR/opencv_contrib/modules \
     # -D WITH_OPENCL=Off \
     # -D BUILD_opencv_face=Off \
     # -D BUILD_opencv_objdetect=Off \
