@@ -300,6 +300,10 @@ install_chrome()
     sudo apt-get update
     # Google Chrome
     sudo apt-get install -y google-chrome-stable 
+
+
+    # for extensions.gnome.org integration
+    sudo apt-get install chrome-gnome-shell
 }
  
 install_spotify()
@@ -329,8 +333,26 @@ install_vpn()
     sudo openconnect -b vpn.net.rpi.edu -uyour_school_username -ucrallj
     alias rpivpn='sudo openconnect -b vpn.net.rpi.edu -uyour_school_username -ucrallj'
 
-    sudo apt-get install network-manager-openvpn-gnome
+
+
+    sudo apt-get install network-manager-openvpn-gnome -y
+
+    # https://askubuntu.com/questions/187511/how-can-i-use-a-ovpn-file-with-network-manager
+    # Open network manager, click add, click vpn, then click add from file
+    # select the *.ovpn file
+
+    sudo chcon -t cert_t ~/.config/openvpn/* 
+
+
+    Add the following tow lines to oovpn file
+    up /etc/openvpn/update-resolve-conf
+    down /etc/openvpn/update-resolve-conf
+
+
+    openvpn --script-security 2 --config ~/.config/openvpn/imryrr1-udp-1194-VPN/imryrr1-udp-1194-VPN.ovpn \
+        --x509-username-field jon.crall
     
+
 }
 
  
@@ -1165,12 +1187,25 @@ mount_android()
     fusermount -u /media/droid
 }
 
+python_keyring()
+{
+
+    # https://pypi.python.org/pypi/keyring
+    sudo apt install libdbus-glib-1-dev
+    pip install secretstorage dbus-python
+    pip install keyring
+
+    keyring set test-dummy-appname joncrall
+    keyring get test-dummy-appname joncrall
+
+    python -c "import keyring.util.platform_; print(keyring.util.platform_.config_root())"
+}
+
 install_octave(){
 
     sudo add-apt-repository ppa:octave/stable -y
     sudo apt-get update -y
     sudo apt-get install octave -y
-
 }
 
 remap_capslock_as_shift
