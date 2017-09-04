@@ -1172,3 +1172,58 @@ install_octave(){
     sudo apt-get install octave -y
 
 }
+
+remap_capslock_as_shift
+{
+    # resets xkbmap
+    setxkbmap us
+
+    # https://unix.stackexchange.com/questions/65507/use-setxkbmap-to-swap-the-left-shift-and-left-control
+    mkdir -p ~/.xkb/keymap
+    mkdir -p ~/.xkb/symbols
+    setxkbmap -print > ~/.xkb/keymap/mykbd
+    
+    echo "
+    partial modifier_keys
+    xkb_symbols "swap_l_shift_ctrl" {
+        replace key <LCTL>  { [ Shift_L ] };
+        replace key <LFSH> { [ Control_L ] };
+    };
+    "
+
+
+    xkbcomp -I$HOME/.xkb ~/.xkb/keymap/mykbd $DISPLAY 
+
+
+    #https://askubuntu.com/questions/371394/how-to-remap-caps-lock-key-to-shift-left-key
+    #https://forums.freebsd.org/threads/48853/
+    xmodmap -e "keycode 66 = Shift_L NoSymbol Shift_L" #this will make Caps Lock to act as Shift_L
+    xmodmap -pke > .xmodmap
+    echo xmodmap .xmodmap >> .xinitrc
+
+    clear control
+    clear mod1
+
+    keycode 37 = Control_L NoSymbol Control_L
+    keycode 50 = Shift_L ISO_Next_Group Shift_L ISO_Next_Group
+    
+
+    xmodmap -e "remove shift = Shift_L"
+    xmodmap -e "add control = Shift_L"
+    xmodmap -e "keycode 37 = Control_L"
+
+    #xmodmap -e "remove Control = Control_L"
+    xmodmap -e "remove Shift = Shift_L"
+    xmodmap -e "keysym Shift_L = Control_L"
+    xmodmap -e "keysym Control_L = Shift_L"
+    xmodmap -e "add Control = Control_L"
+    xmodmap -e "add Shift = Shift_L"
+
+#clear control
+#clear mod1
+keycode 37 = Control_L
+keycode 64 = Control_L
+add control = Control_L Control_R
+add mod1 = Alt_L Meta_L
+    
+}

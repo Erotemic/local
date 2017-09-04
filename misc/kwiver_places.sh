@@ -10,9 +10,12 @@
 
     #pytest --cov=sprokit --cov-report=term  --tb=no --disable-warnings --pyargs sprokit
 
+~/code/VIAME/packages/kwiver/vital/bindings/
+~/code/VIAME/packages/kwiver/vital/bindings/c_introspect.py
 
 ~/code/VIAME/packages/kwiver/vital/bindings/c/types/detected_object.h
 ~/code/VIAME/packages/kwiver/vital/bindings/c/types/detected_object.cxx
+
 ~/code/VIAME/packages/kwiver/vital/types/detected_object.cxx
 ~/code/VIAME/packages/kwiver/vital/bindings/python/vital/types/detected_object.py
 ~/code/VIAME/packages/kwiver/vital/bindings/python/vital/types/c_introspect.py
