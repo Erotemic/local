@@ -16,6 +16,8 @@ FIXME:
 from __future__ import absolute_import, division, print_function, unicode_literals
 from os.path import expanduser, exists, join, isdir
 import sys
+import re
+import itertools as it
 
 
 def get_bibtex_dict():
@@ -256,6 +258,117 @@ def get_word_in_line_at_col(line, col, nonword_chars=' \t\n\r[](){}:;.,"\'\\/'):
 
 # --- Find file markers
 
+
+def find_pyclass_above_row(line_list, row):
+    """ originally part of the vim plugin """
+    # Get text posision
+    pattern = '^class [a-zA-Z_]'
+    classline, classpos = find_pattern_above_row(pattern, line_list, row, maxIter=None)
+    return classline, classpos
+
+
+def parse_callname(searchline, sentinal='def '):
+    """
+    Parses the function or class name from a signature line
+    originally part of the vim plugin
+    """
+    rparen_pos = searchline.find('(')
+    if rparen_pos > 0:
+        callname = searchline[len(sentinal):rparen_pos].strip(' ')
+        return callname
+    return None
+
+
+def find_pattern_above_row(pattern, line_list='current', row='current', maxIter=50):
+    """
+    searches a few lines above the curror until it **matches** a pattern
+    """
+    if row == 'current':
+        import vim
+        row = vim.current.window.cursor[0] - 1
+        line_list = vim.current.buffer
+    # Iterate until we match Janky way to find function name
+    for ix in it.count(0):
+        pos = row - ix
+        if maxIter is not None and ix > maxIter:
+            break
+        if pos < 0:
+            break
+        searchline = line_list[pos]
+        if re.match(pattern, searchline) is not None:
+            return searchline, pos
+    return None
+
+
+def find_pyfunc_above_row(line_list, row, orclass=False):
+    """
+    originally part of the vim plugin
+
+    CommandLine:
+        python -m utool.util_inspect --test-find_pyfunc_above_row
+
+    Example:
+        >>> # ENABLE_DOCTEST
+        >>> from utool.util_inspect import *  # NOQA
+        >>> import utool as ut
+        >>> func = find_pyfunc_above_row
+        >>> fpath = meta_util_six.get_funcglobals(func)['__file__'].replace('.pyc', '.py')
+        >>> line_list = ut.read_from(fpath, aslines=True)
+        >>> row = meta_util_six.get_funccode(func).co_firstlineno + 1
+        >>> pyfunc, searchline = find_pyfunc_above_row(line_list, row)
+        >>> result = pyfunc
+        >>> print(result)
+        find_pyfunc_above_row
+
+    Example:
+        >>> # DISABLE_DOCTEST
+        >>> from utool.util_inspect import *  # NOQA
+        >>> import utool as ut
+        >>> fpath = ut.util_inspect.__file__.replace('.pyc', '.py')
+        >>> line_list = ut.read_from(fpath, aslines=True)
+        >>> row = 1608
+        >>> pyfunc, searchline = find_pyfunc_above_row(line_list, row, orclass=True)
+        >>> result = pyfunc
+        >>> print(result)
+        find_pyfunc_above_row
+    """
+    import utool as ut
+    searchlines = []  # for debugging
+    funcname = None
+    # Janky way to find function name
+    func_sentinal   = 'def '
+    method_sentinal = '    def '
+    class_sentinal = 'class '
+    for ix in range(200):
+        func_pos = row - ix
+        searchline = line_list[func_pos]
+        searchline = ut.ensure_unicode(searchline)
+        cleanline = searchline.strip(' ')
+        searchlines.append(cleanline)
+        if searchline.startswith(func_sentinal):  # and cleanline.endswith(':'):
+            # Found a valid function name
+            funcname = parse_callname(searchline, func_sentinal)
+            if funcname is not None:
+                break
+        if orclass and searchline.startswith(class_sentinal):
+            # Found a valid class name (as funcname)
+            funcname = parse_callname(searchline, class_sentinal)
+            if funcname is not None:
+                break
+        if searchline.startswith(method_sentinal):  # and cleanline.endswith(':'):
+            # Found a valid function name
+            funcname = parse_callname(searchline, method_sentinal)
+            if funcname is not None:
+                classline, classpos = find_pyclass_above_row(line_list, func_pos)
+                classname = parse_callname(classline, class_sentinal)
+                if classname is not None:
+                    funcname = '.'.join([classname, funcname])
+                    break
+                else:
+                    funcname = None
+    return funcname, searchlines
+
+
 def find_pyfunc_above_cursor():
     import vim
     import utool as ut
@@ -265,7 +378,7 @@ def find_pyfunc_above_cursor():
     # Get text posision
     (row, col) = vim.current.window.cursor
     line_list = vim.current.buffer
-    funcname, searchlines = ut.find_pyfunc_above_row(line_list, row, True)
+    funcname, searchlines = find_pyfunc_above_row(line_list, row, True)
     return funcname, searchlines
 
 

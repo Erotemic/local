@@ -544,12 +544,21 @@ elif filetype in {'cmake'}:
     statement = 'message(STATUS "{expr} = ${{{expr}}}")'.format(expr=expr)
 elif filetype in {'cpp', 'cxx', 'h'}:
     if 'vital' in pyvim_funcs.get_current_fpath():
-        statement = ut.codeblock(
-            '''
-            auto logger = kwiver::vital::get_logger("temp.logger");
-            LOG_INFO(logger, "{expr} = " << {expr} );
-            '''
-        ).format(expr=expr)
+
+        if pyvim_funcs.find_pattern_above_row(
+            '\s*auto logger = kwiver::vital::get_logger.*') is None:
+            statement = ut.codeblock(
+                '''
+                auto logger = kwiver::vital::get_logger("temp.logger");
+                LOG_INFO(logger, "{expr} = " << {expr} );
+                '''
+            ).format(expr=expr)
+        else:
+            statement = ut.codeblock(
+                '''
+                LOG_INFO(logger, "{expr} = " << {expr} );
+                '''
+            ).format(expr=expr)
     else:
         cout = 'std::cout'
         endl = 'std::endl'
