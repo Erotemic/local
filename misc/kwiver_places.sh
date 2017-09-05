@@ -15,10 +15,9 @@
 
 ~/code/VIAME/packages/kwiver/vital/bindings/c/types/detected_object.h
 ~/code/VIAME/packages/kwiver/vital/bindings/c/types/detected_object.cxx
+~/code/VIAME/packages/kwiver/vital/bindings/python/vital/types/detected_object.py
 
 ~/code/VIAME/packages/kwiver/vital/types/detected_object.cxx
-~/code/VIAME/packages/kwiver/vital/bindings/python/vital/types/detected_object.py
-~/code/VIAME/packages/kwiver/vital/bindings/python/vital/types/c_introspect.py
 
 
 
