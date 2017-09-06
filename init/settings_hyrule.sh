@@ -486,11 +486,7 @@ virtualenv_numpy_16()
 
     pip install setuptools -U
     pip install numpy
-}
 
-
-install_python()
-{
     sudo pip install pillow
     # Virtual Environment 
     cd
