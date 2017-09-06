@@ -87,12 +87,14 @@ hyrule_create_users()
 
     # Grant sudoers
     #sudo visudo
+    sudo adduser joshbeard
     sudo adduser jason
     sudo adduser git
     # Add group
     sudo groupadd ibeis
     sudo groupadd rpi
     sudo usermod -a -G sudo jason
+    sudo usermod -a -G sudo joshbeard
     sudo usermod -a -G ibeis jason
     sudo usermod -a -G ibeis joncrall
     sudo usermod -a -G rpi joncrall
