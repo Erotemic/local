@@ -41,6 +41,10 @@ IBEIS_REPOS_URLS, IBEIS_REPOS = repo_list([
     'https://github.com/Erotemic/dtool.git',
     'https://github.com/Erotemic/ibeis.git',
 
+    'https://github.com/Erotemic/VIAME.git',
+    # 'https://github.com/Erotemic/VIAME/packages/kwiver.git',
+    # 'https://github.com/Erotemic/ibeis.git',
+
     #'https://github.com/Theano/Theano.git'
 
     #'https://github.com/bluemellophone/gzc-server.git',
