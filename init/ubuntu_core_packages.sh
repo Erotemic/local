@@ -320,8 +320,7 @@ install_spotify()
 install_vpn()
 {
 
-    # 
-    http://dotcio.rpi.edu/services/network-remote-access/vpn-connection-and-installation/using-vpnc-open-source-client
+    # http://dotcio.rpi.edu/services/network-remote-access/vpn-connection-and-installation/using-vpnc-open-source-client
 
     # replaces cisco anyconnect
     sudo apt-get install network-manager-openconnect-gnome -y

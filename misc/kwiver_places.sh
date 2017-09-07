@@ -10,6 +10,8 @@
 
     #pytest --cov=sprokit --cov-report=term  --tb=no --disable-warnings --pyargs sprokit
 
+~/code/VIAME/packages/kwiver/sprokit/processes/bindings/c/vital_type_converters.cxx
+
 ~/code/VIAME/packages/kwiver/vital/bindings/
 ~/code/VIAME/packages/kwiver/vital/bindings/c_introspect.py
 
