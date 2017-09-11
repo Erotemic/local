@@ -353,6 +353,24 @@ install_vpn()
 
     openvpn --script-security 2 --config ~/.config/openvpn/imryrr1-udp-1194-VPN/imryrr1-udp-1194-VPN.ovpn \
         --x509-username-field jon.crall
+
+    
+    #Reference: https://bugs.launchpad.net/ubuntu/+source/dnsmasq/+bug/1639776
+    #There is a workaround for the openvpn issue on ubuntu
+    #16.04. After connecting to the vpn, run:
+
+    sudo pkill dnsmasq
+
+    #...after which dnsmasq "dumps all of the DNS server entries into
+    #/etc/resolv.conf and removes 127.0.1.1 (thus temporarily fixing the
+    #issue)."
+
+    #Reference:
+    #https://askubuntu.com/questions/233222/how-can-i-disable-the-dns-that-network-manager-uses
+    #Tell Network Manager not to use dnsmasq:
+    #Edit /etc/NetworkManager/NetworkManager.conf and comment out the line
+    #dns=dnsmasq line, so it looks like "#dns=dnsmasq" and then restart
+    #Network Manager with sudo restart network-manager.
     
 
 }
@@ -1264,3 +1282,8 @@ add control = Control_L Control_R
 add mod1 = Alt_L Meta_L
     
 }
+
+gmail_api(){
+    pip install --upgrade google-api-python-client
+}
+

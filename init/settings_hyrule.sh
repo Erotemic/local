@@ -97,6 +97,7 @@ hyrule_create_users()
     sudo usermod -a -G sudo joshbeard
     sudo usermod -a -G ibeis jason
     sudo usermod -a -G ibeis joncrall
+    sudo usermod -a -G rpi joshbeard
     sudo usermod -a -G rpi joncrall
     sudo usermod -a -G rpi jason
     # Delete user
