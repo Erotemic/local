@@ -12,6 +12,11 @@ alias clean_python='find . -iname *.pyc -delete & find . -iname *.pyo -delete'
 
 alias cgrep='grep --exclude-dir "*build*" --exclude-dir .git -ER'
 
+fzfind()
+{
+    find . -iname "*$1*"
+}
+
 #clean_python(){
 #    # Recursively delete compiled python files
 #    find . -iname *.pyc -delete
@@ -101,6 +106,7 @@ alias kw='cd $CODE_DIR/kwiver/'
 alias vi='cd $CODE_DIR/VIAME/'
 alias vib='cd $CODE_DIR/VIAME/build'
 alias vikw='cd $CODE_DIR/VIAME/packages/kwiver/'
+alias sp='cd $CODE_DIR/VIAME/packages/kwiver/sprokit'
 alias vikwb='cd $CODE_DIR/VIAME/build/build/src/kwiver-build/'
 alias vikwi='cd /home/joncrall/code/VIAME/build/install/lib/python2.7/site-packages'
 alias vicam='cd $CODE_DIR/VIAME/plugins/camtrawl/'

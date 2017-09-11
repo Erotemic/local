@@ -369,6 +369,13 @@ def find_and_open_path(path):
     if result is not None:
         path = result
 
+    current_fpath = pyvim_funcs.get_current_fpath()
+    if os.path.islink(current_fpath):
+        newbase = os.path.dirname(os.path.realpath(current_fpath))
+        resolved_path = os.path.join(newbase, path)
+        if try_open(resolved_path):
+            return 
+
     if try_open(path):
         return 
     else:
@@ -383,6 +390,7 @@ def find_and_open_path(path):
                     return
             if try_open(path):
                 return
+
         #vim.command('echoerr "Could not find path={}"'.format(path))
         print('Could not find path={}'.format(path))
 

@@ -10,7 +10,6 @@
 
     #pytest --cov=sprokit --cov-report=term  --tb=no --disable-warnings --pyargs sprokit
 
-~/code/VIAME/packages/kwiver/sprokit/processes/bindings/c/vital_type_converters.cxx
 
 ~/code/VIAME/packages/kwiver/vital/bindings/
 ~/code/VIAME/packages/kwiver/vital/bindings/c_introspect.py
@@ -20,6 +19,13 @@
 ~/code/VIAME/packages/kwiver/vital/bindings/python/vital/types/detected_object.py
 
 ~/code/VIAME/packages/kwiver/vital/types/detected_object.cxx
+
+
+~/code/VIAME/packages/kwiver/sprokit/processes/bindings/c/vital_type_converters.cxx
+~/code/VIAME/packages/kwiver/sprokit/processes/bindings/python/kwiver/kwiver_process.py
+~/code/VIAME/packages/kwiver/sprokit/processes/bindings/python/kwiver/util/vital_type_converters.py
+~/code/VIAME/packages/kwiver/sprokit/processes/kwiver_type_traits.h
+
 
 
 
@@ -35,10 +41,10 @@
 ~/code/VIAME/packages/kwiver/CMake/utils/kwiver-utils-tests.cmake
 
 # sprokit utilities
-~/code/VIAME/packages/kwiver/sprokit/cmake/conf/sprokit-macro-targets.cmake
-~/code/VIAME/packages/kwiver/sprokit/cmake/conf/sprokit-macro-tests.cmake
-~/code/VIAME/packages/kwiver/sprokit/cmake/conf/sprokit-macro-configure.cmake
-~/code/VIAME/packages/kwiver/sprokit/cmake/conf/sprokit-macro-python.cmake
+~/code/VIAME/packages/kwiver/sprokit/conf/sprokit-macro-targets.cmake
+~/code/VIAME/packages/kwiver/sprokit/conf/sprokit-macro-tests.cmake
+~/code/VIAME/packages/kwiver/sprokit/conf/sprokit-macro-configure.cmake
+~/code/VIAME/packages/kwiver/sprokit/conf/sprokit-macro-python.cmake
 ~/code/VIAME/packages/kwiver/sprokit/cmake/support/test.cmake
 ~/code/VIAME/packages/kwiver/sprokit/tests/bindings/python/CMakeLists.txt  # Defines helpers
 
