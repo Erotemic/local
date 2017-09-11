@@ -1279,3 +1279,8 @@ add control = Control_L Control_R
 add mod1 = Alt_L Meta_L
     
 }
+
+gmail_api(){
+    pip install --upgrade google-api-python-client
+}
+
