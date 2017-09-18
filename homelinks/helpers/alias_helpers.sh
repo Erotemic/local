@@ -480,12 +480,20 @@ workon_py2()
 {
     workon_py "$HOME/venv2"
 }
+alias we-py2=workon_py2
+
+workon_py2_debug()
+{
+    workon_py "$HOME/code/cpython-27/venvs/venv2-debug"
+}
+alias we-py2debug=workon_py2_debug
 
 
 workon_py3()
 {
     workon_py "$HOME/venv3"
 }
+alias we-py3=workon_py3
 
 workon_py37()
 {

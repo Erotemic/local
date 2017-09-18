@@ -62,6 +62,10 @@
 ~/code/VIAME/packages/kwiver/sprokit/processes/bindings/python/kwiver/util/vital_type_converters.py
 
 
+cd ~/code/VIAME/build/build/src/kwiver-build
+tree -d -I CMakeFiles\|__pycache__
+
+
 # sprokit source
 ~/code/VIAME/packages/kwiver/sprokit/processes/bindings/python/CMakeLists.txt
 ~/code/VIAME/packages/kwiver/sprokit/src/bindings/python/CMakeLists.txt

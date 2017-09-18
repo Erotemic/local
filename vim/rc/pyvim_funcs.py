@@ -955,6 +955,71 @@ def vim_popup_menu(options):
     return chosen
 
 
+def find_and_open_path(path, mode='split', verbose=0):
+    import utool as ut
+    import os
+
+    def try_open(path):
+        # base = '/home/joncrall/code/VIAME/packages/kwiver/sprokit/src/bindings/python/sprokit/pipeline'
+        # base = '/home'
+        if exists(path):
+            if verbose:
+                print('EXISTS path = {!r}\n'.format(path))
+            open_fpath(path, mode=mode)
+            return True
+
+    path = expanduser(path)
+    if try_open(path):
+        return
+
+    # path = 'sprokit/pipeline/pipeline.h'
+    # base = os.getcwd()
+    # base = '/home/joncrall/code/VIAME/packages/kwiver/sprokit/src/bindings/python/sprokit/pipeline'
+
+    if path.startswith('<') and path.endswith('>'):
+        path = path[1:-1]
+    if path.endswith(':'):
+        path = path[:-1]
+    if try_open(path):
+        return
+
+    # Search downwards for relative paths
+    candidates = []
+    if not os.path.isabs(path):
+        limit = {'~', os.path.expanduser('~')}
+        start = os.getcwd()
+        candidates += list(ut.ancestor_paths(start, limit=limit))
+    candidates += os.environ['PATH'].split(os.sep)
+    result = ut.search_candidate_paths(candidates, [path], verbose=verbose)
+    if result is not None:
+        path = result
+
+    current_fpath = get_current_fpath()
+    if os.path.islink(current_fpath):
+        newbase = os.path.dirname(os.path.realpath(current_fpath))
+        resolved_path = os.path.join(newbase, path)
+        if try_open(resolved_path):
+            return
+
+    if try_open(path):
+        return
+    else:
+        filetype = get_current_filetype()
+        if True or filetype in {'py', 'pyx'}:
+            try:
+                path = ut.get_modpath_from_modname(path)
+                print('rectified module to path = {!r}'.format(path))
+            except Exception as ex:
+                if True or filetype in {'py', 'pyx'}:
+                    print(ex)
+                    return
+            if try_open(path):
+                return
+
+        #vim.command('echoerr "Could not find path={}"'.format(path))
+        print('Could not find path={}'.format(path))
+
+
 if __name__ == '__main__':
     """
     CommandLine:

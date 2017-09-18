@@ -310,7 +310,30 @@ EOF
 endfunc
 
 
-func! OpenFileAtCursor(...) 
+func! FUNC_OpenPath(...)
+
+Python2or3 << EOF
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool as ut
+import re
+from os.path import exists, expanduser
+ut.rrrr(verbose=False)
+
+argv = pyvim_funcs.vim_argv(defaults=[None, 'split'])
+path, mode = argv[0:2]
+
+pyvim_funcs.find_and_open_path(path, mode=mode, verbose=0)
+
+EOF
+endfunc
+command! -nargs=1 SplitPath call FUNC_OpenPath(<f-args>, 'split')
+command! -nargs=1 OpenPath call FUNC_OpenPath(<f-args>, 'e')
+command! -nargs=1 EE call FUNC_OpenPath(<f-args>, 'e')
+
+
+
+func! OpenPathAtCursor(...) 
 
 Python2or3 << EOF
 import vim
@@ -330,66 +353,7 @@ verbose = 0
 if verbose:
     print('path = {!r}'.format(path))
 
-def try_open(path):
-    # base = '/home/joncrall/code/VIAME/packages/kwiver/sprokit/src/bindings/python/sprokit/pipeline'
-    # base = '/home'
-    if exists(path):
-        if verbose:
-            print('EXISTS path = {!r}\n'.format(path))
-        pyvim_funcs.open_fpath(path, mode=mode)
-        return True
-
-def find_and_open_path(path):
-    path = expanduser(path)
-    if try_open(path):
-        return 
-
-    # path = 'sprokit/pipeline/pipeline.h'
-    # base = os.getcwd()
-    # base = '/home/joncrall/code/VIAME/packages/kwiver/sprokit/src/bindings/python/sprokit/pipeline'
-        
-    if path.startswith('<') and path.endswith('>'):
-        path = path[1:-1]
-    if try_open(path):
-        return 
-
-    # Search downwards for relative paths
-    candidates = []
-    if not os.path.isabs(path):
-        limit = {'~', os.path.expanduser('~')}
-        start = os.getcwd()
-        candidates += list(ut.ancestor_paths(start, limit=limit))
-    candidates += os.environ['PATH'].split(os.sep)
-    result = ut.search_candidate_paths(candidates, [path], verbose=verbose)
-    if result is not None:
-        path = result
-
-    current_fpath = pyvim_funcs.get_current_fpath()
-    if os.path.islink(current_fpath):
-        newbase = os.path.dirname(os.path.realpath(current_fpath))
-        resolved_path = os.path.join(newbase, path)
-        if try_open(resolved_path):
-            return 
-
-    if try_open(path):
-        return 
-    else:
-        filetype = pyvim_funcs.get_current_filetype()
-        if True or filetype in {'py', 'pyx'}:
-            try:
-                path = ut.get_modpath_from_modname(path)
-                print('rectified module to path = {!r}'.format(path))
-            except Exception as ex:
-                if True or filetype in {'py', 'pyx'}:
-                    print(ex)
-                    return
-            if try_open(path):
-                return
-
-        #vim.command('echoerr "Could not find path={}"'.format(path))
-        print('Could not find path={}'.format(path))
-
-find_and_open_path(path)
+pyvim_funcs.find_and_open_path(path, mode=mode, verbose=verbose)
 
 EOF
 endfunc

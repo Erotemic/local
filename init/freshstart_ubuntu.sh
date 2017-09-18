@@ -37,14 +37,6 @@ entry_prereq_git_and_local()
 }
 
 
-freshstart_ubuntu_entry_point()
-{
-    source ~/local/init/freshstart_ubuntu.sh
-    entry_prereq_git_and_local
-    freshstart_ubuntu_entry_point
-}
-
-
 ensure_config_symlinks()
 {
     "
@@ -177,13 +169,12 @@ ensure_config_symlinks()
     echo "==============================="
 }
 
-freshtart_ubuntu_entry_point()
+freshtart_ubuntu_script()
 { 
     "
     CommandLine:
         source ~/local/init/freshstart_ubuntu.sh
-        freshtart_ubuntu_entry_point
-
+        freshtart_ubuntu_script
     "
     mkdir -p ~/tmp
     mkdir -p ~/code
@@ -209,6 +200,7 @@ freshtart_ubuntu_entry_point()
     git config core.fileMode false
     git config --global alias.co checkout
 
+    make_sshkey
 
     #sudo apt-get install trash-cli
     sudo apt-get install -y exuberant-ctags 
