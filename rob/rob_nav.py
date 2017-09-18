@@ -115,8 +115,9 @@ def _sed(r, regexpr, repl, force=False, recursive=False, dpath_list=None):
     if True:
         import utool as ut
         force = ut.smart_cast2(force)
+        include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h', '*.pyx', '*.pxi', '*.cmake', 'CMakeLists.txt']
         ut.sed(regexpr, repl, force=force, recursive=recursive,
-               dpath_list=dpath_list, verbose=True)
+               dpath_list=dpath_list, verbose=True, include_patterns=include_patterns)
         return
     else:
         #_grep(r, [repl], dpath_list=dpath_list, recursive=recursive)
@@ -127,7 +128,7 @@ def _sed(r, regexpr, repl, force=False, recursive=False, dpath_list=None):
         if pyext:
             include_patterns = ['*.py']
         else:
-            include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h', '*.pyx', '*.pxi']
+            include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h', '*.pyx', '*.pxi', '*.cmake', 'CMakeLists.txt']
         if ut.get_argflag('--all'):
             include_patterns = ['*']
         #if ut.get_argflag('--tex'):

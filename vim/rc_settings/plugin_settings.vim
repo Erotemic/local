@@ -121,6 +121,21 @@ let g:tagbar_type_python = {
     \ }
 \ }
 
+
+let g:tagbar_type_cmake = {
+    \ 'ctagstype' : 'cmake',
+    \ 'kinds'     : [
+        \ 'f:functions:0:1',
+    \ ],
+    \ 'sro'        : '.',
+    \ 'kind2scope' : {
+        \ 'f' : 'function',
+    \ },
+    \ 'scope2kind' : {
+        \ 'function' : 'f',
+    \ }
+\ }
+
 "let g:tagbar_type_python = {
     "\ 'ctagstype' : 'python',
     "\ 'kinds'     : [

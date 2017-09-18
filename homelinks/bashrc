@@ -29,6 +29,9 @@ export QT_API=pyqt
 
 #export CC=gcc
 #export CXX=g++
+export CC=/usr/bin/clang-4.0
+export CXX=/usr/bin/clang++-4.0
+
 
 export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig:$PKG_CONFIG_PATH
 
@@ -62,6 +65,7 @@ fi
 
 source ~/local/homelinks/helpers/git_helpers
 source ~/local/homelinks/helpers/alias_helpers.sh
+source ~/local/init/utils.sh
 
 
 

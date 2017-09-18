@@ -518,8 +518,7 @@ install_virtualbox()
     #wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
     #sudo apt-get update
     #sudo apt-get install virtualbox-4.3
-    sudo apt-get install virtualbox 
-    sudo apt-get install dkms
+    sudo apt-get install virtualbox dkms
     # download addons and mount on guest machine
     #http://download.virtualbox.org/virtualbox/4.1.12/
     utget 'http://download.virtualbox.org/virtualbox/4.1.12/VBoxGuestAdditions_4.1.12.iso'
@@ -1020,10 +1019,6 @@ edit_startup_commands()
     #Icon=display
 }
 
-make_sshkey(){
-    ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
-    ssh-keygen -t rsa -b 4096 
-}
 
 fix_dbus_issues()
 {

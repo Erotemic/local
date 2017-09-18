@@ -191,13 +191,13 @@ map <c-h> <c-w>h
 " Open file under cursor
 
 " In current v/split or new tab
-noremap <leader>go :call OpenFileAtCursor("e")<CR>
-noremap <leader>gf :call OpenFileAtCursor("e")<CR>
-noremap <leader>gi :call OpenFileAtCursor("split")<CR>
-noremap <leader>gv :call OpenFileAtCursor("vsplit")<CR>
-noremap <leader>gv :call OpenFileAtCursor("vsplit")<CR>
-noremap <leader>gt :call OpenFileAtCursor("tabe")<CR>
-noremap gi :call OpenFileAtCursor("split")<CR>
+noremap <leader>go :call OpenPathAtCursor("e")<CR>
+noremap <leader>gf :call OpenPathAtCursor("e")<CR>
+noremap <leader>gi :call OpenPathAtCursor("split")<CR>
+noremap <leader>gv :call OpenPathAtCursor("vsplit")<CR>
+noremap <leader>gv :call OpenPathAtCursor("vsplit")<CR>
+noremap <leader>gt :call OpenPathAtCursor("tabe")<CR>
+noremap gi :call OpenPathAtCursor("split")<CR>
 
 "noremap <leader>gi :wincmd f<CR> 
 "noremap gi :wincmd f<CR> 
