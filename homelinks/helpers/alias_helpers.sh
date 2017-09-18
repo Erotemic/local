@@ -553,3 +553,8 @@ codeblock()
     # Prevents python indentation errors in bash
     python -c "from textwrap import dedent; print(dedent('''$1''').strip('\n'))"
 }
+
+untilfail()
+{
+    while $@; do :; done
+}

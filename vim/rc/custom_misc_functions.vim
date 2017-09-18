@@ -357,13 +357,8 @@ def find_and_open_path(path):
     candidates = []
     if not os.path.isabs(path):
         limit = {'~', os.path.expanduser('~')}
-        prev = None
-        curr = os.getcwd()
-        while curr != prev and prev not in limit:
-            candidates.append(curr)
-            #limit
-            prev = curr
-            curr = os.path.split(curr)[0]
+        start = os.getcwd()
+        candidates += list(ut.ancestor_paths(start, limit=limit))
     candidates += os.environ['PATH'].split(os.sep)
     result = ut.search_candidate_paths(candidates, [path], verbose=verbose)
     if result is not None:
@@ -433,7 +428,7 @@ pyvim_funcs.vim_grep(pat, mode='project')
 
 EOF
 endfunc
-command! -nargs=1 GrepProject call FUNC_GrepProject(<f-args>)<CR>
+command! -nargs=1 GrepProject call FUNC_GrepProject(<f-args>)
 
 
 func! FUNC_Grep(...) 
@@ -448,7 +443,22 @@ pyvim_funcs.vim_grep(pat, mode='normal')
 
 EOF
 endfunc
-command! -nargs=1 Grep call FUNC_Grep(<f-args>)<CR>
+command! -nargs=1 Grep call FUNC_Grep(<f-args>)
+
+
+func! FUNC_GrepRepo(...) 
+Python2or3 << EOF
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+
+argv = pyvim_funcs.vim_argv(defaults=[None])
+pat = argv[0]
+#pat, mode = argv
+pyvim_funcs.vim_grep(pat, mode='repo')
+
+EOF
+endfunc
+command! -nargs=1 GrepRepo call FUNC_GrepRepo(<f-args>)
 
 
 func! PyFormatParagraph() range
