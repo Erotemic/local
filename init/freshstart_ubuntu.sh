@@ -200,6 +200,7 @@ freshtart_ubuntu_script()
     git config core.fileMode false
     git config --global alias.co checkout
 
+    make_sshkey
 
     #sudo apt-get install trash-cli
     sudo apt-get install -y exuberant-ctags 
