@@ -10,7 +10,7 @@ alias ls='ls --color --human-readable --group-directories-first --hide="*.pyc" -
 alias pygrep='grep -r --include "*.py"'
 alias clean_python='find . -iname *.pyc -delete & find . -iname *.pyo -delete'
 
-alias cgrep='grep --exclude-dir "*build*" --exclude-dir .git -ER'
+alias cgrep='grep -I --exclude-dir "*build*" --exclude-dir .git -ER'
 
 fzfind()
 {
