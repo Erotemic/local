@@ -111,7 +111,7 @@ if [ -d "$HOME/.local/cuda" ]; then
     export CPATH=$CPATH:$HOME/.local/cuda/include
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.local/cuda/lib64
     if [ -f "$HOME/.local/cuda/lib64/libcudnn.so" ]; then
-        CUDNN_LIBRARIES=$HOME/.local/cuda/lib64/libcudnn.so
+        export CUDNN_LIBRARIES=$HOME/.local/cuda/lib64/libcudnn.so
     fi
 fi
 
