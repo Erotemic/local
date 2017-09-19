@@ -14,6 +14,9 @@ simple_setup_auto(){
     "
     Does setup on machines without root access
     "
+    # Just in case
+    deactivate
+
     mkdir -p ~/tmp
     mkdir -p ~/code
     cd ~
@@ -50,7 +53,7 @@ simple_setup_auto(){
     if [ ! -d ~/code/utool ]; then
         git clone -b next http://github.com/Erotemic/utool.git ~/code/utool
     fi
-    if [ "$(have_python_module ubelt)" == "False"]; then
+    if [ "$(have_python_module ubelt)" == "False" ]; then
         pip install -e ~/code/utool
     fi
 
@@ -58,7 +61,7 @@ simple_setup_auto(){
     if [ ! -d ~/code/ubelt ]; then
         git clone http://github.com/Erotemic/ubelt.git ~/code/ubelt
     fi
-    if [ "$(have_python_module ubelt)" == "False"]; then
+    if [ "$(have_python_module ubelt)" == "False" ]; then
         pip install -e ~/code/ubelt
     fi
 
