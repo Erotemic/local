@@ -107,24 +107,24 @@ fi
 
 # Add CUDA to the library paths if it exists
 if [ -d "$HOME/.local/cuda" ]; then
-    export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$HOME/.local/cuda
-    export CPATH=$CPATH:$HOME/.local/cuda/include
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.local/cuda/lib64
-    if [ -f "$HOME/.local/cuda/lib64/libcudnn.so" ]; then
-        export CUDNN_LIBRARIES=$HOME/.local/cuda/lib64/libcudnn.so
-    fi
+    #export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$HOME/.local/cuda
+    #export CPATH=$CPATH:$HOME/.local/cuda/include
+    #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.local/cuda/lib64
+    #if [ -f "$HOME/.local/cuda/lib64/libcudnn.so" ]; then
+    #    export CUDNN_LIBRARIES=$HOME/.local/cuda/lib64/libcudnn.so
+    #fi
 fi
 
 if [ -d "/usr/local/cuda" ]; then
     # Use the symlinked version if available
-    export PATH=$PATH:/usr/local/cuda/bin
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64
+    #export PATH=$PATH:/usr/local/cuda/bin
+    #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64
     #export LIBRARY_PATH=/usr/local/cuda/lib64
-elif [ -d "/usr/local/cuda" ]; then
-    # Use an explicit version if available
-    export PATH=$PATH:/usr/local/cuda7.5/bin
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda7.5/lib64
-fi
+#elif [ -d "/usr/local/cuda" ]; then
+#    # Use an explicit version if available
+#    export PATH=$PATH:/usr/local/cuda7.5/bin
+#    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda7.5/lib64
+#fi
 
 # Other program environment variables
 if [[ "$HOSTNAME" == "hyrule"  ]]; then 
@@ -136,9 +136,9 @@ if [[ "$HOSTNAME" == "hyrule"  ]]; then
     #export TOMCAT_HOME=$TOMCAT_DIR
     #export CATALINA_HOME=$TOMCAT_DIR
     export TEXLIVE_BIN=$(echo /usr/local/texlive/*/bin/x86_64-linux)
-elif [[ "$HOSTNAME" == "dozer"  ]]; then 
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-6.5/lib64:/usr/local/lib
-    export PATH=$PATH:/usr/local/cuda-6.5/bin
+#elif [[ "$HOSTNAME" == "dozer"  ]]; then 
+#    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-6.5/lib64:/usr/local/lib
+#    export PATH=$PATH:/usr/local/cuda-6.5/bin
 elif [[ "$HOSTNAME" == "Ooo"  ]]; then 
     export THEANO_FLAGS="device=cpu"
     export TEXLIVE_BIN=$(echo /usr/local/texlive/*/bin/x86_64-linux)
