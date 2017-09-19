@@ -119,7 +119,7 @@ if [ -d "/usr/local/cuda" ]; then
     # Use the symlinked version if available
     export PATH=$PATH:/usr/local/cuda/bin
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64
-    export LIBRARY_PATH=/usr/local/cuda/lib64
+    #export LIBRARY_PATH=/usr/local/cuda/lib64
 elif [ -d "/usr/local/cuda" ]; then
     # Use an explicit version if available
     export PATH=$PATH:/usr/local/cuda7.5/bin
@@ -191,6 +191,9 @@ fi
 # Clean paths again before workon stuff happens
 export PATH=$(pathvar_clean PATH)
 export LD_LIBRARY_PATH=$(pathvar_clean LD_LIBRARY_PATH)
+export CMAKE_PREFIX_PATH=$(pathvar_clean CMAKE_PREFIX_PATH)
+export CPATH=$(pathvar_clean CPATH)
+export CPATH=$(pathvar_clean CPATH)
 
 #env
 #workon_py2
