@@ -46,13 +46,19 @@ simple_setup_auto(){
     python ~/local/init/ensure_vim_plugins.py
 
     # Install utool
+    echo "Installing utool"
     if [ ! -d ~/code/utool ]; then
         git clone -b next http://github.com/Erotemic/utool.git ~/code/utool
+    fi
+    if [ "$(have_python_module ubelt)" == "False"]; then
         pip install -e ~/code/utool
     fi
 
+    echo "Installing ubelt"
     if [ ! -d ~/code/ubelt ]; then
         git clone http://github.com/Erotemic/ubelt.git ~/code/ubelt
+    fi
+    if [ "$(have_python_module ubelt)" == "False"]; then
         pip install -e ~/code/ubelt
     fi
 
@@ -62,6 +68,9 @@ simple_setup_auto(){
     python ~/local/init/init_ipython_config.py
 
 }
+
+
+
 
 entry_prereq_git_and_local()
 {
@@ -117,15 +126,25 @@ codeblock()
 }
 
 have_sudo(){
-    HAVE_SUDO=$(python -c "$(codeblock "
+    python -c "$(codeblock "
         import grp, pwd 
         user = '$(whoami)'
         groups = [g.gr_name for g in grp.getgrall() if user in g.gr_mem]
         gid = pwd.getpwnam(user).pw_gid
         groups.append(grp.getgrgid(gid).gr_name)
         print('sudo' in groups)
-    ")")
-    echo "HAVE_SUDO = $HAVE_SUDO"
+    ")
+}
+
+
+have_python_module(){
+    python -c "$(codeblock "
+        try:
+            import $1
+            print(True)
+        except ImportError:
+            print(False)
+    ")"
 }
 
 ensure_config_symlinks()
