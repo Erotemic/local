@@ -81,8 +81,6 @@ init_local_cudnn(){
     cp cuda/include/cudnn.h $CUDADIR/include
     cp cuda/lib64/libcudnn* $CUDADIR/lib64
     chmod a+r $CUDADIR/include/cudnn.h
-
-
 }
 
 

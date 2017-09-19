@@ -372,7 +372,7 @@ _VAR=$1
 python -c "
 if __name__ == '__main__':
     import os
-    parts = os.environ['$_VAR'].split(os.pathsep)
+    parts = os.environ.get('$_VAR', '').split(os.pathsep)
     seen = set([])
     fixed = []
     for p in parts:
