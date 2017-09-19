@@ -101,19 +101,19 @@ if [ -d "$CPLEX_PREFIX" ]; then
 fi
 
 
-if [ -d "$HOME/.local" ]; then
-    export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$HOME/.local
-fi
+#if [ -d "$HOME/.local" ]; then
+#    export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$HOME/.local
+#fi
 
 # Add CUDA to the library paths if it exists
-if [ -d "$HOME/.local/cuda" ]; then
-    #export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$HOME/.local/cuda
-    #export CPATH=$CPATH:$HOME/.local/cuda/include
-    #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.local/cuda/lib64
-    #if [ -f "$HOME/.local/cuda/lib64/libcudnn.so" ]; then
-    #    export CUDNN_LIBRARIES=$HOME/.local/cuda/lib64/libcudnn.so
-    #fi
-fi
+#if [ -d "$HOME/.local/cuda" ]; then
+#    export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$HOME/.local/cuda
+#    export CPATH=$CPATH:$HOME/.local/cuda/include
+#    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.local/cuda/lib64
+#    if [ -f "$HOME/.local/cuda/lib64/libcudnn.so" ]; then
+#        export CUDNN_LIBRARIES=$HOME/.local/cuda/lib64/libcudnn.so
+#    fi
+#fi
 
 if [ -d "/usr/local/cuda" ]; then
     # Use the symlinked version if available
