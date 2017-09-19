@@ -105,6 +105,9 @@ fi
 #    export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$HOME/.local
 #fi
 
+
+# CHOOSE ONE: Use either local cuda/cudnn or system cuda/cudnn
+
 # Add CUDA to the library paths if it exists
 #if [ -d "$HOME/.local/cuda" ]; then
 #    export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$HOME/.local/cuda
