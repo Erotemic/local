@@ -53,7 +53,7 @@ simple_setup_auto(){
     if [ ! -d ~/code/utool ]; then
         git clone -b next http://github.com/Erotemic/utool.git ~/code/utool
     fi
-    if [ "$(have_python_module ubelt)" == "False" ]; then
+    if [ "$(has_pymodule ubelt)" == "False" ]; then
         pip install -e ~/code/utool
     fi
 
@@ -61,11 +61,11 @@ simple_setup_auto(){
     if [ ! -d ~/code/ubelt ]; then
         git clone http://github.com/Erotemic/ubelt.git ~/code/ubelt
     fi
-    if [ "$(have_python_module ubelt)" == "False" ]; then
+    if [ "$(has_pymodule ubelt)" == "False" ]; then
         pip install -e ~/code/ubelt
     fi
 
-    git clone git@github.com:Erotemic/networkx.git ~/code/networkx
+    git clone http://github.com/Erotemic/networkx.git ~/code/networkx
     pip install -e ~/code/networkx
 
     python ~/local/init/init_ipython_config.py
@@ -140,10 +140,17 @@ have_sudo(){
 }
 
 
-have_python_module(){
-    python -c "$(codeblock "
+has_pymodule(){
+    if [ "$2" ]; then
+        PYEXE="$1"
+        PYMOD="$2"
+    else
+        PYEXE=python
+        PYMOD="$1"
+    fi
+    $PYEXE -c "$(codeblock "
         try:
-            import $1
+            import $PYMOD
             print(True)
         except ImportError:
             print(False)
@@ -469,40 +476,31 @@ freshtart_ubuntu_script()
     python ~/local/init/init_ipython_config.py
 }
 
-
-
-setup_venv2(){
-    # ENSURE SYSTEM PIP IS SAME AS SYSTEM PYTHON
-    # sudo update-alternatives --set pip /usr/local/bin/pip2.7
-    # sudo rm /usr/local/bin/pip
-    # sudo ln -s /usr/local/bin/pip2.7 /usr/local/bin/pip
-    if [ "$(which pip2)" == "" ]; then
-        sudo apt-get install curl -y
-        sudo curl https://bootstrap.pypa.io/get-pip.py | sudo python2
+ensure_curl(){
+    HAVE_SUDO=$(have_sudo)
+    if [ "$(which curl)" == "" ]; then
+        echo "Need to install curl"
+        if [ "$HAVE_SUDO" == "True" ]; then
+            sudo apt-get install curl -y
+        else
+            echo "Cannot install curl without sudo"
+        fi
     fi
-    sudo pip2 install pip setuptools virtualenv -U
-    export PYTHON2_VENV="$HOME/venv2"
-    mkdir $PYTHON2_VENV
-    python2 -m virtualenv -p /usr/bin/python2.7 $PYTHON2_VENV 
-    #python2 -m virtualenv --relocatable $PYTHON2_VENV 
-}
-
-setup_venv37(){
-    # Make sure you install 3.7 to ~/.local from source
-    export PYTHON3_VENV="$HOME/venv3_7"
-    mkdir -p $PYTHON3_VENV
-    ~/.local/bin/python3 -m venv $PYTHON3_VENV
-    ln -s $PYTHON3_VENV ~/venv3 
-
 }
 
 setup_venv3(){
+    "
+    CommandLine:
+        source ~/local/init/freshstart_ubuntu.sh && setup_venv3
+    "
     # Ensure PIP, setuptools, and virtual are on the SYSTEM
-    if [ "$(which pip3)" == "" ]; then
-        sudo apt-get install curl -y
-        sudo curl https://bootstrap.pypa.io/get-pip.py | sudo python3
+    if [ "$(has_pymodule python3 pip)" == "False" ]; then
+    #if [ "$(which pip3)" == "" ]; then
+        ensure_curl
+        curl https://bootstrap.pypa.io/get-pip.py > ~/tmp/get-pip.py
+        python3 ~/tmp/get-pip.py --user
     fi
-    sudo pip3 install pip setuptools virtualenv -U
+    python3 -m pip install pip setuptools virtualenv -U --user
 
     export PYTHON3_VENV="$HOME/venv3"
     mkdir -p $PYTHON3_VENV
@@ -514,7 +512,44 @@ setup_venv3(){
     #pip3 --version
     # should be for 3.x
 }
+
+
+setup_venv2(){
+    "
+    CommandLine:
+        source ~/local/init/freshstart_ubuntu.sh && setup_venv2
+    "
+    # ENSURE SYSTEM PIP IS SAME AS SYSTEM PYTHON
+    # sudo update-alternatives --set pip /usr/local/bin/pip2.7
+    # sudo rm /usr/local/bin/pip
+    # sudo ln -s /usr/local/bin/pip2.7 /usr/local/bin/pip
+    echo "setup venv2"
+
+    if [ "$(has_pymodule python2 pip)" == "False" ]; then
+    #if [ "$(which pip2)" == "" ]; then
+        ensure_curl
+        curl https://bootstrap.pypa.io/get-pip.py > ~/tmp/get-pip.py
+        python2 ~/tmp/get-pip.py --user
+    fi
+    python2 -m pip install pip setuptools virtualenv -U --user
+    export PYTHON2_VENV="$HOME/venv2"
+    mkdir $PYTHON2_VENV
+    python2 -m virtualenv -p /usr/bin/python2.7 $PYTHON2_VENV 
+    #python2 -m virtualenv --relocatable $PYTHON2_VENV 
+}
+
+setup_venv37(){
+    echo "setup venv37"
+    # Make sure you install 3.7 to ~/.local from source
+    export PYTHON3_VENV="$HOME/venv3_7"
+    mkdir -p $PYTHON3_VENV
+    ~/.local/bin/python3 -m venv $PYTHON3_VENV
+    ln -s $PYTHON3_VENV ~/venv3 
+
+}
+
 setupt_venvpypy(){
+    echo "setup venvpypy"
 
     export PYPY_VENV="$HOME/venvpypy"
     mkdir -p $PYPY_VENV
@@ -847,6 +882,14 @@ setup_development_environment(){
     #python -c "import PyQt4"
     # TODO: install from source this is weird it doesnt work
     # sudo apt-get autoremove
+    
+    pip install bs4
+    ./
+    
+
+    if [ "$(which cmake)" == "" ]; then
+        python ~/local/build_scripts/init_cmake_latest.py
+    fi
 }
 
 
@@ -859,79 +902,6 @@ local_apt(){
     # Cant get this to work
     dpkg -i $PKG_DEB --force-not-root --root=$HOME 
     #--------
-}
-
-
-setup_venv2(){
-    echo "setup venv2"
-    # ENSURE SYSTEM PIP IS SAME AS SYSTEM PYTHON
-    # sudo update-alternatives --set pip /usr/local/bin/pip2.7
-    # sudo rm /usr/local/bin/pip
-    # sudo ln -s /usr/local/bin/pip2.7 /usr/local/bin/pip
-    if [ "$(which pip2)" == "" ]; then
-        ensure_curl
-        curl https://bootstrap.pypa.io/get-pip.py > ~/tmp/get-pip.py
-        python2 ~/tmp/get-pip.py --user
-    fi
-    python2 -m pip install pip setuptools virtualenv -U --user
-    export PYTHON2_VENV="$HOME/venv2"
-    mkdir $PYTHON2_VENV
-    python2 -m virtualenv -p /usr/bin/python2.7 $PYTHON2_VENV 
-    #python2 -m virtualenv --relocatable $PYTHON2_VENV 
-}
-
-setup_venv37(){
-    echo "setup venv37"
-    # Make sure you install 3.7 to ~/.local from source
-    export PYTHON3_VENV="$HOME/venv3_7"
-    mkdir -p $PYTHON3_VENV
-    ~/.local/bin/python3 -m venv $PYTHON3_VENV
-    ln -s $PYTHON3_VENV ~/venv3 
-
-}
-
-
-ensure_curl(){
-    HAVE_SUDO=$(have_sudo)
-    if [ "$(which curl)" == "" ]; then
-        echo "Need to install curl"
-        if [ "$HAVE_SUDO" == "True" ]; then
-            sudo apt-get install curl -y
-        else
-            echo "Cannot install curl without sudo"
-        fi
-    fi
-}
-
-setup_venv3(){
-    # Ensure PIP, setuptools, and virtual are on the SYSTEM
-    echo "setup venv3"
-    if [ "$(which pip3)" == "" ]; then
-        ensure_curl
-        curl https://bootstrap.pypa.io/get-pip.py > ~/tmp/get-pip.py
-        python3 ~/tmp/get-pip.py --user
-    fi
-    python3 -m pip install pip setuptools virtualenv -U --user
-
-    export PYTHON3_VENV="$HOME/venv3"
-    mkdir -p $PYTHON3_VENV
-    python3 -m virtualenv -p /usr/bin/python3 $PYTHON3_VENV
-    python3 -m virtualenv --relocatable $PYTHON3_VENV 
-    # source $PYTHON3_VENV/bin/activate
-
-    # Now ensure the correct pip is installed locally
-    #pip3 --version
-    # should be for 3.x
-}
-setupt_venvpypy(){
-    echo "setup venvpypy"
-
-    export PYPY_VENV="$HOME/venvpypy"
-    mkdir -p $PYPY_VENV
-    virtualenv-3.4 -p /usr/bin/pypy $PYPY_VENV 
-
-    pypy -m ensurepip
-    sudo apt-get install pypy-pip
 }
 
 install_chrome()
@@ -981,20 +951,6 @@ install_fonts()
     rm ~/.cache/matplotlib/fontList*
 }
 
-virtualbox_ubuntu_init()
-{
-    sudo apt-get install dkms 
-    sudo apt-get update
-    sudo apt-get upgrade
-    # Press Ctrl+D to automatically install virtualbox addons do this
-    sudo apt-get install virtualbox-guest-additions-iso
-    sudo apt-get install dkms build-essential linux-headers-generic
-    sudo apt-get install build-essential linux-headers-$(uname -r)
-    sudo apt-get install virtualbox-ose-guest-x11
-    # setup virtualbox for ssh
-    VBoxManage modifyvm virtual-ubuntu --natpf1 "ssh,tcp,,3022,,22"
-}
-
 customize_sudoers()
 { 
     # References: http://askubuntu.com/questions/147241/execute-sudo-without-password
@@ -1012,21 +968,6 @@ customize_sudoers()
 } 
 
 
-nopassword_on_sudo()
-{ 
-    # CAREFUL. THIS IS HUGE SECURITY RISK
-    # References: http://askubuntu.com/questions/147241/execute-sudo-without-password
-    sudo cat /etc/sudoers > ~/tmp/sudoers.next  
-    echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >> ~/tmp/sudoers.next  
-    # Copy over the new sudoers file
-    visudo -c -f ~/tmp/sudoers.next
-    if [ "$?" -eq "0" ]; then
-        sudo cp ~/tmp/sudoers.next /etc/sudoers
-    fi 
-    rm ~/tmp/sudoers.next
-} 
-
- 
 gnome_settings()
 {
     # NOTE: mouse scroll wheel behavior was fixed by unplugging and replugging
@@ -1110,51 +1051,4 @@ nautilus_settings()
 
     #http://askubuntu.com/questions/411430/open-the-parent-folder-of-a-symbolic-link-via-right-click
     mkdir -p ~/.gnome2/nautilus-scripts
-}
-
-setup_ibeis()
-{
-    mkdir -p ~/code
-    cd ~/code
-    if [ ! -f ~/ibeis ]; then
-        git clone https://github.com/Erotemic/ibeis.git
-    fi
-    cd ~/code/ibeis
-    git pull
-    git checkout next
-    ./_scripts/bootstrap.py
-    ./_scripts/__install_prereqs__.sh
-    ./super_setup.py --build --develop
-    ./super_setup.py --checkout next
-    ./super_setup.py --build --develop
-
-    # Options
-    ./_scripts/bootstrap.py --no-syspkg --nosudo
-
-    cd 
-    export IBEIS_WORK_DIR="$(python -c 'import ibeis; print(ibeis.get_workdir())')"
-    echo $IBEIS_WORK_DIR
-    ln -s $IBEIS_WORK_DIR  work
-}
-
-
-setup_development_environment(){
-    "
-    CommandLine:
-        source ~/local/init/freshstart_ubuntu.sh && setup_development_environment
-
-    "
-
-    ensure_config_symlinks
-    
-    pip install bs4
-    ./
-    
-
-    if [ "$(which cmake)" == "" ]; then
-        python ~/local/build_scripts/init_cmake_latest.py
-    fi
-
-    # setup_ssh_server
-
 }

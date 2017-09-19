@@ -184,3 +184,24 @@ export LD_LIBRARY_PATH=$(pathvar_clean LD_LIBRARY_PATH)
 #workon_py2
 #workon_pypy
 #deactivate_venv
+
+
+if [ "$USER" == "jon.crall" ] || [ "$USER" == "joncrall" ] ; then
+    IS_JONCRALL=True
+else
+    IS_JONCRALL=False
+fi
+
+
+#IS_JONCRALL=True
+#if [ $IS_JONCRALL = True ]; then 
+#    echo "foo"
+#else
+#    echo "bar"
+#fi
+#IS_JONCRALL=False
+#if [ $IS_JONCRALL = True ]; then 
+#    echo "foo"
+#else
+#    echo "bar"
+#fi
