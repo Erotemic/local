@@ -1,3 +1,68 @@
+simple_setup_manual()
+{
+    sudo apt-get install git -y
+    # If local does not exist
+    if [ ! -f ~/local ]; then
+        git clone https://github.com/Erotemic/local.git
+        cd local/init 
+    fi
+
+    source ~/local/init/freshstart_ubuntu.sh && simple_setup_auto
+}
+
+simple_setup_auto(){
+    "
+    Does setup on machines without root access
+    "
+    mkdir -p ~/tmp
+    mkdir -p ~/code
+    cd ~
+    ensure_config_symlinks
+
+    source ~/.bashrc
+
+    git config --global user.name joncrall
+    #git config --global user.email crallj@rpi.edu
+    git config --global user.email jon.crall@kitware.com
+    git config --global push.default current
+
+    git config --global core.editor "vim"
+    git config --global rerere.enabled true
+    git config core.fileMode false
+    git config --global alias.co checkout
+
+    setup_venv3
+    source ~/venv3/bin/activate
+
+    pip install setuptools --upgrade
+    pip install six
+    pip install jedi
+    pip install ipython
+    pip install pep8 autopep8 flake8 pylint line_profiler
+
+    mkdir -p ~/local/vim/vimfiles/bundle
+    source ~/local/vim/init_vim.sh
+    echo "source ~/local/vim/portable_vimrc" > ~/.vimrc
+    python ~/local/init/ensure_vim_plugins.py
+
+    # Install utool
+    if [ ! -d ~/code/utool ]; then
+        git clone -b next http://github.com/Erotemic/utool.git ~/code/utool
+        pip install -e ~/code/utool
+    fi
+
+    if [ ! -d ~/code/ubelt ]; then
+        git clone http://github.com/Erotemic/ubelt.git ~/code/ubelt
+        pip install -e ~/code/ubelt
+    fi
+
+    git clone git@github.com:Erotemic/networkx.git ~/code/networkx
+    pip install -e ~/code/networkx
+
+    python ~/local/init/init_ipython_config.py
+
+}
+
 entry_prereq_git_and_local()
 {
     # This is usually done manually
@@ -37,6 +102,20 @@ entry_prereq_git_and_local()
 }
 
 
+codeblock()
+{
+    # Usage:
+    # 
+    # >>> echo "$(codeblock "
+    # ...     a long
+    # ...     multiline string.
+    # ...     this is the last line that will be considered.
+    # ...     ")"
+    # 
+    # Prevents python indentation errors in bash
+    python -c "from textwrap import dedent; print(dedent('''$1''').strip('\n'))"
+}
+
 ensure_config_symlinks()
 {
     "
@@ -44,9 +123,22 @@ ensure_config_symlinks()
         source ~/local/init/freshstart_ubuntu.sh && ensure_config_symlinks
 
     "
+
+     HAVE_SUDO=$(python -c "$(codeblock "
+         import grp, pwd 
+         user = '$(whoami)'
+         groups = [g.gr_name for g in grp.getgrall() if user in g.gr_mem]
+         gid = pwd.getpwnam(user).pw_gid
+         groups.append(grp.getgrgid(gid).gr_name)
+         print('sudo' in groups)
+     ")")
+     echo "HAVE_SUDO = $HAVE_SUDO"
+
     if [ "$(which symlinks)" == "" ]; then
         # Program to remove dead symlinks
-        sudo apt-get install symlinks -y
+        if [ "$HAVE_SUDO" == "True" ]; then 
+            sudo apt-get install symlinks -y
+        fi
         if [ "$(which symlinks)" == "" ]; then
             # bypass symlinks
             alias symlinks=echo "bypass symlinks not installed"
