@@ -116,6 +116,18 @@ codeblock()
     python -c "from textwrap import dedent; print(dedent('''$1''').strip('\n'))"
 }
 
+have_sudo(){
+    HAVE_SUDO=$(python -c "$(codeblock "
+        import grp, pwd 
+        user = '$(whoami)'
+        groups = [g.gr_name for g in grp.getgrall() if user in g.gr_mem]
+        gid = pwd.getpwnam(user).pw_gid
+        groups.append(grp.getgrgid(gid).gr_name)
+        print('sudo' in groups)
+    ")")
+    echo "HAVE_SUDO = $HAVE_SUDO"
+}
+
 ensure_config_symlinks()
 {
     "
@@ -124,15 +136,7 @@ ensure_config_symlinks()
 
     "
 
-     HAVE_SUDO=$(python -c "$(codeblock "
-         import grp, pwd 
-         user = '$(whoami)'
-         groups = [g.gr_name for g in grp.getgrall() if user in g.gr_mem]
-         gid = pwd.getpwnam(user).pw_gid
-         groups.append(grp.getgrgid(gid).gr_name)
-         print('sudo' in groups)
-     ")")
-     echo "HAVE_SUDO = $HAVE_SUDO"
+    HAVE_SUDO=$(have_sudo)
 
     if [ "$(which symlinks)" == "" ]; then
         # Program to remove dead symlinks
@@ -837,15 +841,17 @@ local_apt(){
 
 
 setup_venv2(){
+    echo "setup venv2"
     # ENSURE SYSTEM PIP IS SAME AS SYSTEM PYTHON
     # sudo update-alternatives --set pip /usr/local/bin/pip2.7
     # sudo rm /usr/local/bin/pip
     # sudo ln -s /usr/local/bin/pip2.7 /usr/local/bin/pip
     if [ "$(which pip2)" == "" ]; then
-        sudo apt-get install curl -y
-        sudo curl https://bootstrap.pypa.io/get-pip.py | sudo python2
+        ensure_curl
+        curl https://bootstrap.pypa.io/get-pip.py > ~/tmp/get-pip.py
+        python2 ~/tmp/get-pip.py --user
     fi
-    sudo pip2 install pip setuptools virtualenv -U
+    python2 -m pip install pip setuptools virtualenv -U --user
     export PYTHON2_VENV="$HOME/venv2"
     mkdir $PYTHON2_VENV
     python2 -m virtualenv -p /usr/bin/python2.7 $PYTHON2_VENV 
@@ -853,6 +859,7 @@ setup_venv2(){
 }
 
 setup_venv37(){
+    echo "setup venv37"
     # Make sure you install 3.7 to ~/.local from source
     export PYTHON3_VENV="$HOME/venv3_7"
     mkdir -p $PYTHON3_VENV
@@ -861,13 +868,28 @@ setup_venv37(){
 
 }
 
+
+ensure_curl(){
+    HAVE_SUDO=$(have_sudo)
+    if [ "$(which curl)" == "" ]; then
+        echo "Need to install curl"
+        if [ "$HAVE_SUDO" == "True" ]; then
+            sudo apt-get install curl -y
+        else
+            echo "Cannot install curl without sudo"
+        fi
+    fi
+}
+
 setup_venv3(){
     # Ensure PIP, setuptools, and virtual are on the SYSTEM
+    echo "setup venv3"
     if [ "$(which pip3)" == "" ]; then
-        sudo apt-get install curl -y
-        sudo curl https://bootstrap.pypa.io/get-pip.py | sudo python3
+        ensure_curl
+        curl https://bootstrap.pypa.io/get-pip.py > ~/tmp/get-pip.py
+        python3 ~/tmp/get-pip.py --user
     fi
-    sudo pip3 install pip setuptools virtualenv -U
+    python3 -m pip install pip setuptools virtualenv -U --user
 
     export PYTHON3_VENV="$HOME/venv3"
     mkdir -p $PYTHON3_VENV
@@ -880,6 +902,7 @@ setup_venv3(){
     # should be for 3.x
 }
 setupt_venvpypy(){
+    echo "setup venvpypy"
 
     export PYPY_VENV="$HOME/venvpypy"
     mkdir -p $PYPY_VENV
