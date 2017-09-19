@@ -133,7 +133,7 @@ have_sudo(){
         gid = pwd.getpwnam(user).pw_gid
         groups.append(grp.getgrgid(gid).gr_name)
         print('sudo' in groups)
-    ")
+    ")"
 }
 
 
