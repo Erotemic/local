@@ -11,6 +11,81 @@ init_cuda_with_deb_pkg(){
 }
 
 
+init_local_cuda(){
+    # Download the correct version packages from nvidia
+    # https://developer.nvidia.com/cuda-downloads
+
+    # Sync between machines
+    rsync -avp ~/cuda-archive/ jon.crall@arisia.kitware.com:cuda-archive
+    rsync -avp ~/cuda-archive/ jon.crall@aretha.kitware.com:cuda-archive
+
+    CUDA_INSTALL=$(python -c "$(codeblock "
+    from os.path import join, exists, expanduser
+
+    # SET TO CURRENT VERSION YOU WANT
+    cuda = '8.0'
+    osname = 'linux'
+    type = 'run'
+
+    # (cuda_version, os, installer-type)
+    ver = {}
+    ver[('8.0', 'linux', 'run')] = 'cudnn-8.0-linux-x64-v7.tgz'
+
+    fname = ver[(cuda, osname, type)]
+    fpath = join(expanduser('~/cuda-archive'), fname)
+    assert exists(fpath)
+    print(fpath)
+    ")")
+}
+
+
+init_local_cudnn(){
+    # Download the correct version packages from nvidia
+    # https://developer.nvidia.com/rdp/cudnn-download
+
+    # Sync between machines
+    rsync -avp ~/cuda-archive/ jon.crall@arisia.kitware.com:cuda-archive
+    rsync -avp ~/cuda-archive/ jon.crall@aretha.kitware.com:cuda-archive
+
+    CUDNN_TGZ=$(python -c "$(codeblock "
+    from os.path import join, exists, expanduser
+
+    # SET TO CURRENT VERSION YOU WANT
+    cuda = '8.0'
+    cudnn = '7.0'
+    osname = 'linux'
+
+    # (cuda_version, cudnn_version, os)
+    ver = {}
+    ver[('8.0', '7.0', 'linux')] = 'cudnn-8.0-linux-x64-v7.tgz'
+    ver[('9.0', '7.0', 'linux')] = 'cudnn-9.0-linux-x64-v7.tgz'
+
+    fname = ver[(cuda, cudnn, osname)]
+    fpath = join(expanduser('~/cuda-archive'), fname)
+    assert exists(fpath)
+    print(fpath)
+    ")")
+    echo "CUDNN_TGZ = $CUDNN_TGZ"
+
+    mkdir -p ~/.local
+    # Navigate to <cudnnpath> and unzip cudnn
+    CUDNNPATH="$HOME/tmp"
+    cd $CUDNNPATH
+    tar -xzvf $CUDNN_TGZ
+
+    # Then copy the files into your cudadir
+    CUDADIR=$HOME/.local/cuda
+    mkdir -p $CUDADIR
+    mkdir -p $CUDADIR/include
+    mkdir -p $CUDADIR/lib64
+    cp cuda/include/cudnn.h $CUDADIR/include
+    cp cuda/lib64/libcudnn* $CUDADIR/lib64
+    chmod a+r $CUDADIR/include/cudnn.h
+
+
+}
+
+
 init_cudnn(){
     # Download the DEB packages from nvidia
     # https://developer.nvidia.com/rdp/cudnn-download
