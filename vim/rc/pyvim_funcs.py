@@ -876,9 +876,11 @@ def vim_grep(pat, mode='normal', hashid=None):
     if hashid is None:
         hashid = ut.hash_data(pat)
     print('Grepping for pattern = %r' % (pat,))
+    import os
 
-    if mode == 'normal':
-        grep_tup = ut.grep([pat], verbose=False)
+    def _grep_dpath(dpath):
+        grep_tup = ut.grep([pat], dpath_list=[dpath],
+                           exclude_patterns=['*.pyc'], verbose=False)
         reflags = 0
         (found_fpath_list, found_lines_list, found_lxs_list) = grep_tup
         regex_list = [pat]
@@ -888,14 +890,22 @@ def vim_grep(pat, mode='normal', hashid=None):
         grep_result = ut.GrepResult(found_fpath_list, found_lines_list,
                                     found_lxs_list, extended_regex_list,
                                     reflags=reflags)
-        import os
         text = '\n'.join([
-            'Greping Directory "{}"'.format(os.getcwd()),
+            'Greping Directory "{}"'.format(dpath),
             'tofind_list={}'.format(ut.repr2(extended_regex_list)),
             grep_result.make_resultstr(colored=False),
             '=============',
             'found_fpath_list = {}'.format(ut.repr2(found_fpath_list, nl=1))
         ])
+        return text
+
+    if mode == 'normal':
+        text = _grep_dpath(os.getcwd())
+    elif mode == 'repo':
+        for path in ut.ancestor_paths(limit={'~/code', '~'}):
+            if exists(join(path, '.git')):
+                break
+        text = _grep_dpath(path)
     elif mode == 'project':
         msg_list = ut.grep_projects([pat], verbose=False, colored=False)
         text = '\n'.join(msg_list)
@@ -977,13 +987,8 @@ def find_and_open_path(path, mode='split', verbose=0):
     candidates = []
     if not os.path.isabs(path):
         limit = {'~', os.path.expanduser('~')}
-        prev = None
-        curr = os.getcwd()
-        while curr != prev and prev not in limit:
-            candidates.append(curr)
-            #limit
-            prev = curr
-            curr = os.path.split(curr)[0]
+        start = os.getcwd()
+        candidates += list(ut.ancestor_paths(start, limit=limit))
     candidates += os.environ['PATH'].split(os.sep)
     result = ut.search_candidate_paths(candidates, [path], verbose=verbose)
     if result is not None:

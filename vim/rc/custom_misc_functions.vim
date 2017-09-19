@@ -392,7 +392,7 @@ pyvim_funcs.vim_grep(pat, mode='project')
 
 EOF
 endfunc
-command! -nargs=1 GrepProject call FUNC_GrepProject(<f-args>)<CR>
+command! -nargs=1 GrepProject call FUNC_GrepProject(<f-args>)
 
 
 func! FUNC_Grep(...) 
@@ -407,7 +407,22 @@ pyvim_funcs.vim_grep(pat, mode='normal')
 
 EOF
 endfunc
-command! -nargs=1 Grep call FUNC_Grep(<f-args>)<CR>
+command! -nargs=1 Grep call FUNC_Grep(<f-args>)
+
+
+func! FUNC_GrepRepo(...) 
+Python2or3 << EOF
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+
+argv = pyvim_funcs.vim_argv(defaults=[None])
+pat = argv[0]
+#pat, mode = argv
+pyvim_funcs.vim_grep(pat, mode='repo')
+
+EOF
+endfunc
+command! -nargs=1 GrepRepo call FUNC_GrepRepo(<f-args>)
 
 
 func! PyFormatParagraph() range
