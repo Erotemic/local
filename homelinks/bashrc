@@ -58,9 +58,9 @@ export PKG_CONFIG_PATH=~/.local/lib/pkgconfig:$PKG_CONFIG_PATH
 
 export PATH=$PATH:~/scripts
 
-#if [ -d "$HOME/.local" ]; then
-#    export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$HOME/.local
-#fi
+if [ -d "$HOME/.local" ]; then
+    export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$HOME/.local
+fi
 
 
 # Add user CUDA/CUDNN to the library paths if it exists
@@ -69,10 +69,10 @@ if [ -d "$HOME/.local/cuda" ]; then
     export CPATH=$HOME/.local/cuda/include:$CPATH
     export LD_LIBRARY_PATH=$HOME/.local/cuda/lib64:$LD_LIBRARY_PATH
 
-    #export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$HOME/.local/cuda
-    #if [ -f "$HOME/.local/cuda/lib64/libcudnn.so" ]; then
-    #    export CUDNN_LIBRARIES=$HOME/.local/cuda/lib64/libcudnn.so
-    #fi
+    export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$HOME/.local/cuda
+    if [ -f "$HOME/.local/cuda/lib64/libcudnn.so" ]; then
+        export CUDNN_LIBRARIES=$HOME/.local/cuda/lib64/libcudnn.so
+    fi
 fi
 
 

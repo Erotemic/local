@@ -47,6 +47,14 @@ init_local_cudnn(){
     rsync -avp ~/cuda-archive/ arisia:cuda-archive
     rsync -avp ~/cuda-archive/ aretha:cuda-archive
 
+    # check for user cuda
+    ls ~/.local/cuda/lib64/libcudnn*
+    ls ~/.local/cuda/include/cudnn*
+    # check for system cuda
+    ls /usr/local/cuda/lib64/libcudnn*
+    ls /usr/local/cuda/lib64/
+    ls /usr/local/cuda/include/cudnn*
+
     python -c "$(codeblock "
         from os.path import join, exists, expanduser, splitext, relpath
         import ubelt as ub
