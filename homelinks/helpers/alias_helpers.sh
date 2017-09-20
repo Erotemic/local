@@ -350,6 +350,22 @@ tcp()
     cp $1 ../flann/$1
 }
 
+
+print_all_pathvars()
+{
+    python -c "$(codeblock "
+    import os
+    vars = ['PATH', 'LD_LIBRARY_PATH', 'CPATH', 'CMAKE_PREFIX_PATH']
+    for v in vars:
+        print('------')
+        print(v)
+        value = os.environ.get(v, '')
+        plist = [p for p in value.split(os.pathsep) if p]
+        print('    ' + (os.linesep + '    ').join(plist))
+        print('------')
+    ")"
+}
+
 pathvar_print(){
 # pathvar_print LD_LIBRARY_PATH
 # pathvar_print PATH
@@ -357,11 +373,11 @@ _VAR=$1
 python -c "
 if __name__ == '__main__':
     import os
-    pathvar = os.environ['$_VAR'].split(os.pathsep)
+    pathvar = [p for p in os.environ['$_VAR'].split(os.pathsep) if p]
     print('\n'.join(pathvar))
 "
 }
-complete -W "PATH LD_LIBRARY_PATH" "pathvar_print"
+complete -W "PATH LD_LIBRARY_PATH CPATH CMAKE_PREFIX_PATH" "pathvar_print"
 
 
 pathvar_clean()
@@ -382,7 +398,7 @@ if __name__ == '__main__':
     print(os.pathsep.join(fixed))
 "
 }
-complete -W "PATH LD_LIBRARY_PATH" "pathvar_clean"
+complete -W "PATH LD_LIBRARY_PATH CPATH CMAKE_PREFIX_PATH" "pathvar_clean"
 
 pathvar_remove()
 {
@@ -400,7 +416,7 @@ if __name__ == '__main__':
     print(os.pathsep.join(newpathvar))
 "
 }
-complete -W "PATH LD_LIBRARY_PATH" "pathvar_remove"
+complete -W "PATH LD_LIBRARY_PATH CPATH CMAKE_PREFIX_PATH" "pathvar_remove"
 
 
 
@@ -565,4 +581,18 @@ codeblock()
 untilfail()
 {
     while $@; do :; done
+}
+
+
+
+#export OMP_NUM_THREADS=7
+ 
+permit_erotemic_gitrepo()
+{ 
+    #permit_gitrepo -i
+    sed -i 's/https:\/\/github.com\/Erotemic/git@github.com:Erotemic/' .git/config
+    sed -i 's/https:\/\/github.com\/WildbookOrg/git@github.com:WildbookOrg/' .git/config
+    #sed -i 's/https:\/\/github.com\/bluemellophone/git@github.com:bluemellophone/' .git/config
+    #sed -i 's/https:\/\/github.com\/zmjjmz/git@github.com:zmjjmz/' .git/config
+    #sed -i 's/https:\/\/github.com\//git@github.com:' .git/config
 }

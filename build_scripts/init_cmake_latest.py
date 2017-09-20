@@ -1,42 +1,55 @@
 # Download latest by parsing webpage
 import os
-from os.path import join
+from os.path import join, splitext, basename
 import glob
 import requests
 
-html = requests.get(r'https://cmake.org/download/').content
-page_str = html.decode('utf8')
 
-# from six.moves import urllib  #NOQA
-# headers = { 'User-Agent' : 'Mozilla/5.0' }
-# req = urllib2.Request(r'https://cmake.org/download/', None, headers)
-# page = urllib2.urlopen(req)
-# import utool as ut
+def get_latest_cmake_url():
+    html = requests.get(r'https://cmake.org/download/').content
+    page_str = html.decode('utf8')
 
-# https://cmake.org/files/v3.9/cmake-3.9.0-Linux-x86_64.tar.gz
+    # from six.moves import urllib  #NOQA
+    # headers = { 'User-Agent' : 'Mozilla/5.0' }
+    # req = urllib2.Request(r'https://cmake.org/download/', None, headers)
+    # page = urllib2.urlopen(req)
+    # import utool as ut
 
-next = False
-lines = page_str.split('\n')
-for index, x in enumerate(lines):
-    if next:
-        print(x)
-        if 'Linux' not in x:
-            next = False
-            continue
-        import parse
-        url_suffix = parse.parse('{foo}href="{href}"{other}', x)['href']
-        url = r'https://cmake.org' + url_suffix
-        print('url_suffix = {!r}'.format(url_suffix))
-        print('url.replace = {!r}'.format(url.replace))
-        break
-    if '<td>Linux x86_64</td>' in x:
-        print('x = {!r}'.format(x))
-        print('NEXT')
-        next = True
-url = url.replace('.sh', '.tar.gz')
+    # https://cmake.org/files/v3.9/cmake-3.9.0-Linux-x86_64.tar.gz
 
-install_prefix = os.path.expanduser('~')
-tmpdir = join(install_prefix, 'tmp')
+    next = False
+    lines = page_str.split('\n')
+    for index, x in enumerate(lines):
+        if next:
+            print(x)
+            if 'Linux' not in x:
+                next = False
+                continue
+            import parse
+            url_suffix = parse.parse('{foo}href="{href}"{other}', x)['href']
+            url = r'https://cmake.org' + url_suffix
+            print('url_suffix = {!r}'.format(url_suffix))
+            print('url.replace = {!r}'.format(url.replace))
+            break
+        if '<td>Linux x86_64</td>' in x:
+            print('x = {!r}'.format(x))
+            print('NEXT')
+            next = True
+    url = url.replace('.sh', '.tar.gz')
+    return url
+
+# url_override = 'https://cmake.org/files/v3.8/cmake-3.8.2-Linux-x86_64.tar.gz'
+url_override = None
+if url_override is not None:
+    url = url_override
+else:
+    url = get_latest_cmake_url()
+
+dname = splitext(basename(url))[0].replace('.tar', '')
+
+install_prefix = join(os.path.expanduser('~'), '.local')
+tmpdir = join(os.path.expanduser('~'), 'tmp', 'cmake', dname)
+os.makedirs(install_prefix, exist_ok=True)
 os.makedirs(tmpdir, exist_ok=True)
 os.chdir(tmpdir)
 
