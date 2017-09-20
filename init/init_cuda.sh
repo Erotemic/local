@@ -27,9 +27,9 @@ init_local_cuda(){
     osname = 'linux'
     type = 'run'
 
-    # (cuda_version, os, installer-type)
+    # (cuda_version, os, installer-type) = (run, patch)
     ver = {}
-    ver[('8.0', 'linux', 'run')] = 'cudnn-8.0-linux-x64-v7.tgz'
+    ver[('8.0', 'linux', 'run')] = ('cuda_8.0.61_375.26_linux.run', cuda_8.0.61.2_linux.run)
 
     fname = ver[(cuda, osname, type)]
     fpath = join(expanduser('~/cuda-archive'), fname)
@@ -44,43 +44,75 @@ init_local_cudnn(){
     # https://developer.nvidia.com/rdp/cudnn-download
 
     # Sync between machines
-    rsync -avp ~/cuda-archive/ jon.crall@arisia.kitware.com:cuda-archive
-    rsync -avp ~/cuda-archive/ jon.crall@aretha.kitware.com:cuda-archive
+    rsync -avp ~/cuda-archive/ arisia:cuda-archive
+    rsync -avp ~/cuda-archive/ aretha:cuda-archive
 
-    CUDNN_TGZ=$(python -c "$(codeblock "
-    from os.path import join, exists, expanduser
+    python -c "$(codeblock "
+        from os.path import join, exists, expanduser, splitext, relpath
+        import ubelt as ub
 
-    # SET TO CURRENT VERSION YOU WANT
-    cuda = '8.0'
-    cudnn = '7.0'
-    osname = 'linux'
+        # SET TO CURRENT VERSION YOU WANT
+        cuda = '8.0'
+        cudnn = '6.0'
+        osname = 'linux'
 
-    # (cuda_version, cudnn_version, os)
-    ver = {}
-    ver[('8.0', '7.0', 'linux')] = 'cudnn-8.0-linux-x64-v7.tgz'
-    ver[('9.0', '7.0', 'linux')] = 'cudnn-9.0-linux-x64-v7.tgz'
+        # (cuda_version, cudnn_version, os)
+        ver = {}
+        ver[('9.0', '7.0', 'linux')] = 'cudnn-9.0-linux-x64-v7.tgz'
+        ver[('8.0', '7.0', 'linux')] = 'cudnn-8.0-linux-x64-v7.tgz'
+        ver[('8.0', '6.0', 'linux')] = 'cudnn-8.0-linux-x64-v6.0.tgz'
+        ver[('8.0', '5.1', 'linux')] = 'cudnn-8.0-linux-x64-v5.1.tgz'
 
-    fname = ver[(cuda, cudnn, osname)]
-    fpath = join(expanduser('~/cuda-archive'), fname)
-    assert exists(fpath)
-    print(fpath)
-    ")")
-    echo "CUDNN_TGZ = $CUDNN_TGZ"
+        print('Unpacking cudnn {} for cuda {} on {}'.format(cudnn, cuda, osname))
 
-    mkdir -p ~/.local
-    # Navigate to <cudnnpath> and unzip cudnn
-    CUDNNPATH="$HOME/tmp"
-    cd $CUDNNPATH
-    tar -xzvf $CUDNN_TGZ
+        home = expanduser('~')
+        cudnn_tgz_fname = ver[(cuda, cudnn, osname)]
+        cudnn_tgz_fpath = join(home, 'cuda-archive', cudnn_tgz_fname)
+        assert exists(cudnn_tgz_fpath)
 
-    # Then copy the files into your cudadir
-    CUDADIR=$HOME/.local/cuda
-    mkdir -p $CUDADIR
-    mkdir -p $CUDADIR/include
-    mkdir -p $CUDADIR/lib64
-    cp cuda/include/cudnn.h $CUDADIR/include
-    cp cuda/lib64/libcudnn* $CUDADIR/lib64
-    chmod a+r $CUDADIR/include/cudnn.h
+        suffix = splitext(cudnn_tgz_fname)[0].replace('cudnn-', '')
+
+        # Navigate to <cudnnpath> and unzip cudnn
+        cudnn_dir = ub.ensuredir(((home, 'tmp', 'cudnn', suffix)))
+        import os
+        os.chdir(cudnn_dir)
+        ub.cmd('tar -xzvf ' + cudnn_tgz_fpath, verbose=2)
+
+        # Then copy the files into your cudadir
+        install_prefix = ub.ensuredir((home, '.local'))
+        cuda_dpath = ub.ensuredir((install_prefix, 'cuda'))
+        include_dpath = ub.ensuredir((cuda_dpath, 'include'))
+        lib_dpath = ub.ensuredir((cuda_dpath, 'lib64'))
+
+        import shutil
+        import glob
+
+        srcdir = join(cudnn_dir, 'cuda')
+        dstdir = join(install_prefix, 'cuda')
+
+        print('Removing old CUDNN')
+        iters = [
+            glob.iglob(dstdir + '/lib64/libcudnn.so*'),
+            glob.iglob(dstdir + '/lib64/libcudnn_static.a*'),
+            glob.iglob(dstdir + '/include/cudnn.h'),
+        ]
+        import itertools as it
+        for path in it.chain.from_iterable(iters):
+            ub.delete(path, verbose=True)
+
+        print('Install new CUDNN')
+        for src in glob.iglob(srcdir + '/*/*', recursive=True):
+            name = relpath(src, srcdir)
+            dst = join(dstdir, name)
+            print('copying {} -> {}'.format(src, dst))
+            shutil.copy(src, dst)
+
+        src = join(cudnn_dir, 'cuda', 'include')
+
+        ub.cmd('chmod a+r ' + dstdir + '/include/cudnn.h', verbose=2)
+        ")"
+
+        tree /home/joncrall/.local/cuda/
 }
 
 
