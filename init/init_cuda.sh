@@ -39,29 +39,22 @@ init_local_cuda(){
 }
 
 
-init_local_cudnn(){
-    # Download the correct version packages from nvidia
-    # https://developer.nvidia.com/rdp/cudnn-download
-
-    # Sync between machines
-    rsync -avp ~/cuda-archive/ arisia:cuda-archive
-    rsync -avp ~/cuda-archive/ aretha:cuda-archive
-
-    # check for user cuda
-    ls ~/.local/cuda/lib64/libcudnn*
-    ls ~/.local/cuda/include/cudnn*
-    # check for system cuda
-    ls /usr/local/cuda/lib64/libcudnn*
-    ls /usr/local/cuda/lib64/
-    ls /usr/local/cuda/include/cudnn*
-
+change_cudnn_version(){
+    "
+        source ~/local/init/init_cuda.sh
+        change_cudnn_version 7.0
+        change_cudnn_version 6.0
+        change_cudnn_version 5.1
+    "
     python -c "$(codeblock "
         from os.path import join, exists, expanduser, splitext, relpath
         import ubelt as ub
 
         # SET TO CURRENT VERSION YOU WANT
         cuda = '8.0'
-        cudnn = '6.0'
+        #cudnn = '6.0'
+        #cudnn = '7.0'
+        cudnn = '$1'
         osname = 'linux'
 
         # (cuda_version, cudnn_version, os)
@@ -119,8 +112,28 @@ init_local_cudnn(){
 
         ub.cmd('chmod a+r ' + dstdir + '/include/cudnn.h', verbose=2)
         ")"
+}
 
-        tree /home/joncrall/.local/cuda/
+
+init_local_cudnn(){
+    # Download the correct version packages from nvidia
+    # https://developer.nvidia.com/rdp/cudnn-download
+
+    # Sync between machines
+    rsync -avp ~/cuda-archive/ arisia:cuda-archive
+    rsync -avp ~/cuda-archive/ aretha:cuda-archive
+
+    # check for user cuda
+    ls ~/.local/cuda/lib64/libcudnn*
+    ls ~/.local/cuda/include/cudnn*
+    # check for system cuda
+    ls /usr/local/cuda/lib64/libcudnn*
+    ls /usr/local/cuda/lib64/
+    ls /usr/local/cuda/include/cudnn*
+
+    change_cudnn_version 6.0
+
+    tree /home/joncrall/.local/cuda/
 }
 
 
@@ -188,28 +201,33 @@ oldcudastuff(){
     export LD_LIBRARY_PATH=/usr/local/cuda-6.0/lib64:$LD_LIBRARY_PATH
 }
 
-#==========================
 
-# Download
-cd ~/tmp
-http://developer.download.nvidia.com/compute/cuda/6_5/rel/installers/cuda_6.5.14_linux_64.run
-chmod +x cuda_*
-#wget http://developer.download.nvidia.com/compute/cuda/4_2/rel/toolkit/cudatoolkit_4.2.9_linux_64_ubuntu11.04.run
-#wget http://developer.download.nvidia.com/compute/cuda/4_2/rel/sdk/gpucomputingsdk_4.2.9_linux.run
+main_cuda(){
 
-# Install 
-cd ~/Downloads
-chmod +x cudatoolkit_4.2.9_linux_*
-sudo ./cudatoolkit_4.2.9_linux_*
+    #==========================
 
-export PATH=$PATH:/opt/cuda/bin
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cuda/lib:/opt/cuda/lib64
-echo 'export PATH=$PATH:/opt/cuda/bin' >> ~/.bash_profile
-echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cuda/lib:/opt/cuda/lib64' >> ~/.bash_profile
+    # Download
+    cd ~/tmp
+    http://developer.download.nvidia.com/compute/cuda/6_5/rel/installers/cuda_6.5.14_linux_64.run
+    chmod +x cuda_*
+    #wget http://developer.download.nvidia.com/compute/cuda/4_2/rel/toolkit/cudatoolkit_4.2.9_linux_64_ubuntu11.04.run
+    #wget http://developer.download.nvidia.com/compute/cuda/4_2/rel/sdk/gpucomputingsdk_4.2.9_linux.run
 
-# compile
-cd ~/NVIDIA_GPU_Computing_SDK/C
-LINKFLAGS=-L/usr/lib/nvidia-current/ make cuda-install=/opt/cuda
+    # Install 
+    cd ~/Downloads
+    chmod +x cudatoolkit_4.2.9_linux_*
+    sudo ./cudatoolkit_4.2.9_linux_*
+
+    export PATH=$PATH:/opt/cuda/bin
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cuda/lib:/opt/cuda/lib64
+    echo 'export PATH=$PATH:/opt/cuda/bin' >> ~/.bash_profile
+    echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cuda/lib:/opt/cuda/lib64' >> ~/.bash_profile
+
+    # compile
+    cd ~/NVIDIA_GPU_Computing_SDK/C
+    LINKFLAGS=-L/usr/lib/nvidia-current/ make cuda-install=/opt/cuda
+
+}
 
 
 test()

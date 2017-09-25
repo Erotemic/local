@@ -339,9 +339,20 @@ freshtart_ubuntu_script()
     #sudo apt-get install terminator -y
 
     if [ "$(which terminator)" == "" ]; then
-        sudo add-apt-repository ppa:gnome-terminator
+        # Dont use buggy gtk2 version 
+        # https://bugs.launchpad.net/ubuntu/+source/terminator/+bug/1568132
+
+        #sudo add-apt-repository ppa:gnome-terminator
+        #sudo apt-get update
+        #sudo apt-get install terminator -y
+        cat /etc/apt/sources.list
+        sudo apt remove terminator
+        sudo add-apt-repository --remove ppa:gnome-terminator
+        
+
+        sudo add-apt-repository ppa:gnome-terminator/nightly-gtk3
         sudo apt-get update
-        sudo apt-get install terminator -y
+        
     fi
 
     # Development Environment
