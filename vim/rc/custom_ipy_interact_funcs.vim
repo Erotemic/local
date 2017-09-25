@@ -63,9 +63,17 @@ def _context_func(file=None):
         dprint('copied text to clipboard')
 
     # Build xdtool script
+    import re
+    # Make sure regexes are bash escaped
+    terminal_pattern = r'\|'.join([
+        re.escape('terminator.Terminator'),  # gtk3 terminator
+        re.escape('x-terminal-emulator.X-terminal-emulator'),  # gtk2 terminator
+    ])
+
     doscript = [
         ('remember_window_id', 'ACTIVE_GVIM'),
-        ('focus', 'x-terminal-emulator.X-terminal-emulator'),
+        #('focus', 'x-terminal-emulator.X-terminal-emulator'),
+        ('focus', terminal_pattern),
         ('key', 'ctrl+shift+v'),
         ('key', 'KP_Enter'),
     ]
