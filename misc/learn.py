@@ -5,6 +5,62 @@ Script that lets me play with things I'm learning
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 
+def can_cc_change_mid_iter():
+    """
+    The connected components can change durring iteration.
+
+    This means when a decision is made that changes the state of the graph, the
+    current iterable may no longer be valid. For example, if we are trying to
+    find potential negative redundancies, and we loop over all combinations of
+    non-neg-redundant PCCs, if we ever decide that two of these PCCs are in
+    fact the same, then then candidate edges generated in the future may be
+    within the same PCC.
+
+    To make this concrete say we have PCCs: 1, 2, and 3.
+    We iterate over all combinations of these PCCs.
+
+        >>> pccs = [1, 2, 3]
+        >>> for cc1, cc2 in it.combinations(pccs, 2):
+        ...     print('compare PCCs {} and {}'.format(cc1, cc2))
+        compare PCCs 1 and 2
+        compare PCCs 1 and 3
+        compare PCCs 2 and 3
+
+    If we decide that an edge between PCC 1 and 2 is positive, and an edge
+    between PCC 1 and 3 is positive then they the entire graph will be merged
+    into the same PCC. However, when we next compare 2 and 3 the "negative
+    redundant" suggestion will have to be within the same PCC.
+
+    Currently the code assumes that the PCCs we test for negative redundancy
+    will be disjoint. This iteration pattern violates this assumption.
+
+    However, iterators are how we achieve a fair amount of efficiency in the
+    code. Alternative strategires are to:
+        1. Restart neg-redundancy finding whenever we add a positive edge.
+        2. Precompute all the edges we will suggest before we allow the user to
+           make a decision, then the assumptions made wont be violated, but the
+           reviewer will end up reviewing edges within a PCC in negative
+           redundancy mode. Also, the amount of precomputation is enormous.
+        3. Compute neg-redundancy in chunks
+
+    Therefore, we need to modify code to not assume that the pccs we will tests
+    for neg-redun will be disjoint.
+
+
+    """
+    import networkx as nx
+    g = nx.Graph()
+    g.add_nodes_from([1, 2, 3, 4, 5])
+
+    for cc in nx.connected_components(g):
+        print('cc = {!r}'.format(cc))
+
+    for cc in nx.connected_components(g):
+        g.add_edge(1, 5)
+        g.add_edge(2, 5)
+        print('cc = {!r}'.format(cc))
+
+
 def orient_bbox():
     import sympy as sym
     sin, cos = sym.sin, sym.cos
