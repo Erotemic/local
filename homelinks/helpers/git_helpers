@@ -47,21 +47,31 @@ gg-short-status()
 
 alias ggss=gg-short-status
 
+git_sync()
+{
+    REMOTE=$1
+    RELPWD=$(python -c "import os; print(os.path.relpath('$(pwd)', os.path.expanduser('~')))")
+
+    # Safe version
+    gcwip && ssh $REMOTE "cd $RELPWD && git pull"
+
+    # Fast, but unsafe version
+    #gcwip& 
+    #ssh $REMOTE "cd $RELPWD && git pull"
+}
+alias git-sync='git_sync'
+complete -W "arisia aretha lev hyrule" "git_sync"
+complete -W "arisia aretha lev hyrule" "git-sync"
+
 
 git_lev_sync()
 {
-    # Safe version
-     gcwip ; ssh lev "cd $(pwd) && git pull"
-    
-    # Fast, but unsafe version
-    #gcwip& 
-    #ssh lev "cd $(pwd) && git pull"
+    git_sync lev
 }
 
 git_hyrule_sync()
 {
-    # Safe version
-     gcwip ; ssh hyrule "cd $(pwd) && git pull"
+    git_sync hyrule
 }
 
 git_remote_sync()

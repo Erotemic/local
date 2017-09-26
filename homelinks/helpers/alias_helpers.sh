@@ -10,7 +10,7 @@ alias ls='ls --color --human-readable --group-directories-first --hide="*.pyc" -
 alias pygrep='grep -r --include "*.py"'
 alias clean_python='find . -iname *.pyc -delete & find . -iname *.pyo -delete'
 
-alias cgrep='grep --exclude-dir "*build*" --exclude-dir .git -ER'
+alias cgrep='grep -I --exclude-dir "*build*" --exclude-dir .git -ER'
 
 fzfind()
 {
@@ -107,6 +107,7 @@ alias vi='cd $CODE_DIR/VIAME/'
 alias vib='cd $CODE_DIR/VIAME/build'
 alias vikw='cd $CODE_DIR/VIAME/packages/kwiver/'
 alias sp='cd $CODE_DIR/VIAME/packages/kwiver/sprokit'
+alias sseg='cd ~/sseg'
 alias vikwb='cd $CODE_DIR/VIAME/build/build/src/kwiver-build/'
 alias vikwi='cd /home/joncrall/code/VIAME/build/install/lib/python2.7/site-packages'
 alias vicam='cd $CODE_DIR/VIAME/plugins/camtrawl/python'
@@ -350,6 +351,22 @@ tcp()
     cp $1 ../flann/$1
 }
 
+
+print_all_pathvars()
+{
+    python -c "$(codeblock "
+    import os
+    vars = ['PATH', 'LD_LIBRARY_PATH', 'CPATH', 'CMAKE_PREFIX_PATH']
+    for v in vars:
+        print('------')
+        print(v)
+        value = os.environ.get(v, '')
+        plist = [p for p in value.split(os.pathsep) if p]
+        print('    ' + (os.linesep + '    ').join(plist))
+        print('------')
+    ")"
+}
+
 pathvar_print(){
 # pathvar_print LD_LIBRARY_PATH
 # pathvar_print PATH
@@ -357,11 +374,11 @@ _VAR=$1
 python -c "
 if __name__ == '__main__':
     import os
-    pathvar = os.environ['$_VAR'].split(os.pathsep)
+    pathvar = [p for p in os.environ['$_VAR'].split(os.pathsep) if p]
     print('\n'.join(pathvar))
 "
 }
-complete -W "PATH LD_LIBRARY_PATH" "pathvar_print"
+complete -W "PATH LD_LIBRARY_PATH CPATH CMAKE_PREFIX_PATH" "pathvar_print"
 
 
 pathvar_clean()
@@ -372,7 +389,7 @@ _VAR=$1
 python -c "
 if __name__ == '__main__':
     import os
-    parts = os.environ['$_VAR'].split(os.pathsep)
+    parts = os.environ.get('$_VAR', '').split(os.pathsep)
     seen = set([])
     fixed = []
     for p in parts:
@@ -382,7 +399,7 @@ if __name__ == '__main__':
     print(os.pathsep.join(fixed))
 "
 }
-complete -W "PATH LD_LIBRARY_PATH" "pathvar_clean"
+complete -W "PATH LD_LIBRARY_PATH CPATH CMAKE_PREFIX_PATH" "pathvar_clean"
 
 pathvar_remove()
 {
@@ -400,7 +417,7 @@ if __name__ == '__main__':
     print(os.pathsep.join(newpathvar))
 "
 }
-complete -W "PATH LD_LIBRARY_PATH" "pathvar_remove"
+complete -W "PATH LD_LIBRARY_PATH CPATH CMAKE_PREFIX_PATH" "pathvar_remove"
 
 
 
@@ -565,4 +582,18 @@ codeblock()
 untilfail()
 {
     while $@; do :; done
+}
+
+
+
+#export OMP_NUM_THREADS=7
+ 
+permit_erotemic_gitrepo()
+{ 
+    #permit_gitrepo -i
+    sed -i 's/https:\/\/github.com\/Erotemic/git@github.com:Erotemic/' .git/config
+    sed -i 's/https:\/\/github.com\/WildbookOrg/git@github.com:WildbookOrg/' .git/config
+    #sed -i 's/https:\/\/github.com\/bluemellophone/git@github.com:bluemellophone/' .git/config
+    #sed -i 's/https:\/\/github.com\/zmjjmz/git@github.com:zmjjmz/' .git/config
+    #sed -i 's/https:\/\/github.com\//git@github.com:' .git/config
 }

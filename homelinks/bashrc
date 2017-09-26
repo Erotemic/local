@@ -2,9 +2,9 @@
 
 # DEBUG WHERE SOMETHING CAME FROM
 #set -x
-if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
-    source /etc/profile.d/vte.sh
-fi
+#if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
+#    source /etc/profile.d/vte.sh
+#fi
 
 export QT_ACCESSIBILITY=0
 export QT_API=pyqt
@@ -32,18 +32,65 @@ export QT_API=pyqt
 #export CC=/usr/bin/clang-4.0
 #export CXX=/usr/bin/clang++-4.0
 
+############
+# Pre BASHRC
+############
+# Undo weird basic settings (This lets us be confident in the output of this script)
+export LD_LIBRARY_PATH=""
+export CPATH=""
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
 
-export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig:$PKG_CONFIG_PATH
+#echo "PATH = $PATH"
+#echo "CPATH = $CPATH"
+#echo "LD_LIBRARY_PATH = $LD_LIBRARY_PATH"
 
-export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
-export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+
+############
+# USER LEVEL (takes top priority)
+############
+
 export PATH=~/bin:$PATH
 
-#export PKG_CONFIG_PATH=~/.local/lib/pkgconfig:$PKG_CONFIG_PATH
-#export LD_LIBRARY_PATH=~/.local/lib:$LD_LIBRARY_PATH
-#export PATH=~/.local/bin:$PATH
+export PATH=~/.local/bin:$PATH
+export LD_LIBRARY_PATH=~/.local/lib:$LD_LIBRARY_PATH
+export PKG_CONFIG_PATH=~/.local/lib/pkgconfig:$PKG_CONFIG_PATH
+
 
 export PATH=$PATH:~/scripts
+
+if [ -d "$HOME/.local" ]; then
+    export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$HOME/.local
+fi
+
+
+# Add user CUDA/CUDNN to the library paths if it exists
+if [ -d "$HOME/.local/cuda" ]; then
+    # Prepend to get around weird system ld_library_paths
+    export CPATH=$HOME/.local/cuda/include:$CPATH
+    export LD_LIBRARY_PATH=$HOME/.local/cuda/lib64:$LD_LIBRARY_PATH
+
+    export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$HOME/.local/cuda
+    if [ -f "$HOME/.local/cuda/lib64/libcudnn.so" ]; then
+        export CUDNN_LIBRARIES=$HOME/.local/cuda/lib64/libcudnn.so
+    fi
+fi
+
+
+##############
+# System Level (priorty after user)
+##############
+
+
+export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig:$PKG_CONFIG_PATH
+export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:
+
+if [ -d "/usr/local/cuda" ]; then
+    #export PATH=$PATH:/usr/local/cuda/bin
+    export CPATH=$CPATH:/usr/local/cuda/include
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64
+    #export LIBRARY_PATH=/usr/local/cuda/lib64
+fi
 
 
 # My standard environment variables
@@ -68,25 +115,11 @@ source ~/local/homelinks/helpers/alias_helpers.sh
 source ~/local/init/utils.sh
 
 
-
-#export OMP_NUM_THREADS=7
- 
-permit_erotemic_gitrepo()
-{ 
-    #permit_gitrepo -i
-    sed -i 's/https:\/\/github.com\/Erotemic/git@github.com:Erotemic/' .git/config
-    sed -i 's/https:\/\/github.com\/WildbookOrg/git@github.com:WildbookOrg/' .git/config
-    #sed -i 's/https:\/\/github.com\/bluemellophone/git@github.com:bluemellophone/' .git/config
-    #sed -i 's/https:\/\/github.com\/zmjjmz/git@github.com:zmjjmz/' .git/config
-    #sed -i 's/https:\/\/github.com\//git@github.com:' .git/config
-}
-
-
 # set history to not ignore leading whitespace
 export HISTCONTROL=
 
 # If IBM CPLEX is installed
-export CPLEX_PREFIX=/opt/ibm/ILOG/CPLEX_Studio_Community1263
+CPLEX_PREFIX=/opt/ibm/ILOG/CPLEX_Studio_Community1263
 if [ -d "$CPLEX_PREFIX" ]; then
     export PATH=$PATH:$CPLEX_PREFIX/cplex/bin/x86-64_linux/
     export PATH=$PATH:$CPLEX_PREFIX/opl/oplide/
@@ -98,20 +131,8 @@ if [ -d "$CPLEX_PREFIX" ]; then
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/cplex/bin/x86-64_linux/
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/opl/bin/x86-64_linux
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/opl/lib/x86-64_linux/static_pic
-fi
-
-
-# Add CUDA to the library paths if it exists
-if [ -d "/usr/local/cuda" ]; then
-    # Use the symlinked version if available
-    export PATH=$PATH:/usr/local/cuda/bin
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64
-
-    export LIBRARY_PATH=/usr/local/cuda/lib64
-elif [ -d "/usr/local/cuda" ]; then
-    # Use an explicit version if available
-    export PATH=$PATH:/usr/local/cuda7.5/bin
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda7.5/lib64
+else:
+    CPLEX_PREFIX=""
 fi
 
 # Other program environment variables
@@ -124,9 +145,9 @@ if [[ "$HOSTNAME" == "hyrule"  ]]; then
     #export TOMCAT_HOME=$TOMCAT_DIR
     #export CATALINA_HOME=$TOMCAT_DIR
     export TEXLIVE_BIN=$(echo /usr/local/texlive/*/bin/x86_64-linux)
-elif [[ "$HOSTNAME" == "dozer"  ]]; then 
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-6.5/lib64:/usr/local/lib
-    export PATH=$PATH:/usr/local/cuda-6.5/bin
+#elif [[ "$HOSTNAME" == "dozer"  ]]; then 
+#    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-6.5/lib64:/usr/local/lib
+#    export PATH=$PATH:/usr/local/cuda-6.5/bin
 elif [[ "$HOSTNAME" == "Ooo"  ]]; then 
     export THEANO_FLAGS="device=cpu"
     export TEXLIVE_BIN=$(echo /usr/local/texlive/*/bin/x86_64-linux)
@@ -154,6 +175,8 @@ complete -W "gp focus kill project_dpaths sync_clipboard_to grepnr printproc_2 s
 
 export PATH=$(pathvar_clean PATH)
 export LD_LIBRARY_PATH=$(pathvar_clean LD_LIBRARY_PATH)
+export CMAKE_PREFIX_PATH=$(pathvar_clean CMAKE_PREFIX_PATH)
+export CPATH=$(pathvar_clean CPATH)
 
 
 # https://unix.stackexchange.com/questions/813/how-to-determine-where-an-environment-variable-came-from 
@@ -179,8 +202,38 @@ fi
 # Clean paths again before workon stuff happens
 export PATH=$(pathvar_clean PATH)
 export LD_LIBRARY_PATH=$(pathvar_clean LD_LIBRARY_PATH)
+export CMAKE_PREFIX_PATH=$(pathvar_clean CMAKE_PREFIX_PATH)
+export CPATH=$(pathvar_clean CPATH)
+
+
+DEBUG_BASHRC=0
+
+if [ "$DEBUG_BASHRC" == "True" ]; then
+    print_all_pathvars
+fi
 
 #env
 #workon_py2
 #workon_pypy
 #deactivate_venv
+
+
+if [ "$USER" == "jon.crall" ] || [ "$USER" == "joncrall" ] ; then
+    IS_JONCRALL=True
+else
+    IS_JONCRALL=False
+fi
+
+
+#IS_JONCRALL=True
+#if [ $IS_JONCRALL = True ]; then 
+#    echo "foo"
+#else
+#    echo "bar"
+#fi
+#IS_JONCRALL=False
+#if [ $IS_JONCRALL = True ]; then 
+#    echo "foo"
+#else
+#    echo "bar"
+#fi

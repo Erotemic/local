@@ -11,6 +11,132 @@ init_cuda_with_deb_pkg(){
 }
 
 
+init_local_cuda(){
+    # Download the correct version packages from nvidia
+    # https://developer.nvidia.com/cuda-downloads
+
+    # Sync between machines
+    rsync -avp ~/cuda-archive/ jon.crall@arisia.kitware.com:cuda-archive
+    rsync -avp ~/cuda-archive/ jon.crall@aretha.kitware.com:cuda-archive
+
+    CUDA_INSTALL=$(python -c "$(codeblock "
+    from os.path import join, exists, expanduser
+
+    # SET TO CURRENT VERSION YOU WANT
+    cuda = '8.0'
+    osname = 'linux'
+    type = 'run'
+
+    # (cuda_version, os, installer-type) = (run, patch)
+    ver = {}
+    ver[('8.0', 'linux', 'run')] = ('cuda_8.0.61_375.26_linux.run', cuda_8.0.61.2_linux.run)
+
+    fname = ver[(cuda, osname, type)]
+    fpath = join(expanduser('~/cuda-archive'), fname)
+    assert exists(fpath)
+    print(fpath)
+    ")")
+}
+
+
+change_cudnn_version(){
+    "
+        source ~/local/init/init_cuda.sh
+        change_cudnn_version 7.0
+        change_cudnn_version 6.0
+        change_cudnn_version 5.1
+    "
+    python -c "$(codeblock "
+        from os.path import join, exists, expanduser, splitext, relpath
+        import ubelt as ub
+
+        # SET TO CURRENT VERSION YOU WANT
+        cuda = '8.0'
+        #cudnn = '6.0'
+        #cudnn = '7.0'
+        cudnn = '$1'
+        osname = 'linux'
+
+        # (cuda_version, cudnn_version, os)
+        ver = {}
+        ver[('9.0', '7.0', 'linux')] = 'cudnn-9.0-linux-x64-v7.tgz'
+        ver[('8.0', '7.0', 'linux')] = 'cudnn-8.0-linux-x64-v7.tgz'
+        ver[('8.0', '6.0', 'linux')] = 'cudnn-8.0-linux-x64-v6.0.tgz'
+        ver[('8.0', '5.1', 'linux')] = 'cudnn-8.0-linux-x64-v5.1.tgz'
+
+        print('Unpacking cudnn {} for cuda {} on {}'.format(cudnn, cuda, osname))
+
+        home = expanduser('~')
+        cudnn_tgz_fname = ver[(cuda, cudnn, osname)]
+        cudnn_tgz_fpath = join(home, 'cuda-archive', cudnn_tgz_fname)
+        assert exists(cudnn_tgz_fpath)
+
+        suffix = splitext(cudnn_tgz_fname)[0].replace('cudnn-', '')
+
+        # Navigate to <cudnnpath> and unzip cudnn
+        cudnn_dir = ub.ensuredir(((home, 'tmp', 'cudnn', suffix)))
+        import os
+        os.chdir(cudnn_dir)
+        ub.cmd('tar -xzvf ' + cudnn_tgz_fpath, verbose=2)
+
+        # Then copy the files into your cudadir
+        install_prefix = ub.ensuredir((home, '.local'))
+        cuda_dpath = ub.ensuredir((install_prefix, 'cuda'))
+        include_dpath = ub.ensuredir((cuda_dpath, 'include'))
+        lib_dpath = ub.ensuredir((cuda_dpath, 'lib64'))
+
+        import shutil
+        import glob
+
+        srcdir = join(cudnn_dir, 'cuda')
+        dstdir = join(install_prefix, 'cuda')
+
+        print('Removing old CUDNN')
+        iters = [
+            glob.iglob(dstdir + '/lib64/libcudnn.so*'),
+            glob.iglob(dstdir + '/lib64/libcudnn_static.a*'),
+            glob.iglob(dstdir + '/include/cudnn.h'),
+        ]
+        import itertools as it
+        for path in it.chain.from_iterable(iters):
+            ub.delete(path, verbose=True)
+
+        print('Install new CUDNN')
+        for src in glob.iglob(srcdir + '/*/*', recursive=True):
+            name = relpath(src, srcdir)
+            dst = join(dstdir, name)
+            print('copying {} -> {}'.format(src, dst))
+            shutil.copy(src, dst)
+
+        src = join(cudnn_dir, 'cuda', 'include')
+
+        ub.cmd('chmod a+r ' + dstdir + '/include/cudnn.h', verbose=2)
+        ")"
+}
+
+
+init_local_cudnn(){
+    # Download the correct version packages from nvidia
+    # https://developer.nvidia.com/rdp/cudnn-download
+
+    # Sync between machines
+    rsync -avp ~/cuda-archive/ arisia:cuda-archive
+    rsync -avp ~/cuda-archive/ aretha:cuda-archive
+
+    # check for user cuda
+    ls ~/.local/cuda/lib64/libcudnn*
+    ls ~/.local/cuda/include/cudnn*
+    # check for system cuda
+    ls /usr/local/cuda/lib64/libcudnn*
+    ls /usr/local/cuda/lib64/
+    ls /usr/local/cuda/include/cudnn*
+
+    change_cudnn_version 6.0
+
+    tree /home/joncrall/.local/cuda/
+}
+
+
 init_cudnn(){
     # Download the DEB packages from nvidia
     # https://developer.nvidia.com/rdp/cudnn-download
@@ -75,28 +201,33 @@ oldcudastuff(){
     export LD_LIBRARY_PATH=/usr/local/cuda-6.0/lib64:$LD_LIBRARY_PATH
 }
 
-#==========================
 
-# Download
-cd ~/tmp
-http://developer.download.nvidia.com/compute/cuda/6_5/rel/installers/cuda_6.5.14_linux_64.run
-chmod +x cuda_*
-#wget http://developer.download.nvidia.com/compute/cuda/4_2/rel/toolkit/cudatoolkit_4.2.9_linux_64_ubuntu11.04.run
-#wget http://developer.download.nvidia.com/compute/cuda/4_2/rel/sdk/gpucomputingsdk_4.2.9_linux.run
+main_cuda(){
 
-# Install 
-cd ~/Downloads
-chmod +x cudatoolkit_4.2.9_linux_*
-sudo ./cudatoolkit_4.2.9_linux_*
+    #==========================
 
-export PATH=$PATH:/opt/cuda/bin
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cuda/lib:/opt/cuda/lib64
-echo 'export PATH=$PATH:/opt/cuda/bin' >> ~/.bash_profile
-echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cuda/lib:/opt/cuda/lib64' >> ~/.bash_profile
+    # Download
+    cd ~/tmp
+    http://developer.download.nvidia.com/compute/cuda/6_5/rel/installers/cuda_6.5.14_linux_64.run
+    chmod +x cuda_*
+    #wget http://developer.download.nvidia.com/compute/cuda/4_2/rel/toolkit/cudatoolkit_4.2.9_linux_64_ubuntu11.04.run
+    #wget http://developer.download.nvidia.com/compute/cuda/4_2/rel/sdk/gpucomputingsdk_4.2.9_linux.run
 
-# compile
-cd ~/NVIDIA_GPU_Computing_SDK/C
-LINKFLAGS=-L/usr/lib/nvidia-current/ make cuda-install=/opt/cuda
+    # Install 
+    cd ~/Downloads
+    chmod +x cudatoolkit_4.2.9_linux_*
+    sudo ./cudatoolkit_4.2.9_linux_*
+
+    export PATH=$PATH:/opt/cuda/bin
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cuda/lib:/opt/cuda/lib64
+    echo 'export PATH=$PATH:/opt/cuda/bin' >> ~/.bash_profile
+    echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cuda/lib:/opt/cuda/lib64' >> ~/.bash_profile
+
+    # compile
+    cd ~/NVIDIA_GPU_Computing_SDK/C
+    LINKFLAGS=-L/usr/lib/nvidia-current/ make cuda-install=/opt/cuda
+
+}
 
 
 test()

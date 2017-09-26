@@ -310,13 +310,14 @@ call QUICKOPEN_leader_tvio('Z', '~/code/ibeis/ibeis/algo/hots/neighbor_index.py'
 call QUICKOPEN_leader_tvio('l', '~/code/VIAME/plugins')
 "call QUICKOPEN_leader_tvio('s', '~/code/VIAME/packages/kwiver/sprokit')
 call QUICKOPEN_leader_tvio('v', '~/code/VIAME/packages/kwiver/vital')
-call QUICKOPEN_leader_tvio('a', '~/code/VIAME/packages/kwiver/arrows')
+"call QUICKOPEN_leader_tvio('a', '~/code/VIAME/packages/kwiver/arrows')
 call QUICKOPEN_leader_tvio('k', '~/code/VIAME/packages/kwiver')
 call QUICKOPEN_leader_tvio('a', '~/code/VIAME/packages/')
 call QUICKOPEN_leader_tvio('c', '~/code/VIAME/plugins/camtrawl/python/camtrawl_processes.py')
 call QUICKOPEN_leader_tvio('8', '~/local/misc/kwiver_places.sh')
 call QUICKOPEN_leader_tvio('y', '~/local/misc/kwiver_places.sh')
 call QUICKOPEN_leader_tvio('x', '~/code/xdoctest/xdoctest/core.py')
+call QUICKOPEN_leader_tvio('a', '~/sseg')
 
 
 if has("win32") || has("win16")
