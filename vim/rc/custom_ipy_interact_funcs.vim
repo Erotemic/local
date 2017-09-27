@@ -12,9 +12,9 @@ import utool as ut
 ut.rrrr(0)
 ut.util_ubuntu.rrr(0)
 
-# Hack to determine mode
-mode = vim.eval('a:1')
-return_to_vim = vim.eval('a:2')
+argv = pyvim_funcs.vim_argv(defaults=['clipboard', '1'])
+mode = argv[0]
+return_to_vim = argv[1] != '0'
 
 DEBUG_STDOUT = False
 DEBUG_FILE = False
@@ -58,39 +58,41 @@ def _context_func(file=None):
         # Prepare to send text to xdotool
         dprint('preparing text')
         text = ut.unindent(text)
-        dprint('copying text to clipboard')
-        ut.copy_text_to_clipboard(text)
-        dprint('copied text to clipboard')
+        #dprint('copying text to clipboard')
+        #ut.copy_text_to_clipboard(text)
+        #dprint('copied text to clipboard')
 
-    # Build xdtool script
-    import re
-    # Make sure regexes are bash escaped
-    terminal_pattern = r'\|'.join([
-        'terminal',
-        re.escape('terminator.Terminator'),  # gtk3 terminator
-        re.escape('x-terminal-emulator.X-terminal-emulator'),  # gtk2 terminator
-    ])
+    pyvim_funcs.enter_text_in_terminal(text, return_to_vim=return_to_vim)
 
-    doscript = [
-        ('remember_window_id', 'ACTIVE_GVIM'),
-        #('focus', 'x-terminal-emulator.X-terminal-emulator'),
-        ('focus', terminal_pattern),
-        ('key', 'ctrl+shift+v'),
-        ('key', 'KP_Enter'),
-    ]
-    if '\n' in text:
-        # Press enter twice for multiline texts
-        doscript += [
-            ('key', 'KP_Enter'),
-        ]
-    if return_to_vim == "1":
-        doscript += [
-            ('focus_id', '$ACTIVE_GVIM'),
-        ]
-    # execute script
-    dprint('Running script')
-    ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01, file=file, verbose=DEBUG)
-    dprint('Finished script')
+    # # Build xdtool script
+    # import re
+    # # Make sure regexes are bash escaped
+    # terminal_pattern = r'\|'.join([
+    #     'terminal',
+    #     re.escape('terminator.Terminator'),  # gtk3 terminator
+    #     re.escape('x-terminal-emulator.X-terminal-emulator'),  # gtk2 terminator
+    # ])
+
+    # doscript = [
+    #     ('remember_window_id', 'ACTIVE_GVIM'),
+    #     #('focus', 'x-terminal-emulator.X-terminal-emulator'),
+    #     ('focus', terminal_pattern),
+    #     ('key', 'ctrl+shift+v'),
+    #     ('key', 'KP_Enter'),
+    # ]
+    # if '\n' in text:
+    #     # Press enter twice for multiline texts
+    #     doscript += [
+    #         ('key', 'KP_Enter'),
+    #     ]
+    # if return_to_vim == "1":
+    #     doscript += [
+    #         ('focus_id', '$ACTIVE_GVIM'),
+    #     ]
+    # # execute script
+    # dprint('Running script')
+    # ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01, file=file, verbose=DEBUG)
+    # dprint('Finished script')
 
 if DEBUG_STDOUT:
     from os.path import expanduser
@@ -126,7 +128,10 @@ if pyvim_funcs.is_module_pythonfile():
         needs_path = True
 
     if needs_path:
-        modname = splitext(basename(modpath))[0]
+        mod_subdirs = ut.get_module_subdir_list(modpath)
+        basepath = modpath
+        for _ in range(len(mod_subdirs)):
+            basepath = dirname(basepath)
         lines.append('import sys')
         lines.append('sys.path.append(%r)' % (dirname(modpath),))
 
@@ -149,24 +154,25 @@ if pyvim_funcs.is_module_pythonfile():
         print('ast parsing failed')
     # Prepare to send text to xdotool
     text = ut.unindent('\n'.join(lines))
-    ut.copy_text_to_clipboard(text)
-    # Build xdtool script
-    doscript = [
-        ('remember_window_id', 'ACTIVE_GVIM'),
-        ('focus', 'x-terminal-emulator.X-terminal-emulator'),
-        ('key', 'ctrl+shift+v'),
-        ('key', 'KP_Enter'),
-    ]
-    if '\n' in text:
-        # Press enter twice for multiline texts
-        doscript += [
-            ('key', 'KP_Enter'),
-        ]
-    if return_to_vim:
-        doscript += [
-            ('focus_id', '$ACTIVE_GVIM'),
-        ]
-    ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01)
+    pyvim_funcs.enter_text_in_terminal(text, return_to_vim=True)
+    # ut.copy_text_to_clipboard(text)
+    # # Build xdtool script
+    # doscript = [
+    #     ('remember_window_id', 'ACTIVE_GVIM'),
+    #     ('focus', 'x-terminal-emulator.X-terminal-emulator'),
+    #     ('key', 'ctrl+shift+v'),
+    #     ('key', 'KP_Enter'),
+    # ]
+    # if '\n' in text:
+    #     # Press enter twice for multiline texts
+    #     doscript += [
+    #         ('key', 'KP_Enter'),
+    #     ]
+    # if return_to_vim:
+    #     doscript += [
+    #         ('focus_id', '$ACTIVE_GVIM'),
+    #     ]
+    # ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01)
 else:
     print('current file is not a pythonfile')
 #L______________
@@ -182,15 +188,16 @@ import utool.util_ubuntu
 import utool as ut
 ut.rrrr(0)
 ut.util_ubuntu.rrr(0)
-ut.copy_text_to_clipboard('ut.fix_embed_globals()')
-doscript = [
-    ('remember_window_id', 'ACTIVE_GVIM'),
-    ('focus', 'x-terminal-emulator.X-terminal-emulator'),
-    ('key', 'ctrl+shift+v'),
-    ('key', 'KP_Enter'),
-    ('focus_id', '$ACTIVE_GVIM'),
-]
-ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01)
+pyvim_funcs.enter_text_in_terminal('ut.fix_embed_globals()')
+#ut.copy_text_to_clipboard('ut.fix_embed_globals()')
+#doscript = [
+#    ('remember_window_id', 'ACTIVE_GVIM'),
+#    ('focus', 'x-terminal-emulator.X-terminal-emulator'),
+#    ('key', 'ctrl+shift+v'),
+#    ('key', 'KP_Enter'),
+#    ('focus_id', '$ACTIVE_GVIM'),
+#]
+#ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01)
 #L______________
 EOF
 endfu 
@@ -203,6 +210,7 @@ import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool.util_ubuntu
 import utool as ut
-ut.util_ubuntu.XCtrl.do(('focus', 'x-terminal-emulator.X-terminal-emulator'))
+terminal_pattern = pyvim_funcs.wmctrl_terminal_pattern()
+ut.util_ubuntu.XCtrl.do(('focus', terminal_pattern))
 EOF
 endfu

@@ -153,7 +153,7 @@ def get_expr_at_cursor():
     buf = vim.current.buffer
     (row, col) = vim.current.window.cursor
     line = buf[row - 1]  # Original end of the file
-    nonword_chars = ' \t\n\r[](){}:;,"\'\\/='
+    nonword_chars = ' \t\n\r[](){}:;,"\'\\/=$'
     word = get_word_in_line_at_col(line, col, nonword_chars)
     return word
 
@@ -224,7 +224,7 @@ def get_word_at_cursor(url_ok=False):
 
 def get_word_in_line_at_col(line, col,
                             nonword_chars_left=' \t\n\r[](){}:;,"\'\\/',
-                            nonword_chars_right=' \t\n\r[](){}:;.,"\'\\/'):
+                            nonword_chars_right=None):
     r"""
     Args:
         line (?):
@@ -244,6 +244,8 @@ def get_word_in_line_at_col(line, col,
         >>> result = ('word = %r' % (word,))
         >>> print(result)
     """
+    if nonword_chars_right is None:
+        nonword_chars_right = nonword_chars_left
     lpos = col
     rpos = col
     while lpos > 0:
@@ -1023,6 +1025,76 @@ def find_and_open_path(path, mode='split', verbose=0):
 
         #vim.command('echoerr "Could not find path={}"'.format(path))
         print('Could not find path={}'.format(path))
+
+
+def getvar(key, default=None, context='g'):
+    """ gets the value of a vim variable and defaults if it does not exist """
+    import vim
+    varname = '{}:{}'.format(context, key)
+    var_exists = int(vim.eval('exists("{}")'.format(varname)))
+    if var_exists:
+        value = vim.eval('get({}:, "{}")'.format(context, key))
+    else:
+        value = default
+    return value
+
+
+def wmctrl_terminal_pattern():
+    # Make sure regexes are bash escaped
+    import re
+    terminal_pattern = getvar('vpy_terminal_pattern', default=None)
+    if terminal_pattern is None:
+        terminal_pattern = r'\|'.join([
+            'terminal',
+            re.escape('terminator.Terminator'),  # gtk3 terminator
+            re.escape('x-terminal-emulator.X-terminal-emulator'),  # gtk2 terminator
+        ])
+        return terminal_pattern
+
+
+def enter_text_in_terminal(text, return_to_vim=True):
+    """
+    Takes a block of text, copies it to the clipboard, pastes it into the most
+    recently used terminal, presses enter (if needed) to run what presumably is
+    a command or script, and then returns to vim.
+
+    TODO:
+        * User specified terminal pattern
+        * User specified paste keypress
+        * Allow usage from non-gui terminal vim.
+            (ensure we can detect if we are running in a terminal and
+             register our window as the active vim, and then paste into
+             the second mru terminal)
+    """
+    # Build xdtool script
+
+    terminal_pattern = wmctrl_terminal_pattern()
+
+    # Sequence of key presses that will trigger a paste event
+    paste_keypress = 'ctrl+shift+v'
+
+    import utool as ut
+    # Copy the text to the clipboard
+    ut.copy_text_to_clipboard(text)
+
+    doscript = [
+        ('remember_window_id', 'ACTIVE_GVIM'),
+        ('focus', terminal_pattern),
+        ('key', paste_keypress),
+        ('key', 'KP_Enter'),
+    ]
+    if '\n' in text:
+        # Press enter twice for multiline texts
+        doscript += [
+            ('key', 'KP_Enter'),
+        ]
+    if return_to_vim:
+        doscript += [
+            ('focus_id', '$ACTIVE_GVIM'),
+        ]
+    # execute script
+    ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01)
+    #file=debug_file , verbose=DEBUG)
 
 
 if __name__ == '__main__':
