@@ -66,6 +66,7 @@ def _context_func(file=None):
     import re
     # Make sure regexes are bash escaped
     terminal_pattern = r'\|'.join([
+        'terminal',
         re.escape('terminator.Terminator'),  # gtk3 terminator
         re.escape('x-terminal-emulator.X-terminal-emulator'),  # gtk2 terminator
     ])

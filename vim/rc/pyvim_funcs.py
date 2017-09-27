@@ -211,21 +211,24 @@ def get_word_at_cursor(url_ok=False):
     (row, col) = vim.current.window.cursor
     line = buf[row - 1]  # Original end of the file
     if url_ok:
-        nonword_chars = ' \t\n\r{},"\'\\'
+        nonword_chars_left = ' \t\n\r{},"\'\\'
+        nonword_chars_right = nonword_chars_left
     else:
-        nonword_chars = ' \t\n\r[](){}:;.,"\'\\/=*+'
-    word = get_word_in_line_at_col(line, col, nonword_chars)
+        nonword_chars_left  = ' \t\n\r[](){}:;,"\'\\/='
+        nonword_chars_right = ' \t\n\r[](){}:;,."\'\\/='
+    word = get_word_in_line_at_col(line, col,
+                                   nonword_chars_left=nonword_chars_left,
+                                   nonword_chars_right=nonword_chars_right)
     return word
 
 
-def get_word_in_line_at_col(line, col, nonword_chars=' \t\n\r[](){}:;.,"\'\\/'):
+def get_word_in_line_at_col(line, col,
+                            nonword_chars_left=' \t\n\r[](){}:;,"\'\\/',
+                            nonword_chars_right=' \t\n\r[](){}:;.,"\'\\/'):
     r"""
     Args:
         line (?):
         col (?):
-
-    Returns:
-        ndarray[uint8_t, ndim=1]: word -  aggregate descriptor cluster center
 
     CommandLine:
         python  ~/local/vim/rc/pyvim_funcs.py --test-get_word_in_line_at_col
@@ -244,12 +247,14 @@ def get_word_in_line_at_col(line, col, nonword_chars=' \t\n\r[](){}:;.,"\'\\/'):
     lpos = col
     rpos = col
     while lpos > 0:
-        if line[lpos] in nonword_chars:
+        # Expand to the left
+        if line[lpos] in nonword_chars_left:
             lpos += 1
             break
         lpos -= 1
     while rpos < len(line):
-        if line[rpos] in nonword_chars:
+        # Expand to the right
+        if line[rpos] in nonword_chars_right:
             break
         rpos += 1
     word = line[lpos:rpos]
