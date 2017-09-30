@@ -1048,6 +1048,14 @@ def wmctrl_terminal_pattern():
             'terminal',
             re.escape('terminator.Terminator'),  # gtk3 terminator
             re.escape('x-terminal-emulator.X-terminal-emulator'),  # gtk2 terminator
+            # other common terminal applications
+            'tilix',
+            'konsole',
+            'rxvt',
+            'terminology',
+            'xterm',
+            'tilda',
+            'Yakuake',
         ])
         return terminal_pattern
 
