@@ -245,6 +245,12 @@ install_core_extras()
     sshfs -o idmap=user ibeis-hackathon:/home/ubuntu ~/ami
     sshfs -o idmap=user lev:/ ~/lev
 
+    mkdir -p ~/aretha    
+    sshfs -o follow_symlinks,idmap=user aretha:/home/local/KHQ/jon.crall ~/aretha
+
+    # unmount
+    fusermount -u ~/aretha
+    
 
     # To allow to get the flash package from software center
     #http://askubuntu.com/questions/576562/apt-way-to-get-adobe-flash-player-latest-version-for-linux-not-working
