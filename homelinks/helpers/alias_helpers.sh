@@ -567,16 +567,28 @@ python -m utool.util_ubuntu XCtrl.move_window joncrall special2
 
 codeblock()
 {
-    # Usage:
-    # 
-    # >>> echo "$(codeblock "
-    # ...     a long
-    # ...     multiline string.
-    # ...     this is the last line that will be considered.
-    # ...     ")"
-    # 
-    # Prevents python indentation errors in bash
-    python -c "from textwrap import dedent; print(dedent('''$1''').strip('\n'))"
+    if [ "-h" == "$1" ] || [ "--help" == "$1" ]; then 
+        # Use codeblock to show the usage of codeblock, so you can use
+        # codeblock while you codeblock.
+        echo "$(codeblock '
+            Unindents code before its executed so you can maintain a pretty
+            indentation in your code file. Multiline strings simply begin  
+            with 
+                "$(codeblock "
+            and end with 
+                ")"
+
+            Example:
+                echo "$(codeblock "
+                    a long
+                    multiline string.
+                    this is the last line that will be considered.
+                    ")"
+        ')"
+    else
+        # Prevents python indentation errors in bash
+        python -c "from textwrap import dedent; print(dedent('''$1''').strip('\n'))"
+    fi
 }
 
 untilfail()
