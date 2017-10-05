@@ -1062,3 +1062,8 @@ nautilus_settings()
     #http://askubuntu.com/questions/411430/open-the-parent-folder-of-a-symbolic-link-via-right-click
     mkdir -p ~/.gnome2/nautilus-scripts
 }
+
+jupyter_mime_association(){
+    python -m utool.util_ubuntu --exec-add_new_mimetype_association --mime-name=ipynb+json --ext=.ipynb --exe-fpath=/usr/local/bin/ipynb
+    python -m utool.util_ubuntu --exec-add_new_mimetype_association --mime-name=ipynb+json --ext=.ipynb --exe-fpath=jupyter-notebook --force
+}
