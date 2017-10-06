@@ -252,10 +252,10 @@ mode = vim.eval('a:1')
 
 indent = pyvim_funcs.get_cursor_py_indent()
 newtext = '\n'.join([
-    #indent + 'import utool',
-    #indent + 'with utool.embed_on_exception_context:'
-    indent + 'import ipdb',
-    indent + 'with ipdb.launch_ipdb_on_exception():'
+    indent + 'import utool',
+    indent + 'with utool.embed_on_exception_context:'
+    #indent + 'import ipdb',
+    #indent + 'with ipdb.launch_ipdb_on_exception():'
 ])
 if 'v' in mode.lower():
     newtext += '\n' + ut.indent(pyvim_funcs.get_selected_text())
