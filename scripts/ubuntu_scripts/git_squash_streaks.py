@@ -6,6 +6,27 @@ import email.utils
 import ubelt as ub
 
 
+def printex(ex):
+    """
+    Example:
+        >>> try:
+        >>>     raise Exception('foobar')
+        >>> except Exception as ex:
+        >>>     printex(ex)
+    """
+    import traceback
+    tbtext = traceback.format_exc()
+    tbtext = ub.highlight_code(tbtext, lexer_name='pytb', stripall=True)
+    print('')
+    print(ub.color_text('┌───────────', 'red'))
+    print(ub.color_text('│ EXCEPTION:', 'red'))
+    print('')
+    print('{!r} {}'.format(type(ex), ex))
+    print(tbtext)
+    print(ub.color_text('└───────────', 'red'))
+    print('')
+
+
 class Streak(ub.NiceRepr):
     def __init__(self, child, _streak=None):
         # If child is None, then this is the future-most streak
@@ -316,6 +337,8 @@ def squash_streaks(authors, timedelta='sameday', inplace=False,
     # Switch to a temp branch before we start working
     if not dry:
         temp_branchname = checkout_temporary_branch(repo, '-squash-temp')
+    else:
+        temp_branchname = None
 
     try:
         for streak in ub.ProgIter(streaks, 'squashing', verbose=3):
@@ -323,8 +346,7 @@ def squash_streaks(authors, timedelta='sameday', inplace=False,
             # Start is the commit further back in time
             _squash_between(repo, streak.start, streak.stop, dry=dry)
     except Exception as ex:
-        import utool as ut
-        ut.printex(ex, 'squash_streaks failed')
+        printex(ex)
         print('ERROR: squash_streaks failed.')
         if not dry and auto_rollback:
             print('ROLLING BACK')
