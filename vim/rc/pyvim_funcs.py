@@ -147,17 +147,6 @@ def pyrun_fuzzyfont(request):
     vimprint('--- /Called Fuzyzfont ---')
 
 
-def get_expr_at_cursor():
-    """ returns the word highlighted by the curor """
-    import vim
-    buf = vim.current.buffer
-    (row, col) = vim.current.window.cursor
-    line = buf[row - 1]  # Original end of the file
-    nonword_chars = ' \t\n\r[](){}:;,"\'\\/=$'
-    word = get_word_in_line_at_col(line, col, nonword_chars)
-    return word
-
-
 def get_line_at_cursor():
     import vim
     buf = vim.current.buffer
@@ -214,8 +203,8 @@ def get_word_at_cursor(url_ok=False):
         nonword_chars_left = ' \t\n\r{},"\'\\'
         nonword_chars_right = nonword_chars_left
     else:
-        nonword_chars_left  = ' \t\n\r[](){}:;,"\'\\/='
-        nonword_chars_right = ' \t\n\r[](){}:;,."\'\\/='
+        nonword_chars_left  = ' \t\n\r[](){}:;,"\'\\/=$'
+        nonword_chars_right = ' \t\n\r[](){}:;,"\'\\/=$.'
     word = get_word_in_line_at_col(line, col,
                                    nonword_chars_left=nonword_chars_left,
                                    nonword_chars_right=nonword_chars_right)
