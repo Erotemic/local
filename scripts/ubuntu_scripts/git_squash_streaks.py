@@ -402,8 +402,22 @@ def git_squash_streaks():
     if authors is None:
         authors = {git.Git().config('user.name')}
         # HACK: for me. todo user alias
+        # SEE: .mailmap file to auto extract?
+        # https://git-scm.com/docs/git-shortlog#_mapping_authors
+        """
+        # .mailmap
+        # Proper Name <proper@email.xx> Commit Name <commit@email.xx>
+        Jon Crall <jon.crall@kitware.com> joncrall <jon.crall@kitware.com>
+        Jon Crall <jon.crall@kitware.com> jon.crall <jon.crall@kitware.com>
+        Jon Crall <jon.crall@kitware.com> Jon Crall <erotemic@gmail.com>
+        Jon Crall <jon.crall@kitware.com> joncrall <erotemic@gmail.com>
+        Jon Crall <jon.crall@kitware.com> joncrall <crallj@rpi.edu>
+        Jon Crall <jon.crall@kitware.com> Jon Crall <crallj@rpi.edu>
+        """
         if {'joncrall', 'Jon Crall', 'jon.crall'}.intersection(authors):
             authors.update({'joncrall', 'Jon Crall'})
+    else:
+        authors = {a.strip() for a in authors.split(',')}
 
     print('authors = {!r}'.format(authors))
     squash_streaks(authors=authors, inplace=inplace,
