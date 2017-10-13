@@ -1,30 +1,52 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import print_function, unicode_literals
 import os
 import git
 import email.utils
 import ubelt as ub
 
 
-def printex(ex):
+def print_exc(exc_info=None):
     """
     Example:
         >>> try:
         >>>     raise Exception('foobar')
         >>> except Exception as ex:
-        >>>     printex(ex)
+        >>>     import sys
+        >>>     exc_info = sys.exc_info()
+        >>>     print_exc(exc_info)
     """
+    import sys
     import traceback
-    tbtext = traceback.format_exc()
-    tbtext = ub.highlight_code(tbtext, lexer_name='pytb', stripall=True)
-    print('')
-    print(ub.color_text('┌───────────', 'red'))
-    print(ub.color_text('│ EXCEPTION:', 'red'))
-    print('')
-    print('{!r} {}'.format(type(ex), ex))
-    print(tbtext)
-    print(ub.color_text('└───────────', 'red'))
-    print('')
+    if exc_info is None:
+        exc_info = sys.exc_info()
+    tbtext = ''.join(traceback.format_exception(*exc_info))
+
+    colored = False
+    if colored:
+        import ubelt as ub
+        def color_text(text):
+            ub.color_text(text)
+        def color_pytb(text):
+            return ub.highlight_code(text, lexer_name='pytb', stripall=True)
+    else:
+        def color_text(text):
+            return text
+        def color_pytb(text):
+            return text
+
+    lines = [
+        '',
+        color_text('┌───────────'),
+        color_text('│ EXCEPTION:'),
+        '',
+        color_pytb(tbtext),
+        color_text('└───────────'),
+        ''
+    ]
+    text = '\n'.join(lines)
+    print(text)
 
 
 class Streak(ub.NiceRepr):
@@ -346,7 +368,7 @@ def squash_streaks(authors, timedelta='sameday', inplace=False,
             # Start is the commit further back in time
             _squash_between(repo, streak.start, streak.stop, dry=dry)
     except Exception as ex:
-        printex(ex)
+        print_exc(ex)
         print('ERROR: squash_streaks failed.')
         if not dry and auto_rollback:
             print('ROLLING BACK')
