@@ -1013,8 +1013,9 @@ def find_and_open_path(path, mode='split', verbose=0):
     else:
         filetype = get_current_filetype()
         if True or filetype in {'py', 'pyx'}:
+            from xdoctest import static_analysis as static
             try:
-                path = ut.get_modpath_from_modname(path)
+                path = static.modname_to_modpath(path)
                 print('rectified module to path = {!r}'.format(path))
             except Exception as ex:
                 if True or filetype in {'py', 'pyx'}:
@@ -1112,10 +1113,12 @@ if __name__ == '__main__':
         python -m pyvim_funcs --allexamples
         python -m pyvim_funcs --allexamples --noface --nosrc
     """
-    import multiprocessing
-    multiprocessing.freeze_support()  # for win32
-    import utool as ut  # NOQA
-    ut.ENABLE_COLORS = False
-    ut.util_str.ENABLE_COLORS = False
-    ut.util_dbg.COLORED_EXCEPTIONS = False
-    ut.doctest_funcs()
+    import xdoctest as xdoc
+    xdoc.doctest_module()
+    # import multiprocessing
+    # multiprocessing.freeze_support()  # for win32
+    # import utool as ut  # NOQA
+    # ut.ENABLE_COLORS = False
+    # ut.util_str.ENABLE_COLORS = False
+    # ut.util_dbg.COLORED_EXCEPTIONS = False
+    # ut.doctest_funcs()
