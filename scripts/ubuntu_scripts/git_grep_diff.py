@@ -110,3 +110,10 @@ if __name__ == '__main__':
     """
     import sys
     main(sys.argv)
+
+# repo = GitRepo('.')
+# repo.grep_diff('plugin', inverse=True)
+# """
+# Do git add --patch on each of these
+# git add --patch sprokit/conf/sprokit-macro-python.cmake sprokit/src/bindings/python/processes/CMakeLists.txt sprokit/src/bindings/python/schedulers/CMakeLists.txt sprokit/src/bindings/python/test/python/modules/CMakeLists.txt
+# """

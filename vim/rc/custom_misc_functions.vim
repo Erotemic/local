@@ -475,7 +475,7 @@ import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
 
-expr = pyvim_funcs.get_expr_at_cursor()
+expr = pyvim_funcs.get_word_at_cursor()
 indent = pyvim_funcs.get_cursor_py_indent()
 
 filetype = pyvim_funcs.get_current_filetype()

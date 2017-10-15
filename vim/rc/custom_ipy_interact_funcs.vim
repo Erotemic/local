@@ -56,11 +56,18 @@ def _context_func(file=None):
                 dprint('grabbing text at current line')
                 text = pyvim_funcs.get_line_at_cursor()
         # Prepare to send text to xdotool
-        dprint('preparing text')
         text = ut.unindent(text)
         #dprint('copying text to clipboard')
         #ut.copy_text_to_clipboard(text)
         #dprint('copied text to clipboard')
+
+    # Strip docstring prefix
+    dprint('preparing text')
+    lines = text.splitlines(True)
+    if all(line.startswith(('>>> ', '...')) for line in lines):
+        lines = [line[4:] for line in lines]
+        text = ''.join(lines)
+    text = ut.unindent(text)
 
     pyvim_funcs.enter_text_in_terminal(text, return_to_vim=return_to_vim)
 
@@ -141,6 +148,7 @@ if pyvim_funcs.is_module_pythonfile():
         sourcecode = ut.readfrom(modpath, verbose=False)
         # TODO get classes and whatnot
         func_names = ut.parse_function_names(sourcecode)
+        #print('func_names = {!r}'.format(func_names))
         if '__all__' in sourcecode:
             import_names = ut.parse_import_names(sourcecode)
             extra_names = func_names + import_names
@@ -152,6 +160,7 @@ if pyvim_funcs.is_module_pythonfile():
     except Exception as ex:
         ut.printex(ex, 'ast parsing failed', tb=True)
         print('ast parsing failed')
+        raise
     # Prepare to send text to xdotool
     text = ut.unindent('\n'.join(lines))
     pyvim_funcs.enter_text_in_terminal(text, return_to_vim=True)
