@@ -516,7 +516,7 @@ class CursorContext(object):
         move_cursor(*self.pos)
 
 
-def close_folds_matching_pattern(pattern, limit=None, search_range=None):
+def close_matching_folds(pattern, search_range=None, limit=1):
     """
     Looks in a range of lines for a pattern and executes a close fold command
     anywhere that matches.
@@ -527,9 +527,11 @@ def close_folds_matching_pattern(pattern, limit=None, search_range=None):
         >>> import pyvim_funcs
         >>> pyvim_funcs.dummy_import_vim(pyvim_funcs.__file__)
         >>> import vim
-        >>> #pyvim_funcs.close_folds_matching_pattern('def ')
+        >>> #pyvim_funcs.close_matching_folds('def ')
     """
     import vim
+    if isinstance(search_range, (tuple, list)):
+        search_range = slice(*search_range)
 
     if search_range is not None:
         text = '\n'.join(vim.current.buffer[search_range])

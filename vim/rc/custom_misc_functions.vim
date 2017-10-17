@@ -34,7 +34,7 @@ function! CmdHere()
         silent !cmd /c start cmd
     else
         "silent !gnome-terminal .
-        silent !terminator --working-directory=.&
+        silent !terminator --working-directory=$(pwd)&
     endif
     redraw!
 endfunction
@@ -582,16 +582,6 @@ EOF
 endfunc
 
 
-" Support python 2 and 3 
-if has('python')
-    command! -nargs=1 Python2or3 python <args>
-elseif has('python3')
-    command! -nargs=1 Python2or3 python3 <args>
-else
-    echo "Error: Requires Vim compiled with +python or +python3"
-    finish
-endif
-
 
 func! FoldCopyrightHeader()
 Python2or3 << EOF
@@ -608,8 +598,7 @@ Ignore:
 """
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 pattern = 'Copyright .* by .* THE POSSIBILITY OF SUCH DAMAGE'
-pyvim_funcs.close_folds_matching_pattern(pattern, limit=1,
-                                         search_range=slice(0, 50))
+pyvim_funcs.close_matching_folds(pattern, search_range=(0, 50), limit=1)
 EOF
 endfunc
 

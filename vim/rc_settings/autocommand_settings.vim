@@ -96,7 +96,6 @@ au MyVimRC FileType cpp setlocal cinkeys-=0#
 au MyVimRC FileType cpp setlocal smartindent
 au MyVimRC Filetype cpp setlocal shiftwidth=2
 au MyVimRC Filetype cpp setlocal tabstop=2
-au MyVimRC Filetype cpp call FoldCopyrightHeader()
 
 " Latex
 
@@ -151,6 +150,7 @@ au MyVimRC BufWritePre *.py :%s///e
 "
 au MyVimRC FileType cpp setlocal foldmethod=syntax
 au MyVimRC FileType cpp normal zR
+au MyVimRC Filetype cpp call FoldCopyrightHeader()
 "au FileType cpp if getfsize(@%) > 200 | set foldmethod=syntax | endif
 "au FileType cpp if getfsize(@%) > 200 | normal zR | endif
 
