@@ -117,44 +117,6 @@ endfu
 call EnsureCustomPyModPath()
 
 
-func! OpenSetups()
-"pyfile pyvim_funcs.py
-Python2or3 << EOF
-import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-fpath_list = [
-        '~/code/ibeis/setup.py',
-        '~/code/utool/setup.py',
-        '~/code/vtool/setup.py',
-        '~/code/hesaff/setup.py',
-        '~/code/detecttools/setup.py',
-        '~/code/pyrf/setup.py',
-        '~/code/guitool/setup.py',
-        '~/code/plottool/setup.py',
-    ]
-pyvim_funcs.open_fpath_list(fpath_list, num_hsplits=2)
-EOF
-endfu
-
-
-func! OpenGitIgnores()
-Python2or3 << EOF
-import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-fpath_list = [
-        '~/code/ibeis/.gitignore',
-        '~/code/utool/.gitignore',
-        '~/code/vtool/.gitignore',
-        '~/code/hesaff/.gitignore',
-        '~/code/detecttools/.gitignore',
-        '~/code/pyrf/.gitignore',
-        '~/code/guitool/.gitignore',
-        '~/code/plottool/.gitignore',
-    ]
-pyvim_funcs.open_fpath_list(fpath_list, num_hsplits=2)
-EOF
-endfu
-
 """"""""""""""""""""""""""""""""""
 
 
@@ -319,14 +281,12 @@ import utool as ut
 import re
 from os.path import exists, expanduser
 ut.rrrr(verbose=False)
-
 argv = pyvim_funcs.vim_argv(defaults=[None, 'split'])
 path, mode = argv[0:2]
-
 pyvim_funcs.find_and_open_path(path, mode=mode, verbose=0)
-
 EOF
 endfunc
+
 command! -nargs=1 SplitPath call FUNC_OpenPath(<f-args>, 'split')
 command! -nargs=1 OpenPath call FUNC_OpenPath(<f-args>, 'e')
 command! -nargs=1 EE call FUNC_OpenPath(<f-args>, 'e')
