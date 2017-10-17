@@ -525,8 +525,8 @@ if filetype == 'sh':
 elif filetype in {'cmake'}:
     statement = 'message(STATUS "{expr} = ${{{expr}}}")'.format(expr=expr)
 elif filetype in {'cpp', 'cxx', 'h'}:
-    if 'vital' in pyvim_funcs.get_current_fpath():
-
+    current_fpath = pyvim_funcs.get_current_fpath()
+    if any(n in current_fpath for n in ['vital', 'kwiver', 'sprokit']):
         if pyvim_funcs.find_pattern_above_row(
             '\s*auto logger = kwiver::vital::get_logger.*') is None:
             statement = ut.codeblock(
@@ -578,6 +578,38 @@ else:
     #newline = indent + "print('{expr} = %r' % ({expr},))".format(expr=expr)
     newline = indent + "print('{expr} = {{!r}}'.format({expr}))".format(expr=expr)
     pyvim_funcs.insert_codeblock_under_cursor(newline)
+EOF
+endfunc
+
+
+" Support python 2 and 3 
+if has('python')
+    command! -nargs=1 Python2or3 python <args>
+elseif has('python3')
+    command! -nargs=1 Python2or3 python3 <args>
+else
+    echo "Error: Requires Vim compiled with +python or +python3"
+    finish
+endif
+
+
+func! FoldCopyrightHeader()
+Python2or3 << EOF
+"""
+References:
+    https://stackoverflow.com/questions/2250011/can-i-have-vim-ignore-a-license-block-at-the-top-of-a-file
+
+Ignore:
+    >>> import os, sys
+    >>> sys.path.append(os.path.expanduser('~/local/vim/rc'))
+    >>> import pyvim_funcs
+    >>> pyvim_funcs.dummy_import_vim('~/code/kwiver/vital/logger/kwiver_logger.cxx')
+    >>> import vim
+"""
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+pattern = 'Copyright .* by .* THE POSSIBILITY OF SUCH DAMAGE'
+pyvim_funcs.close_folds_matching_pattern(pattern, limit=1,
+                                         search_range=slice(0, 50))
 EOF
 endfunc
 

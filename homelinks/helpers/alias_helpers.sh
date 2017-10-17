@@ -238,10 +238,13 @@ alias cop=commit_profile
 
 cls()
 {
-    for i in {1..100}
-    do
-        echo ""
-    done
+    # References:
+    # https://askubuntu.com/questions/25077/how-to-really-clear-the-terminal
+    tput reset
+    #for i in {1..100}
+    #do
+    #    echo ""
+    #done
 }
 
 

@@ -14,7 +14,7 @@ FIXME:
     instead of the last line you dont want
 """
 from __future__ import absolute_import, division, print_function, unicode_literals
-from os.path import expanduser, exists, join, isdir
+from os.path import expanduser, exists, join, isdir, abspath
 import sys
 import re
 import itertools as it
@@ -495,6 +495,64 @@ def get_codelines_around_buffer(rows_before=0, rows_after=10):
 
 # --- INSERT TEXT CODE
 
+def get_cursor_position():
+    import vim
+    (row, col) = vim.current.window.cursor
+    return row, col
+
+
+class CursorContext(object):
+    """
+    moves back to original position after context is done
+    """
+    def __init__(self):
+        self.pos = None
+
+    def __enter__(self):
+        self.pos = get_cursor_position()
+        return self
+
+    def __exit__(self, *exc_info):
+        move_cursor(*self.pos)
+
+
+def close_folds_matching_pattern(pattern, limit=None, search_range=None):
+    """
+    Looks in a range of lines for a pattern and executes a close fold command
+    anywhere that matches.
+
+    Example:
+        >>> import os, sys
+        >>> sys.path.append(os.path.expanduser('~/local/vim/rc'))
+        >>> import pyvim_funcs
+        >>> pyvim_funcs.dummy_import_vim(pyvim_funcs.__file__)
+        >>> import vim
+        >>> #pyvim_funcs.close_folds_matching_pattern('def ')
+    """
+    import vim
+
+    if search_range is not None:
+        text = '\n'.join(vim.current.buffer[search_range])
+        offset = search_range.start
+    else:
+        text = '\n'.join(vim.current.buffer)
+        offset = 0
+
+    flags = re.MULTILINE | re.DOTALL
+    patre = re.compile(pattern, flags=flags)
+
+    # The context will remember and reset the current cursor position
+    # with CursorContext():
+    for count, match in enumerate(patre.finditer(text)):
+        if limit is not None and count >= limit:
+            break
+        # Find the matching line
+        lineno = text[:match.start()].count('\n') + offset + 1
+        # Move to the fold
+        move_cursor(lineno)
+        # close the fold
+        vim.command(':foldclose')
+
 
 def move_cursor(row, col=0):
     import vim
@@ -546,26 +604,57 @@ class DummyVimBuffer(object):
         return self._list.extend(item)
 
 
-def dummy_import_vim():
-    vim = ut.DynStruct()
-    vim.current = ut.DynStruct()
-    vim.current.window = ut.DynStruct()
-    vim.current.window.cursor = (0, 0)
-    vim.current.buffer = DummyVimBuffer([
-        'line1',
-        'line2',
-        'line3',
-    ])
+def dummy_import_vim(fpath=None):
+    if fpath is not None:
+        fpath = abspath(expanduser(fpath))
+
+    try:
+        import vim
+        dohack = False
+    except ImportError:
+        dohack = True
+        vim = None
+
+    if vim is not None:
+        if getattr(vim, '__ishack__', False):
+            if fpath != vim.current.buffer.name:
+                dohack = True
+
+    if dohack:
+        import sys
+        import utool as ut
+        vim = ut.DynStruct()
+        vim.__ishack__  = True
+        vim.current = ut.DynStruct()
+        vim.current.window = ut.DynStruct()
+        vim.current.window.cursor = (0, 0)
+        if fpath is None:
+            lines = [
+                'line1',
+                'line2',
+                'line3',
+            ]
+        else:
+            lines = ut.readfrom(fpath).splitlines()
+        vim.current.buffer = DummyVimBuffer(lines)
+        vim.current.buffer.name = fpath
+        # VERY HACKY
+        sys.modules['vim'] = vim
     return vim
 
 
 def _insert_codeblock(vim, text, pos):
     """
-    vim = dummy_import_vim()
-    text = 'foobar'
-    pos = 0
-    _insert_codeblock(vim, text, pos)
-    print(vim.current.buffer)
+    Example:
+        >>> import os, sys
+        >>> sys.path.append(os.path.expanduser('~/local/vim/rc'))
+        >>> from pyvim_funcs import *
+        >>> from pyvim_funcs import _insert_codeblock
+        >>> vim = dummy_import_vim()
+        >>> text = 'foobar'
+        >>> pos = 0
+        >>> _insert_codeblock(vim, text, pos)
+        >>> print(vim.current.buffer)
     """
     lines = [line.encode('utf-8') for line in text.split('\n')]
     buffer_tail = vim.current.buffer[pos:]  # Original end of the file
@@ -1047,6 +1136,14 @@ def wmctrl_terminal_pattern():
             'Yakuake',
         ])
         return terminal_pattern
+
+
+def keypress(keys):
+    """
+    Simulates keypress commands
+    """
+    import vim
+    vim.command('call feedkeys("{}")'.format(keys))
 
 
 def enter_text_in_terminal(text, return_to_vim=True):

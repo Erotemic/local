@@ -96,6 +96,7 @@ au MyVimRC FileType cpp setlocal cinkeys-=0#
 au MyVimRC FileType cpp setlocal smartindent
 au MyVimRC Filetype cpp setlocal shiftwidth=2
 au MyVimRC Filetype cpp setlocal tabstop=2
+au MyVimRC Filetype cpp call FoldCopyrightHeader()
 
 " Latex
 

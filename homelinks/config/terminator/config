@@ -20,23 +20,19 @@
 [plugins]
 [profiles]
   [[default]]
-    background_color = "#120a0a"
+    background_color = "#2e3436"
     background_darkness = 0.72
-    background_image = None
+    cursor_color = "#ff9bf3"
     font = Ubuntu Mono 10
     foreground_color = "#ff9bf3"
-    scroll_on_output = False
     scrollback_infinite = True
     scrollback_lines = 5000
     use_system_font = False
   [[New Profile]]
-    background_image = None
   [[joncrall]]
     background_color = "#292929"
     background_darkness = 0.81
-    background_image = None
     font = Ubuntu Mono 10
     foreground_color = "#ff9bf3"
-    scroll_on_output = False
     scrollback_lines = 5000
     use_system_font = False
