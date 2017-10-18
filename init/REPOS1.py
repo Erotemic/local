@@ -23,25 +23,28 @@ BUNDLE_DPATH = unixpath('~/local/vim/vimfiles/bundle')
 
 # Non local project repos
 IBEIS_REPOS_URLS, IBEIS_REPOS = repo_list([
-    'https://github.com/bluemellophone/pyrf.git',
-    'https://github.com/bluemellophone/detecttools.git',
-    'https://github.com/bluemellophone/pydarknet.git',
+    # 'https://github.com/bluemellophone/pyrf.git',
+    # 'https://github.com/bluemellophone/detecttools.git',
+    # 'https://github.com/bluemellophone/pydarknet.git',
     #'https://github.com/hjweide/pygist.git',
-    'https://github.com/Erotemic/hesaff.git',
-    'https://github.com/Erotemic/guitool.git',
+    # 'https://github.com/Erotemic/hesaff.git',
     #'https://github.com/aweinstock314/cyth.git',
     # 'https://github.com/zmjjmz/ibeis-flukematch-module.git',
     #'https://github.com/Erotemic/mtgmonte.git',
-    'https://github.com/bluemellophone/ibeis_cnn.git',
+    # 'https://github.com/bluemellophone/ibeis_cnn.git',
     # 'https://github.com/Erotemic/sandbox_utools.git',
+    'https://github.com/Erotemic/guitool.git',
     'https://github.com/Erotemic/plottool.git',
     'https://github.com/Erotemic/vtool.git',
-    'https://github.com/Erotemic/utool.git',
-    'https://github.com/Erotemic/ubelt.git',
     'https://github.com/Erotemic/dtool.git',
     'https://github.com/Erotemic/ibeis.git',
+    'https://github.com/Erotemic/utool.git',
+
+    'https://github.com/Erotemic/ubelt.git',
+    'https://github.com/Erotemic/xdoctest.git',
 
     'https://github.com/Erotemic/VIAME.git',
+    'https://github.com/Erotemic/kwiver.git',
     # 'https://github.com/Erotemic/VIAME/packages/kwiver.git',
     # 'https://github.com/Erotemic/ibeis.git',
 

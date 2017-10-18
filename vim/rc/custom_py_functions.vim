@@ -60,10 +60,15 @@ pyvim_funcs.ensure_normalmode()
 if pyvim_funcs.is_module_pythonfile():
     modpath = vim.current.buffer.name
     modname = ut.get_modname_from_modpath(modpath)
+    #test_code = ut.codeblock(
+    #    r'''
+    #    import pytest
+    #    pytest.main([__file__, '--xdoc'])
+    #    ''')
     test_code = ut.codeblock(
         r'''
-        import pytest
-        pytest.main([__file__, '--doctest-modules'])
+        import xdoctest
+        xdoctest.doctest_modules()
         ''')
     text = ut.make_default_module_maintest(modname, modpath, test_code=test_code)
     pyvim_funcs.insert_codeblock_under_cursor(text)

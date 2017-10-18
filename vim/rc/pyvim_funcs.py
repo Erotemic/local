@@ -785,6 +785,8 @@ def auto_docstr(**kwargs):
     try:
         funcname, searchlines = find_pyfunc_above_cursor()
         modname, moddir = get_current_modulename()
+        modpath = vim.current.buffer.name
+        print('modpath = {!r}'.format(modpath))
 
         if funcname is None:
             funcname = '[vimerr] UNKNOWN_FUNC: funcname is None'
@@ -794,7 +796,8 @@ def auto_docstr(**kwargs):
             verbose = True
             autodockw = dict(verbose=verbose)
             autodockw.update(kwargs)
-            docstr = ut.auto_docstr(modname, funcname, moddir=moddir, **autodockw)
+            docstr = ut.auto_docstr(modname, funcname, moddir=moddir,
+                                    modpath=modpath, **autodockw)
             #if docstr.find('unexpected indent') > 0:
             #    docstr = funcname + ' ' + docstr
             if docstr[:].strip() == 'error':
@@ -815,7 +818,7 @@ def auto_docstr(**kwargs):
             dbgtext += dbgmsg
         dbgtext += '\n+----------------------'
         dbgtext += '\n| InsertDoctstr(modname=%r, funcname=%r' % (modname, funcname)
-        pycmd = ('import ut; print(ut.auto_docstr(%r, %r)))' % (modname, funcname))
+        pycmd = ('import ut; print(ut.auto_docstr(%r, %r, %r)))' % (modname, funcname, modpath))
         pycmd = pycmd.replace('\'', '\\"')
         dbgtext += '\n| python -c "%s"' % (pycmd,)
         dbgtext += '\n+----------------------'
