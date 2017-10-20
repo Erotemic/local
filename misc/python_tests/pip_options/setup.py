@@ -12,7 +12,7 @@ if __name__ == '__main__':
         name='testpkg',
         packages=['testpkg'],
         version=1,
-        extras_require={
-            'myextra': myextra
-        },
+        # extras_require={
+        #     'myextra': myextra
+        # },
     )
