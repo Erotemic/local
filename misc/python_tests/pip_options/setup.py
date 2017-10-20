@@ -9,7 +9,8 @@ def myextra():
 
 if __name__ == '__main__':
     setup(
-        name='testmod',
+        name='testpkg',
+        packages=['testpkg'],
         version=1,
         extras_require={
             'myextra': myextra
