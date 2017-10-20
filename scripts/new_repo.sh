@@ -6,10 +6,10 @@ CommandLine:
     # Then it will ask you for a sudo password
     # Then it will ask you if you want to clone
 
-    ~joncrall/local/scripts/ubuntu_scripts/new_repo.sh <reponame>
+    ~joncrall/local/scripts/new_repo.sh <reponame>
     git clone git@hyrule.cs.rpi.edu:<reponame>
 
-    sudo ~joncrall/local/scripts/ubuntu_scripts/new_repo.sh crall-candidacy-2015
+    sudo ~joncrall/local/scripts/new_repo.sh crall-candidacy-2015
     git clone git@hyrule.cs.rpi.edu:crall-candidacy-2015
     cd crall-candidacy-2015
     touch main.tex.latexmain

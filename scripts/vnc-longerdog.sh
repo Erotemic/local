@@ -62,5 +62,5 @@ vncconnect
 #__PYSCRIPT__
 #python /dev/fd/42
 
-remmina -c ~/local/scripts/ubuntu_scripts/remminaconf-vnc-longerdog.remmina
+remmina -c ~/local/scripts/remminaconf-vnc-longerdog.remmina
 #vinagre --vnc-scale localhost:5902

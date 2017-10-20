@@ -86,7 +86,7 @@ def main(argv):
     """
     Developer:
         >>> import sys
-        >>> sys.path.append('/home/joncrall/local/scripts/ubuntu_scripts')
+        >>> sys.path.append('/home/joncrall/local/scripts')
         >>> from git_grep_diff import *
         >>> argv = ['dummy', 'module']
     """
@@ -105,8 +105,8 @@ def main(argv):
 if __name__ == '__main__':
     r"""
     CommandLine:
-        export PYTHONPATH=$PYTHONPATH:/home/joncrall/local/scripts/ubuntu_scripts
-        python ~/local/scripts/ubuntu_scripts/git_grep_diff.py
+        export PYTHONPATH=$PYTHONPATH:/home/joncrall/local/scripts
+        python ~/local/scripts/git_grep_diff.py
     """
     import sys
     main(sys.argv)

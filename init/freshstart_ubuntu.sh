@@ -286,7 +286,8 @@ ensure_config_symlinks()
         symlinks -d ~/.vim/
         mkdir -p ~/local/vim/vimfiles/files/info
     fi
-    ln -s ~/local/scripts/ubuntu_scripts ~/scripts
+    unlink ~/scripts
+    ln -s ~/local/scripts ~/scripts
     
 
     echo "==============================="
