@@ -8,9 +8,9 @@ pip install --root $HOME/local/misc/python_tests/pip_options/root file://subdir#
 pip install file://subdir#egg=testpkg
 
 
-# INSIDE VENV: make a home/joncrall/venv3/... inside of the root dir (not good)
+# INSIDE VENV: makes ./root/home/joncrall/venv3/... 
 pip install --root $HOME/local/misc/python_tests/pip_options/root ./subdir
-# OUTSIDE VENV: make a home/joncrall/venv3/... inside of the root dir (not good)
+# OUTSIDE VENV: makes ./root/usr/local/lib/python3.5/dist-packages/testpkg
 pip install --root $HOME/local/misc/python_tests/pip_options/root ./subdir
 
 pip install ./subdir
