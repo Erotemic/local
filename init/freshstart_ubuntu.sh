@@ -286,7 +286,9 @@ ensure_config_symlinks()
         symlinks -d ~/.vim/
         mkdir -p ~/local/vim/vimfiles/files/info
     fi
-    unlink ~/scripts
+    if [ -d ~/scripts ]; then
+        unlink ~/scripts
+    fi
     ln -s ~/local/scripts ~/scripts
     
 

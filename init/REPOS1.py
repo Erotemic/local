@@ -21,6 +21,12 @@ LATEX_DIR    = unixpath('~/latex')
 BUNDLE_DPATH = unixpath('~/local/vim/vimfiles/bundle')
 
 
+LOCAL_URLS, LOCAL_REPOS = repo_list([
+    'https://github.com/Erotemic/local.git',
+    'https://github.com/Erotemic/misc.git',
+], HOME_DIR)
+
+
 # Non local project repos
 IBEIS_REPOS_URLS, IBEIS_REPOS = repo_list([
     # 'https://github.com/bluemellophone/pyrf.git',
@@ -67,13 +73,6 @@ CODE_REPO_URLS = TPL_REPOS_URLS + IBEIS_REPOS_URLS
 CODE_REPOS = TPL_REPOS + IBEIS_REPOS
 
 CODE_REPO_TUP = CODE_REPO_URLS, CODE_REPOS
-
-
-LOCAL_URLS, LOCAL_REPOS = repo_list([
-    'git@hyrule.cs.rpi.edu.com:local.git',
-], HOME_DIR)
-
-
 LATEX_REPO_TUP = repo_list([
     # 'git@hyrule.cs.rpi.edu:crall-lab-notebook.git',
     # 'git@hyrule.cs.rpi.edu:crall-candidacy-2015.git',
