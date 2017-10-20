@@ -180,5 +180,8 @@ au MyVimRC Filetype cpp call FoldCopyrightHeader()
 "au FileType python call PythonInvert()
 "au FileType python set textwidth=80
 
+" Call everytime we open a Markdown file
+au MyVimRC BufRead,BufNewFile,BufEnter *.md,*.markdown call MathAndLiquid()
+
 
 :augroup PostMyVimRC

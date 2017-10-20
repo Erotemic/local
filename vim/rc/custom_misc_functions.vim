@@ -311,7 +311,8 @@ path = pyvim_funcs.get_word_at_cursor(url_ok=True)
 verbose = 0
 
 if verbose:
-    print('path = {!r}'.format(path))
+    print('OpenPathAtCursor path = {!r}'.format(path))
+    print('exists = {!r}'.format(exists(path)))
 
 pyvim_funcs.find_and_open_path(path, mode=mode, verbose=verbose)
 
@@ -603,3 +604,26 @@ command! MaximizeSplit resize 117<CR>
 "command! -nargs=+ -complete=command Redir let s:reg = @@ | redir @"> | silent execute <q-args> | redir END | new | pu | 1,2d_ | let @@ = s:reg
 " INSTEAD USE
 " put = execute('au')
+"
+function! MathAndLiquid()
+    " http://scottsievert.com/blog/2016/01/06/vim-jekyll-mathjax/
+    "" Define certain regions
+    " Block math. Look for "$$[anything]$$"
+    syn region math start=/\$\$/ end=/\$\$/
+    " inline math. Look for "$[not $][anything]$"
+    syn match math_block '\$[^$].\{-}\$'
+
+    " Liquid single line. Look for "{%[anything]%}"
+    syn match liquid '{%.*%}'
+    " Liquid multiline. Look for "{%[anything]%}[anything]{%[anything]%}"
+    syn region highlight_block start='{% highlight .*%}' end='{%.*%}'
+    " Fenced code blocks, used in GitHub Flavored Markdown (GFM)
+    syn region highlight_block start='```' end='```'
+
+    "" Actually highlight those regions.
+    hi link math Statement
+    hi link liquid Statement
+    hi link highlight_block Function
+    hi link math_block Function
+    setlocal spell
+endfunction

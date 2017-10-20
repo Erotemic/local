@@ -68,7 +68,7 @@ if pyvim_funcs.is_module_pythonfile():
     test_code = ut.codeblock(
         r'''
         import xdoctest
-        xdoctest.doctest_modules()
+        xdoctest.doctest_module(__file__)
         ''')
     text = ut.make_default_module_maintest(modname, modpath, test_code=test_code)
     pyvim_funcs.insert_codeblock_under_cursor(text)

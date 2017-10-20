@@ -1,12 +1,3 @@
-if has("win32") || has("win16")
-    :set runtimepath+=$USERPROFILE\local\vim\portable_vimrc 
-endif
-set runtimepath+=~/local/vim/vimfiles/
-source ~/local/vim/rc/win32_presource.vim
-"source ~/local/vim/rc/venv_presource.vim
-set encoding=utf8
-let g:markdown_fenced_languages = ['html', 'python', 'bash=sh']
-
 " COMMON JUMP TO RC FILES
 " ~/local/vim/rc/pyvim_funcs.py
 " ~/local/vim/rc/pyvim_funcs.py
@@ -43,6 +34,15 @@ let g:markdown_fenced_languages = ['html', 'python', 'bash=sh']
 
 " Snippets Directory
 " ~/local/vim/vimfiles/UltiSnips/python.snippets
+
+if has("win32") || has("win16")
+    :set runtimepath+=$USERPROFILE\local\vim\portable_vimrc 
+endif
+set runtimepath+=~/local/vim/vimfiles/
+source ~/local/vim/rc/win32_presource.vim
+"source ~/local/vim/rc/venv_presource.vim
+set encoding=utf8
+let g:markdown_fenced_languages = ['html', 'python', 'bash=sh']
 
 " My custom python syntax
 source ~/local/vim/vimfiles/syntax/python.vim 
@@ -247,72 +247,79 @@ call QUICKOPEN_leader_tvio('tr', '~/code/ibeis/ibeis/expt/test_result.py')
 call QUICKOPEN_leader_tvio('E', '~/code/ibeis/ibeis/expt/experiment_configs.py')
 call QUICKOPEN_leader_tvio('f', '~/code/fletch/CMake')
 call QUICKOPEN_leader_tvio('F', '~/code/ibeis/ibeis/init/filter_annots.py')
-call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/inspect_gui.py')
-call QUICKOPEN_leader_tvio('G', '~/code/ibeis/ibeis/gui/newgui.py')
+"call QUICKOPEN_leader_tvio('g', '~/code/ibeis/ibeis/gui/inspect_gui.py')
+"call QUICKOPEN_leader_tvio('G', '~/code/ibeis/ibeis/gui/newgui.py')
 """"""""""""""
 call QUICKOPEN_leader_tvio('H', '~/code/ibeis/ibeis/algo/hots/pipeline.py')
 call QUICKOPEN_leader_tvio('h', '~/code/ibeis/ibeis/algo/graph/core.py')
 """"""""""""""
-call QUICKOPEN_leader_tvio('i', '~/code/ibeis/ibeis/__init__.py')
-call QUICKOPEN_leader_tvio('I', '~/code/ibeis/ibeis/other/dbinfo.py')
-call QUICKOPEN_leader_tvio('j', '~/code/ibeis/ibeis/dbio/export_subset.py')
-call QUICKOPEN_leader_tvio('J', '~/local/vim/vimfiles/bundle/jedi-vim/jedi_vim.py')
+"call QUICKOPEN_leader_tvio('i', '~/code/ibeis/ibeis/__init__.py')
+"call QUICKOPEN_leader_tvio('I', '~/code/ibeis/ibeis/other/dbinfo.py')
+"call QUICKOPEN_leader_tvio('j', '~/code/ibeis/ibeis/dbio/export_subset.py')
+"call QUICKOPEN_leader_tvio('J', '~/local/vim/vimfiles/bundle/jedi-vim/jedi_vim.py')
 "call QUICKOPEN_leader_tvio('k', '~/code/ibeis/ibeis/algo/hots/chip_match.py')
-call QUICKOPEN_leader_tvio('K', '~/code/ibeis-flukematch-module/ibeis_flukematch/plugin.py')
-call QUICKOPEN_leader_tvio('k', '~/code/ibeis/ibeis/algo/smk/smk_pipeline.py')
+"call QUICKOPEN_leader_tvio('K', '~/code/ibeis-flukematch-module/ibeis_flukematch/plugin.py')
+"call QUICKOPEN_leader_tvio('k', '~/code/ibeis/ibeis/algo/smk/smk_pipeline.py')
 call QUICKOPEN_leader_tvio('l', '~/latex/crall-thesis-2017/main.tex')
 call QUICKOPEN_leader_tvio('L', '~/latex/crall-iccvw-2017/main.tex')
 "call QUICKOPEN_leader_tvio('L', '~/latex/crall-thesis-2017/sec-3-4-expt.tex')
-call QUICKOPEN_leader_tvio('m', '~/code/ibeis/ibeis/init/main_helpers.py')
-call QUICKOPEN_leader_tvio('M', '~/code/ibeis/ibeis/main_module.py')
+"call QUICKOPEN_leader_tvio('m', '~/code/ibeis/ibeis/init/main_helpers.py')
+"call QUICKOPEN_leader_tvio('M', '~/code/ibeis/ibeis/main_module.py')
 """"""""""""""
 "call QUICKOPEN_leader_tvio('n', '~/code/ibeis/ibeis/algo/Config.py')
-call QUICKOPEN_leader_tvio('n', '~/code/networkx/networkx/algorithms/connectivity')
+"call QUICKOPEN_leader_tvio('n', '~/code/networkx/networkx/algorithms/connectivity')
 "call QUICKOPEN_leader_tvio('N', '~/code/ibeis/ibeis/algo/hots/score_normalization.py')
-call QUICKOPEN_leader_tvio('N', '~/code/ibeis_cnn/ibeis_cnn/custom_layers.py')
+"call QUICKOPEN_leader_tvio('N', '~/code/ibeis_cnn/ibeis_cnn/custom_layers.py')
 """"""""""""""
 call QUICKOPEN_leader_tvio('o', '~/code/ibeis/ibeis/algo/verif/vsone.py')
 "call QUICKOPEN_leader_tvio('o', '~/code/ibeis/ibeis/algo/preproc/preproc_annot.py')
 "call QUICKOPEN_leader_tvio('O', '~/code/ibeis/ibeis/algo/preproc/preproc_chip.py')
 """"""""""""""
 call QUICKOPEN_leader_tvio('p', '~/code/plottool/plottool/__init__.py')
-call QUICKOPEN_leader_tvio('P', '~/code/plottool/plottool/draw_func2.py')
+"call QUICKOPEN_leader_tvio('P', '~/code/plottool/plottool/draw_func2.py')
 """"""""""""""
-call QUICKOPEN_leader_tvio('q', '~/code/ibeis/ibeis/algo/hots/query_request.py')
-call QUICKOPEN_leader_tvio('Q', '~/code/ibeis/ibeis/algo/hots/hots_query_result.py')
+"call QUICKOPEN_leader_tvio('q', '~/code/ibeis/ibeis/algo/hots/query_request.py')
+"call QUICKOPEN_leader_tvio('Q', '~/code/ibeis/ibeis/algo/hots/hots_query_result.py')
 """"""""""""""
-call QUICKOPEN_leader_tvio('r', '~/code/ibeis/ibeis/algo/graph/core.py')
-call QUICKOPEN_leader_tvio('R', '~/code/ibeis/README.md')
+"call QUICKOPEN_leader_tvio('r', '~/code/ibeis/ibeis/algo/graph/core.py')
+"call QUICKOPEN_leader_tvio('R', '~/code/ibeis/README.md')
 "call QUICKOPEN_leader_tvio('s', '~/code/ibeis/ibeis/scripts/gen_cand_expts.py')
 "call QUICKOPEN_leader_tvio('s', '~/code/ibeis/ibeis/scripts/specialdraw.py')
 "call QUICKOPEN_leader_tvio('s', '~/code/ibeis/ibeis/scripts/classify_shark.py')
 "call QUICKOPEN_leader_tvio('s', '~/code/ibeis/ibeis/scripts/script_vsone.py')
 "call QUICKOPEN_leader_tvio('s', '~/code/ibeis/ibeis/scripts/iccv.py')
 "call QUICKOPEN_leader_tvio('s', '~/code/ibeis/ibeis/scripts/thesis.py')
-call QUICKOPEN_leader_tvio('s', '~/code/ibeis/ibeis/scripts/postdoc.py')
-call QUICKOPEN_leader_tvio('S', '~/code/ibeis/setup.py')
-call QUICKOPEN_leader_tvio('t', '~/code/ibeis/ibeis/templates/generate_notebook.py')
-call QUICKOPEN_leader_tvio('T', '~/code/ibeis/ibeis/tag_funcs.py')
+"call QUICKOPEN_leader_tvio('S', '~/code/ibeis/setup.py')
+call QUICKOPEN_leader_tvio('S', '~/code/ibeis/ibeis/scripts/postdoc.py')
+"call QUICKOPEN_leader_tvio('t', '~/code/ibeis/ibeis/templates/generate_notebook.py')
+"call QUICKOPEN_leader_tvio('T', '~/code/ibeis/ibeis/tag_funcs.py')
 call QUICKOPEN_leader_tvio('u', '~/code/utool/utool/__init__.py')
-call QUICKOPEN_leader_tvio('U', '~/code/utool/utool/util_dev.py')
+"call QUICKOPEN_leader_tvio('U', '~/code/utool/utool/util_dev.py')
 "call QUICKOPEN_leader_tvio('v', '~/code/vtool/vtool/__init__.py')
 call QUICKOPEN_leader_tvio('V', '~/code/vtool/vtool/__init__.py')
-call QUICKOPEN_leader_tvio('W', '~/code/ibeis_cnn/ibeis_cnn/models/abstract_models.py')
+"call QUICKOPEN_leader_tvio('W', '~/code/ibeis_cnn/ibeis_cnn/models/abstract_models.py')
 call QUICKOPEN_leader_tvio('w', '~/code/ibeis/ibeis/web/apis_query.py')
-call QUICKOPEN_leader_tvio('x', '~/code/ibeis/ibeis/viz/interact/interact_name.py')
-call QUICKOPEN_leader_tvio('X', '~/code/ibeis/ibeis/algo/hots/multi_index.py')
-call QUICKOPEN_leader_tvio('y', '~/code/ibeis/ibeis/algo/hots/vsone_pipeline.py')
-call QUICKOPEN_leader_tvio('Y', '~/code/cyth/cyth/cyth_script.py')
-call QUICKOPEN_leader_tvio('z', '~/code/ibeis/ibeis/viz/viz_graph2.py')
-call QUICKOPEN_leader_tvio('Z', '~/code/ibeis/ibeis/algo/hots/neighbor_index.py')
+"call QUICKOPEN_leader_tvio('x', '~/code/ibeis/ibeis/viz/interact/interact_name.py')
+"call QUICKOPEN_leader_tvio('X', '~/code/ibeis/ibeis/algo/hots/multi_index.py')
+"call QUICKOPEN_leader_tvio('y', '~/code/ibeis/ibeis/algo/hots/vsone_pipeline.py')
+"call QUICKOPEN_leader_tvio('Y', '~/code/cyth/cyth/cyth_script.py')
+"call QUICKOPEN_leader_tvio('z', '~/code/ibeis/ibeis/viz/viz_graph2.py')
+"call QUICKOPEN_leader_tvio('Z', '~/code/ibeis/ibeis/algo/hots/neighbor_index.py')
 
 
 call QUICKOPEN_leader_tvio('l', '~/code/VIAME/plugins')
 "call QUICKOPEN_leader_tvio('s', '~/code/VIAME/packages/kwiver/sprokit')
 call QUICKOPEN_leader_tvio('v', '~/code/VIAME/packages/kwiver/vital')
 "call QUICKOPEN_leader_tvio('a', '~/code/VIAME/packages/kwiver/arrows')
-call QUICKOPEN_leader_tvio('k', '~/code/VIAME/packages/kwiver')
-call QUICKOPEN_leader_tvio('a', '~/code/VIAME/packages/')
+
+call QUICKOPEN_leader_tvio('k', '~/code/kwiver')
+call QUICKOPEN_leader_tvio('K', '~/code/VIAME/packages/kwiver')
+
+call QUICKOPEN_leader_tvio('r', '~/code/kwiver/sprokit')
+call QUICKOPEN_leader_tvio('R', '~/code/VIAME/packages/kwiver/sprokit')
+
+call QUICKOPEN_leader_tvio('i', '~/code/VIAME')
+
 call QUICKOPEN_leader_tvio('c', '~/code/VIAME/plugins/camtrawl/python/camtrawl/processes.py')
 call QUICKOPEN_leader_tvio('8', '~/local/misc/kwiver_places.sh')
 call QUICKOPEN_leader_tvio('y', '~/local/misc/kwiver_places.sh')
@@ -329,39 +336,6 @@ endif
 "syntax sync minlines=500
 "set visualbell
 "set noeb vb t_vb=
-"
-"
-
-function! MathAndLiquid()
-    " http://scottsievert.com/blog/2016/01/06/vim-jekyll-mathjax/
-    "" Define certain regions
-    " Block math. Look for "$$[anything]$$"
-    syn region math start=/\$\$/ end=/\$\$/
-    " inline math. Look for "$[not $][anything]$"
-    syn match math_block '\$[^$].\{-}\$'
-
-    " Liquid single line. Look for "{%[anything]%}"
-    syn match liquid '{%.*%}'
-    " Liquid multiline. Look for "{%[anything]%}[anything]{%[anything]%}"
-    syn region highlight_block start='{% highlight .*%}' end='{%.*%}'
-    " Fenced code blocks, used in GitHub Flavored Markdown (GFM)
-    syn region highlight_block start='```' end='```'
-
-    "" Actually highlight those regions.
-    hi link math Statement
-    hi link liquid Statement
-    hi link highlight_block Function
-    hi link math_block Function
-    setlocal spell
-endfunction
-
-" Call everytime we open a Markdown file
-autocmd BufRead,BufNewFile,BufEnter *.md,*.markdown call MathAndLiquid()
-
-"if has("unix")
-"    execute "!mkdir -p ~/.vim/files/info"
-"endif
-
 
 " mkdir -p ~/.vim/files/info
 :set viminfo='100,n$HOME/.vim/files/info/viminfo
@@ -380,12 +354,3 @@ for varname, list_ in listvars.items():
     liststr = '[' + ', '.join('"%s"' % v for v in list_) + ']'
     vim.command('let g:' + varname + ' = ' + liststr)
 EOF
-
-
-
-"" HACK
-"highlight POSGroup guifg=green | highlight NEGGroup guifg=red | highlight INCGroup guifg=yellow | highlight UNRGroup guifg=purple
-":call matchadd('POSGroup', 'POSTV', 0, 500)
-":call matchadd('NEGGroup', 'NEGTV', 0, 501)
-":call matchadd('INCGroup', 'INCMP', 0, 502)
-":call matchadd('UNRGroup', 'UNREV', 0, 503)

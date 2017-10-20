@@ -203,8 +203,8 @@ def get_word_at_cursor(url_ok=False):
         nonword_chars_left = ' \t\n\r{},"\'\\'
         nonword_chars_right = nonword_chars_left
     else:
-        nonword_chars_left  = ' \t\n\r[](){}:;,"\'\\/=$'
-        nonword_chars_right = ' \t\n\r[](){}:;,"\'\\/=$.'
+        nonword_chars_left  = ' \t\n\r[](){}:;,"\'\\/=$*'
+        nonword_chars_right = ' \t\n\r[](){}:;,"\'\\/=$*.'
     word = get_word_in_line_at_col(line, col,
                                    nonword_chars_left=nonword_chars_left,
                                    nonword_chars_right=nonword_chars_right)
@@ -553,7 +553,10 @@ def close_matching_folds(pattern, search_range=None, limit=1):
         # Move to the fold
         move_cursor(lineno)
         # close the fold
-        vim.command(':foldclose')
+        try:
+            vim.command(':foldclose')
+        except vim.error:
+            pass
 
 
 def move_cursor(row, col=0):
@@ -836,7 +839,7 @@ def auto_docstr(**kwargs):
     return text
 
 
-def open_fpath(fpath, mode='e', nofoldenable=False):
+def open_fpath(fpath, mode='e', nofoldenable=False, verbose=0):
     """
     Execs new splits / tabs / etc
 
@@ -869,8 +872,17 @@ def open_fpath(fpath, mode='e', nofoldenable=False):
             raise NotImplementedError('implement fpath cmd for me')
     else:
         command = ":exec ':{mode} {fpath}'".format(mode=mode, fpath=fpath)
-    # print('command = {!r}\n'.format(command))
-    vim.command(command)
+
+    if verbose:
+        print('command = {!r}\n'.format(command))
+
+    try:
+        vim.command(command)
+    except Exception as ex:
+        print('FAILED TO OPEN PATH')
+        print('ex = {!r}'.format(ex))
+        raise
+        pass
 
     if nofoldenable:
         vim.command(":set nofoldenable")
@@ -1055,7 +1067,7 @@ def find_and_open_path(path, mode='split', verbose=0):
         if exists(path):
             if verbose:
                 print('EXISTS path = {!r}\n'.format(path))
-            open_fpath(path, mode=mode)
+            open_fpath(path, mode=mode, verbose=verbose)
             return True
 
     path = expanduser(path)
