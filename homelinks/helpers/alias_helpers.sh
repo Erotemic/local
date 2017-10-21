@@ -581,7 +581,7 @@ codeblock()
                 ")"
 
             Example:
-                echo "$(codeblock "
+               echo "$(codeblock "
                     a long
                     multiline string.
                     this is the last line that will be considered.
@@ -589,7 +589,8 @@ codeblock()
         ')"
     else
         # Prevents python indentation errors in bash
-        python -c "from textwrap import dedent; print(dedent('''$1''').strip('\n'))"
+        #python -c "from textwrap import dedent; print(dedent('''$1''').strip('\n'))"
+        echo "$1" | python -c "import sys; from textwrap import dedent; print(dedent(sys.stdin.read()).strip('\n'))"
     fi
 }
 
