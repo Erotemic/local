@@ -1070,8 +1070,24 @@ def find_and_open_path(path, mode='split', verbose=0):
             open_fpath(path, mode=mode, verbose=verbose)
             return True
 
+    def expand_module(path):
+        # if True or filetype in {'py', 'pyx'}:
+        # filetype = get_current_filetype()
+        from xdoctest import static_analysis as static
+        try:
+            path = static.modname_to_modpath(path)
+            print('rectified module to path = {!r}'.format(path))
+        except Exception as ex:
+            # if True or filetype in {'py', 'pyx'}:
+            print(ex)
+            return None
+        return path
+
     path = expanduser(path)
     if try_open(path):
+        return
+
+    if try_open(os.path.expandvars(path)):
         return
 
     # path = 'sprokit/pipeline/pipeline.h'
@@ -1106,19 +1122,8 @@ def find_and_open_path(path, mode='split', verbose=0):
     if try_open(path):
         return
     else:
-        filetype = get_current_filetype()
-        if True or filetype in {'py', 'pyx'}:
-            from xdoctest import static_analysis as static
-            try:
-                path = static.modname_to_modpath(path)
-                print('rectified module to path = {!r}'.format(path))
-            except Exception as ex:
-                if True or filetype in {'py', 'pyx'}:
-                    print(ex)
-                    return
-            if try_open(path):
-                return
-
+        if try_open(expand_module(path)):
+            return
         #vim.command('echoerr "Could not find path={}"'.format(path))
         print('Could not find path={}'.format(path))
 
@@ -1207,6 +1212,17 @@ def enter_text_in_terminal(text, return_to_vim=True):
     # execute script
     ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01)
     #file=debug_file , verbose=DEBUG)
+
+
+def is_url(text):
+    """ heuristic check if str is url formatted """
+    return any([
+        text.startswith('http://'),
+        text.startswith('https://'),
+        text.startswith('www.'),
+        '.org/' in text,
+        '.com/' in text,
+    ])
 
 
 if __name__ == '__main__':

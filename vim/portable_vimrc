@@ -22,6 +22,7 @@
 ":e ~/local/init/ensure_vim_plugins.py
 ":e ~/local/vim/rc_settings/remap_settings.vim
 ":e ~/local/vim/rc_settings/plugin_settings.vim
+" source ~/local/vim/vimfiles/syntax/python.vim
 " source ~/local/vim/vimfiles/after/syntax/tex.vim
 " source ~/local/vim/vimfiles/after/syntax/cmake.vim
 " source ~/local/vim/vimfiles/after/syntax/tex.vim

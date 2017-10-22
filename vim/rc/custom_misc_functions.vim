@@ -245,15 +245,25 @@ import utool as ut
 ut.rrrr(verbose=False)
 word = pyvim_funcs.get_word_at_cursor(url_ok=True)
 
-if word.startswith('<') and word.endswith('>`_'):
-    print('word = %r' % (word,))
-    word = word[1:-3]
-    print('word = %r' % (word,))
+def extract_url_embeding(word):
+    # parse several common ways to embed url
+    # rst url embedding
+    if word.startswith('<') and word.endswith('>`_'):
+        word = word[1:-3]
+    # markdown url embedding
+    if word.startswith('[') and word.endswith(')'):
+        import parse
+        pres = parse.parse('[{tag}]({ref})', word)
+        if pres:
+            word = pres.named['ref']
+    return word
 
-if ut.is_url(word):
+word = extract_url_embeding(word)
+
+print('word = {!r}'.format(word))
+if pyvim_funcs.is_url(word):
     url = word
     print(url)
-
 else:
     bibtex_dict = pyvim_funcs.get_bibtex_dict()
     title = bibtex_dict[word]['title'].replace('{', '').replace('}', '')
@@ -308,7 +318,7 @@ argv = pyvim_funcs.vim_argv(defaults=['split'])
 mode = argv[0]
 
 path = pyvim_funcs.get_word_at_cursor(url_ok=True)
-verbose = 0
+verbose = 1
 
 if verbose:
     print('OpenPathAtCursor path = {!r}'.format(path))
