@@ -1,0 +1,77 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          log_sensors
+# Required-Start:    $local_fs $network
+# Required-Stop:     $local_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: custom script
+# Description:       custom script
+### END INIT INFO
+
+
+PIDFILE="/var/run/log_sensors.pid"
+NAME="log_sensors"
+DAEMON="/home/joncrall/local/ubuntu/startup/log_sensors.sh"
+
+# Return 0, process already started.
+# Return 1, start cpu_temp
+do_start()
+{
+        if [ -f $PIDFILE ]; then
+                return 0
+        fi
+        $DAEMON &
+        echo "$!" > $PIDFILE
+        return 1
+}
+
+# Return 0, process not started.
+# Return 1, kill process
+do_stop()
+{
+        if [ ! -f $PIDFILE ]; then
+                return 0
+        fi
+        kill -9 `cat $PIDFILE`
+        rm $PIDFILE
+        return 1
+}
+
+case "$1" in
+  start)
+        do_start
+        case "$?" in
+                0) echo "$NAME already started." ;;
+                1) echo "Started $NAME." ;;
+        esac
+        ;;
+  stop)
+        do_stop
+        case "$?" in
+                0) echo "$NAME has not started." ;;
+                1) echo "Killed $NAME." ;;
+        esac
+        ;;
+
+  status)
+        if [ ! -r "$PIDFILE" ]; then
+                echo "$NAME is not running."
+                exit 3
+        fi
+        if read pid < "$PIDFILE" && ps -p "$pid" > /dev/null 2>&1; then
+                echo "$NAME is running."
+                exit 0
+        else
+                echo "$NAME is not running but $PIDFILE exists."
+                exit 1
+        fi
+        ;;
+  *)
+        N=/etc/init.d/$NAME
+        echo "Usage: $N {start|stop|status}" >&2
+        exit 1
+        ;;
+esac
+
+exit 0
