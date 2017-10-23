@@ -22,6 +22,9 @@ python run_camtrawl.py
 
 
 ~/code/VIAME/build/install/bin/pipeline_runner -p ~/code/VIAME/examples/hello_world_pipeline/hello_world_detector.pipe
+
+
+cd ~/code/VIAME/examples/tracking_pipelines/
 ~/code/VIAME/build/install/bin/pipeline_runner -p ~/code/VIAME/examples/tracking_pipelines/simple_tracker.pipe
 
 
