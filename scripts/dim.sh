@@ -7,3 +7,4 @@
 #redshift -O 6500 -b 1.0
 #redshift -O 2500 -b .5
 redshift -O 2200 -b .4
+redshift -O 2000 -b .3
