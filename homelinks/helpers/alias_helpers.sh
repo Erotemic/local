@@ -10,11 +10,51 @@ alias ls='ls --color --human-readable --group-directories-first --hide="*.pyc" -
 alias pygrep='grep -r --include "*.py"'
 alias clean_python='find . -iname *.pyc -delete & find . -iname *.pyo -delete'
 
-alias cgrep='grep -I --exclude-dir "*build*" --exclude-dir .git -ER'
+#alias cgrep='grep -I --exclude-dir "*build*" --exclude-dir .git -ER'
+alias cgrep='grep -I -ER \
+    --exclude-dir "*build*" \
+    --exclude-dir .git \
+    --exclude "*.dot*" \
+    --exclude "*.rst*" \
+    --exclude "*.pipe*" \
+    --exclude "tags"'
+
+
+#alias cgrep='grep -I --exclude-dir "*build*" --exclude-dir .git -ER'
+alias cmakecache_grep='grep -I -ER --exclude-dir .git --include "CMakeCache.txt"'
 
 fzfind()
 {
-    find . -iname "*$1*"
+    #find . -iname "*$1*"
+    #find . -type d \( -path "./build*" -o -path builds \) -prune -o -iname "*$1*"
+    python -c "$(codeblock "
+    import sys
+    import os
+    from fnmatch import fnmatch
+    from os.path import join
+
+    exclude = ['build*', '.git']
+    patterns = ['*' + p + '*' for p in sys.argv[1:]]
+
+    def imatches(patterns, strings):
+        for item in strings:
+            item = item.lower()
+            if any(fnmatch(item, pat) for pat in patterns):
+                yield item
+
+    for root, dirs, files in os.walk('.'):
+        # Prune any directory matching the bad pattern
+        to_remove = [dx for dx, dname in enumerate(dirs) 
+                     if any(fnmatch(dname, pat) for pat in exclude)]
+        for dx in reversed(to_remove):
+            del dirs[dx]
+
+        # print any paths matching the name
+        for dname in imatches(patterns, dirs):
+            print(join(root, dname))
+        for fname in imatches(patterns, files):
+            print(join(root, fname))
+    ")" "$@"
 }
 
 #clean_python(){
@@ -103,7 +143,9 @@ alias co='cd $CODE_DIR'
 alias cv='cd $CODE_DIR/opencv'
 #alias fl='cd $CODE_DIR/flann/'
 alias fl='cd $CODE_DIR/fletch/'
+alias flb='cd $CODE_DIR/fletch/build-py2'
 alias kw='cd $CODE_DIR/kwiver/'
+alias kwb='cd $CODE_DIR/kwiver/build-py2'
 alias vi='cd $CODE_DIR/VIAME/'
 alias vib='cd $CODE_DIR/VIAME/build-py2'
 alias vikw='cd $CODE_DIR/VIAME/packages/kwiver/'

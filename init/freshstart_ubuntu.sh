@@ -34,6 +34,8 @@ simple_setup_auto(){
     git config core.fileMode false
     git config --global alias.co checkout
 
+    git config --global merge.conflictstyle diff3
+
     setup_venv3
     source ~/venv3/bin/activate
 
@@ -114,20 +116,6 @@ entry_prereq_git_and_local()
 }
 
 
-codeblock()
-{
-    # Usage:
-    # 
-    # >>> echo "$(codeblock "
-    # ...     a long
-    # ...     multiline string.
-    # ...     this is the last line that will be considered.
-    # ...     ")"
-    # 
-    # Prevents python indentation errors in bash
-    python -c "from textwrap import dedent; print(dedent('''$1''').strip('\n'))"
-}
-
 have_sudo(){
     python -c "$(codeblock "
         import grp, pwd 
@@ -192,7 +180,7 @@ ensure_config_symlinks()
     # If that doesnt work use absolute home link
     RELHOME="$HOME"
     
-    export HOMELINKS=$RELHOME/local/homelinks
+    HOMELINKS=$RELHOME/local/homelinks
 
     # Symlink all homelinks files 
     #================
@@ -515,7 +503,7 @@ setup_venv3(){
     fi
     python3 -m pip install pip setuptools virtualenv -U --user
 
-    export PYTHON3_VENV="$HOME/venv3"
+    PYTHON3_VENV="$HOME/venv3"
     mkdir -p $PYTHON3_VENV
     python3 -m virtualenv -p /usr/bin/python3 $PYTHON3_VENV
     python3 -m virtualenv --relocatable $PYTHON3_VENV 
@@ -544,17 +532,129 @@ setup_venv2(){
         curl https://bootstrap.pypa.io/get-pip.py > ~/tmp/get-pip.py
         python2 ~/tmp/get-pip.py --user
     fi
-    python2 -m pip install pip setuptools virtualenv -U --user
-    export PYTHON2_VENV="$HOME/venv2"
-    mkdir $PYTHON2_VENV
-    python2 -m virtualenv -p /usr/bin/python2.7 $PYTHON2_VENV 
+    PYTHON2_VENV="$HOME/venv2"
+    mkdir -p $PYTHON2_VENV
+    python2.7 -m pip install pip setuptools virtualenv -U --user
+    python2.7 -m virtualenv -p $(which python2.7) $PYTHON2_VENV 
+    #python2 -m virtualenv -p /usr/bin/python2.7 $PYTHON2_VENV 
     #python2 -m virtualenv --relocatable $PYTHON2_VENV 
+}
+
+
+codeblock()
+{
+    if [ "-h" == "$1" ] || [ "--help" == "$1" ]; then 
+        # Use codeblock to show the usage of codeblock, so you can use
+        # codeblock while you codeblock.
+        echo "$(codeblock '
+            Unindents code before its executed so you can maintain a pretty
+            indentation in your code file. Multiline strings simply begin  
+            with 
+                "$(codeblock "
+            and end with 
+                ")"
+
+            Example:
+               echo "$(codeblock "
+                    a long
+                    multiline string.
+                    this is the last line that will be considered.
+                    ")"
+        ')"
+    else
+        # Prevents python indentation errors in bash
+        #python -c "from textwrap import dedent; print(dedent('''$1''').strip('\n'))"
+        echo "$1" | python -c "import sys; from textwrap import dedent; print(dedent(sys.stdin.read()).strip('\n'))"
+    fi
+}
+
+__heredoc__(){
+    echo "$@" > /dev/null
+}
+
+patch_venv_with_libs(){
+    __heredoc__ "
+    CommandLine:
+        source ~/local/init/freshstart_ubuntu.sh && patch_venv_with_libs
+
+    Ignore:
+        # FIXME:
+        # https://github.com/bastibe/lunatic-python/issues/35
+
+        ln -s /usr/lib/python2.7/config-x86_64-linux-gnu ~/venv2/lib
+        ln -s /usr/lib/python2.7/config-x86_64-linux-gnu_d ~/venv2/lib
+    "
+    # References:
+    # https://github.com/pypa/virtualenv/pull/1045
+    ACTIVATE_SCRIPT=$VIRTUAL_ENV/bin/activate
+
+    # apply the patch 
+    python -c "$(codeblock "
+        import textwrap
+        from os.path import exists
+        new_path = '$ACTIVATE_SCRIPT'
+        old_path = '$ACTIVATE_SCRIPT.old'
+        if not exists(old_path):
+            import shutil
+            shutil.copy(new_path, old_path)
+
+        text = open(old_path, 'r').read()
+        lines = text.splitlines(True)
+
+        def absindent(text, prefix=''):
+            text = textwrap.dedent(text).lstrip()
+            text = prefix + prefix.join(text.splitlines(True))
+            return text.splitlines(True)
+
+        if len(lines) != 78:
+            # hacky way of preventing extra patches
+            print('length of file {} is unexpected'.format(new_path))
+        else:
+            print('patching {}'.format(new_path))
+            new_lines = []
+            for old_lineno, line in enumerate(lines, start=1):
+                new_lines.append(line)
+                if old_lineno == 10:
+                    new_lines.extend(absindent('''
+                            C_INCLUDE_PATH=\"\$_OLD_C_INCLUDE_PATH\"
+                            LD_LIBRARY_PATH=\"\$_OLD_VIRTUAL_LD_LIBRARY_PATH\"
+
+                        ''', ' ' * 8))
+                elif old_lineno == 11:
+                    new_lines.extend(absindent('''
+                            export C_INCLUDE_PATH
+                            export LD_LIBRARY_PATH
+
+                            unset _OLD_C_INCLUDE_PATH
+                            unset _OLD_VIRTUAL_LD_LIBRARY_PATH
+                        ''', ' ' * 8))
+                elif old_lineno == 46:
+                    new_lines.extend(absindent('''
+                            _OLD_C_INCLUDE_PATH=\"\$C_INCLUDE_PATH\"
+                            _OLD_VIRTUAL_LD_LIBRARY_PATH=\"\$LD_LIBRARY_PATH\"
+
+                        '''))
+                elif old_lineno == 47:
+                    new_lines.extend(absindent('''
+                            C_INCLUDE_PATH=\"\$VIRTUAL_ENV/include:\$C_INCLUDE_PATH\"
+                            LD_LIBRARY_PATH=\"\$VIRTUAL_ENV/lib:\$LD_LIBRARY_PATH\"
+
+                        '''))
+                elif old_lineno == 48:
+                    new_lines.extend(absindent('''
+                            export C_INCLUDE_PATH
+                            export LD_LIBRARY_PATH
+                        '''))
+            new_text = ''.join(new_lines)
+            open(new_path, 'w').write(new_text)
+    ")"
+    #diff -u $VIRTUAL_ENV/bin/activate.old $VIRTUAL_ENV/bin/activate 
 }
 
 setup_venv37(){
     echo "setup venv37"
     # Make sure you install 3.7 to ~/.local from source
-    export PYTHON3_VENV="$HOME/venv3_7"
+    PYTHON3_VENV="$HOME/venv3_7"
     mkdir -p $PYTHON3_VENV
     ~/.local/bin/python3 -m venv $PYTHON3_VENV
     ln -s $PYTHON3_VENV ~/venv3 
@@ -564,7 +664,7 @@ setup_venv37(){
 setupt_venvpypy(){
     echo "setup venvpypy"
 
-    export PYPY_VENV="$HOME/venvpypy"
+    PYPY_VENV="$HOME/venvpypy"
     mkdir -p $PYPY_VENV
     virtualenv-3.4 -p /usr/bin/pypy $PYPY_VENV 
 
@@ -596,14 +696,14 @@ install_fonts()
     wget https://downloads.sourceforge.net/project/cm-unicode/cm-unicode/0.7.0/cm-unicode-0.7.0-ttf.tar.xz
     7z x cm-unicode-0.7.0-ttf.tar.xz && 7z x cm-unicode-0.7.0-ttf.tar && rm cm-unicode-0.7.0-ttf.tar
 
-    export _SUDO ""
-    export FONT_DIR=$HOME/.fonts
+    _SUDO ""
+    FONT_DIR=$HOME/.fonts
 
-    #export _SUDO sudo
-    #export FONT_DIR=/usr/share/fonts
+    #_SUDO sudo
+    #FONT_DIR=/usr/share/fonts
 
-    export TTF_FONT_DIR=$FONT_DIR/truetype
-    export OTF_FONT_DIR=$FONT_DIR/truetype
+    TTF_FONT_DIR=$FONT_DIR/truetype
+    OTF_FONT_DIR=$FONT_DIR/truetype
 
     mkdir -p $TTF_FONT_DIR
     mkdir -p $OTF_FONT_DIR
@@ -771,7 +871,7 @@ setup_ibeis()
     ./_scripts/bootstrap.py --no-syspkg --nosudo
 
     cd 
-    export IBEIS_WORK_DIR="$(python -c 'import ibeis; print(ibeis.get_workdir())')"
+    IBEIS_WORK_DIR="$(python -c 'import ibeis; print(ibeis.get_workdir())')"
     echo $IBEIS_WORK_DIR
     ln -s $IBEIS_WORK_DIR  work
 }
@@ -941,14 +1041,14 @@ install_fonts()
     wget https://downloads.sourceforge.net/project/cm-unicode/cm-unicode/0.7.0/cm-unicode-0.7.0-ttf.tar.xz
     7z x cm-unicode-0.7.0-ttf.tar.xz && 7z x cm-unicode-0.7.0-ttf.tar && rm cm-unicode-0.7.0-ttf.tar
 
-    export _SUDO ""
-    export FONT_DIR=$HOME/.fonts
+    _SUDO ""
+    FONT_DIR=$HOME/.fonts
 
-    #export _SUDO sudo
-    #export FONT_DIR=/usr/share/fonts
+    #_SUDO sudo
+    #FONT_DIR=/usr/share/fonts
 
-    export TTF_FONT_DIR=$FONT_DIR/truetype
-    export OTF_FONT_DIR=$FONT_DIR/truetype
+    TTF_FONT_DIR=$FONT_DIR/truetype
+    OTF_FONT_DIR=$FONT_DIR/truetype
 
     mkdir -p $TTF_FONT_DIR
     mkdir -p $OTF_FONT_DIR
