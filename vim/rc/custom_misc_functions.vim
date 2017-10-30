@@ -574,6 +574,38 @@ EOF
 endfunc
 
 
+func! FUNC_IReplace(...)
+Python2or3 << EOF
+"""
+Search and replace while ignoring caps 
+"""
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool as ut
+import re
+from os.path import exists, expanduser
+ut.rrrr(verbose=False)
+argv = pyvim_funcs.vim_argv(defaults=[None, None])
+find, repl = argv[0:2]
+#print('find = {!r}'.format(find))
+#print('repl = {!r}'.format(repl))
+
+n_changed = 0
+
+for lx in range(len(vim.current.buffer)):
+    line = vim.current.buffer[lx]
+    newline = line
+    newline = newline.replace(find, repl)
+    newline = newline.replace(find.lower(), repl.lower())
+    newline = newline.replace(find.upper(), repl.upper())
+    if line != newline:
+        vim.current.buffer[lx] = newline
+        n_changed += 1
+print('found and replaced {!r} matches'.format(n_changed))
+EOF
+endfunc
+
+
 
 "-------------------------
 command! HexmodeOn :%!xxd
