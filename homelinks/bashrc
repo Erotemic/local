@@ -57,6 +57,8 @@ export PKG_CONFIG_PATH=~/.local/lib/pkgconfig:$PKG_CONFIG_PATH
 
 
 export PATH=$PATH:~/scripts
+export PATH=$PATH:~/misc/git
+export PATH=$PATH:~/misc/scripts
 
 if [ -d "$HOME/.local" ]; then
     export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$HOME/.local

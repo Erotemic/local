@@ -572,20 +572,123 @@ __heredoc__(){
     echo "$@" > /dev/null
 }
 
-patch_venv_with_libs(){
+
+
+patch_venv_with_shared_libs(){
+    __heredoc__ "
+    References:
+        https://github.com/pypa/virtualenv/pull/1045/files
+    "
+
+    python -c "$(codeblock "
+        import shutil
+        import os
+        import sys
+        from os.path import join
+
+        def is_relative_lib():
+            # Check if the python was compiled with LDFLAGS -rpath and $ORIGIN
+            import distutils
+            ldflags_var = distutils.sysconfig.get_config_var('LDFLAGS')
+            if ldflags_var is None:
+                return False
+            ldflags = ldflags_var.split(',')
+            n_flags = len(ldflags)
+            idx = 0
+            while idx < n_flags - 1:
+                flag = ldflags[idx]
+                if flag == '-rpath':
+                    # rpath can contain multiple entries:
+                    rpaths = ldflags[idx+1].split(os.pathsep)
+                    for rpath in rpaths:
+                        rpath = rpath.strip()
+                        if rpath.startswith(''''$'ORIGIN'''):
+                            return True
+                    idx += 1
+                idx += 1
+            return False
+
+        def copyfile(src, dest, symlink=True):
+            if not os.path.exists(src):
+                # Some bad symlink in the src
+                print('Cannot find file %s (bad symlink)' % src)
+                return
+            if os.path.exists(dest):
+                print('File %s already exists' % dest)
+                return
+            if not os.path.exists(os.path.dirname(dest)):
+                print('Creating parent directories for %s' % os.path.dirname(dest))
+                os.makedirs(os.path.dirname(dest))
+            if not os.path.islink(src):
+                srcpath = os.path.abspath(src)
+            else:
+                srcpath = os.readlink(src)
+            if symlink and hasattr(os, 'symlink') and not is_win:
+                print('Symlinking %s' % dest)
+                try:
+                    os.symlink(srcpath, dest)
+                except (OSError, NotImplementedError):
+                    print('Symlinking failed, copying to %s' % dest)
+                    copyfileordir(src, dest, symlink)
+            else:
+                print('Copying to %s' % dest)
+                copyfileordir(src, dest, symlink)
+
+        def copyfileordir(src, dest, symlink=True):
+            if os.path.isdir(src):
+                shutil.copytree(src, dest, symlink)
+            else:
+                shutil.copy2(src, dest)
+                    
+        def install_shared(bin_dir, symlink=True):
+            # copy (symlink by default) the python shared library to the target
+            print('Installing shared lib...')
+
+            sys.real_prefix
+            real_executable = join(sys.real_prefix, os.path.relpath(sys.executable, sys.prefix))
+
+            current_shared = os.path.realpath(join(os.path.dirname(real_executable), '..', 'lib'))
+
+            target_shared = os.path.normpath(join(bin_dir, '..', 'lib'))
+
+            import glob
+
+            lib_subdirs = ['', 'x86_64-linux-gnu', 'i386-linux-gnu']
+            for subdir in lib_subdirs:
+                major = sys.version_info.major
+                minor = sys.version_info.minor
+                libfiles = list(glob.glob(join(current_shared, subdir, 'libpython*{}.{}*'.format(major, minor))))
+                if libfiles:
+                    break
+
+            assert len(libfiles) > 0, 'no python libs found' 
+
+            for libpython in libfiles:
+                target_file = join(target_shared, os.path.basename(libpython))
+
+                copyfile(libpython, target_file)
+                
+            print('done.')
+
+        bin_dir = join(os.environ['VIRTUAL_ENV'], 'bin')  # hack
+        install_shared(bin_dir, symlink=True)
+    ")"
+}
+
+patch_venv_with_ld_library(){
     __heredoc__ "
     CommandLine:
-        source ~/local/init/freshstart_ubuntu.sh && patch_venv_with_libs
+        source ~/local/init/freshstart_ubuntu.sh && patch_venv_with_ld_library
+
+    References:
+        https://github.com/pypa/virtualenv/pull/1045
+        https://github.com/bastibe/lunatic-python/issues/35
 
     Ignore:
         # FIXME:
-        # https://github.com/bastibe/lunatic-python/issues/35
-
         ln -s /usr/lib/python2.7/config-x86_64-linux-gnu ~/venv2/lib
         ln -s /usr/lib/python2.7/config-x86_64-linux-gnu_d ~/venv2/lib
     "
-    # References:
-    # https://github.com/pypa/virtualenv/pull/1045
     ACTIVATE_SCRIPT=$VIRTUAL_ENV/bin/activate
 
     # apply the patch 

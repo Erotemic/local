@@ -64,6 +64,7 @@ unmount-if-mounted()
 
 mount-remotes()
 {
+    echo "Mounting remotes"
     mount-if-available aretha 
     #mount-if-available arisia 
     #mount-if-available lev 
@@ -71,12 +72,36 @@ mount-remotes()
 
 unmount-remotes()
 {
+    echo "Unmounting remotes"
     unmount-if-mounted aretha
 }
 
 
-mount-remotes
+# https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+key="$1"
 
+case $key in
+    -u|--unmount)
+    UNMOUNT=YES
+    shift # past argument
+    ;;
+    *)    # unknown option
+    POSITIONAL+=("$1") # save it in an array for later
+    shift # past argument
+    ;;
+esac
+done
+set -- "${POSITIONAL[@]}" # restore positional parameters
+
+
+if [ "$UNMOUNT" == "YES" ]; then
+    unmount-remotes
+else
+    mount-remotes
+fi
 
 #fusermount -u ~/aretha
 
