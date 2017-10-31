@@ -60,19 +60,19 @@ alias ggss=gg-short-status
 #    #gcwip& 
 #    #ssh $REMOTE "cd $RELPWD && git pull"
 #}
-alias git-sync='git_sync'
-complete -W "arisia aretha lev hyrule" "git_sync"
+#alias git-sync='git_sync'
+#complete -W "arisia aretha lev hyrule" "git_sync"
 complete -W "arisia aretha lev hyrule" "git-sync"
 
 
 git_lev_sync()
 {
-    git_sync lev
+    git-sync lev
 }
 
 git_hyrule_sync()
 {
-    git_sync hyrule
+    git-sync hyrule
 }
 
 git_remote_sync()

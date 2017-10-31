@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [ "$#" -eq "1" ]; then 
+    REMOTE=$1
+
+    # We assume the file structure is mostly the same on the remote
+    RELPWD=$(python -c "import os; print(os.path.relpath('$(pwd)', os.path.expanduser('~')))")
+
+    # Safe version
+    git commit -am "wip" && git push && ssh $REMOTE "cd $RELPWD && git pull"
+else
+    echo "Must specify exactly one argument"
+fi
