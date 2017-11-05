@@ -1288,3 +1288,35 @@ gmail_api(){
     pip install --upgrade google-api-python-client
 }
 
+
+install_ipp(){
+  mkdir -p ~/tpl-archive/ipp
+  #mv ~/Downloads/l_ipp_2018.0.128.tgz ~/tpl-archive/ipp
+
+  rsync -arvp ~/tpl-archive/ipp arisia:tpl-archive/
+  rsync -arvp ~/tpl-archive/ipp aretha:tpl-archive/
+
+  # Please download and install IPP from https://software.intel.com/en-us/intel-ipp
+  mkdir -p ~/tmp
+  cd ~/tmp
+  tar -xvzf ~/tpl-archive/ipp/l_ipp_2018.0.128.tgz 
+  cd ~/tmp/l_ipp_2018.0.128
+
+  #./install.sh --help
+  ./install.sh --user-mode
+
+  # Enter the following commands
+  __heredoc__ "
+      ENTER
+      q
+      accept
+      # gets hairy here
+      ENTER
+  "
+
+
+
+  # installs to $HOME/intel
+  # ENSURE YOU ADD $HOME/intel/lib/intel64 to your LD_LIBRARY_PATH
+  # ALSO ADD $HOME/intel/ipp/include to CPATH
+}

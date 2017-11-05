@@ -78,6 +78,16 @@ if [ -d "$HOME/.local/cuda" ]; then
 fi
 
 
+# Add user CUDA/CUDNN to the library paths if it exists
+if [ -d "$HOME/intel/ipp/lib/intel64" ]; then
+    # Prepend to get around weird system ld_library_paths
+    export CPATH=$HOME/intel/ipp/include:$CPATH
+    export LD_LIBRARY_PATH=$HOME/intel/ipp/lib/intel64:$LD_LIBRARY_PATH
+
+    export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$HOME/intel/ipp
+fi
+
+
 ##############
 # System Level (priorty after user)
 ##############

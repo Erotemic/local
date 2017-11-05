@@ -120,8 +120,10 @@ init_local_cudnn(){
     # https://developer.nvidia.com/rdp/cudnn-download
 
     # Sync between machines
-    rsync -avp ~/cuda-archive/ arisia:cuda-archive
-    rsync -avp ~/cuda-archive/ aretha:cuda-archive
+    mkdir -p ~/tpl-archive/cuda
+    #~/tpl-archive/cuda
+    rsync -avp ~/tpl-archive/cuda arisia:tpl-archive/cuda
+    rsync -avp ~/tpl-archive/cuda aretha:tpl-archive/cuda
 
     # check for user cuda
     ls ~/.local/cuda/lib64/libcudnn*
