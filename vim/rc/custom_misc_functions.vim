@@ -245,20 +245,7 @@ import utool as ut
 ut.rrrr(verbose=False)
 word = pyvim_funcs.get_word_at_cursor(url_ok=True)
 
-def extract_url_embeding(word):
-    # parse several common ways to embed url
-    # rst url embedding
-    if word.startswith('<') and word.endswith('>`_'):
-        word = word[1:-3]
-    # markdown url embedding
-    if word.startswith('[') and word.endswith(')'):
-        import parse
-        pres = parse.parse('[{tag}]({ref})', word)
-        if pres:
-            word = pres.named['ref']
-    return word
-
-word = extract_url_embeding(word)
+word = pyvim_funcs.extract_url_embeding(word)
 
 print('word = {!r}'.format(word))
 if pyvim_funcs.is_url(word):
@@ -283,8 +270,10 @@ endfunc
 
 
 func! FUNC_OpenPath(...)
-
 Python2or3 << EOF
+"""
+Does a fancy open of a path specified as an function arg.
+"""
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
@@ -304,8 +293,10 @@ command! -nargs=1 EE call FUNC_OpenPath(<f-args>, 'e')
 
 
 func! OpenPathAtCursor(...) 
-
 Python2or3 << EOF
+"""
+Does a fancy open of a path at the current cursor position in vim
+"""
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
@@ -313,19 +304,14 @@ import re
 from os.path import exists, expanduser
 ut.rrrr(verbose=False)
 
-
 argv = pyvim_funcs.vim_argv(defaults=['split'])
 mode = argv[0]
-
 path = pyvim_funcs.get_word_at_cursor(url_ok=True)
-verbose = 1
-
+verbose = 0
 if verbose:
     print('OpenPathAtCursor path = {!r}'.format(path))
     print('exists = {!r}'.format(exists(path)))
-
 pyvim_funcs.find_and_open_path(path, mode=mode, verbose=verbose)
-
 EOF
 endfunc
 

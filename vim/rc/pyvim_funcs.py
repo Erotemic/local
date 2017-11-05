@@ -1057,14 +1057,25 @@ def vim_popup_menu(options):
     return chosen
 
 
-def find_and_open_path(path, mode='split', verbose=0):
+def find_and_open_path(path, mode='split', verbose=0,
+                       enable_python=True,
+                       enable_url=True):
+    """
+    Fancy-Find. Does some magic to try and find the correct path.
+
+    Currently supports:
+        * well-formed absolute and relatiave paths
+        * ill-formed relative paths when you are in a descendant directory
+        * python modules that exist in the PYTHONPATH
+
+    """
     import utool as ut
     import os
 
     def try_open(path):
         # base = '/home/joncrall/code/VIAME/packages/kwiver/sprokit/src/bindings/python/sprokit/pipeline'
         # base = '/home'
-        if exists(path):
+        if path and exists(path):
             if verbose:
                 print('EXISTS path = {!r}\n'.format(path))
             open_fpath(path, mode=mode, verbose=verbose)
@@ -1076,12 +1087,18 @@ def find_and_open_path(path, mode='split', verbose=0):
         from xdoctest import static_analysis as static
         try:
             path = static.modname_to_modpath(path)
-            print('rectified module to path = {!r}'.format(path))
+            # print('rectified module to path = {!r}'.format(path))
         except Exception as ex:
             # if True or filetype in {'py', 'pyx'}:
-            print(ex)
             return None
         return path
+
+    if enable_url:
+        # https://github.com/Erotemic
+        url = extract_url_embeding(path)
+        if is_url(url):
+            ut.open_url_in_browser(url, 'google-chrome')
+            return
 
     path = expanduser(path)
     if try_open(path):
@@ -1122,10 +1139,27 @@ def find_and_open_path(path, mode='split', verbose=0):
     if try_open(path):
         return
     else:
-        if try_open(expand_module(path)):
-            return
+        if enable_python:
+            if try_open(expand_module(path)):
+                return
         #vim.command('echoerr "Could not find path={}"'.format(path))
         print('Could not find path={}'.format(path))
+
+
+def extract_url_embeding(word):
+    """
+    parse several common ways to embed url within a "word"
+    """
+    # rst url embedding
+    if word.startswith('<') and word.endswith('>`_'):
+        word = word[1:-3]
+    # markdown url embedding
+    if word.startswith('[') and word.endswith(')'):
+        import parse
+        pres = parse.parse('[{tag}]({ref})', word)
+        if pres:
+            word = pres.named['ref']
+    return word
 
 
 def getvar(key, default=None, context='g'):

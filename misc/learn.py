@@ -332,16 +332,13 @@ def iters_until_threshold():
     # sym.solve(sym.Eq(binom_thresh.subs({s: 50}), .05))
     # sym.solve(sym.Eq(poisson_thresh.subs({s: 50}), .05))
     # Find a numerical solution
-    def solve_numeric(expr, target, want, fixed, method=None, bounds=None):
+    def solve_numeric(expr, target, solve_for, fixed={}, method=None, bounds=None):
         """
         Args:
             expr (Expr): symbolic expression
             target (float): numberic value
+            solve_for (sympy.Symbol): The symbol you care about
             fixed (dict): fixed values of the symbol
-
-        expr = poisson_thresh
-        expr.free_symbols
-        fixed = {s: 10}
 
         solve_numeric(poisson_thresh, .05, {s: 30}, method=None)
         solve_numeric(poisson_thresh, .05, {s: 30}, method='Nelder-Mead')
@@ -352,17 +349,19 @@ def iters_until_threshold():
         want_symbols = expr.free_symbols - set(fixed.keys())
         # TODO: can probably extend this to multiple params
         assert len(want_symbols) == 1, 'specify all but one var'
-        assert want == list(want_symbols)[0]
+        assert solve_for == list(want_symbols)[0]
         fixed_expr = expr.subs(fixed)
         def func(a1):
-            expr_value = float(fixed_expr.subs({want: a1}).evalf())
+            expr_value = float(fixed_expr.subs({solve_for: a1}).evalf())
             return (expr_value - target) ** 2
+        if not fixed:
+            a1 = 0
+        else:
+            a1 = list(fixed.values())[0]
         # if method is None:
         #     method = 'Nelder-Mead'
         #     method = 'Newton-CG'
         #     method = 'BFGS'
-        # Use one of the other params the startin gpoing
-        a1 = list(fixed.values())[0]
         result = scipy.optimize.minimize(func, x0=a1, method=method, bounds=bounds)
         if not result.success:
             print('\n')
