@@ -10,6 +10,9 @@ alias ls='ls --color --human-readable --group-directories-first --hide="*.pyc" -
 alias pygrep='grep -r --include "*.py"'
 alias clean_python='find . -iname *.pyc -delete & find . -iname *.pyo -delete'
 
+# watch with a higher frequency
+alias watch='watch -n .5'
+
 #alias cgrep='grep -I --exclude-dir "*build*" --exclude-dir .git -ER'
 alias cgrep='grep -I -ER \
     --exclude-dir "*build*" \
