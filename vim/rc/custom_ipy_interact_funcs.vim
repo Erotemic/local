@@ -129,18 +129,23 @@ if pyvim_funcs.is_module_pythonfile():
     modpath = vim.current.buffer.name
     modname = ut.get_modname_from_modpath(modpath)
     lines = []
+
     try:
         needs_path = not ut.check_module_installed(modname)
     except Exception:
         needs_path = True
 
     if needs_path:
-        mod_subdirs = ut.get_module_subdir_list(modpath)
-        basepath = modpath
-        for _ in range(len(mod_subdirs)):
-            basepath = dirname(basepath)
+        from xdoctest import static_analysis
+        basepath = static_analysis.split_modpath(modpath)[0]
+
+        #mod_subdirs = ut.get_module_subdir_list(modpath)
+        #basepath = modpath
+        #for _ in range(len(mod_subdirs)):
+        #    basepath = dirname(basepath)
         lines.append('import sys')
-        lines.append('sys.path.append(%r)' % (dirname(modpath),))
+        #lines.append('sys.path.append(%r)' % (dirname(modpath),))
+        lines.append('sys.path.append(%r)' % (basepath,))
 
     lines.append("from {} import *".format(modname))
     # Add private and protected functions
