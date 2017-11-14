@@ -143,6 +143,7 @@ alias scr='cd ~/scripts'
 # Special navigation
 alias code='cd $CODE_DIR'
 alias co='cd $CODE_DIR'
+alias cl='cd $CODE_DIR/clab'
 alias cv='cd $CODE_DIR/opencv'
 #alias fl='cd $CODE_DIR/flann/'
 alias fl='cd $CODE_DIR/fletch/'

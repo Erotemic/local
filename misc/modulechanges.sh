@@ -710,3 +710,6 @@ rob sp "infr.enable_redundancy" "infr.params['redun.enabled']" True
 
 rob sp "infr.classifiers" "infr.verifiers" True
 
+
+rob sedr "^from pysseg.torch import" "from . import"
+rob sedr "^from pysseg\." "from ."

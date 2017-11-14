@@ -3,6 +3,7 @@ A list of my personally used repositories
 
 CommandLine:
     lc
+    python ~/local/init/ensure_repos.py
     python init/ensure_vim_plugins.py
     python ~/local/init/ensure_vim_plugins.py
 """
@@ -49,6 +50,8 @@ IBEIS_REPOS_URLS, IBEIS_REPOS = repo_list([
     'https://github.com/Erotemic/ubelt.git',
     'https://github.com/Erotemic/xdoctest.git',
 
+    'https://github.com/Erotemic/clab.git',
+
     'https://github.com/Erotemic/VIAME.git',
     'https://github.com/Erotemic/kwiver.git',
     # 'https://github.com/Erotemic/VIAME/packages/kwiver.git',
@@ -76,8 +79,8 @@ CODE_REPO_TUP = CODE_REPO_URLS, CODE_REPOS
 LATEX_REPO_TUP = repo_list([
     # 'git@hyrule.cs.rpi.edu:crall-lab-notebook.git',
     # 'git@hyrule.cs.rpi.edu:crall-candidacy-2015.git',
-    'git@hyrule.cs.rpi.edu:crall-iccvw-2017.git',
-    'git@hyrule.cs.rpi.edu:crall-thesis-2017.git',
+    # 'git@hyrule.cs.rpi.edu:crall-iccvw-2017.git',
+    # 'git@hyrule.cs.rpi.edu:crall-thesis-2017.git',
 ], LATEX_DIR)
 LATEX_REPOS_URLS, LATEX_REPOS = LATEX_REPO_TUP
 
