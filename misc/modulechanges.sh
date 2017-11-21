@@ -713,3 +713,16 @@ rob sp "infr.classifiers" "infr.verifiers" True
 
 rob sedr "^from pysseg.torch import" "from . import"
 rob sedr "^from pysseg\." "from ."
+
+cd ~/code/clab/clab
+rob sedr pysseg clab True
+
+cgrep ">>> .*sys.path"
+cgrep ">>> .*sys.path"
+
+rob sedr "^from clab\.torch import" "from . import"
+rob sedr "^from clab\." "from ." True
+rob sedr "^    from clab\." "    from ." True
+rob sedr "^        from clab\." "        from ." True
+
+rob sedr "^from clab import" "from . import" True
