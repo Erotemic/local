@@ -724,5 +724,14 @@ rob sedr "^from clab\.torch import" "from . import"
 rob sedr "^from clab\." "from ." True
 rob sedr "^    from clab\." "    from ." True
 rob sedr "^        from clab\." "        from ." True
-
 rob sedr "^from clab import" "from . import" True
+
+cd ~/code/clab/clab/live
+rob sed "clab.torch.urban_train" "clab.live.urban_train"  True
+rob sed "clab.torch.siam_train" "clab.live.siam_train"  True
+rob sed "clab.torch.sseg_train" "clab.live.sseg_train"  True
+rob sed "clab.torch.urban_mapper" "clab.live.urban_mapper"  True
+
+
+rob sedr "^from \. import" "from clab import" True
+rob sedr "^from \." "from clab." 
