@@ -1320,3 +1320,49 @@ install_ipp(){
   # ENSURE YOU ADD $HOME/intel/lib/intel64 to your LD_LIBRARY_PATH
   # ALSO ADD $HOME/intel/ipp/include to CPATH
 }
+
+
+docker(){
+    # https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/#set-up-the-repository
+    # https://github.com/NVIDIA/nvidia-docker
+
+    sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    sudo apt-key fingerprint 0EBFCD88
+    sudo add-apt-repository \
+       "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+       $(lsb_release -cs) \
+       stable"
+    sudo apt update
+    sudo apt install docker-ce
+
+    # Add self to docker group
+    sudo groupadd docker
+    sudo usermod -aG docker $USER
+    # NEED TO LOGOUT / LOGIN to revaluate groups
+    su - $USER  # or we can do this
+
+    # TEST:
+    docker run hello-world
+    sudo docker run hello-world
+
+
+    # NVIDIA-Docker
+    curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | \
+      sudo apt-key add -
+    curl -s -L https://nvidia.github.io/nvidia-docker/ubuntu16.04/amd64/nvidia-docker.list | \
+      sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+    sudo apt-get update
+
+    # Install nvidia-docker2 and reload the Docker daemon configuration
+    sudo apt-get install -y nvidia-docker2
+    sudo pkill -SIGHUP dockerd
+
+    # TEST
+    docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi
+    
+
+
+    # urban 
+    docker build -t urban3d .
+}

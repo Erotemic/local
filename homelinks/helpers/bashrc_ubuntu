@@ -151,18 +151,18 @@ alias start=nautilus
 alias cmd=bash
 
 
-alias gvim=gvim_ubuntu_hack 
-if [ -f ~/bin/gvim ]; then
-    gvim_ubuntu_hack()
-    {
-        ~/bin/gvim -f $@ 2> /dev/null &
-    }
-else
-    gvim_ubuntu_hack()
-    {
-        /usr/bin/gvim -f $@ 2> /dev/null &
-    }
-fi
+#alias gvim=gvim_ubuntu_hack 
+#if [ -f ~/bin/gvim ]; then
+#    gvim_ubuntu_hack()
+#    {
+#        ~/bin/gvim -f $@ 2> /dev/null &
+#    }
+#else
+#    gvim_ubuntu_hack()
+#    {
+#        /usr/bin/gvim -f $@ 2> /dev/null &
+#    }
+#fi
 
 
 #alias resetftp='/etc/init.d/vsftpd restart'
