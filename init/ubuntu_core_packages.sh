@@ -1358,11 +1358,75 @@ docker(){
     sudo apt-get install -y nvidia-docker2
     sudo pkill -SIGHUP dockerd
 
+    # https://github.com/moby/moby/issues/3127
+    # ENSURE ALL DOCKER PROCS ARE CLOSED
+    docker ps -q | xargs docker kill
+
+
+    service docker stop
+    #mv /var/lib/docker $dest
+
+    # MOVE DOCKER TO EXTERNAL
+    #Ubuntu/Debian: edit your /etc/default/docker file with the -g option: 
+    # sudo vim /etc/default/docker
+    #sudo mkdir -p /data/docker
+    #sudo sed -ie 's/#DOCKER_OPTS.*/DOCKER_OPTS="-dns 8.8.8.8 -dns 8.8.4.4 -g \/data\/docker"/g' /etc/default/docker
+    sudo sed -ie 's|^#* *DOCKER_OPTS.*|DOCKER_OPTS="-g /data/docker"|g' /etc/default/docker
+    sudo sed -ie 's|^#* *export DOCKER_TMPDIR.*|export DOCKER_TMPDIR=/data/docker-tmp|g' /etc/default/docker
+    cat /etc/default/docker
+    #sudo sed -ie 's/#export DOCKER_TMPDIR.*/export DOCKER_TMPDIR="/data/docker/tmp"/g' /etc/default/docker
+
+    cat /lib/systemd/system/docker.service
+
+    # We need to point the systemctl docker serivce to this file
+
+    # the proper way to edit systemd service file is to create a file in
+    # /etc/systemd/system/docker.service.d/<something>.conf and only override
+    # the directives you need. The file in /lib/systemd/system/docker.service
+    # is "reserved" for the package vendor.
+    sudo mkdir -p /etc/systemd/system/docker.service.d
+    sudo sh -c 'cat >> /etc/systemd/system/docker.service.d/override.conf << EOL
+[Service]
+EnvironmentFile=-/etc/default/docker
+ExecStart=
+ExecStart=/usr/bin/dockerd -H fd:// \$DOCKER_OPTS
+EOL'
+    cat /etc/systemd/system/docker.service.d/override.conf
+    sudo systemctl daemon-reload
+
+    # SEE https://github.com/moby/moby/issues/9889#issuecomment-120927382
+
+    # https://success.docker.com/article/Using_systemd_to_control_the_Docker_daemon
+    service docker start
+    sudo systemctl status docker
+    sudo journalctl -u docker
+    journalctl -xe
+
+    #ln -s $dest /var/lib/docker
+    #mv /var/lib/docker /data/docker
+    #ln -s /data/docker /var/lib/docker
+    
+
     # TEST
     docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi
     
-
-
     # urban 
-    docker build -t urban3d .
+    #nvidia-docker build -f ~/docker/Dockerfile -t urban3d .
+    nvidia-docker build -t urban3d .
+    #nvidia-docker run -t urban3d nvidia-smi
+
+    nvidia-docker run -it urban3d bash
+
+    nvidia-docker run -v ~/data:/data -it urban3d
+
+    rsync ~/docker/Dockerfile jon.crall@aretha.kitware.com:docker/Dockerfile
+
+    # stop all containers
+    docker stop $(docker ps -a -q)
+    
+    # remove all containers
+    docker rm $(docker ps -a -q)
+
+    # remove all images
+    docker rmi $(docker images -a -q)
 }

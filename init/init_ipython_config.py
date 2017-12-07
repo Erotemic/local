@@ -66,6 +66,7 @@ def write_default_ipython_profile():
         c.InteractiveShellApp.exec_lines.append('%autoreload 2')
         #c.InteractiveShellApp.exec_lines.append('%pylab qt4')
         c.InteractiveShellApp.exec_lines.append('import numpy as np')
+        c.InteractiveShellApp.exec_lines.append('import ubelt as ub')
         c.InteractiveShellApp.exec_lines.append('import utool as ut')
         c.InteractiveShellApp.exec_lines.append('import pandas as pd')
         c.InteractiveShellApp.exec_lines.append('pd.options.display.max_columns = 40')

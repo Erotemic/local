@@ -329,6 +329,7 @@ call QUICKOPEN_leader_tvio('m', '~/misc/notes.sh')
 
 "call QUICKOPEN_leader_tvio('a', '~/sseg/pysseg')
 call QUICKOPEN_leader_tvio('a', '~/code/clab/clab/live/')
+call QUICKOPEN_leader_tvio('A', '~/code/clab-private/')
 call QUICKOPEN_leader_tvio('c', '~/code/clab/clab')
 
 

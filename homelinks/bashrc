@@ -251,5 +251,6 @@ fi
 #fi
 
 if [ -f "$HOME/.bashrc-local" ]; then 
+    # For machine-specific bashrc things that will not be published on github
     source $HOME/.bashrc-local
 fi

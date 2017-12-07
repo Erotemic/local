@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import print_function, unicode_literals
+import re
 import os
 import git
+import warnings
 import email.utils
 import ubelt as ub
 
@@ -113,15 +115,35 @@ def find_chain(head, authors=None):
     """
     chain = []
     commit = head
-    while len(commit.parents) == 1:
+    while len(commit.parents) <= 1:
         if authors is not None and commit.author.name not in authors:
             break
+        if len(commit.parents) == 0:
+            # Hmm it seems that including the initial commit in a chain causes
+            # problems, issue a warning
+            warnings.warn(ub.codeblock(
+                '''
+                This script contains a known issue, where the initial commit is
+                not included when it "should" be part of a streak.
+
+                To squash the entire branch, use the following workaround:
+                    git branch -m master old_master
+                    git checkout --orphan master
+                    git commit -am "initial commit"
+                    git branch -D old_master
+                '''))
+
+            break
+
         chain.append(commit)
-        commit = commit.parents[0]
+        if len(commit.parents) > 0:
+            commit = commit.parents[0]
+        else:
+            break
     return chain
 
 
-def find_streaks(chain, authors, timedelta=None):
+def find_streaks(chain, authors, timedelta='sameday', pattern=None):
     """
     Given a chain, finds subchains (called streaks) that have the same author
     and are within a timedelta threshold of each other.
@@ -129,7 +151,10 @@ def find_streaks(chain, authors, timedelta=None):
     Args:
         chain (list of commits): from `find_chain`
         authors (set): valid authors
-        timedelta (float): minimum time between commits in seconds
+        timedelta (float or str): minimum time between commits in seconds
+            or a categorical value such as 'sameday' or 'alltime'
+        pattern (str): instead of squashing messages with the same name, squash
+            only if they match this pattern (Default: None)
     """
     if len(chain) == 0:
         raise ValueError('No continuous commits exist')
@@ -138,41 +163,64 @@ def find_streaks(chain, authors, timedelta=None):
     streaks = []
     streak_ids = []
 
+    def matches_time(streak, commit):
+        if timedelta == 'alltime':
+            return True
+        elif timedelta is not None:
+            # only continue on streaks within the timedelta
+            datetime1 = streak.stop.authored_datetime
+            datetime2 = commit.authored_datetime
+            if timedelta == 'sameday':
+                date1 = datetime1.date()
+                date2 = datetime2.date()
+                if date1 == date2:
+                    return True
+            else:
+                if abs(datetime2 - datetime1).seconds < timedelta:
+                    return True
+        else:
+            raise ValueError('timedelta = {!r}'.format(timedelta))
+
+    def matches_message(streak, commit):
+        if pattern is None:
+            flag = streak.start.message == commit.message
+        else:
+            flag = re.match(pattern, commit.message) is not None
+        return flag
+
     def continues_streak(streak, commit):
         if commit.author.name not in authors:
             return False
         if len(streak) == 0:
             return True
-        if streak.start.message == commit.message:
-            if timedelta is not None:
-                # only continue on streaks within the timedelta
-                datetime1 = streak.stop.authored_datetime
-                datetime2 = commit.authored_datetime
-                if timedelta == 'sameday':
-                    date1 = datetime1.date()
-                    date2 = datetime2.date()
-                    if date1 == date2:
-                        return True
-                else:
-                    if abs(datetime2 - datetime1).seconds < timedelta:
-                        return True
+        if matches_message(streak, commit):
+            if matches_time(streak, commit):
+                return True
         return False
 
     LEN_THRESH = 2
     child = None
+
+    def log_streak(streak):
+        if len(streak) < LEN_THRESH:
+            streak_ids.extend([None] * max(1, len(streak)))
+        else:
+            streaks.append(streak)
+            streak_ids.extend([len(streaks)] * len(streak))
+        pass
+
     streak = Streak(child, [])
     for commit in chain:
         if continues_streak(streak, commit):
             streak.append(commit)
         else:
             # Streak is broken
-            if len(streak) < LEN_THRESH:
-                streak_ids.extend([None] * max(1, len(streak)))
-            else:
-                streaks.append(streak)
-                streak_ids.extend([len(streaks)] * len(streak))
+            log_streak(streak)
             child = commit
             streak = Streak(child, [])
+
+    # Corner case where the streak goes until the end of the chain
+    log_streak(streak)
     return streaks
 
 
@@ -215,8 +263,8 @@ def commits_between(repo, start, stop):
         list of git.Commit: between commits
 
     References:
-        https://stackoverflow.com/questions/18679870/list-commits-between-2-commit-hashes-in-git
-        https://stackoverflow.com/questions/462974/what-are-the-differences-between-double-dot-and-triple-dot-in-git-com
+        https://stackoverflow.com/questions/18679870/commits-between-2-hashes
+        https://stackoverflow.com/questions/462974/diff-double-and-triple-dot
 
     Warning:
         this gets messy any node on the path between <start> and <stop> has
@@ -259,7 +307,7 @@ class RollbackError(Exception):
     pass
 
 
-def _squash_between(repo, start, stop, dry=False):
+def _squash_between(repo, start, stop, dry=False, verbose=True):
     """
     inplace squash between, use external function that sets up temp branches to
     use this directly from the commandline.
@@ -292,8 +340,9 @@ def _squash_between(repo, start, stop, dry=False):
     new_msg += 'Squashed {} commits from <{}> to <{}>\n'.format(
         len(commits), ts_start, ts_stop_short)
 
-    print(' * Creating new commit with message:')
-    print(new_msg)
+    if verbose:
+        print(' * Creating new commit with message:')
+        print(new_msg)
 
     old_head = repo.commit('HEAD')
     assert (stop == old_head or repo.is_ancestor(ancestor_rev=stop,
@@ -307,17 +356,20 @@ def _squash_between(repo, start, stop, dry=False):
         repo.git.reset(stop.hexsha, hard=True)
         # Undo commits from start to stop by softly reseting to just before the start
         before_start = start.parents[0]
-        print(' * reseting to before <start>')
+        if verbose:
+            print(' * reseting to before <start>')
         repo.git.reset(before_start.hexsha, soft=True)
 
         # Commit the changes in a new squashed commit and presever authored date
-        print(' * creating one commit with all modifications up to <stop>')
+        if verbose:
+            print(' * creating one commit with all modifications up to <stop>')
         repo.index.commit(new_msg, author_date=ts_stop)
 
         # If <stop> was not the most recent commit, we need to take those back on
         if stop != old_head:
             # Copy commits following the end of the streak in front of our new commit
-            print(' * fixing up the head')
+            if verbose:
+                print(' * fixing up the head')
             try:
                 # above_commits = commits_between(repo, stop, old_head)
                 # print('above_commits = {}'.format(ub.repr2(above_commits, si=True)))
@@ -328,22 +380,40 @@ def _squash_between(repo, start, stop, dry=False):
                 print('ERROR: need to roll back')
                 raise
         else:
-            print(' * already at the head, no need to fix')
+            if verbose:
+                print(' * already at the head, no need to fix')
 
 
-def squash_streaks(authors, timedelta='sameday', inplace=False,
-                   auto_rollback=True, dry=False):
+def squash_streaks(authors, timedelta='sameday', pattern=None, inplace=False,
+                   auto_rollback=True, dry=False, verbose=True):
     """
-    Squashes consecutive commits with the same message that occurred on the
-    same day.
+    Squashes consecutive commits with the same message within a time range.
 
     Args:
+        authors (set): "level-set" of authors who's commits can be squashed
+            together.
+        timedelta (str or int): strategy mode or max number of seconds to
+            determine how far appart two commits can be before they are
+            squashed. (Default: 'sameday').
+            Valid values: ['sameday', 'alltime', <n_seconds:float>]
+        pattern (str): instead of squashing messages with the same name, squash
+            only if they match this pattern (Default: None)
         inplace (bool): if True changes will be applied directly to the current
             branch otherwise a temporary branch will be created. Then you must
             manually reset the current branch to this branch and delete the
-            temp branch.
+            temp branch. (Default: False)
+        auto_rollback (bool): if True the repo will be reset to a clean state
+            if any errors occur. (Default: True)
+        dry (bool): if True this only executes a dry run, that prints the
+            chains that would be squashed (Default: False)
+        verbose (bool): verbosity flag (Default: True)
     """
-    # authors = {'joncrall', 'Jon Crall'}
+    if verbose:
+        if dry:
+            print('squashing streaks (DRY RUN)')
+        else:
+            print('squashing streaks')
+        print('authors = {!r}'.format(authors))
 
     repo = git.Repo(os.getcwd())
     orig_branch_name = repo.active_branch.name
@@ -351,10 +421,14 @@ def squash_streaks(authors, timedelta='sameday', inplace=False,
     head = repo.commit('HEAD')
 
     chain = find_chain(head, authors=authors)
-    print('Found chain of length %r' % (len(chain)))
+    if verbose:
+        print('Found chain of length %r' % (len(chain)))
+        # print(ub.repr2(chain, nl=1))
 
-    streaks = find_streaks(chain, authors=authors, timedelta=timedelta)
-    print('Found %r streaks' % (len(streaks)))
+    streaks = find_streaks(chain, authors=authors, timedelta=timedelta,
+                           pattern=pattern)
+    if verbose:
+        print('Found %r streaks' % (len(streaks)))
 
     # Switch to a temp branch before we start working
     if not dry:
@@ -363,10 +437,12 @@ def squash_streaks(authors, timedelta='sameday', inplace=False,
         temp_branchname = None
 
     try:
-        for streak in ub.ProgIter(streaks, 'squashing', verbose=3):
-            print('Squashing streak = %r' % (str(streak),))
+        for streak in ub.ProgIter(streaks, 'squashing', verbose=3 * verbose):
+            if verbose:
+                print('Squashing streak = %r' % (str(streak),))
             # Start is the commit further back in time
-            _squash_between(repo, streak.start, streak.stop, dry=dry)
+            _squash_between(repo, streak.start, streak.stop, dry=dry,
+                            verbose=verbose)
     except Exception as ex:
         print_exc(ex)
         print('ERROR: squash_streaks failed.')
@@ -379,22 +455,25 @@ def squash_streaks(authors, timedelta='sameday', inplace=False,
         return
 
     if dry:
-        print('Finished. did nothing')
+        if verbose:
+            print('Finished. did nothing')
     elif inplace:
         # Copy temp branch back over original
         repo.git.checkout(orig_branch_name)
         repo.git.reset(temp_branchname, hard=True)
         repo.git.branch(D=temp_branchname)
-        print('Finished. Now you should force push the branch back to the server')
+        if verbose:
+            print('Finished. Now you should force push the branch back to the server')
     else:
         # Go back to the original branch
         repo.git.checkout(orig_branch_name)
-        print('Finished')
-        print('The squashed branch is: {}'.format(temp_branchname))
-        print('To automatically accept changes run with --inplace')
-        print('You can inspect the difference with:')
-        print('    gitk {} {}'.format(orig_branch_name, temp_branchname))
-        print('Finished. Now you must manually clean this branch up.')
+        if verbose:
+            print('Finished')
+            print('The squashed branch is: {}'.format(temp_branchname))
+            print('You can inspect the difference with:')
+            print('    gitk {} {}'.format(orig_branch_name, temp_branchname))
+            print('Finished. Now you must manually clean this branch up.')
+            print('Or, to automatically accept changes run with --inplace')
 
 
 # commandline entry point
@@ -405,24 +484,75 @@ def git_squash_streaks():
     Usage:
         TODO
     """
-    print('git_squash_streaks')
+    import argparse
 
-    inplace = ub.argflag('--inplace')
-    auto_rollback = not ub.argflag('--no-rollback')
-    authors = ub.argval('--authors', default=None)
+    try:
+        # TODO: can we autogenerate the entire argument parser from the
+        # docstring? or at least sectinons of it?
+        # Parse docstrings for help strings
+        from xdoctest import docscrape_google as scrape
+        docstr = squash_streaks.__doc__
+        help_dict = {}
+        for argdict in scrape.parse_google_args(docstr):
+            help_dict[argdict['name']] = argdict['desc']
+        description = scrape.split_google_docblocks(docstr)[0][1][0].strip()
+        description = description.replace('\n', ' ')
+    except ImportError:
+        from collections import defaultdict
+        help_dict = defaultdict(lambda: '')
+        description = ''
 
-    # Do a dry-run by default
-    dry = True
-    if ub.argflag(('--force', '-f')):
-        dry = False
-    if ub.argflag(('--dry-run', '--dry', '-n')):
-        dry = True
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument(*('--timedelta',), type=str,
+                        help=help_dict['timedelta'])
 
-    if dry:
-        print('DRY RUN')
+    parser.add_argument(*('--pattern',), type=str,
+                        help=help_dict['pattern'])
 
-    if authors is None:
-        authors = {git.Git().config('user.name')}
+    parser.add_argument(*('--inplace',), action='store_true',
+                        help=help_dict['inplace'])
+
+    parser.add_argument(*('--auto-rollback',), action='store_true',
+                        dest='auto_rollback', help=help_dict['auto_rollback'])
+
+    parser.add_argument('--authors', type=str,
+                        help=(help_dict['authors'] +
+                              ' Defaults to your git config user.name'))
+
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(*('-n', '--dry'), dest='dry', action='store_true',
+                        help=help_dict['dry'])
+    group.add_argument(*('-f', '--force'), dest='dry', action='store_false',
+                        help='opposite of --dry')
+
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(*('-v', '--verbose'), dest='verbose', action='store_const',
+                       const=1, help='verbosity flag flag')
+    group.add_argument(*('-q', '--quiet'), dest='verbose', action='store_const',
+                       const=0, help='suppress output')
+
+    parser.set_defaults(
+        inplace=False,
+        auto_rollback=False,
+        authors=None,
+        pattern=None,
+        timedelta='sameday',
+        dry=True,
+        verbose=True,
+    )
+    args = parser.parse_args()
+
+    # Postprocess args
+    ns = args.__dict__.copy()
+    try:
+        ns['timedelta'] = float(ns['timedelta'])
+    except ValueError:
+        valid_timedelta_categories = ['sameday', 'alltime']
+        if ns['timedelta'] not in valid_timedelta_categories:
+            raise ValueError('timedelta = {}'.format(ns['timedelta']))
+
+    if ns['authors'] is None:
+        ns['authors'] = {git.Git().config('user.name')}
         # HACK: for me. todo user alias
         # SEE: .mailmap file to auto extract?
         # https://git-scm.com/docs/git-shortlog#_mapping_authors
@@ -436,17 +566,19 @@ def git_squash_streaks():
         Jon Crall <jon.crall@kitware.com> joncrall <crallj@rpi.edu>
         Jon Crall <jon.crall@kitware.com> Jon Crall <crallj@rpi.edu>
         """
-        if {'joncrall', 'Jon Crall', 'jon.crall'}.intersection(authors):
-            authors.update({'joncrall', 'Jon Crall'})
+        if {'joncrall', 'Jon Crall', 'jon.crall'}.intersection(ns['authors']):
+            ns['authors'].update({'joncrall', 'Jon Crall'})
     else:
-        authors = {a.strip() for a in authors.split(',')}
+        ns['authors'] = {a.strip() for a in ns['authors'].split(',')}
 
-    print('authors = {!r}'.format(authors))
-    squash_streaks(authors=authors, inplace=inplace,
-                   auto_rollback=auto_rollback, dry=dry)
+    print(ub.repr2(ns, nl=1))
 
-    if dry:
-        print('Finished the dry run. Use -f to force')
+    squash_streaks(**ns)
+
+    if ns['dry']:
+        if ns['verbose']:
+            print('Finished the dry run. Use -f to force')
+
 
 if __name__ == '__main__':
     git_squash_streaks()
