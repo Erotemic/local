@@ -1409,17 +1409,19 @@ EOL'
 
     # TEST
     docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi
-    
-    # urban 
-    #nvidia-docker build -f ~/docker/Dockerfile -t urban3d .
-    nvidia-docker build -t urban3d .
-    #nvidia-docker run -t urban3d nvidia-smi
-
-    nvidia-docker run -it urban3d bash
-
-    nvidia-docker run -v ~/data:/data -it urban3d
 
     rsync ~/docker/Dockerfile jon.crall@aretha.kitware.com:docker/Dockerfile
+    rsync ~/docker/Dockerfile jon.crall@arisia.kitware.com:docker/Dockerfile
+    
+    # urban 
+    nvidia-docker build -f ~/docker/Dockerfile -t joncrall/urban3d .
+    #nvidia-docker run -t joncrall/urban3d nvidia-smi
+
+    nvidia-docker run -it joncrall/urban3d bash
+
+    nvidia-docker run -v ~/data:/data -it joncrall/urban3d
+
+    rsync -avRP final_model jon.crall@arisia:docker/
 
     # stop all containers
     docker stop $(docker ps -a -q)
@@ -1429,4 +1431,25 @@ EOL'
 
     # remove all images
     docker rmi $(docker images -a -q)
+
+    nvidia-docker run -v ~/data:/data -t joncrall/urban3d df -h /dev/shm
+    nvidia-docker run --shm-size=12g -v ~/data:/data -t joncrall/urban3d df -h /dev/shm
+    nvidia-docker run --shm-size=12g -v ~/data:/data -it joncrall/urban3d
+
+
+    nvidia-docker run --shm-size=12g -v ~/data:/data -t joncrall/urban3d python3 -m clab.live.final train --train_data_path=/data/UrbanMapper3D/training --debug --num_workers=0
+    --nopin
+
+    nvidia-docker run --ipc=host -v ~/data:/data -t joncrall/urban3d python3 -m clab.live.final train --train_data_path=/data/UrbanMapper3D/training --debug --num_workers=2 --gpu=2
+
+
+    cd ~/tmp
+    wget http://www.topcoder.com/contest/problem/UrbanMapper3D/training.zip
+    wget http://www.topcoder.com/contest/problem/UrbanMapper3D/testing.zip
+    unzip testing.zip
+    unzip training.zip
+    mkdir -p ~/data/UrbanMapper3D
+    mv testing ~/data/UrbanMapper3D/
+    mv training ~/data/UrbanMapper3D/
+    
 }
