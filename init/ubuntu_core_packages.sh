@@ -1436,6 +1436,8 @@ EOL'
     nvidia-docker run --shm-size=12g -v ~/data:/data -t joncrall/urban3d df -h /dev/shm
     nvidia-docker run --shm-size=12g -v ~/data:/data -it joncrall/urban3d
 
+    
+    nvidia-docker run --shm-size=12g -v ~/data:/data -t joncrall/urban3d cat test.sh
 
     nvidia-docker run --shm-size=12g -v ~/data:/data -t joncrall/urban3d python3 -m clab.live.final train --train_data_path=/data/UrbanMapper3D/training --debug --num_workers=0
     --nopin

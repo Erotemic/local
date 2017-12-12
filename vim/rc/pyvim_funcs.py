@@ -589,6 +589,46 @@ def insert_codeblock_between_lines(text, row1, row2):
     #ut.insert_block_between_lines(text, row1, row2, vim.buffer, inplace=True)
 
 
+def find_python_import_row():
+    """
+    Find lines where import block begins (after __future__)
+    """
+    in_comment = False
+    import vim
+    row = 0
+    for row, line in enumerate(vim.current.buffer):
+        if not in_comment:
+            if line.strip().startswith('#'):
+                pass
+            elif line.strip().startswith('"""'):
+                in_comment = '"'
+            elif line.strip().startswith("''''"):
+                in_comment = "'"
+            elif line.startswith('from __future__'):
+                pass
+            elif line.startswith('import'):
+                break
+            elif line.startswith('from'):
+                break
+            else:
+                break
+        else:
+            if line.strip().endswith(in_comment * 3):
+                in_comment = False
+    return row
+
+
+def prepend_import_block(text):
+    import vim
+    row = find_python_import_row()
+    # FIXME: doesnt work right when row=0
+    buffer_tail = vim.current.buffer[row:]
+    lines = [line.encode('utf-8') for line in text.split('\n')]
+    new_tail  = lines + buffer_tail
+    del(vim.current.buffer[row:])  # delete old data
+    vim.current.buffer.append(new_tail)  # append new data
+
+
 class DummyVimBuffer(object):
     def __init__(self, _list):
         self._list = _list

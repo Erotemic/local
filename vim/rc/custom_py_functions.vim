@@ -334,3 +334,85 @@ pyvim_funcs.insert_codeblock_over_selection(formated_text)
 EOF
 endfunc
 
+
+func! FUNC_AutoPyImport() 
+Python2or3 << EOF
+# FIXME: Unfinished
+import vim
+import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import utool as ut
+import ubelt as ub
+
+def undefined_names(fpath):
+    """
+    Use a linter to find undefined names
+    fpath = ub.truepath('~/code/utool/utool/util_inspect.py')
+    """
+    import pyflakes.api
+    import pyflakes.reporter
+
+    class CaptureReporter(pyflakes.reporter.Reporter):
+        def __init__(reporter, warningStream, errorStream):
+            reporter.syntax_errors = []
+            reporter.messages = []
+            reporter.unexpected = []
+
+        def unexpectedError(reporter, filename, msg):
+            reporter.unexpected.append(msg)
+
+        def syntaxError(reporter, filename, msg, lineno, offset, text):
+            reporter.syntax_errors.append(msg)
+
+        def flake(reporter, message):
+            reporter.messages.append(message)
+
+    names = set()
+
+    import ubelt as ub
+    reporter = CaptureReporter(None, None)
+    n = pyflakes.api.checkPath(fpath, reporter)
+    for msg in reporter.messages:
+        if msg.__class__.__name__.endswith('UndefinedName'):
+            assert len(msg.message_args) == 1
+            names.add(msg.message_args[0])
+    return names
+    #import parse
+    #lint_patterns = [
+    #    "{} undefined name '{varname}'"
+    #]
+    # TODO use pyflakes programtically
+    #for line in ub.cmd('pyflakes ' + fpath)['out'].splitlines():
+    #    for pat in lint_patterns:
+
+known_imports = {
+    'np': 'import numpy as np',
+    'pd': 'import pandas as pd',
+    'ub': 'import ubelt as ub',
+    'Image': 'from PIL import Image',
+    'mpl': 'import matplotlib as mpl',
+}
+known_modules = [
+    'glob'
+]
+for name in known_modules:
+    known_imports[name] = 'import {}'.format(name)
+for name in dir(os.path):
+    if not name.startswith('_'):
+        known_imports[name] = 'from os.path import {}'.format(name)
+
+pyvim_funcs.ensure_normalmode()
+
+
+if pyvim_funcs.is_module_pythonfile():
+    fpath = pyvim_funcs.get_current_fpath()
+    names = undefined_names(fpath)
+    import_block = '\n'.join(ub.take(known_imports, names))
+    # FIXME: doesnt work right when row=0
+    pyvim_funcs.prepend_import_block(import_block)
+else:
+    print('current file is not a pythonfile')
+#L______________
+EOF
+endfu 
+command! AutoPyImport call FUNC_AutoPyImport()
+
