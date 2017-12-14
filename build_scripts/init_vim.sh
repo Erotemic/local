@@ -8,9 +8,8 @@ cd ~/code/vim
 
 prereq(){
     #sudo apt-get build-dep vim
-    sudo apt-get install build-essential -y
-    sudo apt-get install libtinfo-dev -y
-    sudo apt-get build-dep vim-gtk
+    sudo apt-get install build-essential libtinfo-dev -y
+    sudo apt-get build-dep vim-gtk -y
     #sudo apt-get build-dep vim-gnome
 }
 
@@ -25,15 +24,15 @@ help(){
 #make distclean
 
 
-# Check version of gtk
-dpkg -l libgtk* | grep -e '^i' | grep -e 'libgtk-*[0-9]'
-pkg-config --modversion gtk+-3.0
-
-sudo apt-get update
+#sudo apt-get update
+# We want to be on gtk-3.22.4, but ubuntu16.04 defaults to 3.17
 # TODO: upgrade gtk3
 # https://github.com/vim/vim/issues/1483
-sudo apt-get install libgtk-3-0
+#sudo apt-get install libgtk-3-0
 
+# Check version of gtk
+dpkg -l libgtk* | grep -e '^i' | grep -e 'libgtk-*[0-9]'
+#pkg-config --modversion gtk+-3.0
 
 
 #CFLAGS="$CFLAG -O3"
@@ -63,7 +62,7 @@ make distclean
     --prefix=$HOME \
     --enable-pythoninterp=no \
     --enable-python3interp=yes \
-    --enable-gui=gtk3
+    --enable-gui=gtk2
 
 
 vim_python37_version(){
@@ -88,13 +87,14 @@ vim_python37_version(){
     #--enable-python3interp=yes \
 
 cat src/auto/config.mk 
+cat src/auto/config.mk | grep GUI
 cat src/auto/config.mk | grep PYTHON3
 
 # Build
 make -j9
 # Test
 ~/code/vim/src/vim -u NONE
-#~/code/vim/src/vim --version
+~/code/vim/src/vim --version
 # Install
 make install
 
