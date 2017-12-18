@@ -390,9 +390,13 @@ known_imports = {
     'ub': 'import ubelt as ub',
     'Image': 'from PIL import Image',
     'mpl': 'import matplotlib as mpl',
+    'nn': 'from torch import nn',
+    'F': 'import torch.nn.functional as F',
+    'Variable': 'from torch.autograd import Variable',
 }
 known_modules = [
-    'glob'
+    'glob',
+    'torch',
 ]
 for name in known_modules:
     known_imports[name] = 'import {}'.format(name)
@@ -406,7 +410,7 @@ pyvim_funcs.ensure_normalmode()
 if pyvim_funcs.is_module_pythonfile():
     fpath = pyvim_funcs.get_current_fpath()
     names = undefined_names(fpath)
-    import_block = '\n'.join(ub.take(known_imports, names))
+    import_block = '\n'.join([known_imports[n] for n in names if n in known_imports])
     # FIXME: doesnt work right when row=0
     pyvim_funcs.prepend_import_block(import_block)
 else:
