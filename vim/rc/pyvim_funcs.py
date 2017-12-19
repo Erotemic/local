@@ -505,15 +505,18 @@ class CursorContext(object):
     """
     moves back to original position after context is done
     """
-    def __init__(self):
+    def __init__(self, offset=0):
         self.pos = None
+        self.offset = offset
 
     def __enter__(self):
         self.pos = get_cursor_position()
         return self
 
     def __exit__(self, *exc_info):
-        move_cursor(*self.pos)
+        row, col = self.pos
+        row += self.offset
+        move_cursor(row, col)
 
 
 def close_matching_folds(pattern, search_range=None, limit=1):

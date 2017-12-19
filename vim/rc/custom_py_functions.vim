@@ -335,7 +335,7 @@ EOF
 endfunc
 
 
-func! FUNC_AutoPyImport() 
+func! FUNC_AutoImport() 
 Python2or3 << EOF
 # FIXME: Unfinished
 import vim
@@ -395,6 +395,7 @@ known_imports = {
     'Variable': 'from torch.autograd import Variable',
 }
 known_modules = [
+    'cv2',
     'glob',
     'torch',
 ]
@@ -431,11 +432,12 @@ if pyvim_funcs.is_module_pythonfile():
 
     import_block = '\n'.join([known_imports[n] for n in have_names])
     # FIXME: doesnt work right when row=0
-    pyvim_funcs.prepend_import_block(import_block)
+    with pyvim_funcs.CursorContext(offset=len(have_names)):
+        pyvim_funcs.prepend_import_block(import_block)
 else:
     print('current file is not a pythonfile')
 #L______________
 EOF
 endfu 
-command! AutoPyImport call FUNC_AutoPyImport()
+command! AutoImport call FUNC_AutoImport()
 
