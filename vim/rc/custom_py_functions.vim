@@ -398,6 +398,12 @@ known_modules = [
     'glob',
     'torch',
 ]
+#import glob
+#builtin_modnames = [
+#    name_we for name_we, ext in map(splitext, map(basename, glob.glob(join(dirname(os.__file__), '*.py'))))
+#]
+#known_modules += builtin_modnames
+
 for name in known_modules:
     known_imports[name] = 'import {}'.format(name)
 for name in dir(os.path):
@@ -406,11 +412,24 @@ for name in dir(os.path):
 
 pyvim_funcs.ensure_normalmode()
 
+from xdoctest import static_analysis as static
 
 if pyvim_funcs.is_module_pythonfile():
     fpath = pyvim_funcs.get_current_fpath()
     names = undefined_names(fpath)
-    import_block = '\n'.join([known_imports[n] for n in names if n in known_imports])
+
+    # Add any unregistered names if they correspond with a findable module
+    for n in names:
+        if n not in known_imports:
+            if static.modname_to_modpath(n) is not None:
+                known_imports[n] = 'from os.path import {}'.format(n)
+
+    have_names = sorted(set(known_imports).intersection(set(names)))
+    missing = set(names) - set(have_names)
+    if missing:
+        print('Warning: unknown modules {}'.format(missing))
+
+    import_block = '\n'.join([known_imports[n] for n in have_names])
     # FIXME: doesnt work right when row=0
     pyvim_funcs.prepend_import_block(import_block)
 else:

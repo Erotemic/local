@@ -1453,5 +1453,12 @@ EOL'
     mkdir -p ~/data/UrbanMapper3D
     mv testing ~/data/UrbanMapper3D/
     mv training ~/data/UrbanMapper3D/
-    
+}
+
+
+make_private_permissions()
+{
+    #chmod g-r g-x [path]
+    chmod ug-rx clab-private.git
+    chmod 700 clab-private.git
 }

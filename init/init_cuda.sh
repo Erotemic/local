@@ -15,9 +15,19 @@ init_local_cuda(){
     # Download the correct version packages from nvidia
     # https://developer.nvidia.com/cuda-downloads
 
+    # https://stackoverflow.com/questions/39379792/install-cuda-without-root
+
     # Sync between machines
-    rsync -avp ~/cuda-archive/ jon.crall@arisia.kitware.com:cuda-archive
-    rsync -avp ~/cuda-archive/ jon.crall@aretha.kitware.com:cuda-archive
+    cd
+    rsync -avuzpR tpl-archive/ jon.crall@arisia.kitware.com
+    rsync -avzupR tpl-archive/ jon.crall@aretha.kitware.com:
+
+    rsync -avzup tpl-archive/cuda/ jon.crall@arisia.kitware.com:tpl-archive/cuda
+    rsync -avzup tpl-archive/cuda/ jon.crall@aretha.kitware.com:tpl-archive/cuda
+
+    tar -xf cuda_cluster_pkgs_9.1.85_ubuntu1604.tar.gz
+    mv cuda_cluster_pkgs_ubuntu1604 ~/tmp
+    cd ~/tmp/cuda_cluster_pkgs_ubuntu1604
 
     CUDA_INSTALL=$(python -c "$(codeblock "
     from os.path import join, exists, expanduser
@@ -32,7 +42,7 @@ init_local_cuda(){
     ver[('8.0', 'linux', 'run')] = ('cuda_8.0.61_375.26_linux.run', cuda_8.0.61.2_linux.run)
 
     fname = ver[(cuda, osname, type)]
-    fpath = join(expanduser('~/cuda-archive'), fname)
+    fpath = join(expanduser('~/tpl-archive/cuda'), fname)
     assert exists(fpath)
     print(fpath)
     ")")
@@ -59,6 +69,7 @@ change_cudnn_version(){
 
         # (cuda_version, cudnn_version, os)
         ver = {}
+        ver[('9.1', '7.0', 'linux')] = 'cudnn-9.1-linux-x64-v7.tgz'
         ver[('9.0', '7.0', 'linux')] = 'cudnn-9.0-linux-x64-v7.tgz'
         ver[('8.0', '7.0', 'linux')] = 'cudnn-8.0-linux-x64-v7.tgz'
         ver[('8.0', '6.0', 'linux')] = 'cudnn-8.0-linux-x64-v6.0.tgz'
@@ -68,7 +79,7 @@ change_cudnn_version(){
 
         home = expanduser('~')
         cudnn_tgz_fname = ver[(cuda, cudnn, osname)]
-        cudnn_tgz_fpath = join(home, 'cuda-archive', cudnn_tgz_fname)
+        cudnn_tgz_fpath = join(home, 'tpl-archive', 'cuda', cudnn_tgz_fname)
         assert exists(cudnn_tgz_fpath)
 
         suffix = splitext(cudnn_tgz_fname)[0].replace('cudnn-', '')
@@ -122,8 +133,10 @@ init_local_cudnn(){
     # Sync between machines
     mkdir -p ~/tpl-archive/cuda
     #~/tpl-archive/cuda
-    rsync -avp ~/tpl-archive/cuda arisia:tpl-archive/cuda
-    rsync -avp ~/tpl-archive/cuda aretha:tpl-archive/cuda
+    #rsync -avpR ~/tpl-archive/ arisia:tpl-archive
+    #rsync -avpR ~/tpl-archive/ aretha:tpl-archive
+    rsync -avuzpR tpl-archive/ jon.crall@arisia.kitware.com
+    rsync -avzupR tpl-archive/ jon.crall@aretha.kitware.com:
 
     # check for user cuda
     ls ~/.local/cuda/lib64/libcudnn*

@@ -476,22 +476,13 @@ def squash_streaks(authors, timedelta='sameday', pattern=None, inplace=False,
             print('Or, to automatically accept changes run with --inplace')
 
 
-# commandline entry point
-def git_squash_streaks():
-    """
-    git-squash-streaks
-
-    Usage:
-        TODO
-    """
-    import argparse
-
+def _autoparse_desc(func):
     try:
         # TODO: can we autogenerate the entire argument parser from the
         # docstring? or at least sectinons of it?
         # Parse docstrings for help strings
         from xdoctest import docscrape_google as scrape
-        docstr = squash_streaks.__doc__
+        docstr = func.__doc__
         help_dict = {}
         for argdict in scrape.parse_google_args(docstr):
             help_dict[argdict['name']] = argdict['desc']
@@ -501,6 +492,19 @@ def git_squash_streaks():
         from collections import defaultdict
         help_dict = defaultdict(lambda: '')
         description = ''
+    return description, help_dict
+
+
+# commandline entry point
+def git_squash_streaks():
+    """
+    git-squash-streaks
+
+    Usage:
+        See argparse
+    """
+    import argparse
+    description, help_dict = _autoparse_desc(squash_streaks)
 
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument(*('--timedelta',), type=str,
