@@ -35,3 +35,4 @@ test_times.txt
 
 vim/vimfiles/view/*
 vim/vimfiles/files/
+*.swp

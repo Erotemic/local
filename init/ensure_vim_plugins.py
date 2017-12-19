@@ -8,6 +8,7 @@ CommandLine:
     python -c "import os, sys; os.system(sys.executable + ' ' + os.path.expanduser('~/local/init/ensure_vim_plugins')"
     python init/ensure_vim_plugins.py
     python ~/local/init/ensure_vim_plugins.py
+    python %USERPROFILE%/local/init/ensure_vim_plugins.py
 """
 from __future__ import absolute_import, division, print_function, unicode_literals
 import sys
@@ -21,6 +22,17 @@ def ensure_ctags_win32():
     import utool as ut
     from os.path import join
     dpath = ut.grab_zipped_url('http://prdownloads.sourceforge.net/ctags/ctags58.zip')
+    """
+    TODO: Download the zipfile, then unzip and take ONLY the
+    file ctags58/ctags58/ctags.exe and move it somewhere in the path
+    the best place might be C;\ProgFiles\Git\mingw64\bin
+
+    ALSO:
+    make a win setup file
+
+    Downloads fonts from https://www.dropbox.com/sh/49h1ht1e2t7dlbj/AACzVIDrfn1GkImP5l_C3Vtia?dl=1
+    """
+
     ctags_fname = 'ctags.exe'
     ctags_src = join(dpath, ctags_fname)
     def find_mingw_bin():

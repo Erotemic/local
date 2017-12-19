@@ -79,10 +79,16 @@ def pyrun_adjust_size():
         #font_name, font_size, extra = 
         sepx = gfn.rfind(':h')
         sepx2 = gfn.rfind(':cANSI')
+        if sepx2 == -1:
+            sepx2 = None
         font_name = gfn[:sepx] + ':h'
-        font_size = float(gfn[sepx + 2:sepx2])
-        font_suff = gfn[sepx2:] if sepx2 != -1 else ''
-        pass
+        sl = slice(sepx + 2, sepx2)
+        try:
+            substr = gfn[sl]
+            font_size = float(substr)
+        except Exception:
+            pass
+        font_suff = gfn[sepx2:] if sepx2 is not None else ''
     else:
         # Find the position that seprates the font name 
         # from the font size

@@ -38,6 +38,7 @@
 
 if has("win32") || has("win16")
     :set runtimepath+=$USERPROFILE\local\vim\portable_vimrc 
+
 endif
 set runtimepath+=~/local/vim/vimfiles/
 source ~/local/vim/rc/win32_presource.vim
@@ -51,10 +52,20 @@ source ~/local/vim/vimfiles/syntax/python.vim
 "===========PLUGINS==========="
 " PLUGIN: Pathogen
 "
-if has('python')
-    command! -nargs=1 Python2or3 python <args>
+
+set pythonthreedll=$USERPROFILE\Miniconda3\python36.dll
+echo $pythonthreedll
+
+if has('win32')
+    command! -nargs=1 Python2or3 python3 <args>
 elseif has('python3')
     command! -nargs=1 Python2or3 python3 <args>
+elseif has('python')
+    command! -nargs=1 Python2or3 python <args>
+"elseif has('python/dyn')
+"    command! -nargs=1 Python2or3 python <args>
+"elseif has('python3/dyn')
+"    command! -nargs=1 Python2or3 python3 <args>
 else
     echo "Error: Requires Vim compiled with +python or +python3"
     finish

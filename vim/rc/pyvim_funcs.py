@@ -50,8 +50,8 @@ def get_bibtex_dict():
 
 def available_fonts():
     win32_fonts = [
-        r'Mono_Dyslexic:h10:cANSI',
         r'Inconsolata:h10',
+        r'Mono_Dyslexic:h10:cANSI',
         r'OpenDyslexicMono\ 10',
         # r'monofur:h11',
         #r'Mono\ Dyslexic:h10',
