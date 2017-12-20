@@ -423,7 +423,7 @@ if pyvim_funcs.is_module_pythonfile():
     for n in names:
         if n not in known_imports:
             if static.modname_to_modpath(n) is not None:
-                known_imports[n] = 'from os.path import {}'.format(n)
+                known_imports[n] = 'import {}'.format(n)
 
     have_names = sorted(set(known_imports).intersection(set(names)))
     missing = set(names) - set(have_names)
