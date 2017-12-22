@@ -54,12 +54,13 @@ let g:markdown_fenced_languages = ['html', 'python', 'bash=sh']
 " PLUGIN: Pathogen
 "
 
-set pythonthreedll=$USERPROFILE\Miniconda3\python36.dll
-echo $pythonthreedll
-
 if has('win32')
-    command! -nargs=1 Python2or3 python3 <args>
-elseif has('python3')
+    set pythonthreedll=$USERPROFILE\Miniconda3\python36.dll
+    echo $pythonthreedll
+    "command! -nargs=1 Python2or3 python3 <args>
+endif
+
+if has('python3')
     command! -nargs=1 Python2or3 python3 <args>
 elseif has('python')
     command! -nargs=1 Python2or3 python <args>
