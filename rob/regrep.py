@@ -17,10 +17,10 @@ class RegKey:
         self.key = rawkey
         self.root = root
         self.path = path
-         
+
     def __str__(self):
         return "%s\\%s" % (RegRoots.get(self.root, hex(self.root)), self.path)
-     
+
     def close(self):
         _winreg.CloseKey(self.key)
 
@@ -41,7 +41,7 @@ class RegKey:
                 yield _winreg.EnumKey(self.key, ikey)
             except EnvironmentError:
                 break
-         
+
     def subkeys(self):
         """ Enumerate the subkeys in this key.
         """
@@ -55,15 +55,15 @@ class RegKey:
 def OpenRegKey(root, path):
     try:
         rawkey = _winreg.OpenKey(root, path)
-    except Exception, e:
-        #print "Couldn't open %r %r: %s" % (root, path, e)
+    except Exception as e:
+        #print("Couldn't open %r %r: %s" % (root, path, e))
         return None
     return RegKey(rawkey, root, path)
 
 def grep_key(key, target):
     for name, value, typ in key.values():
         if isinstance(value, basestring) and target in value:
-            print "%s\\%s = %r" % (key, name, value)
+            print("%s\\%s = %r" % (key, name, value))
 
     for subkey in key.subkeys():
         if not subkey:

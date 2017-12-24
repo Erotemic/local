@@ -96,7 +96,7 @@ def GetActiveWindowText():
 
 def GetWindowText(hwnd, optional=None):
     text = win32gui.GetWindowText(hwnd)
-    print text
+    print(text)
     return 1
 
 
@@ -114,12 +114,12 @@ def EnumWindowTest():
 
 
 def check_settings(r):
-    print repr(r.path_vars_list)
-    #print '\n**'.join(map(repr,r.path_vars_list))
-    #print '\n++'.join(map(repr,r.env_vars_list))
+    print(repr(r.path_vars_list))
+    #print('\n**'.join(map(repr,r.path_vars_list)))
+    #print('\n++'.join(map(repr,r.env_vars_list)))
     print('Current Settings: ')
     windows_path2 = registry2.get_env('PATH')
-    print windows_path2
+    print(windows_path2)
 
 
 def add_path_vars(pathvar_list):
@@ -235,7 +235,7 @@ def nircmd(r, command ):
 
 def disable_windows_login_screen():
     os.system('sudo "control userpasswords2"')
-    print 'Click your name. Uncheck Box. Type password.'
+    print('Click your name. Uncheck Box. Type password.')
 
 def refresh():
     'Tell windows that settings have been changed'
@@ -278,14 +278,14 @@ def save_power_settings_pref(r):
     #PATH_SEP = os.path.pathsep
     #path_str = robos.get_env_var('PATH')
     #if to_add in path_str.split(PATH_SEP):
-        #print 'Path='+to_add+' is already in the system PATH'
+        #print('Path='+to_add+' is already in the system PATH')
         #return
     #newpath = to_add+PATH_SEP+path_str
     #robos.set_env_var('PATH',newpath)
 
 
 def test_devmgr():
-    print grep_registry('Presonus')
+    print(grep_registry('Presonus'))
     # MANUALLY FOUND
     #HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run
     to_delete = r'''
@@ -336,9 +336,9 @@ def test_devmgr():
     for key, val in dvmgr.iteritems():
         in_find = multifind(val,to_find) + multifind(key,to_find)
         in_multifind = multifind_joint(val, to_find_joint) +  multifind_joint(key, to_find_joint)
-        #print val
+        #print(val)
         if not (any(in_find) or any(in_multifind)): continue
-        #print '%r, %r' % (in_find, in_multifind)
+        #print('%r, %r' % (in_find, in_multifind))
         print(key+' = '+repr(val))
         if tkey == key:
             print('^^^ PRESONUS HERE ^^^')
@@ -351,8 +351,8 @@ def test_devmgr():
     #registry.print_key(legacy_item)
     os.environ['devmgr_show_nonpresent_devices'] = '1'
     #os.system('devmgmt.msc')
-    #print get_env_var('DEVMGR_SHOW_NONPRESENT_DEVICES')
-    #print devmgr_key
+    #print(get_env_var('DEVMGR_SHOW_NONPRESENT_DEVICES'))
+    #print(devmgr_key)
 
 
 def get_clipboard():
