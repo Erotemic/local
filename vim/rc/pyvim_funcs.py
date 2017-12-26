@@ -362,7 +362,8 @@ def find_pyfunc_above_row(line_list, row, orclass=False):
                     break
                 else:
                     funcname = None
-    return funcname, searchlines
+    foundline = searchline
+    return funcname, searchlines, func_pos, foundline
 
 
 def find_pyfunc_above_cursor():
@@ -374,8 +375,8 @@ def find_pyfunc_above_cursor():
     # Get text posision
     (row, col) = vim.current.window.cursor
     line_list = vim.current.buffer
-    funcname, searchlines = find_pyfunc_above_row(line_list, row, True)
-    return funcname, searchlines
+    funcname, searchlines, pos, foundline = find_pyfunc_above_row(line_list, row, True)
+    return funcname, searchlines, pos, foundline
 
 
 def is_paragraph_end(line_):
@@ -803,6 +804,30 @@ def get_current_modulename():
     return modname, moddir
 
 
+def auto_cmdline():
+    import ubelt as ub
+    modname, moddir = get_current_modulename()
+    funcname, searchlines, pos, foundline = find_pyfunc_above_cursor()
+    text = ub.codeblock(
+        '''
+        CommandLine:
+            python -m {modname} {funcname}
+        ''').format(funcname=funcname, modname=modname)
+
+    def get_indent(line):
+        """
+        returns the preceding whitespace
+        """
+        n_whitespace = len(line) - len(line.lstrip())
+        prefix = line[:n_whitespace]
+        return prefix
+
+    prefix = get_indent(foundline)
+
+    text = ub.indent(text, prefix + '    ')
+    return text
+
+
 def auto_docstr(**kwargs):
     import imp
     import utool as ut
@@ -829,7 +854,7 @@ def auto_docstr(**kwargs):
     dbgmsg = ''
 
     try:
-        funcname, searchlines = find_pyfunc_above_cursor()
+        funcname, searchlines, pos, foundline = find_pyfunc_above_cursor()
         modname, moddir = get_current_modulename()
         modpath = vim.current.buffer.name
         print('modpath = {!r}'.format(modpath))

@@ -189,12 +189,13 @@ import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 
 if pyvim_funcs.is_module_pythonfile():
     print('building docstr')
-    text = pyvim_funcs.auto_docstr( 
-        with_args=False,
-        with_ret=False,
-        with_commandline=True,
-        with_example=False,
-        with_header=False)
+    text = pyvim_funcs.auto_cmdline()
+    #text = pyvim_funcs.auto_docstr( 
+    #    with_args=False,
+    #    with_ret=False,
+    #    with_commandline=True,
+    #    with_example=False,
+    #    with_header=False)
     pyvim_funcs.insert_codeblock_under_cursor(text)
 else:
     print('current file is not a pythonfile')
@@ -280,7 +281,7 @@ mode = vim.eval('a:1')
 indent = pyvim_funcs.get_cursor_py_indent()
 newtext = '\n'.join([
     indent + 'import ubelt',
-    indent + 'for timer in ubelt.Timerit(10):',
+    indent + 'for timer in ubelt.Timerit(100, bestof=10):',
     indent + '    with timer:',
 ])
 if 'v' in mode.lower():
