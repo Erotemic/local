@@ -704,9 +704,16 @@ encryprtion()
     # Try OTFE
     sudo apt-get install cryptmount
 
+
+    # TRUECRYPT IS DEPRICATED. DO NOT USE
     sudo add-apt-repository ppa:stefansundin/truecrypt -y
     sudo apt-get update
     sudo apt-get install truecrypt -y
+
+    sudo add-apt-repository ppa:unit193/encryption
+    sudo apt update
+    sudo apt install veracrypt -y
+    
 }
 
 

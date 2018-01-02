@@ -155,7 +155,7 @@ if pyvim_funcs.is_module_pythonfile():
         func_names = ut.parse_function_names(sourcecode)
         #print('func_names = {!r}'.format(func_names))
         if '__all__' in sourcecode:
-            import_names = ut.parse_import_names(sourcecode)
+            import_names, modules = ut.parse_import_names(sourcecode, branch=False)
             extra_names = func_names + import_names
         else:
             extra_names = [name for name in func_names if name.startswith('_')]
