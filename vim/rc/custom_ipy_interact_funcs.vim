@@ -156,15 +156,22 @@ if pyvim_funcs.is_module_pythonfile():
         #print('func_names = {!r}'.format(func_names))
         if '__all__' in sourcecode:
             import_names, modules = ut.parse_import_names(sourcecode, branch=False)
-            extra_names = func_names + import_names
+            #extra_names = func_names + import_names
+            #import_names, modules = ut.parse_import_names(sourcecode, ignore_if=True)
+            extra_names = list(func_names) + list(import_names)
         else:
             extra_names = [name for name in func_names if name.startswith('_')]
         if len(extra_names) > 0:
             lines.append("from {} import {}".format(
                 modname, ', '.join(extra_names)))
     except Exception as ex:
-        ut.printex(ex, 'ast parsing failed', tb=True)
-        print('ast parsing failed')
+        #print(repr(ex))
+        import traceback
+        tbtext = traceback.format_exc()
+        print(tbtext)
+        print(repr(ex))
+        #ut.printex(ex, 'ast parsing failed', tb=True, colored=False)
+        #print('ast parsing failed')
         raise
     # Prepare to send text to xdotool
     text = ut.unindent('\n'.join(lines))

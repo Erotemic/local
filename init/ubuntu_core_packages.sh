@@ -1143,10 +1143,20 @@ razer_mouse(){
     sudo apt install razercfg qrazercfg
     
     # https://terrycain.github.io/razer-drivers/#ubuntu
-    sudo add-apt-repository ppa:terrz/razerutils
+    # NOTE THIS PPA IS DEPRICATED. SEE LINK FOR THE NEW ONE
+    #sudo add-apt-repository ppa:terrz/razerutils
     sudo apt update
     sudo apt install python3-razer razer-kernel-modules-dkms razer-daemon razer-doc
-    
+
+    sudo add-apt-repository --remove ppa:terrz/razerutils
+    ppa:whatever/ppa
+
+    sudo ppa-purge ppa:terrz/razerutils
+
+    ls /etc/apt/sources.list.d | grep terrz
+    sudo rm /etc/apt/sources.list.d/terrz-ubuntu-razerutils-xenial.list
+    sudo rm /etc/apt/sources.list.d/terrz-ubuntu-razerutils-xenial.list.save
+
 }
 
 tilix(){
@@ -1469,3 +1479,12 @@ make_private_permissions()
     chmod ug-rx clab-private.git
     chmod 700 clab-private.git
 }
+
+apt-add-repository-remove()
+{
+    # https://askubuntu.com/questions/307/how-can-ppas-be-removed
+    # cat /etc/apt/sources.list
+    sudo add-apt-repository --remove ppa;whatever/ppa
+
+}
+
