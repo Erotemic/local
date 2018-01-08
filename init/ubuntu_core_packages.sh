@@ -1476,6 +1476,9 @@ EOL'
 make_private_permissions()
 {
     #chmod g-r g-x [path]
+    chmod -R og-wrx /super/secret/path
+    chmod -R u+wrx /super/secret/path
+
     chmod ug-rx clab-private.git
     chmod 700 clab-private.git
 }
