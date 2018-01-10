@@ -61,6 +61,8 @@ current_cudnn_info()
     echo "--- CUDNN INFO ---"
     echo "Relevant ENV Vars"
     echo " * CUDNN_LIBRARIES = $CUDNN_LIBRARIES"
+    echo " * CUDNN_LIB_DIR = $CUDNN_LIB_DIR"
+    echo " * CUDNN_INCLUDE_DIR = $CUDNN_INCLUDE_DIR"
     echo ""
     echo "Relevant Paths"
     echo "$CUDNN_INCLUDE_PATH"
@@ -145,7 +147,6 @@ change_cudnn_version(){
             name = relpath(src, srcdir)
             dst = join(dstdir, name)
             print('copying {} -> {}'.format(src, dst))
-            #ub.cmd(('ls', '-al', src), verbout=1, verbose=2)
             # use cp -P to preserve the relative symlinks
             ub.cmd(('cp', '-P', src, dst), verbout=1, verbose=2)
             #shutil.copy2(src, dst)
