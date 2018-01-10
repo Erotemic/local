@@ -283,7 +283,8 @@ def find_pattern_above_row(pattern, line_list='current', row='current', maxIter=
         import vim
         row = vim.current.window.cursor[0] - 1
         line_list = vim.current.buffer
-    # Iterate until we match Janky way to find function name
+    # Iterate until we match.
+    # Janky way to find function / class name
     for ix in it.count(0):
         pos = row - ix
         if maxIter is not None and ix > maxIter:

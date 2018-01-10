@@ -49,12 +49,40 @@ init_local_cuda(){
 }
 
 
+current_cudnn_info()
+{
+    "
+        source ~/local/init/init_cuda.sh
+        current_cudnn_info
+    "
+    CUDNN_INCLUDE_PATH="$HOME/.local/cuda/include"
+    CUDNN_LIB_PATH="$HOME/.local/cuda/lib64"
+    echo ""
+    echo "--- CUDNN INFO ---"
+    echo "Relevant ENV Vars"
+    echo " * CUDNN_LIBRARIES = $CUDNN_LIBRARIES"
+    echo ""
+    echo "Relevant Paths"
+    echo "$CUDNN_INCLUDE_PATH"
+    echo ""
+    ls -al $CUDNN_INCLUDE_PATH
+    echo ""
+    echo "$CUDNN_LIB_PATH"
+    echo ""
+    ls -al $CUDNN_LIB_PATH
+    echo "------"
+    echo ""
+}
+
+
 change_cudnn_version(){
     "
         source ~/local/init/init_cuda.sh
         change_cudnn_version 7.0
         change_cudnn_version 6.0
         change_cudnn_version 5.1
+
+        current_cudnn_info
     "
     python -c "$(codeblock "
         from os.path import join, exists, expanduser, splitext, relpath
@@ -62,7 +90,6 @@ change_cudnn_version(){
 
         # SET TO CURRENT VERSION YOU WANT
         cuda = '8.0'
-        #cudnn = '6.0'
         #cudnn = '7.0'
         cudnn = '$1'
         osname = 'linux'
@@ -90,12 +117,13 @@ change_cudnn_version(){
         os.chdir(cudnn_dir)
         ub.cmd('tar -xzvf ' + cudnn_tgz_fpath, verbose=2)
 
-        # Then copy the files into your cudadir
+        # Setup the local install paths for cudnn
         install_prefix = ub.ensuredir((home, '.local'))
         cuda_dpath = ub.ensuredir((install_prefix, 'cuda'))
         include_dpath = ub.ensuredir((cuda_dpath, 'include'))
         lib_dpath = ub.ensuredir((cuda_dpath, 'lib64'))
 
+        # Finally copy the files into your cudadir
         import shutil
         import glob
 
@@ -117,7 +145,10 @@ change_cudnn_version(){
             name = relpath(src, srcdir)
             dst = join(dstdir, name)
             print('copying {} -> {}'.format(src, dst))
-            shutil.copy(src, dst)
+            #ub.cmd(('ls', '-al', src), verbout=1, verbose=2)
+            # use cp -P to preserve the relative symlinks
+            ub.cmd(('cp', '-P', src, dst), verbout=1, verbose=2)
+            #shutil.copy2(src, dst)
 
         src = join(cudnn_dir, 'cuda', 'include')
 
