@@ -2,6 +2,9 @@
 # References:
 # https://caffe2.ai/docs/getting-started.html?platform=ubuntu&configuration=compile
 git clone --recursive https://github.com/caffe2/caffe2.git && cd caffe2
+
+#git submodule update --init --recursive
+
 cd ~/code/caffe2
 # make && cd build && sudo make install
 # python -c 'from caffe2.python import core' 2>/dev/null && echo "Success" || echo "Failure"
@@ -20,8 +23,8 @@ vars = distutils.sysconfig.get_config_vars()
 libpath = os.path.join(vars['LIBDIR'], vars['MULTIARCH'], vars['LDLIBRARY'])
 print(libpath)
 ")
-echo "VENV_PYTHON_LIBRARY = $VENV_PYTHON_LIBRARY"
-echo "VENV_PYTHON_INCLUDE = $VENV_PYTHON_INCLUDE"
+echo "VENV_INCLUDE = $VENV_INCLUDE"
+echo "VENV_LIB = $VENV_LIB"
 
 
 cmake -G "Unix Makefiles" \
@@ -40,7 +43,6 @@ cmake -G "Unix Makefiles" \
 
 fixup(){
     # https://github.com/caffe2/caffe2/issues/1676
-
     SITE_DIR=$(python -c "from distutils import sysconfig; print(sysconfig.get_python_lib(prefix=''))")
     # Currently need to move caffe2 into PYTHONPATH
     PREFIX=$(python -c "import sys; print(sys.prefix)")

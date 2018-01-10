@@ -73,10 +73,10 @@ if [ -d "$HOME/.local/cuda" ]; then
 
     export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$HOME/.local/cuda
     if [ -f "$HOME/.local/cuda/lib64/libcudnn.so" ]; then
-        export CUDNN_LIBRARIES=$HOME/.local/cuda/lib64/libcudnn.so
-        export CUDNN_LIB_DIR=$HOME/.local/cuda/lib64
         export CUDNN_INCLUDE_DIR=$HOME/.local/cuda/include
-
+        export CUDNN_LIB_DIR=$HOME/.local/cuda/lib64
+        export CUDNN_LIBRARY=$CUDNN_LIB_DIR/libcudnn.so
+        export CUDNN_LIBRARIES=$CUDNN_LIBRARY
     fi
 fi
 
