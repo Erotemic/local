@@ -252,9 +252,19 @@ install_core_extras()
     fusermount -u ~/aretha
     
 
+
+    sudo apt-get update
+    sudo apt-get install patchutils
+    #http://superuser.com/questions/403664/how-can-i-copy-and-paste-text-out-of-a-remote-vim-to-a-local-vim
+    # 
+}
+
+install_fresh_flash_player()
+{
     # To allow to get the flash package from software center
     #http://askubuntu.com/questions/576562/apt-way-to-get-adobe-flash-player-latest-version-for-linux-not-working
     #http://blog.cacoo.com/2012/08/07/troubleshooting-chrome-flash/
+    # NOTE probably not a great idea to install flash
     sudo add-apt-repository universe
     sudo apt-get install pepperflashplugin-nonfree
     sudo update-pepperflashplugin-nonfree --status
@@ -263,13 +273,6 @@ install_core_extras()
     sudo add-apt-repository ppa:nilarimogard/webupd8
     sudo apt-get update
     sudo apt-get install freshplayerplugin
-
-
-    sudo apt-get update
-    sudo apt-get install patchutils
-
-    #http://superuser.com/questions/403664/how-can-i-copy-and-paste-text-out-of-a-remote-vim-to-a-local-vim
-    # 
 }
 
 
