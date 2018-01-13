@@ -5,6 +5,124 @@ Script that lets me play with things I'm learning
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 
+def symbolic_confusion(**known):
+    """
+    Example:
+        >>> known = {'tp': 10, 'fp': 100, 'total': 1000}
+        >>> solution = symbolic_confusion(**known)
+        >>> print(ub.repr2(solution))
+        >>> known = {'tp': 10, 'fp': 100, 'fn': 1}
+        >>> solution = symbolic_confusion(**known)
+        >>> print(ub.repr2(solution))
+        >>> print(ub.repr2(ub.dict_subset(solution, ['fpr']), nl=2))
+        >>> known = {'tp': 10, 'fp': 100, 'fn': 1, 'total': 1000}
+        >>> solution = symbolic_confusion(**known)
+        >>> print(ub.repr2(solution))
+        >>> print(ub.repr2(ub.dict_subset(solution, ['fpr']), nl=2))
+
+
+        >>> known = {'tp': 10, 'pp': 12, 'rp': 15, 'total': 500}
+        >>> solution = symbolic_confusion(**known)
+        >>> print(ub.repr2(solution))
+    """
+    import sympy as sym
+    all_vars = {}
+    def symbols(names, mode):
+        if mode == 'nonneg-int':
+            flags = {'is_nonnegative': True, 'is_integer': True}
+        elif mode == 'nonneg-real':
+            flags = {'is_nonnegative': True, 'is_real': True}
+        elif mode == 'real':
+            flags = {'is_real': True}
+        else:
+            flags = {}
+        out = sym.symbols(names, **flags)
+        if isinstance(out, tuple):
+            variables = out
+        else:
+            variables = [out]
+        for v in variables:
+            all_vars[v.name] = v
+        return out
+
+    # Core variables
+    (tp, fp, fn, tn) = symbols('tp, fp, fn, tn', 'nonneg-int')
+    (rp, pp, rn, pn) = symbols('rp, pp, rn, pn', 'nonneg-int')
+    total = symbols('total', 'nonneg-int')
+
+    # Derived varaibles
+    tpr, tnr, fnr, fpr = symbols('tpr, tnr, fnr, fpr', 'nonneg-real')
+    acc, fdr, for_ = symbols('acc, fdr, for', 'nonneg-real')
+    ppv, npv = symbols('ppv, npv', 'nonneg-real')
+    mcc, bm, mk, f1 = symbols('mcc, bm, mk, f1', 'real')
+
+    # Aliases
+    all_vars['precision'] = ppv
+    all_vars['recall'] = tpr
+
+    core_constraints = [
+        sym.Eq(total, tp + fp + fn + tn),
+        sym.Eq(total, pp + pn),
+        sym.Eq(total, rp + rn),
+
+        sym.Eq(rp, tp + fn),
+        sym.Eq(rn, tn + fp),
+
+        sym.Eq(pp, tp + fp),
+        sym.Eq(pn, tn + fn),
+    ]
+
+    #
+    # TODO: can we get the functional form of how to compute the other base
+    # constants if we specify what we have? (we need 4 dof I think)
+    # if False:
+    #     sym.solve(core_constraints, [tp, pp, rp, total])
+    #     implicit=1)
+
+    derived_constraints = [
+        sym.Eq(tpr, tp / (tp + fn)),
+        sym.Eq(tnr, tn / (tn + fp)),
+        sym.Eq(fnr, fn / (fn + tp)),
+        sym.Eq(fpr, tp / (tp + tn)),
+
+        sym.Eq(ppv, tp / (tp + fp)),
+        sym.Eq(npv, tn / (tn + fn)),
+
+        sym.Eq(for_, fn / (fn + tn)),
+        sym.Eq(fdr,  fp / (fp + tp)),
+
+        sym.Eq(acc,  (tp + tn) / (rp + rn)),
+        sym.Eq(f1, 2 * tp / (2 * tp + fp + fn)),
+        # using mcc messes up linear equations
+        # sym.Eq(mcc, tp * tn - fp * fn / sym.sqrt((tp + fp) * (tp - fn) * (tn + fp) * (tn + fn))),
+        sym.Eq(bm, tpr + tnr - 1),
+        sym.Eq(mk, ppv + npv - 1),
+    ]
+    import ubelt as ub
+
+    # Enter as much information as you know
+    known_dict = ub.map_keys(all_vars.__getitem__, known)
+    known_info = [sym.Eq(k, v) for k, v in known_dict.items()]
+
+    # setup a system of equations representing all constraints
+    system = core_constraints + derived_constraints + known_info
+
+    try:
+        soln1_ = sym.solve(system)
+        soln1 = soln1_[0]
+    except:
+        soln1 = sym.solve(system, implicit=1)
+
+    solution = {k.name: v for k, v in soln1.items()}
+
+    try:
+        solution = {k: v.evalf() for k, v in solution.items()}
+    except:
+        pass
+
+    return solution
+
+
 def can_cc_change_mid_iter():
     """
     The connected components can change durring iteration.
