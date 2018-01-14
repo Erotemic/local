@@ -1286,16 +1286,22 @@ def enter_text_in_terminal(text, return_to_vim=True):
              register our window as the active vim, and then paste into
              the second mru terminal)
     """
-    # Build xdtool script
-
-    terminal_pattern = wmctrl_terminal_pattern()
-
-    # Sequence of key presses that will trigger a paste event
-    paste_keypress = 'ctrl+shift+v'
-
     import utool as ut
     # Copy the text to the clipboard
     ut.copy_text_to_clipboard(text)
+
+    # Build xdtool script
+    import sys
+    if sys.platform.startswith('win32'):
+        print('win32 cannot copy to terminal yet. Just copied to clipboard. '
+              ' Needs AHK support for motion?')
+        return
+
+    terminal_pattern = wmctrl_terminal_pattern()
+
+
+    # Sequence of key presses that will trigger a paste event
+    paste_keypress = 'ctrl+shift+v'
 
     doscript = [
         ('remember_window_id', 'ACTIVE_GVIM'),
