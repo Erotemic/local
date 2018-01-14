@@ -1,17 +1,15 @@
 
 # References:
 # https://caffe2.ai/docs/getting-started.html?platform=ubuntu&configuration=compile
+cd ~/code
 git clone --recursive https://github.com/caffe2/caffe2.git && cd caffe2
 
-#git submodule update --init --recursive
-
 cd ~/code/caffe2
+git pull
+git submodule update --init --recursive
+
 # make && cd build && sudo make install
 # python -c 'from caffe2.python import core' 2>/dev/null && echo "Success" || echo "Failure"
-
-cd ~/code/caffe2
-mkdir -p ~/code/caffe2/build_py3
-cd ~/code/caffe2/build_py3
 
 
 # Get venv location of the include dir
@@ -27,19 +25,74 @@ echo "VENV_INCLUDE = $VENV_INCLUDE"
 echo "VENV_LIB = $VENV_LIB"
 
 
-cmake -G "Unix Makefiles" \
-  -D USE_MPI=Off \
-  -D USE_METAL=Off \
-  -D USE_GLOO=Off \
-  -D USE_GLOG=Off \
-  -D USE_GFLAGS=Off \
-  -D USE_ROCKSDB=Off \
-  -D USE_MOBILE_OPENGL=Off \
-  -D PYTHON_LIBRARY="$VENV_LIB" \
-  -D PYTHON_INCLUDE_DIR="$VENV_INCLUDE" \
-  ~/code/caffe2
+# I assume you have these variables defined in your bashrc
+echo "CUDNN_LIBRARY = $CUDNN_LIBRARY"
+echo "CUDNN_INCLUDE_DIR = $CUDNN_INCLUDE_DIR"
 
-  #USE_CUDA=On \
+# Do we need to add fletch?
+if []; then
+    export FLETCH_INSTALL=$HOME/code/fletch/build-py3/install
+    export CMAKE_PREFIX_PATH=$FLETCH_INSTALL:$CMAKE_PREFIX_PATH
+    export CPATH=$FLETCH_INSTALL/include:$CPATH
+    export LD_LIBRARY_PATH=$FLETCH_INSTALL/lib:$LD_LIBRARY_PATH
+fi
+
+
+build_gpu(){
+    # BUILD WITH GPU
+    cd ~/code/caffe2
+    mkdir -p ~/code/caffe2/build_py3
+    cd ~/code/caffe2/build_py3
+
+    cmake -G "Unix Makefiles" \
+      -D USE_MPI=Off \
+      -D USE_METAL=Off \
+      -D USE_GLOO=Off \
+      -D USE_GLOG=Off \
+      -D USE_GFLAGS=Off \
+      -D USE_ROCKSDB=Off \
+      -D USE_MOBILE_OPENGL=Off \
+      -D USE_CUDA=On \
+      -D PYTHON_LIBRARY="$VENV_LIB" \
+      -D PYTHON_INCLUDE_DIR="$VENV_INCLUDE" \
+      -D CUDNN_LIBRARY="$CUDNN_LIBRARY" \
+      -D CUDNN_INCLUDE_DIR="$CUDNN_INCLUDE_DIR" \
+      ~/code/caffe2
+      make -j5
+
+    # OR
+    CMAKE_ARGS="-DUSE_CUDA=On" python setup.py build
+}
+
+
+build_cpu(){
+    # BUILD WITH CPU ONLY
+    cd ~/code/caffe2
+    mkdir -p ~/code/caffe2/build_cpu_py3
+    cd ~/code/caffe2/build_cpu_py3
+
+    CMAKE_ARGS="
+      -D USE_MPI=Off \
+      -D USE_METAL=Off \
+      -D USE_GLOO=Off \
+      -D USE_GLOG=Off \
+      -D USE_GFLAGS=Off \
+      -D USE_ROCKSDB=Off \
+      -D USE_MOBILE_OPENGL=Off \
+      -D USE_CUDA=Off
+      "
+
+    cmake -G "Unix Makefiles" \
+        $CMAKE_ARGS \
+      -D CMAKE_INSTALL_PREFIX=$HOME/venv3 \
+      -D PYTHON_LIBRARY="$VENV_LIB" \
+      -D PYTHON_INCLUDE_DIR="$VENV_INCLUDE" \
+      ~/code/caffe2
+    make -j5
+
+    # OR
+    CMAKE_ARGS="$CMAKE_ARGS" python setup.py build
+}
 
 fixup(){
     # https://github.com/caffe2/caffe2/issues/1676
@@ -68,4 +121,3 @@ test(){
     python -c 'from caffe2.python import core' 2>/dev/null && echo "Success" || echo "Failure"
     python -m caffe2.python.operator_test.relu_op_test
 }
-

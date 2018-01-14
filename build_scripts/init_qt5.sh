@@ -3,6 +3,11 @@
 # 2) Build and install sip
 # 3) Build and install PyQt5
 
+
+# HEY GUESS WHAT!
+# DO THIS INSTEAD
+# pip install pyqt5
+
 # https://wiki.qt.io/Building_Qt_5_from_Git
 # http://download.qt.io/official_releases/qt/5.8/5.8.0/single/qt-everywhere-opensource-src-5.8.0.tar.gz
 # Build Qt5 by itself

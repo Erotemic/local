@@ -1,4 +1,5 @@
 " COMMON JUMP TO RC FILES
+" ~/.vimrc-local
 " ~/local/vim/rc/pyvim_funcs.py
 " ~/local/vim/rc/pyvim_funcs.py
 " ~/local/vim/rc/custom_misc_functions.vim  
@@ -342,7 +343,6 @@ call QUICKOPEN_leader_tvio('m', '~/misc/notes.sh')
 
 "call QUICKOPEN_leader_tvio('a', '~/sseg/pysseg')
 "call QUICKOPEN_leader_tvio('a', '~/code/clab/clab/live/')
-call QUICKOPEN_leader_tvio('A', '~/code/clab-private/')
 call QUICKOPEN_leader_tvio('c', '~/code/clab/clab')
 call QUICKOPEN_leader_tvio('a', '~/code/clab/clab/torch/')
 
@@ -352,6 +352,18 @@ if has("win32") || has("win16")
     " Seems to work. Thank god.
     autocmd Filetype tex,latex source $USERPROFILE\local\vim\vimfiles\after\syntax\tex.vim
 endif
+
+" Source special local vim settings
+if has('win32')
+    if filereadable($USERPROFILE . "/.vimrc-local")
+        source ~/.vimrc-local
+    endif
+else
+    if filereadable($HOME . "/.vimrc-local")
+        source ~/.vimrc-local
+    endif
+endif
+
         
 "syntax sync minlines=500
 "set visualbell
