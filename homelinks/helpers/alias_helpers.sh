@@ -191,6 +191,7 @@ alias pydist='cd $CODE_DIR/pyrf/'
 
 alias ya='cd $CODE_DIR/yael'
 alias ub='cd $CODE_DIR/ubelt'
+alias xo='cd $CODE_DIR/xdoctest'
 alias ut='cd $CODE_DIR/utool'
 alias uts='cd $CODE_DIR/utool/utool/util_scripts'
 alias vt='cd $CODE_DIR/vtool'

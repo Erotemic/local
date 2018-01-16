@@ -713,10 +713,9 @@ encryprtion()
     sudo apt-get update
     sudo apt-get install truecrypt -y
 
-    sudo add-apt-repository ppa:unit193/encryption
+    sudo add-apt-repository ppa:unit193/encryption -y
     sudo apt update
     sudo apt install veracrypt -y
-    
 }
 
 
