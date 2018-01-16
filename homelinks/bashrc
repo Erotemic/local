@@ -70,6 +70,23 @@ if [ -d "$HOME/.local/cuda" ]; then
     # Prepend to get around weird system ld_library_paths
     export CPATH=$HOME/.local/cuda/include:$CPATH
     export LD_LIBRARY_PATH=$HOME/.local/cuda/lib64:$LD_LIBRARY_PATH
+    export LIBRARY_PATH=$HOME/.local/cuda/lib64:$LIBRARY_PATH
+
+    if [ -f "$HOME/.local/cuda/bin/nvcc" ]; then
+        export PATH=$HOME/.local/cuda/bin:$PATH
+        export CUDA_HOME=$HOME/.local/cuda
+        export CUDA_PATH=$HOME/.local/cuda
+        export CUDA_BIN_PATH=$HOME/.local/cuda/bin
+        export CUDA_TOOLKIT_ROOT_DIR=$HOME/.local/cuda
+        export CUDA_SDK_ROOT_DIR=$HOME/.local/cuda
+        #export CUDA_NVCC_EXECUTABLE=$HOME/.local/cuda/bin/nvcc
+    fi
+    if [ -f "$HOME/.local/cuda/lib64/libcudart.so" ]; then
+        #export CUDA_CUDART_LIBRARY=$HOME/.local/cuda/lib64/libcudart.so
+        #export CUDA_CUDA_LIBRARY=$HOME/.local/cuda/lib64/libcuda.so
+        
+        export CUDA_HOME=$HOME/.local/cuda
+    fi
 
     export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$HOME/.local/cuda
     if [ -f "$HOME/.local/cuda/lib64/libcudnn.so" ]; then
@@ -81,7 +98,7 @@ if [ -d "$HOME/.local/cuda" ]; then
 fi
 
 
-# Add user CUDA/CUDNN to the library paths if it exists
+# Add user intel-libs to the library paths if it exists
 if [ -d "$HOME/intel/ipp/lib/intel64" ]; then
     # Prepend to get around weird system ld_library_paths
     export CPATH=$HOME/intel/ipp/include:$CPATH

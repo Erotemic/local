@@ -76,6 +76,88 @@ current_cudnn_info()
     echo ""
 }
 
+uninstall_local_cuda()
+{
+    # Uninstall old local cuda via manifest
+    python -c "$(codeblock "
+    import os
+    import ubelt as ub
+
+    def subfiles(dpath):
+        for dirpath, dirnames, filenames in os.walk(dpath):
+            for fname in filenames:
+                yield os.path.join(dirpath, fname)
+
+    manifest_fpath = ub.truepath('$HOME/.local/cuda/manifest_cuda.txt')
+    if os.path.exists(manifest_fpath):
+        lines = list(open(manifest_fpath, 'r').readlines())
+        print(len(lines))
+        for line in lines:
+            if line.startswith('#'):
+                continue
+            mode, *rest = line.strip().split(':')
+            path = ':'.join(rest)
+
+            # remove hash
+            if mode in ['link', 'file']:
+                *parts, hash = path.split(':')
+                path = ':'.join(parts)
+
+            elif os.path.exists(path) or os.path.islink(path):
+                if mode == 'link' and os.path.islink(path): 
+                    print('UNLINK ' + path)
+                    os.unlink(path)
+                elif mode == 'file':
+                    print('REMOVE ' + path)
+                    ub.delete(path)
+                elif mode == 'dir':
+                    children = list(subfiles(path))
+                    if len(children) > 0:
+                        print('NOT REMOVING ({} children) {}'.format(len(children), path))
+                        #print(children)
+                    elif len(children) == 0:
+                        print('RMDIR ' + path)
+                        ub.delete(path)
+                        #os.rmdir(path)
+                else:
+                    raise Exception(mode)
+    ")"
+}
+
+
+change_cuda_version()
+{
+
+    # Install desired cuda version
+    uninstall_local_cuda
+
+    # version 8
+    #sh ~/tpl-archive/cuda/cuda-linux64-rel-8.0.61-21551265.run -prefix=$HOME/.local/cuda -noprompt -manifest $HOME/.local/cuda/manifest_cuda.txt -nosymlink 
+
+    # version 9
+    sh ~/tpl-archive/cuda/cuda-linux.9.1.85-23083092.run -prefix=$HOME/.local/cuda -noprompt -manifest $HOME/.local/cuda/manifest_cuda.txt -nosymlink 
+
+    # IS there any way to get these to work locally?
+    sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run --help
+    sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run -a
+    sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run -a -x 
+    sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run --info
+}
+
+prep_cuda_runfile(){
+    # Extract the actual cuda installer to the tpl-dir
+    sh ~/tpl-archive/cuda/cuda_8.0.61_375.26_linux.run --silent --toolkitpath=$HOME/.local/cuda/ --no-opengl-libs --verbose --extract=$HOME/tpl-archive/cuda
+    # only keep the toolkit, remove the driver and samples
+    rm $HOME/tpl-archive/cuda/NVIDIA-Linux-x86_64-375.26.run
+    rm $HOME/tpl-archive/cuda/cuda-samples-linux-8.0.61-21551265.run
+
+    
+    sh ~/tpl-archive/cuda/cuda_9.1.85_387.26_linux.run --silent --toolkitpath=$HOME/.local/cuda/ --no-opengl-libs --verbose --extract=$HOME/tpl-archive/cuda
+    #rm $HOME/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run
+    rm $HOME/tpl-archive/cuda/cuda-samples.9.1.85-23083092-linux.run
+}
+
+
 
 change_cudnn_version(){
     "
