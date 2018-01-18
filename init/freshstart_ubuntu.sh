@@ -7,7 +7,8 @@ simple_setup_manual()
         cd local/init 
     fi
 
-    source ~/local/init/freshstart_ubuntu.sh && simple_setup_auto
+    source ~/local/init/freshstart_ubuntu.sh 
+    simple_setup_auto
 }
 
 simple_setup_auto(){
@@ -20,18 +21,20 @@ simple_setup_auto(){
     mkdir -p ~/tmp
     mkdir -p ~/code
     cd ~
+
+    source ~/local/init/freshstart_ubuntu.sh 
     ensure_config_symlinks
 
     source ~/.bashrc
 
-    git config --global user.name joncrall
     #git config --global user.email crallj@rpi.edu
+    git config --global user.name $USER
     git config --global user.email jon.crall@kitware.com
     git config --global push.default current
 
     git config --global core.editor "vim"
     git config --global rerere.enabled true
-    git config core.fileMode false
+    git config --global core.fileMode false
     git config --global alias.co checkout
 
     git config --global merge.conflictstyle diff3
@@ -150,7 +153,6 @@ ensure_config_symlinks()
     "
     CommandLine:
         source ~/local/init/freshstart_ubuntu.sh && ensure_config_symlinks
-
     "
 
     HAVE_SUDO=$(have_sudo)
@@ -498,6 +500,7 @@ setup_venv3(){
     if [ "$(has_pymodule python3 pip)" == "False" ]; then
     #if [ "$(which pip3)" == "" ]; then
         ensure_curl
+        mkdir -p ~/tmp
         curl https://bootstrap.pypa.io/get-pip.py > ~/tmp/get-pip.py
         python3 ~/tmp/get-pip.py --user
     fi
@@ -506,7 +509,7 @@ setup_venv3(){
     PYTHON3_VENV="$HOME/venv3"
     mkdir -p $PYTHON3_VENV
     python3 -m virtualenv -p /usr/bin/python3 $PYTHON3_VENV
-    python3 -m virtualenv --relocatable $PYTHON3_VENV 
+    # python3 -m virtualenv --relocatable $PYTHON3_VENV 
     # source $PYTHON3_VENV/bin/activate
 
     # Now ensure the correct pip is installed locally

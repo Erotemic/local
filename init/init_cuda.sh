@@ -78,6 +78,10 @@ current_cudnn_info()
 
 uninstall_local_cuda()
 {
+    "
+        source ~/local/init/init_cuda.sh
+        uninstall_local_cuda
+    "
     # Uninstall old local cuda via manifest
     python -c "$(codeblock "
     import os
@@ -109,16 +113,18 @@ uninstall_local_cuda()
                     os.unlink(path)
                 elif mode == 'file':
                     print('REMOVE ' + path)
-                    ub.delete(path)
+                    #ub.delete(path)
+                    os.remove(path)
                 elif mode == 'dir':
                     children = list(subfiles(path))
                     if len(children) > 0:
-                        print('NOT REMOVING ({} children) {}'.format(len(children), path))
+                        #print('NOT REMOVING ({} children) {}'.format(len(children), path))
                         #print(children)
+                        pass
                     elif len(children) == 0:
                         print('RMDIR ' + path)
-                        ub.delete(path)
-                        #os.rmdir(path)
+                        #ub.delete(path)
+                        os.rmdir(path)
                 else:
                     raise Exception(mode)
     ")"

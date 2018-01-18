@@ -274,3 +274,8 @@ if [ -f "$HOME/.bashrc-local" ]; then
     # For machine-specific bashrc things that will not be published on github
     source $HOME/.bashrc-local
 fi
+
+
+# super trick: make multiprocessing actually use multiple cores
+# https://stackoverflow.com/questions/15639779/why-does-multiprocessing-use-only-a-single-core-after-i-import-numpy
+export OPENBLAS_MAIN_FREE=1
