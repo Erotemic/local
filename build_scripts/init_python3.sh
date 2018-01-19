@@ -55,7 +55,15 @@ git checkout 3.6
 # Configure cflags
 
 cd ~/code/cpython
-CFLAGS="-fno-strict-aliasing -fstack-protector --param=ssp-buffer-size=4 -Wformat -Wformat-security -Werror=format-security -O2" ./configure --prefix="$PREFIX" --enable-shared LDFLAGS="-Wl,-rpath /usr/local/lib" --enable-optimizations
+
+#CFLAGS="-fno-strict-aliasing -fstack-protector --param=ssp-buffer-size=4 -Wformat -Wformat-security -Werror=format-security -O2" ./configure --prefix="$PREFIX" --enable-shared LDFLAGS="-Wl,-rpath /usr/local/lib" --enable-optimizations
+
+CFLAGS="-fno-strict-aliasing -fstack-protector --param=ssp-buffer-size=4 -Wformat -Wformat-security -Werror=format-security" ./configure --prefix="$PREFIX" --enable-shared LDFLAGS="-Wl,-rpath /usr/local/lib" --enable-optimizations --with-computed-gotos --without-gcc CC=icc CXX=icpc CCFLAGS="-O3"
+
+
+# TODO:
+# --with-icc
+
 
 NCPUS=$(grep -c ^processor /proc/cpuinfo)
 make -j$NCPUS
