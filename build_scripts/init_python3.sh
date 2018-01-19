@@ -1,10 +1,13 @@
 # Probably the easier option if available, but hey your building python from source
-sudo apt-get install libreadline-dev 
-sudo apt-get install libssl-dev
-sudo apt-get install libsqlite3-dev
-sudo apt-get install libgdbm-dev
-sudo apt-get install liblzma-dev
+apt_install_deps(){
+    sudo apt-get install libreadline-dev 
+    sudo apt-get install libssl-dev
+    sudo apt-get install libsqlite3-dev
+    sudo apt-get install libgdbm-dev
+    sudo apt-get install liblzma-dev
+}
 
+set -e
 
 NCPUS=$(grep -c ^processor /proc/cpuinfo)
 export PREFIX=$HOME/.local
@@ -58,4 +61,3 @@ NCPUS=$(grep -c ^processor /proc/cpuinfo)
 make -j$NCPUS
 make test
 make install
-

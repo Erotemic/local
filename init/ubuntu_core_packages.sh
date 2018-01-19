@@ -1321,8 +1321,25 @@ install_ipp(){
   tar -xvzf ~/tpl-archive/ipp/l_ipp_2018.0.128.tgz 
   cd ~/tmp/l_ipp_2018.0.128
 
-  #./install.sh --help
+  ./install.sh --help
   ./install.sh --user-mode
+
+  mkdir -p $HOME/.local/intel
+
+echo "ACCEPT_EULA=accept
+INSTALL_MODE=NONRPM
+NONRPM_DB_DIR=$HOME/.local/intel
+ARCH_SELECTED=ALL
+COMPONENTS=DEFAULTS
+PSET_MODE=install
+CONTINUE_WITH_INSTALLDIR_OVERWRITE=yes
+PSET_INSTALL_DIR=$HOME/.local/intel
+SIGNING_ENABLED=no
+" > silent.cfg
+
+  ./install.sh --user-mode --nonrpm-db-dir $HOME/.local/intel
+  --silent
+
 
   # Enter the following commands
   __heredoc__ "
