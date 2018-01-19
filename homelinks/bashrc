@@ -70,7 +70,7 @@ if [ -d "$HOME/.local/cuda" ]; then
     # Prepend to get around weird system ld_library_paths
     export CPATH=$HOME/.local/cuda/include:$CPATH
     export LD_LIBRARY_PATH=$HOME/.local/cuda/lib64:$LD_LIBRARY_PATH
-    export LIBRARY_PATH=$HOME/.local/cuda/lib64:$LIBRARY_PATH
+    #export LIBRARY_PATH=$HOME/.local/cuda/lib64:$LIBRARY_PATH
 
     if [ -f "$HOME/.local/cuda/bin/nvcc" ]; then
         export PATH=$HOME/.local/cuda/bin:$PATH
@@ -84,7 +84,6 @@ if [ -d "$HOME/.local/cuda" ]; then
     if [ -f "$HOME/.local/cuda/lib64/libcudart.so" ]; then
         #export CUDA_CUDART_LIBRARY=$HOME/.local/cuda/lib64/libcudart.so
         #export CUDA_CUDA_LIBRARY=$HOME/.local/cuda/lib64/libcuda.so
-        
         export CUDA_HOME=$HOME/.local/cuda
     fi
 

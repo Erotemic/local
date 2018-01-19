@@ -1,1 +1,1 @@
-ssh -XY jon.crall@aretha.kitware.com
+ssh -XYA jon.crall@aretha.kitware.com
