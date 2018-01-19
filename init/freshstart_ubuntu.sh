@@ -506,16 +506,15 @@ setup_venv3(){
     fi
     python3 -m pip install pip setuptools virtualenv -U --user
 
+    #python3 -c "import sys; print(sys.version)"
     #PYVERSUFF=$(python3 -c "import sys; print('.'.join(map(str, sys.version_info[0:3])))")
     #PYVERSUFF=$(python3 -c "import sysconfig; print(sysconfig.get_config_var('LDVERSION'))")
     PYEXE=$(python3 -c "import sys; print(sys.executable)")
     PYVERSUFF=$(python3 -c "import sysconfig; print(sysconfig.get_config_var('VERSION'))")
-
-    python3 -c "import sys; print(sys.version)"
-
     PYTHON3_VERSION_VENV="$HOME/venv$PYVERSUFF"
     mkdir -p $PYTHON3_VERSION_VENV
-    python3 -m virtualenv -p $PYEXE --relocatable $PYTHON3_VERSION_VENV 
+    python3 -m virtualenv -p $PYEXE $PYTHON3_VERSION_VENV 
+    python3 -m virtualenv --relocatable $PYTHON3_VERSION_VENV 
 
     PYTHON3_VENV="$HOME/venv3"
     # symlink to the real env

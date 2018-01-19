@@ -21,6 +21,7 @@ init_local_cuda(){
     cd
     rsync -avuzpR ~/./tpl-archive/ jon.crall@arisia.kitware.com:.
     rsync -avzupR ~/./tpl-archive/ jon.crall@aretha.kitware.com:.
+    rsync -avzupR ~/./tpl-archive/ jon.crall@klendathu.kitware.com:.
 
     rsync -avzup tpl-archive/cuda/ jon.crall@arisia.kitware.com:tpl-archive/cuda
     rsync -avzup tpl-archive/cuda/ jon.crall@aretha.kitware.com:tpl-archive/cuda

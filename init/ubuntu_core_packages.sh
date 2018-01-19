@@ -1334,11 +1334,13 @@ COMPONENTS=DEFAULTS
 PSET_MODE=install
 CONTINUE_WITH_INSTALLDIR_OVERWRITE=yes
 PSET_INSTALL_DIR=$HOME/.local/intel
+CONTINUE_WITH_OPTIONAL_ERROR=yes
 SIGNING_ENABLED=no
 " > silent.cfg
 
-  ./install.sh --user-mode --nonrpm-db-dir $HOME/.local/intel
-  --silent
+  ./install.sh --user-mode --silent silent.cfg
+
+  #./install.sh --user-mode --nonrpm-db-dir $HOME/.local/intel --silent silent.cfg
 
 
   # Enter the following commands
