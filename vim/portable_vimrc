@@ -344,7 +344,7 @@ call QUICKOPEN_leader_tvio('m', '~/misc/notes.sh')
 "call QUICKOPEN_leader_tvio('a', '~/sseg/pysseg')
 "call QUICKOPEN_leader_tvio('a', '~/code/clab/clab/live/')
 call QUICKOPEN_leader_tvio('c', '~/code/clab/clab')
-call QUICKOPEN_leader_tvio('a', '~/code/clab/clab/torch/')
+call QUICKOPEN_leader_tvio('a', '~/code/clab/clab/fit_harness.py')
 
 
 if has("win32") || has("win16")
