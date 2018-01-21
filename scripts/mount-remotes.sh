@@ -32,11 +32,21 @@ already-mounted(){
 
 mount-if-available(){
     HOST=$1
+    mkdir -p $HOME/remote
     MOUNTPOINT=$HOME/remote/$HOST
+
+    if [ "$(which sshfs)" == "" ];  then
+        echo "Error: sshf is not installed. sudo apt install sshfs"
+    fi
+
     if [ "$(already-mounted $MOUNTPOINT)" != "" ]; then
         echo "Already mounted: $HOST"
     else
         if [ "$(is-available $HOST)" != "" ]; then
+            echo "Mounting: $HOST"
+            mkdir -p $MOUNTPOINT
+            sshfs -o follow_symlinks,idmap=user $HOST: $MOUNTPOINT
+        elif [ "$FORCE" != "" ]; then
             echo "Mounting: $HOST"
             mkdir -p $MOUNTPOINT
             sshfs -o follow_symlinks,idmap=user $HOST: $MOUNTPOINT
@@ -86,6 +96,10 @@ key="$1"
 case $key in
     -u|--unmount)
     UNMOUNT=YES
+    shift # past argument
+    ;;
+    -f|--force)
+    FORCE=YES
     shift # past argument
     ;;
     *)    # unknown option
