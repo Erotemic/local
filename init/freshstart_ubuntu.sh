@@ -2,13 +2,40 @@ simple_setup_manual()
 {
     sudo apt-get install git -y
     # If local does not exist
-    if [ ! -f ~/local ]; then
+    if [ ! -d ~/local ]; then
         git clone https://github.com/Erotemic/local.git
         cd local/init 
     fi
 
     source ~/local/init/freshstart_ubuntu.sh 
     simple_setup_auto
+}
+
+local_remote_presetup(){
+    "
+    Run this script on the local computer to setup the remote with data that
+    must be pushed to it (i.e. we cannot pull these files)
+    "
+    REMOTE=somemachine.com
+    REMOTE_USER=jon.crall
+    ssh-copy-id $REMOTE_USER@$REMOTE
+    #In event of slowdown: sshpass -f <(printf '%s\n' kwpass=yourpass) ssh-copy-id $REMOTE_USER@$REMOTE
+    rsync -avzupR tpl-archive/ $REMOTE_USER@$REMOTE
+}
+
+set_global_git_config(){
+
+    #git config --global user.email crallj@rpi.edu
+    git config --global user.name $USER
+    git config --global user.email jon.crall@kitware.com
+    git config --global push.default current
+
+    git config --global core.editor "vim"
+    git config --global rerere.enabled true
+    git config --global core.fileMode false
+    git config --global alias.co checkout
+    git config --global alias.submodpull 'submodule update --init --recursive'
+    git config --global merge.conflictstyle diff3
 }
 
 simple_setup_auto(){
@@ -22,37 +49,45 @@ simple_setup_auto(){
     mkdir -p ~/code
     cd ~
 
+    if [ ! -d ~/.ssh ]; then
+        mkdir -p ~/.ssh
+        # ADD MY PUBLIC KEY TO authorized_keys
+        #chmod 600 ~/.ssh/authorized_keys
+        # From local machine
+        #ssh-copy-id username@remote
+        ssh-copy-id jon.crall@klendathu.kitware.com 
+    fi
+
     source ~/local/init/freshstart_ubuntu.sh 
     ensure_config_symlinks
 
     source ~/.bashrc
 
-    #git config --global user.email crallj@rpi.edu
-    git config --global user.name $USER
-    git config --global user.email jon.crall@kitware.com
-    git config --global push.default current
+    set_global_git_config
 
-    git config --global core.editor "vim"
-    git config --global rerere.enabled true
-    git config --global core.fileMode false
-    git config --global alias.co checkout
-
-    git config --global merge.conflictstyle diff3
-
+    source ~/local/init/freshstart_ubuntu.sh
     setup_venv3
     source ~/venv3/bin/activate
 
     pip install setuptools --upgrade
     pip install six
     pip install jedi
+    pip install pep8 autopep8 flake8 pylint 
+    pip install line_profiler
+
+    pip install Cython
     pip install ipython
-    pip install pep8 autopep8 flake8 pylint line_profiler
+
+    pip install numpy scipy
+    pip install pyqt5
+    pip install opencv-python
 
     mkdir -p ~/local/vim/vimfiles/bundle
     source ~/local/vim/init_vim.sh
     echo "source ~/local/vim/portable_vimrc" > ~/.vimrc
     python ~/local/init/ensure_vim_plugins.py
 
+    source ~/local/init/freshstart_ubuntu.sh
     # Install utool
     echo "Installing utool"
     if [ ! -d ~/code/utool ]; then
@@ -60,6 +95,14 @@ simple_setup_auto(){
     fi
     if [ "$(has_pymodule ubelt)" == "False" ]; then
         pip install -e ~/code/utool
+    fi
+
+    echo "Installing xdoctest"
+    if [ ! -d ~/code/xdoctest ]; then
+        git clone http://github.com/Erotemic/xdoctest.git ~/code/xdoctest
+    fi
+    if [ "$(has_pymodule xdoctest)" == "False" ]; then
+        pip install -e ~/code/xdoctest
     fi
 
     echo "Installing ubelt"
@@ -70,11 +113,41 @@ simple_setup_auto(){
         pip install -e ~/code/ubelt
     fi
 
-    git clone http://github.com/Erotemic/networkx.git ~/code/networkx
-    pip install -e ~/code/networkx
+    #git clone http://github.com/Erotemic/networkx.git ~/code/networkx
+    #pip install -e ~/code/networkx
 
     python ~/local/init/init_ipython_config.py
 
+    deactivate 
+    setup_venv2
+    source ~/venv2/bin/activate
+    pip install setuptools --upgrade
+    pip install six
+    pip install jedi
+    pip install pep8 autopep8 flake8 pylint 
+    pip install line_profiler
+
+    pip install Cython
+    pip install ipython
+
+    pip install numpy scipy pandas
+    pip install opencv-python
+
+    we-py3
+}
+
+
+setup_deep_learn_env(){
+    source ~/local/init/init_cuda.sh
+    change_cudnn_version 7.0
+
+    cd ~/code
+    git clone https://github.com/pytorch/pytorch.git
+    cd ~/code/pytorch
+    git pull
+    git submodpull
+    pip install pyyaml
+    python setup.py install
 }
 
 
@@ -308,16 +381,9 @@ freshtart_ubuntu_script()
 
     source ~/.bashrc
 
-    git config --global user.name joncrall
-    #git config --global user.email crallj@rpi.edu
-    git config --global user.email jon.crall@kitware.com
-    git config --global push.default current
+    set_global_git_config
 
-    git config --global core.editor "vim"
-    git config --global rerere.enabled true
-    git config core.fileMode false
-    git config --global alias.co checkout
-
+    source ~/local/init/freshstart_ubuntu.sh
     make_sshkey
 
     #sudo apt-get install trash-cli

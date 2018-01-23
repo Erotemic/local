@@ -258,6 +258,7 @@ init_local_cudnn(){
     #rsync -avpR ~/tpl-archive/ aretha:tpl-archive
     rsync -avuzpR tpl-archive/ jon.crall@arisia.kitware.com
     rsync -avzupR tpl-archive/ jon.crall@aretha.kitware.com:
+    rsync -avzupR tpl-archive/ jon.crall@klendathu.kitware.com:
 
     # check for user cuda
     ls ~/.local/cuda/lib64/libcudnn*
