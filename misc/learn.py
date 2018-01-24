@@ -94,7 +94,7 @@ def symbolic_confusion(**known):
         sym.Eq(acc,  (tp + tn) / (rp + rn)),
         sym.Eq(f1, 2 * tp / (2 * tp + fp + fn)),
         # using mcc messes up linear equations
-        # sym.Eq(mcc, tp * tn - fp * fn / sym.sqrt((tp + fp) * (tp - fn) * (tn + fp) * (tn + fn))),
+        # sym.Eq(mcc, (tp * tn - fp * fn) / sym.sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))),
         sym.Eq(bm, tpr + tnr - 1),
         sym.Eq(mk, ppv + npv - 1),
     ]

@@ -3,6 +3,7 @@ simple_setup_manual()
     sudo apt-get install git -y
     # If local does not exist
     if [ ! -d ~/local ]; then
+        cd $HOME
         git clone https://github.com/Erotemic/local.git
         cd local/init 
     fi
@@ -17,10 +18,11 @@ local_remote_presetup(){
     must be pushed to it (i.e. we cannot pull these files)
     "
     REMOTE=somemachine.com
+    REMOTE=hermes.kitware.com
     REMOTE_USER=jon.crall
     ssh-copy-id $REMOTE_USER@$REMOTE
     #In event of slowdown: sshpass -f <(printf '%s\n' kwpass=yourpass) ssh-copy-id $REMOTE_USER@$REMOTE
-    rsync -avzupR tpl-archive/ $REMOTE_USER@$REMOTE
+    rsync -avzupR ~/./tpl-archive/ $REMOTE_USER@$REMOTE:. 
 }
 
 set_global_git_config(){
@@ -55,7 +57,7 @@ simple_setup_auto(){
         #chmod 600 ~/.ssh/authorized_keys
         # From local machine
         #ssh-copy-id username@remote
-        ssh-copy-id jon.crall@klendathu.kitware.com 
+        #ssh-copy-id jon.crall@klendathu.kitware.com 
     fi
 
     source ~/local/init/freshstart_ubuntu.sh 
@@ -113,8 +115,33 @@ simple_setup_auto(){
         pip install -e ~/code/ubelt
     fi
 
+    echo "Installing vtool"
+    if [ ! -d ~/code/vtool ]; then
+        git clone http://github.com/Erotemic/vtool.git ~/code/vtool
+    fi
+    if [ "$(has_pymodule vtool)" == "False" ]; then
+        pip install -e ~/code/vtool
+    fi
+
+    echo "Installing guitool"
+    if [ ! -d ~/code/guitool ]; then
+        git clone http://github.com/Erotemic/guitool.git ~/code/guitool
+    fi
+    if [ "$(has_pymodule guitool)" == "False" ]; then
+        pip install -e ~/code/guitool
+    fi
+
+    echo "Installing plottool"
+    if [ ! -d ~/code/plottool ]; then
+        git clone http://github.com/Erotemic/plottool.git ~/code/plottool
+    fi
+    if [ "$(has_pymodule plottool)" == "False" ]; then
+        pip install -e ~/code/plottool
+    fi
+
     #git clone http://github.com/Erotemic/networkx.git ~/code/networkx
     #pip install -e ~/code/networkx
+    pip install networkx tqdm
 
     python ~/local/init/init_ipython_config.py
 
@@ -148,6 +175,12 @@ setup_deep_learn_env(){
     git submodpull
     pip install pyyaml
     python setup.py install
+
+    pip install h5py matplotlib Pillow torchvision
+    pip install tensorflow
+
+    git clone https://github.com/TeamHG-Memex/tensorboard_logger.git ~/code/tensorboard_logger
+    pip install -e ~/code/tensorboard_logger
 }
 
 
@@ -416,6 +449,7 @@ freshtart_ubuntu_script()
     # Development Environment
     sudo apt-get install gcc g++ gfortran build-essential -y
     sudo apt-get install -y python3-dev python3-tk
+    sudo apt-get install -y python3-tk
 
     #sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 10
 
