@@ -1,3 +1,6 @@
+ubuntu_system_deps(){
+    sudo apt-get install -y google-mock
+}
 
 # References:
 # https://caffe2.ai/docs/getting-started.html?platform=ubuntu&configuration=compile
@@ -77,6 +80,7 @@ build_cpu(){
       -D USE_GLOO=Off \
       -D USE_GLOG=Off \
       -D USE_GFLAGS=Off \
+      -D USE_GMOCK=Off \
       -D USE_ROCKSDB=Off \
       -D USE_MOBILE_OPENGL=Off \
       -D USE_CUDA=Off
