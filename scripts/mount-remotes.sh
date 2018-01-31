@@ -76,6 +76,7 @@ mount-remotes()
 {
     echo "Mounting remotes"
     mount-if-available aretha 
+    mount-if-available hermes 
     #mount-if-available arisia 
     #mount-if-available lev 
 }
@@ -84,6 +85,7 @@ unmount-remotes()
 {
     echo "Unmounting remotes"
     unmount-if-mounted aretha
+    unmount-if-mounted hermes 
 }
 
 

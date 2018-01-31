@@ -178,12 +178,74 @@ setup_deep_learn_env(){
 
     pip install h5py matplotlib Pillow torchvision
     pip install tensorflow
+    pip install scikit-image
 
     git clone https://github.com/TeamHG-Memex/tensorboard_logger.git ~/code/tensorboard_logger
     pip install -e ~/code/tensorboard_logger
 }
 
 
+setup_kitware_ssh_keys(){
+    # DO THIS ONCE, THEN MOVE THESE KEY AROUND TO KITWARE MACHINES
+    mkdir -p ~/.ssh
+    cd ~/.ssh
+    ssh-keygen -t rsa -b 8192 -C "jon.crall@kitware.com" -f id_joncrall_kitware_rsa -N ""
+
+    # setup local machine with a special public / private key pair
+    ssh-add id_joncrall_kitware_rsa
+
+    # Add this public key to remote authorized_keys so they recognize you.  
+    # You may have to type in your password for each of these, but it will be
+    # the last time.
+    ssh-copy-id jon.crall@hermes
+    ssh-copy-id jon.crall@aretha
+    ssh-copy-id jon.crall@arisia
+    ssh-copy-id jon.crall@klendathu
+
+    # move public and private keys to other computers
+    rsync ~/.ssh/./id_joncrall_kitware_rsa* aretha:.ssh/./
+    rsync ~/.ssh/./id_joncrall_kitware_rsa* arisia:.ssh/./
+    rsync ~/.ssh/./id_joncrall_kitware_rsa* hermes:.ssh/./
+    rsync ~/.ssh/./id_joncrall_kitware_rsa* klendathu:.ssh/./
+
+    # move .ssh config to other computers
+    rsync ~/.ssh/./config aretha:.ssh/./
+    rsync ~/.ssh/./config arisia:.ssh/./
+    rsync ~/.ssh/./config hermes:.ssh/./
+    rsync ~/.ssh/./config klendathu:.ssh/./
+
+    # Now make sure the special private id_rsa is registered on each remote
+    ssh -A aretha "ssh-add .ssh/id_joncrall_kitware_rsa"
+    ssh -A arisia "ssh-add .ssh/id_joncrall_kitware_rsa"
+    ssh -A hermes "ssh-add .ssh/id_joncrall_kitware_rsa"
+    ssh -A klendathu "ssh-add .ssh/id_joncrall_kitware_rsa"
+}
+
+
+
+new_setup_ssh_keys(){
+    mkdir -p ~/.ssh
+    cd ~/.ssh
+    ssh-keygen -t rsa -b 4096 -C "jon.crall@kitware.com"
+    # Add new key to ssh agent if it is already running
+
+    ssh-add
+    # Manual Step:
+    # Add public key to github https://github.com/settings/keys
+    # Add public key to other places
+
+    fix_ssh_permissions
+}
+
+fix_ssh_permissions(){
+    # Fix ssh keys if you have them
+    ls -al ~/.ssh
+    chmod 700 ~/.ssh
+    chmod 600 ~/.ssh/authorized_keys
+    chmod 600 ~/.ssh/known_hosts
+    chmod 600 ~/.ssh/config
+    chmod 400 ~/.ssh/id_rsa*
+}
 
 
 entry_prereq_git_and_local()
@@ -198,16 +260,10 @@ entry_prereq_git_and_local()
     # If on a new computer, then make a new ssh key
     
     if [[ "$HOSTNAME" == "calculex"  ]]; then 
-        cd ~/.ssh
-        ssh-keygen -t rsa -b 4096 -C "jon.crall@kitware.com"
-
-        # Add new key to ssh agent if it is already running
-
-        ssh-add
-        # Manual Step:
-        # Add key to github https://github.com/settings/keys
+        new_setup_ssh_keys
     fi
 
+    fix_ssh_permissions
 
     # Fix ssh keys if you have them
     ls -al ~/.ssh

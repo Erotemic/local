@@ -6,7 +6,7 @@ from os.path import relpath
 import ubelt as ub
 
 
-def _git_sync(host, remote=None, dry=False):
+def _git_sync(host, remote=None, dry=False, forward_ssh_agent=False):
     cwd = os.getcwd()
     relpwd = relpath(cwd, expanduser('~'))
 
@@ -22,10 +22,15 @@ def _git_sync(host, remote=None, dry=False):
     else:
         parts += [
             'git push',
-            'ssh {host} "cd {relpwd} && git pull"'
+            'ssh {ssh_flags} {host} "cd {relpwd} && git pull"'
         ]
 
-    kw = dict(host=host, relpwd=relpwd, remote=remote)
+    ssh_flags = []
+    if forward_ssh_agent:
+        ssh_flags += ['-A']
+    ssh_flags = ' '.join(ssh_flags)
+
+    kw = dict(host=host, relpwd=relpwd, remote=remote, ssh_flags=ssh_flags)
 
     for part in parts:
         command = part.format(**kw)
@@ -45,11 +50,12 @@ def git_sync():
     import argparse
     parser = argparse.ArgumentParser(description='Sync a git repo with a remote server via ssh')
 
-    parser.add_argument('host', nargs=1, help='server to sync to via ssh (e.g. user@servername.edu)')
-    parser.add_argument('remote', nargs='?', help='the git remote to use (e.g. origin)')
-
+    parser.add_argument('host', nargs=1, help='Server to sync to via ssh (e.g. user@servername.edu)')
+    parser.add_argument('remote', nargs='?', help='The git remote to use (e.g. origin)')
+    parser.add_argument('-A', dest='forward_ssh_agent', action='store_true',
+                        help='Enable forwarding of the ssh authentication agent connection')
     parser.add_argument(*('-n', '--dry'), dest='dry', action='store_true',
-                        help='perform a dry run')
+                        help='Perform a dry run')
 
     parser.set_defaults(
         dry=False,
