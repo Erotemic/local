@@ -237,6 +237,10 @@ setup_kitware_ssh_keys(){
     #ssh -A arisia "ssh-add .ssh/id_joncrall_kitware_rsa"
     #ssh -A hermes "ssh-add .ssh/id_joncrall_kitware_rsa"
     #ssh -A klendathu "ssh-add .ssh/id_joncrall_kitware_rsa"
+
+    # Copy from a remote to my computer
+    rsync aretha:.ssh/./id_joncrall_kitware_rsa* ~/.ssh/./
+    rsync aretha:.ssh/./config ~/.ssh/./
 }
 
 
