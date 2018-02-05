@@ -201,24 +201,42 @@ setup_kitware_ssh_keys(){
     ssh-copy-id jon.crall@aretha
     ssh-copy-id jon.crall@arisia
     ssh-copy-id jon.crall@klendathu
+    ssh-copy-id joncrall@acidalia
 
-    # move public and private keys to other computers
-    rsync ~/.ssh/./id_joncrall_kitware_rsa* aretha:.ssh/./
-    rsync ~/.ssh/./id_joncrall_kitware_rsa* arisia:.ssh/./
-    rsync ~/.ssh/./id_joncrall_kitware_rsa* hermes:.ssh/./
-    rsync ~/.ssh/./id_joncrall_kitware_rsa* klendathu:.ssh/./
+    # ENSURE YOU HAVE ALL COMPUTERS UPDATED IN YOUR SSH CONFIG
 
-    # move .ssh config to other computers
-    rsync ~/.ssh/./config aretha:.ssh/./
-    rsync ~/.ssh/./config arisia:.ssh/./
-    rsync ~/.ssh/./config hermes:.ssh/./
-    rsync ~/.ssh/./config klendathu:.ssh/./
+    REMOTES=( aretha arisia hermes klendathu acidalia )
+    for remote in "${REMOTES[@]}"
+    do
+        echo "UPDATING remote = $remote"
+        # move public and private keys to other computers
+        rsync ~/.ssh/./id_joncrall_kitware_rsa* $remote:.ssh/./
 
-    # Now make sure the special private id_rsa is registered on each remote
-    ssh -A aretha "ssh-add .ssh/id_joncrall_kitware_rsa"
-    ssh -A arisia "ssh-add .ssh/id_joncrall_kitware_rsa"
-    ssh -A hermes "ssh-add .ssh/id_joncrall_kitware_rsa"
-    ssh -A klendathu "ssh-add .ssh/id_joncrall_kitware_rsa"
+        # move .ssh config to other computers
+        rsync ~/.ssh/./config $remote:.ssh/./
+
+        # Now make sure the special private id_rsa is registered on each remote
+        ssh -A $remote "ssh-add .ssh/id_joncrall_kitware_rsa"
+    done
+    
+    #rsync ~/.ssh/./id_joncrall_kitware_rsa* aretha:.ssh/./
+    #rsync ~/.ssh/./id_joncrall_kitware_rsa* arisia:.ssh/./
+    #rsync ~/.ssh/./id_joncrall_kitware_rsa* hermes:.ssh/./
+    #rsync ~/.ssh/./id_joncrall_kitware_rsa* klendathu:.ssh/./
+    #rsync ~/.ssh/./id_joncrall_kitware_rsa* acidalia:.ssh/./
+
+    ## move .ssh config to other computers
+    #rsync ~/.ssh/./config aretha:.ssh/./
+    #rsync ~/.ssh/./config arisia:.ssh/./
+    #rsync ~/.ssh/./config hermes:.ssh/./
+    #rsync ~/.ssh/./config klendathu:.ssh/./
+    #rsync ~/.ssh/./config acidalia:.ssh/./
+
+    ## Now make sure the special private id_rsa is registered on each remote
+    #ssh -A aretha "ssh-add .ssh/id_joncrall_kitware_rsa"
+    #ssh -A arisia "ssh-add .ssh/id_joncrall_kitware_rsa"
+    #ssh -A hermes "ssh-add .ssh/id_joncrall_kitware_rsa"
+    #ssh -A klendathu "ssh-add .ssh/id_joncrall_kitware_rsa"
 }
 
 

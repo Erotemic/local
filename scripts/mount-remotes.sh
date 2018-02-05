@@ -77,7 +77,7 @@ mount-remotes()
     echo "Mounting remotes"
     mount-if-available aretha 
     mount-if-available hermes 
-    #mount-if-available arisia 
+    mount-if-available arisia 
     #mount-if-available lev 
 }
 
