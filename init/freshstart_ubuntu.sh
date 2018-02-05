@@ -160,6 +160,8 @@ simple_setup_auto(){
     pip install numpy scipy pandas
     pip install opencv-python
 
+    source ~/.bashrc
+
     we-py3
 }
 
@@ -495,7 +497,7 @@ freshtart_ubuntu_script()
     set_global_git_config
 
     source ~/local/init/freshstart_ubuntu.sh
-    make_sshkey
+    #make_sshkey
 
     #sudo apt-get install trash-cli
     sudo apt-get install -y exuberant-ctags 
@@ -550,11 +552,11 @@ freshtart_ubuntu_script()
     source ~/local/init/ubuntu_core_packages.sh
 
     # Get latex docs
-    cd ~/latex
-    if [ ! -f ~/latex ]; then
-        mkdir -p ~/latex
-        git clone git@hyrule.cs.rpi.edu.com:crall-candidacy-2015.git
-    fi
+    #cd ~/latex
+    #if [ ! -f ~/latex ]; then
+    #    mkdir -p ~/latex
+    #    git clone git@hyrule.cs.rpi.edu.com:crall-candidacy-2015.git
+    #fi
 
     # Install machine specific things
 
@@ -670,10 +672,10 @@ ensure_curl(){
 }
 
 setup_venv3(){
-    "
+    echo "
     CommandLine:
         source ~/local/init/freshstart_ubuntu.sh && setup_venv3
-    "
+    " > /dev/null
     # Ensure PIP, setuptools, and virtual are on the SYSTEM
     if [ "$(has_pymodule python3 pip)" == "False" ]; then
     #if [ "$(which pip3)" == "" ]; then
@@ -708,29 +710,57 @@ setup_venv3(){
 
 
 setup_venv2(){
-    "
+    echo "
     CommandLine:
         source ~/local/init/freshstart_ubuntu.sh && setup_venv2
-    "
-    # ENSURE SYSTEM PIP IS SAME AS SYSTEM PYTHON
-    # sudo update-alternatives --set pip /usr/local/bin/pip2.7
-    # sudo rm /usr/local/bin/pip
-    # sudo ln -s /usr/local/bin/pip2.7 /usr/local/bin/pip
-    echo "setup venv2"
-
+    " > /dev/null
+    # Ensure PIP, setuptools, and virtual are on the SYSTEM
     if [ "$(has_pymodule python2 pip)" == "False" ]; then
     #if [ "$(which pip2)" == "" ]; then
         ensure_curl
+        mkdir -p ~/tmp
         curl https://bootstrap.pypa.io/get-pip.py > ~/tmp/get-pip.py
         python2 ~/tmp/get-pip.py --user
     fi
+    python2 -m pip install pip setuptools virtualenv -U --user
+
+    PYEXE=$(python2 -c "import sys; print(sys.executable)")
+    PYVERSUFF=$(python2 -c "import sysconfig; print(sysconfig.get_config_var('VERSION'))")
+    PYTHON2_VERSION_VENV="$HOME/venv$PYVERSUFF"
+    mkdir -p $PYTHON2_VERSION_VENV
+    python2 -m virtualenv -p $PYEXE $PYTHON2_VERSION_VENV 
+    python2 -m virtualenv --relocatable $PYTHON2_VERSION_VENV 
+
     PYTHON2_VENV="$HOME/venv2"
-    mkdir -p $PYTHON2_VENV
-    python2.7 -m pip install pip setuptools virtualenv -U --user
-    python2.7 -m virtualenv -p $(which python2.7) $PYTHON2_VENV 
-    #python2 -m virtualenv -p /usr/bin/python2.7 $PYTHON2_VENV 
-    #python2 -m virtualenv --relocatable $PYTHON2_VENV 
+    # symlink to the real env
+    ln -s $PYTHON2_VERSION_VENV $PYTHON2_VENV
 }
+
+
+#setup_venv2(){
+#    echo "
+#    CommandLine:
+#        source ~/local/init/freshstart_ubuntu.sh && setup_venv2
+#    " > /dev/null
+#    # ENSURE SYSTEM PIP IS SAME AS SYSTEM PYTHON
+#    # sudo update-alternatives --set pip /usr/local/bin/pip2.7
+#    # sudo rm /usr/local/bin/pip
+#    # sudo ln -s /usr/local/bin/pip2.7 /usr/local/bin/pip
+#    echo "setup venv2"
+
+#    if [ "$(has_pymodule python2 pip)" == "False" ]; then
+#    #if [ "$(which pip2)" == "" ]; then
+#        ensure_curl
+#        curl https://bootstrap.pypa.io/get-pip.py > ~/tmp/get-pip.py
+#        python2 ~/tmp/get-pip.py --user
+#    fi
+#    PYTHON2_VENV="$HOME/venv2"
+#    mkdir -p $PYTHON2_VENV
+#    python2.7 -m pip install pip setuptools virtualenv -U --user
+#    python2.7 -m virtualenv -p $(which python2.7) $PYTHON2_VENV 
+#    #python2 -m virtualenv -p /usr/bin/python2.7 $PYTHON2_VENV 
+#    #python2 -m virtualenv --relocatable $PYTHON2_VENV 
+#}
 
 
 codeblock()
@@ -977,7 +1007,6 @@ install_chrome()
     sudo apt-get install -y google-chrome-stable 
 }
 
-
 install_fonts()
 {
     # Download fonts
@@ -1028,23 +1057,6 @@ virtualbox_ubuntu_init()
     VBoxManage modifyvm virtual-ubuntu --natpf1 "ssh,tcp,,3022,,22"
 }
 
-customize_sudoers()
-{ 
-    # References: http://askubuntu.com/questions/147241/execute-sudo-without-password
-    # Make timeout for sudoers a bit longer
-    sudo cat /etc/sudoers > ~/tmp/sudoers.next  
-    sed -i 's/^Defaults.*env_reset/Defaults    env_reset, timestamp_timeout=480/' ~/tmp/sudoers.next 
-    # Copy over the new sudoers file
-    sudo visudo -c -f ~/tmp/sudoers.next
-    if [ "$?" -eq "0" ]; then
-        sudo cp ~/tmp/sudoers.next /etc/sudoers
-    fi 
-    rm ~/tmp/sudoers.next
-    #cat ~/tmp/sudoers.next  
-    #sudo cat /etc/sudoers 
-} 
-
-
 nopassword_on_sudo()
 { 
     # CAREFUL. THIS IS HUGE SECURITY RISK
@@ -1060,49 +1072,6 @@ nopassword_on_sudo()
 } 
 
  
-gnome_settings()
-{
-    # NOTE: mouse scroll wheel behavior was fixed by unplugging and replugging
-    # the mouse. Odd. 
-
-    #gconftool-2 --all-dirs "/"
-    #gconftool-2 --all-dirs "/desktop/url-handlers"
-    #gconftool-2 -a "/desktop/url-handlers"
-    #gconftool-2 -a "/desktop/applications"
-    #gconftool-2 --all-dirs "/schemas/desktop"
-    #gconftool-2 --all-dirs "/apps"
-    #gconftool-2 -R /desktop
-    #gconftool-2 -R /
-    #gconftool-2 --get /apps/nautilus/preferences/desktop_font
-    #gconftool-2 --get /desktop/gnome/interface/monospace_font_name
-
-    #gconftool-2 -a "/apps/gnome-terminal/profiles/Default" 
-    #gsettings set org.gnome.desktop.lockdown disable-lock-screen 'true'
-    #sudo -u gdm gconftool-2 --type=bool --set /desktop/gnome/sound/event_sounds false
-    #sudo apt-get install -y gnome-tweak-tool
-
-    gconftool-2 --set "/apps/gnome-terminal/profiles/Default/background_color" --type string "#1111111"
-    gconftool-2 --set "/apps/gnome-terminal/profiles/Default/foreground_color" --type string "#FFFF6999BBBB"
-    gconftool-2 --set /apps/gnome-screensaver/lock_enabled --type bool false
-    gconftool-2 --set /desktop/gnome/sound/event_sounds --type=bool false
-
-    # try and disable password after screensaver lock
-    gsettings set org.gnome.desktop.lockdown disable-lock-screen 'true'
-    gsettings set org.gnome.desktop.screensaver lock-enabled false
-
-
-    # Fix search in nautilus (remove recurison)
-    # http://askubuntu.com/questions/275883/traditional-search-as-you-type-on-newer-nautilus-versions
-    gsettings set org.gnome.nautilus.preferences enable-interactive-search true
-    #gsettings set org.gnome.nautilus.preferences enable-interactive-search false
-
-    gconftool-2 --get /apps/gnome-screensaver/lock_enabled 
-    gconftool-2 --get /desktop/gnome/sound/event_sounds
-
-    #sudo apt-get install nautilus-open-terminal
-}
-
-
 nautilus_settings()
 {
     # Get rid of anyonying nautilus sidebar items
@@ -1281,16 +1250,6 @@ setup_development_environment(){
     pip install pydot
     python -c "import pydot"
 
-    # Ubuntu hack for pyqt4
-    # http://stackoverflow.com/questions/15608236/eclipse-and-google-app-engine-importerror-no-module-named-sysconfigdata-nd-u
-    #sudo apt-get install python-qt4-dev
-    #sudo apt-get remove python-qt4-dev
-    #sudo apt-get remove python-qt4
-    #sudo ln -s /usr/lib/python2.7/plat-*/_sysconfigdata_nd.py /usr/lib/python2.7/
-    #python -c "import PyQt4"
-    # TODO: install from source this is weird it doesnt work
-    # sudo apt-get autoremove
-    
     pip install bs4
     ./
     
@@ -1312,52 +1271,6 @@ local_apt(){
     #--------
 }
 
-install_chrome()
-{
-    # Google PPA
-    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-    sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
-    sudo apt-get update
-    # Google Chrome
-    sudo apt-get install -y google-chrome-stable 
-}
-
-
-install_fonts()
-{
-    # Download fonts
-    sudo apt-get -y install nautilus-dropbox
-
-    mkdir -p ~/tmp 
-    cd ~/tmp
-    wget https://github.com/antijingoist/open-dyslexic/archive/master.zip
-    7z x master.zip
-
-    wget https://downloads.sourceforge.net/project/cm-unicode/cm-unicode/0.7.0/cm-unicode-0.7.0-ttf.tar.xz
-    7z x cm-unicode-0.7.0-ttf.tar.xz && 7z x cm-unicode-0.7.0-ttf.tar && rm cm-unicode-0.7.0-ttf.tar
-
-    _SUDO ""
-    FONT_DIR=$HOME/.fonts
-
-    #_SUDO sudo
-    #FONT_DIR=/usr/share/fonts
-
-    TTF_FONT_DIR=$FONT_DIR/truetype
-    OTF_FONT_DIR=$FONT_DIR/truetype
-
-    mkdir -p $TTF_FONT_DIR
-    mkdir -p $OTF_FONT_DIR
-
-    $_SUDO cp -v ~/Dropbox/Fonts/*.ttf $TTF_FONT_DIR/
-    $_SUDO cp -v ~/Dropbox/Fonts/*.otf $OTF_FONT_DIR/
-    $_SUDO cp -v ~/tmp/open-dyslexic-master/otf/*.otf $OTF_FONT_DIR/
-    $_SUDO cp -v ~/tmp/cm-unicode-0.7.0/*.ttf $TTF_FONT_DIR/
-
-    $_SUDO fc-cache -f -v
-
-    # Delete matplotlib cache if you install new fonts
-    rm ~/.cache/matplotlib/fontList*
-}
 
 customize_sudoers()
 { 
@@ -1418,48 +1331,6 @@ gnome_settings()
     #sudo apt-get install nautilus-open-terminal
 }
 
-
-nautilus_settings()
-{
-    # Get rid of anyonying nautilus sidebar items
-    echo "Get Rid of anoying sidebar items"
-    chmod +w ~/.config/user-dirs.dirs
-    sed -i 's/XDG_TEMPLATES_DIR/#XDG_TEMPLATES_DIR/' ~/.config/user-dirs.dirs 
-    sed -i 's/XDG_PUBLICSHARE_DIR/#XDG_PUBLICSHARE_DIR/' ~/.config/user-dirs.dirs
-    sed -i 's/XDG_DOCUMENTS_DIR/#XDG_DOCUMENTS_DIR/' ~/.config/user-dirs.dirs
-    sed -i 's/XDG_MUSIC_DIR/#XDG_MUSIC_DIR/' ~/.config/user-dirs.dirs
-    sed -i 's/XDG_PICTURES_DIR/#XDG_PICTURES_DIR/' ~/.config/user-dirs.dirs
-    sed -i 's/XDG_VIDEOS_DIR/#XDG_VIDEOS_DIR/' ~/.config/user-dirs.dirs
-    echo "enabled=true" >> ~/.config/user-dirs.conf
-    chmod -w ~/.config/user-dirs.dirs
-    #cat ~/.config/user-dirs.conf 
-    #cat ~/.config/user-dirs.dirs 
-    #cat ~/.config/user-dirs.locale
-    #cat /etc/xdg/user-dirs.conf 
-    #cat /etc/xdg/user-dirs.defaults 
-    ###
-    sudo sed -i 's/TEMPLATES/#TEMPLATES/'     /etc/xdg/user-dirs.defaults 
-    sudo sed -i 's/PUBLICSHARE/#PUBLICSHARE/' /etc/xdg/user-dirs.defaults 
-    sudo sed -i 's/DOCUMENTS/#DOCUMENTS/'     /etc/xdg/user-dirs.defaults 
-    sudo sed -i 's/MUSIC/#MUSIC/'             /etc/xdg/user-dirs.defaults 
-    sudo sed -i 's/PICTURES/#PICTURES/'       /etc/xdg/user-dirs.defaults 
-    sudo sed -i 's/VIDEOS/#VIDEOS/'           /etc/xdg/user-dirs.defaults 
-    ###
-    sudo sed -i "s/enabled=true/enabled=false/" /etc/xdg/user-dirs.conf
-    sudo echo "enabled=false" >> /etc/xdg/user-dirs.conf
-    sudo sed -i "s/enabled=true/enabled=false/" /etc/xdg/user-dirs.conf
-    xdg-user-dirs-gtk-update
-
-    #echo "Get Open In Terminal in context menu"
-    #sudo apt-get install nautilus-open-terminal -y
-
-    # Tree view for nautilus
-    gsettings set org.gnome.nautilus.window-state side-pane-view "tree"
-
-
-    #http://askubuntu.com/questions/411430/open-the-parent-folder-of-a-symbolic-link-via-right-click
-    mkdir -p ~/.gnome2/nautilus-scripts
-}
 
 jupyter_mime_association(){
     python -m utool.util_ubuntu --exec-add_new_mimetype_association --mime-name=ipynb+json --ext=.ipynb --exe-fpath=/usr/local/bin/ipynb
