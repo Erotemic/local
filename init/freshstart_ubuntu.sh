@@ -241,8 +241,8 @@ setup_kitware_ssh_keys(){
     #ssh -A klendathu "ssh-add .ssh/id_joncrall_kitware_rsa"
 
     # Copy from a remote to my computer
-    rsync aretha:.ssh/./id_joncrall_kitware_rsa* ~/.ssh/./
-    rsync aretha:.ssh/./config ~/.ssh/./
+    rsync aretha:.ssh/./id_joncrall_kitware_rsa* $HOME/.ssh/
+    rsync aretha:.ssh/./config $HOME/.ssh/
 }
 
 
@@ -269,6 +269,7 @@ fix_ssh_permissions(){
     chmod 600 ~/.ssh/known_hosts
     chmod 600 ~/.ssh/config
     chmod 400 ~/.ssh/id_rsa*
+    chmod 400 ~/.ssh/id_*rsa*
 }
 
 
