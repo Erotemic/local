@@ -28,6 +28,12 @@ echo "VENV_INCLUDE = $VENV_INCLUDE"
 echo "VENV_LIB = $VENV_LIB"
 
 
+#export CUDNN_INCLUDE_DIR=/usr/local/cuda/include
+#export CUDNN_LIB_DIR=/usr/local/cuda/lib64
+#export CUDNN_LIBRARY=$CUDNN_LIB_DIR/libcudnn.so
+#export CUDNN_LIBRARIES=$CUDNN_LIBRARY
+
+
 # I assume you have these variables defined in your bashrc
 echo "CUDNN_LIBRARY = $CUDNN_LIBRARY"
 echo "CUDNN_INCLUDE_DIR = $CUDNN_INCLUDE_DIR"
@@ -56,12 +62,13 @@ build_gpu(){
       -D USE_ROCKSDB=Off \
       -D USE_MOBILE_OPENGL=Off \
       -D USE_CUDA=On \
+      -D CMAKE_INSTALL_PREFIX=$HOME/venv3 \
       -D PYTHON_LIBRARY="$VENV_LIB" \
       -D PYTHON_INCLUDE_DIR="$VENV_INCLUDE" \
       -D CUDNN_LIBRARY="$CUDNN_LIBRARY" \
       -D CUDNN_INCLUDE_DIR="$CUDNN_INCLUDE_DIR" \
       ~/code/caffe2
-      make -j5
+      make -j20
 
     # OR
     CMAKE_ARGS="-DUSE_CUDA=On" python setup.py build

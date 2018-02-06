@@ -93,6 +93,11 @@ if [ -d "$HOME/.local/cuda" ]; then
         export CUDNN_LIB_DIR=$HOME/.local/cuda/lib64
         export CUDNN_LIBRARY=$CUDNN_LIB_DIR/libcudnn.so
         export CUDNN_LIBRARIES=$CUDNN_LIBRARY
+    elif [ -f "/usr/local/cuda/lib64/libcudnn.so" ]; then
+        export CUDNN_INCLUDE_DIR=/usr/local/cuda/include
+        export CUDNN_LIB_DIR=/usr/local/cuda/lib64
+        export CUDNN_LIBRARY=$CUDNN_LIB_DIR/libcudnn.so
+        export CUDNN_LIBRARIES=$CUDNN_LIBRARY
     fi
 fi
 
