@@ -746,6 +746,12 @@ install_xrdp_remote_desktop()
     sudo apt-get update -y
     sudo apt-get install remmina remmina-plugin-rdp libfreerdp-plugins-standard -y
 
+    # Add self to fuse group
+    # https://superuser.com/questions/466304/how-do-i-make-sshfs-work-in-debian-i-get-dev-fuse-permission-denied
+    sudo groupadd fuse
+    sudo usermod -aG fuse $USER
+    sudo chmod g+rw /dev/fuse
+    sudo chgrp fuse /dev/fuse
 
     # ----OLD---
     # http://c-nergy.be/blog/?p=9962
@@ -1511,4 +1517,5 @@ apt-add-repository-remove()
     sudo add-apt-repository --remove ppa;whatever/ppa
 
 }
+
 

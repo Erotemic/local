@@ -123,6 +123,11 @@ def main():
             ['mv ' + util_git1.unixpath(dir_) + ' ' + clutterdir for dir_ in __NOT_GIT_REPOS__])
         print('\n'.join(suggested_cmds))
 
+    # HACK FOR JEDI
+    cd(BUNDLE_DPATH)
+    import os
+    os.system('submodule update --init --recursive')
+
 
 if __name__ == '__main__':
     main()
