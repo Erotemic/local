@@ -274,6 +274,7 @@ fix_ssh_permissions(){
     chmod 600 ~/.ssh/config
     chmod 400 ~/.ssh/id_rsa*
     chmod 400 ~/.ssh/id_*_rsa*
+    ls -al ~/.ssh
 }
 
 
