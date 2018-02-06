@@ -263,13 +263,17 @@ new_setup_ssh_keys(){
 
 fix_ssh_permissions(){
     # Fix ssh keys if you have them
+    echo "
+    CommandLine:
+        source ~/local/init/freshstart_ubuntu.sh && fix_ssh_permissions
+    " > /dev/null
     ls -al ~/.ssh
     chmod 700 ~/.ssh
     chmod 600 ~/.ssh/authorized_keys
     chmod 600 ~/.ssh/known_hosts
     chmod 600 ~/.ssh/config
     chmod 400 ~/.ssh/id_rsa*
-    chmod 400 ~/.ssh/id_*rsa*
+    chmod 400 ~/.ssh/id_*_rsa*
 }
 
 
