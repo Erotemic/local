@@ -62,7 +62,22 @@ alias ggss=gg-short-status
 #}
 #alias git-sync='git_sync'
 #complete -W "arisia aretha lev hyrule" "git_sync"
-complete -W "arisia aretha lev hyrule" "git-sync"
+
+
+USER_SSH_HOSTS=$(python -c "
+# READ known hostnames from ~/.ssh/config
+from os.path import expanduser, exists
+ssh_config_path = expanduser('~/.ssh/config')
+if exists(ssh_config_path):
+    lines = open(ssh_config_path, 'r').read().split('\n')
+    lines = [line for line in lines if line.startswith('Host ')]
+    hosts = [line.split(' ')[1] for line in lines]
+    print(' '.join(sorted(hosts)))
+")
+#echo "USER_SSH_HOSTS = $USER_SSH_HOSTS"
+
+complete -W "$USER_SSH_HOSTS" "git-sync"
+#complete -W "acidalia arisia aretha lev hyrule" "git-sync"
 
 
 git_lev_sync()

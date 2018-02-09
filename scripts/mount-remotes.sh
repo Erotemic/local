@@ -78,6 +78,7 @@ mount-remotes()
     mount-if-available aretha 
     mount-if-available hermes 
     mount-if-available arisia 
+    mount-if-available acidalia 
     #mount-if-available lev 
 }
 

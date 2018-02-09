@@ -415,7 +415,18 @@ def squash_streaks(authors, timedelta='sameday', pattern=None, inplace=False,
             print('squashing streaks')
         print('authors = {!r}'.format(authors))
 
-    repo = git.Repo(os.getcwd())
+    # If you are in a repo subdirectory, find the repo root
+    cwd = os.getcwd()
+    repodir = cwd
+    while True:
+        if os.path.exists(os.path.join(repodir, '.git')):
+            break
+        newpath = os.path.dirname(repodir)
+        if newpath == repodir:
+            raise git.exc.InvalidGitRepositoryError(cwd)
+        repodir = newpath
+
+    repo = git.Repo(repodir)
     orig_branch_name = repo.active_branch.name
 
     head = repo.commit('HEAD')

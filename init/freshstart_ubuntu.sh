@@ -207,6 +207,8 @@ setup_kitware_ssh_keys(){
 
     # ENSURE YOU HAVE ALL COMPUTERS UPDATED IN YOUR SSH CONFIG
 
+    remote=acidalia
+
     REMOTES=( aretha arisia hermes klendathu acidalia )
     for remote in "${REMOTES[@]}"
     do
@@ -218,7 +220,9 @@ setup_kitware_ssh_keys(){
         rsync ~/.ssh/./config $remote:.ssh/./
 
         # Now make sure the special private id_rsa is registered on each remote
-        ssh -A $remote "ssh-add .ssh/id_joncrall_kitware_rsa"
+        # Actually we dont do this because it only persists for one session 
+        # but we can add the key to the ssh/config to make it work.
+        #ssh -A $remote "ssh-add .ssh/id_joncrall_kitware_rsa"
     done
     
     #rsync ~/.ssh/./id_joncrall_kitware_rsa* aretha:.ssh/./
