@@ -334,11 +334,11 @@ def _squash_between(repo, start, stop, dry=False, verbose=True):
     messages = [commit.message for commit in commits]
     # messages = [commit.message for commit in streak._streak]
     unique_messages = ub.unique(messages)
-    new_msg = '\n'.join(unique_messages)
-    if new_msg == 'wip\n':
-        new_msg = new_msg.strip('\n') + ' - '
-    new_msg += 'Squashed {} commits from <{}> to <{}>\n'.format(
-        len(commits), ts_start, ts_stop_short)
+    summary = '\n'.join(unique_messages)
+    if summary == 'wip\n':
+        summary = summary.strip('\n')
+    new_msg = '{} - Squashed {} commits from <{}> to <{}>\n'.format(
+        summary, len(commits), ts_start, ts_stop_short)
 
     if verbose:
         print(' * Creating new commit with message:')

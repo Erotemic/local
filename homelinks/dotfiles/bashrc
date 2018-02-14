@@ -142,10 +142,10 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     #source $HOME/local/homelinks/helpers/bashrc_mac.sh
 else
     export NCPUS=$(grep -c ^processor /proc/cpuinfo)
-    source $HOME/local/homelinks/helpers/bashrc_ubuntu
+    source $HOME/local/homelinks/helpers/bashrc_ubuntu.sh
 fi
 
-source $HOME/local/homelinks/helpers/git_helpers
+source $HOME/local/homelinks/helpers/git_helpers.sh
 source $HOME/local/homelinks/helpers/alias_helpers.sh
 source $HOME/local/init/utils.sh
 
