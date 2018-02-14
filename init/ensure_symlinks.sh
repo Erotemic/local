@@ -5,11 +5,13 @@ ensure_config_symlinks()
     __heredoc__ '''
     CommandLine:
         source ~/local/init/ensure_symlinks.sh && ensure_config_symlinks
+        source ~/local/init/ensure_symlinks.sh && ensure_config_symlinks --nosudo
     '''
 
     HAVE_SUDO=$(have_sudo)
+    NOSUDO=$1
 
-    if [ "$(which symlinks)" == "" ]; then
+    if [ "$(which symlinks)" == "" ] && ["$NOSUDO" == "--nosudo"]; then
         # Program to remove dead symlinks
         if [ "$HAVE_SUDO" == "True" ]; then 
             sudo apt-get install symlinks -y
