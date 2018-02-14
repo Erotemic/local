@@ -1,3 +1,5 @@
+source $HOME/local/init/utils.sh
+
 simple_setup_manual()
 {
     sudo apt-get install git -y
@@ -104,9 +106,9 @@ setup_kitware_ssh_keys(){
 
 
 simple_setup_auto(){
-    "
+    __heredoc__ """
     Does setup on machines without root access
-    "
+    """
     # Just in case
     deactivate
 
@@ -315,18 +317,6 @@ entry_prereq_git_and_local()
 }
 
 
-have_sudo(){
-    python -c "$(codeblock "
-        import grp, pwd 
-        user = '$(whoami)'
-        groups = [g.gr_name for g in grp.getgrall() if user in g.gr_mem]
-        gid = pwd.getpwnam(user).pw_gid
-        groups.append(grp.getgrgid(gid).gr_name)
-        print('sudo' in groups)
-    ")"
-}
-
-
 has_pymodule(){
     if [ "$2" ]; then
         PYEXE="$1"
@@ -346,11 +336,11 @@ has_pymodule(){
 
 freshtart_ubuntu_script()
 { 
-    "
+    __heredoc__ """
     CommandLine:
         source ~/local/init/freshstart_ubuntu.sh
         freshtart_ubuntu_script
-    "
+    """
     mkdir -p ~/tmp
     mkdir -p ~/code
     cd ~
@@ -544,10 +534,10 @@ ensure_curl(){
 }
 
 setup_venv3(){
-    echo "
+    __heredoc__ """
     CommandLine:
         source ~/local/init/freshstart_ubuntu.sh && setup_venv3
-    " > /dev/null
+    """
     # Ensure PIP, setuptools, and virtual are on the SYSTEM
     if [ "$(has_pymodule python3 pip)" == "False" ]; then
     #if [ "$(which pip3)" == "" ]; then
@@ -582,10 +572,10 @@ setup_venv3(){
 
 
 setup_venv2(){
-    echo "
+    __heredoc__ """
     CommandLine:
         source ~/local/init/freshstart_ubuntu.sh && setup_venv2
-    " > /dev/null
+    """
     # Ensure PIP, setuptools, and virtual are on the SYSTEM
     if [ "$(has_pymodule python2 pip)" == "False" ]; then
     #if [ "$(which pip2)" == "" ]; then
@@ -635,44 +625,11 @@ setup_venv2(){
 #}
 
 
-codeblock()
-{
-    if [ "-h" == "$1" ] || [ "--help" == "$1" ]; then 
-        # Use codeblock to show the usage of codeblock, so you can use
-        # codeblock while you codeblock.
-        echo "$(codeblock '
-            Unindents code before its executed so you can maintain a pretty
-            indentation in your code file. Multiline strings simply begin  
-            with 
-                "$(codeblock "
-            and end with 
-                ")"
-
-            Example:
-               echo "$(codeblock "
-                    a long
-                    multiline string.
-                    this is the last line that will be considered.
-                    ")"
-        ')"
-    else
-        # Prevents python indentation errors in bash
-        #python -c "from textwrap import dedent; print(dedent('''$1''').strip('\n'))"
-        echo "$1" | python -c "import sys; from textwrap import dedent; print(dedent(sys.stdin.read()).strip('\n'))"
-    fi
-}
-
-__heredoc__(){
-    echo "$@" > /dev/null
-}
-
-
-
 patch_venv_with_shared_libs(){
-    __heredoc__ "
+    __heredoc__ """
     References:
         https://github.com/pypa/virtualenv/pull/1045/files
-    "
+    """
 
     python -c "$(codeblock "
         import shutil
@@ -1014,11 +971,11 @@ setup_ibeis()
 
 
 setup_development_environment(){
-    "
+    __heredoc__ """
     CommandLine:
         source ~/local/init/freshstart_ubuntu.sh
         setup_development_environment
-    "
+    """
 
     pip install bs4
     pip install pyperclip
