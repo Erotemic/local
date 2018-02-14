@@ -373,6 +373,89 @@ test()
 optirun ~/NVIDIA_GPU_Computing_SDK/C/bin/linux/release/./fluidsGL
 }
 
+fix-bad-symlinks(){
+
+    ls /usr/local/cuda-8.0/targets/x86_64-linux/lib/libcnmem.so.1
+    md5sum /usr/local/cuda-8.0/targets/x86_64-linux/lib/*
+
+    source $HOME/local/init/utils.sh
+
+    /usr/local/cuda-9.0/targets/x86_64-linux/lib/
+
+    sudo python3 -m pip install ubelt
+    sudo python3 -c "$(codeblock "
+    import glob
+    import os
+    import ubelt as ub
+    import shutil
+
+    #libfiles = glob.glob(os.path.join(dpath,'*.so*'))
+    #aliases = sorted(glob.glob(fname + '*'))
+
+    dpath = '/usr/local/cuda-9.0/targets/x86_64-linux/lib/'
+    os.chdir(dpath)
+    libfiles = glob.glob('*.so*')
+    groups = ub.group_items(libfiles, [p.split('.')[0] for p in libfiles])
+
+    for key, aliases in groups.items():
+        if len(aliases) == 1:
+            continue
+        # Order from most specific to least specific
+        aliases = sorted(aliases)
+        print(aliases)
+
+        all_hard = not any(map(os.path.islink, aliases))
+
+        hashes = list(map(ub.hash_file, aliases))
+        items = hashes
+        first = next(iter(items))
+        all_same = all(first == item for item in items)
+
+        print('all_hard = {}'.format(all_hard))
+        print('all_same = {}'.format(all_same))
+
+        if all_hard and all_same:
+            # all the files are the same!
+            # Link all but the last
+            *tolink, anchor = aliases
+            print(anchor)
+
+            # move old files out of the way
+            new_paths = []
+            for p in tolink:
+                n = p + '.bak'
+                new_paths.append(n)
+                shutil.move(p, n)
+
+            # now in reverse order link to previous
+            for prev, curr in zip(aliases[::-1], aliases[::-1][1:]):
+                os.symlink(prev, curr)
+
+            for n in new_paths:
+                ub.delete(n)
+    ")"
+
+
+    cd /usr/local/cuda-8.0/targets/x86_64-linux/lib/
+    #sudo rm libcudnn.so.7
+    #sudo rm libcudnn.so.7
+    sudo ln -s libcudnn.so.7.0.1 libcudnn.so.7
+    sudo ln -s libcudnn.so.7 libcudnn.so
+
+    # search for any hard less than full versioned files with the same hash as
+    # the base and symlink them
+    FNAME=libcnmem.so
+    for f in $(ls $FNAME.*); do
+      echo "File -> $f"
+    done
+    
+
+    sudo rm libcudnn.so.
+    sudo ln -s libcudnn.so libcudnn.so.7
+    sudo ln -s libcudnn.so libcudnn.so.7.0.1
+
+}
+
 cleanup()
 {
     cd ~/Desktop
