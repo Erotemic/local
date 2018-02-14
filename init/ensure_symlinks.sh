@@ -11,7 +11,7 @@ ensure_config_symlinks()
     HAVE_SUDO=$(have_sudo)
     NOSUDO=$1
 
-    if [ "$(which symlinks)" == "" ] && ["$NOSUDO" == "--nosudo"]; then
+    if [ "$(which symlinks)" == "" ] && ["$NOSUDO" != "--nosudo"]; then
         # Program to remove dead symlinks
         if [ "$HAVE_SUDO" == "True" ]; then 
             sudo apt-get install symlinks -y
