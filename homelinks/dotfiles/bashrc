@@ -145,9 +145,9 @@ else
     source $HOME/local/homelinks/helpers/bashrc_ubuntu.sh
 fi
 
+#source $HOME/local/init/utils.sh
 source $HOME/local/homelinks/helpers/git_helpers.sh
 source $HOME/local/homelinks/helpers/alias_helpers.sh
-source $HOME/local/init/utils.sh
 
 
 # set history to not ignore leading whitespace
@@ -282,4 +282,4 @@ fi
 
 # super trick: make multiprocessing actually use multiple cores
 # https://stackoverflow.com/questions/15639779/why-does-multiprocessing-use-only-a-single-core-after-i-import-numpy
-export OPENBLAS_MAIN_FREE=1
+#export OPENBLAS_MAIN_FREE=1
