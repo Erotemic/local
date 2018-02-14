@@ -40,6 +40,69 @@ set_global_git_config(){
     git config --global merge.conflictstyle diff3
 }
 
+setup_kitware_ssh_keys(){
+    # DO THIS ONCE, THEN MOVE THESE KEY AROUND TO KITWARE MACHINES
+    mkdir -p ~/.ssh
+    cd ~/.ssh
+    ssh-keygen -t rsa -b 8192 -C "jon.crall@kitware.com" -f id_joncrall_kitware_rsa -N ""
+
+    # setup local machine with a special public / private key pair
+    ssh-add id_joncrall_kitware_rsa
+
+    # Add this public key to remote authorized_keys so they recognize you.  
+    # You may have to type in your password for each of these, but it will be
+    # the last time.
+    ssh-copy-id jon.crall@hermes
+    ssh-copy-id jon.crall@aretha
+    ssh-copy-id jon.crall@arisia
+    ssh-copy-id jon.crall@klendathu
+    ssh-copy-id joncrall@acidalia
+
+    # ENSURE YOU HAVE ALL COMPUTERS UPDATED IN YOUR SSH CONFIG
+
+    remote=acidalia
+
+    REMOTES=( aretha arisia hermes klendathu acidalia )
+    for remote in "${REMOTES[@]}"
+    do
+        echo "UPDATING remote = $remote"
+        # move public and private keys to other computers
+        rsync ~/.ssh/./id_joncrall_kitware_rsa* $remote:.ssh/./
+
+        # move .ssh config to other computers
+        rsync ~/.ssh/./config $remote:.ssh/./
+
+        # Now make sure the special private id_rsa is registered on each remote
+        # Actually we dont do this because it only persists for one session 
+        # but we can add the key to the ssh/config to make it work.
+        #ssh -A $remote "ssh-add .ssh/id_joncrall_kitware_rsa"
+    done
+    
+    #rsync ~/.ssh/./id_joncrall_kitware_rsa* aretha:.ssh/./
+    #rsync ~/.ssh/./id_joncrall_kitware_rsa* arisia:.ssh/./
+    #rsync ~/.ssh/./id_joncrall_kitware_rsa* hermes:.ssh/./
+    #rsync ~/.ssh/./id_joncrall_kitware_rsa* klendathu:.ssh/./
+    #rsync ~/.ssh/./id_joncrall_kitware_rsa* acidalia:.ssh/./
+
+    ## move .ssh config to other computers
+    #rsync ~/.ssh/./config aretha:.ssh/./
+    #rsync ~/.ssh/./config arisia:.ssh/./
+    #rsync ~/.ssh/./config hermes:.ssh/./
+    #rsync ~/.ssh/./config klendathu:.ssh/./
+    #rsync ~/.ssh/./config acidalia:.ssh/./
+
+    ## Now make sure the special private id_rsa is registered on each remote
+    #ssh -A aretha "ssh-add .ssh/id_joncrall_kitware_rsa"
+    #ssh -A arisia "ssh-add .ssh/id_joncrall_kitware_rsa"
+    #ssh -A hermes "ssh-add .ssh/id_joncrall_kitware_rsa"
+    #ssh -A klendathu "ssh-add .ssh/id_joncrall_kitware_rsa"
+
+    # Copy from a remote to my computer
+    rsync acidalia:.ssh/./id_joncrall_kitware_rsa* $HOME/.ssh/
+    rsync acidalia:.ssh/./config $HOME/.ssh/
+}
+
+
 simple_setup_auto(){
     "
     Does setup on machines without root access
@@ -185,70 +248,6 @@ setup_deep_learn_env(){
     git clone https://github.com/TeamHG-Memex/tensorboard_logger.git ~/code/tensorboard_logger
     pip install -e ~/code/tensorboard_logger
 }
-
-
-setup_kitware_ssh_keys(){
-    # DO THIS ONCE, THEN MOVE THESE KEY AROUND TO KITWARE MACHINES
-    mkdir -p ~/.ssh
-    cd ~/.ssh
-    ssh-keygen -t rsa -b 8192 -C "jon.crall@kitware.com" -f id_joncrall_kitware_rsa -N ""
-
-    # setup local machine with a special public / private key pair
-    ssh-add id_joncrall_kitware_rsa
-
-    # Add this public key to remote authorized_keys so they recognize you.  
-    # You may have to type in your password for each of these, but it will be
-    # the last time.
-    ssh-copy-id jon.crall@hermes
-    ssh-copy-id jon.crall@aretha
-    ssh-copy-id jon.crall@arisia
-    ssh-copy-id jon.crall@klendathu
-    ssh-copy-id joncrall@acidalia
-
-    # ENSURE YOU HAVE ALL COMPUTERS UPDATED IN YOUR SSH CONFIG
-
-    remote=acidalia
-
-    REMOTES=( aretha arisia hermes klendathu acidalia )
-    for remote in "${REMOTES[@]}"
-    do
-        echo "UPDATING remote = $remote"
-        # move public and private keys to other computers
-        rsync ~/.ssh/./id_joncrall_kitware_rsa* $remote:.ssh/./
-
-        # move .ssh config to other computers
-        rsync ~/.ssh/./config $remote:.ssh/./
-
-        # Now make sure the special private id_rsa is registered on each remote
-        # Actually we dont do this because it only persists for one session 
-        # but we can add the key to the ssh/config to make it work.
-        #ssh -A $remote "ssh-add .ssh/id_joncrall_kitware_rsa"
-    done
-    
-    #rsync ~/.ssh/./id_joncrall_kitware_rsa* aretha:.ssh/./
-    #rsync ~/.ssh/./id_joncrall_kitware_rsa* arisia:.ssh/./
-    #rsync ~/.ssh/./id_joncrall_kitware_rsa* hermes:.ssh/./
-    #rsync ~/.ssh/./id_joncrall_kitware_rsa* klendathu:.ssh/./
-    #rsync ~/.ssh/./id_joncrall_kitware_rsa* acidalia:.ssh/./
-
-    ## move .ssh config to other computers
-    #rsync ~/.ssh/./config aretha:.ssh/./
-    #rsync ~/.ssh/./config arisia:.ssh/./
-    #rsync ~/.ssh/./config hermes:.ssh/./
-    #rsync ~/.ssh/./config klendathu:.ssh/./
-    #rsync ~/.ssh/./config acidalia:.ssh/./
-
-    ## Now make sure the special private id_rsa is registered on each remote
-    #ssh -A aretha "ssh-add .ssh/id_joncrall_kitware_rsa"
-    #ssh -A arisia "ssh-add .ssh/id_joncrall_kitware_rsa"
-    #ssh -A hermes "ssh-add .ssh/id_joncrall_kitware_rsa"
-    #ssh -A klendathu "ssh-add .ssh/id_joncrall_kitware_rsa"
-
-    # Copy from a remote to my computer
-    rsync aretha:.ssh/./id_joncrall_kitware_rsa* $HOME/.ssh/
-    rsync aretha:.ssh/./config $HOME/.ssh/
-}
-
 
 
 new_setup_ssh_keys(){
@@ -996,7 +995,7 @@ setup_venv37(){
 
 }
 
-setupt_venvpypy(){
+setup_venvpypy(){
     echo "setup venvpypy"
 
     PYPY_VENV="$HOME/venvpypy"

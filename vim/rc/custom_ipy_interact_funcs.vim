@@ -61,9 +61,36 @@ def _context_func(file=None):
         #ut.copy_text_to_clipboard(text)
         #dprint('copied text to clipboard')
 
-    # Strip docstring prefix
-    dprint('preparing text')
+    # Preprocess the strings a bit
+    dprint('preprocesing the text')
     lines = text.splitlines(True)
+
+    # Handle C++ pybind11 docs
+    import re
+    if all(re.match('" *(>>>)|(\.\.\.) .*', line) for line in lines):
+        if all(line.strip().endswith('"') for line in lines):
+            new_lines = []
+            for line in lines:
+                if line.endswith('\\n"\n'):
+                    line = line[1:-4] + '\n'
+                elif line.endswith('"\n'):
+                    line = line[1:-2] + '\n'
+                elif line.endswith('\\n"'):
+                    line = line[1:-3]
+                elif line.endswith('"'):
+                    line = line[1:-1]
+                else:
+                    raise AssertionError('unknown case')
+                new_lines.append(line)
+            lines = new_lines
+            text = ut.unindent(''.join(lines))
+            text = ut.unindent(text)
+            lines = text.splitlines(True)
+            #[line[re.search('(>>>|\.\.\.)', line).end():-1] for line in lines]
+            #if all(line.startswith('"') for line in lines):
+            #pass
+
+    # Strip docstring prefix
     if all(line.startswith(('>>> ', '...')) for line in lines):
         lines = [line[4:] for line in lines]
         text = ''.join(lines)
@@ -119,15 +146,26 @@ import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
 import utool.util_ubuntu
-from os.path import dirname
+from os.path import dirname, expanduser
 from os.path import basename, splitext
 ut.rrrr(verbose=False)
 
 return_to_vim = True
 
 if pyvim_funcs.is_module_pythonfile():
+    from os.path import join, relpath
     modpath = vim.current.buffer.name
     modname = ut.get_modname_from_modpath(modpath)
+
+    # HACK to add symlinks back into the paths for system uniformity
+    special_symlinks = [
+        ('/media/joncrall/raid/code', expanduser('~/code')),
+    ]
+    # Abstract via symlinks
+    for real, link in special_symlinks:
+        if modpath.startswith(real):
+            modpath = join(link, relpath(modpath, real))
+
     lines = []
 
     try:
