@@ -1,4 +1,101 @@
 #!/bin/bash
+
+
+simple(){
+    cd ~/code
+    if [ ! -d "$HOME/code/fletch" ]; then
+        git clone https://github.com/Erotemic/fletch.git ~/code/fletch
+        cd ~/code/fletch
+        git remote add source https://github.com/Kitware/fletch.git
+        git pull source master
+    fi
+
+
+    OpenCV_SELECT_VERSION="3.4.0"
+    #OpenCV_SELECT_VERSION=$(python -c "import cv2; print(cv2.__version__)")
+
+    PYTHON_VERSION=$(python -c "import sys; info = sys.version_info; print('{}.{}'.format(info.major, info.minor))")
+    PYTHON_MAJOR_VERSION==$(python -c "import sys; info = sys.version_info; print('{}'.format(info.major))")
+    # Check if we have a venv setup
+    # The prefered case where we are in a virtual environment
+    LOCAL_PREFIX=$VIRTUAL_ENV/
+    PYTHON_PACKAGES_PATH=$LOCAL_PREFIX/lib/python$PY_VERSION/site-packages
+    PYTHON_INCLUDE_DIR=$LOCAL_PREFIX/include/python"$PY_VERSION"m
+    PYTHON_LIBRARY=$LOCAL_PREFIX/lib/python$PY_VERSION/config-"$PY_VERSION"m-x86_64-linux-gnu/libpython"$PY_VERSION".so
+
+    echo "
+    ======================
+    VARIABLE CONFIGURATION
+    ======================
+    # Intermediate vars
+    PY_VERSION=$PY_VERSION
+    PLAT_NAME=$PLAT_NAME
+    # Final vars
+    REPO_DIR=$REPO_DIR
+    BUILD_DIR=$BUILD_DIR
+    LOCAL_PREFIX=$LOCAL_PREFIX
+    PYTHON_EXECUTABLE=$PYTHON_EXECUTABLE
+    PYTHON_LIBRARY=$PYTHON_LIBRARY
+    PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR
+    PYTHON_PACKAGES_PATH=$PYTHON_PACKAGES_PATH
+    OpenCV_SELECT_VERSION=$OpenCV_SELECT_VERSION
+    "
+
+    # splitting out dependencies for easier visibility
+    export OPENCV_DEPENDS="
+        -D fletch_ENABLE_ZLib:BOOL=True \
+        -D fletch_ENABLE_VXL:BOOL=True \
+        -D fletch_ENABLE_PNG:BOOL=True \
+        -D fletch_ENABLE_libtiff:BOOL=True \
+        -D fletch_ENABLE_libjson:BOOL=True \
+        -D fletch_ENABLE_libjpeg-turbo:BOOL=True \
+        -D fletch_ENABLE_libxml2:BOOL=True"
+
+    export CAFFE_DEPENDS="
+        -D fletch_ENABLE_Protobuf:BOOL=True \
+        -D Protobuf_SELECT_VERSION=3.4.1 \
+        -D fletch_ENABLE_LevelDB:BOOL=True \
+        -D fletch_ENABLE_HDF5:BOOL=True \
+        -D fletch_ENABLE_Snappy:BOOL=True \
+        -D fletch_ENABLE_SuiteSparse:BOOL=True \
+        -D fletch_ENABLE_GLog:BOOL=True \
+        -D fletch_ENABLE_OpenBLAS:BOOL=True \
+        -D fletch_ENABLE_OpenCV:BOOL=True \
+        -D fletch_ENABLE_LMDB:BOOL=True \
+        -D fletch_ENABLE_Boost:BOOL=True \
+        -D fletch_ENABLE_GFlags:BOOL=True"
+
+    export OTHER_OPTIONS="
+        -D fletch_ENABLE_pybind11:BOOL=True \
+        -D fletch_ENABLE_GTest:BOOL=True \
+        -D fletch_ENABLE_FFmpeg:BOOL=True \
+        -D fletch_ENABLE_Eigen:BOOL=True \
+        -D fletch_ENABLE_Ceres=True"
+
+    # Setup a build directory and build fletch
+    FLETCH_BUILD=$HOME/code/fletch/build-py$PYTHON_VERSION
+
+    mkdir -p $FLETCH_BUILD
+    cd $FLETCH_BUILD
+    cmake -G "Unix Makefiles" \
+        -D fletch_BUILD_WITH_CUDA:BOOL=True \
+        -D fletch_BUILD_WITH_CUDNN:BOOL=True \
+        -D fletch_BUILD_WITH_PYTHON:BOOL=True \
+        -D fletch_PYTHON_MAJOR_VERSION=$PYTHON_MAJOR_VERSION \
+        -D CMAKE_INSTALL_PREFIX=$LOCAL_PREFIX \
+        -D fletch_PYTHON_MAJOR_VERSION=3 \
+        -D OpenCV_SELECT_VERSION=$OpenCV_SELECT_VERSION \
+        $OPENCV_DEPENDS $CAFFE_DEPENDS $OTHER_OPTIONS \
+        ..
+
+    NCPUS=$(grep -c ^processor /proc/cpuinfo)
+    make -j$NCPUS
+
+    # TEST
+    #(cd ../python && python -c "import caffe")
+}
+
+
 update_symbolic_rebases()
 {
 
@@ -457,8 +554,11 @@ test_fletch_branch()
     fi
 }
 main(){
-
     git clone https://github.com/Erotemic/fletch.git ~/code/fletch
+
+    cd ~/code/fletch
+    git remote add source https://github.com/Kitware/fletch.git
+    git pull source master
 
 
     cd ~/code/fletch
@@ -471,11 +571,6 @@ main(){
     REPO_DIR=~/code/fletch
     #BUILD_DIR="$REPO_DIR/cmake_builds/build.$PLAT_NAME-$PY_VERSION"
     BUILD_DIR="$REPO_DIR/build"
-
-    get_py_config_var()
-    {
-        python -c "from distutils import sysconfig; print(sysconfig.get_config_vars()['$1'])"
-    }
 
     # Check if we have a venv setup
     if [[ "$VIRTUAL_ENV" == ""  ]]; then
@@ -491,6 +586,10 @@ main(){
             LOCAL_PREFIX=/usr/local
             PYTHON_PACKAGES_PATH=$LOCAL_PREFIX/lib/python$PY_VERSION/dist-packages
         fi
+        get_py_config_var()
+        {
+            python -c "from distutils import sysconfig; print(sysconfig.get_config_vars()['$1'])"
+        }
         export PYTHON_LIBRARY=$(get_py_config_var 'LIBDIR')/$(get_py_config_var 'LDLIBRARY')
         export PYTHON_INCLUDE_DIR=$(get_py_config_var 'INCLUDEPY')
         # No windows support here
@@ -602,7 +701,6 @@ main(){
         # ...     this is the last line that will be considered.
         # ...     ")"
         # 
-
         # Prevents python indentation errors in bash
         python -c "from textwrap import dedent; print(dedent('''$1''').strip('\n'))"
         #python -c "import utool as ut; print(ut.codeblock('''$1'''))"
@@ -619,7 +717,6 @@ main(){
         print(parts[-1].upper()) 
         ")"
     }
-
 
 
     if [[ $CMAKE_EXITCODE == 0 ]]; then
@@ -641,4 +738,66 @@ main(){
     else
         echo "Cmake Generation Failed"
     fi
+}
+
+
+prebuild_fletch_caffe_segnet(){
+    # Recommended way to install caffe-segnet and ALL dependencies 
+    # Note: caffe-segnet only supports cudnn 5.1.
+    # Disable cudnn if you don't have this.
+
+    # See https://github.com/Erotemic/local/blob/master/init/init_cuda.sh for this sweet script
+    # source ~/local/init/init_cuda.sh
+    # change_cudnn_version 5.1
+
+    # Define these variables before continuing
+    # (ensure they agree with other script vars)
+    CODE_DIR="$HOME/code"
+    FLETCH_BUILD="$CODE_DIR/fletch/build-segnet"
+
+    # Clone the fletch repo
+    mkdir -p $CODE_DIR
+    cd $CODE_DIR
+    git clone https://github.com/Kitware/fletch.git
+
+    # splitting out dependencies for easier visibility
+    export OPENCV_DEPENDS="
+        -D fletch_ENABLE_ZLib:BOOL=True \
+        -D fletch_ENABLE_VXL:BOOL=True \
+        -D fletch_ENABLE_PNG:BOOL=True \
+        -D fletch_ENABLE_libtiff:BOOL=True \
+        -D fletch_ENABLE_libjson:BOOL=True \
+        -D fletch_ENABLE_libjpeg-turbo:BOOL=True \
+        -D fletch_ENABLE_libxml2:BOOL=True"
+
+    export CAFFE_DEPENDS="
+        -D fletch_ENABLE_Protobuf:BOOL=True \
+        -D Protobuf_SELECT_VERSION=3.4.1 \
+        -D fletch_ENABLE_LevelDB:BOOL=True \
+        -D fletch_ENABLE_HDF5:BOOL=True \
+        -D fletch_ENABLE_Snappy:BOOL=True \
+        -D fletch_ENABLE_SuiteSparse:BOOL=True \
+        -D fletch_ENABLE_GLog:BOOL=True \
+        -D fletch_ENABLE_OpenBLAS:BOOL=True \
+        -D fletch_ENABLE_OpenCV:BOOL=True \
+        -D fletch_ENABLE_LMDB:BOOL=True \
+        -D fletch_ENABLE_Boost:BOOL=True \
+        -D fletch_ENABLE_GFlags:BOOL=True"
+
+    # Setup a build directory and build fletch
+    mkdir -p $FLETCH_BUILD
+    cd $FLETCH_BUILD
+    cmake -G "Unix Makefiles" \
+        -D fletch_ENABLE_Caffe_Segnet:BOOL=True \
+        -D fletch_BUILD_WITH_CUDA:BOOL=True \
+        -D fletch_BUILD_WITH_CUDNN:BOOL=True \
+        -D fletch_BUILD_WITH_PYTHON:BOOL=True \
+        -D fletch_PYTHON_MAJOR_VERSION=3 \
+        $OPENCV_DEPENDS $CAFFE_DEPENDS \
+        ..
+
+    make -j5
+
+    # TEST
+    (cd ../python && python -c "import caffe")
 }
