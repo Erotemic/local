@@ -41,7 +41,15 @@
 if has("win32") || has("win16")
     :set runtimepath+=$USERPROFILE\local\vim\portable_vimrc 
 
+    " TODO: the fix didnt work
+    " https://stackoverflow.com/questions/24833970/get-e484-cant-open-file-tmp-foo-a-when-using-systemwget-in-vim
+    "set noshelltemp
+    "if has("gui_running") == 0
+    "    " Fix issue where system() breaks when running from git-bash on win32
+    "    set shell=/bin/bash
+    "endif
 endif
+
 set runtimepath+=~/local/vim/vimfiles/
 source ~/local/vim/rc/win32_presource.vim
 "source ~/local/vim/rc/venv_presource.vim
@@ -104,7 +112,8 @@ def get_disabled_plugins():
         (flag & UNIX, 'vim-startify'),
         (flag, 'vim-searchindex'),
 
-        (flag & UNIX, 'syntastic'),
+        #(flag & UNIX, 'syntastic'),
+        (flag, 'syntastic'),
         (flag, 'jedi-vim'),
         (flag, 'LaTeX-Box'),
         (flag, 'vim-markdown'),
