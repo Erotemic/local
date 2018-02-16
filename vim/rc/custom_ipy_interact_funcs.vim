@@ -168,8 +168,10 @@ if pyvim_funcs.is_module_pythonfile():
 
     lines = []
 
+    import ubelt as ub
     try:
         needs_path = not ut.check_module_installed(modname)
+        ub.modpath_to_modname(modname)  # hack for checking if importable
     except Exception:
         needs_path = True
 
