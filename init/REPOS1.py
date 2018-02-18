@@ -12,7 +12,7 @@ from meta_util_git1 import set_userid, unixpath, repo_list
 
 
 set_userid(userid='Erotemic',
-           owned_computers=['Hyrule', 'BakerStreet', 'Ooo', 'calculex'],
+           owned_computers=['Hyrule', 'BakerStreet', 'Ooo', 'calculex', 'acidilia'],
            permitted_repos=['pyrf', 'detecttools', 'pygist'])
 
 # USER DEFINITIONS
@@ -40,10 +40,10 @@ IBEIS_REPOS_URLS, IBEIS_REPOS = repo_list([
     #'https://github.com/Erotemic/mtgmonte.git',
     # 'https://github.com/bluemellophone/ibeis_cnn.git',
     # 'https://github.com/Erotemic/sandbox_utools.git',
-    'https://github.com/Erotemic/guitool.git',
+    # 'https://github.com/Erotemic/guitool.git',
     'https://github.com/Erotemic/plottool.git',
     'https://github.com/Erotemic/vtool.git',
-    'https://github.com/Erotemic/dtool.git',
+    # 'https://github.com/Erotemic/dtool.git',
     'https://github.com/Erotemic/ibeis.git',
     'https://github.com/Erotemic/utool.git',
 
@@ -68,7 +68,7 @@ IBEIS_REPOS_URLS, IBEIS_REPOS = repo_list([
 TPL_REPOS_URLS, TPL_REPOS = repo_list([
     #'https://github.com/Erotemic/opencv',
     #'https://github.com/Erotemic/pgmpy.git',
-    'https://github.com/Erotemic/flann.git',
+    # 'https://github.com/Erotemic/flann.git',
     # 'https://github.com/Erotemic/flann',
 ], CODE_DIR)
 
@@ -150,6 +150,9 @@ VIM_REPO_URLS, VIM_REPOS = repo_list([
     #'https://github.com/honza/vim-snippets.git',
 
     'https://github.com/SirVer/ultisnips.git',
+
+    'https://github.com/Erotemic/vimtk.git',
+
     # 'https://github.com/Erotemic/vim-quickopen-tvio.git',
     # 'https://github.com/docunext/closetag.vim.git',
 

@@ -19,6 +19,7 @@ alias cgrep='grep -I -ER \
     --exclude-dir .git \
     --exclude "*.dot*" \
     --exclude "*.rst*" \
+    --exclude "*.html*" \
     --exclude "*.pipe*" \
     --exclude "tags"'
 

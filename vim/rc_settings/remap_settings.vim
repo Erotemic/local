@@ -101,14 +101,16 @@ vnoremap gu :call PyUnFormatDoctest()<CR>
 " copy whatever is in clipboard to terminal
 noremap  <leader>z :call CopyGVimToTerminalDev('clipboard', 1)<CR>
 " DO line in ipython and RETURN to vim
-noremap  <leader>a :call CopyGVimToTerminalDev(mode(), 1)<CR>
-vnoremap <leader>a :call CopyGVimToTerminalDev(visualmode(), 1)<CR>
-noremap  <leader>w :call CopyGVimToTerminalDev('word', 1)<CR>
-noremap  <leader>m :call CopyGVimToTerminalDev('word', 1)<CR>
 
-noremap <leader>C :call CopyCurrentFpath()<Esc>
+let g:vimtk_default_mappings=1
+"noremap  <leader>a :call CopyGVimToTerminalDev(mode(), 1)<CR>
+"vnoremap <leader>a :call CopyGVimToTerminalDev(visualmode(), 1)<CR>
+"noremap  <leader>w :call CopyGVimToTerminalDev('word', 1)<CR>
+"noremap  <leader>m :call CopyGVimToTerminalDev('word', 1)<CR>
 
-noremap  <leader>M :call IPythonImportAll()<CR>
+"noremap <leader>C :call CopyCurrentFpath()<Esc>
+
+"noremap  <leader>M :call IPythonImportAll()<CR>
 noremap  <leader>x :call IPyFixEmbedGlobals()<CR>
 
 
@@ -131,7 +133,17 @@ noremap  <leader>ft :call FocusTerm()<CR>
 " Hotkey:
 " Refreshing the vim RC / syntax
 noremap <leader>r :source ~/local/vim/portable_vimrc<CR>
+
+
+" Hack to reload vimtk plugin as well
+
+let g:loaded_vimtk=0
+let g:loaded_vimtk_autoload=0
+source ~/.vim/bundle/vimtk/plugin/vimtk.vim
+source ~/.vim/bundle/vimtk/autoload/vimtk.vim
+
 noremap <leader>R :source ~/local/vim/portable_vimrc<CR>
+
 noremap <leader>rs :syntax sync minlines=500.<CR>
 
 " for python doctests

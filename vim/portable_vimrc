@@ -12,6 +12,10 @@
 " ~/local/vim/rc_settings/remap_settings.vim
 " ~/local/vim/rc_settings/autocommand_settings.vim
 
+
+" ~/code/vimtk/plugin/vimtk.vim
+
+
 " Spell Files
 ":e ~/local/vim/vimfiles/spell/en.utf-8.add
 ":e ~/local/vim/vimfiles/spell/en.latin1.add
@@ -107,6 +111,8 @@ def get_disabled_plugins():
 
         (flag, 'nerdcommenter'),
         (flag, 'tagbar'),
+
+        (flag, 'vimtk'),
 
         (flag & UNIX, 'supertab'),
         (flag & UNIX, 'vim-startify'),

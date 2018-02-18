@@ -1519,3 +1519,22 @@ apt-add-repository-remove()
 }
 
 
+new-vim-plugin(){
+NAME=$1
+
+co
+
+mkdir -p ~/code/$NAME
+cd ~/code/$NAME
+
+mkdir doc
+mkdir plugin
+mkdir autoload
+
+touch doc/$NAME.txt
+touch plugin/$NAME.vim
+touch autoload/$NAME.vim
+
+touch README
+touch LICENSE
+}

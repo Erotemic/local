@@ -11,6 +11,9 @@ simple_setup_manual()
     fi
 
     source ~/local/init/freshstart_ubuntu.sh 
+
+    source ~/local/init/ensure_symlinks.sh 
+    ensure_config_symlinks
     simple_setup_auto
 }
 
