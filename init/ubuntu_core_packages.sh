@@ -1554,8 +1554,6 @@ move_hdd(){
 
     sudo apt install gddrescue -y
 
-    OLD_DISK=/dev/sdd
-    NEW_DISK=/dev/sdf
     echo "OLD_DISK = $OLD_DISK"
     echo "NEW_DISK = $NEW_DISK"
 
@@ -1580,6 +1578,7 @@ move_hdd(){
     echo "NEW_DISK = $NEW_DISK"
 
     # DEFINE which disk we are going to clober
+    OLD_DISK=/dev/sdd
     NEW_DISK=/dev/sdf
 
     # Create a new GDP partition table.
@@ -1633,9 +1632,47 @@ move_hdd(){
     # Copy the system on the old hard drive onto the new one
     sudo rsync -aAXvP /* /mnt/new_disk2 --exclude={/dev/*,/proc/*,/sys/*,/tmp/*,/var/tmp/*,/run/*,/mnt/*,/media/*,/lost+found}
 
-
     # Install grub on the new disk
-    grub-install $NEW_DISK
+    echo "installing grub on NEW_DISK = $NEW_DISK"
+    sudo grub-install $NEW_DISK
+
+    # We need to modify fstab on the new disk, because the UUIDs have changed
+
+    # For each old partition, we need to modify its mount UUID in fstab
+
+    find_uuid_column(){
+        # Helper script to find a UUID column
+        python -c "$(codeblock "
+        import sys
+        for part in sys.stdin.read().split(' '):
+            if part.startswith('UUID'):
+                print(part[6:-1])
+        ")" $@
+    }
+
+    echo "OLD_DISK = $OLD_DISK"
     echo "NEW_DISK = $NEW_DISK"
+
+    OLD_UUID1=$(blkid | grep "${OLD_DISK}1" | find_uuid_column)
+    OLD_UUID2=$(blkid | grep "${OLD_DISK}2" | find_uuid_column)
+    OLD_UUID3=$(blkid | grep "${OLD_DISK}3" | find_uuid_column)
+
+    NEW_UUID1=$(blkid | grep "${NEW_DISK}1" | find_uuid_column)
+    NEW_UUID2=$(blkid | grep "${NEW_DISK}2" | find_uuid_column)
+    NEW_UUID3=$(blkid | grep "${NEW_DISK}3" | find_uuid_column)
+
+    # Replace the old UUIDs with the new ones in the new fstab file
+    sudo sed -i "s/$OLD_UUID1/$NEW_UUID1/" /mnt/new_disk2/etc/fstab
+    sudo sed -i "s/$OLD_UUID2/$NEW_UUID2/" /mnt/new_disk2/etc/fstab
+    sudo sed -i "s/$OLD_UUID3/$NEW_UUID3/" /mnt/new_disk2/etc/fstab
+
+    cat /mnt/new_disk2/etc/fstab | grep "$OLD_UUID1" 
+    cat /mnt/new_disk2/etc/fstab | grep "$OLD_UUID2" 
+    cat /mnt/new_disk2/etc/fstab | grep "$OLD_UUID3" 
+
+    cat /mnt/new_disk2/etc/fstab | grep "$NEW_UUID1" 
+    cat /mnt/new_disk2/etc/fstab | grep "$NEW_UUID2" 
+    cat /mnt/new_disk2/etc/fstab | grep "$NEW_UUID3" 
+
 
 }
