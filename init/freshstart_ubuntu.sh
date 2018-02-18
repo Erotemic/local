@@ -2,7 +2,7 @@ source $HOME/local/init/utils.sh
 
 simple_setup_manual()
 {
-    sudo apt-get install git -y
+    sudo apt install git -y
     # If local does not exist
     if [ ! -d ~/local ]; then
         cd $HOME
@@ -290,7 +290,7 @@ fix_ssh_permissions(){
 entry_prereq_git_and_local()
 {
     # This is usually done manually
-    sudo apt-get install git -y
+    sudo apt install git -y
     cd ~
 
     # sudo usermod -l newUsername oldUsername
@@ -351,7 +351,7 @@ freshtart_ubuntu_script()
         git clone https://github.com/Erotemic/local.git
     fi
 
-    sudo apt-get install symlinks -y
+    sudo apt install symlinks -y
 
     source ~/local/init/freshstart_ubuntu.sh
     source ~/local/init/ensure_symlinks.sh 
@@ -364,37 +364,37 @@ freshtart_ubuntu_script()
     source ~/local/init/freshstart_ubuntu.sh
     #make_sshkey
 
-    #sudo apt-get install trash-cli
-    sudo apt-get install -y exuberant-ctags 
+    #sudo apt install trash-cli
+    sudo apt install -y exuberant-ctags 
 
     # Vim
-    #sudo apt-get install -y vim
-    #sudo apt-get install -y vim-gtk
-    sudo apt-get install -y vim-gnome
+    #sudo apt install -y vim
+    #sudo apt install -y vim-gtk
+    sudo apt install -y vim-gnome
 
     # Terminal settings
-    #sudo apt-get install terminator -y
+    #sudo apt install terminator -y
 
     if [ "$(which terminator)" == "" ]; then
         # Dont use buggy gtk2 version 
         # https://bugs.launchpad.net/ubuntu/+source/terminator/+bug/1568132
 
         #sudo add-apt-repository ppa:gnome-terminator
-        #sudo apt-get update
-        #sudo apt-get install terminator -y
+        #sudo apt update
+        #sudo apt install terminator -y
         #cat /etc/apt/sources.list
         #sudo apt remove terminator
         #sudo add-apt-repository --remove ppa:gnome-terminator
 
         sudo add-apt-repository ppa:gnome-terminator/nightly-gtk3
-        sudo apt-get update
-        sudo apt-get install terminator -y
+        sudo apt update
+        sudo apt install terminator -y
     fi
 
     # Development Environment
-    sudo apt-get install gcc g++ gfortran build-essential -y
-    sudo apt-get install -y python3-dev python3-tk
-    sudo apt-get install -y python3-tk
+    sudo apt install gcc g++ gfortran build-essential -y
+    sudo apt install -y python3-dev python3-tk
+    sudo apt install -y python3-tk
 
     #sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 10
 
@@ -449,13 +449,13 @@ freshtart_ubuntu_script()
     fi
 
     # Extended development environment
-    sudo apt-get install -y pkg-config
-    sudo apt-get install -y libtk-img-dev
-    sudo apt-get install -y libblas-dev liblapack-dev
-    sudo apt-get install -y libav-tools libgeos-dev 
-    sudo apt-get install -y libfftw3-dev libfreetype6-dev 
-    sudo apt-get install -y libatlas-base-dev liblcms1-dev zlib1g-dev
-    sudo apt-get install -y libjpeg-dev libopenjpeg-dev libpng12-dev libtiff5-dev
+    sudo apt install -y pkg-config
+    sudo apt install -y libtk-img-dev
+    sudo apt install -y libblas-dev liblapack-dev
+    sudo apt install -y libav-tools libgeos-dev 
+    sudo apt install -y libfftw3-dev libfreetype6-dev 
+    sudo apt install -y libatlas-base-dev liblcms1-dev zlib1g-dev
+    sudo apt install -y libjpeg-dev libopenjpeg-dev libpng12-dev libtiff5-dev
 
     pip install numpy
     pip install scipy
@@ -499,13 +499,13 @@ freshtart_ubuntu_script()
 
     # Ubuntu hack for pyqt4
     # http://stackoverflow.com/questions/15608236/eclipse-and-google-app-engine-importerror-no-module-named-sysconfigdata-nd-u
-    #sudo apt-get install python-qt4-dev
-    #sudo apt-get remove python-qt4-dev
-    #sudo apt-get remove python-qt4
+    #sudo apt install python-qt4-dev
+    #sudo apt remove python-qt4-dev
+    #sudo apt remove python-qt4
     #sudo ln -s /usr/lib/python2.7/plat-*/_sysconfigdata_nd.py /usr/lib/python2.7/
     #python -c "import PyQt4"
     # TODO: install from source this is weird it doesnt work
-    # sudo apt-get autoremove
+    # sudo apt autoremove
 
     # Install utool
     if [ ! -d ~/code/utool ]; then
@@ -529,7 +529,7 @@ ensure_curl(){
     if [ "$(which curl)" == "" ]; then
         echo "Need to install curl"
         if [ "$HAVE_SUDO" == "True" ]; then
-            sudo apt-get install curl -y
+            sudo apt install curl -y
         else
             echo "Cannot install curl without sudo"
         fi
@@ -826,7 +826,7 @@ setup_venvpypy(){
     virtualenv-3.4 -p /usr/bin/pypy $PYPY_VENV 
 
     pypy -m ensurepip
-    sudo apt-get install pypy-pip
+    sudo apt install pypy-pip
 }
 
 install_chrome()
@@ -834,15 +834,15 @@ install_chrome()
     # Google PPA
     wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
     sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
-    sudo apt-get update
+    sudo apt update
     # Google Chrome
-    sudo apt-get install -y google-chrome-stable 
+    sudo apt install -y google-chrome-stable 
 }
 
 install_fonts()
 {
     # Download fonts
-    sudo apt-get -y install nautilus-dropbox
+    sudo apt -y install nautilus-dropbox
 
     mkdir -p ~/tmp 
     cd ~/tmp
@@ -877,14 +877,14 @@ install_fonts()
 
 virtualbox_ubuntu_init()
 {
-    sudo apt-get install dkms 
-    sudo apt-get update
-    sudo apt-get upgrade
+    sudo apt install dkms 
+    sudo apt update
+    sudo apt upgrade
     # Press Ctrl+D to automatically install virtualbox addons do this
-    sudo apt-get install virtualbox-guest-additions-iso
-    sudo apt-get install dkms build-essential linux-headers-generic
-    sudo apt-get install build-essential linux-headers-$(uname -r)
-    sudo apt-get install virtualbox-ose-guest-x11
+    sudo apt install virtualbox-guest-additions-iso
+    sudo apt install dkms build-essential linux-headers-generic
+    sudo apt install build-essential linux-headers-$(uname -r)
+    sudo apt install virtualbox-ose-guest-x11
     # setup virtualbox for ssh
     VBoxManage modifyvm virtual-ubuntu --natpf1 "ssh,tcp,,3022,,22"
 }
@@ -936,7 +936,7 @@ nautilus_settings()
     xdg-user-dirs-gtk-update
 
     #echo "Get Open In Terminal in context menu"
-    #sudo apt-get install nautilus-open-terminal -y
+    #sudo apt install nautilus-open-terminal -y
 
     # Tree view for nautilus
     gsettings set org.gnome.nautilus.window-state side-pane-view "tree"
@@ -1027,22 +1027,22 @@ setup_development_environment(){
     fi
 
     # Extended development environment
-    sudo apt-get install -y pkg-config
-    sudo apt-get install -y libtk-img-dev
-    sudo apt-get install -y libav-tools libgeos-dev 
-    sudo apt-get install -y libfftw3-dev libfreetype6-dev 
-    sudo apt-get install -y libatlas-base-dev liblcms1-dev zlib1g-dev
-    sudo apt-get install -y libjpeg-dev libopenjpeg-dev libpng12-dev libtiff5-dev
+    sudo apt install -y pkg-config
+    sudo apt install -y libtk-img-dev
+    sudo apt install -y libav-tools libgeos-dev 
+    sudo apt install -y libfftw3-dev libfreetype6-dev 
+    sudo apt install -y libatlas-base-dev liblcms1-dev zlib1g-dev
+    sudo apt install -y libjpeg-dev libopenjpeg-dev libpng12-dev libtiff5-dev
 
     # Commonly used and frequently forgotten
-    sudo apt-get install -y wmctrl xsel xdotool xclip
-    sudo apt-get install -y gparted htop tree
-    sudo apt-get install -y tmux astyle
-    sudo apt-get install -y synaptic okular
-    sudo apt-get install -y openssh-server
+    sudo apt install -y wmctrl xsel xdotool xclip
+    sudo apt install -y gparted htop tree
+    sudo apt install -y tmux astyle
+    sudo apt install -y synaptic okular
+    sudo apt install -y openssh-server
 
-    sudo apt-get install -y valgrind synaptic vlc gitg expect
-    sudo apt-get install sshfs -y
+    sudo apt install -y valgrind synaptic vlc gitg expect
+    sudo apt install sshfs -y
 
     pip install numpy
     pip install scipy
@@ -1140,7 +1140,7 @@ gnome_settings()
     #gconftool-2 -a "/apps/gnome-terminal/profiles/Default" 
     #gsettings set org.gnome.desktop.lockdown disable-lock-screen 'true'
     #sudo -u gdm gconftool-2 --type=bool --set /desktop/gnome/sound/event_sounds false
-    #sudo apt-get install -y gnome-tweak-tool
+    #sudo apt install -y gnome-tweak-tool
 
     gconftool-2 --set "/apps/gnome-terminal/profiles/Default/background_color" --type string "#1111111"
     gconftool-2 --set "/apps/gnome-terminal/profiles/Default/foreground_color" --type string "#FFFF6999BBBB"
@@ -1160,7 +1160,7 @@ gnome_settings()
     gconftool-2 --get /apps/gnome-screensaver/lock_enabled 
     gconftool-2 --get /desktop/gnome/sound/event_sounds
 
-    #sudo apt-get install nautilus-open-terminal
+    #sudo apt install nautilus-open-terminal
 }
 
 

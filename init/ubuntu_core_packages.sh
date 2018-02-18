@@ -30,7 +30,7 @@ langtool --disable WHITESPACE_RULE,EN_QUOTES,EN_UNPAIRED_BRACKETS chapter1-intro
 
 custom_tmux() 
 {
-    sudo apt-get install autotools-dev automake libevent-dev libncurses5-dev
+    sudo apt install autotools-dev automake libevent-dev libncurses5-dev
     co
     git clone https://github.com/tmux/tmux.git
     cd tmux
@@ -48,29 +48,29 @@ custom_tmux()
 
 install_core()
 {
-    sudo apt-get update -y 
-    sudo apt-get upgrade -y
+    sudo apt update -y 
+    sudo apt upgrade -y
     # Git
-    sudo apt-get install -y git
+    sudo apt install -y git
 
     # latest git
     sudo add-apt-repository ppa:git-core/ppa -y
-    sudo apt-get update
-    sudo apt-get install git -y
+    sudo apt update
+    sudo apt install git -y
     git --version
     
 
     # Vim / Gvim
-    #sudo apt-get install -y vim
-    #sudo apt-get install -y vim-gtk
-    #sudo apt-get remove -y vim
-    #sudo apt-get remove -y vim-gnome
+    #sudo apt install -y vim
+    #sudo apt install -y vim-gtk
+    #sudo apt remove -y vim
+    #sudo apt remove -y vim-gnome
 
-    sudo apt-get install -y exuberant-ctags 
+    sudo apt install -y exuberant-ctags 
 
     # Trash put
-    #sudo apt-get install -y trash-cli
-    sudo apt-get install -y gvfs-bin
+    #sudo apt install -y trash-cli
+    sudo apt install -y gvfs-bin
     # make sure you have permission to trash
     #ls -al ~/.local/share/
     #sudo chown -R $USERNAME:$USERNAME ~/.local/share/Trash 
@@ -82,52 +82,52 @@ install_core()
     #sudo ls -al ~/.local/share/Trash/info
     
     # Commonly used and frequently forgotten
-    sudo apt-get install -y wmctrl xsel xdotool xclip
-    sudo apt-get install -y xclip
-    sudo apt-get install -y gparted htop tree
-    sudo apt-get install -y tmux astyle
-    sudo apt-get install -y synaptic okular
-    sudo apt-get install -y openssh-server
+    sudo apt install -y wmctrl xsel xdotool xclip
+    sudo apt install -y xclip
+    sudo apt install -y gparted htop tree
+    sudo apt install -y tmux astyle
+    sudo apt install -y synaptic okular
+    sudo apt install -y openssh-server
 
-    sudo apt-get install p7zip-full -y
-    sudo apt-get install graphviz -y
-    sudo apt-get install imagemagick -y
+    sudo apt install p7zip-full -y
+    sudo apt install graphviz -y
+    sudo apt install imagemagick -y
 
     # sqlite db  editor
-    #sudo apt-get install sqliteman
-    sudo apt-get install -y postgresql
-    sudo apt-get install -y sqlitebrowser 
+    #sudo apt install sqliteman
+    sudo apt install -y postgresql
+    sudo apt install -y sqlitebrowser 
     #References: http://stackoverflow.com/questions/7454796/taglist-exuberant-ctags-not-found-in-path
-    sudo apt-get install -y hdfview
+    sudo apt install -y hdfview
 
     # for editing desktop sidebar icons
-    sudo apt-get install alacarte
+    sudo apt install alacarte
 
     # anti-virus 
     # https://www.upcloud.com/support/scanning-ubuntu-14-04-server-for-malware/
-    sudo apt-get install clamav clamav-daemon
+    sudo apt install clamav clamav-daemon
     sudo freshclam
     sudo clamscan -r /home
 
-    sudo apt-get install rkhunter
+    sudo apt install rkhunter
 }
 
 truely_ergonomic_keyboard_setup()
 {
-    sudo apt-get install lm-sensors
-    sudo apt-get install hardinfo
+    sudo apt install lm-sensors
+    sudo apt install hardinfo
     # TEK truely ergonomic keyboard setup
     # Link for TEK 229 Need to switch for 209
     # https://trulyergonomic.com/store/layout-designer--configurator--reprogrammable--truly-ergonomic-mechanical-keyboard/#KTo7PD0+P0BBQkNERUw5394rNR4fICEi4yMkJSYnLS4xOBQaCBUXTBwYDBITLzDhBBYHCQorCw0ODzPl4B0bBhkFKhEQNjc05OfiSktOTSwoLFBSUU/mRQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAX2BhAAAAAAAAAAAAAAAAXF1eVlcAAAAAAAAAAABZWltVAAAAAAAAAAAAYgBjVAAAAAAAAAAAWCsAAAAAAACTAQAMAiMBAAwBigEADAIhAQAMAZQBAAwBkgEADAGDAQAMALYBAAwAzQEADAC1AQAMAOIBAAwA6gEADADpAQAMALhJAEYAAAAAAEitR64AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACk6Ozw9Pj9AQUJDREVMOd/eKzUeHyAhImQjJCUmJy4qLzAUGggVF0wcGAwSEzQx4wQWBwkKLQsNDg8z5+EdGwYZBSoREDY3OOXg4kpLTk0sKCxQUlFP5uQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAF9gYQAAAAAAAAAAAAAAAFxdXlZXAAAAAAAAAAAAWVpbVQAAAAAAAAAAAGIAY1QAAAAAAAAAAFgrAAAAAAAAkwEADAIjAQAMAYoBAAwCIQEADAGUAQAMAZIBAAwBgwEADAC2AQAMAM0BAAwAtQEADADiAQAMAOoBAAwA6QEADAC4SQBGAAAAAABIrUeuAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
     cd ~/tmp
     utzget http://www.trulyergonomic.com/Truly_Ergonomic_Firmware_Upgrade_Linux_v2_0_0.tar.gz
     cd tex-linux
-    #sudo apt-get remove libwxbase3.0-0 libwxgtk3.0-0 libwxgtk-webview3.0-0
+    #sudo apt remove libwxbase3.0-0 libwxgtk3.0-0 libwxgtk-webview3.0-0
     #In Ubuntu before 15.04 vivid (or derivatives like Linux Mint 17.2) you have to:
     #1. add the ubuntu-toolchain-r/test ppa to get libstdc++6-4.9
     sudo add-apt-repository ppa:ubuntu-toolchain-r/test 
-    sudo apt-get update
-    sudo apt-get install libstdc++6
+    sudo apt update
+    sudo apt install libstdc++6
     wget http://security.ubuntu.com/ubuntu/pool/universe/w/wxwidgets3.0/libwxbase3.0-0_3.0.2-1_amd64.deb
     wget http://security.ubuntu.com/ubuntu/pool/universe/w/wxwidgets3.0/libwxgtk3.0-0_3.0.2-1_amd64.deb
     wget http://security.ubuntu.com/ubuntu/pool/universe/w/wxwidgets3.0/libwxgtk-webview3.0-0_3.0.2-1_amd64.deb
@@ -142,7 +142,7 @@ install_dropbox()
     #cd ~/tmp
     #cd ~/tmp && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
     #.dropbox-dist/dropboxd
-    sudo apt-get -y install nautilus-dropbox
+    sudo apt -y install nautilus-dropbox
 }
 
 install_zotero()
@@ -209,24 +209,24 @@ install_zotero()
 install_core_extras()
 {
     # Not commonly used but frequently forgotten
-    sudo apt-get install -y valgrind synaptic vlc gitg expect
-    sudo apt-get install -y sysstat
-    sudo apt-get install -y subversion
-    sudo apt-get install -y remmina 
+    sudo apt install -y valgrind synaptic vlc gitg expect
+    sudo apt install -y sysstat
+    sudo apt install -y subversion
+    sudo apt install -y remmina 
 
 
-    #sudo apt-get install -y screen
+    #sudo apt install -y screen
 
-    sudo apt-get install -y filezilla
+    sudo apt install -y filezilla
 
-    sudo apt-get install python-pydot -y
+    sudo apt install python-pydot -y
 
-    sudo apt-get install dia-gnome -y
+    sudo apt install dia-gnome -y
 
     # flux
     sudo add-apt-repository ppa:kilian/f.lux
-    sudo apt-get update
-    sudo apt-get install fluxgui -y
+    sudo apt update
+    sudo apt install fluxgui -y
 
     # 7zip
 
@@ -240,7 +240,7 @@ install_core_extras()
 
 
     # ssh file system
-    sudo apt-get install sshfs -y
+    sudo apt install sshfs -y
     mkdir ~/ami    
     sshfs -o idmap=user ibeis-hackathon:/home/ubuntu ~/ami
     sshfs -o idmap=user lev:/ ~/lev
@@ -253,8 +253,8 @@ install_core_extras()
     
 
 
-    sudo apt-get update
-    sudo apt-get install patchutils
+    sudo apt update
+    sudo apt install patchutils
     #http://superuser.com/questions/403664/how-can-i-copy-and-paste-text-out-of-a-remote-vim-to-a-local-vim
     # 
 }
@@ -266,13 +266,13 @@ install_fresh_flash_player()
     #http://blog.cacoo.com/2012/08/07/troubleshooting-chrome-flash/
     # NOTE probably not a great idea to install flash
     sudo add-apt-repository universe
-    sudo apt-get install pepperflashplugin-nonfree
+    sudo apt install pepperflashplugin-nonfree
     sudo update-pepperflashplugin-nonfree --status
     sudo update-pepperflashplugin-nonfree --install 
 
     sudo add-apt-repository ppa:nilarimogard/webupd8
-    sudo apt-get update
-    sudo apt-get install freshplayerplugin
+    sudo apt update
+    sudo apt install freshplayerplugin
 }
 
 
@@ -281,16 +281,16 @@ install_skype()
     # References: https://help.ubuntu.com/community/Skype
     #sudo dpkg --add-architecture i386
     sudo add-apt-repository "deb http://archive.canonical.com/ $(lsb_release -sc) partner"
-    sudo apt-get update 
-    sudo apt-get install skype -y
-    #sudo apt-get install -y skype
+    sudo apt update 
+    sudo apt install skype -y
+    #sudo apt install -y skype
 }
 
 install_evaluating()
 {
-    #sudo apt-get install inkscape -y
+    #sudo apt install inkscape -y
     #References: https://github.com/kayhayen/Nuitka#use-case-3-package-compilation
-    sudo apt-get install nuitka
+    sudo apt install nuitka
     nuitka --module ibeis --recurse-directory=ibeis
     nuitka --recurse-all main.py
 }
@@ -300,8 +300,8 @@ install_ubuntu_tweak()
     # To clean up old kernels
     # References: http://askubuntu.com/questions/2793/how-do-i-remove-or-hide-old-kernel-versions-to-clean-up-the-boot-menu
     sudo add-apt-repository ppa:tualatrix/ppa
-    sudo apt-get update
-    sudo apt-get install -y ubuntu-tweak
+    sudo apt update
+    sudo apt install -y ubuntu-tweak
 }
 
 install_chrome()
@@ -309,13 +309,13 @@ install_chrome()
     # Google PPA
     wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
     sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
-    sudo apt-get update
+    sudo apt update
     # Google Chrome
-    sudo apt-get install -y google-chrome-stable 
+    sudo apt install -y google-chrome-stable 
 
 
     # for extensions.gnome.org integration
-    sudo apt-get install chrome-gnome-shell
+    sudo apt install chrome-gnome-shell
 }
  
 install_spotify()
@@ -323,8 +323,8 @@ install_spotify()
     #cat /etc/apt/sources.list
     sudo sh -c 'echo "deb http://repository.spotify.com stable non-free" >> /etc/apt/sources.list'
     sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 94558F59
-    sudo apt-get update
-    sudo apt-get install -y spotify-client --force-yes
+    sudo apt update
+    sudo apt install -y spotify-client --force-yes
     # https://community.spotify.com/t5/Help-Desktop-Linux-Windows-Web/Linux-users-important-update/td-p/1157534
     sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys D2C19886
 }
@@ -335,7 +335,7 @@ install_vpn()
     # http://dotcio.rpi.edu/services/network-remote-access/vpn-connection-and-installation/using-vpnc-open-source-client
 
     # replaces cisco anyconnect
-    sudo apt-get install network-manager-openconnect-gnome -y
+    sudo apt install network-manager-openconnect-gnome -y
 
     # gateway: vpn.net.rpi.edu
 
@@ -346,7 +346,7 @@ install_vpn()
 
 
 
-    sudo apt-get install network-manager-openvpn-gnome -y
+    sudo apt install network-manager-openvpn-gnome -y
 
     # https://askubuntu.com/questions/187511/how-can-i-use-a-ovpn-file-with-network-manager
     # Open network manager, click add, click vpn, then click add from file
@@ -389,9 +389,9 @@ install_latex()
 {
     echo 'latex'
     # Latex (ubuntu uses texlive 2013, use something more recent)
-    sudo apt-get purge texlive
-    sudo apt-get purge texlive-base
-    sudo apt-get purge pgf
+    sudo apt purge texlive
+    sudo apt purge texlive-base
+    sudo apt purge pgf
 
     #texlive 2015
     # https://www.tug.org/texlive/acquire-netinstall.html
@@ -411,7 +411,7 @@ install_latex()
     # lets see if that works...
     #python -m utool.util_cplat --exec-get-path-dirs:0
 
-    sudo apt-get install latexmk
+    sudo apt install latexmk
 
     # Support for utf8
     #sudo tlmgr install euenc
@@ -450,20 +450,20 @@ install_python()
     pip install guppy
 
     #https://github.com/rogerbinns/apsw/releases/download/3.8.6-r1/apsw-3.8.6-r1.win32-py2.7.exe
-    sudo apt-get install -y libsqlite3-dev 
-    sudo apt-get install -y sqlite3
-    sudo apt-get install -y libsqlite3
-    sudo apt-get install -y python-apsw
+    sudo apt install -y libsqlite3-dev 
+    sudo apt install -y sqlite3
+    sudo apt install -y libsqlite3
+    sudo apt install -y python-apsw
     #sudo pip install apsw
 
 
-    sudo apt-get install libgeos-dev -y
+    sudo apt install libgeos-dev -y
     pip install shapely
 }
 
 install_hdf5()
 {
-    #sudo apt-get install -y libhdf5-serial-dev
+    #sudo apt install -y libhdf5-serial-dev
     #The following extra packages will be installed:
     #  libhdf5-openmpi-7
     #Suggested packages:
@@ -472,42 +472,42 @@ install_hdf5()
     #  libhdf5-7 libhdf5-dev libhdf5-serial-dev
     #The following NEW packages will be installed:
     #  libhdf5-openmpi-7 libhdf5-openmpi-dev
-    sudo apt-get install -y libhdf5-serial-dev
-    sudo apt-get install -y libhdf5-openmpi-dev
+    sudo apt install -y libhdf5-serial-dev
+    sudo apt install -y libhdf5-openmpi-dev
     #h5cc -showconfig
-    sudo apt-get install hdf5-tools
+    sudo apt install hdf5-tools
 }
 
 install_cuda_prereq()
 {
-    sudo apt-get install -y libprotobuf-dev
-    sudo apt-get install -y libleveldb-dev 
-    sudo apt-get install -y libsnappy-dev 
-    sudo apt-get install -y libboost-all-dev 
-    sudo apt-get install -y libopencv-dev 
+    sudo apt install -y libprotobuf-dev
+    sudo apt install -y libleveldb-dev 
+    sudo apt install -y libsnappy-dev 
+    sudo apt install -y libboost-all-dev 
+    sudo apt install -y libopencv-dev 
 
     install_hdf5
 
-    sudo apt-get install -y libgflags-dev
-    sudo apt-get install -y libgoogle-glog-dev
-    sudo apt-get install -y liblmdb-dev
-    sudo apt-get install -y protobuf-compiler 
+    sudo apt install -y libgflags-dev
+    sudo apt install -y libgoogle-glog-dev
+    sudo apt install -y liblmdb-dev
+    sudo apt install -y protobuf-compiler 
 
-    #sudo apt-get install -y gcc-4.6 
-    #sudo apt-get install -y g++-4.6 
-    #sudo apt-get install -y gcc-4.6-multilib
-    #sudo apt-get install -y g++-4.6-multilib 
-    sudo apt-get install libpthread-stubs0-dev
+    #sudo apt install -y gcc-4.6 
+    #sudo apt install -y g++-4.6 
+    #sudo apt install -y gcc-4.6-multilib
+    #sudo apt install -y g++-4.6-multilib 
+    sudo apt install libpthread-stubs0-dev
 
-    sudo apt-get install -y gfortran
-    sudo apt-get install -y libjpeg62
-    sudo apt-get install -y libfreeimage-dev
-    sudo apt-get install -y libatlas-base-dev 
+    sudo apt install -y gfortran
+    sudo apt install -y libjpeg62
+    sudo apt install -y libfreeimage-dev
+    sudo apt install -y libatlas-base-dev 
 
-    sudo apt-get install -y python-dev
-    #sudo apt-get install -y python-pip
-    #sudo apt-get install -y python-numpy
-    #sudo apt-get install -y python-pillow
+    sudo apt install -y python-dev
+    #sudo apt install -y python-pip
+    #sudo apt install -y python-numpy
+    #sudo apt install -y python-pillow
 }
 
 
@@ -515,9 +515,9 @@ install_xlib()
 {
     # for gnome-shell-grid
     sudo pip install svn+https://python-xlib.svn.sourceforge.net/svnroot/python-xlib/trunk/
-    sudo apt-get install -y python-wnck 
-    sudo apt-get install -y wmctrl 
-    sudo apt-get install -y xdotool
+    sudo apt install -y python-wnck 
+    sudo apt install -y wmctrl 
+    sudo apt install -y xdotool
 }
 
 install_virtualbox()
@@ -525,9 +525,9 @@ install_virtualbox()
     # References: https://www.virtualbox.org/wiki/Linux_Downloads
     # Add oracle keys
     #wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
-    #sudo apt-get update
-    #sudo apt-get install virtualbox-4.3
-    sudo apt-get install virtualbox dkms
+    #sudo apt update
+    #sudo apt install virtualbox-4.3
+    sudo apt install virtualbox dkms
     # download addons and mount on guest machine
     #http://download.virtualbox.org/virtualbox/4.1.12/
     utget 'http://download.virtualbox.org/virtualbox/4.1.12/VBoxGuestAdditions_4.1.12.iso'
@@ -547,7 +547,7 @@ lprof_dl()
 
 install_captn_proto()
 {
-    sudo apt-get install capnproto
+    sudo apt install capnproto
     sudo pip install pycapnp
     #References: http://kentonv.github.io/capnproto/install.html
     #curl -O https://capnproto.org/capnproto-c++-0.5.0.tar.gz
@@ -560,8 +560,8 @@ install_captn_proto()
 
 install_clang()
 {
-    sudo apt-get install clang-3.5
-    sudo apt-get install libstdc++-4.8-dev
+    sudo apt install clang-3.5
+    sudo apt install libstdc++-4.8-dev
 
     # Set clang as default C compiler
     sudo update-alternatives --install /usr/bin/cc cc /usr/bin/clang-3.5 100
@@ -615,20 +615,20 @@ install_numba()
 {
     # References: http://askubuntu.com/questions/588688/importerror-no-module-named-llvmlite-binding
     # References: http://askubuntu.com/questions/576510/error-while-trying-to-install-llvmlite-on-ubuntu-14-04
-    sudo apt-get install zlib1g zlib1g-dev 
-    sudo apt-get install libedit-dev
-    sudo apt-get install llvm-3.5 llvm-3.5-dev llvm-dev
-    sudo apt-get install llvm-3.6 llvm-3.6-dev llvm-dev
+    sudo apt install zlib1g zlib1g-dev 
+    sudo apt install libedit-dev
+    sudo apt install llvm-3.5 llvm-3.5-dev llvm-dev
+    sudo apt install llvm-3.6 llvm-3.6-dev llvm-dev
     pip install enum34 funcsigs
 
-    sudo apt-get install libedit-dev -y
+    sudo apt install libedit-dev -y
     sudo pip install enum34 -U
     sudo -H pip install pip --upgrade
     sudo -H pip install llvmlite
     sudo -H pip install funcsig
     which llvm-config-3.5
     sudo ln -s llvm-config-3.5 /usr/bin/llvm-config
-    sudo apt-get install libedit-dev -y
+    sudo apt install libedit-dev -y
     export LLVM_CONFIG=/usr/bin/llvm-config-3.5
 
     sudo LLVM_CONFIG=/usr/bin/llvm-config-3.6 pip install llvmlite -U
@@ -640,17 +640,17 @@ install_numba()
 }
 
 # Cleanup
-#sudo apt-get remove jasper -y
+#sudo apt remove jasper -y
 
 install_hpn()
 {
     # References: https://spoutcraft.org/threads/blazing-fast-sftp-ssh-transfer.7682/
     ssh -V
 
-    sudo apt-get install python-software-properties
+    sudo apt install python-software-properties
     sudo add-apt-repository ppa:w-rouesnel/openssh-hpn
-    sudo apt-get update -y
-    sudo apt-get install openssh-server
+    sudo apt update -y
+    sudo apt install openssh-server
 
 
     sudo gvim /etc/ssh/sshd_config
@@ -679,9 +679,9 @@ secure_ssl_pip()
 
 install_screen_capture()
 {
-    #sudo apt-get install recordmydesktop gtk-recordmydesktop
+    #sudo apt install recordmydesktop gtk-recordmydesktop
     sudo add-apt-repository ppa:obsproject/obs-studio -y
-    sudo apt-get update && sudo apt-get install obs-studio -y
+    sudo apt update && sudo apt install obs-studio -y
 }
 
 
@@ -698,20 +698,20 @@ encryprtion()
     # https://coderslagoon.com/home.php
     cryptkeeper()
     {
-        sudo apt-get install cryptkeeper
+        sudo apt install cryptkeeper
         #http://superuser.com/questions/179150/reading-an-encfs-volume-from-windows
         #http://alternativeto.net/software/aescrypt/
         #http://www.getsafe.org/about#linuxversion
     }
 
     # Try OTFE
-    sudo apt-get install cryptmount
+    sudo apt install cryptmount
 
 
     # TRUECRYPT IS DEPRICATED. DO NOT USE
     sudo add-apt-repository ppa:stefansundin/truecrypt -y
-    sudo apt-get update
-    sudo apt-get install truecrypt -y
+    sudo apt update
+    sudo apt install truecrypt -y
 
     sudo add-apt-repository ppa:unit193/encryption -y
     sudo apt update
@@ -725,10 +725,10 @@ install_xrdp_remote_desktop()
 
     # --- SERVER ---
     # Install xrdp server
-    sudo apt-get install xrdp -y
+    sudo apt install xrdp -y
 
     # Install an alternative desktop (apparently gnome-fallback has issues)
-    sudo apt-get install mate-core mate-desktop-environment mate-notification-daemon
+    sudo apt install mate-core mate-desktop-environment mate-notification-daemon
 
     # In Ubuntu 16.04 you have to modify /etc/xrdp/startwm.sh
     # References:
@@ -742,9 +742,10 @@ install_xrdp_remote_desktop()
 
     # --- CLIENT ---
     # Update REMINA on the client to the latest and greatest
-    sudo apt-add-repository ppa:remmina-ppa-team/remmina-next -y
-    sudo apt-get update -y
-    sudo apt-get install remmina remmina-plugin-rdp libfreerdp-plugins-standard -y
+    #sudo apt-add-repository ppa:remmina-ppa-team/remmina-next -y
+    #sudo apt update -y
+    #sudo apt install remmina remmina-plugin-rdp libfreerdp-plugins-standard -y
+    sudo apt install remmina remmina-plugin-rdp libfreerdp-plugins-standard -y
 
     # Add self to fuse group
     # https://superuser.com/questions/466304/how-do-i-make-sshfs-work-in-debian-i-get-dev-fuse-permission-denied
@@ -768,21 +769,21 @@ install_xrdp_remote_desktop()
     #sudo apt-add-repository ppa:ubuntu-mate-dev/trusty-mate
     #sudo add-apt-repository --remove ppa:ubuntu-mate-dev/ppa
     #sudo add-apt-repository --remove ppa:ubuntu-mate-dev/trusty-mate
-    #sudo apt-get update 
-    #sudo apt-get upgrade
-    #sudo apt-get install ubuntu-mate-core ubuntu-mate-desktop
+    #sudo apt update 
+    #sudo apt upgrade
+    #sudo apt install ubuntu-mate-core ubuntu-mate-desktop
     #echo mate-session >~/.xsession
     #sudo service xrdp restart
 
     # http://askubuntu.com/questions/247501/i-get-failed-to-load-session-ubuntu-2d-when-using-xrdp
 
-    sudo apt-get install gnome-session-fallback
+    sudo apt install gnome-session-fallback
     cat ~/.xsession 
     echo gnome-session --session=gnome-fallback > ~/.xsession
 
     # http://c-nergy.be/blog/?p=5305
-    sudo apt-get update
-    sudo apt-get install xfce4
+    sudo apt update
+    sudo apt install xfce4
  
     # this works but has tab key issue
     echo xfce4-session >~/.xsession
@@ -835,12 +836,12 @@ __PYSCRIPT__
 
 install_vnc_client()
 {
-    sudo apt-get install x11vnc -y
-    sudo apt-get install vinagre -y
+    sudo apt install x11vnc -y
+    sudo apt install vinagre -y
 
     cd ~/tmp
     utzget http://www.karlrunge.com/x11vnc/etv/ssvnc_unix_only-1.0.20.tar.gz
-#sudo apt-get install remmina
+#sudo apt install remmina
 }
 
 fix_softwarecenter_color()
@@ -861,7 +862,7 @@ gksudo gedit /usr/share/software-center/ui/gtk3/css/softwarecenter.css
 
 fix_gnome3_workspaces_multimonior()
 {
-    sudo apt-get install gconf-editor 
+    sudo apt install gconf-editor 
     #http://gregcor.com/2011/05/07/fix-dual-monitors-in-gnome-3-aka-my-workspaces-are-broken/
     gsettings get org.gnome.shell.overrides workspaces-only-on-primary
     gsettings set org.gnome.shell.overrides workspaces-only-on-primary false
@@ -946,8 +947,8 @@ make_venv_physical()
 
 install_brightness_adjust()
 {
-    sudo apt-get update
-    sudo apt-get install xbacklight
+    sudo apt update
+    sudo apt install xbacklight
     xbacklight -dec 10
 
     xrandr -q | grep " connected"
@@ -1074,9 +1075,9 @@ fix_audio_hyrule(){
     # https://answers.launchpad.net/ubuntu/+source/alsa-driver/+question/402824 
 
      # https://ubuntuforums.org/showthread.php?t=1121805
-    sudo apt-get --purge remove linux-sound-base alsa-base alsa-utils
-    sudo apt-get install linux-sound-base alsa-base alsa-utils
-    sudo apt-get install gdm ubuntu-desktop
+    sudo apt --purge remove linux-sound-base alsa-base alsa-utils
+    sudo apt install linux-sound-base alsa-base alsa-utils
+    sudo apt install gdm ubuntu-desktop
 
     # http://www.linuxquestions.org/questions/ubuntu-63/how-to-set-default-sound-card-in-ubuntu-4175480799/
     cat /proc/asound/modules 
@@ -1092,13 +1093,13 @@ fix_audio_hyrule(){
 
 
     # https://help.ubuntu.com/community/OpenSound
-    sudo apt-get purge pulseaudio gstreamer0.10-pulseaudio
+    sudo apt purge pulseaudio gstreamer0.10-pulseaudio
     sudo dpkg-reconfigure linux-sound-base
 
 
     # http://askubuntu.com/questions/629634/after-reinstall-alsa-and-pulse-audio-system-setting-missing
-    sudo apt-get remove --purge alsa-base pulseaudio
-    sudo apt-get install alsa-base* pulseaudio* pulseaudio-module-bluetooth* pulseaudio-module-x11* 
+    sudo apt remove --purge alsa-base pulseaudio
+    sudo apt install alsa-base* pulseaudio* pulseaudio-module-bluetooth* pulseaudio-module-x11* 
     unity-control-center* unity-control-center-signon* webaccounts-extension-common* xul-ext-webaccounts*
     indicator-sound* libcanberra-pulse* osspd* osspd-pulseaudio*
     # http://techgage.com/news/disabling_nvidias_hdmi_audio_under_linux/
@@ -1112,7 +1113,7 @@ fix_audio_hyrule(){
 old_setup_ssh_server()
 {
     # See hyrule specific version
-    sudo apt-get install -y openssh-server
+    sudo apt install -y openssh-server
 
     sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.factory-defaults
     sudo chmod a-w /etc/ssh/sshd_config.factory-defaults
@@ -1125,7 +1126,7 @@ old_setup_ssh_server()
 
 setup_ssh_server() {
     # This works for any computer and makes the computer name appear in bubble text on login
-    sudo apt-get install openssh-server -y
+    sudo apt install openssh-server -y
     sudo service ssh status
     # small change to default sshd_config
     sudo sed -i 's/#Banner \/etc\/issue.net/Banner \/etc\/issue.net/' /etc/ssh/sshd_config
@@ -1221,13 +1222,13 @@ fix_wacom(){
 mount_android()
 {
     # http://www.mysolutions.it/mounting-your-mtp-androids-sd-card-on-ubuntu/
-    sudo apt-get install mtpfs mtp-tools -y
+    sudo apt install mtpfs mtp-tools -y
 
     sudo mkdir /media/droid
     sudo chmod 775 /media/droid
     sudo mtpfs -o allow_other /media/droid
 
-    sudo apt-get install jmtpfs
+    sudo apt install jmtpfs
 
     sudo jmtpfs /media/droid
     fusermount -u /media/droid
@@ -1250,8 +1251,8 @@ python_keyring()
 install_octave(){
 
     sudo add-apt-repository ppa:octave/stable -y
-    sudo apt-get update -y
-    sudo apt-get install octave -y
+    sudo apt update -y
+    sudo apt install octave -y
 }
 
 remap_capslock_as_shift
@@ -1370,7 +1371,7 @@ docker(){
     # https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/#set-up-the-repository
     # https://github.com/NVIDIA/nvidia-docker
 
-    sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+    sudo apt install apt-transport-https ca-certificates curl software-properties-common
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     sudo apt-key fingerprint 0EBFCD88
     sudo add-apt-repository \
@@ -1396,10 +1397,10 @@ docker(){
       sudo apt-key add -
     curl -s -L https://nvidia.github.io/nvidia-docker/ubuntu16.04/amd64/nvidia-docker.list | \
       sudo tee /etc/apt/sources.list.d/nvidia-docker.list
-    sudo apt-get update
+    sudo apt update
 
     # Install nvidia-docker2 and reload the Docker daemon configuration
-    sudo apt-get install -y nvidia-docker2
+    sudo apt install -y nvidia-docker2
     sudo pkill -SIGHUP dockerd
 
     # https://github.com/moby/moby/issues/3127
