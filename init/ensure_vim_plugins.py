@@ -91,6 +91,7 @@ def main():
     VIM_REPO_URLS = util_git1.VIM_REPO_URLS
     VIM_REPO_DIRS = util_git1.get_repo_dirs(VIM_REPO_URLS, BUNDLE_DPATH)
     # All modules in the bundle dir (even if not listed)
+    import os
     BUNDLE_DIRS = [join(BUNDLE_DPATH, name) for name in os.listdir(BUNDLE_DPATH)]
 
     cd(BUNDLE_DPATH)
@@ -126,7 +127,7 @@ def main():
     # HACK FOR JEDI
     cd(BUNDLE_DPATH)
     import os
-    os.system('submodule update --init --recursive')
+    os.system('git submodule update --init --recursive')
 
 
 if __name__ == '__main__':

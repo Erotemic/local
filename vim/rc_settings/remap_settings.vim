@@ -139,8 +139,8 @@ noremap <leader>r :source ~/local/vim/portable_vimrc<CR>
 
 let g:loaded_vimtk=0
 let g:loaded_vimtk_autoload=0
-source ~/.vim/bundle/vimtk/plugin/vimtk.vim
-source ~/.vim/bundle/vimtk/autoload/vimtk.vim
+source ~/local/vim/vimfiles/bundle/vimtk/plugin/vimtk.vim
+source ~/local/vim/vimfiles/bundle/vimtk/autoload/vimtk.vim
 
 noremap <leader>R :source ~/local/vim/portable_vimrc<CR>
 
