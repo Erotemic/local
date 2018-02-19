@@ -351,7 +351,8 @@ call QUICKOPEN_leader_tvio('R', '~/code/VIAME/packages/kwiver/sprokit')
 
 call QUICKOPEN_leader_tvio('i', '~/code/VIAME')
 
-"call QUICKOPEN_leader_tvio('c', '~/code/VIAME/plugins/camtrawl/python/camtrawl/processes.py')
+"call QUICKOPEN_leader_tvio('c', '~/code/VIAME/plugins/camtrawl/python/run_camtrawl.py')
+"call QUICKOPEN_leader_tvio('c', '~/code/VIAME/plugins/camtrawl/python/run_camtrawl.py')
 call QUICKOPEN_leader_tvio('8', '~/local/misc/kwiver_places.sh')
 call QUICKOPEN_leader_tvio('y', '~/local/misc/kwiver_places.sh')
 call QUICKOPEN_leader_tvio('x', '~/code/xdoctest/xdoctest/core.py')
