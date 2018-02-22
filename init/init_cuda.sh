@@ -200,7 +200,7 @@ change_cudnn_version(){
 
         home = expanduser('~')
         cudnn_tgz_fname = ver[(cuda_version, cudnn, osname)]
-        cudnn_tgz_fpath = join(home, 'tpl-archive', 'cuda', cudnn_tgz_fname)
+        cudnn_tgz_fpath = join(home, 'tpl-archive', 'cuda', 'cudnn', cudnn_tgz_fname)
         assert exists(cudnn_tgz_fpath), 'tar does not exist'
 
         suffix = splitext(cudnn_tgz_fname)[0].replace('cudnn-', '')
@@ -221,8 +221,8 @@ change_cudnn_version(){
         import shutil
         import glob
 
-        srcdir = join(cudnn_dir, 'cuda', 'cudnn')
-        dstdir = join(install_prefix, 'cuda')
+        srcdir = join(cudnn_dir, 'cuda')
+        dstdir = cuda_dpath
 
         print('Removing old CUDNN')
         iters = [
