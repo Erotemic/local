@@ -183,7 +183,7 @@ change_cudnn_version(){
         import ubelt as ub
 
         # SET TO CURRENT VERSION YOU WANT
-        cuda = '8.0'
+        cuda_version = '8.0'
         #cudnn = '7.0'
         cudnn = '$1'
         osname = 'linux'
@@ -196,10 +196,10 @@ change_cudnn_version(){
         ver[('8.0', '6.0', 'linux')] = 'cudnn-8.0-linux-x64-v6.0.tgz'
         ver[('8.0', '5.1', 'linux')] = 'cudnn-8.0-linux-x64-v5.1.tgz'
 
-        print('Unpacking cudnn {} for cuda {} on {}'.format(cudnn, cuda, osname))
+        print('Unpacking cudnn {} for cuda {} on {}'.format(cudnn, cuda_version, osname))
 
         home = expanduser('~')
-        cudnn_tgz_fname = ver[(cuda, cudnn, osname)]
+        cudnn_tgz_fname = ver[(cuda_version, cudnn, osname)]
         cudnn_tgz_fpath = join(home, 'tpl-archive', 'cuda', cudnn_tgz_fname)
         assert exists(cudnn_tgz_fpath), 'tar does not exist'
 
@@ -213,7 +213,7 @@ change_cudnn_version(){
 
         # Setup the local install paths for cudnn
         install_prefix = ub.ensuredir((home, '.local'))
-        cuda_dpath = ub.ensuredir((install_prefix, 'cuda'))
+        cuda_dpath = ub.ensuredir((install_prefix, 'cuda-' + cuda_version))
         include_dpath = ub.ensuredir((cuda_dpath, 'include'))
         lib_dpath = ub.ensuredir((cuda_dpath, 'lib64'))
 
