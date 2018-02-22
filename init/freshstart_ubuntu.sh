@@ -43,6 +43,8 @@ set_global_git_config(){
     git config --global alias.co checkout
     git config --global alias.submodpull 'submodule update --init --recursive'
     git config --global merge.conflictstyle diff3
+
+    git config --global core.autocrlf true
 }
 
 setup_kitware_ssh_keys(){

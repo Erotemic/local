@@ -661,3 +661,31 @@ permit_erotemic_gitrepo()
     #sed -i 's/https:\/\/github.com\/zmjjmz/git@github.com:zmjjmz/' .git/config
     #sed -i 's/https:\/\/github.com\//git@github.com:' .git/config
 }
+
+normalize_line_endings(){
+    __heredoc__ '''
+    find . -not -type d -exec file "{}" ";" | grep CRLF
+    sudo apt install dos2unix
+    '''
+    
+    for fpath in "$@"
+    do
+    #echo "fpath = $fpath"
+    tr -d '\r' < $fpath > _tempfile.out && mv _tempfile.out $fpath
+    done
+}
+
+normalize_newline_eof()
+{
+    for fpath in "$@"
+    do
+        if [ -z "$(tail -c 1 "$fpath")" ]
+        then
+            NOOP=
+        else
+            echo "No newline at end of fpath = $fpath"
+            echo "Fixing"
+            echo "" >> $fpath
+        fi
+    done
+}
