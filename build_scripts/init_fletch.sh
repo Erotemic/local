@@ -46,7 +46,9 @@ simple(){
     "
 
     # splitting out dependencies for easier visibility
+    # dont build opencv with cuda, I dont think we use it
     export OPENCV_DEPENDS="
+        -D fletch_ENABLE_OpenCV_CUDA:BOOL=False \
         -D fletch_ENABLE_ZLib:BOOL=True \
         -D fletch_ENABLE_VXL:BOOL=True \
         -D fletch_ENABLE_PNG:BOOL=True \

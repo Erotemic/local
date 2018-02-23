@@ -139,6 +139,11 @@ change_cuda_version()
     # Install desired cuda version
     uninstall_local_cuda
 
+    # NOTE: Installing these to the local directory will NOT install
+    # LIBCUDA.so, which needs to be installed via the NVIDIA drivers.
+    # This will live in your system folder (hopefully it is cross compatible
+    # between cuda versions)
+
     # version 8
     sh ~/tpl-archive/cuda/cuda-linux64-rel-8.0.61-21551265.run -prefix=$HOME/.local/cuda-8.0 -noprompt -manifest $HOME/.local/cuda-8.0/manifest_cuda.txt -nosymlink 
     ln -s $HOME/.local/cuda-8.0 $HOME/.local/cuda
@@ -223,6 +228,7 @@ change_cudnn_version(){
 
         srcdir = join(cudnn_dir, 'cuda')
         dstdir = cuda_dpath
+        print('Installing cuda to {}'.format(dstdir))
 
         print('Removing old CUDNN')
         iters = [
