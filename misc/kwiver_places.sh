@@ -57,6 +57,7 @@
 # vital python tests
 ~/code/VIAME/packages/kwiver/vital/bindings/python/vital/tests/CMakeLists.txt
 ~/code/VIAME/packages/kwiver/vital/bindings/python/run_tests.sh
+~/code/VIAME/packages/kwiver/vital/bindings/python/vital/types/bounding_box.cxx
 
 # SPROKIT 
 ~/code/VIAME/packages/kwiver/sprokit/processes/bindings/python/kwiver/util/vital_type_converters.py

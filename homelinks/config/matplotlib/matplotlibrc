@@ -2,3 +2,4 @@
 
 backend     : qt5agg
 backend.qt5 : PyQt5
+backend_fallback : True

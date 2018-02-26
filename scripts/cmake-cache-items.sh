@@ -1,16 +1,21 @@
 #!/bin/bash
-
-echo "
-
+__heredoc__(){
+    if [ "$noop" == "defined for some reason" ]
+    then
+        echo Why did you define noop to that particular value? Were you looking to see this message?
+    fi
+}
+__heredoc__ '''
 Usage:
     cmake-cache-items.sh ~/code/kwiver/build-py2-old
 
-    cmake \$(cmake-cache-items.sh <other-dir>) ..
-    cmake \$(cmake-cache-items.sh ~/code/fletch/build-py2) ..
-" > /dev/null
-    # cmake $(cmake-cache-items.sh <other-dir>) ..
-    # cmake $(cmake-cache-items.sh ~/code/fletch/build-py2) ..
-    # cmake $(cmake-cache-items.sh ~/code/kwiver/build-py2-old) -D fletch_DIR=$HOME/code/fletch/build-py2 ..
+    cmake $(cmake-cache-items.sh <other-dir>) ..
+    cmake $(cmake-cache-items.sh ~/code/fletch/build-py2) ..
+'''
+
+# cmake $(cmake-cache-items.sh <other-dir>) ..
+# cmake $(cmake-cache-items.sh ~/code/fletch/build-py2) ..
+# cmake $(cmake-cache-items.sh ~/code/kwiver/build-py2-old) -D fletch_DIR=$HOME/code/fletch/build-py2 ..
 
 if [ "$#" -eq 0 ]; then
     DPATH="."

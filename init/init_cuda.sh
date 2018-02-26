@@ -134,15 +134,22 @@ uninstall_local_cuda()
 
 change_cuda_version()
 {
+    # UNFINISHED
 
     # Install desired cuda version
     uninstall_local_cuda
 
+    # NOTE: Installing these to the local directory will NOT install
+    # LIBCUDA.so, which needs to be installed via the NVIDIA drivers.
+    # This will live in your system folder (hopefully it is cross compatible
+    # between cuda versions)
+
     # version 8
-    #sh ~/tpl-archive/cuda/cuda-linux64-rel-8.0.61-21551265.run -prefix=$HOME/.local/cuda -noprompt -manifest $HOME/.local/cuda/manifest_cuda.txt -nosymlink 
+    sh ~/tpl-archive/cuda/cuda-linux64-rel-8.0.61-21551265.run -prefix=$HOME/.local/cuda-8.0 -noprompt -manifest $HOME/.local/cuda-8.0/manifest_cuda.txt -nosymlink 
+    ln -s $HOME/.local/cuda-8.0 $HOME/.local/cuda
 
     # version 9
-    sh ~/tpl-archive/cuda/cuda-linux.9.1.85-23083092.run -prefix=$HOME/.local/cuda -noprompt -manifest $HOME/.local/cuda/manifest_cuda.txt -nosymlink 
+    sh ~/tpl-archive/cuda/cuda-linux.9.1.85-23083092.run -prefix=$HOME/.local/cuda-9.0 -noprompt -manifest $HOME/.local/cuda/manifest_cuda.txt -nosymlink 
 
     # IS there any way to get these to work locally?
     sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run --help
@@ -167,20 +174,21 @@ prep_cuda_runfile(){
 
 
 change_cudnn_version(){
-    "
+    __heredoc__ '''
         source ~/local/init/init_cuda.sh
         change_cudnn_version 7.0
         change_cudnn_version 6.0
         change_cudnn_version 5.1
 
         current_cudnn_info
-    "
+    '''
+    # THIS WORKS
     python -c "$(codeblock "
         from os.path import join, exists, expanduser, splitext, relpath
         import ubelt as ub
 
         # SET TO CURRENT VERSION YOU WANT
-        cuda = '8.0'
+        cuda_version = '8.0'
         #cudnn = '7.0'
         cudnn = '$1'
         osname = 'linux'
@@ -193,12 +201,12 @@ change_cudnn_version(){
         ver[('8.0', '6.0', 'linux')] = 'cudnn-8.0-linux-x64-v6.0.tgz'
         ver[('8.0', '5.1', 'linux')] = 'cudnn-8.0-linux-x64-v5.1.tgz'
 
-        print('Unpacking cudnn {} for cuda {} on {}'.format(cudnn, cuda, osname))
+        print('Unpacking cudnn {} for cuda {} on {}'.format(cudnn, cuda_version, osname))
 
         home = expanduser('~')
-        cudnn_tgz_fname = ver[(cuda, cudnn, osname)]
-        cudnn_tgz_fpath = join(home, 'tpl-archive', 'cuda', cudnn_tgz_fname)
-        assert exists(cudnn_tgz_fpath)
+        cudnn_tgz_fname = ver[(cuda_version, cudnn, osname)]
+        cudnn_tgz_fpath = join(home, 'tpl-archive', 'cuda', 'cudnn', cudnn_tgz_fname)
+        assert exists(cudnn_tgz_fpath), 'tar does not exist'
 
         suffix = splitext(cudnn_tgz_fname)[0].replace('cudnn-', '')
 
@@ -210,7 +218,7 @@ change_cudnn_version(){
 
         # Setup the local install paths for cudnn
         install_prefix = ub.ensuredir((home, '.local'))
-        cuda_dpath = ub.ensuredir((install_prefix, 'cuda'))
+        cuda_dpath = ub.ensuredir((install_prefix, 'cuda-' + cuda_version))
         include_dpath = ub.ensuredir((cuda_dpath, 'include'))
         lib_dpath = ub.ensuredir((cuda_dpath, 'lib64'))
 
@@ -219,7 +227,8 @@ change_cudnn_version(){
         import glob
 
         srcdir = join(cudnn_dir, 'cuda')
-        dstdir = join(install_prefix, 'cuda')
+        dstdir = cuda_dpath
+        print('Installing cuda to {}'.format(dstdir))
 
         print('Removing old CUDNN')
         iters = [
@@ -453,6 +462,9 @@ fix-bad-symlinks(){
     sudo rm libcudnn.so.
     sudo ln -s libcudnn.so libcudnn.so.7
     sudo ln -s libcudnn.so libcudnn.so.7.0.1
+
+
+    # IF CUDA DIR DOES NOT HAVE PROPER SYMLINKS
 
 }
 

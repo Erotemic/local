@@ -1,5 +1,9 @@
 #!/bin/bash
 
+prereq(){
+    sudo apt install libreadline-dev
+}
+
 
 simple(){
     cd ~/code
@@ -42,7 +46,9 @@ simple(){
     "
 
     # splitting out dependencies for easier visibility
+    # dont build opencv with cuda, I dont think we use it
     export OPENCV_DEPENDS="
+        -D fletch_ENABLE_OpenCV_CUDA:BOOL=False \
         -D fletch_ENABLE_ZLib:BOOL=True \
         -D fletch_ENABLE_VXL:BOOL=True \
         -D fletch_ENABLE_PNG:BOOL=True \
@@ -66,11 +72,21 @@ simple(){
         -D fletch_ENABLE_GFlags:BOOL=True"
 
     export OTHER_OPTIONS="
+        -D fletch_ENABLE_PostgreSQL:BOOL=True \
         -D fletch_ENABLE_pybind11:BOOL=True \
         -D fletch_ENABLE_GTest:BOOL=True \
         -D fletch_ENABLE_FFmpeg:BOOL=True \
         -D fletch_ENABLE_Eigen:BOOL=True \
+        -D fletch_ENABLE_log4cplus:BOOL=True \
         -D fletch_ENABLE_Ceres=True"
+
+    export BIG_OPTIONS="
+        -D fletch_ENABLE_GeographicLib=True \
+        -D fletch_ENABLE_VTK:BOOL=ON \
+        -D fletch_ENABLE_PROJ4:BOOL=ON \
+        -D fletch_ENABLE_libkml:BOOL=ON \
+        -D fletch_ENABLE_TinyXML:BOOL=True \
+        -D fletch_ENABLE_Qt:BOOL=ON"
 
     # Setup a build directory and build fletch
     FLETCH_BUILD=$HOME/code/fletch/build-py$PYTHON_VERSION
@@ -81,11 +97,12 @@ simple(){
         -D fletch_BUILD_WITH_CUDA:BOOL=True \
         -D fletch_BUILD_WITH_CUDNN:BOOL=True \
         -D fletch_BUILD_WITH_PYTHON:BOOL=True \
+        -D fletch_ENABLE_Caffe:BOOL=True \
         -D fletch_PYTHON_MAJOR_VERSION=$PYTHON_MAJOR_VERSION \
         -D CMAKE_INSTALL_PREFIX=$LOCAL_PREFIX \
         -D fletch_PYTHON_MAJOR_VERSION=3 \
         -D OpenCV_SELECT_VERSION=$OpenCV_SELECT_VERSION \
-        $OPENCV_DEPENDS $CAFFE_DEPENDS $OTHER_OPTIONS \
+        $OPENCV_DEPENDS $CAFFE_DEPENDS $OTHER_OPTIONS $BIG_OPTIONS \
         ..
 
     NCPUS=$(grep -c ^processor /proc/cpuinfo)
