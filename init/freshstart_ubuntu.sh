@@ -1228,4 +1228,7 @@ resetup_ooo_after_os_reinstall()
     sudo sh -c "echo \"$COMP_BUBBLE\" >> /etc/issue.net"
     cat /etc/issue.net 
     sudo sed -i 's/#AuthorizedKeysFile\t%h\/.ssh\/authorized_keys/AuthorizedKeysFile\t%h\/.ssh\/authorized_keys/' /etc/ssh/sshd_config
+
+
+    # be sure to do fix_monitor_positions in ubuntu_core_packages.sh
 }
