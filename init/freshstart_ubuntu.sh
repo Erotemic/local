@@ -1,5 +1,6 @@
 source $HOME/local/init/utils.sh
 
+
 simple_setup_manual()
 {
     sudo apt install git -y
@@ -1167,4 +1168,62 @@ gnome_settings()
 jupyter_mime_association(){
     python -m utool.util_ubuntu --exec-add_new_mimetype_association --mime-name=ipynb+json --ext=.ipynb --exe-fpath=/usr/local/bin/ipynb
     python -m utool.util_ubuntu --exec-add_new_mimetype_association --mime-name=ipynb+json --ext=.ipynb --exe-fpath=jupyter-notebook --force
+}
+
+
+
+big_apt_install(){
+
+    sudo apt install -y astyle automake autotools-dev build-essential curl expect exuberant-ctags g++ gcc gfortran gitg gparted graphviz hardinfo hdfview htop imagemagick libatlas-base-dev libatlas-base-dev libav-tools libblas-dev libboost-all-dev libevent-dev libfftw3-dev libfreeimage-dev libfreetype6-dev libgeos-dev libgflags-dev libgoogle-glog-dev libjpeg-dev libjpeg62 liblapack-dev libleveldb-dev liblmdb-dev libncurses5-dev libopencv-dev libopenjpeg-dev libpng12-dev libprotobuf-dev libpthread-stubs0-dev libsnappy-dev libtiff5-dev libtk-img-dev lm-sensors mdadm okular openssh-server p7zip-full patchutils pkg-config postgresql protobuf-compiler python-dev python3-dev python3-tk remmina rsync sqlitebrowser sshfs symlinks synaptic terminator tmux tree valgrind vim-gnome vlc wmctrl xclip xdotool xsel zlib1g-dev initramfs-tools gdisk openssh-server libhdf5-serial-dev libhdf5-openmpi-dev xbacklight hdf5-tools libsqlite3-dev sqlite3 libsqlite3 sysstat
+    
+
+    sudo apt install remmina remmina-plugin-rdp libfreerdp-plugins-standard -y
+    # Add self to fuse group
+    sudo groupadd fuse
+    sudo usermod -aG fuse $USER
+    sudo chmod g+rw /dev/fuse
+    sudo chgrp fuse /dev/fuse
+
+    sudo add-apt-repository ppa:obsproject/obs-studio -y
+    sudo apt update && sudo apt install obs-studio -y
+
+    sudo apt -y install nautilus-dropbox
+
+    # Google Chrome
+    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+    sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+    sudo apt update -y
+    sudo apt install -y google-chrome-stable 
+
+    sudo add-apt-repository ppa:unit193/encryption -y
+    sudo apt update
+    sudo apt install veracrypt -y
+
+
+}
+
+resetup_ooo_after_os_reinstall()
+{
+    # https://ubuntuforums.org/showthread.php?t=2002217
+    # if you reinstalled your OS you just need to tell the system about the
+    # raid to get things working again
+    sudo apt-get install gdisk mdadm rsync -y
+    # Simply scan for your preconfigured raid
+    sudo mdadm --assemble --scan 
+    # Mount the RAID (temporary. modify fstab to automount)
+    sudo mkdir -p /media/joncrall/raid
+    sudo mount /dev/md0 /media/joncrall/raid
+    # Modify fstab so RAID auto-mounts at startup
+    sudo sh -c "echo '# appended to fstab by by install scripts' >> /etc/fstab"
+    sudo sh -c "echo 'UUID=4bf557b1-cbf7-414c-abde-a09a25e351a6  /media/joncrall/raid              ext4    defaults        0 0' >> /etc/fstab"
+
+    sudo ln -s /media/joncrall/raid /raid
+
+
+    # small change to default sshd_config
+    # Allow authorized keys
+    COMP_BUBBLE=$(python -c "import utool as ut; print(ut.bubbletext(ut.get_computer_name()))")
+    sudo sh -c "echo \"$COMP_BUBBLE\" >> /etc/issue.net"
+    cat /etc/issue.net 
+    sudo sed -i 's/#AuthorizedKeysFile\t%h\/.ssh\/authorized_keys/AuthorizedKeysFile\t%h\/.ssh\/authorized_keys/' /etc/ssh/sshd_config
 }

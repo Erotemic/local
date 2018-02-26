@@ -41,6 +41,25 @@
 # SATA3G_3      |  /dev/sdc       |  Baracuda13 no4 |  Z1E1V25E
 
 
+resetup_raid_after_os_reinstall()
+{
+    # https://ubuntuforums.org/showthread.php?t=2002217
+    # if you reinstalled your OS you just need to tell the system about the
+    # raid to get things working again
+    sudo apt-get install gdisk mdadm rsync -y
+    # Simply scan for your preconfigured raid
+    sudo mdadm --assemble --scan 
+    # Mount the RAID (temporary. modify fstab to automount)
+    sudo mkdir -p /media/joncrall/raid
+    sudo mount /dev/md0 /media/joncrall/raid
+    # Modify fstab so RAID auto-mounts at startup
+    sudo sh -c "echo '# appended to fstab by by install scripts' >> /etc/fstab"
+    sudo sh -c "echo 'UUID=4bf557b1-cbf7-414c-abde-a09a25e351a6  /media/joncrall/raid              ext4    defaults        0 0' >> /etc/fstab"
+
+    sudo ln -s /media/joncrall/raid /raid
+}
+
+
 
 # Show all devices wheter or not they are mounted 
 lsblk 

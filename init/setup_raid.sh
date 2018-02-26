@@ -13,7 +13,7 @@ resetup_raid_after_os_reinstall()
     # Mount the RAID (temporary. modify fstab to automount)
     sudo mount /dev/md0 /media/raid
     # Modify fstab so RAID auto-mounts at startup
-    echo "/dev/md0    /media/raid       ext4  defaults     1  2" >> /etc/fstab
+    sudo sh -c "echo '/dev/md0    /media/raid       ext4  defaults     1  2' >> /etc/fstab"
 }
 
 #=================
