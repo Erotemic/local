@@ -73,7 +73,7 @@ au MyVimRC SwapExists * let v:swapchoice = 'e'
 
 if exists('+colorcolumn')
     :call AuFileType('setlocal colorcolumn=', 'text', 'markdown', 'tex')
-    :call AuFileType('setlocal colorcolumn=81', 'python', 'vim', 'cpp')
+    :call AuFileType('setlocal colorcolumn=81', 'python', 'cython', 'vim', 'cpp')
     "au FileType text setlocal colorcolumn=
     "au FileType python setlocal colorcolumn=81
     "au FileType vim setlocal colorcolumn=81

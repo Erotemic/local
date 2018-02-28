@@ -335,6 +335,26 @@ flake8_args_list = [
 ]
 flake8_args = ' '.join(flake8_args_list)
 vim.command('let g:syntastic_python_flake8_args = "%s"' % flake8_args)
+
+
+# Needed to hack syntastic cython checker
+vim.command('let g:syntastic_cython_checkers = ["flake8"]')
+cython_flake8_errors = flake8_errors + [
+    'E901', 
+    'E225',
+    'E226',
+    'E227',
+    'E251',
+    'E402',
+    'E999',
+]
+cython_flake8_args_list = [
+    '--max-line-length 79',
+    #'--max-line-length 100',
+    '--ignore=' + ','.join(cython_flake8_errors)
+]
+cython_flake8_args = ' '.join(cython_flake8_args_list)
+vim.command('let g:syntastic_cython_flake8_args = "%s"' % cython_flake8_args)
 EOF
 
 

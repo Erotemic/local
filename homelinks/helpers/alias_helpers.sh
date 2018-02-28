@@ -497,9 +497,14 @@ debug_paths(){
 }
 
 
-
 deactivate_venv()
 {
+
+    # https://stackoverflow.com/questions/85880/determine-if-a-function-exists-in-bash
+    if [ -n "$(type -t conda)" ] && [ "$(type -t conda)" = function ]; then
+        conda deactivate
+    fi
+
     OLD_VENV=$VIRTUAL_ENV
     # echo "deactivate_venv OLD_VENV=$OLD_VENV"
     if [ "$OLD_VENV" != "" ]; then
@@ -539,6 +544,20 @@ workon_py()
         # echo "new venv doesn't exist"
 }
 
+
+workon_conda()
+{
+    # Wrapper around conda activate that handles deactivating any existing
+    # python virtualenvs
+    NEW_VENV=$1
+    if [ -d $_CONDA_ROOT/envs/$NEW_VENV ]; then
+        # Ensure the old env is deactivated
+        deactivate_venv
+        # Activate the new venv
+        conda activate $NEW_VENV
+    fi
+}
+
 workon_pysys()
 {
     deactivate_venv
@@ -563,6 +582,14 @@ workon_py3()
     workon_py "$HOME/venv3"
 }
 alias we-py3=workon_py3
+
+
+workon_conda3()
+{
+    workon_conda cenv3
+}
+alias we-conda3=workon_conda3
+
 
 workon_py37()
 {

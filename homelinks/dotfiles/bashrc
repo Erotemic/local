@@ -128,6 +128,14 @@ if [ -d "/usr/local/cuda" ]; then
 fi
 
 
+if [ -f "$HOME/.local/conda/etc/profile.d/conda.sh" ]; then
+    # Add the conda command to the environment if conda is installed 
+    # (note this does not modify the path or add conda python)
+    source $HOME/.local/conda/etc/profile.d/conda.sh
+    complete -W "activate env clean config create help info install list package remove uninstall search update upgrade -h --help -V --version" "conda"
+fi
+
+
 # My standard environment variables
 if [[ "$HOSTNAME" == "ibeis.cs.uic.edu"  ]]; then 
     export CODE_DIR=/opt/ibeis

@@ -605,6 +605,26 @@ setup_venv2(){
 }
 
 
+setup_conda_env(){
+    mkdir -p ~/tmp
+    cd ~/tmp
+    CONDA_INSTALL_SCRIPT=Miniconda3-latest-Linux-x86_64.sh
+    curl https://repo.continuum.io/miniconda/$CONDA_INSTALL_SCRIPT > $CONDA_INSTALL_SCRIPT
+    chmod +x $CONDA_INSTALL_SCRIPT 
+
+    # Install miniconda to user local directory
+    _CONDA_ROOT=$HOME/.local/conda
+    sh $CONDA_INSTALL_SCRIPT -b -p $_CONDA_ROOT
+
+    source $_CONDA_ROOT/etc/profile.d/conda.sh
+
+    conda update -n base conda
+    conda create -y -n cenv3 python=3
+    conda activate cenv3
+    #conda remove --name cenv3 --all
+}
+
+
 #setup_venv2(){
 #    echo "
 #    CommandLine:
