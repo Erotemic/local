@@ -1,5 +1,10 @@
 ubuntu_system_deps(){
     sudo apt-get install -y google-mock
+
+    # following can be optional if you turn them off in cmake or install via fletch
+    sudo apt install -y liblmdb-dev
+    sudo apt install -y libgflags-dev
+    sudo apt install -y libgoogle-glog-dev
 }
 
 # References:
@@ -47,21 +52,52 @@ if []; then
 fi
 
 
+build_withpip(){
+    CAFFE2_CMAKE_ARGS="
+      -D USE_MPI=Off 
+      -D USE_METAL=Off 
+      -D USE_GLOO=Off 
+      -D USE_GLOG=Off 
+      -D USE_GFLAGS=Off 
+      -D USE_ROCKSDB=Off 
+      -D USE_MOBILE_OPENGL=Off 
+      -D USE_CUDA=On"
+
+    cd ~/code/caffe2
+    CMAKE_ARGS="$CAFFE2_CMAKE_ARGS" python setup.py build
+    #pip install -e $HOME/code/caffe2
+}
+
+
 build_gpu(){
     # BUILD WITH GPU
     cd ~/code/caffe2
     mkdir -p ~/code/caffe2/build_py3
     cd ~/code/caffe2/build_py3
 
+    CAFFE2_CMAKE_ARGS="
+      -D USE_MPI=Off 
+      -D USE_METAL=Off 
+      -D USE_GLOO=Off 
+      -D USE_GLOG=Off 
+      -D USE_GFLAGS=Off 
+      -D USE_ROCKSDB=Off 
+      -D USE_MOBILE_OPENGL=Off 
+      -D USE_CUDA=On"
+
+    CAFFE2_CMAKE_ARGS="
+      -D USE_GLOG=On 
+      -D USE_GFLAGS=On 
+      -D USE_MPI=Off 
+      -D USE_METAL=Off 
+      -D USE_GLOO=Off 
+      -D USE_ROCKSDB=Off 
+      -D USE_MOBILE_OPENGL=Off 
+      -D USE_CUDA=On"
+
+
     cmake -G "Unix Makefiles" \
-      -D USE_MPI=Off \
-      -D USE_METAL=Off \
-      -D USE_GLOO=Off \
-      -D USE_GLOG=Off \
-      -D USE_GFLAGS=Off \
-      -D USE_ROCKSDB=Off \
-      -D USE_MOBILE_OPENGL=Off \
-      -D USE_CUDA=On \
+      $CAFFE2_CMAKE_ARGS \
       -D CMAKE_INSTALL_PREFIX=$HOME/venv3 \
       -D PYTHON_LIBRARY="$VENV_LIB" \
       -D PYTHON_INCLUDE_DIR="$VENV_INCLUDE" \
@@ -123,6 +159,13 @@ cleanup(){
     rm -rf $PREFIX/include/caffe2
 
     pip uninstall onnx_caffe2
+
+    # REMOVE caffe
+
+    SITE_DIR=$(python -c "from distutils import sysconfig; print(sysconfig.get_python_lib(prefix=''))")
+    PREFIX=$(python -c "import sys; print(sys.prefix)")
+    rm -rf $PREFIX/$SITE_DIR/caffe2
+    rm -rf $PREFIX/$SITE_DIR/caffe
 }
 
 test(){
