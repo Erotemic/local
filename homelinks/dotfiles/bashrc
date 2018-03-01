@@ -99,6 +99,11 @@ if [ -d "$HOME/.local/cuda" ]; then
         export CUDNN_LIBRARY=$CUDNN_LIB_DIR/libcudnn.so
         export CUDNN_LIBRARIES=$CUDNN_LIBRARY
     fi
+elif [ -d "/usr/local/cuda" ]; then
+    #export PATH=$PATH:/usr/local/cuda/bin
+    export CPATH=$CPATH:/usr/local/cuda/include
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64
+    #export LIBRARY_PATH=/usr/local/cuda/lib64
 fi
 
 
@@ -120,12 +125,6 @@ export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig:$PKG_CONFIG_PATH
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:
 
-if [ -d "/usr/local/cuda" ]; then
-    #export PATH=$PATH:/usr/local/cuda/bin
-    export CPATH=$CPATH:/usr/local/cuda/include
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64
-    #export LIBRARY_PATH=/usr/local/cuda/lib64
-fi
 
 
 if [ -f "$HOME/.local/conda/etc/profile.d/conda.sh" ]; then
