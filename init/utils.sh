@@ -98,3 +98,28 @@ codeblock()
     fi
 }
 
+
+
+writeto()
+{
+    fpath=$1
+    text=$2
+    fixed_text=$(codeblock "$text")
+    sh -c "echo \"$fixed_text\" > $fpath"
+}
+
+
+sudo_writeto()
+{
+    fpath=$1
+    text=$2
+    fixed_text=$(codeblock "$text")
+    # IS THERE A BETTER WAY TO FORWARD AN ENV TO SUDO SO sudo writeto works
+    sudo sh -c "echo \"$fixed_text\" > $fpath"
+}
+
+# Can we wrap sudo such we can allow utils to be used?
+#util_sudo(){
+#    echo "$@"
+#    #sudo bash -c "source $HOME/local/init/utils.sh; $@"
+#}

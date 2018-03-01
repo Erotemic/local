@@ -1,3 +1,5 @@
+source $HOME/local/init/utils.sh
+
 common_paths()
 {
     cat ~/local/init/ensure_vim_plugins.py
@@ -1715,4 +1717,3 @@ move_hdd(){
     cat /mnt/new_disk2/etc/fstab | grep "$NEW_UUID2" 
     cat /mnt/new_disk2/etc/fstab | grep "$NEW_UUID3" 
 }
-

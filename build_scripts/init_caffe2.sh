@@ -15,7 +15,8 @@ cd ~/code
 git clone --recursive https://github.com/caffe2/caffe2.git && cd caffe2
 
 cd ~/code/caffe2
-git pull
+git checkout v0.8.1
+#git pull
 git submodule update --init --recursive
 
 # make && cd build && sudo make install
@@ -104,6 +105,7 @@ build_gpu(){
       -D USE_METAL=Off 
       -D BUILD_CUSTOM_PROTOBUF=ON
       -D USE_GLOO=Off 
+      -D BUILD_TEST=Off 
       -D USE_ROCKSDB=Off 
       -D BLAS=OpenBLAS 
       -D CMAKE_EXPORT_NO_PACKAGE_REGISTRY=True
@@ -112,7 +114,8 @@ build_gpu(){
       -D USE_MOBILE_OPENGL=Off 
       -D USE_CUDA=On"
 
-    rm CMakeCache.txt && cmake -G "Unix Makefiles" \
+    #rm CMakeCache.txt && 
+    cmake -G "Unix Makefiles" \
       $CAFFE2_CMAKE_ARGS \
       -D CMAKE_INSTALL_PREFIX=$HOME/venv3 \
       -D PYTHON_LIBRARY="$VENV_LIB" \
@@ -190,4 +193,73 @@ test(){
     python -c 'from caffe2.python import core'
     python -c 'from caffe2.python import core' 2>/dev/null && echo "Success" || echo "Failure"
     python -m caffe2.python.operator_test.relu_op_test
+}
+
+
+build_caffe2_via_fletch(){
+    cd ~/code
+    if [ ! -d "$HOME/code/fletch" ]; then
+        git clone https://github.com/Erotemic/fletch.git ~/code/fletch
+        cd ~/code/fletch
+        git remote add source https://github.com/Kitware/fletch.git
+        git pull source master
+    fi
+
+    LOCAL_PREFIX=$VIRTUAL_ENV/
+
+    # splitting out dependencies for easier visibility
+    export OPENCV_DEPENDS=" \
+        -D OpenCV_SELECT_VERSION=3.4.0 \
+        -D fletch_ENABLE_OpenCV_CUDA:BOOL=False \
+        -D fletch_ENABLE_ZLib:BOOL=True \
+        -D fletch_ENABLE_VXL:BOOL=True \
+        -D fletch_ENABLE_PNG:BOOL=True \
+        -D fletch_ENABLE_libtiff:BOOL=True \
+        -D fletch_ENABLE_libjson:BOOL=True \
+        -D fletch_ENABLE_libjpeg-turbo:BOOL=True \
+        -D fletch_ENABLE_libxml2:BOOL=True"
+
+    export CAFFE2_DEPENDS=" \
+        -D fletch_ENABLE_CUB:BOOL=True \
+        -D fletch_ENABLE_Caffe2:BOOL=True \
+        -D fletch_ENABLE_Eigen:BOOL=True \
+        -D fletch_ENABLE_Protobuf:BOOL=True \
+        -D Protobuf_SELECT_VERSION=3.4.1 \
+        -D fletch_ENABLE_OpenBLAS:BOOL=True \
+        -D fletch_ENABLE_OpenCV:BOOL=True \
+        -D fletch_ENABLE_Snappy:BOOL=True \
+        -D fletch_ENABLE_SuiteSparse:BOOL=True \
+        -D fletch_ENABLE_LevelDB:BOOL=True \
+        -D fletch_ENABLE_LMDB:BOOL=True \
+        -D fletch_ENABLE_GLog:BOOL=True \
+        -D fletch_ENABLE_GFlags:BOOL=True \
+        -D fletch_ENABLE_GTest:BOOL=True \
+        -D fletch_ENABLE_pybind11:BOOL=True \
+        -D fletch_ENABLE_FFmpeg:BOOL=True \
+        -D fletch_ENABLE_Boost:BOOL=True"
+
+    export PYTHON_DEPENDS=" \
+        -D fletch_BUILD_WITH_PYTHON:BOOL=True \
+        -D fletch_PYTHON_MAJOR_VERSION=3"
+    echo "PYTHON_DEPENDS = $PYTHON_DEPENDS"
+
+    export OTHER_DEPENDS=" \
+        -D fletch_BUILD_WITH_CUDA:BOOL=True \
+        -D fletch_BUILD_WITH_CUDNN:BOOL=True \
+        -D CMAKE_INSTALL_PREFIX=$LOCAL_PREFIX"
+
+    FLETCH_CMAKE_ARGS="$OTHER_DEPENDS $PYTHON_DEPENDS $OPENCV_DEPENDS $CAFFE2_DEPENDS"
+    
+    # Setup a build directory and build fletch
+    FLETCH_BUILD=$HOME/code/fletch/build-caffe2
+    mkdir -p $FLETCH_BUILD
+    cd $FLETCH_BUILD
+
+    cmake -G "Unix Makefiles" $FLETCH_CMAKE_ARGS ..
+
+    NCPUS=$(grep -c ^processor /proc/cpuinfo)
+    make -j$NCPUS
+
+    # TEST
+    #(cd ../python && python -c "import caffe")
 }

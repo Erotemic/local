@@ -38,38 +38,41 @@ def get_latest_cmake_url():
     url = url.replace('.sh', '.tar.gz')
     return url
 
-# url_override = 'https://cmake.org/files/v3.8/cmake-3.8.2-Linux-x86_64.tar.gz'
-url_override = None
-if url_override is not None:
-    url = url_override
-else:
-    url = get_latest_cmake_url()
 
-dname = splitext(basename(url))[0].replace('.tar', '')
+def main():
+    # url_override = 'https://cmake.org/files/v3.8/cmake-3.8.2-Linux-x86_64.tar.gz'
+    url_override = None
+    if url_override is not None:
+        url = url_override
+    else:
+        url = get_latest_cmake_url()
 
-install_prefix = join(os.path.expanduser('~'), '.local')
-tmpdir = join(os.path.expanduser('~'), 'tmp', 'cmake', dname)
-os.makedirs(install_prefix, exist_ok=True)
-os.makedirs(tmpdir, exist_ok=True)
-os.chdir(tmpdir)
+    dname = splitext(basename(url))[0].replace('.tar', '')
 
-# cmake_unzipped_fpath = ut.grab_zipped_url(url)
-os.system('wget ' + url)
-os.system('tar -xf cmake-*.tar.gz')
+    install_prefix = join(os.path.expanduser('~'), '.local')
+    tmpdir = join(os.path.expanduser('~'), 'tmp', 'cmake', dname)
+    os.makedirs(install_prefix, exist_ok=True)
+    os.makedirs(tmpdir, exist_ok=True)
+    os.chdir(tmpdir)
 
-cmake_unzipped_fpath = sorted(glob.glob('cmake-*'))[0]
+    os.system('wget ' + url)
+    os.system('tar -xf cmake-*.tar.gz')
 
-for dname in ['bin', 'doc', 'man', 'share']:
-    install_dst = join(install_prefix, dname)
-    install_src = join(cmake_unzipped_fpath, dname)
-    # FIXME: this broke
-    #ut.util_path.copy(install_src, install_dst)
-    # HACK AROUND IT
-    from os.path import dirname
-    cmd = str('cp -r "' + install_src + '" "' + dirname(install_dst) + '"')
-    print(cmd)
-    os.system(cmd)
+    cmake_unzipped_fpath = sorted(glob.glob('cmake-*'))[0]
+    for dname in ['bin', 'doc', 'man', 'share']:
+        install_dst = join(install_prefix, dname)
+        install_src = join(cmake_unzipped_fpath, dname)
+        # HACK AROUND IT
+        from os.path import dirname
+        cmd = str('cp -r "' + install_src + '" "' + dirname(install_dst) + '"')
+        print(cmd)
+        os.system(cmd)
+    print(cmake_unzipped_fpath)
 
-    # ut.cmd(cmd)
-    #os.system(cmd)
-print(cmake_unzipped_fpath)
+
+if __name__ == '__main__':
+    r"""
+    CommandLine:
+        python ~/local/build_scripts/init_cmake_latest.py
+    """
+    main()

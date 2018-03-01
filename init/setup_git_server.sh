@@ -1,5 +1,9 @@
+source $HOME/local/init/utils.sh
+
+
 setup_gitserver()
 {
+    # https://git-scm.com/book/en/v2/Git-on-the-Server-Setting-Up-the-Server
     sudo adduser git
     # Set git user password
     sudo passwd git
@@ -9,6 +13,7 @@ setup_gitserver()
     # add yourself as an authorized user
     sudo touch ~git/.ssh/authorized_keys
     sudo sh -c "cat $HOME/.ssh/id_rsa.pub >> ~git/.ssh/authorized_keys"
+    sudo sh -c "cat $HOME/.ssh/id_joncrall_kitware_rsa.pub >> ~git/.ssh/authorized_keys"
 
     # Change shell so nasty things can't happen on the relatively open git server
     sudo chsh -s /bin/rbash git
@@ -54,6 +59,38 @@ clone_bare_repo(){
     ssh-copy-id git@<hostaddr>
     ssh-copy-id git@calculex.kitware.com
     "
+}
+
+init_bare_repo(){ 
+    cd ~git sudo su git git init --bare <reponame>.git 
+}
+
+setup_unauthenticated_access(){
+    # allow checkout via http
+    # https://git-scm.com/book/en/v2/Git-on-the-Server-Git-Daemon
+
+    source $HOME/local/init/utils.sh
+    util_sudo writeto /etc/systemd/system/git-daemon.service "
+        [Unit]
+        Description=Start Git Daemon
+
+        [Service]
+        ExecStart=/usr/bin/git daemon --reuseaddr --base-path=/home/git/ /home/git/
+
+        Restart=always
+        RestartSec=500ms
+
+        StandardOutput=syslog
+        StandardError=syslog
+        SyslogIdentifier=git-daemon
+
+        User=git
+        Group=git
+
+        [Install]
+        WantedBy=multi-user.target
+    "
+    
 }
 
 

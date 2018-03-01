@@ -717,3 +717,10 @@ normalize_newline_eof()
         fi
     done
 }
+
+
+gitk(){
+    # always spawn gitk in the background 
+    GITK_EXE="$(which gitk)"
+    $GITK_EXE $@&
+}
