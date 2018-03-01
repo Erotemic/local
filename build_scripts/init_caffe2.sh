@@ -5,6 +5,8 @@ ubuntu_system_deps(){
     sudo apt install -y liblmdb-dev
     sudo apt install -y libgflags-dev
     sudo apt install -y libgoogle-glog-dev
+
+    # NOTE: the ubuntu 16.04 system protobuf is too old, need to build a newer version
 }
 
 # References:
@@ -54,12 +56,17 @@ fi
 
 build_withpip(){
     CAFFE2_CMAKE_ARGS="
+      -D CMAKE_EXPORT_NO_PACKAGE_REGISTRY=True
+      -D CMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY=True
+      -D CMAKE_FIND_PACKAGE_NO_SYSTEM_PACKAGE_REGISTRY=True
       -D USE_MPI=Off 
       -D USE_METAL=Off 
       -D USE_GLOO=Off 
       -D USE_GLOG=Off 
       -D USE_GFLAGS=Off 
       -D USE_ROCKSDB=Off 
+      -D BUILD_CUSTOM_PROTOBUF=ON
+      -D BLAS=OpenBLAS 
       -D USE_MOBILE_OPENGL=Off 
       -D USE_CUDA=On"
 
@@ -75,28 +82,37 @@ build_gpu(){
     mkdir -p ~/code/caffe2/build_py3
     cd ~/code/caffe2/build_py3
 
-    CAFFE2_CMAKE_ARGS="
-      -D USE_MPI=Off 
-      -D USE_METAL=Off 
-      -D USE_GLOO=Off 
-      -D USE_GLOG=Off 
-      -D USE_GFLAGS=Off 
-      -D USE_ROCKSDB=Off 
-      -D USE_MOBILE_OPENGL=Off 
-      -D USE_CUDA=On"
+    #CAFFE2_CMAKE_ARGS="
+    #  -D USE_MPI=Off 
+    #  -D USE_METAL=Off 
+    #  -D USE_GLOO=Off 
+    #  -D USE_GLOG=Off 
+    #  -D BUILD_CUSTOM_PROTOBUF=ON
+    #  -D USE_GFLAGS=Off 
+    #  -D USE_ROCKSDB=Off 
+    #  -D USE_MOBILE_OPENGL=Off 
+    #  -D BLAS=OpenBLAS 
+    #  -D CMAKE_EXPORT_NO_PACKAGE_REGISTRY=True
+    #  -D CMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY=True
+    #  -D CMAKE_FIND_PACKAGE_NO_SYSTEM_PACKAGE_REGISTRY=True
+    #  -D USE_CUDA=On"
 
     CAFFE2_CMAKE_ARGS="
       -D USE_GLOG=On 
       -D USE_GFLAGS=On 
       -D USE_MPI=Off 
       -D USE_METAL=Off 
+      -D BUILD_CUSTOM_PROTOBUF=ON
       -D USE_GLOO=Off 
       -D USE_ROCKSDB=Off 
+      -D BLAS=OpenBLAS 
+      -D CMAKE_EXPORT_NO_PACKAGE_REGISTRY=True
+      -D CMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY=True
+      -D CMAKE_FIND_PACKAGE_NO_SYSTEM_PACKAGE_REGISTRY=True
       -D USE_MOBILE_OPENGL=Off 
       -D USE_CUDA=On"
 
-
-    cmake -G "Unix Makefiles" \
+    rm CMakeCache.txt && cmake -G "Unix Makefiles" \
       $CAFFE2_CMAKE_ARGS \
       -D CMAKE_INSTALL_PREFIX=$HOME/venv3 \
       -D PYTHON_LIBRARY="$VENV_LIB" \
