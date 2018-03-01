@@ -205,8 +205,6 @@ build_caffe2_via_fletch(){
         git pull source master
     fi
 
-    LOCAL_PREFIX=$VIRTUAL_ENV/
-
     # splitting out dependencies for easier visibility
     export OPENCV_DEPENDS=" \
         -D OpenCV_SELECT_VERSION=3.4.0 \
@@ -246,9 +244,9 @@ build_caffe2_via_fletch(){
     echo "PYTHON_DEPENDS = $PYTHON_DEPENDS"
 
     export OTHER_DEPENDS=" \
+        -D fletch_ENABLE_VXL:BOOL=False \
         -D fletch_BUILD_WITH_CUDA:BOOL=True \
-        -D fletch_BUILD_WITH_CUDNN:BOOL=True \
-        -D CMAKE_INSTALL_PREFIX=$LOCAL_PREFIX"
+        -D fletch_BUILD_WITH_CUDNN:BOOL=True"
 
     FLETCH_CMAKE_ARGS="$OTHER_DEPENDS $PYTHON_DEPENDS $OPENCV_DEPENDS $CAFFE2_DEPENDS"
     
