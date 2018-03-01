@@ -150,6 +150,7 @@ change_cuda_version()
 
     # version 9
     sh ~/tpl-archive/cuda/cuda-linux.9.1.85-23083092.run -prefix=$HOME/.local/cuda-9.0 -noprompt -manifest $HOME/.local/cuda/manifest_cuda.txt -nosymlink 
+    ln -s $HOME/.local/cuda-9.0 $HOME/.local/cuda
 
     # IS there any way to get these to work locally?
     sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run --help

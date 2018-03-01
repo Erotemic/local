@@ -236,6 +236,8 @@ build_caffe2_via_fletch(){
         -D fletch_ENABLE_GTest:BOOL=True \
         -D fletch_ENABLE_pybind11:BOOL=True \
         -D fletch_ENABLE_FFmpeg:BOOL=True \
+        -D FFmpeg_SELECT_VERSION=3.3.3 \
+        -D Boost_SELECT_VERSION=1.65.1 \
         -D fletch_ENABLE_Boost:BOOL=True"
 
     export PYTHON_DEPENDS=" \
@@ -262,4 +264,13 @@ build_caffe2_via_fletch(){
 
     # TEST
     #(cd ../python && python -c "import caffe")
+}
+
+detectron(){
+    cd ~/code/Detectron/lib
+    mkdir -p ~/code/Detectron/lib/build
+    cd ~/code/Detectron/lib/build
+    cmake -G "Unix Makefiles" -D Caffe2_DIR=$HOME/code/fletch/build-caffe2/build/src/Caffe2-build .
+    $FLETCH_CMAKE_ARGS ..
+
 }

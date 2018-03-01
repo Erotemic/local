@@ -102,23 +102,25 @@ setup_unauthenticated_access(){
     # for each repo create this file
     touch git-daemon-export-ok
 
-    # At this point we can now clone with
-    # git clone git://remote:repo.git
 
-    # Now enable http checkout 
-    sudo apt install apache2 apache2-utils -y
-    sudo a2enmod cgi alias env
-    sudo service apache2 restart
+    # _----------------------
+    # Ignore the following, it is incomplete
+    ## At this point we can now clone with
+    ## git clone git://remote:repo.git
 
-    sudo chgrp -R www-data ~git
-    sudo_appendto /etc/apache2/apache2.conf "
-        SetEnv GIT_PROJECT_ROOT /home/git
-        ScriptAlias /git/ /usr/lib/git-core/git-http-backend/
-    "
-    
-    
-    
-    
+    ## Now enable http checkout 
+    #sudo apt install apache2 apache2-utils -y
+    #sudo a2enmod cgi alias env
+    #sudo service apache2 restart
+    #sudo chgrp -R www-data ~git
+
+    ## Is this the right place for a CGI script? I dont know what I'm doing here
+    #sudo_appendto /etc/apache2/apache2.conf "
+    #    SetEnv GIT_PROJECT_ROOT /home/git
+    #    ScriptAlias /git/ /usr/lib/git-core/git-http-backend/
+    #"
+    #sudo ln -s /home/git /srv/git
+    ## meh I couldn't get this working. 
 }
 
 
