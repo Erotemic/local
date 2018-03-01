@@ -62,7 +62,11 @@ clone_bare_repo(){
 }
 
 init_bare_repo(){ 
-    cd ~git sudo su git git init --bare <reponame>.git 
+    REPONAME=$1
+    cd ~git
+    sudo git init --bare $REPONAME.git 
+    sudo touch $REPONAME.git/git-daemon-export-ok
+    sudo chown -R git:git $REPONAME.git 
 }
 
 setup_unauthenticated_access(){
@@ -70,7 +74,7 @@ setup_unauthenticated_access(){
     # https://git-scm.com/book/en/v2/Git-on-the-Server-Git-Daemon
 
     source $HOME/local/init/utils.sh
-    util_sudo writeto /etc/systemd/system/git-daemon.service "
+    sudo_writeto /etc/systemd/system/git-daemon.service "
         [Unit]
         Description=Start Git Daemon
 
@@ -90,6 +94,30 @@ setup_unauthenticated_access(){
         [Install]
         WantedBy=multi-user.target
     "
+    sudo systemctl enable git-daemon
+    sudo service git-daemon start
+    #sudo systemctl start git-daemon
+
+    cd ~git
+    # for each repo create this file
+    touch git-daemon-export-ok
+
+    # At this point we can now clone with
+    # git clone git://remote:repo.git
+
+    # Now enable http checkout 
+    sudo apt install apache2 apache2-utils -y
+    sudo a2enmod cgi alias env
+    sudo service apache2 restart
+
+    sudo chgrp -R www-data ~git
+    sudo_appendto /etc/apache2/apache2.conf "
+        SetEnv GIT_PROJECT_ROOT /home/git
+        ScriptAlias /git/ /usr/lib/git-core/git-http-backend/
+    "
+    
+    
+    
     
 }
 

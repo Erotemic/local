@@ -118,6 +118,15 @@ sudo_writeto()
     sudo sh -c "echo \"$fixed_text\" > $fpath"
 }
 
+sudo_appendto()
+{
+    fpath=$1
+    text=$2
+    fixed_text=$(codeblock "$text")
+    # IS THERE A BETTER WAY TO FORWARD AN ENV TO SUDO SO sudo writeto works
+    sudo sh -c "echo \"$fixed_text\" >> $fpath"
+}
+
 # Can we wrap sudo such we can allow utils to be used?
 #util_sudo(){
 #    echo "$@"
