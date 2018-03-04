@@ -230,7 +230,7 @@ build_caffe2_deps_via_fletch(){
 
     we-py2
     PYTHON_VERSION=$(python -c "import sys; info = sys.version_info; print('{}.{}'.format(info.major, info.minor))")
-    PYTHON_MAJOR_VERSION==$(python -c "import sys; info = sys.version_info; print('{}'.format(info.major))")
+    PYTHON_MAJOR_VERSION=$(python -c "import sys; info = sys.version_info; print('{}'.format(info.major))")
     
     # splitting out dependencies for easier visibility
     export OPENCV_DEPENDS=" \
@@ -287,9 +287,97 @@ build_caffe2_deps_via_fletch(){
     NCPUS=$(grep -c ^processor /proc/cpuinfo)
     make -j$NCPUS
 
-    # Need to fix the post-intall in version .8.1
-    #mv install/caffe2 install/lib/python3.5/site-packages
-    #mv install/caffe install/lib/python3.5/site-packages
+    # now build caffe2 with fletch deps
+    VENV_INCLUDE=$(python -c "
+import sys, distutils, os
+vars = distutils.sysconfig.get_config_vars()
+if sys.version_info.major == 3:
+    libpath = os.path.join(vars['LIBDIR'], vars['MULTIARCH'], vars['LDLIBRARY'])
+    print(os.path.join(sys.prefix, 'include', 'python' + distutils.sysconfig.get_config_var('LDLIBRARY')))
+else:
+    print(os.path.join(sys.prefix, 'include', 'python{}.{}'.format(sys.version_info.major, sys.version_info.minor)))
+    ")
+    # Venv doesnt actually store lib, so link to the system one
+    VENV_LIB=$(python -c "
+import sys, distutils, os
+vars = distutils.sysconfig.get_config_vars()
+libpath = os.path.join(vars['LIBDIR'], vars['MULTIARCH'], vars['LDLIBRARY'])
+print(libpath)
+    ")
+
+
+PYTHON_INCLUDE=$(python -c "
+import sys, distutils, os
+vars = distutils.sysconfig.get_config_vars()
+if sys.version_info.major == 3:
+    libpath = os.path.join(vars['LIBDIR'], vars['MULTIARCH'], vars['LDLIBRARY'])
+    print(os.path.join(sys.prefix, 'include', 'python' + distutils.sysconfig.get_config_var('LDLIBRARY')))
+else:
+    print(os.path.join(sys.prefix, 'include', 'python{}.{}'.format(sys.version_info.major, sys.version_info.minor)))
+    ")
+    
+PYTHON_LIBRARY=$(python -c "
+import sys, distutils, os
+vars = distutils.sysconfig.get_config_vars()
+libpath = os.path.join(vars['LIBDIR'], vars['MULTIARCH'], vars['LDLIBRARY'])
+print(libpath)
+    ")
+    
+
+    NUMPY_INCLUDE_DIR=$(python -c "import numpy as np; print(np.get_include())")
+    NUMPY_VERSION=$(python -c "import numpy as np; print(np.__version__)")
+    FLETCH_INSTALL_PREFIX=$FLETCH_BUILD/install
+    SITE_DIR=$(python -c "from distutils import sysconfig; print(sysconfig.get_python_lib(prefix=''))")
+    echo "FLETCH_INSTALL_PREFIX = $FLETCH_INSTALL_PREFIX"
+    echo "NUMPY_INCLUDE_DIR = $NUMPY_INCLUDE_DIR"
+
+    export PYTHONPATH=$FLETCH_INSTALL_PREFIX/$SITE_DIR:$PYTHONPATH
+    export CPATH=$FLETCH_INSTALL_PREFIX/include:$CPATH
+    export LD_LIBRARY_PATH=$FLETCH_INSTALL_PREFIX/lib:$LD_LIBRARY_PATH
+    export CMAKE_PREFIX_PATH=$FLETCH_INSTALL_PREFIX:$CMAKE_PREFIX_PATH
+
+    echo "VENV_LIB = $VENV_LIB"
+    echo "VENV_INCLUDE = $VENV_INCLUDE"
+
+    cd ~/code/caffe2
+    mkdir -p ~/code/caffe2/build-gpu-py$PYTHON_MAJOR_VERSION
+    cd ~/code/caffe2/build-gpu-py$PYTHON_MAJOR_VERSION
+    rm -rf *
+
+    CAFFE2_CMAKE_ARGS="
+      -D USE_GLOG=On 
+      -D USE_GFLAGS=On 
+      -D BUILD_CUSTOM_PROTOBUF=Off 
+      -D USE_MPI=Off 
+      -D USE_METAL=Off 
+      -D USE_GLOO=Off 
+      -D USE_NCCL=Off 
+      -D USE_NNPACK=Off
+      -D BUILD_TEST=Off 
+      -D USE_ROCKSDB=Off 
+      -D BLAS=OpenBLAS 
+      -D USE_OPENCV=OFF
+      -D CMAKE_EXPORT_NO_PACKAGE_REGISTRY=True
+      -D CMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY=True
+      -D CMAKE_FIND_PACKAGE_NO_SYSTEM_PACKAGE_REGISTRY=True
+      -D USE_MOBILE_OPENGL=Off 
+      -D USE_CUDA=On"
+    ####
+
+    #rm CMakeCache.txt && 
+    cmake -G "Unix Makefiles" \
+      $CAFFE2_CMAKE_ARGS \
+      -D CMAKE_INSTALL_PREFIX=$HOME/venv$PYTHON_MAJOR_VERSION \
+      -D PYTHON_LIBRARY="$VENV_LIB" \
+      -D PYTHON_INCLUDE_DIR="$VENV_INCLUDE" \
+      -D NUMPY_INCLUDE_DIR=$NUMPY_INCLUDE_DIR \
+      -D NUMPY_VERSION=$NUMPY_VERSION \
+      -D CUDNN_LIBRARY="$CUDNN_LIBRARY" \
+      -D CUDNN_INCLUDE_DIR="$CUDNN_INCLUDE_DIR" \
+      ~/code/caffe2
+
+    NCPUS=$(grep -c ^processor /proc/cpuinfo)
+    make -j$NCPUS
 
     # TEST
     #(cd ../python && python -c "import caffe")
@@ -364,7 +452,6 @@ build_caffe2_via_fletch(){
     # Need to fix the post-intall in version .8.1
     mv install/caffe2 install/lib/python3.5/site-packages
     mv install/caffe install/lib/python3.5/site-packages
-
 
     # TEST
     #(cd ../python && python -c "import caffe")
