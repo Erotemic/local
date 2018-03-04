@@ -1197,7 +1197,8 @@ jupyter_mime_association(){
 big_apt_install(){
 
     sudo apt install -y astyle automake autotools-dev build-essential curl expect exuberant-ctags g++ gcc gfortran gitg gparted graphviz hardinfo hdfview htop imagemagick libatlas-base-dev libatlas-base-dev libav-tools libblas-dev libboost-all-dev libevent-dev libfftw3-dev libfreeimage-dev libfreetype6-dev libgeos-dev libgflags-dev libgoogle-glog-dev libjpeg-dev libjpeg62 liblapack-dev libleveldb-dev liblmdb-dev libncurses5-dev libopencv-dev libopenjpeg-dev libpng12-dev libprotobuf-dev libpthread-stubs0-dev libsnappy-dev libtiff5-dev libtk-img-dev lm-sensors mdadm okular openssh-server p7zip-full patchutils pkg-config postgresql protobuf-compiler python-dev python3-dev python3-tk remmina rsync sqlitebrowser sshfs symlinks synaptic terminator tmux tree valgrind vim-gnome vlc wmctrl xclip xdotool xsel zlib1g-dev initramfs-tools gdisk openssh-server libhdf5-serial-dev libhdf5-openmpi-dev xbacklight hdf5-tools libsqlite3-dev sqlite3 sysstat gitk
-    
+
+    sudo apt-get install network-manager-openvpn-gnome -y
 
     sudo apt install remmina remmina-plugin-rdp libfreerdp-plugins-standard -y
     # Add self to fuse group
@@ -1220,8 +1221,16 @@ big_apt_install(){
     sudo add-apt-repository ppa:unit193/encryption -y
     sudo apt update
     sudo apt install veracrypt -y
+}
 
 
+fix_vpn_issue(){
+    # Reference: https://bugs.launchpad.net/ubuntu/+source/dnsmasq/+bug/1639776
+    # Reference: https://askubuntu.com/questions/233222/how-can-i-disable-the-dns-that-network-manager-uses
+    #There is a workaround for the openvpn issue on ubuntu
+    #16.04. After connecting to the vpn, run:
+    sudo pkill dnsmasq
+    sudo sed -i 's/^\(dns=dnsmasq\)/#\1/g' /etc/NetworkManager/NetworkManager.conf 
 }
 
 resetup_ooo_after_os_reinstall()

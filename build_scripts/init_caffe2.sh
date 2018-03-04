@@ -300,11 +300,9 @@ detectron(){
 
     cmake -G "Unix Makefiles" -D Caffe2_DIR=$CAFFE2_BUILD .
     cmake -G "Unix Makefiles" .
-    $FLETCH_CMAKE_ARGS ..
 
-
-
-
+    #$FLETCH_CMAKE_ARGS ..
+    #cmake -G "Unix Makefiles" -D Caffe2_DIR=$HOME/code/fletch/build-caffe2/build/src/Caffe2-build ..
     
 
     
