@@ -54,6 +54,79 @@ if []; then
     export LD_LIBRARY_PATH=$FLETCH_INSTALL/lib:$LD_LIBRARY_PATH
 fi
 
+build_caffe2_via_fletch(){
+    cd ~/code
+    if [ ! -d "$HOME/code/fletch" ]; then
+        git clone https://github.com/Erotemic/fletch.git ~/code/fletch
+        cd ~/code/fletch
+        git remote add source https://github.com/Kitware/fletch.git
+        git pull source master
+    fi
+
+    # splitting out dependencies for easier visibility
+    export OPENCV_DEPENDS=" \
+        -D OpenCV_SELECT_VERSION=3.4.0 \
+        -D fletch_ENABLE_OpenCV_CUDA:BOOL=False \
+        -D fletch_ENABLE_ZLib:BOOL=True \
+        -D fletch_ENABLE_VXL:BOOL=True \
+        -D fletch_ENABLE_PNG:BOOL=True \
+        -D fletch_ENABLE_libtiff:BOOL=True \
+        -D fletch_ENABLE_libjson:BOOL=True \
+        -D fletch_ENABLE_libjpeg-turbo:BOOL=True \
+        -D fletch_ENABLE_libxml2:BOOL=True"
+
+    export CAFFE2_DEPENDS=" \
+        -D fletch_ENABLE_CUB:BOOL=True \
+        -D fletch_ENABLE_Caffe2:BOOL=True \
+        -D fletch_ENABLE_Eigen:BOOL=True \
+        -D fletch_ENABLE_Protobuf:BOOL=True \
+        -D Protobuf_SELECT_VERSION=3.4.1 \
+        -D fletch_ENABLE_OpenBLAS:BOOL=True \
+        -D fletch_ENABLE_OpenCV:BOOL=True \
+        -D fletch_ENABLE_Snappy:BOOL=True \
+        -D fletch_ENABLE_SuiteSparse:BOOL=True \
+        -D fletch_ENABLE_LevelDB:BOOL=True \
+        -D fletch_ENABLE_LMDB:BOOL=True \
+        -D fletch_ENABLE_GLog:BOOL=True \
+        -D fletch_ENABLE_GFlags:BOOL=True \
+        -D fletch_ENABLE_GTest:BOOL=True \
+        -D fletch_ENABLE_pybind11:BOOL=True \
+        -D fletch_ENABLE_FFmpeg:BOOL=True \
+        -D FFmpeg_SELECT_VERSION=3.3.3 \
+        -D Boost_SELECT_VERSION=1.65.1 \
+        -D fletch_ENABLE_Boost:BOOL=True"
+
+    export PYTHON_DEPENDS=" \
+        -D fletch_BUILD_WITH_PYTHON:BOOL=True \
+        -D fletch_PYTHON_MAJOR_VERSION=3"
+    echo "PYTHON_DEPENDS = $PYTHON_DEPENDS"
+
+    export OTHER_DEPENDS=" \
+        -D fletch_ENABLE_VXL:BOOL=False \
+        -D fletch_BUILD_WITH_CUDA:BOOL=True \
+        -D fletch_BUILD_WITH_CUDNN:BOOL=True"
+
+    FLETCH_CMAKE_ARGS="$OTHER_DEPENDS $PYTHON_DEPENDS $OPENCV_DEPENDS $CAFFE2_DEPENDS"
+    
+    # Setup a build directory and build fletch
+    FLETCH_BUILD=$HOME/code/fletch/build-caffe2
+    mkdir -p $FLETCH_BUILD
+    cd $FLETCH_BUILD
+
+    cmake -G "Unix Makefiles" $FLETCH_CMAKE_ARGS ..
+
+    NCPUS=$(grep -c ^processor /proc/cpuinfo)
+    make -j$NCPUS
+
+    # Need to fix the post-intall in version .8.1
+    mv install/caffe2 install/lib/python3.5/site-packages
+    mv install/caffe install/lib/python3.5/site-packages
+
+    # TEST
+    #(cd ../python && python -c "import caffe")
+}
+
+
 
 build_withpip(){
     CAFFE2_CMAKE_ARGS="
@@ -229,8 +302,6 @@ build_caffe2_deps_via_fletch(){
     fi
 
     we-py2
-    PYTHON_VERSION=$(python -c "import sys; info = sys.version_info; print('{}.{}'.format(info.major, info.minor))")
-    PYTHON_MAJOR_VERSION=$(python -c "import sys; info = sys.version_info; print('{}'.format(info.major))")
     
     # splitting out dependencies for easier visibility
     export OPENCV_DEPENDS=" \
@@ -276,9 +347,36 @@ build_caffe2_deps_via_fletch(){
         -D fletch_BUILD_WITH_CUDNN:BOOL=True"
 
     FLETCH_CMAKE_ARGS="$OTHER_DEPENDS $PYTHON_DEPENDS $OPENCV_DEPENDS $CAFFE2_DEPENDS"
+
+    PYTHON_VERSION=$(python -c "import sys; info = sys.version_info; print('{}.{}'.format(info.major, info.minor))")
+    PYTHON_MAJOR_VERSION=$(python -c "import sys; info = sys.version_info; print('{}'.format(info.major))")
+    VENV_INCLUDE=$(python -c "$(codeblock "
+        import sys, distutils, os
+        vars = distutils.sysconfig.get_config_vars()
+        if sys.version_info.major == 3:
+            libpath = os.path.join(vars['LIBDIR'], vars['MULTIARCH'], vars['LDLIBRARY'])
+            print(os.path.join(sys.prefix, 'include', 'python' + distutils.sysconfig.get_config_var('LDLIBRARY')))
+        else:
+            print(os.path.join(sys.prefix, 'include', 'python{}.{}'.format(sys.version_info.major, sys.version_info.minor)))
+    ")")
+    # Venv doesnt actually store lib, so link to the system one
+    VENV_LIB=$(python -c "$(codeblock "
+        import sys, distutils, os
+        vars = distutils.sysconfig.get_config_vars()
+        libpath = os.path.join(vars['LIBDIR'], vars['MULTIARCH'], vars['LDLIBRARY'])
+        print(libpath)
+    ")")
+    NUMPY_INCLUDE_DIR=$(python -c "import numpy as np; print(np.get_include())")
+    NUMPY_VERSION=$(python -c "import numpy as np; print(np.__version__)")
+    SITE_DIR=$(python -c "from distutils import sysconfig; print(sysconfig.get_python_lib(prefix=''))")
+
+    CAFFE2_BUILD_DIR=$HOME/code/caffe2/build-gpu-py$PYTHON_MAJOR_VERSION
+    CAFFE2_CMAKE_INSTALL_PREFIX=$CAFFE2_BUILD_DIR/install
     
     # Setup a build directory and build fletch
     FLETCH_BUILD=$HOME/code/fletch/build-caffe2-deps-py$PYTHON_MAJOR_VERSION
+    FLETCH_INSTALL_PREFIX=$FLETCH_BUILD/install
+    echo "FLETCH_BUILD = $FLETCH_BUILD"
     mkdir -p $FLETCH_BUILD
     cd $FLETCH_BUILD
 
@@ -288,49 +386,6 @@ build_caffe2_deps_via_fletch(){
     make -j$NCPUS
 
     # now build caffe2 with fletch deps
-    VENV_INCLUDE=$(python -c "
-import sys, distutils, os
-vars = distutils.sysconfig.get_config_vars()
-if sys.version_info.major == 3:
-    libpath = os.path.join(vars['LIBDIR'], vars['MULTIARCH'], vars['LDLIBRARY'])
-    print(os.path.join(sys.prefix, 'include', 'python' + distutils.sysconfig.get_config_var('LDLIBRARY')))
-else:
-    print(os.path.join(sys.prefix, 'include', 'python{}.{}'.format(sys.version_info.major, sys.version_info.minor)))
-    ")
-    # Venv doesnt actually store lib, so link to the system one
-    VENV_LIB=$(python -c "
-import sys, distutils, os
-vars = distutils.sysconfig.get_config_vars()
-libpath = os.path.join(vars['LIBDIR'], vars['MULTIARCH'], vars['LDLIBRARY'])
-print(libpath)
-    ")
-
-
-PYTHON_INCLUDE=$(python -c "
-import sys, distutils, os
-vars = distutils.sysconfig.get_config_vars()
-if sys.version_info.major == 3:
-    libpath = os.path.join(vars['LIBDIR'], vars['MULTIARCH'], vars['LDLIBRARY'])
-    print(os.path.join(sys.prefix, 'include', 'python' + distutils.sysconfig.get_config_var('LDLIBRARY')))
-else:
-    print(os.path.join(sys.prefix, 'include', 'python{}.{}'.format(sys.version_info.major, sys.version_info.minor)))
-    ")
-    
-PYTHON_LIBRARY=$(python -c "
-import sys, distutils, os
-vars = distutils.sysconfig.get_config_vars()
-libpath = os.path.join(vars['LIBDIR'], vars['MULTIARCH'], vars['LDLIBRARY'])
-print(libpath)
-    ")
-    
-
-    NUMPY_INCLUDE_DIR=$(python -c "import numpy as np; print(np.get_include())")
-    NUMPY_VERSION=$(python -c "import numpy as np; print(np.__version__)")
-    FLETCH_INSTALL_PREFIX=$FLETCH_BUILD/install
-    SITE_DIR=$(python -c "from distutils import sysconfig; print(sysconfig.get_python_lib(prefix=''))")
-    echo "FLETCH_INSTALL_PREFIX = $FLETCH_INSTALL_PREFIX"
-    echo "NUMPY_INCLUDE_DIR = $NUMPY_INCLUDE_DIR"
-
     export PYTHONPATH=$FLETCH_INSTALL_PREFIX/$SITE_DIR:$PYTHONPATH
     export CPATH=$FLETCH_INSTALL_PREFIX/include:$CPATH
     export LD_LIBRARY_PATH=$FLETCH_INSTALL_PREFIX/lib:$LD_LIBRARY_PATH
@@ -338,11 +393,12 @@ print(libpath)
 
     echo "VENV_LIB = $VENV_LIB"
     echo "VENV_INCLUDE = $VENV_INCLUDE"
+    echo "FLETCH_INSTALL_PREFIX = $FLETCH_INSTALL_PREFIX"
+    echo "NUMPY_INCLUDE_DIR = $NUMPY_INCLUDE_DIR"
 
     cd ~/code/caffe2
-    mkdir -p ~/code/caffe2/build-gpu-py$PYTHON_MAJOR_VERSION
-    cd ~/code/caffe2/build-gpu-py$PYTHON_MAJOR_VERSION
-    rm -rf *
+    mkdir -p $CAFFE2_BUILD_DIR
+    cd $CAFFE2_BUILD_DIR
 
     CAFFE2_CMAKE_ARGS="
       -D USE_GLOG=On 
@@ -367,7 +423,7 @@ print(libpath)
     #rm CMakeCache.txt && 
     cmake -G "Unix Makefiles" \
       $CAFFE2_CMAKE_ARGS \
-      -D CMAKE_INSTALL_PREFIX=$HOME/venv$PYTHON_MAJOR_VERSION \
+      -D CMAKE_INSTALL_PREFIX=$CAFFE2_CMAKE_INSTALL_PREFIX \
       -D PYTHON_LIBRARY="$VENV_LIB" \
       -D PYTHON_INCLUDE_DIR="$VENV_INCLUDE" \
       -D NUMPY_INCLUDE_DIR=$NUMPY_INCLUDE_DIR \
@@ -378,84 +434,26 @@ print(libpath)
 
     NCPUS=$(grep -c ^processor /proc/cpuinfo)
     make -j$NCPUS
+     
+    make install
+    # add to the pythonpath
+    export PYTHONPATH=$CAFFE2_CMAKE_INSTALL_PREFIX/$SITE_DIR:$PYTHONPATH
+    export CPATH=$CAFFE2_CMAKE_INSTALL_PREFIX/include:$CPATH
+    export LD_LIBRARY_PATH=$CAFFE2_CMAKE_INSTALL_PREFIX/lib:$LD_LIBRARY_PATH
+    export CMAKE_PREFIX_PATH=$CAFFE2_CMAKE_INSTALL_PREFIX:$CMAKE_PREFIX_PATH
+
+    pip install future
+    pip install protobuf
+
+    cd $HOME
+    python -c 'from caffe2.python import core'
+    python -c 'from caffe2.python import workspace; print(workspace.NumCudaDevices())'
 
     # TEST
     #(cd ../python && python -c "import caffe")
 }
 
 
-
-build_caffe2_via_fletch(){
-    cd ~/code
-    if [ ! -d "$HOME/code/fletch" ]; then
-        git clone https://github.com/Erotemic/fletch.git ~/code/fletch
-        cd ~/code/fletch
-        git remote add source https://github.com/Kitware/fletch.git
-        git pull source master
-    fi
-
-    # splitting out dependencies for easier visibility
-    export OPENCV_DEPENDS=" \
-        -D OpenCV_SELECT_VERSION=3.4.0 \
-        -D fletch_ENABLE_OpenCV_CUDA:BOOL=False \
-        -D fletch_ENABLE_ZLib:BOOL=True \
-        -D fletch_ENABLE_VXL:BOOL=True \
-        -D fletch_ENABLE_PNG:BOOL=True \
-        -D fletch_ENABLE_libtiff:BOOL=True \
-        -D fletch_ENABLE_libjson:BOOL=True \
-        -D fletch_ENABLE_libjpeg-turbo:BOOL=True \
-        -D fletch_ENABLE_libxml2:BOOL=True"
-
-    export CAFFE2_DEPENDS=" \
-        -D fletch_ENABLE_CUB:BOOL=True \
-        -D fletch_ENABLE_Caffe2:BOOL=True \
-        -D fletch_ENABLE_Eigen:BOOL=True \
-        -D fletch_ENABLE_Protobuf:BOOL=True \
-        -D Protobuf_SELECT_VERSION=3.4.1 \
-        -D fletch_ENABLE_OpenBLAS:BOOL=True \
-        -D fletch_ENABLE_OpenCV:BOOL=True \
-        -D fletch_ENABLE_Snappy:BOOL=True \
-        -D fletch_ENABLE_SuiteSparse:BOOL=True \
-        -D fletch_ENABLE_LevelDB:BOOL=True \
-        -D fletch_ENABLE_LMDB:BOOL=True \
-        -D fletch_ENABLE_GLog:BOOL=True \
-        -D fletch_ENABLE_GFlags:BOOL=True \
-        -D fletch_ENABLE_GTest:BOOL=True \
-        -D fletch_ENABLE_pybind11:BOOL=True \
-        -D fletch_ENABLE_FFmpeg:BOOL=True \
-        -D FFmpeg_SELECT_VERSION=3.3.3 \
-        -D Boost_SELECT_VERSION=1.65.1 \
-        -D fletch_ENABLE_Boost:BOOL=True"
-
-    export PYTHON_DEPENDS=" \
-        -D fletch_BUILD_WITH_PYTHON:BOOL=True \
-        -D fletch_PYTHON_MAJOR_VERSION=3"
-    echo "PYTHON_DEPENDS = $PYTHON_DEPENDS"
-
-    export OTHER_DEPENDS=" \
-        -D fletch_ENABLE_VXL:BOOL=False \
-        -D fletch_BUILD_WITH_CUDA:BOOL=True \
-        -D fletch_BUILD_WITH_CUDNN:BOOL=True"
-
-    FLETCH_CMAKE_ARGS="$OTHER_DEPENDS $PYTHON_DEPENDS $OPENCV_DEPENDS $CAFFE2_DEPENDS"
-    
-    # Setup a build directory and build fletch
-    FLETCH_BUILD=$HOME/code/fletch/build-caffe2
-    mkdir -p $FLETCH_BUILD
-    cd $FLETCH_BUILD
-
-    cmake -G "Unix Makefiles" $FLETCH_CMAKE_ARGS ..
-
-    NCPUS=$(grep -c ^processor /proc/cpuinfo)
-    make -j$NCPUS
-
-    # Need to fix the post-intall in version .8.1
-    mv install/caffe2 install/lib/python3.5/site-packages
-    mv install/caffe install/lib/python3.5/site-packages
-
-    # TEST
-    #(cd ../python && python -c "import caffe")
-}
 
 detectron(){
     CAFFE2_INSTALL_PREFIX=$HOME/code/fletch/build-caffe2/install
@@ -491,8 +489,6 @@ detectron(){
 
     #$FLETCH_CMAKE_ARGS ..
     #cmake -G "Unix Makefiles" -D Caffe2_DIR=$HOME/code/fletch/build-caffe2/build/src/Caffe2-build ..
-    
-
     
 
 }
