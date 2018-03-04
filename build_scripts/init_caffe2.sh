@@ -260,15 +260,53 @@ build_caffe2_via_fletch(){
     NCPUS=$(grep -c ^processor /proc/cpuinfo)
     make -j$NCPUS
 
+    # Need to fix the post-intall in version .8.1
+    mv install/caffe2 install/lib/python3.5/site-packages
+    mv install/caffe install/lib/python3.5/site-packages
+
+
     # TEST
     #(cd ../python && python -c "import caffe")
 }
 
 detectron(){
+    CAFFE2_INSTALL_PREFIX=$HOME/code/fletch/build-caffe2/install
+    export PYTHONPATH=$CAFFE2_INSTALL_PREFIX/lib/python3.5/site-packages:$PYTHONPATH
+    export CPATH=$CAFFE2_INSTALL_PREFIX/include:$CPATH
+    export LD_LIBRARY_PATH=$CAFFE2_INSTALL_PREFIX/lib:$LD_LIBRARY_PATH
+
+    # To check if Caffe2 build was successful
+    python -c 'from caffe2.python import core'
+    # To check if Caffe2 GPU build was successful
+    python -c 'from caffe2.python import workspace; print(workspace.NumCudaDevices())'
+
+    CAFFE2_BUILD=$HOME/code/fletch/build-caffe2/build/src/Caffe2-build
+
+    CAFFE2_BUILD=$HOME/code/caffe2/build
+    CAFFE2_INSTALL_PREFIX=$CAFFE2_BUILD
+    export CMAKE_PREFIX_PATH=$CAFFE2_INSTALL_PREFIX:$CMAKE_PREFIX_PATH
+    export PYTHONPATH=$CAFFE2_BUILD:$PYTHONPATH
+
+    echo "CAFFE2_BUILD = $CAFFE2_BUILD"
+
     cd ~/code/Detectron/lib
+    # Edit to remove the dumb python2 references
+    make
+    DETECTRON=$HOME/code/Detectron
+    python $DETECTRON/tests/test_spatial_narrow_as_op.py
+
     mkdir -p ~/code/Detectron/lib/build
     cd ~/code/Detectron/lib/build
-    cmake -G "Unix Makefiles" -D Caffe2_DIR=$HOME/code/fletch/build-caffe2/build/src/Caffe2-build .
+
+    cmake -G "Unix Makefiles" -D Caffe2_DIR=$CAFFE2_BUILD .
+    cmake -G "Unix Makefiles" .
     $FLETCH_CMAKE_ARGS ..
+
+
+
+
+    
+
+    
 
 }
