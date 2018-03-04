@@ -228,6 +228,7 @@ build_caffe2_deps_via_fletch(){
         git pull source master
     fi
 
+    we-py2
     PYTHON_VERSION=$(python -c "import sys; info = sys.version_info; print('{}.{}'.format(info.major, info.minor))")
     PYTHON_MAJOR_VERSION==$(python -c "import sys; info = sys.version_info; print('{}'.format(info.major))")
     
