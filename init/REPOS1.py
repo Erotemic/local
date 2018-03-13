@@ -176,6 +176,9 @@ VIM_REPO_URLS, VIM_REPOS = repo_list([
     ###'https://github.com/koron/minimap-vim.git',
     #'https://github.com/severin-lemaignan/vim-minimap.git',
     ###'https://github.com/zhaocai/GoldenView.Vim.git',
+
+    # 'https://github.com/ryanoasis/vim-devicons.git',  # pain to get fonts
+    # 'https://github.com/ryanoasis/nerd-fonts.git',  # not really a plugin
 ], BUNDLE_DPATH)
 
 VIM_NONGIT_PLUGINS = [

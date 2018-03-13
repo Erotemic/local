@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# PYTHON_ARGCOMPLETE_OK
 # -*- coding: utf-8 -*-
 from __future__ import print_function, unicode_literals
 import re
@@ -515,6 +516,11 @@ def git_squash_streaks():
         See argparse
     """
     import argparse
+    try:
+        import argcomplete
+    except ImportError:
+        argcomplete = None
+        raise
     description, help_dict = _autoparse_desc(squash_streaks)
 
     parser = argparse.ArgumentParser(description=description)
@@ -555,6 +561,8 @@ def git_squash_streaks():
         dry=True,
         verbose=True,
     )
+    if argcomplete:
+        argcomplete.autocomplete(parser)
     args = parser.parse_args()
 
     # Postprocess args

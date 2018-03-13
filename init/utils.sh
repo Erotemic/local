@@ -1,19 +1,13 @@
-__heredoc__(){
-    # simple function that does nothing so we can write simple heredocs
-    # we cant use it here though, otherwise it would infinite recurse!
-    # Use it like this (sans leading comment symbols):
-    # __heredoc__ '''
-    # this is where your text goes. It can be multiline and indented, just dont
-    # include the single quote character.  also note the surrounding triple
-    # quotes just happen to be synatically correct and are not necessary,
-    # although I do recomend them.
-    # '''
-    if [ "$noop" == "defined for some reason" ]
-    then
-        echo Why did you define noop to that particular value? Were you looking to see this message?
-        echo I really wish other languages would add python triple quotes. they are exceptionally convenient.
-    fi
-}
+# simple function that does nothing so we can write simple heredocs
+# we cant use it here though, otherwise it would infinite recurse!
+# Use it like this (sans leading comment symbols):
+# __heredoc__ '''
+# this is where your text goes. It can be multiline and indented, just dont
+# include the single quote character.  also note the surrounding triple
+# quotes just happen to be synatically correct and are not necessary,
+# although I do recomend them.
+# '''
+__heredoc__(){ NOOP=; }
 
 
 unlink_or_backup()

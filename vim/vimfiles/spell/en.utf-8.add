@@ -432,3 +432,12 @@ cmake
 CMake
 filesystem
 timeit
+Timerit
+kwargs
+func
+args
+toc
+pragma
+str
+bool
+multiline

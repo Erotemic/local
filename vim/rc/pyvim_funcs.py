@@ -165,14 +165,50 @@ def get_first_nonempty_line_after_cursor():
             return line
 
 
+def get_indentation(line_):
+    """
+    returns the number of preceding spaces
+    """
+    return len(line_) - len(line_.lstrip())
+
+
+def get_minimum_indentation(text):
+    r"""
+    returns the number of preceding spaces
+
+    Args:
+        text (str): unicode text
+
+    Returns:
+        int: indentation
+
+    CommandLine:
+        python -m utool.util_str --exec-get_minimum_indentation --show
+
+    Example:
+        >>> # ENABLE_DOCTEST
+        >>> from utool.util_str import *  # NOQA
+        >>> import utool as ut
+        >>> text = '    foo\n   bar'
+        >>> result = get_minimum_indentation(text)
+        >>> print(result)
+        3
+    """
+    lines = text.split('\n')
+    indentations = [get_indentation(line_)
+                    for line_ in lines  if len(line_.strip()) > 0]
+    if len(indentations) == 0:
+        return 0
+    return min(indentations)
+
+
 def get_cursor_py_indent():
     """
     checks current and next line for indentation
     """
-    import utool as ut
     # Check current line for cues
     curr_line = get_line_at_cursor()
-    curr_indent = ut.get_minimum_indentation(curr_line)
+    curr_indent = get_minimum_indentation(curr_line)
     if curr_line is None:
         next_line = ''
     if curr_line.strip().endswith(':'):
@@ -181,7 +217,7 @@ def get_cursor_py_indent():
     next_line = get_first_nonempty_line_after_cursor()
     if next_line is None:
         next_line = ''
-    next_indent = ut.get_minimum_indentation(next_line)
+    next_indent = get_minimum_indentation(next_line)
     if next_indent <= curr_indent + 8:
         # hack for overindented lines
         min_indent = max(curr_indent, next_indent)
@@ -329,7 +365,7 @@ def find_pyfunc_above_row(line_list, row, orclass=False):
         >>> print(result)
         find_pyfunc_above_row
     """
-    import utool as ut
+    import ubelt as ub
     searchlines = []  # for debugging
     funcname = None
     # Janky way to find function name
@@ -339,7 +375,7 @@ def find_pyfunc_above_row(line_list, row, orclass=False):
     for ix in range(200):
         func_pos = row - ix
         searchline = line_list[func_pos]
-        searchline = ut.ensure_unicode(searchline)
+        searchline = ub.ensure_unicode(searchline)
         cleanline = searchline.strip(' ')
         searchlines.append(cleanline)
         if searchline.startswith(func_sentinal):  # and cleanline.endswith(':'):
@@ -369,10 +405,6 @@ def find_pyfunc_above_row(line_list, row, orclass=False):
 
 def find_pyfunc_above_cursor():
     import vim
-    import utool as ut
-    ut.ENABLE_COLORS = False
-    ut.util_str.ENABLE_COLORS = False
-    ut.util_dbg.COLORED_EXCEPTIONS = False
     # Get text posision
     (row, col) = vim.current.window.cursor
     line_list = vim.current.buffer

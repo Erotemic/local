@@ -124,10 +124,25 @@ def main():
             ['mv ' + util_git1.unixpath(dir_) + ' ' + clutterdir for dir_ in __NOT_GIT_REPOS__])
         print('\n'.join(suggested_cmds))
 
+    # Hack for nerd fonts
+    # """
+    # cd ~/local/vim/vimfiles/bundle
+    # # git clone https://github.com/ryanoasis/nerd-fonts.git --depth 1
+    # https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/Inconsolata/complete/Inconsolata%20Nerd%20Font%20Complete.otf
+    # https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Inconsolata/complete/Inconsolata%20Nerd%20Font%20Complete.otf
+    # """
+
     # HACK FOR JEDI
-    cd(BUNDLE_DPATH)
+
     import os
-    os.system('git submodule update --init --recursive')
+    for repo in VIM_REPOS_WITH_SUBMODULES:
+        cd(join(BUNDLE_DPATH, repo))
+        command = 'git submodule update --init --recursive'
+        try:
+            import ubelt as ub
+            ub.cmd(command, verbout=1, verbose=2)
+        except Exception:
+            os.system(command)
 
 
 if __name__ == '__main__':

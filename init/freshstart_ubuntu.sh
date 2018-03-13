@@ -74,11 +74,11 @@ setup_kitware_ssh_keys(){
     for remote in "${REMOTES[@]}"
     do
         echo "UPDATING remote = $remote"
-        # move public and private keys to other computers
-        rsync ~/.ssh/./id_joncrall_kitware_rsa* $remote:.ssh/./
-
         # move .ssh config to other computers
         rsync ~/.ssh/./config $remote:.ssh/./
+
+        # move public and private keys to other computers
+        #rsync ~/.ssh/./id_joncrall_kitware_rsa* $remote:.ssh/./
 
         # Now make sure the special private id_rsa is registered on each remote
         # Actually we dont do this because it only persists for one session 

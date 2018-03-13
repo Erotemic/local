@@ -489,6 +489,18 @@ detectron(){
 
     #$FLETCH_CMAKE_ARGS ..
     #cmake -G "Unix Makefiles" -D Caffe2_DIR=$HOME/code/fletch/build-caffe2/build/src/Caffe2-build ..
-    
+}
 
+detectron_docker(){
+    #https://github.com/facebookresearch/Detectron/blob/master/INSTALL.md 
+
+    DETECTRON=$HOME/code/Detectron
+    cd $DETECTRON/docker
+    docker build -t detectron:c2-cuda9-cudnn7 .
+
+    # test 
+    nvidia-docker run -v ~/data:/data --rm -it detectron:c2-cuda9-cudnn7 python2 tests/test_batch_permutation_op.py 
+
+    # run bash
+    nvidia-docker run -v ~/data:/data -it detectron:c2-cuda9-cudnn7 bash
 }

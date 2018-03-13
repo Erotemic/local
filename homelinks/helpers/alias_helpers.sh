@@ -586,6 +586,11 @@ alias we-py3=workon_py3
 
 workon_conda3()
 {
+    __heredoc__ "
+    deactivate_venv
+    conda create -y -n cenv3 python=3
+    we-conda3
+    "
     workon_conda cenv3
 }
 alias we-conda3=workon_conda3
