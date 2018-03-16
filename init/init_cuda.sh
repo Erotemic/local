@@ -22,9 +22,10 @@ init_local_cuda(){
     rsync -avuzpR ~/./tpl-archive/ jon.crall@arisia.kitware.com:.
     rsync -avzupR ~/./tpl-archive/ jon.crall@aretha.kitware.com:.
     rsync -avzupR ~/./tpl-archive/ jon.crall@klendathu.kitware.com:.
+    rsync -avzupR ~/./tpl-archive/ joncrall@acidalia.kitware.com:.
 
-    rsync -avzup tpl-archive/cuda/ jon.crall@arisia.kitware.com:tpl-archive/cuda
-    rsync -avzup tpl-archive/cuda/ jon.crall@aretha.kitware.com:tpl-archive/cuda
+    #rsync -avzup tpl-archive/cuda/ jon.crall@arisia.kitware.com:tpl-archive/cuda
+    #rsync -avzup tpl-archive/cuda/ jon.crall@aretha.kitware.com:tpl-archive/cuda
 
     tar -xf cuda_cluster_pkgs_9.1.85_ubuntu1604.tar.gz
     mv cuda_cluster_pkgs_ubuntu1604 ~/tmp
@@ -266,9 +267,9 @@ init_local_cudnn(){
     #~/tpl-archive/cuda
     #rsync -avpR ~/tpl-archive/ arisia:tpl-archive
     #rsync -avpR ~/tpl-archive/ aretha:tpl-archive
-    rsync -avuzpR tpl-archive/ jon.crall@arisia.kitware.com
-    rsync -avzupR tpl-archive/ jon.crall@aretha.kitware.com:
-    rsync -avzupR tpl-archive/ jon.crall@klendathu.kitware.com:
+    #rsync -avuzpR tpl-archive/ jon.crall@arisia.kitware.com
+    #rsync -avzupR tpl-archive/ jon.crall@aretha.kitware.com:
+    #rsync -avzupR tpl-archive/ jon.crall@klendathu.kitware.com:
 
     # check for user cuda
     ls ~/.local/cuda/lib64/libcudnn*
