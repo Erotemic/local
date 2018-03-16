@@ -135,52 +135,56 @@ uninstall_local_cuda()
 
 change_cuda_version()
 {
+    __heredoc__ '''
+        ls ~/tpl-archive/cuda
+        source ~/local/init/init_cuda.sh
+
+        change_cuda_version 9.1 
+        change_cuda_version 8.0 
+    '''
     # UNFINISHED
 
     # Install desired cuda version
-    uninstall_local_cuda
+    #uninstall_local_cuda
 
     # NOTE: Installing these to the local directory will NOT install
     # LIBCUDA.so, which needs to be installed via the NVIDIA drivers.
     # This will live in your system folder (hopefully it is cross compatible
     # between cuda versions)
 
+    # Install cuda version locally in ~/.local/cuda-$VERSION and then symlink
+    # ~/.local/cuda to the desired version
+
+    cuda_version=$1
+
     # version 8
-    sh ~/tpl-archive/cuda/cuda-linux64-rel-8.0.61-21551265.run -prefix=$HOME/.local/cuda-8.0 -noprompt -manifest $HOME/.local/cuda-8.0/manifest_cuda.txt -nosymlink 
-    ln -s $HOME/.local/cuda-8.0 $HOME/.local/cuda
+    if [ cuda_version == "8.0" ]; then
+        sh ~/tpl-archive/cuda/cuda-linux64-rel-8.0.61-21551265.run -prefix=$HOME/.local/cuda-8.0 -noprompt -manifest $HOME/.local/cuda-8.0/manifest_cuda.txt -nosymlink 
+        unlink $HOME/.local/cuda
+        ln -s $HOME/.local/cuda-8.0 $HOME/.local/cuda
+    fi
 
     # version 9
-    sh ~/tpl-archive/cuda/cuda-linux.9.1.85-23083092.run -prefix=$HOME/.local/cuda-9.0 -noprompt -manifest $HOME/.local/cuda/manifest_cuda.txt -nosymlink 
-    ln -s $HOME/.local/cuda-9.0 $HOME/.local/cuda
+    if [ cuda_version == "9.1" ]; then
+        unlink $HOME/.local/cuda
+        sh ~/tpl-archive/cuda/cuda-linux.9.1.85-23083092.run -prefix=$HOME/.local/cuda-9.1 -noprompt -manifest $HOME/.local/cuda/manifest_cuda.txt -nosymlink 
+        ln -s $HOME/.local/cuda-9.1 $HOME/.local/cuda
+    fi
 
-    # IS there any way to get these to work locally?
-    sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run --help
-    sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run -a
-    sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run -a -x 
-    sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run --info
+    # IS there any way to get these to work locally? No. These are nvidia drivers. They need to be system level
+    #sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run --help
+    #sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run -a
+    #sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run -a -x 
+    #sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run --info
 }
-
-prep_cuda_runfile(){
-    # Extract the actual cuda installer to the tpl-dir
-    sh ~/tpl-archive/cuda/cuda_8.0.61_375.26_linux.run --silent --toolkitpath=$HOME/.local/cuda/ --no-opengl-libs --verbose --extract=$HOME/tpl-archive/cuda
-    # only keep the toolkit, remove the driver and samples
-    rm $HOME/tpl-archive/cuda/NVIDIA-Linux-x86_64-375.26.run
-    rm $HOME/tpl-archive/cuda/cuda-samples-linux-8.0.61-21551265.run
-
-    
-    sh ~/tpl-archive/cuda/cuda_9.1.85_387.26_linux.run --silent --toolkitpath=$HOME/.local/cuda/ --no-opengl-libs --verbose --extract=$HOME/tpl-archive/cuda
-    #rm $HOME/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run
-    rm $HOME/tpl-archive/cuda/cuda-samples.9.1.85-23083092-linux.run
-}
-
-
 
 change_cudnn_version(){
     __heredoc__ '''
+        ls ~/tpl-archive/cuda/cudnn
         source ~/local/init/init_cuda.sh
-        change_cudnn_version 7.0
-        change_cudnn_version 6.0
-        change_cudnn_version 5.1
+        change_cudnn_version 9.1 7.0
+        change_cudnn_version 9.1 6.0
+        change_cudnn_version 9.1 5.1
 
         current_cudnn_info
     '''
@@ -189,10 +193,10 @@ change_cudnn_version(){
         from os.path import join, exists, expanduser, splitext, relpath
         import ubelt as ub
 
-        # SET TO CURRENT VERSION YOU WANT
-        cuda_version = '8.0'
-        #cudnn = '7.0'
-        cudnn = '$1'
+        # Read cuda version from the current cuda symlink
+
+        cudnn = '$2'
+        cuda_version = $1
         osname = 'linux'
 
         # (cuda_version, cudnn_version, os)
@@ -206,9 +210,14 @@ change_cudnn_version(){
         print('Unpacking cudnn {} for cuda {} on {}'.format(cudnn, cuda_version, osname))
 
         home = expanduser('~')
+        install_prefix = ub.ensuredir((home, '.local'))
+        cuda_dpath = ub.ensuredir((install_prefix, 'cuda'))  # this should by symlinked to a cuda version
+        cuda_version_ = '.'.join(ub.readfrom(join(cuda_dpath, 'version.txt')).strip().split()[-1].split('.')[0:2])
+        assert cuda_version_ == cuda_version
+
         cudnn_tgz_fname = ver[(cuda_version, cudnn, osname)]
         cudnn_tgz_fpath = join(home, 'tpl-archive', 'cuda', 'cudnn', cudnn_tgz_fname)
-        assert exists(cudnn_tgz_fpath), 'tar does not exist'
+        assert exists(cudnn_tgz_fpath), 'tar does not exist {}'.format(cudnn_tgz_fpath)
 
         suffix = splitext(cudnn_tgz_fname)[0].replace('cudnn-', '')
 
@@ -219,8 +228,6 @@ change_cudnn_version(){
         ub.cmd('tar -xzvf ' + cudnn_tgz_fpath, verbose=2)
 
         # Setup the local install paths for cudnn
-        install_prefix = ub.ensuredir((home, '.local'))
-        cuda_dpath = ub.ensuredir((install_prefix, 'cuda-' + cuda_version))
         include_dpath = ub.ensuredir((cuda_dpath, 'include'))
         lib_dpath = ub.ensuredir((cuda_dpath, 'lib64'))
 
@@ -255,6 +262,19 @@ change_cudnn_version(){
 
         ub.cmd('chmod a+r ' + dstdir + '/include/cudnn.h', verbose=2)
         ")"
+}
+
+prep_cuda_runfile(){
+    # Extract the actual cuda installer to the tpl-dir
+    sh ~/tpl-archive/cuda/cuda_8.0.61_375.26_linux.run --silent --toolkitpath=$HOME/.local/cuda/ --no-opengl-libs --verbose --extract=$HOME/tpl-archive/cuda
+    # only keep the toolkit, remove the driver and samples
+    rm $HOME/tpl-archive/cuda/NVIDIA-Linux-x86_64-375.26.run
+    rm $HOME/tpl-archive/cuda/cuda-samples-linux-8.0.61-21551265.run
+
+    
+    sh ~/tpl-archive/cuda/cuda_9.1.85_387.26_linux.run --silent --toolkitpath=$HOME/.local/cuda/ --no-opengl-libs --verbose --extract=$HOME/tpl-archive/cuda
+    #rm $HOME/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run
+    rm $HOME/tpl-archive/cuda/cuda-samples.9.1.85-23083092-linux.run
 }
 
 
