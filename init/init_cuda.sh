@@ -196,7 +196,7 @@ change_cudnn_version(){
         # Read cuda version from the current cuda symlink
 
         cudnn = '$2'
-        cuda_version = $1
+        cuda_version = '$1'
         osname = 'linux'
 
         # (cuda_version, cudnn_version, os)
