@@ -183,6 +183,7 @@ change_cudnn_version(){
         ls ~/tpl-archive/cuda/cudnn
         source ~/local/init/init_cuda.sh
         change_cudnn_version 9.1 7.0
+
         change_cudnn_version 9.1 6.0
         change_cudnn_version 9.1 5.1
 

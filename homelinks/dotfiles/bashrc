@@ -65,46 +65,53 @@ if [ -d "$HOME/.local" ]; then
 fi
 
 
-# Add user CUDA/CUDNN to the library paths if it exists
-if [ -d "$HOME/.local/cuda" ]; then
-    # Prepend to get around weird system ld_library_paths
-    export CPATH=$HOME/.local/cuda/include:$CPATH
-    export LD_LIBRARY_PATH=$HOME/.local/cuda/lib64:$LD_LIBRARY_PATH
-    #export LIBRARY_PATH=$HOME/.local/cuda/lib64:$LIBRARY_PATH
 
-    if [ -f "$HOME/.local/cuda/bin/nvcc" ]; then
-        export PATH=$HOME/.local/cuda/bin:$PATH
-        export CUDA_HOME=$HOME/.local/cuda
-        export CUDA_PATH=$HOME/.local/cuda
-        export CUDA_BIN_PATH=$HOME/.local/cuda/bin
-        export CUDA_TOOLKIT_ROOT_DIR=$HOME/.local/cuda
-        export CUDA_SDK_ROOT_DIR=$HOME/.local/cuda
-        #export CUDA_NVCC_EXECUTABLE=$HOME/.local/cuda/bin/nvcc
-    fi
-    if [ -f "$HOME/.local/cuda/lib64/libcudart.so" ]; then
-        #export CUDA_CUDART_LIBRARY=$HOME/.local/cuda/lib64/libcudart.so
-        #export CUDA_CUDA_LIBRARY=$HOME/.local/cuda/lib64/libcuda.so
-        export CUDA_HOME=$HOME/.local/cuda
-    fi
-
-    export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$HOME/.local/cuda
-    if [ -f "$HOME/.local/cuda/lib64/libcudnn.so" ]; then
-        export CUDNN_INCLUDE_DIR=$HOME/.local/cuda/include
-        export CUDNN_LIB_DIR=$HOME/.local/cuda/lib64
-        export CUDNN_LIBRARY=$CUDNN_LIB_DIR/libcudnn.so
-        export CUDNN_LIBRARIES=$CUDNN_LIBRARY
-    elif [ -f "/usr/local/cuda/lib64/libcudnn.so" ]; then
-        export CUDNN_INCLUDE_DIR=/usr/local/cuda/include
-        export CUDNN_LIB_DIR=/usr/local/cuda/lib64
-        export CUDNN_LIBRARY=$CUDNN_LIB_DIR/libcudnn.so
-        export CUDNN_LIBRARIES=$CUDNN_LIBRARY
-    fi
-elif [ -d "/usr/local/cuda" ]; then
-    #export PATH=$PATH:/usr/local/cuda/bin
-    export CPATH=$CPATH:/usr/local/cuda/include
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64
-    #export LIBRARY_PATH=/usr/local/cuda/lib64
+# ----------- CUDA / CUDNN ---------
+# Determine if/where CUDA is installed
+if [ -f "$HOME/.local/cuda/version.txt" ]; then
+    _CUDA_ROOT="$HOME/.local/cuda"
+elif [ -f "/usr/local/cuda/version.txt" ]; then
+    _CUDA_ROOT="/usr/local/cuda"
 fi
+
+# Determine if/where CUDNN is installed
+if [ -f "$HOME/.local/cuda/lib64/libcudnn.so" ]; then
+    _CUDNN_ROOT="$HOME/.local/cuda"
+elif [ -f "/usr/local/cuda/lib64/libcudnn.so" ]; then
+    _CUDNN_ROOT="/usr/local/cuda"
+fi
+
+# Add CUDA/CUDNN to the library paths if they exist
+if [ "$_CUDA_ROOT" != "" ]; then
+    # Prepend to get around weird system ld_library_paths
+    export CPATH=$_CUDA_ROOT/include:$CPATH
+    export LD_LIBRARY_PATH=$_CUDA_ROOT/lib64:$LD_LIBRARY_PATH
+    export CMAKE_PREFIX_PATH=$_CUDA_ROOT:$CMAKE_PREFIX_PATH
+
+    if [ -f "$_CUDA_ROOT/bin/nvcc" ]; then
+        export PATH=$_CUDA_ROOT/bin:$PATH
+        export CUDA_HOME=$_CUDA_ROOT
+        export CUDA_PATH=$_CUDA_ROOT
+        export CUDA_BIN_PATH=$_CUDA_ROOT/bin
+        export CUDA_TOOLKIT_ROOT_DIR=$_CUDA_ROOT
+        export CUDA_SDK_ROOT_DIR=$_CUDA_ROOT
+        export CUDA_NVCC_EXECUTABLE=$_CUDA_ROOT/bin/nvcc
+    fi
+
+    if [ "$_CUDNN_ROOT" != "" ]; then
+        if [ "$_CUDA_ROOT" != "$_CUDNN_ROOT" ]; then
+            # cudnn may not be in the same place as cuda.
+            export CPATH=$_CUDNN_ROOT/include:$CPATH
+            export LD_LIBRARY_PATH=$_CUDNN_ROOT/lib64:$LD_LIBRARY_PATH
+            export CMAKE_PREFIX_PATH=$_CUDNN_ROOT:$CMAKE_PREFIX_PATH
+        fi
+        export CUDNN_INCLUDE_DIR=$_CUDNN_ROOT/include
+        export CUDNN_LIB_DIR=$_CUDNN_ROOT/lib64
+        export CUDNN_LIBRARY=$CUDNN_LIB_DIR/libcudnn.so
+        export CUDNN_LIBRARIES=$CUDNN_LIBRARY
+    fi
+fi
+# ------------------
 
 
 # Add user intel-libs to the library paths if it exists
