@@ -90,6 +90,7 @@ if [ "$_CUDA_ROOT" != "" ]; then
 
     if [ -f "$_CUDA_ROOT/bin/nvcc" ]; then
         export PATH=$_CUDA_ROOT/bin:$PATH
+        export CUDAHOME=$_CUDA_ROOT
         export CUDA_HOME=$_CUDA_ROOT
         export CUDA_PATH=$_CUDA_ROOT
         export CUDA_BIN_PATH=$_CUDA_ROOT/bin
