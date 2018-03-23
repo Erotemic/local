@@ -140,8 +140,10 @@ change_cuda_version()
     __heredoc__ '''
         ls ~/tpl-archive/cuda
         source ~/local/init/init_cuda.sh
-
         change_cuda_version 9.1 
+
+        ls ~/tpl-archive/cuda
+        source ~/local/init/init_cuda.sh
         change_cuda_version 8.0 
     '''
     # UNFINISHED
@@ -161,14 +163,14 @@ change_cuda_version()
     echo "cuda_version = $cuda_version"
 
     # version 8
-    if [ cuda_version == "8.0" ]; then
+    if [ "$cuda_version" == "8.0" ]; then
         sh ~/tpl-archive/cuda/cuda-linux64-rel-8.0.61-21551265.run -prefix=$HOME/.local/cuda-8.0 -noprompt -manifest $HOME/.local/cuda-8.0/manifest_cuda.txt -nosymlink 
         unlink $HOME/.local/cuda
         ln -s $HOME/.local/cuda-8.0 $HOME/.local/cuda
     fi
 
     # version 9
-    if [ cuda_version == "9.1" ]; then
+    if [ "$cuda_version" == "9.1" ]; then
         unlink $HOME/.local/cuda
         sh ~/tpl-archive/cuda/cuda-linux.9.1.85-23083092.run -prefix=$HOME/.local/cuda-9.1 -noprompt -manifest $HOME/.local/cuda/manifest_cuda.txt -nosymlink 
         ln -s $HOME/.local/cuda-9.1 $HOME/.local/cuda
