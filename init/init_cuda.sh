@@ -158,6 +158,7 @@ change_cuda_version()
     # ~/.local/cuda to the desired version
 
     cuda_version=$1
+    echo "cuda_version = $cuda_version"
 
     # version 8
     if [ cuda_version == "8.0" ]; then
