@@ -172,6 +172,7 @@ change_cuda_version()
         sh ~/tpl-archive/cuda/cuda-linux.9.1.85-23083092.run -prefix=$HOME/.local/cuda-9.1 -noprompt -manifest $HOME/.local/cuda/manifest_cuda.txt -nosymlink 
         ln -s $HOME/.local/cuda-9.1 $HOME/.local/cuda
     fi
+    ls -al $HOME/.local/cuda
 
     # IS there any way to get these to work locally? No. These are nvidia drivers. They need to be system level
     #sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run --help

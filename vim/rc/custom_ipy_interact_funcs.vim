@@ -179,13 +179,13 @@ if pyvim_funcs.is_module_pythonfile():
         from xdoctest import static_analysis
         basepath = static_analysis.split_modpath(modpath)[0]
 
-        #mod_subdirs = ut.get_module_subdir_list(modpath)
-        #basepath = modpath
-        #for _ in range(len(mod_subdirs)):
-        #    basepath = dirname(basepath)
-        lines.append('import sys')
-        #lines.append('sys.path.append(%r)' % (dirname(modpath),))
-        lines.append('sys.path.append(%r)' % (basepath,))
+        user_basepath = ub.compressuser(basepath)
+        if user_basepath != basepath:
+            lines.append('import sys, ubelt')
+            lines.append('sys.path.append(ubelt.truepath(%r))' % (user_basepath,))
+        else:
+            lines.append('import sys')
+            lines.append('sys.path.append(%r)' % (basepath,))
 
     lines.append("from {} import *".format(modname))
     # Add private and protected functions
