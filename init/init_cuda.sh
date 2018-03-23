@@ -24,6 +24,8 @@ init_local_cuda(){
     rsync -avzupR ~/./tpl-archive/ jon.crall@klendathu.kitware.com:.
     rsync -avzupR ~/./tpl-archive/ joncrall@acidalia.kitware.com:.
 
+    rsync -avzupR joncrall@acidalia.kitware.com:./tpl-archive/ ~/.
+
     #rsync -avzup tpl-archive/cuda/ jon.crall@arisia.kitware.com:tpl-archive/cuda
     #rsync -avzup tpl-archive/cuda/ jon.crall@aretha.kitware.com:tpl-archive/cuda
 
@@ -295,12 +297,6 @@ init_local_cudnn(){
 
     # Sync between machines
     mkdir -p ~/tpl-archive/cuda
-    #~/tpl-archive/cuda
-    #rsync -avpR ~/tpl-archive/ arisia:tpl-archive
-    #rsync -avpR ~/tpl-archive/ aretha:tpl-archive
-    #rsync -avuzpR tpl-archive/ jon.crall@arisia.kitware.com
-    #rsync -avzupR tpl-archive/ jon.crall@aretha.kitware.com:
-    #rsync -avzupR tpl-archive/ jon.crall@klendathu.kitware.com:
 
     # check for user cuda
     ls ~/.local/cuda/lib64/libcudnn*
