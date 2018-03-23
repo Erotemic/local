@@ -226,11 +226,12 @@ change_cudnn_version(){
 
         try:
             cuda_version_ = '.'.join(ub.readfrom(join(cuda_dpath, 'version.txt')).strip().split()[-1].split('.')[0:2])
+        except Exception:
+            pass
+        else:
             print(cuda_version_)
             print(cuda_version)
             assert cuda_version_ == cuda_version
-        except IOError:
-            pass
 
         cudnn_tgz_fname = ver[(cuda_version, cudnn, osname)]
         cudnn_tgz_fpath = join(home, 'tpl-archive', 'cuda', 'cudnn', cudnn_tgz_fname)

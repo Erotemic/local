@@ -22,6 +22,11 @@ alias cgrep='grep -I -ER \
     --exclude "*.html*" \
     --exclude "*.css*" \
     --exclude "*.pipe*" \
+    --exclude "*.zip*" \
+    --exclude "*.pkl*" \
+    --exclude "*.pyc*" \
+    --exclude "*.so*" \
+    --exclude "*.o*" \
     --exclude "tags"'
 
 
