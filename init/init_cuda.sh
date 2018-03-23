@@ -184,6 +184,10 @@ change_cudnn_version(){
         source ~/local/init/init_cuda.sh
         change_cudnn_version 9.1 7.0
 
+        ls ~/tpl-archive/cuda/cudnn
+        source ~/local/init/init_cuda.sh
+        change_cudnn_version 8.0 7.0
+
         change_cudnn_version 9.1 6.0
         change_cudnn_version 9.1 5.1
 
@@ -213,10 +217,14 @@ change_cudnn_version(){
         home = expanduser('~')
         install_prefix = ub.ensuredir((home, '.local'))
         cuda_dpath = ub.ensuredir((install_prefix, 'cuda'))  # this should by symlinked to a cuda version
-        cuda_version_ = '.'.join(ub.readfrom(join(cuda_dpath, 'version.txt')).strip().split()[-1].split('.')[0:2])
-        print(cuda_version_)
-        print(cuda_version)
-        assert cuda_version_ == cuda_version
+
+        try:
+            cuda_version_ = '.'.join(ub.readfrom(join(cuda_dpath, 'version.txt')).strip().split()[-1].split('.')[0:2])
+            print(cuda_version_)
+            print(cuda_version)
+            assert cuda_version_ == cuda_version
+        except IOError:
+            pass
 
         cudnn_tgz_fname = ver[(cuda_version, cudnn, osname)]
         cudnn_tgz_fpath = join(home, 'tpl-archive', 'cuda', 'cudnn', cudnn_tgz_fname)
