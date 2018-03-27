@@ -139,7 +139,7 @@ if [ -f "$HOME/.local/conda/etc/profile.d/conda.sh" ]; then
     # Add the conda command to the environment if conda is installed 
     # (note this does not modify the path or add conda python)
     source $HOME/.local/conda/etc/profile.d/conda.sh
-    complete -W "activate env clean config create help info install list package remove uninstall search update upgrade -h --help -V --version" "conda"
+    complete -W "deactivate activate env clean config create help info install list package remove uninstall search update upgrade -h --help -V --version" "conda"
 fi
 
 
@@ -239,15 +239,25 @@ debug(){
     pathvar_print PATH
 }
 
+#echo "CONDA_PREFIX = $CONDA_PREFIX"
 #echo "CURRENT VIRTAL_ENV=$VIRTUAL_ENV"
-if [ "$VIRTUAL_ENV" == "" ]; then
+if [ "$DID_MY_BASHRC_INIT" == "" ]; then
     # For some reason VIRTUAL_ENV is initialized as "", so unset it
     unset VIRTUAL_ENV
     # Use this venv for initialization
-    workon_py3
-else
+    #workon_py3
+    #workon_py "$HOME/venv3"
+    #workon_py "$HOME/venv3"
+    #echo "WORKON BASIC"
+    workon_py py36
+elif [ "$VIRTUAL_ENV" != "" ]; then
     # On reload use the same venv you were in
+    #echo "WORKON VIRTUAL_ENV = $VIRTUAL_ENV"
     workon_py $VIRTUAL_ENV
+elif [ "$CONDA_PREFIX" != "" ]; then
+    # On reload use the same venv you were in
+    #echo "WORKON CONDA_PREFIX = $CONDA_PREFIX"
+    workon_py $CONDA_PREFIX
 fi
 
 # Clean paths again before workon stuff happens
@@ -294,6 +304,7 @@ if [ -f "$HOME/.bashrc-local" ]; then
     source $HOME/.bashrc-local
 fi
 
+DID_MY_BASHRC_INIT="TRUE"
 
 # super trick: make multiprocessing actually use multiple cores
 # https://stackoverflow.com/questions/15639779/why-does-multiprocessing-use-only-a-single-core-after-i-import-numpy

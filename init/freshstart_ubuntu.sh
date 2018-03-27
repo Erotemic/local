@@ -619,9 +619,45 @@ setup_conda_env(){
     source $_CONDA_ROOT/etc/profile.d/conda.sh
 
     conda update -n base conda
-    conda create -y -n cenv3 python=3
-    conda activate cenv3
-    #conda remove --name cenv3 --all
+    conda create -y -n py36 python=3.6
+    conda activate py36
+    #conda remove --name py36 --all
+}
+
+install_conda_basics(){
+
+    pip install pip -U
+    pip install -e ~/code/xdoctest
+    pip install -e ~/code/ubelt
+    pip install -e ~/code/utool
+    pip install -e ~/code/vtool
+
+    pip install -r ~/code/ubelt/optional-requirements.txt
+    pip install pytest
+
+    pip install six
+    pip install jedi
+    pip install ipython
+    pip install pep8 autopep8 flake8 pylint line_profiler
+
+    pip install psutil networkx Pillow scikit-image sympy
+
+    pip install numpy scipy matplotlib
+    pip install opencv-python
+    pip install pyqt5
+
+    pip install pyyaml
+
+    #conda install -y -c dsdale24 pyqt5
+    #conda install -y -c conda-forge opencv
+    #conda install -c pytorch pytorch 
+
+    #conda uninstall pytorch
+    conda install -y -c pytorch magma-cuda80
+
+    git clone --recursive https://github.com/pytorch/pytorch $HOME/code/pytorch-conda
+    cd $HOME/code/pytorch-conda
+    python setup.py install
 }
 
 

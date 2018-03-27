@@ -536,32 +536,53 @@ deactivate_venv()
 workon_py()
 {
     NEW_VENV=$1
+
+    if [ ! -d $NEW_VENV ]; then
+        # Check if it is the name of a conda or virtual env
+        # First try conda, then virtualenv
+        TEMP_PATH=$_CONDA_ROOT/envs/$NEW_VENV
+        if [ -d $TEMP_PATH ]; then
+            NEW_VENV=$TEMP_PATH
+        else
+            TEMP_PATH=$HOME/$NEW_VENV
+            if [ -d $TEMP_PATH ]; then
+                NEW_VENV=$TEMP_PATH
+            fi
+        fi
+    fi
+
     if [ -d $NEW_VENV ]; then
         # Ensure the old env is deactivated
         deactivate_venv
 
-        # Activate the new venv
-        export LD_LIBRARY_PATH=$NEW_VENV/local/lib:$LD_LIBRARY_PATH
-        export LD_LIBRARY_PATH=$NEW_VENV/lib:$LD_LIBRARY_PATH
-        source $NEW_VENV/bin/activate
-        # echo "activated NEW_VENV=$NEW_VENV"
+        if [ -d $NEW_VENV/conda-meta ]; then
+            # Use a conda environment
+            conda activate $NEW_VENV
+        else
+            # Use a virtualenv environment
+            # Activate the new venv
+            export LD_LIBRARY_PATH=$NEW_VENV/local/lib:$LD_LIBRARY_PATH
+            export LD_LIBRARY_PATH=$NEW_VENV/lib:$LD_LIBRARY_PATH
+            source $NEW_VENV/bin/activate
+            # echo "activated NEW_VENV=$NEW_VENV"
+        fi
     fi
-        # echo "new venv doesn't exist"
+    # echo "new venv doesn't exist"
 }
+alias we=workon_py
 
-
-workon_conda()
-{
-    # Wrapper around conda activate that handles deactivating any existing
-    # python virtualenvs
-    NEW_VENV=$1
-    if [ -d $_CONDA_ROOT/envs/$NEW_VENV ]; then
-        # Ensure the old env is deactivated
-        deactivate_venv
-        # Activate the new venv
-        conda activate $NEW_VENV
-    fi
+refresh_conda_autocomplete(){
+    KNOWN_CONDA_ENVS="$(/bin/ls -1 $_CONDA_ROOT/envs | sort)"
+    KNOWN_VIRTUAL_ENVS="$(/bin/ls -1 $HOME | grep venv | sort)"
+    #echo "KNOWN_VIRTUAL_ENVS = $KNOWN_VIRTUAL_ENVS"
+    #echo "KNOWN_CONDA_ENVS = $KNOWN_CONDA_ENVS"
+    # Remove newlines
+    KNOWN_ENVS=$(echo "$KNOWN_CONDA_ENVS $KNOWN_VIRTUAL_ENVS" | tr '\n' ' ')
+    complete -W "$KNOWN_ENVS" "workon_py"
+    complete -W "$KNOWN_ENVS" "we"
 }
+refresh_conda_autocomplete
+
 
 workon_pysys()
 {
@@ -589,16 +610,30 @@ workon_py3()
 alias we-py3=workon_py3
 
 
-workon_conda3()
-{
-    __heredoc__ "
-    deactivate_venv
-    conda create -y -n cenv3 python=3
-    we-conda3
-    "
-    workon_conda cenv3
-}
-alias we-conda3=workon_conda3
+#workon_conda()
+#{
+#    # OLD: DEPRICATE
+
+#    # Wrapper around conda activate that handles deactivating any existing
+#    # python virtualenvs
+#    NEW_VENV=$1
+#    if [ -d $_CONDA_ROOT/envs/$NEW_VENV ]; then
+#        # Ensure the old env is deactivated
+#        deactivate_venv
+#        # Activate the new venv
+#        conda activate $NEW_VENV
+#    fi
+#}
+#workon_conda3()
+#{
+#    __heredoc__ "
+#    deactivate_venv
+#    conda create -y -n cenv3 python=3
+#    we-conda3
+#    "
+#    workon_conda cenv3
+#}
+#alias we-conda3=workon_conda3
 
 
 workon_py37()
