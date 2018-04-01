@@ -100,6 +100,9 @@ hyrule_create_users()
     sudo usermod -a -G rpi joshbeard
     sudo usermod -a -G rpi joncrall
     sudo usermod -a -G rpi jason
+
+    sudo usermod -a -G noaa jon.crall
+    sudo usermod -a -G noaa jonathan.owens
     # Delete user
     #sudo deluser --remove-home newuser
     #sudo chown -R joncrall:rpi *

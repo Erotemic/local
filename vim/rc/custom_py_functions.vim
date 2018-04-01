@@ -54,12 +54,12 @@ func! InsertPyUtMain()
 Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool as ut
-ut.rrrr(verbose=False)
+import ubelt as ub
+#import ubelt, xdoctest; imp.reload(ubelt); imp.reload(xdoctest.static_analysis)
+
 pyvim_funcs.ensure_normalmode()
 if pyvim_funcs.is_module_pythonfile():
     modpath = vim.current.buffer.name
-    modname = ut.get_modname_from_modpath(modpath)
     #test_code = ut.codeblock(
     #    r'''
     #    import pytest
@@ -70,7 +70,8 @@ if pyvim_funcs.is_module_pythonfile():
         import xdoctest
         xdoctest.doctest_module(__file__)
         ''')
-    text = ut.make_default_module_maintest(modname, modpath, test_code=test_code)
+    text = pyvim_funcs.make_default_module_maintest(
+        modpath, test_code=test_code, argv=['all'])
     pyvim_funcs.insert_codeblock_under_cursor(text)
 else:
     print('current file is not a pythonfile')

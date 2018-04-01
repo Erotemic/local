@@ -98,36 +98,6 @@ def _context_func(file=None):
 
     pyvim_funcs.enter_text_in_terminal(text, return_to_vim=return_to_vim)
 
-    # # Build xdtool script
-    # import re
-    # # Make sure regexes are bash escaped
-    # terminal_pattern = r'\|'.join([
-    #     'terminal',
-    #     re.escape('terminator.Terminator'),  # gtk3 terminator
-    #     re.escape('x-terminal-emulator.X-terminal-emulator'),  # gtk2 terminator
-    # ])
-
-    # doscript = [
-    #     ('remember_window_id', 'ACTIVE_GVIM'),
-    #     #('focus', 'x-terminal-emulator.X-terminal-emulator'),
-    #     ('focus', terminal_pattern),
-    #     ('key', 'ctrl+shift+v'),
-    #     ('key', 'KP_Enter'),
-    # ]
-    # if '\n' in text:
-    #     # Press enter twice for multiline texts
-    #     doscript += [
-    #         ('key', 'KP_Enter'),
-    #     ]
-    # if return_to_vim == "1":
-    #     doscript += [
-    #         ('focus_id', '$ACTIVE_GVIM'),
-    #     ]
-    # # execute script
-    # dprint('Running script')
-    # ut.util_ubuntu.XCtrl.do(*doscript, sleeptime=.01, file=file, verbose=DEBUG)
-    # dprint('Finished script')
-
 if DEBUG_STDOUT:
     from os.path import expanduser
     with open(expanduser('~/vim-misc-debug.txt'), 'a') as file:

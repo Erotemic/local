@@ -21,11 +21,11 @@ import itertools as it
 
 
 def get_bibtex_dict():
-    import utool as ut
+    import ubelt as ub
     # HACK: custom current bibtex file
     possible_bib_fpaths = [
-        ut.truepath('./My_Library_clean.bib'),
-        #ut.truepath('~/latex/crall-thesis-2017/My_Library_clean.bib'),
+        ub.truepath('./My_Library_clean.bib'),
+        #ub.truepath('~/latex/crall-thesis-2017/My_Library_clean.bib'),
     ]
 
     bib_fpath = None
@@ -41,7 +41,7 @@ def get_bibtex_dict():
     from bibtexparser import bparser
     parser = bparser.BibTexParser()
     parser.ignore_nonstandard_types = True
-    bib_text = ut.read_from(bib_fpath)
+    bib_text = ub.readfrom(bib_fpath)
     bibtex_db = parser.parse(bib_text)
     bibtex_dict = bibtex_db.get_entry_dict()
 
@@ -188,7 +188,6 @@ def get_minimum_indentation(text):
     Example:
         >>> # ENABLE_DOCTEST
         >>> from utool.util_str import *  # NOQA
-        >>> import utool as ut
         >>> text = '    foo\n   bar'
         >>> result = get_minimum_indentation(text)
         >>> print(result)
@@ -338,31 +337,17 @@ def find_pyfunc_above_row(line_list, row, orclass=False):
     originally part of the vim plugin
 
     CommandLine:
-        python -m utool.util_inspect --test-find_pyfunc_above_row
+        python ~/local/vim/rc/pyvim_funcs.py find_pyfunc_above_row
 
     Example:
-        >>> # ENABLE_DOCTEST
-        >>> from utool.util_inspect import *  # NOQA
-        >>> import utool as ut
+        >>> import ubelt as ub
+        >>> import six
         >>> func = find_pyfunc_above_row
-        >>> fpath = meta_util_six.get_funcglobals(func)['__file__'].replace('.pyc', '.py')
-        >>> line_list = ut.read_from(fpath, aslines=True)
-        >>> row = meta_util_six.get_funccode(func).co_firstlineno + 1
-        >>> pyfunc, searchline = find_pyfunc_above_row(line_list, row)
-        >>> result = pyfunc
-        >>> print(result)
-        find_pyfunc_above_row
-
-    Example:
-        >>> # DISABLE_DOCTEST
-        >>> from utool.util_inspect import *  # NOQA
-        >>> import utool as ut
-        >>> fpath = ut.util_inspect.__file__.replace('.pyc', '.py')
-        >>> line_list = ut.read_from(fpath, aslines=True)
-        >>> row = 1608
-        >>> pyfunc, searchline = find_pyfunc_above_row(line_list, row, orclass=True)
-        >>> result = pyfunc
-        >>> print(result)
+        >>> fpath = six.get_function_globals(func)['__file__'].replace('.pyc', '.py')
+        >>> line_list = ub.readfrom(fpath, aslines=True)
+        >>> row = six.get_function_code(func).co_firstlineno + 1
+        >>> funcname, searchlines, func_pos, foundline = find_pyfunc_above_row(line_list, row)
+        >>> print(funcname)
         find_pyfunc_above_row
     """
     import ubelt as ub
@@ -414,8 +399,8 @@ def find_pyfunc_above_cursor():
 
 def is_paragraph_end(line_):
     # Hack, par_marker_list should be an argument
-    import utool as ut
-    striped_line = ut.ensure_unicode(line_.strip())
+    import ubelt as ub
+    striped_line = ub.ensure_unicode(line_.strip())
     isblank = striped_line == ''
     if isblank:
         return True
@@ -499,8 +484,8 @@ def get_selected_text(select_at_cursor=False):
 def get_text_between_lines(lnum1, lnum2, col1=0, col2=sys.maxsize - 1):
     import vim
     lines = vim.eval('getline({}, {})'.format(lnum1, lnum2))
-    import utool as ut
-    lines = ut.ensure_unicode_strlist(lines)
+    import ubelt as ub
+    lines = list(map(ub.ensure_unicode, lines))
     try:
         if len(lines) == 0:
             pass
@@ -511,11 +496,7 @@ def get_text_between_lines(lnum1, lnum2, col1=0, col2=sys.maxsize - 1):
             lines[-1] = lines[-1][:col2 + 1]
         text = '\n'.join(lines)
     except Exception:
-        import utool as ut
-        ut.ENABLE_COLORS = False
-        ut.util_str.ENABLE_COLORS = False
-        ut.util_dbg.COLORED_EXCEPTIONS = False
-        print(ut.repr2(lines))
+        print(ub.repr2(lines))
         raise
     return text
 
@@ -822,30 +803,38 @@ def get_current_modulename():
     """
     returns current module being edited
 
-    buffer_name = ut.truepath('~/local/vim/rc/pyvim_funcs.py')
+    buffer_name = ub.truepath('~/local/vim/rc/pyvim_funcs.py')
     """
     import vim
-    from os.path import dirname
-    import utool as ut
-    ut.ENABLE_COLORS = False
-    ut.util_str.ENABLE_COLORS = False
-    ut.util_dbg.COLORED_EXCEPTIONS = False
-    #ut.rrrr(verbose=False)
+    import ubelt as ub
     buffer_name = vim.current.buffer.name
-    modname = ut.get_modname_from_modpath(buffer_name)
-    moddir = dirname(buffer_name)
+    modname = ub.modpath_to_modname(buffer_name)
+    moddir, rel_modpath = ub.split_modpath(buffer_name)
+    # moddir = dirname(buffer_name)
     return modname, moddir
 
 
 def auto_cmdline():
     import ubelt as ub
+    from xdoctest import static_analysis as static
+    import vim
+    # import imp
+    # imp.reload(static)
     modname, moddir = get_current_modulename()
     funcname, searchlines, pos, foundline = find_pyfunc_above_cursor()
-    text = ub.codeblock(
-        '''
-        CommandLine:
-            python -m {modname} {funcname}
-        ''').format(funcname=funcname, modname=modname)
+    if static.is_modname_importable(modname, exclude=['.']):
+        text = ub.codeblock(
+            '''
+            CommandLine:
+                python -m {modname} {funcname}
+            ''').format(funcname=funcname, modname=modname)
+    else:
+        modpath = ub.compressuser(vim.current.buffer.name)
+        text = ub.codeblock(
+            '''
+            CommandLine:
+                python {modpath} {funcname}
+            ''').format(funcname=funcname, modpath=modpath)
 
     def get_indent(line):
         """
@@ -1310,6 +1299,9 @@ def enter_text_in_terminal(text, return_to_vim=True):
     recently used terminal, presses enter (if needed) to run what presumably is
     a command or script, and then returns to vim.
 
+    DEPRICATE:
+        use vimtk instead
+
     TODO:
         * User specified terminal pattern
         * User specified paste keypress
@@ -1330,7 +1322,6 @@ def enter_text_in_terminal(text, return_to_vim=True):
         return
 
     terminal_pattern = wmctrl_terminal_pattern()
-
 
     # Sequence of key presses that will trigger a paste event
     paste_keypress = 'ctrl+shift+v'
@@ -1366,19 +1357,89 @@ def is_url(text):
     ])
 
 
-if __name__ == '__main__':
+def make_default_module_maintest(modpath, test_code=None, argv=None,
+                                 force_full=False):
     """
+    Args:
+        modname (str):  module name
+
+    Returns:
+        str: text source code
+
     CommandLine:
-        python -m pyvim_funcs
-        python -m pyvim_funcs --allexamples
-        python -m pyvim_funcs --allexamples --noface --nosrc
+        python -m utool.util_autogen --test-make_default_module_maintest
+
+    References:
+        http://legacy.python.org/dev/peps/pep-0338/
+
+    Example:
+        >>> import sys, ubelt as ub
+        >>> sys.path.append(ub.truepath('~/local/vim/rc/'))
+        >>> from pyvim_funcs import *
+        >>> import pyvim_funcs
+        >>> modpath = pyvim_funcs.__file__
+        >>> argv = None
+        >>> text = make_default_module_maintest(modpath)
+        >>> print(text)
     """
-    import xdoctest as xdoc
-    xdoc.doctest_module()
-    # import multiprocessing
-    # multiprocessing.freeze_support()  # for win32
-    # import utool as ut  # NOQA
-    # ut.ENABLE_COLORS = False
-    # ut.util_str.ENABLE_COLORS = False
-    # ut.util_dbg.COLORED_EXCEPTIONS = False
-    # ut.doctest_funcs()
+    # if not use_modrun:
+    #     if ub.WIN32:
+    #         augpath = 'set PYTHONPATH=%PYTHONPATH%' + os.pathsep + moddir
+    #     else:
+    #         augpath = 'export PYTHONPATH=$PYTHONPATH' + os.pathsep + moddir
+    #     cmdline = augpath + '\n' + cmdline
+    import ubelt as ub
+    from xdoctest import static_analysis as static
+
+    modname = static.modpath_to_modname(modpath)
+    moddir, rel_modpath = static.split_modpath(modpath)
+    if not force_full:
+        info = ub.cmd('python -c "import sys; print(sys.path)"')
+        default_path = eval(info['out'], {})
+        is_importable = static.is_modname_importable(modname, exclude=['.'],
+                                                     sys_path=default_path)
+    if not force_full and is_importable:
+        cmdline = 'python -m ' + modname
+    else:
+        if ub.WIN32:
+            modpath = ub.compressuser(modpath, home='%HOME%')
+            cmdline = 'python -B ' + modpath.replace('\\', '/')
+        else:
+            modpath = ub.compressuser(modpath, home='~')
+            cmdline = 'python ' + modpath
+
+    if test_code is None:
+        test_code = ub.codeblock(
+            r'''
+            import xdoctest
+            xdoctest.doctest_module(__file__)
+            ''')
+        if argv is None:
+            argv = ['all']
+
+    if argv is None:
+        argv = []
+
+    cmdline_ = ub.indent(cmdline + ' ' + ' '.join(argv), ' ' * 8).lstrip(' ')
+    test_code = ub.indent(test_code, ' ' * 4).lstrip(' ')
+    text = ub.codeblock(
+        r'''
+        if __name__ == '__main__':
+            {rr}"""
+            CommandLine:
+                {cmdline_}
+            """
+            {test_code}
+        '''
+    ).format(cmdline_=cmdline_, test_code=test_code, rr='{r}')
+    text = text.format(r='r' if '\\' in text else '')
+    return text
+
+
+if __name__ == '__main__':
+    r"""
+    CommandLine:
+        python ~/local/vim/rc/pyvim_funcs.py all
+    """
+    import xdoctest
+    xdoctest.doctest_module(__file__)

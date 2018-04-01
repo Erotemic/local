@@ -14,6 +14,7 @@
 
 
 " ~/code/vimtk/plugin/vimtk.vim
+" ~/local/vim/vimfiles/bundle/vimtk/plugin/vimtk.vim
 
 
 " Spell Files
@@ -365,6 +366,7 @@ call QUICKOPEN_leader_tvio('q', '~/local/vim/vimfiles/bundle/vimtk/vimtk/core.py
 "call QUICKOPEN_leader_tvio('a', '~/code/clab/clab/live/')
 call QUICKOPEN_leader_tvio('c', '~/code/clab/clab')
 call QUICKOPEN_leader_tvio('a', '~/code/clab/clab/fit_harness.py')
+call QUICKOPEN_leader_tvio('n', '~/code/netharn/netharn/fit_harn.py')
 
 
 if has("win32") || has("win16")

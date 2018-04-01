@@ -654,10 +654,11 @@ install_conda_basics(){
 
     #conda uninstall pytorch
     conda install -y -c pytorch magma-cuda80
+    #conda install -y -c pytorch magma-cuda90
 
     git clone --recursive https://github.com/pytorch/pytorch $HOME/code/pytorch-conda
     cd $HOME/code/pytorch-conda
-    python setup.py install
+    python setup.py clean && python setup.py install
 }
 
 
