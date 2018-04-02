@@ -65,7 +65,7 @@ if pyvim_funcs.is_module_pythonfile():
     #    import pytest
     #    pytest.main([__file__, '--xdoc'])
     #    ''')
-    test_code = ut.codeblock(
+    test_code = ub.codeblock(
         r'''
         import xdoctest
         xdoctest.doctest_module(__file__)

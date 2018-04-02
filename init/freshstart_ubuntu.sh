@@ -618,7 +618,7 @@ setup_conda_env(){
 
     source $_CONDA_ROOT/etc/profile.d/conda.sh
 
-    conda update -n base conda
+    conda update -y -n base conda
     conda create -y -n py36 python=3.6
     conda activate py36
     #conda remove --name py36 --all
