@@ -215,10 +215,6 @@ func! IPyFixEmbedGlobals(...) range
 Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool.util_ubuntu
-import utool as ut
-ut.rrrr(0)
-ut.util_ubuntu.rrr(0)
 pyvim_funcs.enter_text_in_terminal('ut.fix_embed_globals()')
 #ut.copy_text_to_clipboard('ut.fix_embed_globals()')
 #doscript = [

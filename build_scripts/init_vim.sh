@@ -8,8 +8,10 @@ cd ~/code/vim
 
 prereq(){
     #sudo apt-get build-dep vim
-    sudo apt-get install build-essential libtinfo-dev -y
-    sudo apt-get build-dep vim-gtk -y
+    sudo apt install build-essential libtinfo-dev -y
+    sudo apt build-dep vim-gtk -y
+    sudo apt install ncurses-dev
+    sudo apt-get build-dep vim-gtk
     #sudo apt-get build-dep vim-gnome
 }
 
@@ -58,12 +60,6 @@ make distclean
 #PYTHON3_LIBS="-L$VIRTUAL_ENV/lib/python3.7/config-3.7m-x86_64-linux-gnu -lpython3.7m -lpthread -ldl -lutil -lm"
 #PYTHON3_CONFDIR="$VIRTUAL_ENV/lib/python3.7/config-3.7m-x86_64-linux-gnu"
 
-./configure \
-    --prefix=$HOME \
-    --enable-pythoninterp=no \
-    --enable-python3interp=yes \
-    --enable-gui=gtk2
-
 
 vim_python37_version(){
     make distclean
@@ -86,15 +82,78 @@ vim_python37_version(){
 
     #--enable-python3interp=yes \
 
+with_conda_python36(){
+    # NOTE:
+    # https://github.com/ContinuumIO/anaconda-issues/issues/6619
+    #conda install gxx_linux-64
+    #conda install ncurses
+
+    #conda install pkg-config autoconf automake cmake libtool
+    #conda install -c anaconda gtk2-devel-cos6-x86_64 
+    #conda install -c anaconda libx11-devel-cos6-x86_64 
+
+    #conda install -c anaconda libiconv 
+    #conda install -c anaconda glib 
+
+    conda create -n vim80build python=3.6 
+    conda activate vim80build
+
+    #conda install gcc_linux-64
+    #conda install gxx_linux-64 ncurses pkg-config autoconf automake cmake libtool libx11-devel-cos6-x86_64 libiconv glib libxml2 libpng cairo
+
+    conda install ncurses libx11-devel-cos6-x86_64 libiconv glib libxml2 libpng cairo
+    conda install -c pkgw/label/superseded gtk3
+
+    # Remove gxx_linux-64 and gcc_linux-64 after you are done?
+    cd ~/code/vim
+    make distclean
+    LDFLAGS="-L$CONDA_PREFIX/lib -Wl,-rpath,$CONDA_PREFIX/lib" ./configure --prefix=$CONDA_PREFIX --enable-pythoninterp=no --enable-python3interp=yes --enable-gui=gtk3 --with-local-dir==$CONDA_PREFIX
+    cat src/auto/config.mk | grep GUI
+
+    
+    # GTK2 VERSION ALSO WORKS
+    conda config --add channels loopbio
+    conda install gtk2
+
+
+    NCPUS=$(grep -c ^processor /proc/cpuinfo)
+    make -j$NCPUS
+
+    # Potential GTK issue
+    # https://github.com/vim/vim/issues/1149
+
+    #conda install -c mw gtk2
+    #conda install -c pkgw/label/superseded gtk3
+    #conda install -c pkgw-forge gtk3 
+    #conda install -c anaconda libxt-devel-cos6-x86_64 
+    #apt-cache showsrc vim-gtk | grep ^Build-Depends
+
+
+
+    #make distclean
+    #LDFLAGS="-L$CONDA_PREFIX/lib -Wl,-rpath,$CONDA_PREFIX/lib -L. -Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -fstack-protector -rdynamic -Wl,-export-dynamic -Wl,-O2 -Wl,--sort-common -Wl,--as-needed -Wl,-z,relro -Wl,-z,now -L/usr/local/lib -L/usr/lib/x86_64-linux-gnu" \
+    #    ./configure --prefix=$CONDA_PREFIX --enable-pythoninterp=no --enable-python3interp=yes --enable-gui=gtk2 \
+    #    --with-local-dir==$CONDA_PREFIX --with-gnome-libs=$CONDA_PREFIX/lib --with-gnome-includes=$CONDA_PREFIX/include
+    #cat src/auto/config.mk | grep GUI
+}
+
+./configure \
+    --prefix=$HOME \
+    --enable-pythoninterp=no \
+    --enable-python3interp=yes \
+    --enable-gui=gtk2
+
 cat src/auto/config.mk 
 cat src/auto/config.mk | grep GUI
 cat src/auto/config.mk | grep PYTHON3
 
 # Build
-make -j9
+NCPUS=$(grep -c ^processor /proc/cpuinfo)
+make -j$NCPUS
+
 # Test
-~/code/vim/src/vim -u NONE
 ~/code/vim/src/vim --version
+~/code/vim/src/vim -u NONE
 # Install
 make install
 

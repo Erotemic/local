@@ -16,6 +16,7 @@ FIXME:
 from __future__ import absolute_import, division, print_function, unicode_literals
 from os.path import expanduser, exists, join, isdir, abspath
 import sys
+import os
 import re
 import itertools as it
 
@@ -1063,10 +1064,11 @@ def open_fpath_list(fpath_list, num_hsplits=2):
 def vim_grep(pat, mode='normal', hashid=None):
     import vim
     import utool as ut
+    import ubelt as ub
     ut.ENABLE_COLORS = False
     ut.util_str.ENABLE_COLORS = False
     if hashid is None:
-        hashid = ut.hash_data(pat)
+        hashid = ub.hash_data(pat)
     print('Grepping for pattern = %r' % (pat,))
     import os
 
@@ -1084,10 +1086,10 @@ def vim_grep(pat, mode='normal', hashid=None):
                                     reflags=reflags)
         text = '\n'.join([
             'Greping Directory "{}"'.format(dpath),
-            'tofind_list={}'.format(ut.repr2(extended_regex_list)),
+            'tofind_list={}'.format(ub.repr2(extended_regex_list)),
             grep_result.make_resultstr(colored=False),
             '=============',
-            'found_fpath_list = {}'.format(ut.repr2(found_fpath_list, nl=1))
+            'found_fpath_list = {}'.format(ub.repr2(found_fpath_list, nl=1))
         ])
         return text
 
@@ -1105,7 +1107,7 @@ def vim_grep(pat, mode='normal', hashid=None):
         raise KeyError('unknown pyvim_funcs.vim_grep mode={}'.format(mode))
 
     fname = 'tmp_grep_' + hashid + '.txt'
-    dpath = ut.ensure_app_cache_dir('pyvim_funcs')
+    dpath = ub.ensure_app_cache_dir('pyvim_funcs')
     fpath = join(dpath, fname)
 
     # Display the text in a new vim split
@@ -1147,6 +1149,95 @@ def vim_popup_menu(options):
     return chosen
 
 
+def ancestor_paths(start=None, limit={}):
+    """
+    All paths above you
+    """
+    limit = {expanduser(p) for p in limit}.union(set(limit))
+    if start is None:
+        start = os.getcwd()
+    path = start
+    prev = None
+    while path != prev and prev not in limit:
+        yield path
+        prev = path
+        path = os.path.dirname(path)
+
+
+def search_candidate_paths(candidate_path_list, candidate_name_list=None,
+                           priority_paths=None, required_subpaths=[],
+                           verbose=None):
+    """
+    searches for existing paths that meed a requirement
+
+    Args:
+        candidate_path_list (list): list of paths to check. If
+            candidate_name_list is specified this is the dpath list instead
+        candidate_name_list (list): specifies several names to check
+            (default = None)
+        priority_paths (None): specifies paths to check first.
+            Ignore candidate_name_list (default = None)
+        required_subpaths (list): specified required directory structure
+            (default = [])
+        verbose (bool):  verbosity flag(default = True)
+
+    Returns:
+        str: return_path
+
+    CommandLine:
+        python -m utool.util_path --test-search_candidate_paths
+
+    Example:
+        >>> # DISABLE_DOCTEST
+        >>> from utool.util_path import *  # NOQA
+        >>> candidate_path_list = [ub.truepath('~/RPI/code/utool'),
+        >>>                        ub.truepath('~/code/utool')]
+        >>> candidate_name_list = None
+        >>> required_subpaths = []
+        >>> verbose = True
+        >>> priority_paths = None
+        >>> return_path = search_candidate_paths(candidate_path_list,
+        >>>                                      candidate_name_list,
+        >>>                                      priority_paths, required_subpaths,
+        >>>                                      verbose)
+        >>> result = ('return_path = %s' % (str(return_path),))
+        >>> print(result)
+    """
+    if verbose is None:
+        verbose = 1
+
+    if verbose >= 1:
+        print('[search_candidate_paths] Searching for candidate paths')
+
+    if candidate_name_list is not None:
+        candidate_path_list_ = [join(dpath, fname) for dpath, fname in
+                                it.product(candidate_path_list,
+                                           candidate_name_list)]
+    else:
+        candidate_path_list_ = candidate_path_list
+
+    if priority_paths is not None:
+        candidate_path_list_ = priority_paths + candidate_path_list_
+
+    return_path = None
+    for path in candidate_path_list_:
+        if path is not None and exists(path):
+            if verbose >= 2:
+                print('[search_candidate_paths] Found candidate directory %r' % (path,))
+                print('[search_candidate_paths] ... checking for approprate structure')
+            # tomcat directory exists. Make sure it also contains a webapps dir
+            subpath_list = [join(path, subpath) for subpath in required_subpaths]
+            if all(exists(path_) for path_ in subpath_list):
+                return_path = path
+                if verbose >= 2:
+                    print('[search_candidate_paths] Found acceptable path')
+                return return_path
+                break
+    if verbose >= 1:
+        print('[search_candidate_paths] Failed to find acceptable path')
+    return return_path
+
+
 def find_and_open_path(path, mode='split', verbose=0,
                        enable_python=True,
                        enable_url=True):
@@ -1159,7 +1250,6 @@ def find_and_open_path(path, mode='split', verbose=0,
         * python modules that exist in the PYTHONPATH
 
     """
-    import utool as ut
     import os
 
     def try_open(path):
@@ -1187,7 +1277,11 @@ def find_and_open_path(path, mode='split', verbose=0,
         # https://github.com/Erotemic
         url = extract_url_embeding(path)
         if is_url(url):
-            ut.open_url_in_browser(url, 'google-chrome')
+            import webbrowser
+            browser = webbrowser.open(url)
+            # browser = webbrowser.get('google-chrome')
+            browser.open(url)
+            # ut.open_url_in_browser(url, 'google-chrome')
             return
 
     path = expanduser(path)
@@ -1213,9 +1307,9 @@ def find_and_open_path(path, mode='split', verbose=0,
     if not os.path.isabs(path):
         limit = {'~', os.path.expanduser('~')}
         start = os.getcwd()
-        candidates += list(ut.ancestor_paths(start, limit=limit))
+        candidates += list(ancestor_paths(start, limit=limit))
     candidates += os.environ['PATH'].split(os.sep)
-    result = ut.search_candidate_paths(candidates, [path], verbose=verbose)
+    result = search_candidate_paths(candidates, [path], verbose=verbose)
     if result is not None:
         path = result
 

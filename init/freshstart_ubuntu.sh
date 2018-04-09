@@ -648,17 +648,31 @@ install_conda_basics(){
 
     pip install pyyaml
 
+    pip install -e ~/local/vim/vimfiles/bundle/vimtk
+
     #conda install -y -c dsdale24 pyqt5
     #conda install -y -c conda-forge opencv
     #conda install -c pytorch pytorch 
 
     #conda uninstall pytorch
+
+    # CHECK which cuda you have
+    cat ~/.local/cuda/version.txt
+
     conda install -y -c pytorch magma-cuda80
-    #conda install -y -c pytorch magma-cuda90
+
+    # conda install -y -c pytorch magma-cuda90
 
     git clone --recursive https://github.com/pytorch/pytorch $HOME/code/pytorch-conda
     cd $HOME/code/pytorch-conda
     python setup.py clean && python setup.py install
+
+    # TRY TO WORK WITH GXX_LINUX-64
+    #conda install numpy pyyaml mkl mkl-include setuptools cmake cffi typing
+    #export CMAKE_PREFIX_PATH="$(dirname $(which conda))/../" 
+
+    CC="cc" CPP="gcc" CXX="c++" python setup.py install
+    
 }
 
 

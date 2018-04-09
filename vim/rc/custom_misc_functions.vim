@@ -228,8 +228,6 @@ func! MarkdownPreview()
 Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool as ut
-ut.rrrr(verbose=False)
 buffer_name = vim.current.buffer.name
 print('mdview buffer_name = %r' % (buffer_name,))
 os.system('mdview ' + buffer_name + '&')
@@ -276,10 +274,8 @@ Does a fancy open of a path specified as an function arg.
 """
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool as ut
 import re
 from os.path import exists, expanduser
-ut.rrrr(verbose=False)
 argv = pyvim_funcs.vim_argv(defaults=[None, 'split'])
 path, mode = argv[0:2]
 pyvim_funcs.find_and_open_path(path, mode=mode, verbose=0)
@@ -299,10 +295,8 @@ Does a fancy open of a path at the current cursor position in vim
 """
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool as ut
 import re
 from os.path import exists, expanduser
-ut.rrrr(verbose=False)
 
 argv = pyvim_funcs.vim_argv(defaults=['split'])
 mode = argv[0]
@@ -320,15 +314,12 @@ func! GrepWordAtCursor(...)
 Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool as ut
 import re
-ut.rrrr(verbose=False)
 
 argv = pyvim_funcs.vim_argv(defaults=['project'])
 mode = argv[0]
 
 word = pyvim_funcs.get_word_at_cursor(url_ok=False)
-#msg_list = ut.grep_projects(['\\b' + re.escape(word) + '\\b'], verbose=False)
 print('Grepping for pattern = %r' % (word,))
 pat = r'\b' + re.escape(word) + r'\b'
 
