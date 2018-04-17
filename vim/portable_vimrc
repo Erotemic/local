@@ -409,7 +409,6 @@ for varname, list_ in listvars.items():
     vim.command('let g:' + varname + ' = ' + liststr)
 
 if 0:
-    if 0:
     import vimtk
     #import logging
     #logging.basicConfig()
