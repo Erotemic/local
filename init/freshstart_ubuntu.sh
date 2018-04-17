@@ -647,6 +647,9 @@ install_conda_basics(){
     pip install pyqt5
 
     pip install pyyaml
+    pip install pygtrie pyqtree
+
+    pip install tensorboard tensorflow
 
     pip install -e ~/local/vim/vimfiles/bundle/vimtk
 

@@ -1482,12 +1482,17 @@ EOL'
 
 make_private_permissions()
 {
+    # https://unix.stackexchange.com/questions/79395/how-does-the-sticky-bit-work 
+    # https://unix.stackexchange.com/questions/129551/is-it-possible-to-prevent-files-created-being-world-readable
+
     #chmod g-r g-x [path]
     chmod -R og-wrx /super/secret/path
     chmod -R u+wrx /super/secret/path
 
     chmod ug-rx clab-private.git
     chmod 700 clab-private.git
+
+    # TODO: setup umask so new directories are created with the same permissions?
 }
 
 apt-add-repository-remove()
