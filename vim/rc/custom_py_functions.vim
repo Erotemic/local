@@ -387,6 +387,8 @@ def undefined_names(fpath):
     #    for pat in lint_patterns:
 
 known_imports = {
+    'it': 'import itertools as it',
+    'nh': 'import netharn as nh',
     'np': 'import numpy as np',
     'pd': 'import pandas as pd',
     'ub': 'import ubelt as ub',
