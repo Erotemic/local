@@ -31,7 +31,8 @@ def setup_git_scripts():
 
     git_sh_scripts = list(glob.glob(join(dpath, 'git_*.sh')))
     git_py_scripts = list(glob.glob(join(dpath, 'git_*.py')))
-    git_scripts = git_py_scripts + git_sh_scripts
+    github_py_scripts = list(glob.glob(join(dpath, 'github_*.py')))
+    git_scripts = git_py_scripts + git_sh_scripts + github_py_scripts
 
     for fpath in git_scripts:
         fname = basename(fpath)
