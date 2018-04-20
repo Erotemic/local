@@ -408,11 +408,10 @@ for varname, list_ in listvars.items():
     liststr = '[' + ', '.join('"%s"' % v for v in list_) + ']'
     vim.command('let g:' + varname + ' = ' + liststr)
 
-if 0:
+if 1:
     import vimtk
     #import logging
     #logging.basicConfig()
     #logging.getLogger().setLevel(logging.DEBUG)
     vimtk.reload()
-    
 EOF
