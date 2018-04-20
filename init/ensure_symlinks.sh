@@ -120,7 +120,7 @@ ensure_config_symlinks()
         unlink ~/scripts
     fi
     ln -s ~/local/scripts ~/scripts
-    
+    ln -s ~/local/vim/vimfiles/bundle/vimtk ~/code/vimtk
 
     echo "==============================="
     echo "FINISHED ensure_config_symlinks"
