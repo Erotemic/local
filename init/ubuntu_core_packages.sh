@@ -395,31 +395,62 @@ install_vpn()
  
 install_latex()
 {
+    # texlive latest
+    # https://www.tug.org/texlive/acquire-netinstall.html
     echo 'latex'
     # Latex (ubuntu uses texlive 2013, use something more recent)
-    sudo apt purge texlive
-    sudo apt purge texlive-base
-    sudo apt purge pgf
+    sudo apt purge texlive texlive-base pgf -y
 
-    #texlive 2015
-    # https://www.tug.org/texlive/acquire-netinstall.html
     mkdir -p ~/tmp
     cd ~/tmp
     wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
     tar xzvf install-tl-unx.tar.gz
     cd ~/tmp/install-tl-*
-    #export TEXLIVE_INSTALL_PREFIX=/opt/texlive
     #export TEXDIR=/opt/texlive
-    chmod +x install-tl
-    sudo ./install-tl
+    #export TEXDIR=$HOME/.local/texlive
+
+    #echo "$(codeblock "
+    #    selected_scheme scheme-full
+    #    TEXDIR $HOME/.local/texlive/2018
+    #    TEXMFLOCAL $HOME/.local/texlive/texmf-local
+    #    TEXMFSYSCONFIG $HOME/.local/texlive/2018/texmf-config
+    #    TEXMFSYSVAR $HOME/.local/texlive/2018/texmf-var
+    #    TEXMFCONFIG ~/.texlive2018/texmf-config
+    #    TEXMFHOME ~/texmf
+    #    TEXMFVAR ~/.texlive2018/texmf-var
+    #    binary_x86_64-linux 1
+    #    instopt_adjustpath 0
+    #    instopt_adjustrepo 1
+    #    instopt_letter 0
+    #    instopt_portable 0
+    #    instopt_write18_restricted 1
+    #    tlpdbopt_autobackup 1
+    #    tlpdbopt_backupdir tlpkg/backups
+    #    tlpdbopt_create_formats 1
+    #    tlpdbopt_desktop_integration 1
+    #    tlpdbopt_file_assocs 1
+    #    tlpdbopt_generate_updmap 0
+    #    tlpdbopt_install_docfiles 1
+    #    tlpdbopt_install_srcfiles 1
+    #    tlpdbopt_post_code 1
+    #    tlpdbopt_sys_bin /usr/local/bin
+    #    tlpdbopt_sys_info /usr/local/share/info
+    #    tlpdbopt_sys_man /usr/local/share/man
+    #    tlpdbopt_w32_multi_user 1
+    #")" > texlive.profile
+    #chmod +x install-tl
+    #./install-tl --profile=texlive.profile
+
+    sudo apt install texlive-luatex
+    sudo apt install latexmk
+
+    luaotfload-tool --update
+
     # cd /usr/local/texlive/2015/bin/x86_64-linux
     # Installed to /usr/local/texlive/2015/
     # Need to add /usr/local/texlive/2015/bin/x86_64-linux to the PATH
     # In my second time doing this I'm trying adding symlinks to local files instead
     # lets see if that works...
-    #python -m utool.util_cplat --exec-get-path-dirs:0
-
-    sudo apt install latexmk
 
     # Support for utf8
     #sudo tlmgr install euenc
@@ -427,13 +458,13 @@ install_latex()
     # Fix TL2016 bug
     # https://www.tug.org/pipermail/tex-live/2016-June/038678.html
     #http://tex.stackexchange.com/questions/27982/what-are-texlives-four-different-texmf-folders
-    file /usr/local/texlive/2016/texmf-dist/tex/latex/algorithm2e/algorithm2e.sty
-    cat /usr/local/texlive/2016/texmf-dist/tex/latex/algorithm2e/algorithm2e.sty
-    ls -al /usr/local/texlive/2016/texmf-dist/tex/latex/algorithm2e/algorithm2e.sty
-    sudo cp /usr/local/texlive/2016/texmf-dist/tex/latex/algorithm2e/algorithm2e.sty algorithm2e.sty.backup
-    #sudo cp algorithm2e.sty.backup /usr/local/texlive/2016/texmf-dist/tex/latex/algorithm2e/algorithm2e.sty
-    iconv -f ISO-8859-1 -t UTF-8//TRANSLIT algorithm2e.sty.backup -o ~/latex/crall-iccv-2017/algorithm3e.sty
-    file ~/latex/crall-iccv-2017/algorithm3e.sty
+    #file /usr/local/texlive/2016/texmf-dist/tex/latex/algorithm2e/algorithm2e.sty
+    #cat /usr/local/texlive/2016/texmf-dist/tex/latex/algorithm2e/algorithm2e.sty
+    #ls -al /usr/local/texlive/2016/texmf-dist/tex/latex/algorithm2e/algorithm2e.sty
+    #sudo cp /usr/local/texlive/2016/texmf-dist/tex/latex/algorithm2e/algorithm2e.sty algorithm2e.sty.backup
+    ##sudo cp algorithm2e.sty.backup /usr/local/texlive/2016/texmf-dist/tex/latex/algorithm2e/algorithm2e.sty
+    #iconv -f ISO-8859-1 -t UTF-8//TRANSLIT algorithm2e.sty.backup -o ~/latex/crall-iccv-2017/algorithm3e.sty
+    #file ~/latex/crall-iccv-2017/algorithm3e.sty
     
 }
 
