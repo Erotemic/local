@@ -54,6 +54,7 @@ IBEIS_REPOS_URLS, IBEIS_REPOS = repo_list([
 
     'https://github.com/Erotemic/mkinit.git',
     'https://github.com/Erotemic/graphid.git',
+    'https://github.com/Erotemic/xinspect.git',
 
     # 'https://github.com/Erotemic/VIAME.git',
     # 'https://github.com/Erotemic/kwiver.git',
