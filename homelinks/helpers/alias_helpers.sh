@@ -17,6 +17,7 @@ alias watch='watch -n .5'
 alias cgrep='grep -I -ER \
     --exclude-dir "*build*" \
     --exclude-dir .git \
+    --exclude-dir .pytest_cache \
     --exclude "*.dot*" \
     --exclude "*.rst*" \
     --exclude "*.html*" \
@@ -27,6 +28,7 @@ alias cgrep='grep -I -ER \
     --exclude "*.pyc*" \
     --exclude "*.so*" \
     --exclude "*.o*" \
+    --exclude "*.coverage*" \
     --exclude "tags"'
 
 
@@ -153,6 +155,7 @@ alias co='cd $CODE_DIR'
 alias cl='cd $CODE_DIR/clab'
 alias nh='cd $CODE_DIR/netharn'
 alias clp='cd $CODE_DIR/clab-private'
+alias ir='cd $CODE_DIR/irharn'
 alias cv='cd $CODE_DIR/opencv'
 #alias fl='cd $CODE_DIR/flann/'
 alias fl='cd $CODE_DIR/fletch/'
