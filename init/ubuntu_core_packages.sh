@@ -1389,7 +1389,7 @@ docker(){
        $(lsb_release -cs) \
        stable"
     sudo apt update
-    sudo apt install docker-ce
+    sudo apt install -y docker-ce
 
     # Add self to docker group
     sudo groupadd docker

@@ -18,6 +18,7 @@ alias cgrep='grep -I -ER \
     --exclude-dir "*build*" \
     --exclude-dir .git \
     --exclude-dir .pytest_cache \
+    --exclude-dir htmlcov \
     --exclude "*.dot*" \
     --exclude "*.rst*" \
     --exclude "*.html*" \
