@@ -41,11 +41,11 @@ IBEIS_REPOS_URLS, IBEIS_REPOS = repo_list([
     # 'https://github.com/bluemellophone/ibeis_cnn.git',
     # 'https://github.com/Erotemic/sandbox_utools.git',
     # 'https://github.com/Erotemic/guitool.git',
-    'https://github.com/Erotemic/plottool.git',
-    'https://github.com/Erotemic/vtool.git',
+    # 'https://github.com/Erotemic/plottool.git',
+    # 'https://github.com/Erotemic/vtool.git',
     # 'https://github.com/Erotemic/dtool.git',
     'https://github.com/Erotemic/ibeis.git',
-    'https://github.com/Erotemic/utool.git',
+    # 'https://github.com/Erotemic/utool.git',
 
     'https://github.com/Erotemic/ubelt.git',
     'https://github.com/Erotemic/xdoctest.git',
@@ -57,6 +57,9 @@ IBEIS_REPOS_URLS, IBEIS_REPOS = repo_list([
     'https://github.com/Erotemic/mkinit.git',
     'https://github.com/Erotemic/graphid.git',
     'https://github.com/Erotemic/xinspect.git',
+
+    'git@github.com:Erotemic/progiter.git',
+    'git@github.com:Erotemic/timerit.git',
 
     # 'https://github.com/Erotemic/VIAME.git',
     # 'https://github.com/Erotemic/kwiver.git',
