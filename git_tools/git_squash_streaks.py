@@ -106,6 +106,32 @@ def find_chain(head, authors=None):
     The term chain is used in the graph-theory sense. It is a list of commits
     where all non-endpoint commits have exactly one parent and one child.
 
+    TODO:
+        - [ ] allow a chain to include branches if all messages on all branches
+              conform to the chain pattern (e.g. wip)
+
+
+        def search(node, current_path):
+            if current_path:
+                pass
+
+            child_paths = []
+            for parent in node.parents:
+                path = search(parent, current_path)
+                child_paths.append(path)
+
+            if len(child_paths) == 0:
+                pass
+            if len(child_paths) == 1:
+                # normal one parent case
+                pass
+            else:
+                pass
+                # Branching case
+                # ACCEPT THE BRANCHING PATHS IF:
+                #  * PARENT OF ALL PATHS HAVE A COMMON ENDPOINT
+                #  * HANDLE CASE WHERE PATHS OVERLAPS
+
     Args:
         head (git.Commit): starting point
         authors (set): valid authors
