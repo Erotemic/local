@@ -250,11 +250,11 @@ if [ "$DID_MY_BASHRC_INIT" == "" ]; then
     #workon_py "$HOME/venv3"
     #echo "WORKON BASIC"
 
-    #if [[ "$HOSTNAME" == "acidalia"  ]]; then 
-    #    workon_py p36
-    #else
-    workon_py py36
-    #fi
+    if [[ "$HOSTNAME" == "namek"  ]]; then 
+        workon_py "$HOME/venv3"
+    else
+        workon_py py36
+    fi
 
 elif [ "$VIRTUAL_ENV" != "" ]; then
     # On reload use the same venv you were in

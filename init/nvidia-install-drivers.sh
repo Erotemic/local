@@ -8,6 +8,11 @@ lspci | grep -i nvidia
 # Verify linux version
 uname -m && cat /etc/*release
 
+install_via_18_04_apt(){
+    ubuntu-drivers devices
+    sudo ubuntu-drivers autoinstall
+}
+
 
 install_nvidia_driver()
 {

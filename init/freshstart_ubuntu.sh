@@ -216,24 +216,24 @@ simple_setup_auto(){
 
     python ~/local/init/init_ipython_config.py
 
-    deactivate 
-    setup_venv2
-    source ~/venv2/bin/activate
-    pip install setuptools --upgrade
-    pip install six
-    pip install jedi
-    pip install pep8 autopep8 flake8 pylint 
-    pip install line_profiler
+    #deactivate 
+    #setup_venv2
+    #source ~/venv2/bin/activate
+    #pip install setuptools --upgrade
+    #pip install six
+    #pip install jedi
+    #pip install pep8 autopep8 flake8 pylint 
+    #pip install line_profiler
 
-    pip install Cython
-    pip install ipython
+    #pip install Cython
+    #pip install ipython
 
-    pip install numpy scipy pandas
-    pip install opencv-python
+    #pip install numpy scipy pandas
+    #pip install opencv-python
 
-    source ~/.bashrc
+    #source ~/.bashrc
 
-    we-py3
+    #we-py3
 }
 
 
@@ -549,6 +549,13 @@ setup_venv3(){
         ensure_curl
         mkdir -p ~/tmp
         curl https://bootstrap.pypa.io/get-pip.py > ~/tmp/get-pip.py
+
+        # Test if we have distutils; if not, install it. 
+        python3 -c "from distutils import sysconfig as distutils_sysconfig"
+        if [ "$(echo $?)" != "0" ]; then
+            sudo apt install python3-distutils -y
+        fi
+
         python3 ~/tmp/get-pip.py --user
     fi
     python3 -m pip install pip setuptools virtualenv -U --user

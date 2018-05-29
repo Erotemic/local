@@ -579,7 +579,11 @@ workon_py()
 alias we=workon_py
 
 refresh_conda_autocomplete(){
-    KNOWN_CONDA_ENVS="$(/bin/ls -1 $_CONDA_ROOT/envs | sort)"
+    if [ -d "$_CONDA_ROOT" ]; then
+        KNOWN_CONDA_ENVS="$(/bin/ls -1 $_CONDA_ROOT/envs | sort)"
+    else
+        KNOWN_CONDA_ENVS=""
+    fi 
     KNOWN_VIRTUAL_ENVS="$(/bin/ls -1 $HOME | grep venv | sort)"
     #echo "KNOWN_VIRTUAL_ENVS = $KNOWN_VIRTUAL_ENVS"
     #echo "KNOWN_CONDA_ENVS = $KNOWN_CONDA_ENVS"
