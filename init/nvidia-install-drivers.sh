@@ -11,6 +11,33 @@ uname -m && cat /etc/*release
 install_via_18_04_apt(){
     ubuntu-drivers devices
     sudo ubuntu-drivers autoinstall
+
+    # https://askubuntu.com/questions/1028830/how-do-i-install-cuda-on-ubuntu-18-04
+
+    # cuda currently needs gcc 6
+    sudo apt-get install gcc-6 g++-6
+
+    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 10
+    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 20
+
+    sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 10
+    sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 20
+
+    sudo update-alternatives --install /usr/bin/cc cc /usr/bin/gcc 30
+    sudo update-alternatives --set cc /usr/bin/gcc
+
+    sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++ 30
+    sudo update-alternatives --set c++ /usr/bin/g++
+
+    sudo update-alternatives --config gcc
+    sudo update-alternatives --config g++
+
+
+    sudo apt install nvidia-cuda-toolkit
+
+    # can torch see cuda?
+    pip install torch
+    python -c "import torch; print(torch.cuda.is_available())"
 }
 
 
@@ -61,13 +88,21 @@ install_cuda_prereq()
 }
 
 install_cuda_via_tpl(){
+
+    # Prereqs
+    sudo apt-get install freeglut3-dev build-essential libx11-dev libxmu-dev libxi-dev libgl1-mesa-glx libglu1-mesa libglu1-mesa-dev
+
     # nvidia drivers
-    sudo sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-390.42.run
+    # For now assume these exist
+    #sudo sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-390.42.run
 
     # cuda drivers
-    sudo sh ~/tpl-archive/cuda/cuda_9.1.85_387.26_linux.run
+    sudo sh ~/tpl-archive/cuda/cuda_9.1.85_387.26_linux.run -toolkit -silent -override
+    #sudo sh ~/tpl-archive/cuda/cuda_9.1.85_387.26_linux.run
     # accept and select yes and defaults for everything
     # (maybe not the samples though)
+
+    # A REBOOT MAY BE REQUIRED
 }
 
 

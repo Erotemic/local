@@ -583,34 +583,6 @@ setup_venv3(){
 }
 
 
-setup_venv2(){
-    __heredoc__ """
-    CommandLine:
-        source ~/local/init/freshstart_ubuntu.sh && setup_venv2
-    """
-    # Ensure PIP, setuptools, and virtual are on the SYSTEM
-    if [ "$(has_pymodule python2 pip)" == "False" ]; then
-    #if [ "$(which pip2)" == "" ]; then
-        ensure_curl
-        mkdir -p ~/tmp
-        curl https://bootstrap.pypa.io/get-pip.py > ~/tmp/get-pip.py
-        python2 ~/tmp/get-pip.py --user
-    fi
-    python2 -m pip install pip setuptools virtualenv -U --user
-
-    PYEXE=$(python2 -c "import sys; print(sys.executable)")
-    PYVERSUFF=$(python2 -c "import sysconfig; print(sysconfig.get_config_var('VERSION'))")
-    PYTHON2_VERSION_VENV="$HOME/venv$PYVERSUFF"
-    mkdir -p $PYTHON2_VERSION_VENV
-    python2 -m virtualenv -p $PYEXE $PYTHON2_VERSION_VENV 
-    python2 -m virtualenv --relocatable $PYTHON2_VERSION_VENV 
-
-    PYTHON2_VENV="$HOME/venv2"
-    # symlink to the real env
-    ln -s $PYTHON2_VERSION_VENV $PYTHON2_VENV
-}
-
-
 setup_conda_env(){
     mkdir -p ~/tmp
     cd ~/tmp
@@ -668,20 +640,50 @@ install_conda_basics(){
     # CHECK which cuda you have
     cat ~/.local/cuda/version.txt
 
-    conda install -y -c pytorch magma-cuda80
+    conda install -y -c pytorch pytorch
 
+    python -c "import torch; print(torch.cuda.is_available())"
+    
+    # conda install -y -c pytorch magma-cuda80
     # conda install -y -c pytorch magma-cuda90
 
-    git clone --recursive https://github.com/pytorch/pytorch $HOME/code/pytorch-conda
-    cd $HOME/code/pytorch-conda
-    python setup.py clean && python setup.py install
+    #git clone --recursive https://github.com/pytorch/pytorch $HOME/code/pytorch-conda
+    #cd $HOME/code/pytorch-conda
+    #python setup.py clean && python setup.py install
 
     # TRY TO WORK WITH GXX_LINUX-64
     #conda install numpy pyyaml mkl mkl-include setuptools cmake cffi typing
     #export CMAKE_PREFIX_PATH="$(dirname $(which conda))/../" 
 
-    CC="cc" CPP="gcc" CXX="c++" python setup.py install
-    
+    #CC="cc" CPP="gcc" CXX="c++" python setup.py install
+}
+
+
+setup_venv2(){
+    __heredoc__ """
+    CommandLine:
+        source ~/local/init/freshstart_ubuntu.sh && setup_venv2
+    """
+    # Ensure PIP, setuptools, and virtual are on the SYSTEM
+    if [ "$(has_pymodule python2 pip)" == "False" ]; then
+    #if [ "$(which pip2)" == "" ]; then
+        ensure_curl
+        mkdir -p ~/tmp
+        curl https://bootstrap.pypa.io/get-pip.py > ~/tmp/get-pip.py
+        python2 ~/tmp/get-pip.py --user
+    fi
+    python2 -m pip install pip setuptools virtualenv -U --user
+
+    PYEXE=$(python2 -c "import sys; print(sys.executable)")
+    PYVERSUFF=$(python2 -c "import sysconfig; print(sysconfig.get_config_var('VERSION'))")
+    PYTHON2_VERSION_VENV="$HOME/venv$PYVERSUFF"
+    mkdir -p $PYTHON2_VERSION_VENV
+    python2 -m virtualenv -p $PYEXE $PYTHON2_VERSION_VENV 
+    python2 -m virtualenv --relocatable $PYTHON2_VERSION_VENV 
+
+    PYTHON2_VENV="$HOME/venv2"
+    # symlink to the real env
+    ln -s $PYTHON2_VERSION_VENV $PYTHON2_VENV
 }
 
 
