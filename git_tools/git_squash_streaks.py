@@ -372,8 +372,9 @@ def _squash_between(repo, start, stop, dry=False, verbose=True):
         print(new_msg)
 
     old_head = repo.commit('HEAD')
-    assert (stop == old_head or repo.is_ancestor(ancestor_rev=stop,
-                                                 rev=old_head))
+    if (stop != old_head and not repo.is_ancestor(ancestor_rev=stop, rev=old_head)):
+        raise Exception('stop={} is not an ancestor of old_head={}'.format(
+            stop, old_head))
 
     if not dry:
         # ------------------
@@ -412,7 +413,8 @@ def _squash_between(repo, start, stop, dry=False, verbose=True):
 
 
 def squash_streaks(authors, timedelta='sameday', pattern=None, inplace=False,
-                   auto_rollback=True, dry=False, verbose=True):
+                   auto_rollback=True, dry=False, verbose=True,
+                   custom_streak=None):
     """
     Squashes consecutive commits with the same message within a time range.
 
@@ -434,6 +436,8 @@ def squash_streaks(authors, timedelta='sameday', pattern=None, inplace=False,
         dry (bool): if True this only executes a dry run, that prints the
             chains that would be squashed (Default: False)
         verbose (bool): verbosity flag (Default: True)
+        custom_streak(tuple): hack, specify two commits to explicitly squash
+            only this streak is used. We do not automatically check for others.
     """
     if verbose:
         if dry:
@@ -458,13 +462,25 @@ def squash_streaks(authors, timedelta='sameday', pattern=None, inplace=False,
 
     head = repo.commit('HEAD')
 
-    chain = find_chain(head, authors=authors)
-    if verbose:
-        print('Found chain of length %r' % (len(chain)))
-        # print(ub.repr2(chain, nl=1))
+    if custom_streak:
+        print('custom_streak = {!r}'.format(custom_streak))
+        print('Forcing hacked steak')
 
-    streaks = find_streaks(chain, authors=authors, timedelta=timedelta,
-                           pattern=pattern)
+        assert len(custom_streak) == 2
+        a = repo.commit(custom_streak[0])
+        b = repo.commit(custom_streak[1])
+        if repo.is_ancestor(ancestor_rev=a, rev=b):
+            a, b = b, a
+        # assert repo.is_ancestor(ancestor_rev=b, rev=a)
+        streaks = [Streak(a, _streak=[a, b])]
+    else:
+        chain = find_chain(head, authors=authors)
+        if verbose:
+            print('Found chain of length %r' % (len(chain)))
+            # print(ub.repr2(chain, nl=1))
+
+        streaks = find_streaks(chain, authors=authors, timedelta=timedelta,
+                               pattern=pattern)
     if verbose:
         print('Found %r streaks' % (len(streaks)))
 
@@ -552,6 +568,9 @@ def git_squash_streaks():
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument(*('--timedelta',), type=str,
                         help=help_dict['timedelta'])
+
+    parser.add_argument(*('--custom_streak',), nargs=2,
+                        help='hack to specify one custom streak')
 
     parser.add_argument(*('--pattern',), type=str,
                         help=help_dict['pattern'])
