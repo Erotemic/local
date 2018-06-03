@@ -989,28 +989,55 @@ nopassword_on_sudo()
 } 
 
  
-nautilus_settings()
+nautilus_hide_unwanted_sidebar_items()
 {
-    # Get rid of anyonying nautilus sidebar items
-    echo "Get Rid of anoying sidebar items"
-    chmod +w ~/.config/user-dirs.dirs
+    __heredoc__ """
+    CommandLine:
+        source ~/local/init/freshstart_ubuntu.sh && nautilus_hide_unwanted_sidebar_items
+
+    Refernces:
+        https://askubuntu.com/questions/762591/how-to-remove-unwanted-default-bookmarks-in-nautilus
+        https://askubuntu.com/questions/79150/how-to-remove-bookmarks-from-the-nautilus-sidebar/1042059#1042059
+    """
+
+    echo "Removing unwanted nautilus sidebar items"
+
+    if [ "1" == "0" ]; then
+        # Sidebar items are governed by files in $HOME and /etc
+        ls ~/.config/user-dirs*
+        ls /etc/xdg/user-dirs*
+
+        cat ~/.config/user-dirs.dirs 
+        cat ~/.config/user-dirs.locale
+
+        cat /etc/xdg/user-dirs.conf 
+        cat /etc/xdg/user-dirs.defaults 
+
+        #cat ~/.config/user-dirs.conf 
+    fi
+
+    ### --------------------------------------
+    ### modify local config files in $HOME/.config
+    ### --------------------------------------
+    
+    chmod u+w ~/.config/user-dirs.dirs
+    #sed -i 's/XDG_DOCUMENTS_DIR/#XDG_DOCUMENTS_DIR/' ~/.config/user-dirs.dirs
     sed -i 's/XDG_TEMPLATES_DIR/#XDG_TEMPLATES_DIR/' ~/.config/user-dirs.dirs 
     sed -i 's/XDG_PUBLICSHARE_DIR/#XDG_PUBLICSHARE_DIR/' ~/.config/user-dirs.dirs
-    sed -i 's/XDG_DOCUMENTS_DIR/#XDG_DOCUMENTS_DIR/' ~/.config/user-dirs.dirs
     sed -i 's/XDG_MUSIC_DIR/#XDG_MUSIC_DIR/' ~/.config/user-dirs.dirs
     sed -i 's/XDG_PICTURES_DIR/#XDG_PICTURES_DIR/' ~/.config/user-dirs.dirs
     sed -i 's/XDG_VIDEOS_DIR/#XDG_VIDEOS_DIR/' ~/.config/user-dirs.dirs
-    echo "enabled=true" >> ~/.config/user-dirs.conf
-    chmod -w ~/.config/user-dirs.dirs
-    #cat ~/.config/user-dirs.conf 
-    #cat ~/.config/user-dirs.dirs 
-    #cat ~/.config/user-dirs.locale
-    #cat /etc/xdg/user-dirs.conf 
-    #cat /etc/xdg/user-dirs.defaults 
     ###
+    echo "enabled=true" >> ~/.config/user-dirs.conf
+    chmod u-w ~/.config/user-dirs.dirs
+
+    ### --------------------------------------
+    ### Modify global config files in /etc/xdg
+    ### --------------------------------------
+
+    #sudo sed -i 's/DOCUMENTS/#DOCUMENTS/'     /etc/xdg/user-dirs.defaults 
     sudo sed -i 's/TEMPLATES/#TEMPLATES/'     /etc/xdg/user-dirs.defaults 
     sudo sed -i 's/PUBLICSHARE/#PUBLICSHARE/' /etc/xdg/user-dirs.defaults 
-    sudo sed -i 's/DOCUMENTS/#DOCUMENTS/'     /etc/xdg/user-dirs.defaults 
     sudo sed -i 's/MUSIC/#MUSIC/'             /etc/xdg/user-dirs.defaults 
     sudo sed -i 's/PICTURES/#PICTURES/'       /etc/xdg/user-dirs.defaults 
     sudo sed -i 's/VIDEOS/#VIDEOS/'           /etc/xdg/user-dirs.defaults 
@@ -1018,17 +1045,27 @@ nautilus_settings()
     sudo sed -i "s/enabled=true/enabled=false/" /etc/xdg/user-dirs.conf
     sudo echo "enabled=false" >> /etc/xdg/user-dirs.conf
     sudo sed -i "s/enabled=true/enabled=false/" /etc/xdg/user-dirs.conf
+
+    # Trigger an update
     xdg-user-dirs-gtk-update
 
+    echo "
+    NOTE:
+        After restarting nautilus the unwanted items will be demoted to regular
+        bookmarks. You can now removed them via the right click context menu.
+    "
+}
+
+
+nautilus_settings()
+{
     #echo "Get Open In Terminal in context menu"
     #sudo apt install nautilus-open-terminal -y
 
     # Tree view for nautilus
     gsettings set org.gnome.nautilus.window-state side-pane-view "tree"
 
-
     #http://askubuntu.com/questions/411430/open-the-parent-folder-of-a-symbolic-link-via-right-click
-
     mkdir -p ~/.gnome2/nautilus-scripts
 }
 
@@ -1260,6 +1297,9 @@ big_apt_install(){
 
     sudo apt install -y astyle automake autotools-dev build-essential curl expect exuberant-ctags g++ gcc gfortran gitg gparted graphviz hardinfo hdfview htop imagemagick libatlas-base-dev libatlas-base-dev libblas-dev libboost-all-dev libevent-dev libfftw3-dev libfreeimage-dev libfreetype6-dev libgeos-dev libgflags-dev libgoogle-glog-dev libjpeg-dev libjpeg62 liblapack-dev libleveldb-dev liblmdb-dev libncurses5-dev libopencv-dev libprotobuf-dev libpthread-stubs0-dev libsnappy-dev libtiff5-dev libtk-img-dev lm-sensors mdadm okular openssh-server p7zip-full patchutils pkg-config postgresql protobuf-compiler python-dev python3-dev python3-tk remmina rsync sqlitebrowser sshfs symlinks synaptic terminator tmux tree valgrind vim-gnome vlc wmctrl xclip xdotool xsel zlib1g-dev initramfs-tools gdisk openssh-server libhdf5-serial-dev libhdf5-openmpi-dev xbacklight hdf5-tools libsqlite3-dev sqlite3 sysstat gitk
 
+    sudo apt-get install git-lfs
+    
+
     libav-tools 
     libopenjpeg-dev libpng12-dev 
 
@@ -1325,4 +1365,18 @@ resetup_ooo_after_os_reinstall()
 
 
     # be sure to do fix_monitor_positions in ubuntu_core_packages.sh
+}
+
+specific_18_04_freshinstall(){
+    sudo apt install gnome-shell-extensions -y
+    sudo apt install chrome-gnome-shell -y
+    sudo apt-get install gir1.2-cogl-1.0 gir1.2-gtop-2.0 gir1.2-networkmanager-1.0 -y
+}
+
+gnome_extensions(){
+    https://extensions.gnome.org/extension/352/middle-click-to-close-in-overview/
+    https://extensions.gnome.org/extension/15/alternatetab/
+
+    https://extensions.gnome.org/extension/120/system-monitor/
+    https://extensions.gnome.org/extension/9/systemmonitor/
 }

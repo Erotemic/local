@@ -305,9 +305,15 @@ fi
 #    echo "bar"
 #fi
 
+# For machine-specific bashrc things that will not be published on github
+if [ -f "$HOME/.bashrc-internal.sh" ]; then 
+    source $HOME/.bashrc-internal.sh
+fi
 if [ -f "$HOME/.bashrc-local" ]; then 
-    # For machine-specific bashrc things that will not be published on github
     source $HOME/.bashrc-local
+fi
+if [ -f "$HOME/.bashrc-local.sh" ]; then 
+    source $HOME/.bashrc-local.sh
 fi
 
 DID_MY_BASHRC_INIT="TRUE"
