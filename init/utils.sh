@@ -65,6 +65,80 @@ have_sudo(){
 }
 
 
+has_pymodule(){
+    __heredoc__ '''
+    Check if a python module is installed. Echos "True" or "False" to the
+    command line depending on the result.
+
+    Example:
+        source $HOME/local/init/utils.sh
+        has_pymodule sys
+        has_pymodule fake_module
+    '''
+
+    if [ "$2" ]; then
+        PYEXE="$1"
+        PYMOD="$2"
+    else
+        PYEXE=python
+        PYMOD="$1"
+    fi
+    pyblock "$PYEXE" "
+        try:
+            import $PYMOD
+            print(True)
+        except ImportError:
+            print(False)
+    "
+    #$PYEXE -c "$(codeblock "
+    #    try:
+    #        import $PYMOD
+    #        print(True)
+    #    except ImportError:
+    #        print(False)
+    #")"
+}
+
+pyblock(){
+    __heredoc__ '''
+    Executes python code and handles nice indentation.  Need to be slightly
+    careful about the type of quotes used.  Typically stick to doublequotes
+    around the code and singlequotes inside python code. Sometimes it will be
+    necessary to escape some characters.
+
+    Usage:
+       pyblock [PYEXE] TEXT
+
+    Args:
+       PYEXE : positional arg to specify the python executable.
+           if not specified, it defaults to "python"
+
+       TEXT : arbitrary python code to execute
+
+    Notes:
+        Capture results from stdout either using using
+            (1) dollar-parens: $()
+            (2) backticks: ``
+
+    Example:
+        source $HOME/local/init/utils.sh
+        OUTPUT=$(pyblock "
+            import sys
+            print(sys.executable)
+        ")
+        echo "OUTPUT = $OUTPUT"
+    '''
+    if [ "$2" ]; then
+        PYEXE="$1"
+        TEXT="$2"
+    else
+        PYEXE=python
+        TEXT="$1"
+    fi
+    $PYEXE -c "$(codeblock "$TEXT")"
+}
+
+
 codeblock()
 {
     if [ "-h" == "$1" ] || [ "--help" == "$1" ]; then 

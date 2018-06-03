@@ -5,16 +5,22 @@ simple_setup_manual()
 {
     sudo apt install git -y
     # If local does not exist
-    if [ ! -d ~/local ]; then
-        cd $HOME
-        git clone https://github.com/Erotemic/local.git
-        cd local/init 
+    if [ ! -d $HOME/local ]; then
+        git clone https://github.com/Erotemic/local.git $HOME/local
+    fi
+    if [ ! -d $HOME/misc ]; then
+        git clone https://github.com/Erotemic/misc.git $HOME/misc
     fi
     source ~/local/init/freshstart_ubuntu.sh 
 
     source ~/local/init/ensure_symlinks.sh 
     ensure_config_symlinks
     simple_setup_auto
+
+    if [ ! -d $HOME/internal ]; then
+        # Requires SSH keys
+        git clone git@kwgitlab.kitware.com:jon.crall/internal.git $HOME/internal
+    fi
 }
 
 local_remote_presetup(){
@@ -63,13 +69,13 @@ setup_kitware_ssh_keys(){
     ssh-copy-id jon.crall@aretha
     ssh-copy-id jon.crall@arisia
     ssh-copy-id jon.crall@klendathu
-    ssh-copy-id joncrall@acidalia
+    ssh-copy-id joncrall@namek
 
     # ENSURE YOU HAVE ALL COMPUTERS UPDATED IN YOUR SSH CONFIG
 
-    remote=acidalia
+    remote=namek
 
-    REMOTES=( aretha arisia hermes klendathu acidalia )
+    REMOTES=( aretha arisia hermes klendathu namek )
     for remote in "${REMOTES[@]}"
     do
         echo "UPDATING remote = $remote"
@@ -89,14 +95,14 @@ setup_kitware_ssh_keys(){
     #rsync ~/.ssh/./id_joncrall_kitware_rsa* arisia:.ssh/./
     #rsync ~/.ssh/./id_joncrall_kitware_rsa* hermes:.ssh/./
     #rsync ~/.ssh/./id_joncrall_kitware_rsa* klendathu:.ssh/./
-    #rsync ~/.ssh/./id_joncrall_kitware_rsa* acidalia:.ssh/./
+    #rsync ~/.ssh/./id_joncrall_kitware_rsa* namek:.ssh/./
 
     ## move .ssh config to other computers
     #rsync ~/.ssh/./config aretha:.ssh/./
     #rsync ~/.ssh/./config arisia:.ssh/./
     #rsync ~/.ssh/./config hermes:.ssh/./
     #rsync ~/.ssh/./config klendathu:.ssh/./
-    #rsync ~/.ssh/./config acidalia:.ssh/./
+    #rsync ~/.ssh/./config namek:.ssh/./
 
     ## Now make sure the special private id_rsa is registered on each remote
     #ssh -A aretha "ssh-add .ssh/id_joncrall_kitware_rsa"
@@ -105,8 +111,8 @@ setup_kitware_ssh_keys(){
     #ssh -A klendathu "ssh-add .ssh/id_joncrall_kitware_rsa"
 
     # Copy from a remote to my computer
-    rsync acidalia:.ssh/./id_joncrall_kitware_rsa* $HOME/.ssh/
-    rsync acidalia:.ssh/./config $HOME/.ssh/
+    rsync namek:.ssh/./id_joncrall_kitware_rsa* $HOME/.ssh/
+    rsync namek:.ssh/./config $HOME/.ssh/
 }
 
 
@@ -319,24 +325,6 @@ entry_prereq_git_and_local()
         git clone https://github.com/Erotemic/local.git
         cd local/init 
     fi
-}
-
-
-has_pymodule(){
-    if [ "$2" ]; then
-        PYEXE="$1"
-        PYMOD="$2"
-    else
-        PYEXE=python
-        PYMOD="$1"
-    fi
-    $PYEXE -c "$(codeblock "
-        try:
-            import $PYMOD
-            print(True)
-        except ImportError:
-            print(False)
-    ")"
 }
 
 freshtart_ubuntu_script()
@@ -642,7 +630,7 @@ install_conda_basics(){
 
     conda install -y -c pytorch pytorch
 
-    python -c "import torch; print(torch.cuda.is_available())"
+    pyblock "import torch; print(torch.cuda.is_available())"
     
     # conda install -y -c pytorch magma-cuda80
     # conda install -y -c pytorch magma-cuda90
@@ -719,7 +707,7 @@ patch_venv_with_shared_libs(){
         https://github.com/pypa/virtualenv/pull/1045/files
     """
 
-    python -c "$(codeblock "
+    pyblock "
         import shutil
         import os
         import sys
@@ -811,7 +799,7 @@ patch_venv_with_shared_libs(){
 
         bin_dir = join(os.environ['VIRTUAL_ENV'], 'bin')  # hack
         install_shared(bin_dir, symlink=True)
-    ")"
+    "
 }
 
 patch_venv_with_ld_library(){
@@ -831,7 +819,7 @@ patch_venv_with_ld_library(){
     ACTIVATE_SCRIPT=$VIRTUAL_ENV/bin/activate
 
     # apply the patch 
-    python -c "$(codeblock "
+    pyblock "
         import textwrap
         from os.path import exists
         new_path = '$ACTIVATE_SCRIPT'
@@ -889,7 +877,7 @@ patch_venv_with_ld_library(){
                         '''))
             new_text = ''.join(new_lines)
             open(new_path, 'w').write(new_text)
-    ")"
+    "
     #diff -u $VIRTUAL_ENV/bin/activate.old $VIRTUAL_ENV/bin/activate 
 }
 
