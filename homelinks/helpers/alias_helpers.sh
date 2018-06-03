@@ -19,10 +19,12 @@ alias cgrep='grep -I -ER \
     --exclude-dir .git \
     --exclude-dir .pytest_cache \
     --exclude-dir htmlcov \
+    --exclude "searchindex.js" \
     --exclude "*.dot*" \
     --exclude "*.rst*" \
     --exclude "*.html*" \
     --exclude "*.css*" \
+    --exclude "profile_output.*" \
     --exclude "*.pipe*" \
     --exclude "*.zip*" \
     --exclude "*.pkl*" \
