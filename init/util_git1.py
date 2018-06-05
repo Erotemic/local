@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 from __future__ import absolute_import, division, print_function
 import sys
+import re
 import os
 from six.moves import zip
 from os.path import exists, join, dirname, split, isdir
 import REPOS1
 import meta_util_git1 as mu  # NOQA
-from meta_util_git1 import get_repo_dirs, get_repo_dname, unixpath  # NOQA
+from meta_util_git1 import get_repo_dirs, get_repo_dname, unixpath, ChdirContext  # NOQA
 
 PROJECT_REPOS    = REPOS1.PROJECT_REPOS
 IBEIS_REPOS_URLS = REPOS1.IBEIS_REPOS_URLS
@@ -14,6 +15,142 @@ CODE_DIR         = REPOS1.CODE_DIR
 VIM_REPO_URLS    = REPOS1.VIM_REPO_URLS
 BUNDLE_DPATH     = REPOS1.BUNDLE_DPATH
 VIM_REPOS_WITH_SUBMODULES = REPOS1.VIM_REPOS_WITH_SUBMODULES
+
+
+class Repo(object):
+    """
+    Handles a Python module repository
+    """
+    def __init__(repo, url=None, code_dir=None, dpath=None,
+                 modname=None, pythoncmd=None):
+        # modname might need to be called egg?
+        if url is not None and '.git@' in url:
+            # parse out specific branch
+            repo.default_branch = url.split('@')[-1]
+            url = '@'.join(url.split('@')[:-1])
+        else:
+            repo.default_branch = None
+        repo.url = url
+        repo._modname = None
+        if modname is None:
+            modname = []
+        repo._modname_hints = modname if isinstance(modname, list) else [modname]
+        repo.dpath = None
+        repo.scripts = {}
+        if pythoncmd is None:
+            import sys
+            pythoncmd = sys.executable
+        repo.pythoncmd = pythoncmd
+
+        if dpath is None and repo.url is not None and code_dir is not None:
+            dpath = join(code_dir, repo.reponame)
+        if dpath is not None:
+            repo.dpath = dpath.replace('\\', '/')
+
+    @property
+    def reponame(repo):
+        if repo.dpath is not None:
+            from os.path import basename
+            reponame = basename(repo.dpath)
+        elif repo.url is not None:
+            url_parts = re.split('[/:]', repo.url)
+            reponame = url_parts[-1].replace('.git', '')
+        elif repo._modname_hints:
+            reponame = repo._modname_hints[0]
+        else:
+            raise Exception('No way to infer (or even guess) repository name!')
+        return reponame
+
+    def issue(repo, command, sudo=False, dry=False, error='raise', return_out=False):
+        """
+        issues a command on a repo
+
+        Example:
+            >>> # DISABLE_DOCTEST
+            >>> repo = dirname(ut.get_modpath(ut, prefer_pkg=True))
+            >>> command = 'git status'
+            >>> sudo = False
+            >>> result = repocmd(repo, command, sudo)
+            >>> print(result)
+        """
+        WIN32 = sys.platform.startswith('win32')
+        if WIN32:
+            assert not sudo, 'cant sudo on windows'
+        if command == 'short_status':
+            return repo.short_status()
+        command_list = [command]
+        cmdstr = '\n        '.join([cmd_ for cmd_ in command_list])
+        if not dry:
+            import ubelt as ub
+            print('+--- *** repocmd(%s) *** ' % (cmdstr,))
+            print('repo=%s' % ub.color_text(repo.dpath, 'yellow'))
+        verbose = True
+        with repo.chdir_context():
+            ret = None
+            for count, cmd in enumerate(command_list):
+                if dry:
+                    print(cmd)
+                    continue
+                if not sudo or WIN32:
+                    cmdinfo = ub.cmd(cmd, verbout=True)
+                    out, err, ret = ub.take(cmdinfo, ['out', 'err', 'ret'])
+                else:
+                    out, err, ret = ub.cmd('sudo ' + cmd)
+                if verbose > 1:
+                    print('ret(%d) = %r' % (count, ret,))
+                if ret != 0:
+                    if error == 'raise':
+                        raise Exception('Failed command %r' % (cmd,))
+                    elif error == 'return':
+                        return out
+                    else:
+                        raise ValueError('unknown flag error=%r' % (error,))
+                if return_out:
+                    return out
+        if not dry:
+            print('L____')
+
+    def chdir_context(repo, verbose=False):
+        return ChdirContext(repo.dpath, verbose=verbose)
+
+    def short_status(repo):
+        r"""
+        Example:
+            >>> repo = Repo(dpath=ut.truepath('.'))
+            >>> result = repo.short_status()
+            >>> print(result)
+        """
+        import ubelt as ub
+        prefix = repo.dpath
+        with ChdirContext(repo.dpath, verbose=False):
+            info = ub.cmd('git status', verbose=False)
+            out = info['out']
+            # parse git status
+            is_clean_msg1 = 'Your branch is up-to-date with'
+            is_clean_msgs = [
+                'nothing to commit, working directory clean',
+                'nothing to commit, working tree clean',
+            ]
+            msg2 = 'nothing added to commit but untracked files present'
+
+            needs_commit_msgs = [
+                'Changes to be committed',
+                'Changes not staged for commit',
+                'Your branch is ahead of',
+            ]
+
+            suffix = ''
+            if is_clean_msg1 in out and any(msg in out for msg in is_clean_msgs):
+                suffix += ub.color_text('is clean', 'blue')
+            if msg2 in out:
+                suffix += ub.color_text('has untracked files', 'yellow')
+            if any(msg in out for msg in needs_commit_msgs):
+                suffix += ub.color_text('has changes', 'red')
+        print(prefix + ' ' + suffix)
+
+    def is_gitrepo(repo):
+        gitdir = join(repo.dpath, '.git')
+        return exists(gitdir) and isdir(gitdir)
 
 
 def gitcmd(repo, command):
@@ -32,7 +169,7 @@ def gitcmd(repo, command):
         os.system(command)
         print("************")
     else:
-        repo_ = ut.Repo(dpath=repo)
+        repo_ = Repo(dpath=repo)
         repo_.issue(command)
 
 
@@ -41,9 +178,19 @@ def gg_command(command):
     for repo in PROJECT_REPOS:
         if exists(repo) and exists(join(repo, '.git')):
             gitcmd(repo, command)
+        else:
+            print('No checkout for {}'.format(repo))
 
 
-def checkout_repos(repo_urls, repo_dirs=None, checkout_dir=None):
+def clone_repos():
+    for repodir, repourl in zip(PROJECT_REPOS, REPOS1.PROJECT_URLS):
+        print('[git] checkexist: ' + repodir)
+        if not exists(repodir):
+            mu.cd(dirname(repodir))
+            mu.cmd('git clone ' + repourl)
+
+
+def clone_repos_(repo_urls, repo_dirs=None, checkout_dir=None):
     """ Checkout every repo in repo_urls into checkout_dir """
     # Check out any repo you dont have
     if checkout_dir is not None:
@@ -86,13 +233,16 @@ def is_gitrepo(repo_dir):
 
 if __name__ == '__main__':
     varargs = sys.argv[1:]
-    varargs2 = []
-    for a in varargs:
-        # hack
-        if a == '==':
-            break
-        varargs2.append(a)
+    if len(varargs) == 1 and varargs[0] == 'clone_repos':
+        clone_repos()
+    else:
+        varargs2 = []
+        for a in varargs:
+            # hack
+            if a == '==':
+                break
+            varargs2.append(a)
 
-    command = ' '.join(varargs2)
-    # Apply command to all repos
-    gg_command(command)
+        command = ' '.join(varargs2)
+        # Apply command to all repos
+        gg_command(command)

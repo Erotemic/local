@@ -100,3 +100,34 @@ def url_list(repo_urls):
 def cmd(command):
     print('> ' + command)
     os.system(command)
+
+
+class ChdirContext(object):
+    """
+    References http://www.astropython.org/snippet/2009/10/chdir-context-manager
+    """
+    def __init__(self, dpath=None, stay=False, verbose=None):
+        if verbose is None:
+            import utool as ut
+            verbose = ut.NOT_QUIET
+        self.verbose = verbose
+        self.stay = stay
+        self.dpath = dpath
+        self.curdir = os.getcwd()
+
+    def __enter__(self):
+        if self.dpath is not None:
+            if self.verbose:
+                print('[path.push] Change directory to %r' % (self.dpath,))
+            os.chdir(self.dpath)
+        return self
+
+    def __exit__(self, type_, value, trace):
+        if not self.stay:
+            if self.verbose:
+                print('[path.pop] Change directory to %r' % (self.curdir,))
+            os.chdir(self.curdir)
+        if trace is not None:
+            if self.verbose:
+                print('[util_path] Error in chdir context manager!: ' + str(value))
+            return False  # return a falsey value on error
