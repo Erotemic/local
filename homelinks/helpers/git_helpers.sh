@@ -28,7 +28,7 @@ gg-clone()
 
 gg-cmd()
 {
-    python ~/local/init/util_git1.py $@
+    python ~/local/init/util_git1.py 'clone_repos'
 }
 
 alias ggs=gg-status
