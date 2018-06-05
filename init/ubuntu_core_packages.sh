@@ -1381,15 +1381,22 @@ docker(){
     # https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/#set-up-the-repository
     # https://github.com/NVIDIA/nvidia-docker
 
-    sudo apt install apt-transport-https ca-certificates curl software-properties-common
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-    sudo apt-key fingerprint 0EBFCD88
-    sudo add-apt-repository \
-       "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-       $(lsb_release -cs) \
-       stable"
-    sudo apt update
-    sudo apt install -y docker-ce
+     sudo apt install apt-transport-https ca-certificates curl software-properties-common
+     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+     sudo apt-key fingerprint 0EBFCD88
+     IS_1604=$(python -c "import ubelt as ub; print('16.04' in ub.cmd('lsb_release -a')['out'])")
+     IS_1804=$(python -c "import ubelt as ub; print('18.04' in ub.cmd('lsb_release -a')['out'])")
+     if [ "$IS_1604" == "True" ]; then
+         sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+     fi
+     if [ "$IS_1804" == "True" ]; then
+         # Hack: docker-ce doesnt have an 18.04 package yet.
+         sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu artful stable"
+     fi
+     
+     sudo apt update
+     sudo apt install -y docker-ce
+
 
     # Add self to docker group
     sudo groupadd docker
@@ -1472,6 +1479,7 @@ EOL'
     nvidia-docker build -f ~/docker/Dockerfile -t joncrall/urban3d .
     #nvidia-docker run -t joncrall/urban3d nvidia-smi
 
+    # interactive 
     nvidia-docker run -it joncrall/urban3d bash
 
     nvidia-docker run -v ~/data:/data -it joncrall/urban3d

@@ -1297,8 +1297,11 @@ def find_and_open_path(path, mode='split', verbose=0,
 
     if path.startswith('<') and path.endswith('>'):
         path = path[1:-1]
+    if path.startswith('`') and path.endswith('`'):
+        path = path[1:-1]
     if path.endswith(':'):
         path = path[:-1]
+    path = expanduser(path)  # expand again in case a prefix was removed
     if try_open(path):
         return
 
@@ -1327,7 +1330,7 @@ def find_and_open_path(path, mode='split', verbose=0,
             if try_open(expand_module(path)):
                 return
         #vim.command('echoerr "Could not find path={}"'.format(path))
-        print('Could not find path={}'.format(path))
+        print('Could not find path={!r}'.format(path))
 
 
 def extract_url_embeding(word):

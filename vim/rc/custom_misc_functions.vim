@@ -278,7 +278,7 @@ import re
 from os.path import exists, expanduser
 argv = pyvim_funcs.vim_argv(defaults=[None, 'split'])
 path, mode = argv[0:2]
-pyvim_funcs.find_and_open_path(path, mode=mode, verbose=0)
+pyvim_funcs.find_and_open_path(path, mode=mode, verbose=1)
 EOF
 endfunc
 
@@ -301,7 +301,7 @@ from os.path import exists, expanduser
 argv = pyvim_funcs.vim_argv(defaults=['split'])
 mode = argv[0]
 path = pyvim_funcs.get_word_at_cursor(url_ok=True)
-verbose = 0
+verbose = 1
 if verbose:
     print('OpenPathAtCursor path = {!r}'.format(path))
     print('exists = {!r}'.format(exists(path)))
@@ -444,11 +444,11 @@ Python2or3 << EOF
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut
+import ubelt as ub
 #ut.rrrr(0)
-ut.rrrr(0)
 row1, row2 = pyvim_funcs.get_paragraph_line_range_at_cursor()
 text = pyvim_funcs.get_text_between_lines(row1, row2)
-text = ut.ensure_unicode(text)
+text = ub.ensure_unicode(text)
 wrapped_text = ut.format_multiple_paragraph_sentences(text, max_width=None)
 pyvim_funcs.insert_codeblock_between_lines(wrapped_text, row1, row2)
 EOF
