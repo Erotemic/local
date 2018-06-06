@@ -1489,7 +1489,7 @@ EOL'
     # stop all containers
     docker stop $(docker ps -a -q)
     
-    # remove all containers
+    # remove all (non-running) containers (adding a -f does runing containser)
     docker rm $(docker ps -a -q)
 
     # remove all images

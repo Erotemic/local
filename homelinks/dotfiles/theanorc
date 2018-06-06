@@ -1,6 +1,6 @@
-#[global]
-#floatX = float32
-#device = cuda0
+[global]
+device = cuda
+floatX = float32
 #openmp = True
 #int_division = raise
 #print_active_device = False
@@ -16,7 +16,7 @@
 #root = /usr/local/cuda-7.5
 #[pycuda]
 #init=True
-#
+
 #[cmodule]
 #preload_cache = True
 #[global]
@@ -25,4 +25,3 @@
 #linker=cvm
 #int_division = 'floatX'
 #exception_verbosity = high
-

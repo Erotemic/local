@@ -1,4 +1,7 @@
 # Git helpers
+heredoc="""
+Depends on ~/local/init/util_git1.py
+"""
 
 gg-recover()
 {
@@ -23,12 +26,12 @@ gg-push()
 
 gg-clone()
 {
-    python ~/local/init/util_git1.py 'git push' == $@
+    python ~/local/init/util_git1.py 'clone_repos'
 }
 
 gg-cmd()
 {
-    python ~/local/init/util_git1.py 'clone_repos'
+    python ~/local/init/util_git1.py $@
 }
 
 alias ggs=gg-status

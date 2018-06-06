@@ -1,10 +1,12 @@
 #!/usr/bin/env python
+# PYTHON_ARGCOMPLETE_OK
+# -*- coding: utf-8 -*-
 import sys
 import platform
 import signal
 import rob_settings
-import rob_interface  # NOQA
-from rob_helpers import ens
+import rob_interface
+# from rob_helpers import ens
 # from rob_interface import *  # NOQA
 
 

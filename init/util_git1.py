@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+"""
+Used by
+$HOME/local/homelinks/helpers/git_helpers.sh
+"""
 from __future__ import absolute_import, division, print_function
 import sys
 import re
@@ -21,8 +25,8 @@ class Repo(object):
     """
     Handles a Python module repository
     """
-    def __init__(repo, url=None, code_dir=None, dpath=None,
-                 modname=None, pythoncmd=None):
+    def __init__(repo, url=None, dpath=None, modname=None, pythoncmd=None,
+                 code_dir=None):
         # modname might need to be called egg?
         if url is not None and '.git@' in url:
             # parse out specific branch
@@ -36,7 +40,6 @@ class Repo(object):
             modname = []
         repo._modname_hints = modname if isinstance(modname, list) else [modname]
         repo.dpath = None
-        repo.scripts = {}
         if pythoncmd is None:
             import sys
             pythoncmd = sys.executable
@@ -46,6 +49,28 @@ class Repo(object):
             dpath = join(code_dir, repo.reponame)
         if dpath is not None:
             repo.dpath = dpath.replace('\\', '/')
+
+    def owner(repo):
+        url_parts = re.split('[/:]', repo.url)
+        owner = url_parts[-2]
+        return owner
+
+    def change_url_format(repo, out_type='ssh'):
+        """ Changes the url format for committing """
+        url = repo.url
+        url_parts = re.split('[/:]', url)
+        in_type = url_parts[0]
+        url_fmts = {
+            'https': ('.com/', 'https://'),
+            'ssh':   ('.com:', 'git@'),
+        }
+        url_fmts['git'] = url_fmts['ssh']
+        new_repo_url = url
+        for old, new in zip(url_fmts[in_type], url_fmts[out_type]):
+            new_repo_url = new_repo_url.replace(old, new)
+        # Inplace change
+        repo.url = new_repo_url
+        print('new format repo.url = {!r}'.format(repo.url))
 
     @property
     def reponame(repo):
@@ -109,6 +134,41 @@ class Repo(object):
                     return out
         if not dry:
             print('L____')
+
+    def _new_remote_url(repo, host=None, user=None, reponame=None, fmt=None):
+        if reponame is None:
+            reponame = repo.reponame
+        if host is None:
+            host = 'github.com'
+        if fmt is None:
+            fmt = 'ssh'
+        if host == 'github.com':
+            assert user is not None, 'github needs a user'
+        url_fmts = {
+            'https': ('https://', '/'),
+            'ssh':   ('git@', ':'),
+        }
+        prefix, sep = url_fmts[fmt]
+        user_ = '' if user is None else user + '/'
+        parts = [prefix, host, sep, user_, reponame, '.git']
+        parts = [p for p in parts if p is not None]
+        url = ''.join(parts)
+        return url
+
+    def clone(repo, recursive=False):
+        print('[git] check repo exists at %s' % (repo.dpath))
+        if recursive:
+            args = '--recursive'
+        else:
+            args = ''
+        if not exists(repo.dpath):
+            import ubelt as ub
+            os.chdir(dirname(repo.dpath))
+            print('repo.default_branch = %r' % (repo.default_branch,))
+            if repo.default_branch is not None:
+                args += ' -b {}'.format(repo.default_branch)
+            ub.cmd('git clone {args} {url}'.format(args=args, url=repo.url),
+                   verbose=2)
 
     def chdir_context(repo, verbose=False):
         return ChdirContext(repo.dpath, verbose=verbose)
@@ -186,21 +246,25 @@ def clone_repos():
     for repodir, repourl in zip(PROJECT_REPOS, REPOS1.PROJECT_URLS):
         print('[git] checkexist: ' + repodir)
         if not exists(repodir):
+            # repo = Repo(url=repourl, dpath=repodir)
+            # if repo.owner() in :
+            #     pass
+            # repo.clone()
             mu.cd(dirname(repodir))
             mu.cmd('git clone ' + repourl)
 
 
-def clone_repos_(repo_urls, repo_dirs=None, checkout_dir=None):
-    """ Checkout every repo in repo_urls into checkout_dir """
-    # Check out any repo you dont have
-    if checkout_dir is not None:
-        repo_dirs = mu.get_repo_dirs(checkout_dir)
-    assert repo_dirs is not None, 'specify checkout dir or repo_dirs'
-    for repodir, repourl in zip(repo_dirs, repo_urls):
-        print('[git] checkexist: ' + repodir)
-        if not exists(repodir):
-            mu.cd(dirname(repodir))
-            mu.cmd('git clone ' + repourl)
+# def clone_repos_(repo_urls, repo_dirs=None, checkout_dir=None):
+#     """ Checkout every repo in repo_urls into checkout_dir """
+#     # Check out any repo you dont have
+#     if checkout_dir is not None:
+#         repo_dirs = mu.get_repo_dirs(checkout_dir)
+#     assert repo_dirs is not None, 'specify checkout dir or repo_dirs'
+#     for repodir, repourl in zip(repo_dirs, repo_urls):
+#         print('[git] checkexist: ' + repodir)
+#         if not exists(repodir):
+#             mu.cd(dirname(repodir))
+#             mu.cmd('git clone ' + repourl)
 
 
 def setup_develop_repos(repo_dirs):

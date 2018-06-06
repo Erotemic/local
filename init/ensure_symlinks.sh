@@ -122,6 +122,17 @@ ensure_config_symlinks()
     ln -s ~/local/scripts ~/scripts
     ln -s ~/local/vim/vimfiles/bundle/vimtk ~/code/vimtk
 
+
+    #### DO EXTRA SYMLINK FIXES
+    symlinks -c $HOME
+    symlinks -cr $HOME/.local
+    symlinks -cr $HOME/code
+    symlinks -cr $HOME/local
+
+    #symlinks -crt $HOME | grep -v work | grep -v venv3.6 | grep -v .config
+
+    ls -lR $HOME | grep ^l
+
     echo "==============================="
     echo "FINISHED ensure_config_symlinks"
     echo "==============================="
