@@ -5,4 +5,3 @@ cd $HOME/code/nvtop/build && \
 cmake -G "Unix Makefiles" -D CMAKE_INSTALL_PREFIX=$HOME/.local .. && \
 make && \
 make install
-
