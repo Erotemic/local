@@ -19,6 +19,8 @@ alias cgrep='grep -I -ER \
     --exclude-dir .git \
     --exclude-dir .pytest_cache \
     --exclude-dir htmlcov \
+    --exclude-dir "volumes" \
+    --exclude-dir "*.egg-info" \
     --exclude "searchindex.js" \
     --exclude "*.dot*" \
     --exclude "*.rst*" \
