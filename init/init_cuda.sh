@@ -3,56 +3,6 @@
 #http://docs.nvidia.com/cuda/cuda-getting-started-guide-for-linux/index.html#package-manager-installation
 
 
-init_cuda_with_deb_pkg(){
-    # First download the deb from https://developer.nvidia.com/cuda-downloads
-    sudo dpkg -i ~/Downloads/cuda-repo-ubuntu1604-8-0-local-ga2_8.0.61-1_amd64.deb
-    sudo apt-get update
-    sudo apt-get install cuda
-}
-
-
-init_local_cuda(){
-    # Download the correct version packages from nvidia
-    # https://developer.nvidia.com/cuda-downloads
-
-    # https://stackoverflow.com/questions/39379792/install-cuda-without-root
-
-    # Sync between machines
-    cd
-    rsync -avuzpR ~/./tpl-archive/ jon.crall@arisia.kitware.com:.
-    rsync -avzupR ~/./tpl-archive/ jon.crall@aretha.kitware.com:.
-    rsync -avzupR ~/./tpl-archive/ jon.crall@klendathu.kitware.com:.
-    rsync -avzupR ~/./tpl-archive/ joncrall@acidalia.kitware.com:.
-
-    rsync -avzupR joncrall@acidalia.kitware.com:./tpl-archive/ ~/.
-
-    #rsync -avzup tpl-archive/cuda/ jon.crall@arisia.kitware.com:tpl-archive/cuda
-    #rsync -avzup tpl-archive/cuda/ jon.crall@aretha.kitware.com:tpl-archive/cuda
-
-    tar -xf cuda_cluster_pkgs_9.1.85_ubuntu1604.tar.gz
-    mv cuda_cluster_pkgs_ubuntu1604 ~/tmp
-    cd ~/tmp/cuda_cluster_pkgs_ubuntu1604
-
-    CUDA_INSTALL=$(python -c "$(codeblock "
-    from os.path import join, exists, expanduser
-
-    # SET TO CURRENT VERSION YOU WANT
-    cuda = '8.0'
-    osname = 'linux'
-    type = 'run'
-
-    # (cuda_version, os, installer-type) = (run, patch)
-    ver = {}
-    ver[('8.0', 'linux', 'run')] = ('cuda_8.0.61_375.26_linux.run', cuda_8.0.61.2_linux.run)
-
-    fname = ver[(cuda, osname, type)]
-    fpath = join(expanduser('~/tpl-archive/cuda'), fname)
-    assert exists(fpath)
-    print(fpath)
-    ")")
-}
-
-
 current_cudnn_info()
 {
     "
@@ -87,7 +37,8 @@ uninstall_local_cuda()
         uninstall_local_cuda
     "
     # Uninstall old local cuda via manifest
-    python -c "$(codeblock "
+    source $HOME/local/init/utils.sh
+    pyblock "
     import os
     import ubelt as ub
 
@@ -131,16 +82,62 @@ uninstall_local_cuda()
                         os.rmdir(path)
                 else:
                     raise Exception(mode)
-    ")"
+    "
+}
+
+
+install_nvidia_drivers(){
+    sudo apt-get install freeglut3-dev build-essential libx11-dev libxmu-dev libxi-dev libgl1-mesa-glx libglu1-mesa libglu1-mesa-dev
+
+    # Install nvidia drivers on the system level (required to be sudo)
+
+    source $HOME/local/init/utils.sh
+
+    # https://askubuntu.com/questions/481414/install-nvidia-driver-instead-of-nouveau
+    sudo_appendto /etc/modprobe.d/blacklist.conf "
+        blacklist amd76x_edac 
+        blacklist vga16fb
+        blacklist nouveau
+        blacklist rivafb
+        blacklist nvidiafb
+        blacklist rivatv
+        " 
+    cat /etc/modprobe.d/blacklist.conf
+    sudo apt-get remove --purge nvidia-*
+
+    # Update the ramfs
+    sudo update-initramfs -u
+
+    # Now reboot, and then run the nvidia installer
+
+    # may need to reboot after nouveau is diabled
+    sudo sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-390.42.run --disable-nouveau --accept-license
+    --silent
+
+    # Make sure you update your xconfig when asked (todo: find the flag to auto-do this)
+
+    # If we still get errors run:
+
+    # MUST STOP DISPLAY MANAGER HERE
+    # Do Ctrl+Alt+F1
+    sudo service lightdm stop
+    sudo /etc/init.d/gdm stop
+
+    sudo update-initramfs -u
+
+    # Then rerun 
+    sudo sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-390.42.run --disable-nouveau --accept-license
+    
 }
 
 
 change_cuda_version()
 {
-    __heredoc__ '''
+    __heredoc__='''
         ls ~/tpl-archive/cuda
         source ~/local/init/init_cuda.sh
-        change_cuda_version 9.1 
+        cuda_version=9.1
+        change_cuda_version $cuda_version
 
         ls ~/tpl-archive/cuda
         source ~/local/init/init_cuda.sh
@@ -164,7 +161,7 @@ change_cuda_version()
 
     # version 8
     if [ "$cuda_version" == "8.0" ]; then
-        sh ~/tpl-archive/cuda/cuda-linux64-rel-8.0.61-21551265.run -prefix=$HOME/.local/cuda-8.0 -noprompt -manifest $HOME/.local/cuda-8.0/manifest_cuda.txt -nosymlink 
+        sh ~/tpl-archive/cuda/cuda-linux64-rel-8.0.61-21551265.run -prefix=$HOME/.local/cuda-8.0 -noprompt -manifest $HOME/.local/cuda/manifest_cuda.txt -nosymlink 
         unlink $HOME/.local/cuda
         ln -s $HOME/.local/cuda-8.0 $HOME/.local/cuda
     fi
@@ -200,7 +197,8 @@ change_cudnn_version(){
         current_cudnn_info
     '''
     # THIS WORKS
-    python -c "$(codeblock "
+    source $HOME/local/init/utils.sh
+    pyblock "
         from os.path import join, exists, expanduser, splitext, relpath
         import ubelt as ub
 
@@ -279,7 +277,7 @@ change_cudnn_version(){
         src = join(cudnn_dir, 'cuda', 'include')
 
         ub.cmd('chmod a+r ' + dstdir + '/include/cudnn.h', verbose=2)
-        ")"
+        "
 }
 
 prep_cuda_runfile(){
@@ -553,3 +551,57 @@ print_active_device=True
 EOF'
 
 }
+
+
+init_cuda_with_deb_pkg(){
+    # First download the deb from https://developer.nvidia.com/cuda-downloads
+    sudo dpkg -i ~/Downloads/cuda-repo-ubuntu1604-8-0-local-ga2_8.0.61-1_amd64.deb
+    sudo apt-get update
+    sudo apt-get install cuda
+}
+
+
+init_local_cuda(){
+    # Download the correct version packages from nvidia
+    # https://developer.nvidia.com/cuda-downloads
+
+    # https://stackoverflow.com/questions/39379792/install-cuda-without-root
+
+    # Sync between machines
+    cd
+    rsync -avuzpR ~/./tpl-archive/ jon.crall@arisia.kitware.com:.
+    rsync -avzupR ~/./tpl-archive/ jon.crall@aretha.kitware.com:.
+    rsync -avzupR ~/./tpl-archive/ jon.crall@klendathu.kitware.com:.
+    rsync -avzupR ~/./tpl-archive/ joncrall@acidalia.kitware.com:.
+
+    rsync -avzupR joncrall@acidalia.kitware.com:./tpl-archive/ ~/.
+
+    #rsync -avzup tpl-archive/cuda/ jon.crall@arisia.kitware.com:tpl-archive/cuda
+    #rsync -avzup tpl-archive/cuda/ jon.crall@aretha.kitware.com:tpl-archive/cuda
+
+    tar -xf cuda_cluster_pkgs_9.1.85_ubuntu1604.tar.gz
+    mv cuda_cluster_pkgs_ubuntu1604 ~/tmp
+    cd ~/tmp/cuda_cluster_pkgs_ubuntu1604
+
+    source $HOME/local/init/utils.sh
+
+    CUDA_INSTALL=pyblock "
+    from os.path import join, exists, expanduser
+
+    # SET TO CURRENT VERSION YOU WANT
+    cuda = '8.0'
+    osname = 'linux'
+    type = 'run'
+
+    # (cuda_version, os, installer-type) = (run, patch)
+    ver = {}
+    ver[('8.0', 'linux', 'run')] = ('cuda_8.0.61_375.26_linux.run', cuda_8.0.61.2_linux.run)
+
+    fname = ver[(cuda, osname, type)]
+    fpath = join(expanduser('~/tpl-archive/cuda'), fname)
+    assert exists(fpath)
+    print(fpath)
+    "
+}
+
+
