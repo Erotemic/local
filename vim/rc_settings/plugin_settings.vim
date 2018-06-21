@@ -51,6 +51,18 @@ call NERD_TREE_WITH_BAT()
 
 "
 "
+
+
+"-------------------------
+"PLUGIN: Synstastic General
+let g:syntastic_aggregate_errors = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_warning_symbol = 'W>'
+let g:syntastic_error_symbol = '!>'
+let g:syntastic_style_error_symbol = 'S>'
+let g:syntastic_style_warning_symbol = 's>'
+let g:syntastic_always_populate_loc_list = 1
+
 "-------------------------
 " PLUGIN: Syntastic C++
 "let g:syntastic_gpp_include_dirs=['$INSTALL_32/OpenCV/include']
@@ -67,6 +79,75 @@ let g:syntastic_cpp_compiler_options = ' -std=c++11 -stdlib=libc++'
 "let g:syntastic_cpp_compiler = 'clang++'
 "let g:syntastic_c_include_dirs = ['include', '../include']
 "let g:syntastic_c_compiler = 'clang'
+
+"-------------------------
+" PLUGIN: Syntastic Python
+" SyntasticInfo
+let g:syntastic_python_checkers=['flake8'] " ignores lines containng # NOQA
+
+" SCRIPTING VIM IN PYTHON 
+" http://orestis.gr/blog/2008/08/10/scripting-vim-with-python/
+
+Python2or3 << EOF
+import vim
+flake8_errors = [
+    'E126',  # continuation line hanging-indent
+    'E127',  # continuation line over-indented for visual indent
+    'E201',  # whitespace after '('
+    'E202',  # whitespace before ']'
+    'E203',  # whitespace before ', '
+    #'E221',  # multiple spaces before operator
+    'E222',  # multiple spaces after operator
+    'E241',  # multiple spaces after ,
+    'E265',  # block comment should start with "# "
+    'E271',  # multiple spaces after keyword
+    'E272',  # multiple spaces before keyword
+    'E301',  # expected 1 blank line, found 0
+    'E305',  # expected 1 blank line after class / func
+    'E306',  # expected 1 blank line before func
+    #'E402',  # moduel import not at top
+    'E501',  # line length > 79
+    'W602',  # Old reraise syntax
+    'E266',  # too many leading '#' for block comment
+    'N801',  # function name should be lowercase [N806]
+    'N802',  # function name should be lowercase [N806]
+    'N803',  # argument should be lowercase [N806]
+    'N805',  # first argument of a method should be named 'self'
+    'N806',  # variable in function should be lowercase [N806]
+    'N811',  # constant name imported as non constant
+    'N813',  # camel case
+] 
+flake8_args_list = [
+    '--max-line-length 79',
+    #'--max-line-length 100',
+    '--ignore=' + ','.join(flake8_errors)
+]
+flake8_args = ' '.join(flake8_args_list)
+vim.command('let g:syntastic_python_flake8_args = "%s"' % flake8_args)
+
+
+# Needed to hack syntastic cython checker
+vim.command('let g:syntastic_cython_checkers = ["flake8"]')
+cython_flake8_errors = flake8_errors + [
+    'E901', 
+    'E225',
+    'E226',
+    'E227',
+    'E251',
+    'E402',
+    'E999',
+]
+cython_flake8_args_list = [
+    '--max-line-length 79',
+    #'--max-line-length 100',
+    '--ignore=' + ','.join(cython_flake8_errors)
+]
+cython_flake8_args = ' '.join(cython_flake8_args_list)
+vim.command('let g:syntastic_cython_flake8_args = "%s"' % cython_flake8_args)
+EOF
+
+
+
 
 "-------------------------
 " PLUGIN: Tagbar
@@ -280,84 +361,6 @@ let g:jedi#goto_definitions_command = "<leader>gd"
 " PLUGIN: Supertab
 " python autocomplete for supertab
 let g:SuperTabDefaultCompletionType = "context"
-
-"-------------------------
-"PLUGIN: Synstastic General
-let g:syntastic_aggregate_errors = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_warning_symbol = 'W>'
-let g:syntastic_error_symbol = '!>'
-let g:syntastic_style_error_symbol = 'S>'
-let g:syntastic_style_warning_symbol = 's>'
-let g:syntastic_always_populate_loc_list = 1
-
-"-------------------------
-" PLUGIN: Syntastic Python
-" SyntasticInfo
-let g:syntastic_python_checkers=['flake8'] " ignores lines containng # NOQA
-
-" SCRIPTING VIM IN PYTHON 
-" http://orestis.gr/blog/2008/08/10/scripting-vim-with-python/
-
-Python2or3 << EOF
-import vim
-flake8_errors = [
-    'E126',  # continuation line hanging-indent
-    'E127',  # continuation line over-indented for visual indent
-    'E201',  # whitespace after '('
-    'E202',  # whitespace before ']'
-    'E203',  # whitespace before ', '
-    'E221',  # multiple spaces before operator
-    'E222',  # multiple spaces after operator
-    'E241',  # multiple spaces after ,
-    'E265',  # block comment should start with "# "
-    'E271',  # multiple spaces after keyword
-    'E272',  # multiple spaces before keyword
-    'E301',  # expected 1 blank line, found 0
-    'E305',  # expected 1 blank line after class / func
-    'E306',  # expected 1 blank line before func
-    #'E402',  # moduel import not at top
-    'E501',  # line length > 79
-    'W602',  # Old reraise syntax
-    'E266',  # too many leading '#' for block comment
-    'N801',  # function name should be lowercase [N806]
-    'N802',  # function name should be lowercase [N806]
-    'N803',  # argument should be lowercase [N806]
-    'N805',  # first argument of a method should be named 'self'
-    'N806',  # variable in function should be lowercase [N806]
-    'N811',  # constant name imported as non constant
-    'N813',  # camel case
-] 
-flake8_args_list = [
-    '--max-line-length 79',
-    #'--max-line-length 100',
-    '--ignore=' + ','.join(flake8_errors)
-]
-flake8_args = ' '.join(flake8_args_list)
-vim.command('let g:syntastic_python_flake8_args = "%s"' % flake8_args)
-
-
-# Needed to hack syntastic cython checker
-vim.command('let g:syntastic_cython_checkers = ["flake8"]')
-cython_flake8_errors = flake8_errors + [
-    'E901', 
-    'E225',
-    'E226',
-    'E227',
-    'E251',
-    'E402',
-    'E999',
-]
-cython_flake8_args_list = [
-    '--max-line-length 79',
-    #'--max-line-length 100',
-    '--ignore=' + ','.join(cython_flake8_errors)
-]
-cython_flake8_args = ' '.join(cython_flake8_args_list)
-vim.command('let g:syntastic_cython_flake8_args = "%s"' % cython_flake8_args)
-EOF
-
-
 
 "-------------------------
 " PLUGIN: IPython Vim
