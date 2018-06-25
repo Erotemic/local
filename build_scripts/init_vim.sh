@@ -138,7 +138,7 @@ with_conda_python36(){
 }
 
 ./configure \
-    --prefix=$HOME \
+    --prefix=$HOME/.local \
     --enable-pythoninterp=no \
     --enable-python3interp=yes \
     --enable-gui=gtk2

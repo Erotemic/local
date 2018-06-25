@@ -96,7 +96,7 @@ flake8_errors = [
     'E201',  # whitespace after '('
     'E202',  # whitespace before ']'
     'E203',  # whitespace before ', '
-    #'E221',  # multiple spaces before operator
+    'E221',  # multiple spaces before operator  (TODO: I wish I could make an exception for the equals operator. Is there a way to do this?) 
     'E222',  # multiple spaces after operator
     'E241',  # multiple spaces after ,
     'E265',  # block comment should start with "# "
