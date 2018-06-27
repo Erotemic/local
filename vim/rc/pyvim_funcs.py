@@ -852,21 +852,24 @@ def auto_cmdline():
 
 
 def auto_docstr(**kwargs):
+    import ubelt as ub
+    USE_UTOOL = False
     import imp
-    import utool as ut
-    ut.util_dbg.COLORED_EXCEPTIONS = False
-    ut.ENABLE_COLORS = False
-    ut.util_str.ENABLE_COLORS = False
-    try:
-        print("RELOADING UTOOL via imp")
+    if USE_UTOOL:
+        import utool as ut
+        ut.util_dbg.COLORED_EXCEPTIONS = False
+        ut.ENABLE_COLORS = False
+        ut.util_str.ENABLE_COLORS = False
+        try:
+            print("RELOADING UTOOL via imp")
+            imp.reload(ut)
+            imp.reload(ut._internal.meta_util_arg)
+        except Exception as ex:
+            print("... errored")
+            pass
+        print("RELOADING UTOOL via rrrr")
+        ut.rrrr(verbose=0)
         imp.reload(ut)
-        imp.reload(ut._internal.meta_util_arg)
-    except Exception as ex:
-        print("... errored")
-        pass
-    print("RELOADING UTOOL via rrrr")
-    ut.rrrr(verbose=0)
-    imp.reload(ut)
     import vim
 
     modname = None
@@ -875,6 +878,22 @@ def auto_docstr(**kwargs):
     dbgtext = ''
     docstr = ''
     dbgmsg = ''
+
+    def make_docstr_block(header, block):
+        indented_block = '\n' + ub.indent(block)
+        docstr_block = ''.join([header, ':', indented_block])
+        return docstr_block
+
+    def new_autodoc(modname, funcname, moddir=None, modpath=None):
+        # get_indentation()  # TODO
+        num_indent = 4
+
+        command = 'python -m {modname} {funcname}'.format(
+            **locals())
+        docstr = make_docstr_block('CommandLine', command)
+
+        docstr = ub.indent(docstr, ' ' * num_indent)
+        return docstr
 
     try:
         funcname, searchlines, pos, foundline = find_pyfunc_above_cursor()
@@ -890,8 +909,12 @@ def auto_docstr(**kwargs):
             verbose = True
             autodockw = dict(verbose=verbose)
             autodockw.update(kwargs)
-            docstr = ut.auto_docstr(modname, funcname, moddir=moddir,
-                                    modpath=modpath, **autodockw)
+            if USE_UTOOL:
+                docstr = ut.auto_docstr(modname, funcname, moddir=moddir,
+                                        modpath=modpath, **autodockw)
+            else:
+                docstr = new_autodoc(modname, funcname, moddir=moddir,
+                                     modpath=modpath)
             #if docstr.find('unexpected indent') > 0:
             #    docstr = funcname + ' ' + docstr
             if docstr[:].strip() == 'error':
@@ -901,7 +924,10 @@ def auto_docstr(**kwargs):
         flag = False
     except Exception as ex:
         dbgmsg = 'exception(%r): %s' % (type(ex), str(ex))
-        ut.printex(ex, tb=True)
+        if USE_UTOOL:
+            ut.printex(ex, tb=True)
+        else:
+            print(repr(ex))
         flag = False
 
     if flag:
@@ -912,12 +938,13 @@ def auto_docstr(**kwargs):
             dbgtext += dbgmsg
         dbgtext += '\n+----------------------'
         dbgtext += '\n| InsertDoctstr(modname=%r, funcname=%r' % (modname, funcname)
-        pycmd = ('import ut; print(ut.auto_docstr(%r, %r, %r)))' % (modname, funcname, modpath))
-        pycmd = pycmd.replace('\'', '\\"')
-        dbgtext += '\n| python -c "%s"' % (pycmd,)
-        dbgtext += '\n+----------------------'
-        dbgtext += '\n+searchlines = '
-        dbgtext += ut.indentjoin(searchlines, '\n| ')
+        if USE_UTOOL:
+            pycmd = ('import ut; print(ut.auto_docstr(%r, %r, %r)))' % (modname, funcname, modpath))
+            pycmd = pycmd.replace('\'', '\\"')
+            dbgtext += '\n| python -c "%s"' % (pycmd,)
+            dbgtext += '\n+----------------------'
+            dbgtext += '\n+searchlines = '
+            dbgtext += ut.indentjoin(searchlines, '\n| ')
         dbgtext += '\nL----------------------'
     elif len(dbgmsg) > 0:
         dbgtext += '\n| Message: '

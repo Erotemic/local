@@ -98,7 +98,7 @@ unmount_if_mounted()
 }
 
 
-mount_remotes()
+mount_registered_remotes()
 {
     echo "Mounting remotes"
     mount_remote_if_available aretha 
@@ -108,7 +108,7 @@ mount_remotes()
     #mount_remote_if_available lev 
 }
 
-unmount_remotes()
+unmount_registered_remotes()
 {
     echo "Unmounting remotes"
     unmount_if_mounted aretha
@@ -140,11 +140,24 @@ if [[ $# -gt 0 ]]; then
     done
     set -- "${POSITIONAL[@]}" # restore positional parameters
 
-
-    if [ "$UNMOUNT" == "YES" ]; then
-        unmount_remotes
+    if [[ ${#POSITIONAL[@]} -gt 0 ]]; then
+        # User specified a specific set of remotes
+        for REMOTE in "${POSITIONAL[@]}" 
+        do :
+            echo "REMOTE = $REMOTE"
+            if [ "$UNMOUNT" == "YES" ]; then
+                unmount_if_mounted $REMOTE
+            else
+                mount_remote_if_available $REMOTE
+            fi
+        done
     else
-        mount_remotes
+        # Do for all registered remotes
+        if [ "$UNMOUNT" == "YES" ]; then
+            unmount_registered_remotes
+        else
+            mount_registered_remotes
+        fi
     fi
 fi
 
