@@ -214,3 +214,8 @@ set hlsearch
 " :s/\( *\):/:\1/gc
 ":set guitablabel=%N/\ %t
 :set guitablabel=%N/\ %t\ %M
+
+
+" https://unix.stackexchange.com/questions/196098/copy-paste-in-xfce4-terminal-adds-0-and-1
+" fix terminal spacing issue
+set t_BE=
