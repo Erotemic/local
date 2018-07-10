@@ -547,7 +547,7 @@ workon_py()
 {
     NEW_VENV=$1
 
-    if [ ! -d $NEW_VENV ]; then
+    if [ ! -f $NEW_VENV/bin/activate ]; then
         # Check if it is the name of a conda or virtual env
         # First try conda, then virtualenv
         TEMP_PATH=$_CONDA_ROOT/envs/$NEW_VENV
