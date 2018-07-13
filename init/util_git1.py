@@ -117,7 +117,7 @@ class Repo(object):
                     print(cmd)
                     continue
                 if not sudo or WIN32:
-                    cmdinfo = ub.cmd(cmd, verbout=True)
+                    cmdinfo = ub.cmd(cmd, verbose=1)
                     out, err, ret = ub.take(cmdinfo, ['out', 'err', 'ret'])
                 else:
                     out, err, ret = ub.cmd('sudo ' + cmd)

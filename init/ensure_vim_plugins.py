@@ -140,7 +140,7 @@ def main():
         command = 'git submodule update --init --recursive'
         try:
             import ubelt as ub
-            ub.cmd(command, verbout=1, verbose=2)
+            ub.cmd(command, verbose=2)
         except Exception:
             os.system(command)
 
