@@ -35,8 +35,7 @@ func! InsertDocstr()
 Python2or3 << EOF
 import vim
 #vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
-import utool as ut
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
 
 if pyvim_funcs.is_module_pythonfile():
     print('building docstr')
@@ -53,14 +52,14 @@ func! InsertPyUtMain()
     " Imports a python __main__ block 
 Python2or3 << EOF
 import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
 import ubelt as ub
 #import ubelt, xdoctest; imp.reload(ubelt); imp.reload(xdoctest.static_analysis)
 
 pyvim_funcs.ensure_normalmode()
 if pyvim_funcs.is_module_pythonfile():
     modpath = vim.current.buffer.name
-    #test_code = ut.codeblock(
+    #test_code = ub.codeblock(
     #    r'''
     #    import pytest
     #    pytest.main([__file__, '--xdoc'])
@@ -84,15 +83,13 @@ func! PyInsertHeader(...)
     " Imports a standard python header
 Python2or3 << EOF
 mode = vim.eval('(a:0 >= 1) ? a:1 : 0')
-
+import ubelt as ub
 import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool as ut
-ut.rrrr(verbose=False)
+import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
 pyvim_funcs.ensure_normalmode()
 if pyvim_funcs.is_module_pythonfile():
     modpath = vim.current.buffer.name
-    modname = ut.get_modname_from_modpath(modpath)
+    modname = ub.modpath_to_modname(modpath)
     lines = []
     if mode == 'script':
         lines += ['#!/usr/bin/env python']
@@ -100,11 +97,6 @@ if pyvim_funcs.is_module_pythonfile():
         '# -*- coding: utf-8 -*-',
         'from __future__ import print_function, division, absolute_import, unicode_literals',
     ]
-    if mode == 'utool':
-        lines += [
-            'import utool as ut'
-            'print, rrr, profile = ut.inject2(__name__)'
-        ]
     text = '\n'.join(lines)
     pyvim_funcs.insert_codeblock_above_cursor(text)
 else:
@@ -118,8 +110,7 @@ func! AutoPep8Block()
 Python2or3 << EOF
 # FIXME: Unfinished
 import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool as ut
+import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
 
 pyvim_funcs.ensure_normalmode()
 
@@ -138,8 +129,7 @@ func! InsertKWargsDoc()
 Python2or3 << EOF
 import vim
 #vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
-import utool as ut
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
 
 if pyvim_funcs.is_module_pythonfile():
     print('building docstr')
@@ -156,9 +146,7 @@ func! InsertDocstrOnlyArgs()
 Python2or3 << EOF
 import vim
 #vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
-import utool as ut
-ut.rrrr(verbose=False)
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
 
 if pyvim_funcs.is_module_pythonfile():
     print('building docstr')
@@ -180,13 +168,8 @@ func! InsertDocstrOnlyCommandLine()
 Python2or3 << EOF
 import vim
 #vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
-import utool as ut
 import imp
-#imp.reload(ut._internal)
-#imp.reload(ut._internal.meta_util_six)
-imp.reload(ut)
-ut.rrrr(verbose=False)
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
+import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
 
 if pyvim_funcs.is_module_pythonfile():
     print('building docstr')
@@ -205,38 +188,11 @@ EOF
 endfu 
 
 
-func! InsertIBEISExample() 
-Python2or3 << EOF
-import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool as ut
-pyvim_funcs.ensure_normalmode()
-if pyvim_funcs.is_module_pythonfile():
-    modname = ut.get_modname_from_modpath(vim.current.buffer.name)
-    #text = ut.indent(ut.codeblock(
-    #    '''
-    #    Example:
-    #        >>> # DOCTEST_DISABLE
-    #        >>> from {modname} import *   # NOQA
-    #        >>> import ibeis
-    #        >>> ibs = ibeis.opendb('testdb1')
-    #        >>> aid_list = ibs.get_valid_aids()
-    #    '''
-    #)).format(modname=modname)
-    text = pyvim_funcs.auto_docstr(with_args=False, with_ret=False)
-    pyvim_funcs.insert_codeblock_under_cursor(text)
-else:
-    print('current file is not a pythonfile')
-#L______________
-EOF
-endfu 
-
-
 func! PyMakeEmbed() 
 Python2or3 << EOF
 import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool as ut
+import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+import ubelt as ub
 
 indent = pyvim_funcs.get_cursor_py_indent()
 newtext = '\n'.join([
@@ -251,8 +207,8 @@ endfunc
 func! PyMakeWithEmbed(...) range
 Python2or3 << EOF
 import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool as ut
+import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+import ubelt as ub
 
 mode = vim.eval('a:1')
 
@@ -265,7 +221,7 @@ newtext = '\n'.join([
     #indent + 'with ipdb.launch_ipdb_on_exception():'
 ])
 if 'v' in mode.lower():
-    newtext += '\n' + ut.indent(pyvim_funcs.get_selected_text())
+    newtext += '\n' + ub.indent(pyvim_funcs.get_selected_text())
     pyvim_funcs.insert_codeblock_over_selection(newtext)
 else:
     pyvim_funcs.insert_codeblock_under_cursor(newtext)
@@ -276,51 +232,29 @@ endfunc
 func! PyMakeTimerit(...) range
 Python2or3 << EOF
 import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool as ut
+import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+import ubelt as ub
 mode = vim.eval('a:1')
 indent = pyvim_funcs.get_cursor_py_indent()
 newtext = '\n'.join([
-    indent + 'import ubelt',
-    indent + 'for timer in ubelt.Timerit(100, bestof=10, label=\'time\'):',
+    indent + 'import ubelt as ub',
+    indent + 'for timer in ub.Timerit(100, bestof=10, label=\'time\'):',
     indent + '    with timer:',
 ])
 if 'v' in mode.lower():
-    newtext += '\n' + ut.indent(pyvim_funcs.get_selected_text(), ' ' * 8)
+    newtext += '\n' + ub.indent(pyvim_funcs.get_selected_text(), ' ' * 8)
     pyvim_funcs.insert_codeblock_over_selection(newtext)
 else:
     pyvim_funcs.insert_codeblock_under_cursor(newtext)
 EOF
 endfunc
 
-func! PyOpenFileUnderCursor() 
-Python2or3 << EOF
-import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool as ut
-word = pyvim_funcs.get_word_at_cursor()
-if ut.checkpath(word):
-    pyvim_funcs.open_fpath(word)
-else:
-    modpath = ut.get_modpath_from_modname(word)
-    print(modpath)
-    # utool
-    if ut.checkpath(modpath):
-        pyvim_funcs.open_fpath(modpath, 'split')
-    else:
-        print(word)
-    # TODO: infer modules from the context with jedi perhaps
-
-EOF
-endfunc
-
 func! PyFormatDoctest() range
 Python2or3 << EOF
 import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool as ut
+import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
 text = pyvim_funcs.get_selected_text()
-formated_text = ut.format_text_as_docstr(text)
+formated_text = pyvim_funcs.format_text_as_docstr(text)
 pyvim_funcs.insert_codeblock_over_selection(formated_text)
 EOF
 endfunc
@@ -328,10 +262,9 @@ endfunc
 func! PyUnFormatDoctest() range
 Python2or3 << EOF
 import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool as ut
+import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
 text = pyvim_funcs.get_selected_text()
-formated_text = ut.unformat_text_as_docstr(text)
+formated_text = pyvim_funcs.unformat_text_as_docstr(text)
 pyvim_funcs.insert_codeblock_over_selection(formated_text)
 EOF
 endfunc
@@ -341,8 +274,7 @@ func! FUNC_AutoImport()
 Python2or3 << EOF
 # FIXME: Unfinished
 import vim
-import pyvim_funcs, imp; imp.reload(pyvim_funcs)
-import utool as ut
+import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
 import ubelt as ub
 
 def undefined_names(fpath):

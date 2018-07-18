@@ -21,6 +21,14 @@ import re
 import itertools as it
 
 
+try:
+    import importlib
+    reload = importlib.reload
+except (AttributeError, ImportError):
+    import imp
+    reload = imp.reload
+
+
 def get_bibtex_dict():
     import ubelt as ub
     # HACK: custom current bibtex file
@@ -1436,7 +1444,7 @@ def enter_text_in_terminal(text, return_to_vim=True):
     """
     import utool as ut
     # Copy the text to the clipboard
-    ut.copy_text_to_clipboard(text)
+    copy_text_to_clipboard(text)
 
     # Build xdtool script
     import sys
@@ -1558,6 +1566,207 @@ def make_default_module_maintest(modpath, test_code=None, argv=None,
     ).format(cmdline_=cmdline_, test_code=test_code, rr='{r}')
     text = text.format(r='r' if '\\' in text else '')
     return text
+
+
+def format_text_as_docstr(text):
+    r"""
+    CommandLine:
+        python  ~/local/vim/rc/pyvim_funcs.py  --test-format_text_as_docstr
+
+    Example:
+        >>> # DISABLE_DOCTEST
+        >>> from pyvim_funcs import *  # NOQA
+        >>> text = testdata_text()
+        >>> formated_text = format_text_as_docstr(text)
+        >>> result = ('formated_text = \n%s' % (str(formated_text),))
+        >>> print(result)
+    """
+    import re
+    min_indent = get_minimum_indentation(text)
+    indent_ =  ' ' * min_indent
+    formated_text = re.sub('^' + indent_, '' + indent_ + '>>> ', text,
+                           flags=re.MULTILINE)
+    formated_text = re.sub('^$', '' + indent_ + '>>> #', formated_text,
+                           flags=re.MULTILINE)
+    return formated_text
+
+
+def unformat_text_as_docstr(formated_text):
+    r"""
+    CommandLine:
+        python  ~/local/vim/rc/pyvim_funcs.py  --test-unformat_text_as_docstr
+
+    Example:
+        >>> # DISABLE_DOCTEST
+        >>> from pyvim_funcs import *  # NOQA
+        >>> text = testdata_text()
+        >>> formated_text = format_text_as_docstr(text)
+        >>> unformated_text = unformat_text_as_docstr(formated_text)
+        >>> result = ('unformated_text = \n%s' % (str(unformated_text),))
+        >>> print(result)
+    """
+    import re
+    min_indent = get_minimum_indentation(formated_text)
+    indent_ =  ' ' * min_indent
+    unformated_text = re.sub('^' + indent_ + '>>> ', '' + indent_,
+                             formated_text, flags=re.MULTILINE)
+    return unformated_text
+
+
+def copy_text_to_clipboard(text):
+    """
+    Copies text to the clipboard
+
+    CommandLine:
+        pip install pyperclip
+        sudo apt-get install xclip
+        sudo apt-get install xsel
+
+    References:
+        http://stackoverflow.com/questions/11063458/python-script-to-copy-text-to-clipboard
+        http://stackoverflow.com/questions/579687/how-do-i-copy-a-string-to-the-clipboard-on-windows-using-python
+
+    Ignore:
+        import pyperclip
+        # Qt is by far the fastest, followed by xsel, and then xclip
+        #
+        backend_order = ['xclip', 'xsel', 'qt', 'gtk']
+        backend_order = ['qt', 'xsel', 'xclip', 'gtk']
+        for be in backend_order:
+            print('be = %r' % (be,))
+            pyperclip.set_clipboard(be)
+            %timeit pyperclip.copy('a line of reasonable length text')
+            %timeit pyperclip.paste()
+    """
+    import pyperclip
+    import ubelt as ub
+    def _check_clipboard_backend(backend):
+        if backend == 'qt':
+            try:
+                import PyQt5  # NOQA
+                return True
+            except ImportError:
+                return False
+        elif backend == 'gtk':
+            try:
+                import gtk  # NOQA
+                return True
+            except ImportError:
+                return False
+        else:
+            return pyperclip._executable_exists(backend)
+    def _ensure_clipboard_backend():
+        # TODO: vimtk can do this, use that instead
+        if ub.POSIX:
+            backend_order = ['xclip', 'xsel', 'qt', 'gtk']
+            for backend in backend_order:
+                if getattr(pyperclip, '_hacked_clipboard', 'no') == backend:
+                    break
+                elif _check_clipboard_backend(backend):
+                    pyperclip.set_clipboard(backend)
+                    pyperclip._hacked_clipboard = backend
+                    break
+                else:
+                    print('warning %r not installed' % (backend,))
+    _ensure_clipboard_backend()
+    pyperclip.copy(text)
+    # from Tkinter import Tk
+    # tk_inst = Tk()
+    # tk_inst.withdraw()
+    # tk_inst.clipboard_clear()
+    # tk_inst.clipboard_append(text)
+    # tk_inst.destroy()
+
+
+def open_url_in_browser(url, browsername=None, fallback=False):
+    r"""
+    Opens a url in the specified or default browser
+
+    Args:
+        url (str): web url
+
+    CommandLine:
+        python -m utool.util_grabdata --test-open_url_in_browser
+
+    Example:
+        >>> # DISABLE_DOCTEST
+        >>> # SCRIPT
+        >>> url = 'http://www.jrsoftware.org/isdl.php'
+        >>> open_url_in_browser(url, 'chrome')
+    """
+    import webbrowser
+    print('[utool] Opening url=%r in browser' % (url,))
+    if browsername is None:
+        browser = webbrowser.open(url)
+    else:
+        browser = get_prefered_browser(pref_list=[browsername], fallback=fallback)
+    return browser.open(url)
+
+
+def get_prefered_browser(pref_list=[], fallback=True):
+    r"""
+    Args:
+        browser_preferences (list): (default = [])
+        fallback (bool): uses default if non of preferences work (default = True)
+
+    CommandLine:
+        python -m utool.util_grabdata --test-get_prefered_browser
+
+    Ignore:
+        import webbrowser
+        webbrowser._tryorder
+        pref_list = ['chrome', 'firefox', 'google-chrome']
+        pref_list = ['firefox', 'google-chrome']
+
+    Example:
+        >>> # DISABLE_DOCTEST
+        >>> from utool.util_grabdata import *  # NOQA
+        >>> browser_preferences = ['firefox', 'chrome', 'safari']
+        >>> fallback = True
+        >>> browser = get_prefered_browser(browser_preferences, fallback)
+        >>> result = ('browser = %s' % (str(browser),))
+        >>> print(result)
+        >>> ut.quit_if_noshow()
+    """
+    import webbrowser
+    import ubelt as ub
+    pref_list = pref_list if ub.iterable(pref_list) else [pref_list]
+    error_list = []
+
+    def listfind(list_, tofind):
+        try:
+            return list_.index(tofind)
+        except ValueError:
+            return None
+
+    # Hack for finding chrome on win32
+    if ub.WIN32:
+        # http://stackoverflow.com/questions/24873302/webbrowser-chrome-exe-does-not-work
+        win32_chrome_fpath = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'
+        win32_chrome_browsername = win32_chrome_fpath + ' %s'
+        win32_map = {
+            'chrome': win32_chrome_browsername,
+            'google-chrome': win32_chrome_browsername,
+        }
+        for browsername, win32_browsername in win32_map.items():
+            index = listfind(pref_list, browsername)
+            if index is not None and True:
+                pref_list.insert(index + 1, win32_browsername)
+
+    for browsername in pref_list:
+        try:
+            browser = webbrowser.get(browsername)
+            return browser
+        except webbrowser.Error as ex:
+            error_list.append(ex)
+            print(str(browsername) + ' failed. Reason: ' + str(ex))
+
+    if fallback:
+        browser = webbrowser
+        return browser
+    else:
+        raise AssertionError('No browser meets preferences=%r. error_list=%r' %
+                             (pref_list, error_list,))
 
 
 if __name__ == '__main__':
