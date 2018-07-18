@@ -2,6 +2,7 @@
 # PYTHON_ARGCOMPLETE_OK
 # -*- coding: utf-8 -*-
 from __future__ import print_function, unicode_literals
+import sys
 import re
 import os
 import git
@@ -24,6 +25,7 @@ def print_exc(exc_info=None):
     import traceback
     if exc_info is None:
         exc_info = sys.exc_info()
+
     tbtext = ''.join(traceback.format_exception(*exc_info))
 
     colored = False
@@ -339,9 +341,11 @@ def _squash_between(repo, start, stop, dry=False, verbose=True):
     inplace squash between, use external function that sets up temp branches to
     use this directly from the commandline.
     """
-    assert len(start.parents) == 1
-    assert start.authored_datetime < stop.authored_datetime
-    assert repo.is_ancestor(ancestor_rev=start, rev=stop)
+    if len(start.parents) != 1:
+        raise AssertionError('cant handle')
+    # assert start.authored_datetime < stop.authored_datetime
+    if not repo.is_ancestor(ancestor_rev=start, rev=stop):
+        raise AssertionError('cant handle')
 
     # Do RFC2822
     # ISO_8601 = '%Y-%m-%d %H:%M:%S %z'  # NOQA
@@ -410,6 +414,117 @@ def _squash_between(repo, start, stop, dry=False, verbose=True):
         else:
             if verbose:
                 print(' * already at the head, no need to fix')
+
+
+def do_tags(verbose=True, inplace=False, dry=True, auto_rollback=False):
+    if verbose:
+        if dry:
+            print('squashing streaks (DRY RUN)')
+        else:
+            print('squashing streaks')
+        # print('authors = {!r}'.format(authors))
+
+    # If you are in a repo subdirectory, find the repo root
+    cwd = os.getcwd()
+    repodir = cwd
+    while True:
+        if os.path.exists(os.path.join(repodir, '.git')):
+            break
+        newpath = os.path.dirname(repodir)
+        if newpath == repodir:
+            raise git.exc.InvalidGitRepositoryError(cwd)
+        repodir = newpath
+
+    repo = git.Repo(repodir)
+    orig_branch_name = repo.active_branch.name
+
+    # head = repo.commit('HEAD')
+    info = ub.cmd('git tag -l --sort=v:refname', verbose=3)
+
+    info2 = ub.cmd('git show-ref --tags', verbose=3)
+    tag_to_hash = {}
+    for line in info2['out'].splitlines():
+        if line:
+            hashtext, tags = line.split(' ')
+            tag = tags.replace('refs/tags/', '')
+            tag_to_hash[tag] = hashtext
+    print('tag_to_hash = {!r}'.format(tag_to_hash))
+
+    tag_order = [line for line in info['out'].splitlines() if line]
+    custom_streaks = list(ub.iter_window(tag_order, 2))
+    print('Forcing hacked steaks')
+    print('custom_streaks = {!r}'.format(custom_streaks))
+
+    streaks = []
+    for custom_streak in custom_streaks:
+        print('custom_streak = {!r}'.format(custom_streak))
+        assert len(custom_streak) == 2
+        hash_a = tag_to_hash[custom_streak[0]]
+        hash_b = tag_to_hash[custom_streak[1]]
+        a = repo.commit(hash_a)
+        b = repo.commit(hash_b)
+        if repo.is_ancestor(ancestor_rev=a, rev=b):
+            a, b = b, a
+        # assert repo.is_ancestor(ancestor_rev=b, rev=a)
+        streak = Streak(a, _streak=[a, b])
+
+        if len(streak.start.parents) != 1:
+            print('WARNING: cannot include streak = {!r}'.format(streak))
+            continue
+        # assert start.authored_datetime < stop.authored_datetime
+        if not repo.is_ancestor(ancestor_rev=streak.start, rev=streak.stop):
+            print('WARNING: cannot include streak = {!r}'.format(streak))
+            continue
+            # raise AssertionError('cant handle')
+        streaks.append(streak)
+
+    if verbose:
+        print('Found {!r} streaks'.format(len(streaks)))
+
+    # Switch to a temp branch before we start working
+    if not dry:
+        temp_branchname = checkout_temporary_branch(repo, '-squash-temp')
+    else:
+        temp_branchname = None
+
+    try:
+        for streak in ub.ProgIter(streaks, 'squashing', verbose=3 * verbose):
+            if verbose:
+                print('Squashing streak = %r' % (str(streak),))
+            # Start is the commit further back in time
+            _squash_between(repo, streak.start, streak.stop, dry=dry,
+                            verbose=verbose)
+    except Exception as ex:
+        print_exc(sys.exc_info())
+        print('ERROR: squash_streaks failed.')
+        if not dry and auto_rollback:
+            print('ROLLING BACK')
+            repo.git.checkout(orig_branch_name)
+            # repo.git.branch(D=temp_branchname)
+        print('You can debug the difference with:')
+        print('    gitk {} {}'.format(orig_branch_name, temp_branchname))
+        return
+
+    if dry:
+        if verbose:
+            print('Finished. did nothing')
+    elif inplace:
+        # Copy temp branch back over original
+        repo.git.checkout(orig_branch_name)
+        repo.git.reset(temp_branchname, hard=True)
+        repo.git.branch(D=temp_branchname)
+        if verbose:
+            print('Finished. Now you should force push the branch back to the server')
+    else:
+        # Go back to the original branch
+        repo.git.checkout(orig_branch_name)
+        if verbose:
+            print('Finished')
+            print('The squashed branch is: {}'.format(temp_branchname))
+            print('You can inspect the difference with:')
+            print('    gitk {} {}'.format(orig_branch_name, temp_branchname))
+            print('Finished. Now you must manually clean this branch up.')
+            print('Or, to automatically accept changes run with --inplace')
 
 
 def squash_streaks(authors, timedelta='sameday', pattern=None, inplace=False,
@@ -498,7 +613,7 @@ def squash_streaks(authors, timedelta='sameday', pattern=None, inplace=False,
             _squash_between(repo, streak.start, streak.stop, dry=dry,
                             verbose=verbose)
     except Exception as ex:
-        print_exc(ex)
+        print_exc(sys.exc_info())
         print('ERROR: squash_streaks failed.')
         if not dry and auto_rollback:
             print('ROLLING BACK')
@@ -575,6 +690,8 @@ def git_squash_streaks():
     parser.add_argument(*('--pattern',), type=str,
                         help=help_dict['pattern'])
 
+    parser.add_argument(*('--tags',), action='store_true')
+
     parser.add_argument(*('--inplace',), action='store_true',
                         help=help_dict['inplace'])
 
@@ -598,6 +715,7 @@ def git_squash_streaks():
                        const=0, help='suppress output')
 
     parser.set_defaults(
+        tags=False,
         inplace=False,
         auto_rollback=False,
         authors=None,
@@ -612,6 +730,11 @@ def git_squash_streaks():
 
     # Postprocess args
     ns = args.__dict__.copy()
+
+    if ns.pop('tags'):
+        do_tags()
+        return
+
     try:
         ns['timedelta'] = float(ns['timedelta'])
     except ValueError:
