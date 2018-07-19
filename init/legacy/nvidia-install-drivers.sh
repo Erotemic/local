@@ -1,3 +1,4 @@
+# See init_cuda.sh instead
 
 # References
 # http://askubuntu.com/questions/206283/how-can-i-uninstall-a-nvidia-driver-completely

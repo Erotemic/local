@@ -3,6 +3,80 @@
 #http://docs.nvidia.com/cuda/cuda-getting-started-guide-for-linux/index.html#package-manager-installation
 
 
+preinstall_nvidia_drivers(){
+    __heredoc__="
+    This should be run before installing nvidia drivers for the first time. 
+    After running, reboot, then install nvidia drivers.
+    "
+    sudo apt-get install freeglut3-dev build-essential libx11-dev libxmu-dev libxi-dev libgl1-mesa-glx libglu1-mesa libglu1-mesa-dev
+
+    # Install nvidia drivers on the system level (required to be sudo)
+    source $HOME/local/init/utils.sh
+
+    # https://askubuntu.com/questions/481414/install-nvidia-driver-instead-of-nouveau
+    TO_APPEND=`pyblock "
+        # Find which of these lines are not in the blacklist and add them
+        needed = [line.strip() for line in '''
+            blacklist amd76x_edac 
+            blacklist vga16fb
+            blacklist nouveau
+            blacklist rivafb
+            blacklist nvidiafb
+            blacklist rivatv
+        '''.splitlines() if line.strip()]
+        existing = open('/etc/modprobe.d/blacklist.conf', 'r').read().splitlines()
+        existing = [line.strip() for line in existing]
+        toadd = [line.strip() for line in needed if line.strip() not in existing]
+        if toadd:
+            print('')
+            for line in toadd:
+                print(line)
+    "`
+    echo "TO_APPEND = $TO_APPEND"
+    sudo_appendto /etc/modprobe.d/blacklist.conf "$TO_APPEND" 
+    cat /etc/modprobe.d/blacklist.conf
+    sudo apt-get remove --purge nvidia-*
+
+    # Update the ramfs
+    sudo update-initramfs -u
+
+    # Now reboot, and then run the nvidia installer
+}
+
+install_nvidia_drivers(){
+    __heredoc__="
+    Make sure you ran preinstall_nvidia_drivers and rebooted before running this 
+    "
+    # may need to reboot after nouveau is diabled
+    sudo sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-390.42.run --disable-nouveau --accept-license
+    --silent
+    # Make sure you update your xconfig when asked (todo: find the flag to auto-do this)
+
+    # See if there are any errors, if so we need to manuall fix.
+    # See install_nvidia_drivers_manual_fallback
+    cat /var/log/nvidia-installer.log
+}
+
+install_nvidia_drivers_manual_fallback(){
+    # If we still get errors run:
+
+    # Check if any display managers are running
+    service --status-all | grep gdm
+
+    # MUST STOP DISPLAY MANAGER HERE
+    # Do Ctrl+Alt+F1
+    sudo service lightdm stop
+    sudo service gdm stop
+    sudo /etc/init.d/gdm stop
+
+    sudo update-initramfs -u
+
+    # Then rerun 
+    sudo sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-390.42.run --disable-nouveau --accept-license
+}
+    
+
+
 current_cudnn_info()
 {
     "
@@ -83,51 +157,6 @@ uninstall_local_cuda()
                 else:
                     raise Exception(mode)
     "
-}
-
-
-install_nvidia_drivers(){
-    sudo apt-get install freeglut3-dev build-essential libx11-dev libxmu-dev libxi-dev libgl1-mesa-glx libglu1-mesa libglu1-mesa-dev
-
-    # Install nvidia drivers on the system level (required to be sudo)
-
-    source $HOME/local/init/utils.sh
-
-    # https://askubuntu.com/questions/481414/install-nvidia-driver-instead-of-nouveau
-    sudo_appendto /etc/modprobe.d/blacklist.conf "
-        blacklist amd76x_edac 
-        blacklist vga16fb
-        blacklist nouveau
-        blacklist rivafb
-        blacklist nvidiafb
-        blacklist rivatv
-        " 
-    cat /etc/modprobe.d/blacklist.conf
-    sudo apt-get remove --purge nvidia-*
-
-    # Update the ramfs
-    sudo update-initramfs -u
-
-    # Now reboot, and then run the nvidia installer
-
-    # may need to reboot after nouveau is diabled
-    sudo sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-390.42.run --disable-nouveau --accept-license
-    --silent
-
-    # Make sure you update your xconfig when asked (todo: find the flag to auto-do this)
-
-    # If we still get errors run:
-
-    # MUST STOP DISPLAY MANAGER HERE
-    # Do Ctrl+Alt+F1
-    sudo service lightdm stop
-    sudo /etc/init.d/gdm stop
-
-    sudo update-initramfs -u
-
-    # Then rerun 
-    sudo sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-390.42.run --disable-nouveau --accept-license
-    
 }
 
 

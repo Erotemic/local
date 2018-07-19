@@ -8,7 +8,10 @@ CommandLine:
     python ~/local/init/ensure_vim_plugins.py
 """
 from __future__ import absolute_import, division, print_function
-from meta_util_git1 import set_userid, unixpath, repo_list
+from os.path import expanduser, expandvars
+import os
+from meta_util_git1 import set_userid, repo_list
+from collections import defaultdict
 
 
 set_userid(userid='Erotemic',
@@ -16,10 +19,10 @@ set_userid(userid='Erotemic',
            permitted_repos=['pyrf', 'detecttools', 'pygist'])
 
 # USER DEFINITIONS
-HOME_DIR     = unixpath('~')
-CODE_DIR     = unixpath('~/code')
-LATEX_DIR    = unixpath('~/latex')
-BUNDLE_DPATH = unixpath('~/local/vim/vimfiles/bundle')
+HOME_DIR     = expanduser('~')
+CODE_DIR     = expanduser('~/code')
+LATEX_DIR    = expanduser('~/latex')
+BUNDLE_DPATH = expanduser('~/local/vim/vimfiles/bundle')
 
 
 LOCAL_URLS, LOCAL_REPOS = repo_list([
@@ -44,8 +47,10 @@ IBEIS_REPOS_URLS, IBEIS_REPOS = repo_list([
     # 'https://github.com/Erotemic/plottool.git',
     # 'https://github.com/Erotemic/vtool.git',
     # 'https://github.com/Erotemic/dtool.git',
-    'https://github.com/Erotemic/ibeis.git',
     # 'https://github.com/Erotemic/utool.git',
+
+    # 'https://github.com/Erotemic/ibeis.git',
+    'https://github.com/WildbookOrg/ibeis.git',
 
     'https://github.com/Erotemic/ubelt.git',
     'https://github.com/Erotemic/xdoctest.git',
@@ -211,3 +216,44 @@ VIM_REPOS_WITH_SUBMODULES = [
 PROJECT_REPOS = LOCAL_REPOS + CODE_REPOS + LATEX_REPOS
 PROJECT_URLS = LOCAL_URLS + CODE_URLS + LATEX_REPOS_URLS
 # PROJECT_REPOS = LOCAL_REPOS + CODE_REPOS
+
+
+# New more configurable stuff
+config_fpaths = [
+    expanduser('~/internal/repos.txt')
+]
+
+
+def _parse_custom_urls():
+    dpath_to_url = defaultdict(list)
+
+    for fpath in config_fpaths:
+        if os.path.exists(fpath):
+            for line in open(fpath, 'r').read().splitlines():
+                line = line.strip()
+                if line and not line.startswith('#'):
+                    parts = line.split(' ')
+                    # Allow text files to specify url and dpath
+                    # default to code dir if dpath not given
+                    if len(parts) == 1:
+                        url = parts[0]
+                        dpath = CODE_DIR
+                    else:
+                        assert len(parts) == 2
+                        url, dpath = parts
+                        dpath = expandvars(expanduser(dpath))
+                    dpath_to_url[dpath].append(url)
+    return dpath_to_url
+
+
+def update_urls():
+    global PROJECT_URLS
+    global PROJECT_REPOS
+    for dpath, urls in _parse_custom_urls().items():
+        repos_urls, repos = repo_list(urls, dpath)
+
+        PROJECT_URLS += repos_urls
+        PROJECT_REPOS += repos
+
+
+update_urls()

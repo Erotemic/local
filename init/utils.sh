@@ -139,6 +139,9 @@ pyblock(){
 }
 
 
+#alias pycmd=pyblock
+
+
 codeblock()
 {
     if [ "-h" == "$1" ] || [ "--help" == "$1" ]; then 
