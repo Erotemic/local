@@ -300,8 +300,9 @@ mode = argv[0]
 
 # If the word is a python module try and open it
 if pyvim_funcs.is_module_pythonfile():
-    import ubelt as ub
-    ub.modname_to_modpath()
+    #import ubelt as ub
+    pass
+    #ub.modname_to_modpath()
 
 path = pyvim_funcs.get_word_at_cursor(url_ok=True)
 verbose = 1

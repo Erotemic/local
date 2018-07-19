@@ -244,16 +244,11 @@ debug(){
 if [ "$DID_MY_BASHRC_INIT" == "" ]; then
     # For some reason VIRTUAL_ENV is initialized as "", so unset it
     unset VIRTUAL_ENV
-    # Use this venv for initialization
-    #workon_py3
-    #workon_py "$HOME/venv3"
-    #workon_py "$HOME/venv3"
-    #echo "WORKON BASIC"
-
     if [[ "$HOSTNAME" == "namek"  ]]; then 
         workon_py "$HOME/venv3"
     else
-        workon_py py36
+        #workon_py py36
+        conda activate py36
     fi
 
 elif [ "$VIRTUAL_ENV" != "" ]; then
@@ -273,11 +268,10 @@ export CMAKE_PREFIX_PATH=$(pathvar_clean CMAKE_PREFIX_PATH)
 export CPATH=$(pathvar_clean CPATH)
 
 
-DEBUG_BASHRC=0
-
-if [ "$DEBUG_BASHRC" == "True" ]; then
-    print_all_pathvars
-fi
+#DEBUG_BASHRC=0
+#if [ "$DEBUG_BASHRC" == "True" ]; then
+#    print_all_pathvars
+#fi
 
 # For machine-specific bashrc things that will not be published on github
 if [ -f "$HOME/.bashrc-internal.sh" ]; then 

@@ -263,41 +263,41 @@ ep()
     #wmctrl -r ":ACTIVE:" -t 1  # move to desktop 1
 }
 
-hyhspull()
-{
-    echo "Pushing from Hyrule"
-    #Outer quote = " (This marks the beginning and end of the string)
-    #Inner quote = \" (Escaped as to not flag "beginning/end of string")
-    #Third-tier quote = ' (Literal quote)
-    #Fourth-tier quote = \' (Literal quote that will be generated as an escaped outer quote)
-    ssh -t cralljp@linux.cs.rpi.edu "ssh -t joncrall@hyrule.cs.rpi.edu \"cd $CODE_DIR/hotspotter; git commit -am 'hyhs wip'; git push\""
+#hyhspull()
+#{
+#    echo "Pushing from Hyrule"
+#    #Outer quote = " (This marks the beginning and end of the string)
+#    #Inner quote = \" (Escaped as to not flag "beginning/end of string")
+#    #Third-tier quote = ' (Literal quote)
+#    #Fourth-tier quote = \' (Literal quote that will be generated as an escaped outer quote)
+#    ssh -t cralljp@linux.cs.rpi.edu "ssh -t joncrall@hyrule.cs.rpi.edu \"cd $CODE_DIR/hotspotter; git commit -am 'hyhs wip'; git push\""
     
-    echo "Pulling from Local"
-    git pull
-}
+#    echo "Pulling from Local"
+#    git pull
+#}
 
 # Reload profile
 # FIXME if I work on a mac
 #alias rrr='source ~/.profile'
 alias rrr='source ~/.bashrc'
-update_profile()
-{
-    pushd .
-    loc
-    git pull
-    rrr
-    popd
-}
-commit_profile()
-{
-    pushd .
-    loc
-    git commit -am "profile wip"
-    git push
-    popd
-}
-alias upp=update_profile
-alias cop=commit_profile
+#update_profile()
+#{
+#    pushd .
+#    loc
+#    git pull
+#    rrr
+#    popd
+#}
+#commit_profile()
+#{
+#    pushd .
+#    loc
+#    git commit -am "profile wip"
+#    git push
+#    popd
+#}
+#alias upp=update_profile
+#alias cop=commit_profile
 
 
 cls()
@@ -408,15 +408,15 @@ tmuxattach(){
 }
 
 
-utzget()
-{
-python -c "import utool as ut; ut.grab_zipped_url(\"$1\", download_dir=\".\")"
-}
+#utzget()
+#{
+#python -c "import utool as ut; ut.grab_zipped_url(\"$1\", download_dir=\".\")"
+#}
 
-tcp()
-{
-    cp $1 ../flann/$1
-}
+#tcp()
+#{
+#    cp $1 ../flann/$1
+#}
 
 
 print_all_pathvars()
@@ -672,9 +672,9 @@ pyfile()
 }
 
 #alias rpivpn='sudo openconnect -b vpn.net.rpi.edu -uyour_school_username -ucrallj'
-alias rpivpn='rpivpn.sh'
+#alias rpivpn='rpivpn.sh'
 #sudo openconnect -b vpn.net.rpi.edu -ucrallj'
-alias lev='lev.sh'
+#alias lev='lev.sh'
 
 
 gte()
@@ -698,8 +698,8 @@ ge()
 }
 
 mylayout(){
-python -m utool.util_ubuntu XCtrl.move_window GVIM special2
-python -m utool.util_ubuntu XCtrl.move_window joncrall special2
+    python -m utool.util_ubuntu XCtrl.move_window GVIM special2
+    python -m utool.util_ubuntu XCtrl.move_window joncrall special2
 }
 
 

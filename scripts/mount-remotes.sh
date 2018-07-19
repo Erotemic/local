@@ -142,6 +142,8 @@ if [[ $# -gt 0 ]]; then
 
     if [[ ${#POSITIONAL[@]} -gt 0 ]]; then
         # User specified a specific set of remotes
+        # Always force when user specifies the remotes
+        FORCE=YES
         for REMOTE in "${POSITIONAL[@]}" 
         do :
             echo "REMOTE = $REMOTE"

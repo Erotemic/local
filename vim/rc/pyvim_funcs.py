@@ -1304,6 +1304,7 @@ def find_and_open_path(path, mode='split', verbose=0,
             path = static.modname_to_modpath(path)
             # print('rectified module to path = {!r}'.format(path))
         except Exception as ex:
+            print('ex = {!r}'.format(ex))
             # if True or filetype in {'py', 'pyx'}:
             return None
         return path
@@ -1363,6 +1364,12 @@ def find_and_open_path(path, mode='split', verbose=0,
     else:
         if enable_python:
             if try_open(expand_module(path)):
+                return
+
+        if re.match('--\w*=.*', path):
+            # try and open if its a command line arg
+            stripped_path = expanduser(re.sub('--\w*=', '', path))
+            if try_open(stripped_path):
                 return
         #vim.command('echoerr "Could not find path={}"'.format(path))
         print('Could not find path={!r}'.format(path))
