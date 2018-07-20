@@ -8,7 +8,7 @@
 alias pytree='tree -P "*.py" --dirsfirst'
 alias ls='ls --color --human-readable --group-directories-first --hide="*.pyc" --hide="*.pyo"'
 alias pygrep='grep -r --include "*.py"'
-alias clean_python='find . -iname *.pyc -delete && find . -iname *.pyo -delete && find . -iname __pycache__ -delete'
+alias clean_python='find . -iname __pycache__ -delete || find . -iname *.pyc -delete || find . -iname *.pyo -delete'
 
 # watch with a higher frequency
 alias watch='watch -n .5'
