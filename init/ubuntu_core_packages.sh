@@ -440,8 +440,10 @@ install_latex()
     #")" > texlive.profile
     #chmod +x install-tl
     #./install-tl --profile=texlive.profile
-
+    sudo apt install texlive-latex-recommended
+    sudo apt install texlive-latex-extra
     sudo apt install texlive-luatex
+    sudo apt install texlive-luatex-extra
     sudo apt install latexmk
 
     luaotfload-tool --update
