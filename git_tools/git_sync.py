@@ -30,12 +30,13 @@ def _getcwd():
     return canidate1
 
 
-def _git_sync(host, remote=None, dry=False, forward_ssh_agent=False):
+def _git_sync(host, remote=None, dry=False, forward_ssh_agent=False,
+              message='wip'):
     cwd = _getcwd()
     relpwd = relpath(cwd, expanduser('~'))
 
     parts = [
-        'git commit -am "wip"',
+        'git commit -am "{}"'.format(message),
     ]
 
     if remote:
@@ -80,10 +81,13 @@ def git_sync():
                         help='Enable forwarding of the ssh authentication agent connection')
     parser.add_argument(*('-n', '--dry'), dest='dry', action='store_true',
                         help='Perform a dry run')
+    parser.add_argument(*('-m', '--message'), type=str,
+                        help='Specify a custom commit message')
 
     parser.set_defaults(
         dry=False,
         remote=None,
+        message='wip',
     )
     args = parser.parse_args()
     ns = args.__dict__.copy()
