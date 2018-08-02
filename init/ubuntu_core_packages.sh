@@ -210,6 +210,11 @@ install_zotero()
 
 install_core_extras()
 {
+    # https://www.maketecheasier.com/copy-paste-images-clipboard-nautilus/
+    sudo add-apt-repository ppa:atareao/nautilus-extensions
+    sudo apt-get update
+    sudo apt-get install nautilus-copypaste-images
+
     # Not commonly used but frequently forgotten
     sudo apt install -y valgrind synaptic vlc gitg expect
     sudo apt install -y sysstat
@@ -440,8 +445,10 @@ install_latex()
     #")" > texlive.profile
     #chmod +x install-tl
     #./install-tl --profile=texlive.profile
-
+    sudo apt install texlive-latex-recommended
+    sudo apt install texlive-latex-extra
     sudo apt install texlive-luatex
+    sudo apt install texlive-luatex-extra
     sudo apt install latexmk
 
     luaotfload-tool --update

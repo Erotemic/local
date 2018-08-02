@@ -1262,6 +1262,9 @@ gnome_settings()
     gsettings set org.gnome.desktop.lockdown disable-lock-screen 'true'
     gsettings set org.gnome.desktop.screensaver lock-enabled false
 
+    # need to enable to super+L works
+    # gsettings set org.gnome.desktop.lockdown disable-lock-screen 'false'
+
 
     # Fix search in nautilus (remove recurison)
     # http://askubuntu.com/questions/275883/traditional-search-as-you-type-on-newer-nautilus-versions
