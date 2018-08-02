@@ -13,8 +13,18 @@ import os
 from meta_util_git1 import set_userid, repo_list
 from collections import defaultdict
 
+try:
+    import ubelt as ub
+except ImportError:
+    pass
+
+# Local project repositories
+PROJECT_REPOS = []
+PROJECT_URLS = []
+
 
 # New more configurable stuff
+# These will populate PROJECT_REPOS and PROJECT_URLS
 config_fpaths = [
     expanduser('~/local/repos.txt'),
     expanduser('~/internal/repos.txt'),
@@ -30,81 +40,6 @@ HOME_DIR     = expanduser('~')
 CODE_DIR     = expanduser('~/code')
 LATEX_DIR    = expanduser('~/latex')
 BUNDLE_DPATH = expanduser('~/local/vim/vimfiles/bundle')
-
-
-LOCAL_URLS, LOCAL_REPOS = repo_list([
-    # 'https://github.com/Erotemic/local.git',
-    # 'https://github.com/Erotemic/misc.git',
-], HOME_DIR)
-
-
-# Non local project repos
-IBEIS_REPOS_URLS, IBEIS_REPOS = repo_list([
-    # 'https://github.com/bluemellophone/pyrf.git',
-    # 'https://github.com/bluemellophone/detecttools.git',
-    # 'https://github.com/bluemellophone/pydarknet.git',
-    #'https://github.com/hjweide/pygist.git',
-    # 'https://github.com/Erotemic/hesaff.git',
-    #'https://github.com/aweinstock314/cyth.git',
-    # 'https://github.com/zmjjmz/ibeis-flukematch-module.git',
-    #'https://github.com/Erotemic/mtgmonte.git',
-    # 'https://github.com/bluemellophone/ibeis_cnn.git',
-    # 'https://github.com/Erotemic/sandbox_utools.git',
-    # 'https://github.com/Erotemic/guitool.git',
-    # 'https://github.com/Erotemic/plottool.git',
-    # 'https://github.com/Erotemic/vtool.git',
-    # 'https://github.com/Erotemic/dtool.git',
-    # 'https://github.com/Erotemic/utool.git',
-
-    # 'https://github.com/Erotemic/ibeis.git',
-    # 'https://github.com/WildbookOrg/ibeis.git',
-
-    # 'https://github.com/Erotemic/ubelt.git',
-    # 'https://github.com/Erotemic/xdoctest.git',
-
-    # 'https://github.com/Erotemic/clab.git',
-
-    # 'https://github.com/Erotemic/netharn.git',
-
-    # 'https://github.com/Erotemic/mkinit.git',
-    # 'https://github.com/Erotemic/graphid.git',
-    # 'https://github.com/Erotemic/xinspect.git',
-
-    # 'git@github.com:Erotemic/progiter.git',
-    # 'git@github.com:Erotemic/timerit.git',
-
-    # 'https://github.com/Erotemic/VIAME.git',
-    # 'https://github.com/Erotemic/kwiver.git',
-    # 'https://github.com/Erotemic/VIAME/packages/kwiver.git',
-    # 'https://github.com/Erotemic/ibeis.git',
-
-    #'https://github.com/Theano/Theano.git'
-
-    #'https://github.com/bluemellophone/gzc-server.git',
-    #'https://github.com/bluemellophone/gzc-client.git',
-
-], CODE_DIR)
-
-
-TPL_REPOS_URLS, TPL_REPOS = repo_list([
-    #'https://github.com/Erotemic/opencv',
-    #'https://github.com/Erotemic/pgmpy.git',
-    # 'https://github.com/Erotemic/flann.git',
-    # 'https://github.com/Erotemic/flann',
-], CODE_DIR)
-
-CODE_REPO_URLS = TPL_REPOS_URLS + IBEIS_REPOS_URLS
-CODE_REPOS = TPL_REPOS + IBEIS_REPOS
-CODE_URLS = TPL_REPOS_URLS + IBEIS_REPOS_URLS
-
-CODE_REPO_TUP = CODE_REPO_URLS, CODE_REPOS
-LATEX_REPO_TUP = repo_list([
-    # 'git@hyrule.cs.rpi.edu:crall-lab-notebook.git',
-    # 'git@hyrule.cs.rpi.edu:crall-candidacy-2015.git',
-    # 'git@hyrule.cs.rpi.edu:crall-iccvw-2017.git',
-    # 'git@hyrule.cs.rpi.edu:crall-thesis-2017.git',
-], LATEX_DIR)
-LATEX_REPOS_URLS, LATEX_REPOS = LATEX_REPO_TUP
 
 
 """
@@ -219,11 +154,6 @@ VIM_REPOS_WITH_SUBMODULES = [
 # cmake -G "MinGW Makefiles" ../third_party/ycmd/cpp
 # make ycm_support_libs
 
-# Local project repositories
-PROJECT_REPOS = LOCAL_REPOS + CODE_REPOS + LATEX_REPOS
-PROJECT_URLS = LOCAL_URLS + CODE_URLS + LATEX_REPOS_URLS
-# PROJECT_REPOS = LOCAL_REPOS + CODE_REPOS
-
 
 def _parse_custom_urls():
     dpath_to_url = defaultdict(list)
@@ -251,6 +181,7 @@ def update_urls():
     global PROJECT_URLS
     global PROJECT_REPOS
     for dpath, urls in _parse_custom_urls().items():
+        print('urls = {!r}'.format(urls))
         repos_urls, repos = repo_list(urls, dpath)
 
         PROJECT_URLS += repos_urls
@@ -258,3 +189,8 @@ def update_urls():
 
 
 update_urls()
+# print('PROJECT_URLS = {!r}'.format(PROJECT_URLS))
+try:
+    print('PROJECT_REPOS = {}'.format(ub.repr2(PROJECT_REPOS)))
+except NameError:
+    pass

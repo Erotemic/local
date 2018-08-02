@@ -10,15 +10,49 @@ import os
 from six.moves import zip
 from os.path import exists, join, dirname, split, isdir
 import REPOS1
-import meta_util_git1 as mu  # NOQA
-from meta_util_git1 import get_repo_dirs, get_repo_dname, unixpath, ChdirContext  # NOQA
 
-PROJECT_REPOS    = REPOS1.PROJECT_REPOS
-IBEIS_REPOS_URLS = REPOS1.IBEIS_REPOS_URLS
-CODE_DIR         = REPOS1.CODE_DIR
-VIM_REPO_URLS    = REPOS1.VIM_REPO_URLS
-BUNDLE_DPATH     = REPOS1.BUNDLE_DPATH
-VIM_REPOS_WITH_SUBMODULES = REPOS1.VIM_REPOS_WITH_SUBMODULES
+
+def cd(dir_):
+    from os.path import expanduser, normpath, realpath
+    dir_ = normpath(realpath(expanduser(dir_)))
+    print('> cd ' + dir_)
+    os.chdir(dir_)
+
+
+def oscmd(command):
+    """ Builtin Python Operating System Command """
+    print('> ' + command)
+    os.system(command)
+
+
+class ChdirContext(object):
+    """
+    References http://www.astropython.org/snippet/2009/10/chdir-context-manager
+    """
+    def __init__(self, dpath=None, stay=False, verbose=None):
+        if verbose is None:
+            verbose = True
+        self.verbose = verbose
+        self.stay = stay
+        self.dpath = dpath
+        self.curdir = os.getcwd()
+
+    def __enter__(self):
+        if self.dpath is not None:
+            if self.verbose:
+                print('[path.push] Change directory to %r' % (self.dpath,))
+            os.chdir(self.dpath)
+        return self
+
+    def __exit__(self, type_, value, trace):
+        if not self.stay:
+            if self.verbose:
+                print('[path.pop] Change directory to %r' % (self.curdir,))
+            os.chdir(self.curdir)
+        if trace is not None:
+            if self.verbose:
+                print('[util_path] Error in chdir context manager!: ' + str(value))
+            return False  # return a falsey value on error
 
 
 class Repo(object):
@@ -41,7 +75,6 @@ class Repo(object):
         repo._modname_hints = modname if isinstance(modname, list) else [modname]
         repo.dpath = None
         if pythoncmd is None:
-            import sys
             pythoncmd = sys.executable
         repo.pythoncmd = pythoncmd
 
@@ -104,7 +137,7 @@ class Repo(object):
         if command == 'short_status':
             return repo.short_status()
         command_list = [command]
-        cmdstr = '\n        '.join([cmd_ for cmd_ in command_list])
+        oscmdstr = '\n        '.join([cmd_ for oscmd_ in command_list])
         if not dry:
             import ubelt as ub
             print('+--- *** repocmd(%s) *** ' % (cmdstr,))
@@ -112,20 +145,20 @@ class Repo(object):
         verbose = True
         with repo.chdir_context():
             ret = None
-            for count, cmd in enumerate(command_list):
+            for count, command in enumerate(command_list):
                 if dry:
-                    print(cmd)
+                    print(command)
                     continue
                 if not sudo or WIN32:
-                    cmdinfo = ub.cmd(cmd, verbose=1)
+                    oscmdinfo = ub.cmd(command, verbose=1)
                     out, err, ret = ub.take(cmdinfo, ['out', 'err', 'ret'])
                 else:
-                    out, err, ret = ub.cmd('sudo ' + cmd)
+                    out, err, ret = ub.cmd('sudo ' + command)
                 if verbose > 1:
                     print('ret(%d) = %r' % (count, ret,))
                 if ret != 0:
                     if error == 'raise':
-                        raise Exception('Failed command %r' % (cmd,))
+                        raise Exception('Failed command %r' % (command,))
                     elif error == 'return':
                         return out
                     else:
@@ -235,7 +268,7 @@ def gitcmd(repo, command):
 
 def gg_command(command):
     """ Runs a command on all of your PROJECT_REPOS """
-    for repo in PROJECT_REPOS:
+    for repo in REPOS1.PROJECT_REPOS:
         if exists(repo) and exists(join(repo, '.git')):
             gitcmd(repo, command)
         else:
@@ -243,51 +276,38 @@ def gg_command(command):
 
 
 def clone_repos():
-    for repodir, repourl in zip(PROJECT_REPOS, REPOS1.PROJECT_URLS):
+    for repodir, repourl in zip(REPOS1.PROJECT_REPOS, REPOS1.PROJECT_URLS):
         print('[git] checkexist: ' + repodir)
         if not exists(repodir):
             # repo = Repo(url=repourl, dpath=repodir)
             # if repo.owner() in :
             #     pass
             # repo.clone()
-            mu.cd(dirname(repodir))
-            mu.cmd('git clone ' + repourl)
-
-
-# def clone_repos_(repo_urls, repo_dirs=None, checkout_dir=None):
-#     """ Checkout every repo in repo_urls into checkout_dir """
-#     # Check out any repo you dont have
-#     if checkout_dir is not None:
-#         repo_dirs = mu.get_repo_dirs(checkout_dir)
-#     assert repo_dirs is not None, 'specify checkout dir or repo_dirs'
-#     for repodir, repourl in zip(repo_dirs, repo_urls):
-#         print('[git] checkexist: ' + repodir)
-#         if not exists(repodir):
-#             mu.cd(dirname(repodir))
-#             mu.cmd('git clone ' + repourl)
+            cd(dirname(repodir))
+            oscmd('git clone ' + repourl)
 
 
 def setup_develop_repos(repo_dirs):
     """ Run python installs """
     for repodir in repo_dirs:
         print('Installing: ' + repodir)
-        mu.cd(repodir)
+        cd(repodir)
         assert exists('setup.py'), 'cannot setup a nonpython repo'
-        mu.cmd('python setup.py develop')
+        oscmd('python setup.py develop')
 
 
 def pull_repos(repo_dirs, repos_with_submodules=[]):
     for repodir in repo_dirs:
         print('Pulling: ' + repodir)
-        mu.cd(repodir)
+        cd(repodir)
         assert exists('.git'), 'cannot pull a nongit repo'
-        mu.cmd('git pull')
+        oscmd('git pull')
         reponame = split(repodir)[1]
         if reponame in repos_with_submodules or\
            repodir in repos_with_submodules:
             repos_with_submodules
-            mu.cmd('git submodule init')
-            mu.cmd('git submodule update')
+            oscmd('git submodule init')
+            oscmd('git submodule update')
 
 
 def is_gitrepo(repo_dir):
