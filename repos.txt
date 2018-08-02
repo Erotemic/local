@@ -1,0 +1,33 @@
+# 'https://github.com/Erotemic/plottool.git',
+# 'https://github.com/Erotemic/vtool.git',
+# 'https://github.com/Erotemic/dtool.git',
+# 'https://github.com/Erotemic/utool.git',
+# 'https://github.com/Erotemic/ibeis.git',
+
+https://github.com/WildbookOrg/ibeis.git ~/code
+
+https://github.com/Erotemic/ubelt.git
+https://github.com/Erotemic/xdoctest.git
+
+https://github.com/Erotemic/clab.git
+
+https://github.com/Erotemic/netharn.git
+
+https://github.com/Erotemic/mkinit.git
+https://github.com/Erotemic/graphid.git
+https://github.com/Erotemic/xinspect.git
+
+git@github.com:Erotemic/progiter.git
+git@github.com:Erotemic/timerit.git
+
+https://github.com/Erotemic/VIAME.git
+https://github.com/Erotemic/kwiver.git
+https://github.com/Erotemic/sphinx.git
+
+git@github.com:Erotemic/local.git $HOME
+git@github.com:Erotemic/misc.git $HOME
+
+
+# git@hyrule.cs.rpi.edu:crall-candidacy-2015.git $HOME/latex
+# git@hyrule.cs.rpi.edu:crall-iccvw-2017.git $HOME/latex
+# git@hyrule.cs.rpi.edu:crall-thesis-2017.git $HOME/latex

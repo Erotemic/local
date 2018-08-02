@@ -14,6 +14,13 @@ from meta_util_git1 import set_userid, repo_list
 from collections import defaultdict
 
 
+# New more configurable stuff
+config_fpaths = [
+    expanduser('~/local/repos.txt'),
+    expanduser('~/internal/repos.txt'),
+]
+
+
 set_userid(userid='Erotemic',
            owned_computers=['Hyrule', 'BakerStreet', 'Ooo', 'calculex', 'acidilia'],
            permitted_repos=['pyrf', 'detecttools', 'pygist'])
@@ -26,8 +33,8 @@ BUNDLE_DPATH = expanduser('~/local/vim/vimfiles/bundle')
 
 
 LOCAL_URLS, LOCAL_REPOS = repo_list([
-    'https://github.com/Erotemic/local.git',
-    'https://github.com/Erotemic/misc.git',
+    # 'https://github.com/Erotemic/local.git',
+    # 'https://github.com/Erotemic/misc.git',
 ], HOME_DIR)
 
 
@@ -50,21 +57,21 @@ IBEIS_REPOS_URLS, IBEIS_REPOS = repo_list([
     # 'https://github.com/Erotemic/utool.git',
 
     # 'https://github.com/Erotemic/ibeis.git',
-    'https://github.com/WildbookOrg/ibeis.git',
+    # 'https://github.com/WildbookOrg/ibeis.git',
 
-    'https://github.com/Erotemic/ubelt.git',
-    'https://github.com/Erotemic/xdoctest.git',
+    # 'https://github.com/Erotemic/ubelt.git',
+    # 'https://github.com/Erotemic/xdoctest.git',
 
-    'https://github.com/Erotemic/clab.git',
+    # 'https://github.com/Erotemic/clab.git',
 
-    'https://github.com/Erotemic/netharn.git',
+    # 'https://github.com/Erotemic/netharn.git',
 
-    'https://github.com/Erotemic/mkinit.git',
-    'https://github.com/Erotemic/graphid.git',
-    'https://github.com/Erotemic/xinspect.git',
+    # 'https://github.com/Erotemic/mkinit.git',
+    # 'https://github.com/Erotemic/graphid.git',
+    # 'https://github.com/Erotemic/xinspect.git',
 
-    'git@github.com:Erotemic/progiter.git',
-    'git@github.com:Erotemic/timerit.git',
+    # 'git@github.com:Erotemic/progiter.git',
+    # 'git@github.com:Erotemic/timerit.git',
 
     # 'https://github.com/Erotemic/VIAME.git',
     # 'https://github.com/Erotemic/kwiver.git',
@@ -216,12 +223,6 @@ VIM_REPOS_WITH_SUBMODULES = [
 PROJECT_REPOS = LOCAL_REPOS + CODE_REPOS + LATEX_REPOS
 PROJECT_URLS = LOCAL_URLS + CODE_URLS + LATEX_REPOS_URLS
 # PROJECT_REPOS = LOCAL_REPOS + CODE_REPOS
-
-
-# New more configurable stuff
-config_fpaths = [
-    expanduser('~/internal/repos.txt')
-]
 
 
 def _parse_custom_urls():
