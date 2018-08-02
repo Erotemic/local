@@ -137,7 +137,7 @@ class Repo(object):
         if command == 'short_status':
             return repo.short_status()
         command_list = [command]
-        oscmdstr = '\n        '.join([cmd_ for oscmd_ in command_list])
+        cmdstr = '\n        '.join([cmd_ for cmd_ in command_list])
         if not dry:
             import ubelt as ub
             print('+--- *** repocmd(%s) *** ' % (cmdstr,))
@@ -150,7 +150,7 @@ class Repo(object):
                     print(command)
                     continue
                 if not sudo or WIN32:
-                    oscmdinfo = ub.cmd(command, verbose=1)
+                    cmdinfo = ub.cmd(command, verbose=1)
                     out, err, ret = ub.take(cmdinfo, ['out', 'err', 'ret'])
                 else:
                     out, err, ret = ub.cmd('sudo ' + command)
