@@ -332,15 +332,61 @@ remove_wine_stuff(){
 install_cockatrice()
 {
     # https://www.reddit.com/r/Cockatrice/comments/2prlnx/can_anyone_eli5_how_to_install_on_linux/
-    code
+    co
     sudo apt-get install build-essential clang libqt4-dev -y
     sudo apt-get install libprotobuf-dev qtmobility-dev -y
     sudo apt-get install protobuf-compiler -y
+
+
+    # https://github.com/Cockatrice/Cockatrice/wiki/Compiling-Cockatrice-(Linux)#ubuntu-linux
+    sudo apt update
+    sudo apt install git build-essential g++ cmake -y
+    sudo apt install libprotobuf-dev protobuf-compiler -y
+    sudo apt install qt5-default qttools5-dev qttools5-dev-tools -y
+    sudo apt install qtmultimedia5-dev libqt5multimedia5-plugins libqt5svg5-dev libqt5sql5-mysql -y
+    sudo apt install -y libgcrypt11-dev
+
+    sudo apt install qtbase5-dev
+
+    fix_mesa_libEGL(){
+        # NEED TO FIX MESA LIBGL SYMLINK REFERENCED BY Qt5::Gui
+        # https://askubuntu.com/questions/616065/the-imported-target-qt5gui-references-the-file-usr-lib-x86-64-linux-gnu-li
+
+        # CHECK IF BROKEN
+        ls -al /usr/lib/x86_64-linux-gnu/libEGL.so
+
+        # Find existing places
+        locate libEGL.so
+
+        # ON MY 16.04 system, the first of these was broken, but the second and third were not, so fix it.
+        /usr/lib/x86_64-linux-gnu/libEGL.so
+        # It pointed to
+        # /usr/lib/x86_64-linux-gnu/libEGL.so -> mesa-egl/libEGL.so
+        # But mesa-egl/libEGL.so did not exist
+
+        # REMOVE IT
+        sudo unlink /usr/lib/x86_64-linux-gnu/libEGL.so
+
+        # FIND WHICH ONES DO EXIST 
+        ls /usr/lib/x86_64-linux-gnu/libEGL*
+        # Not sure if option (a) or (b) is right
+        # (a) ln -s /usr/lib/x86_64-linux-gnu/libEGL.so.1 /usr/lib/x86_64-linux-gnu/libEGL.so
+        # (b) ln -s /usr/lib/x86_64-linux-gnu/libEGL_nvidia.so.0 /usr/lib/x86_64-linux-gnu/libEGL.so
+        sudo ln -s /usr/lib/x86_64-linux-gnu/libEGL_nvidia.so.0 /usr/lib/x86_64-linux-gnu/libEGL.so
+    }
+
+    deactivate_venv
+    
+    cd ~/code
     git clone https://github.com/Cockatrice/Cockatrice
     cd ~/code/Cockatrice
-    mkdir -p build
-    cd build
-    cmake .. -DWITH_QT4=1 -DWITH_SERVER=0 -DWITH_CLIENT=1 -DWITH_ORACLE=1 -DCMAKE_INSTALL_PREFIX=~
+    mkdir -p ~/code/Cockatrice/build
+    cd ~/code/Cockatrice/build
+    cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/.local
     make -j9
     make install
+    
+    #cmake .. -DWITH_QT4=1 -DWITH_SERVER=0 -DWITH_CLIENT=1 -DWITH_ORACLE=1 -DCMAKE_INSTALL_PREFIX=$HOME/.local
+    #make -j9
+    #make install
 }
