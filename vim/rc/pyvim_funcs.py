@@ -192,7 +192,7 @@ def get_minimum_indentation(text):
         int: indentation
 
     CommandLine:
-        python -m utool.util_str --exec-get_minimum_indentation --show
+        xdoctest -m utool.util_str --exec-get_minimum_indentation --show
 
     Example:
         >>> # ENABLE_DOCTEST
@@ -835,14 +835,14 @@ def auto_cmdline():
         text = ub.codeblock(
             '''
             CommandLine:
-                python -m {modname} {funcname}
+                xdoctest -m {modname} {funcname}
             ''').format(funcname=funcname, modname=modname)
     else:
         modpath = ub.compressuser(vim.current.buffer.name)
         text = ub.codeblock(
             '''
             CommandLine:
-                python {modpath} {funcname}
+                xdoctest -m {modpath} {funcname}
             ''').format(funcname=funcname, modpath=modpath)
 
     def get_indent(line):
@@ -896,7 +896,7 @@ def auto_docstr(**kwargs):
         # get_indentation()  # TODO
         num_indent = 4
 
-        command = 'python -m {modname} {funcname}'.format(
+        command = 'xdoctest -m {modname} {funcname}'.format(
             **locals())
         docstr = make_docstr_block('CommandLine', command)
 
@@ -1220,7 +1220,7 @@ def search_candidate_paths(candidate_path_list, candidate_name_list=None,
         str: return_path
 
     CommandLine:
-        python -m utool.util_path --test-search_candidate_paths
+        xdoctest -m utool.util_path --test-search_candidate_paths
 
     Example:
         >>> # DISABLE_DOCTEST
@@ -1506,7 +1506,7 @@ def make_default_module_maintest(modpath, test_code=None, argv=None,
         str: text source code
 
     CommandLine:
-        python -m utool.util_autogen --test-make_default_module_maintest
+        xdoctest -m utool.util_autogen --test-make_default_module_maintest
 
     References:
         http://legacy.python.org/dev/peps/pep-0338/
@@ -1538,7 +1538,7 @@ def make_default_module_maintest(modpath, test_code=None, argv=None,
         is_importable = static.is_modname_importable(modname, exclude=['.'],
                                                      sys_path=default_path)
     if not force_full and is_importable:
-        cmdline = 'python -m ' + modname
+        cmdline = 'xdoctest -m ' + modname
     else:
         if ub.WIN32:
             modpath = ub.compressuser(modpath, home='%HOME%')
@@ -1693,7 +1693,7 @@ def open_url_in_browser(url, browsername=None, fallback=False):
         url (str): web url
 
     CommandLine:
-        python -m utool.util_grabdata --test-open_url_in_browser
+        xdoctest -m utool.util_grabdata --test-open_url_in_browser
 
     Example:
         >>> # DISABLE_DOCTEST
@@ -1717,7 +1717,7 @@ def get_prefered_browser(pref_list=[], fallback=True):
         fallback (bool): uses default if non of preferences work (default = True)
 
     CommandLine:
-        python -m utool.util_grabdata --test-get_prefered_browser
+        xdoctest -m utool.util_grabdata --test-get_prefered_browser
 
     Ignore:
         import webbrowser
