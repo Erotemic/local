@@ -149,64 +149,9 @@ install_dropbox()
 
 install_zotero()
 {
-    # Find the most recent release URL
-    export ZOTERO_URL=$(python -c "
-    from bs4 import BeautifulSoup
-    import requests
-    url = 'https://www.zotero.org/download/'
-    html = requests.get(url).content
-    soup = BeautifulSoup(html, 'html.parser')
-    #tags = [h for h in soup.find_all('a') if 'Download' in h.text and 'Linux 64-bit' in h.text]
-    tags = [h for h in soup.find_all('a') if 'Download' in h.text]
-    href = tags[0].get('href')
-    print(href)
-    ")
-    # Zotero 5 broke this
-    export ZOTERO_URL="https://www.zotero.org/download/client/dl?channel=release&platform=linux-x86_64&version=5.0.7"
-    echo "ZOTERO_URL=$ZOTERO_URL"
-    #https://download.zotero.org/standalone/4.0.29.10/Zotero-4.0.29.10_linux-x86_64.tar.bz2
-    cd ~/tmp
-    wget $ZOTERO_URL
-    utarbz2 Zotero-*_linux-x86_64.tar.bz2
-    sudo cp -r Zotero_linux-x86_64 /opt/zotero
-    # Change permissions so zotero can automatically update itself
-    sudo chown -R root:$USER /opt/zotero
-    sudo chmod -R g+w /opt/zotero
-    sudo chmod -R u+w /opt/zotero
-
-    python -m utool.util_ubuntu --exec-make_application_icon --exe=/opt/zotero/zotero --icon=/opt/zotero/chrome/icons/default/main-window.ico -w
-
-    # Install Better-Bibtex AddOn
-    # Find the lastest version
-    export LATEXT_BETTER_BIB_XPI=$(python -c "
-    from bs4 import BeautifulSoup
-    import requests, re
-    url = 'https://github.com/retorquere/zotero-better-bibtex/releases/latest/'
-    html = requests.get(url).content
-    soup = BeautifulSoup(html, 'html.parser')
-    #pat = r'zotero-better-bibtex-.*.xpi'
-    pat = r'.xpi'
-    tags = [h for h in soup.find_all('a') if '.xpi' in h.text]
-    href = tags[0].get('href')
-    print('https://github.com' + href)
-    ")
-    echo "LATEXT_BETTER_BIB_XPI=$LATEXT_BETTER_BIB_XPI"
-
-    # Need to do tools->Add-Ons->(setting icon)->Install Addon from file
-    # view citation key
-    cd ~/tmp
-    wget $LATEXT_BETTER_BIB_XPI
-
-    #https://github.com/ZotPlus/zotero-better-bibtex
-    # Find the lastest XPI
-    #https://github.com/retorquere/zotero-better-bibtex/releases/latest
-    # Download the XPI
-    #https://github.com/ZotPlus/zotero-better-bibtex/releases/download/1.6.30/zotero-better-bibtex-1.6.30.xpi
-    # others...
-    #http://www.rtwilson.com/academic/autozotbib
-    #http://www.rtwilson.com/academic/autozotbib.xpi
-    #https://addons.mozilla.org/en-US/firefox/addon/zotero-scholar-citations/
+    sh ~/local/build_scripts/install_zotero.sh
 }
+
 
 install_core_extras()
 {
