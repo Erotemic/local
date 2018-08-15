@@ -70,7 +70,7 @@ if pyvim_funcs.is_module_pythonfile():
         xdoctest.doctest_module(__file__)
         ''')
     text = pyvim_funcs.make_default_module_maintest(
-        modpath, test_code=test_code, argv=['all'])
+        modpath, test_code=test_code, argv=[])
     pyvim_funcs.insert_codeblock_under_cursor(text)
 else:
     print('current file is not a pythonfile')

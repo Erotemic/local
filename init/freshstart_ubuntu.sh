@@ -938,6 +938,7 @@ install_fonts()
     mkdir -p $TTF_FONT_DIR
     mkdir -p $OTF_FONT_DIR
 
+
     $_SUDO cp -v ~/Dropbox/Fonts/*.ttf $TTF_FONT_DIR/
     $_SUDO cp -v ~/Dropbox/Fonts/*.otf $OTF_FONT_DIR/
     $_SUDO cp -v ~/tmp/open-dyslexic-master/otf/*.otf $OTF_FONT_DIR/
@@ -947,6 +948,15 @@ install_fonts()
 
     # Delete matplotlib cache if you install new fonts
     rm ~/.cache/matplotlib/fontList*
+}
+
+
+install_dropbox_fonts2(){
+    # DEPENDS: Linked Dropbox
+    mkdir -p $HOME/.fonts/truetype
+    cp -v ~/Dropbox/Fonts/*.ttf $HOME/.fonts/truetype
+    cp -v ~/Dropbox/Fonts/*.otf $HOME/.fonts/truetype
+    fc-cache -f -v
 }
 
 virtualbox_ubuntu_init()
