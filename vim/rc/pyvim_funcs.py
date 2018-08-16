@@ -1554,7 +1554,8 @@ def make_default_module_maintest(modpath, test_code=None, argv=None,
             xdoctest.doctest_module(__file__)
             ''')
         if argv is None:
-            argv = ['all']
+            # argv = ['all']
+            argv = []
 
     if argv is None:
         argv = []
@@ -1779,7 +1780,7 @@ def get_prefered_browser(pref_list=[], fallback=True):
 if __name__ == '__main__':
     r"""
     CommandLine:
-        python ~/local/vim/rc/pyvim_funcs.py all
+        python ~/local/vim/rc/pyvim_funcs.py
     """
     import xdoctest
     xdoctest.doctest_module(__file__)
