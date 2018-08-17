@@ -173,6 +173,11 @@ def _parse_custom_urls():
                         assert len(parts) == 2
                         url, dpath = parts
                         dpath = expandvars(expanduser(dpath))
+
+                        os.makedirs(dpath, exist_ok=True)
+                        # if not os.path.exists(dpath):
+                        #     os.makedirs(dpath)
+
                     dpath_to_url[dpath].append(url)
     return dpath_to_url
 
