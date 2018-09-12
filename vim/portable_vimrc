@@ -367,8 +367,8 @@ call QUICKOPEN_leader_tvio('q', '~/local/vim/vimfiles/bundle/vimtk/vimtk/core.py
 
 "call QUICKOPEN_leader_tvio('a', '~/sseg/pysseg')
 "call QUICKOPEN_leader_tvio('a', '~/code/clab/clab/live/')
-call QUICKOPEN_leader_tvio('c', '~/code/clab/clab')
-call QUICKOPEN_leader_tvio('a', '~/code/clab/clab/fit_harness.py')
+"call QUICKOPEN_leader_tvio('c', '~/code/clab/clab')
+"call QUICKOPEN_leader_tvio('a', '~/code/clab/clab/fit_harness.py')
 call QUICKOPEN_leader_tvio('n', '~/code/netharn/netharn/fit_harn.py')
 call QUICKOPEN_leader_tvio('N', '~/code/netharn/examples/yolo_voc.py')
 
