@@ -1709,3 +1709,11 @@ move_hdd(){
     cat /mnt/new_disk2/etc/fstab | grep "$NEW_UUID2" 
     cat /mnt/new_disk2/etc/fstab | grep "$NEW_UUID3" 
 }
+
+
+fix_resolvconf(){
+    # https://askubuntu.com/questions/54888/resolvconf-u-gives-the-error-resolvconf-error-etc-resolv-conf-must-be-a-sym
+    sudo rm /etc/resolv.conf
+    sudo ln -s ../run/resolvconf/resolv.conf /etc/resolv.conf
+    sudo resolvconf -u
+}

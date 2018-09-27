@@ -1,4 +1,4 @@
 #device="Logitech USB Trackball"
 #we="Evdev Wheel Emulation"
-xinput set-int-prop "Logitech USB Trackball" "Evdev Wheel Emulation Button" 8 8
-xinput set-int-prop "Logitech USB Trackball" "Evdev Wheel Emulation" 8 1
+#xinput set-int-prop "Logitech USB Trackball" "Evdev Wheel Emulation Button" 8 8
+#xinput set-int-prop "Logitech USB Trackball" "Evdev Wheel Emulation" 8 1
