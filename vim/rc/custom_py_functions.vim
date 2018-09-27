@@ -196,8 +196,10 @@ import ubelt as ub
 
 indent = pyvim_funcs.get_cursor_py_indent()
 newtext = '\n'.join([
-    indent + 'import utool',
-    indent + 'utool.embed()'
+    #indent + 'import utool',
+    #indent + 'utool.embed()'
+    indent + 'import xdev',
+    indent + 'xdev.embed()'
 ])
 pyvim_funcs.insert_codeblock_under_cursor(newtext)
 EOF
@@ -215,8 +217,10 @@ mode = vim.eval('a:1')
 
 indent = pyvim_funcs.get_cursor_py_indent()
 newtext = '\n'.join([
-    indent + 'import utool',
-    indent + 'with utool.embed_on_exception_context:'
+    #indent + 'import utool',
+    #indent + 'with utool.embed_on_exception_context:'
+    indent + 'import xdev',
+    indent + 'with xdev.embed_on_exception_context:'
     #indent + 'import ipdb',
     #indent + 'with ipdb.launch_ipdb_on_exception():'
 ])
