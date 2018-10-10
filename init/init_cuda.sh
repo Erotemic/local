@@ -3,7 +3,19 @@
 #http://docs.nvidia.com/cuda/cuda-getting-started-guide-for-linux/index.html#package-manager-installation
 
 
-preinstall_nvidia_drivers(){
+install_nivida_drivers_apt(){
+    __heredoc__="
+    These are instructions for using apt to install the drivers. 
+    This is probably the best way to get the baseline drivers on the system.
+    "
+    sudo add-apt-repository ppa:graphics-drivers/ppa
+    sudo apt-get update
+    #sudo apt remove --purge nvidia-*
+    sudo apt install nvidia-drivers-396
+}
+
+
+preinstall_nvidia_drivers_run(){
     __heredoc__="
     This should be run before installing nvidia drivers for the first time. 
     After running, reboot, then install nvidia drivers.
@@ -43,7 +55,7 @@ preinstall_nvidia_drivers(){
     # Now reboot, and then run the nvidia installer
 }
 
-install_nvidia_drivers(){
+install_nvidia_drivers_run(){
     __heredoc__="
     Make sure you ran preinstall_nvidia_drivers and rebooted before running this 
     "
@@ -165,7 +177,7 @@ change_cuda_version()
     __heredoc__='''
         ls ~/tpl-archive/cuda
         source ~/local/init/init_cuda.sh
-        cuda_version=9.1
+        cuda_version=9.2
         change_cuda_version $cuda_version
 
         ls ~/tpl-archive/cuda
@@ -200,6 +212,13 @@ change_cuda_version()
         unlink $HOME/.local/cuda
         sh ~/tpl-archive/cuda/cuda-linux.9.1.85-23083092.run -prefix=$HOME/.local/cuda-9.1 -noprompt -manifest $HOME/.local/cuda/manifest_cuda.txt -nosymlink 
         ln -s $HOME/.local/cuda-9.1 $HOME/.local/cuda
+    fi
+
+    if [ "$cuda_version" == "9.2" ]; then
+        unlink $HOME/.local/cuda
+        CUDA_PREFIX=$HOME/.local/cuda-9.2
+        sh ~/tpl-archive/cuda/cuda-9.2/cuda-linux.9.2.148-24330188.run -prefix=$CUDA_PREFIX -noprompt -manifest $HOME/.local/cuda/manifest_cuda.txt -nosymlink 
+        ln -s $CUDA_PREFIX $HOME/.local/cuda
     fi
     ls -al $HOME/.local/cuda
 
@@ -344,105 +363,6 @@ init_local_cudnn(){
 }
 
 
-init_cudnn(){
-    # Download the DEB packages from nvidia
-    # https://developer.nvidia.com/rdp/cudnn-download
-
-    # runtime
-    sudo dpkg -i ~/Downloads/libcudnn6_6.0.21-1+cuda8.0_amd64.deb
-    # dev
-    sudo dpkg -i ~/Downloads/libcudnn6-dev_6.0.21-1+cuda8.0_amd64.deb
-    # doc
-    sudo dpkg -i ~/Downloads/libcudnn6-doc_6.0.21-1+cuda8.0_amd64.deb
-
-    sudo apt-get update
-
-    #cd ~/tmp
-    #tar -xvzf ~/Downloads/cudnn-8.0-linux-x64-v6.0.tgz
-}
-
-
-oldcudastuff(){
-    sudo apt-get install libxi-dev libxmu-dev freeglut3-dev build-essential binutils-gold
-
-    # GeForce 600 Series GTX 670 Linux 64-bit
-
-    # EVGA 04G-P4-2673-KR GeForce GTX 670 Superclocked+ w/Backplate 4GB 256-bit GDDR5 PCI Express 3.0 x16 HDCP Ready SLI Support ...
-
-    #sudo gvim /etc/modprobe.d/blacklist.conf
-
-
-    # Verify supported linux
-    uname -m && cat /etc/*release
-
-    # Verify NVIDIA Card
-    lspci | grep -i nvidia
-
-    sudo /usr/bin/nvidia-uninstall
-
-    # ARMv7 cross development
-    sudo apt-get install g++-4.6-arm-linux-gnueabihf
-
-
-    # Dont use the DEB
-    cd tmp
-    wget http://developer.download.nvidia.com/compute/cuda/6_0/rel/installers/cuda_6.0.37_linux_64.run
-
-    # Stop X
-    Ctrl+Alt+F1
-    sudo service lightdm stop
-
-    chmod +x cuda_6.0.37_linux_64.run
-    ./cuda_6.0.37_linux_64.run
-
-
-    # Downloading the CUDA toolkit deb
-    # Install the deb file
-    http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1204/x86_64/cuda-repo-ubuntu1204_6.0-37_amd64.deb
-    # This line did bad things
-    #sudo sh -c \ 'echo "foreign-architecture armhf" >> /etc/dpkg/dpkg.cfg.d/multiarch'
-    sudo apt-get update
-    sudo apt-get install cuda
-
-    export PATH=/usr/local/cuda-6.0/bin:$PATH
-    export LD_LIBRARY_PATH=/usr/local/cuda-6.0/lib64:$LD_LIBRARY_PATH
-}
-
-
-main_cuda(){
-
-    #==========================
-
-    # Download
-    cd ~/tmp
-    http://developer.download.nvidia.com/compute/cuda/6_5/rel/installers/cuda_6.5.14_linux_64.run
-    chmod +x cuda_*
-    #wget http://developer.download.nvidia.com/compute/cuda/4_2/rel/toolkit/cudatoolkit_4.2.9_linux_64_ubuntu11.04.run
-    #wget http://developer.download.nvidia.com/compute/cuda/4_2/rel/sdk/gpucomputingsdk_4.2.9_linux.run
-
-    # Install 
-    cd ~/Downloads
-    chmod +x cudatoolkit_4.2.9_linux_*
-    sudo ./cudatoolkit_4.2.9_linux_*
-
-    export PATH=$PATH:/opt/cuda/bin
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cuda/lib:/opt/cuda/lib64
-    echo 'export PATH=$PATH:/opt/cuda/bin' >> ~/.bash_profile
-    echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cuda/lib:/opt/cuda/lib64' >> ~/.bash_profile
-
-    # compile
-    cd ~/NVIDIA_GPU_Computing_SDK/C
-    LINKFLAGS=-L/usr/lib/nvidia-current/ make cuda-install=/opt/cuda
-
-}
-
-
-test()
-{
-~/NVIDIA_GPU_Computing_SDK/C/bin/linux/release/./fluidsGL
-optirun ~/NVIDIA_GPU_Computing_SDK/C/bin/linux/release/./fluidsGL
-}
-
 fix-bad-symlinks(){
 
     ls /usr/local/cuda-8.0/targets/x86_64-linux/lib/libcnmem.so.1
@@ -541,46 +461,6 @@ remove_cuda()
     rm -r ~/NVIDIA_GPU_Computing_SDK
     sudo rm -r /opt/cuda
 }
-
-makecudarc()
-{
-python -c 'import theano; print theano.config'
-
-THEANO_FLAGS='floatX=float32,device=gpu0,nvcc.fastmath=True'
-
-
-echo "____________"
-THEANO_FLAGS='device=cpu' python gpu.py
-echo "____________"
-THEANO_FLAGS='device=gpu' python gpu.py
-echo "____________"
-
-sh -c 'cat > ~/.theanorc << EOF
-[cuda]
-root = /usr/local/cuda
-[global]
-device = gpu
-floatX = float32
-EOF'
-
-#http://deeplearning.net/software/theano/library/config.html
-cat ~/.theanorc
-
-
-
-sh -c 'cat > ~/.theanorc << EOF
-[cuda]
-root = /usr/local/cuda
-[global]
-device = gpu
-floatX = float64
-force_device=True
-allow_gc=False
-print_active_device=True
-EOF'
-
-}
-
 
 init_cuda_with_deb_pkg(){
     # First download the deb from https://developer.nvidia.com/cuda-downloads
