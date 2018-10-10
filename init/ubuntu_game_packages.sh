@@ -390,3 +390,10 @@ install_cockatrice()
     #make -j9
     #make install
 }
+
+
+shandalar(){
+    # This sort of works, but crashes with visual glitches when I try to start a new game
+    cd /home/joncrall/Documents/mtg/Manalink_1.3.2/Manalink1.3.2_20010711
+    wine Magic/Program/Magic.exe
+}
