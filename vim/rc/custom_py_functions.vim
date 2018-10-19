@@ -279,100 +279,39 @@ Python2or3 << EOF
 # FIXME: Unfinished
 import vim
 import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+import xinspect
 import ubelt as ub
 
-def undefined_names(fpath):
-    """
-    Use a linter to find undefined names
-    fpath = ub.truepath('~/code/utool/utool/util_inspect.py')
-    """
-    import pyflakes.api
-    import pyflakes.reporter
-
-    class CaptureReporter(pyflakes.reporter.Reporter):
-        def __init__(reporter, warningStream, errorStream):
-            reporter.syntax_errors = []
-            reporter.messages = []
-            reporter.unexpected = []
-
-        def unexpectedError(reporter, filename, msg):
-            reporter.unexpected.append(msg)
-
-        def syntaxError(reporter, filename, msg, lineno, offset, text):
-            reporter.syntax_errors.append(msg)
-
-        def flake(reporter, message):
-            reporter.messages.append(message)
-
-    names = set()
-
-    import ubelt as ub
-    reporter = CaptureReporter(None, None)
-    n = pyflakes.api.checkPath(fpath, reporter)
-    for msg in reporter.messages:
-        if msg.__class__.__name__.endswith('UndefinedName'):
-            assert len(msg.message_args) == 1
-            names.add(msg.message_args[0])
-    return names
-    #import parse
-    #lint_patterns = [
-    #    "{} undefined name '{varname}'"
-    #]
-    # TODO use pyflakes programtically
-    #for line in ub.cmd('pyflakes ' + fpath)['out'].splitlines():
-    #    for pat in lint_patterns:
-
-known_imports = {
-    'it': 'import itertools as it',
-    'nh': 'import netharn as nh',
-    'np': 'import numpy as np',
-    'pd': 'import pandas as pd',
-    'ub': 'import ubelt as ub',
-    'Image': 'from PIL import Image',
-    'mpl': 'import matplotlib as mpl',
-    'nn': 'from torch import nn',
-    'F': 'import torch.nn.functional as F',
-    'Variable': 'from torch.autograd import Variable',
-}
-known_modules = [
-    'cv2',
-    'glob',
-    'torch',
-]
-#import glob
-#builtin_modnames = [
-#    name_we for name_we, ext in map(splitext, map(basename, glob.glob(join(dirname(os.__file__), '*.py'))))
-#]
-#known_modules += builtin_modnames
-
-for name in known_modules:
-    known_imports[name] = 'import {}'.format(name)
-for name in dir(os.path):
-    if not name.startswith('_'):
-        known_imports[name] = 'from os.path import {}'.format(name)
+from xinspect.autogen import Importables
 
 pyvim_funcs.ensure_normalmode()
 
-from xdoctest import static_analysis as static
-
 if pyvim_funcs.is_module_pythonfile():
+    importable = Importables({  
+        'it': 'import itertools as it',
+        'nh': 'import netharn as nh',
+        'np': 'import numpy as np',
+        'pd': 'import pandas as pd',
+        'ub': 'import ubelt as ub',
+        'Image': 'from PIL import Image',
+        'mpl': 'import matplotlib as mpl',
+        'nn': 'from torch import nn',
+        'torch_data': 'import torch.utils.data as torch_data',
+        'F': 'import torch.nn.functional as F',
+        # 'Variable': 'from torch.autograd import Variable',
+    })
+    importable._populate_os_path()
     fpath = pyvim_funcs.get_current_fpath()
-    names = undefined_names(fpath)
+    lines = xinspect.autogen_imports(fpath=fpath, importable=importable)
 
-    # Add any unregistered names if they correspond with a findable module
-    for n in names:
-        if n not in known_imports:
-            if static.modname_to_modpath(n) is not None:
-                known_imports[n] = 'import {}'.format(n)
 
-    have_names = sorted(set(known_imports).intersection(set(names)))
-    missing = set(names) - set(have_names)
-    if missing:
-        print('Warning: unknown modules {}'.format(missing))
-
-    import_block = '\n'.join([known_imports[n] for n in have_names])
+    x = ub.group_items(lines, [x.startswith('from ') for x in lines])
+    ordered_lines = []
+    ordered_lines += sorted(x.get(False, []))
+    ordered_lines += sorted(x.get(True, []))
+    import_block = '\n'.join(ordered_lines)
     # FIXME: doesnt work right when row=0
-    with pyvim_funcs.CursorContext(offset=len(have_names)):
+    with pyvim_funcs.CursorContext(offset=len(lines)):
         pyvim_funcs.prepend_import_block(import_block)
 else:
     print('current file is not a pythonfile')

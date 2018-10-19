@@ -651,9 +651,18 @@ def prepend_import_block(text):
     # FIXME: doesnt work right when row=0
     buffer_tail = vim.current.buffer[row:]
     lines = [line.encode('utf-8') for line in text.split('\n')]
+    print('lines = {!r}'.format(lines))
     new_tail  = lines + buffer_tail
     del(vim.current.buffer[row:])  # delete old data
+    # vim's buffer __del__ method seems to not work when the slice is 0:None.
+    # It should remove everything, but it seems that one item still exists
+    # It seems we can never remove that last item, so we have to hack.
+    hackaway_row0 = row == 0 and len(vim.current.buffer) == 1
+    # print(len(vim.current.buffer))
+    # print('vim.current.buffer = {!r}'.format(vim.current.buffer[:]))
     vim.current.buffer.append(new_tail)  # append new data
+    if hackaway_row0:
+        del vim.current.buffer[0]
 
 
 class DummyVimBuffer(object):
