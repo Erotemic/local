@@ -293,6 +293,7 @@ if pyvim_funcs.is_module_pythonfile():
         'np': 'import numpy as np',
         'pd': 'import pandas as pd',
         'ub': 'import ubelt as ub',
+        'nx': 'import networkx as nx',
         'Image': 'from PIL import Image',
         'mpl': 'import matplotlib as mpl',
         'nn': 'from torch import nn',
