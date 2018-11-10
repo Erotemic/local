@@ -287,7 +287,9 @@ from xinspect.autogen import Importables
 pyvim_funcs.ensure_normalmode()
 
 if pyvim_funcs.is_module_pythonfile():
-    importable = Importables({  
+    importable = Importables()  
+    importable._use_recommended_defaults()
+    importable.known.update({  
         'it': 'import itertools as it',
         'nh': 'import netharn as nh',
         'np': 'import numpy as np',
@@ -299,9 +301,9 @@ if pyvim_funcs.is_module_pythonfile():
         'nn': 'from torch import nn',
         'torch_data': 'import torch.utils.data as torch_data',
         'F': 'import torch.nn.functional as F',
+        'math': 'import math',
         # 'Variable': 'from torch.autograd import Variable',
     })
-    importable._populate_os_path()
     fpath = pyvim_funcs.get_current_fpath()
     lines = xinspect.autogen_imports(fpath=fpath, importable=importable)
 
