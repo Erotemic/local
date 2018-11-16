@@ -468,3 +468,11 @@ nonlinearity
 Dense3D
 config
 HDF5
+iterable
+iterables
+stdout
+stderr
+xdoctest
+CommandLine
+hashable
+unorderable

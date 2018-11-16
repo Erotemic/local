@@ -11,8 +11,11 @@ prereq(){
     sudo apt install build-essential libtinfo-dev -y
     sudo apt build-dep vim-gtk -y
     sudo apt install ncurses-dev
-    sudo apt-get build-dep vim-gtk
+    sudo apt build-dep vim-gtk
     #sudo apt-get build-dep vim-gnome
+
+    sudo apt install gnome-devel -y
+    sudo apt install libgtk-3-dev -y
 }
 
 help(){
@@ -141,7 +144,7 @@ with_conda_python36(){
     --prefix=$HOME/.local \
     --enable-pythoninterp=no \
     --enable-python3interp=yes \
-    --enable-gui=gtk2
+    --enable-gui=gtk3
 
 cat src/auto/config.mk 
 cat src/auto/config.mk | grep GUI
@@ -157,7 +160,7 @@ make -j$NCPUS
 # Install
 make install
 
-ls -al ~/bin/*vim*
+ls -al ~/.local/bin/*vim*
 #ls tmpinstall/bin/
 #/usr/local/bin/gvim-8 --version
 #/usr/bin/gvim --version
