@@ -32,6 +32,7 @@ noremap \ ,
 noremap <leader>ss :%s/\<<C-r><C-w>\>/
 "Surround word with quotes
 noremap <leader>qw ciw'<C-r>"'<Esc>
+noremap <leader>qc ciw`<C-r>"`<Esc>
 
 
 " File navigation
