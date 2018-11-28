@@ -468,8 +468,11 @@ nonlinearity
 Dense3D
 config
 HDF5
-dtype
-rng
-wikipedia
-ndarray
-RandomState
+iterable
+iterables
+stdout
+stderr
+xdoctest
+CommandLine
+hashable
+unorderable

@@ -1308,9 +1308,20 @@ def find_and_open_path(path, mode='split', verbose=0,
     def expand_module(path):
         # if True or filetype in {'py', 'pyx'}:
         # filetype = get_current_filetype()
+        import sys
+        sys.executable
+        import ubelt as ub
+        print('ub = {!r}'.format(ub))
+        xdoc = ub.import_module_from_path('/home/joncrall/code/xdoctest/xdoctest')
+        print('xdoc = {!r}'.format(xdoc))
+        print('sys.executable = {!r}'.format(sys.executable))
+        print('sys.prefix = {!r}'.format(sys.prefix))
         from xdoctest import static_analysis as static
+        print('static = {!r}'.format(static))
         try:
+            print('expand path = {!r}'.format(path))
             path = static.modname_to_modpath(path)
+            print('expanded path = {!r}'.format(path))
             # print('rectified module to path = {!r}'.format(path))
         except Exception as ex:
             print('ex = {!r}'.format(ex))
@@ -1371,8 +1382,11 @@ def find_and_open_path(path, mode='split', verbose=0,
     if try_open(path):
         return
     else:
+        print('enable_python = {!r}'.format(enable_python))
         if enable_python:
-            if try_open(expand_module(path)):
+            pypath = expand_module(path)
+            print('pypath = {!r}'.format(pypath))
+            if try_open(pypath):
                 return
 
         if re.match('--\w*=.*', path):
