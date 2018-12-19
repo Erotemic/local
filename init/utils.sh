@@ -42,9 +42,6 @@ have_sudo(){
     Tests if we have the ability to use sudo.
     Returns the string "True" if we do.
 
-    TODO:
-        move to a bash utils file
-
     Example:
         HAVE_SUDO=$(have_sudo)
         if [ "$HAVE_SUDO" == "True" ]; then
