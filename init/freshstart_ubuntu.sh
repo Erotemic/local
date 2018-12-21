@@ -571,6 +571,27 @@ setup_venv3(){
     # should be for 3.x
 }
 
+dev_fix_venv_mismatched_version(){
+    __heredoc__ """
+    This might fix the cmath import issue?
+    """
+    # Check if the virtualenv and system python are on the same patch version
+    # IF THEY HAVE DIFFERENT MAJOR/MINOR VERSONS DO NOTHING HERE!
+    $VIRTUAL_ENV/bin/python --version
+    /usr/bin/python3 --version
+
+    # overwrite the virtualenv python with a fresh copy of the system python
+    cp $VIRTUAL_ENV/bin/python $VIRTUAL_ENV/bin/python.bakup
+    sha1sum  $VIRTUAL_ENV/bin/python.bakup
+    sha1sum  $VIRTUAL_ENV/bin/python
+    sha1sum  /usr/bin/python3
+
+    lsof  $VIRTUAL_ENV/bin/python
+
+    cp /usr/bin/python3 $VIRTUAL_ENV/bin/python
+}
+
+
 
 setup_conda_env(){
     mkdir -p ~/tmp

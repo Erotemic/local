@@ -174,9 +174,12 @@ def _parse_custom_urls():
                         url, dpath = parts
                         dpath = expandvars(expanduser(dpath))
 
-                        os.makedirs(dpath, exist_ok=True)
-                        # if not os.path.exists(dpath):
-                        #     os.makedirs(dpath)
+                        # try:
+                        #     os.makedirs(dpath, exist_ok=True)
+                        # except Exception:
+                        #     ub.ensuredir(dpath)
+                        if not os.path.exists(dpath):
+                            os.makedirs(dpath)
 
                     dpath_to_url[dpath].append(url)
     return dpath_to_url

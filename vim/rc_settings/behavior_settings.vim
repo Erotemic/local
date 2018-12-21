@@ -219,3 +219,5 @@ set hlsearch
 " https://unix.stackexchange.com/questions/196098/copy-paste-in-xfce4-terminal-adds-0-and-1
 " fix terminal spacing issue
 set t_BE=
+
+set conceallevel=0
