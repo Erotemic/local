@@ -477,3 +477,8 @@ CommandLine
 hashable
 unorderable
 mixin
+FitHarn
+MNIST
+deployer
+kwarg
+CIFAR

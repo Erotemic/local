@@ -1,6 +1,6 @@
 import subprocess
 from subprocess import PIPE
-import rob_interface as robi
+# import rob_interface as robi  # NOQA
 
 
 def get_clipboard():
@@ -10,15 +10,24 @@ def get_clipboard():
     return tag
 
 
+def check_installed_debian(pkgname):
+    """
+    References:
+        http://www.cyberciti.biz/faq/find-out-if-package-is-installed-in-linux/
+    """
+    import ubelt as ub
+    info = ub.cmd('hash ' + pkgname + ' 2>/dev/null', verbose=0, shell=True)
+    is_installed = (info['ret'] == 0)
+    return is_installed
+
+
 def speak(r, to_speak, rate=-5):
     import unicodedata
-    import utool as ut
-    ut.assert_installed_debian('espeak')
-    #if not ut.check_installed_debian('espeak'):
-    #    raise AssertionError('espeak must be installed. run sudo apt-get install espeak')
-
+    import ubelt as ub
+    if not check_installed_debian('espeak'):
+        raise AssertionError('espeak must be installed. run sudo apt-get install espeak')
     # ts1 = to_speak.decode('utf-8')
-    ts1 = ut.ensure_unicode(to_speak)
+    ts1 = ub.ensure_unicode(to_speak)
     ts2 = unicodedata.normalize('NFKD', ts1)
     ts3 = ts2.encode('ascii', 'ignore')
     # ts4 = str(robi.preprocess_research(repr(ts3)))

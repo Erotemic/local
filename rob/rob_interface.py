@@ -302,10 +302,11 @@ def preprocess_research(input_str):
     test of an em — dash
     """
     import utool as ut
+    import ubelt as ub
     inside = ut.named_field('ref', '.*?')
     input_str = re.sub(r'\\emph{' + inside + '}', ut.bref_field('ref'), input_str)
     # input_str = input_str.decode('utf-8')
-    input_str = ut.ensure_unicode(input_str)
+    input_str = ub.ensure_unicode(input_str)
     pause = re.escape(' <break time="300ms"/> ')
     # pause = ', '
     emdash = u'\u2014'  #
@@ -371,7 +372,6 @@ def process_research_line(line):
 def research_clipboard(r, start_line_str=None, rate='2', sentence_mode=True, open_file=False):
     import utool as ut
     to_speak = ut.get_clipboard()
-    #ut.embed()
     #to_speak = robos.get_clipboard()
     write_research(r, to_speak)
     research(r, start_line_str='0', rate=rate, sentence_mode=True, open_file=False)
@@ -410,10 +410,8 @@ def send_command(r, remote, remote_cmd):
 
 def write_research(r, to_write, rate=-5):
     fname = join(split(__file__)[0], 'to_speak.txt')
-    import utool as ut
-    ut.write_to(fname, to_write)
-    # with open(fname, 'w') as file_:
-    #     file_.write(to_write)
+    import ubelt as ub
+    ub.writeto(fname, to_write)
 
 
 def research(r, start_line_str=None, rate='3', sentence_mode=True, open_file=False):
@@ -423,9 +421,9 @@ def research(r, start_line_str=None, rate='3', sentence_mode=True, open_file=Fal
         return
     if open_file is True:
         os.system(fname)
-    import utool as ut
+    import ubelt as ub
 
-    input_str = preprocess_research(ut.readfrom(fname))
+    input_str = preprocess_research(ub.readfrom(fname))
     if sentence_mode:
         input_str = input_str.replace('\n', ' ').replace('. ', '.\n')
         input_str = re.sub('  *', ' ', input_str)
@@ -682,9 +680,9 @@ def fix_path(r):
     """ Removes duplicates from the path Variable """
     PATH_SEP = os.path.pathsep
     pathstr = robos.get_env_var('PATH')
-    import utool as ut
+    import ubelt as ub
 
-    pathlist = ut.unique(pathstr.split(PATH_SEP))
+    pathlist = list(ub.unique(pathstr.split(PATH_SEP)))
 
     new_path = ''
     failed_bit = False
@@ -736,8 +734,8 @@ def create_shortcut(r, what, where=''):
     if where == '':
         target = what + '.lnk'
     else:
-        import utool as ut
-        ut.ensuredir(where)
+        import ubelt as ub
+        ub.ensuredir(where)
         base_what = os.path.basename(what)
         if len(base_what) > 0:
             if base_what[-1] in ['"', "'"]:
