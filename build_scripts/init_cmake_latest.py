@@ -1,4 +1,12 @@
 # Download latest by parsing webpage
+"""
+Attempt to download and locally install the latest cmake from
+
+Installs From:
+    ~~https://cmake.org/download~~
+
+    https://github.com/Kitware/CMake/releases/download/v3.13.1/cmake-3.13.1-Linux-x86_64.tar.gz
+"""
 import os
 from os.path import join, splitext, basename
 import glob
@@ -42,6 +50,7 @@ def get_latest_cmake_url():
 def main():
     # url_override = 'https://cmake.org/files/v3.8/cmake-3.8.2-Linux-x86_64.tar.gz'
     url_override = None
+    url_override = 'https://github.com/Kitware/CMake/releases/download/v3.13.1/cmake-3.13.1-Linux-x86_64.tar.gz'
     if url_override is not None:
         url = url_override
     else:
@@ -55,6 +64,7 @@ def main():
     os.makedirs(tmpdir, exist_ok=True)
     os.chdir(tmpdir)
 
+    print('url = {!r}'.format(url))
     os.system('wget ' + url)
     os.system('tar -xf cmake-*.tar.gz')
 
