@@ -284,6 +284,11 @@ import ubelt as ub
 
 from xinspect.autogen import Importables
 
+if True:
+    import imp
+    imp.reload(xinspect)
+    imp.reload(xinspect.autogen)
+
 pyvim_funcs.ensure_normalmode()
 
 if pyvim_funcs.is_module_pythonfile():
