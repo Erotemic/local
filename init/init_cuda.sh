@@ -8,9 +8,12 @@ install_nivida_drivers_apt(){
     These are instructions for using apt to install the drivers. 
     This is probably the best way to get the baseline drivers on the system.
     "
-    sudo add-apt-repository ppa:graphics-drivers/ppa
-    sudo apt-get update
+    #sudo add-apt-repository ppa:graphics-drivers/ppa
+    #sudo apt-get update
     #sudo apt remove --purge nvidia-*
+    #sudo apt install nvidia-drivers-396
+
+    # It looks like this one works with the above PPA (maybe?)
     sudo apt install nvidia-drivers-396
 }
 
@@ -483,7 +486,7 @@ init_local_cuda(){
     rsync -avzupR ~/./tpl-archive/ jon.crall@klendathu.kitware.com:.
     rsync -avzupR ~/./tpl-archive/ joncrall@acidalia.kitware.com:.
 
-    rsync -avzupR joncrall@acidalia.kitware.com:./tpl-archive/ ~/.
+    rsync -avzupR joncrall@namek.kitware.com:./tpl-archive/ ~/.
 
     #rsync -avzup tpl-archive/cuda/ jon.crall@arisia.kitware.com:tpl-archive/cuda
     #rsync -avzup tpl-archive/cuda/ jon.crall@aretha.kitware.com:tpl-archive/cuda
