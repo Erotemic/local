@@ -482,3 +482,7 @@ MNIST
 deployer
 kwarg
 CIFAR
+ENH
+PyPI
+Docstrings
+docstrings
