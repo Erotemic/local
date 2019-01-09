@@ -14,6 +14,9 @@ install_nivida_drivers_apt(){
     #sudo apt install nvidia-drivers-396
 
     # It looks like this one works with the above PPA (maybe?)
+
+    sudo add-apt-repository ppa:graphics-drivers
+    sudo apt update
     sudo apt install nvidia-drivers-396
 }
 
