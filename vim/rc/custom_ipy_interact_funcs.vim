@@ -112,6 +112,11 @@ endfu
 func! IPythonImportAll()
     " Imports global variables from current module into IPython session
 Python2or3 << EOF
+"""
+Note: this is replaced by vimtk
+
+~/local/vim/vimfiles/bundle/vimtk/autoload/vimtk.vim
+"""
 import vim
 import pyvim_funcs, imp; imp.reload(pyvim_funcs)
 import utool as ut

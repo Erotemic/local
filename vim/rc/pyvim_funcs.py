@@ -1308,16 +1308,16 @@ def find_and_open_path(path, mode='split', verbose=0,
     def expand_module(path):
         # if True or filetype in {'py', 'pyx'}:
         # filetype = get_current_filetype()
-        import sys
-        sys.executable
-        import ubelt as ub
-        print('ub = {!r}'.format(ub))
-        xdoc = ub.import_module_from_path('/home/joncrall/code/xdoctest/xdoctest')
-        print('xdoc = {!r}'.format(xdoc))
-        print('sys.executable = {!r}'.format(sys.executable))
-        print('sys.prefix = {!r}'.format(sys.prefix))
+        # import sys
+        # sys.executable
+        # import ubelt as ub
+        # print('ub = {!r}'.format(ub))
+        # xdoc = ub.import_module_from_path('/home/joncrall/code/xdoctest/xdoctest')
+        # print('xdoc = {!r}'.format(xdoc))
+        # print('sys.executable = {!r}'.format(sys.executable))
+        # print('sys.prefix = {!r}'.format(sys.prefix))
         from xdoctest import static_analysis as static
-        print('static = {!r}'.format(static))
+        # print('static = {!r}'.format(static))
         try:
             print('expand path = {!r}'.format(path))
             path = static.modname_to_modpath(path)
@@ -1328,6 +1328,23 @@ def find_and_open_path(path, mode='split', verbose=0,
             # if True or filetype in {'py', 'pyx'}:
             return None
         return path
+
+    def expand_module_prefix(path):
+        # TODO: we could parse the AST to figure out if the prefix is an alias
+        # for a known module.
+        from xdoctest import static_analysis as static
+        # Check if the path certainly looks like it could be a chain of python
+        # attribute accessors.
+        if re.match('^[\w\d_.]*$', path):
+            parts = path.split('.')
+            for i in reversed(range(len(parts))):
+                prefix = '.'.join(parts[:i])
+                path = static.modname_to_modpath(prefix)
+                if path is not None:
+                    print('expanded prefix = {!r}'.format(path))
+                    return path
+        print('expanded prefix = {!r}'.format(None))
+        return None
 
     if enable_url:
         # https://github.com/Erotemic
@@ -1388,6 +1405,10 @@ def find_and_open_path(path, mode='split', verbose=0,
             print('pypath = {!r}'.format(pypath))
             if try_open(pypath):
                 return
+            pypath = expand_module_prefix(path)
+            print('pypath = {!r}'.format(pypath))
+            if try_open(pypath):
+                return
 
         if re.match('--\w*=.*', path):
             # try and open if its a command line arg
@@ -1428,7 +1449,6 @@ def getvar(key, default=None, context='g'):
 
 def wmctrl_terminal_pattern():
     # Make sure regexes are bash escaped
-    import re
     terminal_pattern = getvar('vpy_terminal_pattern', default=None)
     if terminal_pattern is None:
         terminal_pattern = r'\|'.join([
@@ -1612,7 +1632,6 @@ def format_text_as_docstr(text):
         >>> result = ('formated_text = \n%s' % (str(formated_text),))
         >>> print(result)
     """
-    import re
     min_indent = get_minimum_indentation(text)
     indent_ =  ' ' * min_indent
     formated_text = re.sub('^' + indent_, '' + indent_ + '>>> ', text,
@@ -1636,7 +1655,6 @@ def unformat_text_as_docstr(formated_text):
         >>> result = ('unformated_text = \n%s' % (str(unformated_text),))
         >>> print(result)
     """
-    import re
     min_indent = get_minimum_indentation(formated_text)
     indent_ =  ' ' * min_indent
     unformated_text = re.sub('^' + indent_ + '>>> ', '' + indent_,
