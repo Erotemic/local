@@ -5,6 +5,14 @@ common_paths()
     cat ~/local/init/ensure_vim_plugins.py
 }
 
+#isntall_xnconvert(){
+#    # https://www.unixmen.com/install-xnconvert-ubuntu/
+#    sudo add-apt-repository --remove ppa:dhor/myway
+#    sudo add-apt-repository ppa:dhor/myway -y
+#    sudo apt-get update 
+#    sudo apt-get install xnconvert -y
+#}
+
 install_languagetool(){
 
 # https://www.languagetool.org/
