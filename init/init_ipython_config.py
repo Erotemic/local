@@ -1,5 +1,6 @@
 #/usr/bin/env python
-import utool as ut
+from os.path import join
+import ubelt as ub
 
 
 def setup_extensions():
@@ -25,21 +26,21 @@ def write_default_ipython_profile():
     CommandLine:
         python ~/local/init/init_ipython_config.py
 
-        python -c "import utool as ut; ut.vd(ut.unixpath('~/.ipython/profile_default'))"
-        python -c "import utool as ut; ut.editfile(ut.unixpath('~/.ipython/profile_default/ipython_config.py'))"
+        python -c "import xdev, ubelt; xdev.startfile(ubelt.truepath('~/.ipython/profile_default'))"
+        python -c "import xdev, ubelt; xdev.editfile(ubelt.truepath('~/.ipython/profile_default/ipython_config.py'))"
 
     References:
         http://2sn.org/python/ipython_config.py
     """
-    dpath = ut.unixpath('~/.ipython/profile_default')
-    ut.ensuredir(dpath, info=True, verbose=True)
-    ipy_config_fpath = ut.unixjoin(dpath, 'ipython_config.py')
-    ipy_config_text = ut.codeblock(
+    dpath = ub.expandpath('~/.ipython/profile_default')
+    ub.ensuredir(dpath)
+    ipy_config_fpath = join(dpath, 'ipython_config.py')
+    ipy_config_text = ub.codeblock(
         r'''
         # STARTBLOCK
+        import six
         c = get_config()  # NOQA
         c.InteractiveShellApp.exec_lines = []
-        import six
         if six.PY2:
             future_line = (
                 'from __future__ import absolute_import, division, print_function, with_statement, unicode_literals')
@@ -67,19 +68,18 @@ def write_default_ipython_profile():
         #c.InteractiveShellApp.exec_lines.append('%pylab qt4')
         c.InteractiveShellApp.exec_lines.append('import numpy as np')
         c.InteractiveShellApp.exec_lines.append('import ubelt as ub')
-        c.InteractiveShellApp.exec_lines.append('import utool as ut')
+        c.InteractiveShellApp.exec_lines.append('import xdev')
         c.InteractiveShellApp.exec_lines.append('import pandas as pd')
         c.InteractiveShellApp.exec_lines.append('pd.options.display.max_columns = 40')
         c.InteractiveShellApp.exec_lines.append('pd.options.display.width = 160')
         c.InteractiveShellApp.exec_lines.append('pd.options.display.max_rows = 20')
         c.InteractiveShellApp.exec_lines.append('pd.options.display.float_format = lambda x: \'%.4f\' % (x,)')
         c.InteractiveShellApp.exec_lines.append('import networkx as nx')
-        #c.InteractiveShellApp.exec_lines.append('import plottool as pt')
         c.InteractiveShellApp.exec_lines.append('from os.path import *')
         c.InteractiveShellApp.exec_lines.append('from six.moves import cPickle as pickle')
         #c.InteractiveShellApp.exec_lines.append('if \'verbose\' not in vars():\\n    verbose = True')
-        import utool as ut
-        c.InteractiveShellApp.exec_lines.append(ut.codeblock(
+        import ubelt as ub
+        c.InteractiveShellApp.exec_lines.append(ub.codeblock(
             """
             class classproperty(property):
                 def __get__(self, cls, owner):
@@ -87,20 +87,21 @@ def write_default_ipython_profile():
             class vim(object):
                 @classproperty
                 def focus(cls):
-                    import utool.util_ubuntu
-                    utool.util_ubuntu.xctrl.do(('focus', 'GVIM'),)
+                    from vimtk.cplat_ctrl import Window
+                    Window.find('GVIM').focus()
                 @classproperty
                 def copy(cls):
-                    import utool.util_ubuntu
-                    utool.util_ubuntu.xctrl.do(('focus', 'GVIM'),)
-                    import utool as ut
+                    import time
+                    from vimtk.cplat_ctrl import Window
+                    gvim_window = Window.find('GVIM')
+                    gvim_window.focus()
+                    import vimtk
                     import IPython
                     ipy = IPython.get_ipython()
                     lastline = ipy.history_manager.input_hist_parsed[-2]
-                    ut.copy_text_to_clipboard(lastline)
-                    # import utool as ut
-                    import utool.util_ubuntu
-                    utool.util_ubuntu.xctrl.do(
+                    vimtk.cplat.copy_text_to_clipboard(lastline)
+                    from vimtk import xctrl
+                    xctrl.XCtrl.do(
                         ('focus', 'GVIM'),
                         ('key', 'ctrl+v'),
                         ('focus', 'x-terminal-emulator.X-terminal-emulator')
@@ -116,7 +117,8 @@ def write_default_ipython_profile():
         # ENDBOCK
         '''
     )
-    ut.write_to(ipy_config_fpath, ipy_config_text)
+    with open(ipy_config_fpath, 'w') as file:
+        file.write(ipy_config_text + '\n')
 
 
 if __name__ == '__main__':
