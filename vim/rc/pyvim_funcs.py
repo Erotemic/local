@@ -403,7 +403,13 @@ def find_pyfunc_above_cursor():
     (row, col) = vim.current.window.cursor
     line_list = vim.current.buffer
     funcname, searchlines, pos, foundline = find_pyfunc_above_row(line_list, row, True)
-    return funcname, searchlines, pos, foundline
+    info = {
+        'funcname': funcname,
+        'searchlines': searchlines,
+        'pos': pos,
+        'foundline': foundline,
+    }
+    return info
 
 
 def is_paragraph_end(line_):
@@ -839,7 +845,8 @@ def auto_cmdline():
     # import imp
     # imp.reload(static)
     modname, moddir = get_current_modulename()
-    funcname, searchlines, pos, foundline = find_pyfunc_above_cursor()
+    findfunc_info = find_pyfunc_above_cursor()
+    funcname = findfunc_info['funcname']
     if static.is_modname_importable(modname, exclude=['.']):
         text = ub.codeblock(
             '''
@@ -862,7 +869,7 @@ def auto_cmdline():
         prefix = line[:n_whitespace]
         return prefix
 
-    prefix = get_indent(foundline)
+    prefix = get_indent(findfunc_info['foundline'])
 
     text = ub.indent(text, prefix + '    ')
     return text
@@ -870,23 +877,6 @@ def auto_cmdline():
 
 def auto_docstr(**kwargs):
     import ubelt as ub
-    USE_UTOOL = False
-    import imp
-    if USE_UTOOL:
-        import utool as ut
-        ut.util_dbg.COLORED_EXCEPTIONS = False
-        ut.ENABLE_COLORS = False
-        ut.util_str.ENABLE_COLORS = False
-        try:
-            print("RELOADING UTOOL via imp")
-            imp.reload(ut)
-            imp.reload(ut._internal.meta_util_arg)
-        except Exception as ex:
-            print("... errored")
-            pass
-        print("RELOADING UTOOL via rrrr")
-        ut.rrrr(verbose=0)
-        imp.reload(ut)
     import vim
 
     modname = None
@@ -913,7 +903,9 @@ def auto_docstr(**kwargs):
         return docstr
 
     try:
-        funcname, searchlines, pos, foundline = find_pyfunc_above_cursor()
+        findfunc_info = find_pyfunc_above_cursor()
+        funcname = findfunc_info['funcname']
+
         modname, moddir = get_current_modulename()
         modpath = vim.current.buffer.name
         print('modpath = {!r}'.format(modpath))
@@ -926,14 +918,8 @@ def auto_docstr(**kwargs):
             verbose = True
             autodockw = dict(verbose=verbose)
             autodockw.update(kwargs)
-            if USE_UTOOL:
-                docstr = ut.auto_docstr(modname, funcname, moddir=moddir,
-                                        modpath=modpath, **autodockw)
-            else:
-                docstr = new_autodoc(modname, funcname, moddir=moddir,
-                                     modpath=modpath)
-            #if docstr.find('unexpected indent') > 0:
-            #    docstr = funcname + ' ' + docstr
+            docstr = new_autodoc(modname, funcname, moddir=moddir,
+                                 modpath=modpath)
             if docstr[:].strip() == 'error':
                 flag = True
     except vim.error as ex:
@@ -941,10 +927,7 @@ def auto_docstr(**kwargs):
         flag = False
     except Exception as ex:
         dbgmsg = 'exception(%r): %s' % (type(ex), str(ex))
-        if USE_UTOOL:
-            ut.printex(ex, tb=True)
-        else:
-            print(repr(ex))
+        print(repr(ex))
         flag = False
 
     if flag:
@@ -955,13 +938,7 @@ def auto_docstr(**kwargs):
             dbgtext += dbgmsg
         dbgtext += '\n+----------------------'
         dbgtext += '\n| InsertDoctstr(modname=%r, funcname=%r' % (modname, funcname)
-        if USE_UTOOL:
-            pycmd = ('import ut; print(ut.auto_docstr(%r, %r, %r)))' % (modname, funcname, modpath))
-            pycmd = pycmd.replace('\'', '\\"')
-            dbgtext += '\n| python -c "%s"' % (pycmd,)
-            dbgtext += '\n+----------------------'
-            dbgtext += '\n+searchlines = '
-            dbgtext += ut.indentjoin(searchlines, '\n| ')
+        dbgtext += '\n| ' + ub.repr2(findfunc_info, nl=1)
         dbgtext += '\nL----------------------'
     elif len(dbgmsg) > 0:
         dbgtext += '\n| Message: '

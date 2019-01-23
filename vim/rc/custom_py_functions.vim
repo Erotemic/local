@@ -130,7 +130,6 @@ Python2or3 << EOF
 import vim
 #vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
 import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
-
 if pyvim_funcs.is_module_pythonfile():
     print('building docstr')
     text = pyvim_funcs.auto_docstr()
@@ -145,7 +144,6 @@ endfu
 func! InsertDocstrOnlyArgs() 
 Python2or3 << EOF
 import vim
-#vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
 import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
 
 if pyvim_funcs.is_module_pythonfile():
@@ -167,23 +165,15 @@ endfu
 func! InsertDocstrOnlyCommandLine() 
 Python2or3 << EOF
 import vim
-#vim.command(':echom %r' % ('dbmsg: ' + dbgmsg,))
 import imp
 import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
 
 if pyvim_funcs.is_module_pythonfile():
     print('building docstr')
     text = pyvim_funcs.auto_cmdline()
-    #text = pyvim_funcs.auto_docstr( 
-    #    with_args=False,
-    #    with_ret=False,
-    #    with_commandline=True,
-    #    with_example=False,
-    #    with_header=False)
     pyvim_funcs.insert_codeblock_under_cursor(text)
 else:
     print('current file is not a pythonfile')
-#L______________
 EOF
 endfu 
 
@@ -196,10 +186,49 @@ import ubelt as ub
 
 indent = pyvim_funcs.get_cursor_py_indent()
 newtext = '\n'.join([
-    #indent + 'import utool',
-    #indent + 'utool.embed()'
     indent + 'import xdev',
     indent + 'xdev.embed()'
+])
+pyvim_funcs.insert_codeblock_under_cursor(newtext)
+EOF
+endfunc
+
+
+func! PyMakeWithEmbed(...) range
+Python2or3 << EOF
+import vim
+import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+import ubelt as ub
+
+mode = vim.eval('a:1')
+
+
+indent = pyvim_funcs.get_cursor_py_indent()
+newtext = '\n'.join([
+    indent + 'import xdev',
+    indent + 'with xdev.embed_on_exception_context:'
+    #indent + 'import ipdb',
+    #indent + 'with ipdb.launch_ipdb_on_exception():'
+])
+if 'v' in mode.lower():
+    newtext += '\n' + ub.indent(pyvim_funcs.get_selected_text())
+    pyvim_funcs.insert_codeblock_over_selection(newtext)
+else:
+    pyvim_funcs.insert_codeblock_under_cursor(newtext)
+EOF
+endfunc
+
+
+func! PyMakeXDevKwargs() 
+Python2or3 << EOF
+import vim
+import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+import ubelt as ub
+findfunc_info = pyvim_funcs.find_pyfunc_above_cursor()
+funcname = findfunc_info['funcname']
+newtext = '\n'.join([
+    indent + 'import xdev',
+    indent + 'globals().update(xdev.get_func_kwargs({}))'.format(funcname)
 ])
 pyvim_funcs.insert_codeblock_under_cursor(newtext)
 EOF

@@ -76,6 +76,8 @@ noremap <leader>ec :call InsertDocstrOnlyCommandLine()<CR>
 noremap <leader>em :call InsertPyUtMain()<CR>
 noremap <leader>eh :call PyInsertHeader()<CR>
 noremap <leader>eH :call PyInsertHeader('script')<CR>
+noremap <leader>ek :call PyMakeXDevKwargs()<CR>
+
 
 noremap <c-d> :call InsertDocstr()<CR>
 noremap <c-1> :call InsertDocstr()<CR>
