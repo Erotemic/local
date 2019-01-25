@@ -14,6 +14,9 @@ alias clean_python='find . -regex ".*\(__pycache__\|\.py[co]\)" -delete || find 
 # watch with a higher frequency
 alias watch='watch -n .5'
 
+# Ignore snaps and tmpfs when running df
+alias df='df -x"squashfs" -x"tmpfs"'
+
 #alias cgrep='grep -I --exclude-dir "*build*" --exclude-dir .git -ER'
 alias cgrep='grep -I -ER \
     --exclude-dir "*build*" \
