@@ -104,13 +104,15 @@ pyblock(){
     necessary to escape some characters.
 
     Usage:
-       pyblock [PYEXE] TEXT
+       pyblock [PYEXE] TEXT [ARGS...]
 
     Args:
        PYEXE : positional arg to specify the python executable.
            if not specified, it defaults to "python"
 
        TEXT : arbitrary python code to execute
+
+       ARGS : sys.argv passed to the python program
 
     Notes:
         Capture results from stdout either using using
@@ -124,15 +126,41 @@ pyblock(){
             print(sys.executable)
         ")
         echo "OUTPUT = $OUTPUT"
+
+        OUTPUT = /home/joncrall/venv3.6/bin/python
+
+        OUTPUT=$(pyblock pypy "
+            import sys
+            print(sys.executable)
+        ")
+        echo "OUTPUT = $OUTPUT"
+
+        OUTPUT = /usr/bin/pypy
     '''
-    if [ "$2" ]; then
-        PYEXE="$1"
-        TEXT="$2"
-    else
-        PYEXE=python
-        TEXT="$1"
+    if [[ $# -eq 0 ]]; then
+        echo "MUST SUPPLY AN ARGUMENT: USAGE IS: pyblock [PYEXE] TEXT [ARGS...]"
     fi
-    $PYEXE -c "$(codeblock "$TEXT")"
+
+    # Default values
+    PYEXE=python
+    TEXT=""
+    if [ $# -gt 1 ] && [[ $(which "$1") != "" ]] ; then
+        # If the first arg executable, then assume it is a python executable
+        PYEXE=$1
+        # In this case the second arg must be text
+        TEXT=$2
+        # pop off these first two processed arguments, so the rest can be
+        # passed to the python program
+        shift
+        shift
+    else
+        # Usually the first argument is text
+        TEXT=$1
+        # pop off this processed arguments, so the rest can be passed down
+        shift
+    fi
+
+    $PYEXE -c "$(codeblock "$TEXT")" $@
 }
 
 
