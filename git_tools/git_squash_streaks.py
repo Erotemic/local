@@ -144,6 +144,13 @@ def find_chain(head, authors=None):
     """
     chain = []
     commit = head
+
+    preserve_tags = True  # We preserve tags by default
+
+    if preserve_tags:
+        tags = head.repo.tags
+        tagged_commits = {tag.commit for tag in tags}
+
     while len(commit.parents) <= 1:
         if authors is not None and commit.author.name not in authors:
             break
@@ -164,11 +171,17 @@ def find_chain(head, authors=None):
 
             break
 
+        if preserve_tags:
+            # If we are preserving tags, break the chain once we find one
+            if commit in tagged_commits:
+                break
+
         chain.append(commit)
         if len(commit.parents) > 0:
             commit = commit.parents[0]
         else:
             break
+
     return chain
 
 
