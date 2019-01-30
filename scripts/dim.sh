@@ -9,6 +9,14 @@ dim.sh
 
 if [ "$1" == "-u" ]; then
     redshift -O 6500 -b 1.0
+elif [ "$1" == "0" ]; then
+    redshift -O 6500 -b 1.0
+elif [ "$1" == "1" ]; then
+    redshift -O 3000 -b 0.6
+elif [ "$1" == "2" ]; then
+    redshift -O 2500 -b 0.5
+elif [ "$1" == "3" ]; then
+    redshift -O 2000 -b .3
 else
     #sudo apt-get install redshift
     #redshift -O 6500 -b 1.0
