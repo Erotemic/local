@@ -157,12 +157,12 @@ if pyvim_funcs.is_module_pythonfile():
         user_basepath = ub.compressuser(basepath)
         if user_basepath != basepath:
             lines.append('import sys, ubelt')
-            lines.append('sys.path.append(ubelt.truepath(%r))' % (user_basepath,))
+            lines.append('sys.path.append(ubelt.expandpath(%r))' % (user_basepath,))
         else:
             lines.append('import sys')
             lines.append('sys.path.append(%r)' % (basepath,))
 
-    lines.append("from {} import *".format(modname))
+    lines.append("from {} import *  # NOQA".format(modname))
     # Add private and protected functions
     try:
         sourcecode = ut.readfrom(modpath, verbose=False)
