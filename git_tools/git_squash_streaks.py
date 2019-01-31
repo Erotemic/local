@@ -100,7 +100,7 @@ class Streak(ub.NiceRepr):
         return self._streak[0]
 
 
-def find_chain(head, authors=None):
+def find_chain(head, authors=None, preserve_tags=True):
     """
     Find a chain of commits starting at the HEAD.  If `authors` is specified
     the commits must be from one of these authors.
@@ -137,6 +137,9 @@ def find_chain(head, authors=None):
     Args:
         head (git.Commit): starting point
         authors (set): valid authors
+        preserve_tags (bool, default=True): if True the chain is not allowed
+            to extend past any tags. If a set, then we will not procede past
+            any tag with a name in the set.
 
     Example:
         >>> # assuming you are in a git repo
@@ -145,10 +148,10 @@ def find_chain(head, authors=None):
     chain = []
     commit = head
 
-    preserve_tags = True  # We preserve tags by default
-
     if preserve_tags:
         tags = head.repo.tags
+        if isinstance(preserve_tags, (set, list, tuple)):
+            tags = {tag for tag in tags if tag.name in preserve_tags}
         tagged_commits = {tag.commit for tag in tags}
 
     while len(commit.parents) <= 1:
@@ -703,7 +706,7 @@ def git_squash_streaks():
     parser.add_argument(*('--pattern',), type=str,
                         help=help_dict['pattern'])
 
-    parser.add_argument(*('--tags',), action='store_true')
+    parser.add_argument(*('--tags',), action='store_true', help='experimental')
 
     parser.add_argument(*('--inplace',), action='store_true',
                         help=help_dict['inplace'])
