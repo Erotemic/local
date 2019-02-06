@@ -781,6 +781,10 @@ normalize_newline_eof()
     done
 }
 
+pyversion(){
+    python -c "import $1; print('$1.__version__ = ' + str($1.__version__))"
+}
+
 
 gitk(){
     # always spawn gitk in the background 
