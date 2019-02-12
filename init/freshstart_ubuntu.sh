@@ -290,8 +290,7 @@ fix_ssh_permissions(){
     chmod 600 ~/.ssh/authorized_keys
     chmod 600 ~/.ssh/known_hosts
     chmod 600 ~/.ssh/config
-    chmod 400 ~/.ssh/id_*rsa*
-    chmod 400 ~/.ssh/id_rsa*
+    chmod 400 ~/.ssh/id_*
     ls -al ~/.ssh
 }
 
@@ -320,6 +319,7 @@ entry_prereq_git_and_local()
     chmod 600 ~/.ssh/known_hosts
     chmod 600 ~/.ssh/config
     chmod 400 ~/.ssh/id_rsa*
+    chmod 400 ~/.ssh/id_ed*
 
     # If local does not exist
     if [ ! -f ~/local ]; then
