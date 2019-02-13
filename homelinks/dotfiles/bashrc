@@ -268,7 +268,7 @@ if [ "$DID_MY_BASHRC_INIT" == "" ]; then
         workon_py "$HOME/venv3"
     else
         #workon_py py36
-        conda activate py36
+        conda activate py37
     fi
 
 elif [ "$VIRTUAL_ENV" != "" ]; then
