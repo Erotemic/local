@@ -555,13 +555,13 @@ deactivate_venv()
 workon_py()
 {
     NEW_VENV=$1
-    echo "WEVN1: NEW_VENV = $NEW_VENV"
+    #echo "WEVN1: NEW_VENV = $NEW_VENV"
 
     if [ ! -f $NEW_VENV/bin/activate ]; then
         # Check if it is the name of a conda or virtual env
         # First try conda, then virtualenv
         TEMP_PATH=$_CONDA_ROOT/envs/$NEW_VENV
-        echo "TEMP_PATH = $TEMP_PATH"
+        #echo "TEMP_PATH = $TEMP_PATH"
         if [ -d $TEMP_PATH ]; then
             NEW_VENV=$TEMP_PATH
         else
@@ -571,22 +571,21 @@ workon_py()
             fi
         fi
     fi
-    echo "WEVN2: NEW_VENV = $NEW_VENV"
-
-    echo "TRY NEW VENV"
+    #echo "WEVN2: NEW_VENV = $NEW_VENV"
+    #echo "TRY NEW VENV"
 
     if [ -d $NEW_VENV/conda-meta ]; then
-        echo "NEW CONDA VENV"
+        #echo "NEW CONDA VENV"
         deactivate_venv
         # Use a conda environment
         conda activate $NEW_VENV
         export LD_LIBRARY_PATH=$NEW_VENV/lib:$LD_LIBRARY_PATH
         export CPATH=$NEW_VENV/include:$CPATH
-        echo "CPATH = $CPATH"
-        echo "LD_LIBRARY_PATH = $LD_LIBRARY_PATH"
-        echo "activated conda NEW_VENV=$NEW_VENV"
+        #echo "CPATH = $CPATH"
+        #echo "LD_LIBRARY_PATH = $LD_LIBRARY_PATH"
+        #echo "activated conda NEW_VENV=$NEW_VENV"
     elif [ -d $NEW_VENV ]; then
-        echo "NEW VENV"
+        #echo "NEW VENV"
         # Ensure the old env is deactivated
         deactivate_venv
         # Use a virtualenv environment
@@ -594,7 +593,7 @@ workon_py()
         export LD_LIBRARY_PATH=$NEW_VENV/local/lib:$LD_LIBRARY_PATH
         export LD_LIBRARY_PATH=$NEW_VENV/lib:$LD_LIBRARY_PATH
         source $NEW_VENV/bin/activate
-        echo "activated virtualenv NEW_VENV=$NEW_VENV"
+        #echo "activated virtualenv NEW_VENV=$NEW_VENV"
         # echo "activated NEW_VENV=$NEW_VENV"
     fi
     # echo "new venv doesn't exist"

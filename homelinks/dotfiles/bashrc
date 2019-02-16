@@ -271,9 +271,9 @@ if [ "$DID_MY_BASHRC_INIT" == "" ]; then
     if [[ "$HOSTNAME" == "namek"  ]]; then 
         workon_py "$HOME/venv3"
     else
-        #workon_py py36
+        #we py36
         #wenv py36
-        conda activate py37
+        conda activate py36
     fi
 
 elif [ "$VIRTUAL_ENV" != "" ]; then
