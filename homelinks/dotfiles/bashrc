@@ -78,6 +78,7 @@ if [ "$IS_JONCRALL" ]; then
     export LD_LIBRARY_PATH=""
     export CPATH=""
     export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
+    export CODE_DIR=$HOME/code
 fi
 
 ############
@@ -177,15 +178,6 @@ if [ -f "$HOME/.local/conda/etc/profile.d/conda.sh" ]; then
 fi
 
 
-# My standard environment variables
-if [[ "$HOSTNAME" == "ibeis.cs.uic.edu"  ]]; then 
-    export CODE_DIR=/opt/ibeis
-elif [[ "$HOSTNAME" == "pachy.cs.uic.edu"  ]]; then 
-    export CODE_DIR=/opt/ibeis
-else
-    export CODE_DIR=$HOME/code
-fi
-
 if [[ "$OSTYPE" == "darwin"* ]]; then
     export NCPUS=$(sysctl -n hw.ncpu)
     #source $HOME/local/homelinks/helpers/bashrc_mac.sh
@@ -223,12 +215,7 @@ fi
 if [[ "$HOSTNAME" == "hyrule"  ]]; then 
     export TEXLIVE_BIN=$(echo /usr/local/texlive/*/bin/x86_64-linux)
 elif [[ "$HOSTNAME" == "Ooo"  ]]; then 
-    export THEANO_FLAGS="device=cpu"
     export TEXLIVE_BIN=$(echo /usr/local/texlive/*/bin/x86_64-linux)
-elif [[ "$HOSTNAME" == "Leviathan"  ]]; then 
-    export THEANO_FLAGS='floatX=float32,device=cuda'
-else
-    export PATH=$PATH
 fi
 
 
