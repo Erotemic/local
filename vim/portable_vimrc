@@ -345,8 +345,8 @@ call QUICKOPEN_leader_tvio('l', '~/code/VIAME/plugins')
 "call QUICKOPEN_leader_tvio('v', '~/code/VIAME/packages/kwiver/vital')
 "call QUICKOPEN_leader_tvio('a', '~/code/VIAME/packages/kwiver/arrows')
 
-call QUICKOPEN_leader_tvio('k', '~/code/kwiver')
-call QUICKOPEN_leader_tvio('K', '~/code/VIAME/packages/kwiver')
+"call QUICKOPEN_leader_tvio('k', '~/code/kwiver')
+"call QUICKOPEN_leader_tvio('K', '~/code/VIAME/packages/kwiver')
 
 call QUICKOPEN_leader_tvio('r', '~/code/kwiver/sprokit')
 call QUICKOPEN_leader_tvio('R', '~/code/VIAME/packages/kwiver/sprokit')
