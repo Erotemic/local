@@ -271,7 +271,8 @@ mode = vim.eval('a:1')
 indent = pyvim_funcs.get_cursor_py_indent()
 newtext = '\n'.join([
     indent + 'import ubelt as ub',
-    indent + 'for timer in ub.Timerit(100, bestof=10, label=\'time\'):',
+    indent + 'ti = ub.Timerit(100, bestof=10, verbose=2)',
+    indent + 'for timer in ti.reset(\'time\'):',
     indent + '    with timer:',
 ])
 if 'v' in mode.lower():
