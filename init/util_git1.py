@@ -268,11 +268,20 @@ def gitcmd(repo, command):
 
 def gg_command(command):
     """ Runs a command on all of your PROJECT_REPOS """
+    errors = []
     for repo in REPOS1.PROJECT_REPOS:
-        if exists(repo) and exists(join(repo, '.git')):
-            gitcmd(repo, command)
-        else:
-            print('No checkout for {}'.format(repo))
+        try:
+            if exists(repo) and exists(join(repo, '.git')):
+                gitcmd(repo, command)
+            else:
+                raise Exception('No checkout for {}'.format(repo))
+        except Exception as ex:
+            errors.append((repo, ex))
+
+    if errors:
+        print('There were {} errors'.format(len(errors)))
+        for repo, ex in errors:
+            print('ex = {!r} in {!r}'.format(ex, repo))
 
 
 def clone_repos():
