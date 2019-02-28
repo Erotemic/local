@@ -1,8 +1,7 @@
 #!/bin/bash
 #ipython qtconsole --colors=Linux --autocall 2 --pylab=qt
 
-export QT_API=pyqt 
-ipython qtconsole --colors=Linux --gui=qt --matplotlib=qt --pylab=qt  
+QT_API=pyqt5 ipython qtconsole --colors=Linux --gui=qt --matplotlib=qt --pylab=qt  
 #ipython qtconsole --colors=Linux --pylab=qt
 #ipython qtconsole --colors=Linux
 

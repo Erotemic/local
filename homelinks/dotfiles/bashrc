@@ -58,8 +58,8 @@ else
     IS_JONCRALL=""
 fi
 
-export QT_ACCESSIBILITY=0
-export QT_API=pyqt5
+#export QT_ACCESSIBILITY=0
+#export QT_API=pyqt5
 
 #export CC=gcc
 #export CXX=g++
