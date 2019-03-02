@@ -545,7 +545,7 @@ def do_tags(verbose=True, inplace=False, dry=True, auto_rollback=False):
 
 def squash_streaks(authors, timedelta='sameday', pattern=None, inplace=False,
                    auto_rollback=True, dry=False, verbose=True,
-                   custom_streak=None):
+                   custom_streak=None, preserve_tags=True):
     """
     Squashes consecutive commits with the same message within a time range.
 
@@ -569,6 +569,9 @@ def squash_streaks(authors, timedelta='sameday', pattern=None, inplace=False,
         verbose (bool): verbosity flag (Default: True)
         custom_streak(tuple): hack, specify two commits to explicitly squash
             only this streak is used. We do not automatically check for others.
+        preserve_tags (bool, default=True): if True the chain is not allowed
+            to extend past any tags. If a set, then we will not procede past
+            any tag with a name in the set.
     """
     if verbose:
         if dry:
@@ -605,7 +608,7 @@ def squash_streaks(authors, timedelta='sameday', pattern=None, inplace=False,
         # assert repo.is_ancestor(ancestor_rev=b, rev=a)
         streaks = [Streak(a, _streak=[a, b])]
     else:
-        chain = find_chain(head, authors=authors)
+        chain = find_chain(head, authors=authors, preserve_tags=preserve_tags)
         if verbose:
             print('Found chain of length %r' % (len(chain)))
             # print(ub.repr2(chain, nl=1))
@@ -708,6 +711,9 @@ def git_squash_streaks():
 
     parser.add_argument(*('--tags',), action='store_true', help='experimental')
 
+    parser.add_argument(*('--no-preserve-tags',), dest='preserve_tags',
+                        action='store_false', help=help_dict['preserve_tags'])
+
     parser.add_argument(*('--inplace',), action='store_true',
                         help=help_dict['inplace'])
 
@@ -733,6 +739,7 @@ def git_squash_streaks():
     parser.set_defaults(
         tags=False,
         inplace=False,
+        preserve_tags=True,
         auto_rollback=False,
         authors=None,
         pattern=None,
