@@ -100,7 +100,7 @@ class Streak(ub.NiceRepr):
         return self._streak[0]
 
 
-def find_chain(head, authors=None, preserve_tags=True):
+def find_chain(head, authors=None, preserve_tags=True, oldest_commit=None):
     """
     Find a chain of commits starting at the HEAD.  If `authors` is specified
     the commits must be from one of these authors.
@@ -173,6 +173,13 @@ def find_chain(head, authors=None, preserve_tags=True):
                 '''))
 
             break
+
+        if oldest_commit is not None:
+            if commit.hexsha.startswith(oldest_commit):
+                break
+
+            if oldest_commit in tagged_commits:
+                break
 
         if preserve_tags:
             # If we are preserving tags, break the chain once we find one
@@ -545,7 +552,7 @@ def do_tags(verbose=True, inplace=False, dry=True, auto_rollback=False):
 
 def squash_streaks(authors, timedelta='sameday', pattern=None, inplace=False,
                    auto_rollback=True, dry=False, verbose=True,
-                   custom_streak=None, preserve_tags=True):
+                   custom_streak=None, preserve_tags=True, oldest_commit=None):
     """
     Squashes consecutive commits with the same message within a time range.
 
@@ -572,6 +579,8 @@ def squash_streaks(authors, timedelta='sameday', pattern=None, inplace=False,
         preserve_tags (bool, default=True): if True the chain is not allowed
             to extend past any tags. If a set, then we will not procede past
             any tag with a name in the set.
+        oldest_commit (str, default=None): if specified we will only squash
+            commits toplogically after this commit in the graph.
     """
     if verbose:
         if dry:
@@ -608,7 +617,8 @@ def squash_streaks(authors, timedelta='sameday', pattern=None, inplace=False,
         # assert repo.is_ancestor(ancestor_rev=b, rev=a)
         streaks = [Streak(a, _streak=[a, b])]
     else:
-        chain = find_chain(head, authors=authors, preserve_tags=preserve_tags)
+        chain = find_chain(head, authors=authors, preserve_tags=preserve_tags,
+                           oldest_commit=oldest_commit)
         if verbose:
             print('Found chain of length %r' % (len(chain)))
             # print(ub.repr2(chain, nl=1))
@@ -713,6 +723,9 @@ def git_squash_streaks():
 
     parser.add_argument(*('--no-preserve-tags',), dest='preserve_tags',
                         action='store_false', help=help_dict['preserve_tags'])
+
+    parser.add_argument(*('--oldest-commit',), dest='oldest_commit',
+                        help=help_dict['oldest_commit'])
 
     parser.add_argument(*('--inplace',), action='store_true',
                         help=help_dict['inplace'])
