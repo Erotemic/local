@@ -808,4 +808,13 @@ def git_squash_streaks():
 
 
 if __name__ == '__main__':
+    """
+    Example Usage:
+
+        # Squash between two commits
+
+        git-squash-streaks --custom_streak 7b30a46af68169e3ea38d1f821440f11c25f929f 1dcf7a4ed744feb202e05717e475c1f3bb7ec842
+
+
+    """
     git_squash_streaks()
