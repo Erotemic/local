@@ -52,7 +52,7 @@ CUDA_HOST_COMPILER=/usr/bin/gcc-5 CC=gcc-5 CXX=g++-5 python setup.py build_ext -
 
 
 # Test if I am logging into my own account.
-if [ "$USER" == "jon.crall" ] || [ "$USER" == "joncrall" ] ; then
+if [ "$USER" = "jon.crall" ] || [ "$USER" = "joncrall" ] ; then
     IS_JONCRALL=True
 else
     IS_JONCRALL=""
