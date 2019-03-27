@@ -411,3 +411,10 @@ let g:SuperTabDefaultCompletionType = "context"
 
 "" Don't autofold code
 "let g:pymode_folding = 0
+"
+"
+"-------------------------
+" PLUGIN: Autopep8
+" https://github.com/tell-k/vim-autopep8
+
+let g:autopep8_aggressive=1
