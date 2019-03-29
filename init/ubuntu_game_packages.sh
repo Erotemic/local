@@ -337,6 +337,7 @@ install_cockatrice()
     sudo apt-get install libprotobuf-dev qtmobility-dev -y
     sudo apt-get install protobuf-compiler -y
 
+    sudo apt install libqt5websockets5 libqt5multimedia5 -y
 
     # https://github.com/Cockatrice/Cockatrice/wiki/Compiling-Cockatrice-(Linux)#ubuntu-linux
     sudo apt update
@@ -346,7 +347,11 @@ install_cockatrice()
     sudo apt install qtmultimedia5-dev libqt5multimedia5-plugins libqt5svg5-dev libqt5sql5-mysql -y
     sudo apt install -y libgcrypt11-dev
 
-    sudo apt install qtbase5-dev
+
+    apt-file search Qt5MultimediaConfig.cmake
+    apt-file search Qt5SvgConfig.cmake
+    
+    sudo apt install qtbase5-dev qtmultimedia5-dev libqt5svg5-dev libqt5websockets5-dev -y
 
     fix_mesa_libEGL(){
         # NEED TO FIX MESA LIBGL SYMLINK REFERENCED BY Qt5::Gui
