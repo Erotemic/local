@@ -125,7 +125,7 @@ class Repo(object):
 
         Example:
             >>> # DISABLE_DOCTEST
-            >>> repo = dirname(ut.get_modpath(ut, prefer_pkg=True))
+            >>> repo = dirname(dirname(ub.__file__))
             >>> command = 'git status'
             >>> sudo = False
             >>> result = repocmd(repo, command, sudo)
@@ -209,7 +209,7 @@ class Repo(object):
     def short_status(repo):
         r"""
         Example:
-            >>> repo = Repo(dpath=ut.truepath('.'))
+            >>> repo = Repo(dpath=ub.truepath('.'))
             >>> result = repo.short_status()
             >>> print(result)
         """
@@ -248,12 +248,12 @@ class Repo(object):
 
 def gitcmd(repo, command):
     try:
-        import utool as ut
+        import ubelt as ub
     except ImportError:
         print()
         print("************")
         try:
-            print('repo=%s' % ut.color_text(repo.dpath, 'yellow'))
+            print('repo=%s' % ub.color_text(repo.dpath, 'yellow'))
         except Exception:
             print('repo = %r ' % (repo,))
         os.chdir(repo)

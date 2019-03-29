@@ -33,7 +33,7 @@ def nerdtree_withbat():
     # FIXME: Fix the tilde
 
     # Convert files and suffixes to regexes
-    ignore_suffix_regexes = [suffix.replace('.', '\\.') + '$' for suffix in ignore_suffixes]
+    ignore_suffix_regexes = [suffix.replace('.', '\\\\.') + '$' for suffix in ignore_suffixes]
     ignore_file_regexes   = ['^' + fname + '$' for fname in ignore_files]
     ignore_regexes = ignore_suffix_regexes + ignore_file_regexes
 
@@ -411,3 +411,10 @@ let g:SuperTabDefaultCompletionType = "context"
 
 "" Don't autofold code
 "let g:pymode_folding = 0
+"
+"
+"-------------------------
+" PLUGIN: Autopep8
+" https://github.com/tell-k/vim-autopep8
+
+let g:autopep8_aggressive=1

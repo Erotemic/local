@@ -11,17 +11,75 @@ CommandLine:
     python %USERPROFILE%/local/init/ensure_vim_plugins.py
 """
 from __future__ import absolute_import, division, print_function, unicode_literals
+from os.path import basename
+from os.path import commonprefix
+from os.path import dirname
+from os.path import exists
+from os.path import split
+from os.path import splitext
 import sys
 import os
 from os.path import join
-from meta_util_git1 import cd
-import util_git1
+
+
+def grab_zipped_url(url):
+    import ubelt as ub
+    def unzip_file(zip_fpath, force_commonprefix=True, output_dir=None,
+                   prefix=None, dryrun=False, overwrite=None, verbose=1):
+        import zipfile
+        zip_file = zipfile.ZipFile(zip_fpath)
+        if output_dir is None:
+            output_dir  = dirname(zip_fpath)
+        archive_namelist = zip_file.namelist()
+
+        # force extracted components into a subdirectory if force_commonprefix is
+        if prefix is not None:
+            output_dir = join(output_dir, prefix)
+            ub.ensuredir(output_dir)
+
+        archive_basename, ext = splitext(basename(zip_fpath))
+        if force_commonprefix and commonprefix(archive_namelist) == '':
+            # use the archivename as the default common prefix
+            output_dir = join(output_dir, archive_basename)
+            ub.ensuredir(output_dir)
+
+        for member in archive_namelist:
+            (dname, fname) = split(member)
+            dpath = join(output_dir, dname)
+            ub.ensuredir(dpath)
+            if verbose:
+                print('Unarchive ' + fname + ' in ' + dpath)
+
+            if not dryrun:
+                if overwrite is False:
+                    if exists(join(output_dir, member)):
+                        continue
+                zip_file.extract(member, path=output_dir)
+        zip_file.close()
+
+        # hack
+        return join(output_dir, archive_basename)
+
+    zip_fpath = ub.grabdata(url)
+    dpath = unzip_file(zip_fpath)
+    return dpath
 
 
 def ensure_ctags_win32():
-    import utool as ut
-    from os.path import join
-    dpath = ut.grab_zipped_url('http://prdownloads.sourceforge.net/ctags/ctags58.zip')
+    """
+
+    import netharn as nh
+    closer = nh.export.closer.Closer()
+
+    closer.add_dynamic(ut.unzip_file)
+    # closer.expand(['utool']) # FIXME
+
+    print(closer.current_sourcecode())
+    """
+    import ubelt as ub
+    import shutil
+
+    # dpath = ut.grab_zipped_url('http://prdownloads.sourceforge.net/ctags/ctags58.zip')
     """
     TODO: Download the zipfile, then unzip and take ONLY the
     file ctags58/ctags58/ctags.exe and move it somewhere in the path
@@ -34,9 +92,19 @@ def ensure_ctags_win32():
     """
 
     ctags_fname = 'ctags.exe'
+    dpath = grab_zipped_url('http://prdownloads.sourceforge.net/ctags/ctags58.zip')
     ctags_src = join(dpath, ctags_fname)
+
+    # We need to copy the ctags executable into the mingw bin directory
+    # (so it is on our PATH)
+    candidates = ub.find_path('mingw*bin')
+    if len(candidates) == 0:
+        raise Exception('Could not find mingw')
+    else:
+        copydir = candidates[0]
+
     def find_mingw_bin():
-        pathdirs = ut.get_path_dirs()
+        pathdirs = ub.find_path('')  # list all directories in PATH
         copydir = None
         # hueristic for finding mingw bin
         for pathdir in pathdirs:
@@ -49,9 +117,9 @@ def ensure_ctags_win32():
         return copydir
     copydir = find_mingw_bin()
     ctags_dst = join(copydir, ctags_fname)
-    ut.copy(ctags_src, ctags_dst, overwrite=False)
-    #ut.cmd(ctags_exe)
-    #ut.view_directory(dpath)
+    shutil.copy2(ctags_src, ctags_dst)
+    #ub.cmd(ctags_exe)
+    #xdev.view_directory(dpath)
 
 
 def ensuredir(path):
@@ -61,14 +129,14 @@ def ensuredir(path):
 
 def ensure_nongit_plugins():
     try:
-        import utool as ut
+        import ubelt as ub
         import REPOS1
-        BUNDLE_DPATH = util_git1.BUNDLE_DPATH
+        BUNDLE_DPATH = REPOS1.BUNDLE_DPATH
         for url in REPOS1.VIM_NONGIT_PLUGINS:
-            fpath = ut.grab_zipped_url(url, download_dir=BUNDLE_DPATH)
+            fpath = grab_zipped_url(url, download_dir=BUNDLE_DPATH)
             if fpath.endswith('.vba'):
                 cmd_ = 'vim ' + fpath + ' -c "so % | q"'
-                ut.cmd(cmd_)
+                ub.cmd(cmd_, verbose=3)
             print('url = %r' % (url,))
     except ImportError:
         print('Cant do nongit plugins without utool')
@@ -83,20 +151,32 @@ def main():
             print('failed to get ctags.exe for win32')
             pass
 
-    PULL = '--pull' in sys.argv
+    import REPOS1
+    import util_git1
+    from meta_util_git1 import get_repo_dirs
+    from meta_util_git1 import cd
 
-    BUNDLE_DPATH = util_git1.BUNDLE_DPATH
+    BUNDLE_DPATH = REPOS1.BUNDLE_DPATH
     ensuredir(BUNDLE_DPATH)
-    VIM_REPOS_WITH_SUBMODULES = util_git1.VIM_REPOS_WITH_SUBMODULES
-    VIM_REPO_URLS = util_git1.VIM_REPO_URLS
-    VIM_REPO_DIRS = util_git1.get_repo_dirs(VIM_REPO_URLS, BUNDLE_DPATH)
+    VIM_REPOS_WITH_SUBMODULES = REPOS1.VIM_REPOS_WITH_SUBMODULES
+    VIM_REPO_URLS = REPOS1.VIM_REPO_URLS
+    VIM_REPO_DIRS = get_repo_dirs(VIM_REPO_URLS, BUNDLE_DPATH)
     # All modules in the bundle dir (even if not listed)
     import os
-    BUNDLE_DIRS = [join(BUNDLE_DPATH, name) for name in os.listdir(BUNDLE_DPATH)]
+    BUNDLE_DIRS = [join(BUNDLE_DPATH, name)
+                   for name in os.listdir(BUNDLE_DPATH)]
 
     cd(BUNDLE_DPATH)
 
-    util_git1.checkout_repos(VIM_REPO_URLS, VIM_REPO_DIRS)
+    print('VIM_REPO_DIRS = {!r}'.format(VIM_REPO_DIRS))
+    print('VIM_REPO_URLS = {!r}'.format(VIM_REPO_URLS))
+    # util_git1.checkout_repos(VIM_REPO_URLS, VIM_REPO_DIRS)
+    import ubelt as ub
+    for repodir, repourl in zip(VIM_REPO_DIRS, VIM_REPO_URLS):
+        print('[git] checkexist: ' + repodir)
+        if not exists(repodir):
+            cd(dirname(repodir))
+            ub.cmd('git clone ' + repourl, verbose=3)
 
     __NOT_GIT_REPOS__ = []
     __BUNDLE_REPOS__  = []
@@ -108,7 +188,7 @@ def main():
         else:
             __BUNDLE_REPOS__.append(repodir)
 
-    if PULL:
+    if ub.argflag('--pull'):
         util_git1.pull_repos(__BUNDLE_REPOS__, VIM_REPOS_WITH_SUBMODULES)
 
     ensure_nongit_plugins()
@@ -146,6 +226,10 @@ def main():
 
 
 if __name__ == '__main__':
+    """
+    CommandLine:
+        python ~/local/init/ensure_vim_plugins.py
+    """
     main()
     #PULL = '--pull' in sys.argv
 

@@ -12,7 +12,7 @@ __heredoc__(){ NOOP=; }
 
 unlink_or_backup()
 {
-    __heredoc__ '''
+    __heredoc__='''
     Get a file or directory out of the way without removing it.
 
     If TARGET exists, it is removed if it is a link, otherwise if it is a file or
@@ -24,7 +24,7 @@ unlink_or_backup()
 
     Args:
         TARGET (str): a path to a directory, link, or file
-    ''' 
+    '''
 
     TARGET=$1
     if [ -L $TARGET ]; then
@@ -38,7 +38,7 @@ unlink_or_backup()
 
 
 have_sudo(){
-    __heredoc__ '''
+    __heredoc__='''
     Tests if we have the ability to use sudo.
     Returns the string "True" if we do.
 
@@ -63,7 +63,7 @@ have_sudo(){
 
 
 has_pymodule(){
-    __heredoc__ '''
+    __heredoc__='''
     Check if a python module is installed. Echos "True" or "False" to the
     command line depending on the result.
 
@@ -97,7 +97,7 @@ has_pymodule(){
 }
 
 pyblock(){
-    __heredoc__ '''
+    __heredoc__='''
     Executes python code and handles nice indentation.  Need to be slightly
     careful about the type of quotes used.  Typically stick to doublequotes
     around the code and singlequotes inside python code. Sometimes it will be

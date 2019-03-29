@@ -61,12 +61,15 @@ noremap <leader>ep :call GrepWordAtCursor('project')<CR>
 
 " Python Debugging Snippets
 noremap  <c-b>   :call PyMakeEmbed()<CR><Esc>
-noremap  <c-M-B> :call PyMakeWithEmbed(mode())<CR><Esc>
-vnoremap <c-M-B> :call PyMakeWithEmbed(visualmode())<CR><Esc>
-noremap  <m-b>   :call PyMakeTimerit(mode())<CR><Esc>
-vnoremap <m-b>   :call PyMakeTimerit(visualmode())<CR><Esc>
-inoremap <c-M-B> <Esc>:call PyMakeWithEmbed()<CR>i
 inoremap <c-b>   <Esc>:call PyMakeEmbed()<CR>i
+
+noremap  <m-b>   :call PyMakeWithEmbed(mode())<CR><Esc>
+vnoremap <m-b>   :call PyMakeWithEmbed(visualmode())<CR><Esc>
+inoremap <m-b> <Esc>:call PyMakeWithEmbed()<CR>i
+
+" Timing
+noremap  <c-M-B> :call PyMakeTimerit(mode())<CR><Esc>
+vnoremap <c-M-B> :call PyMakeTimerit(visualmode())<CR><Esc>
 
 " Python Autogen Snippets
 noremap <leader>d  :call InsertDocstr()<CR>

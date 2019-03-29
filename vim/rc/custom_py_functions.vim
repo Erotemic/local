@@ -306,7 +306,9 @@ endfunc
 
 func! FUNC_AutoImport() 
 Python2or3 << EOF
-# FIXME: Unfinished
+
+# TODO
+# - [ ] Push to vimtk
 import vim
 import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
 import xinspect

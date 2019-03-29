@@ -108,8 +108,7 @@ class ChdirContext(object):
     """
     def __init__(self, dpath=None, stay=False, verbose=None):
         if verbose is None:
-            import utool as ut
-            verbose = ut.NOT_QUIET
+            verbose = 1
         self.verbose = verbose
         self.stay = stay
         self.dpath = dpath

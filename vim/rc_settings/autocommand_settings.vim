@@ -61,6 +61,7 @@ endfu
 :call AuOnReadPatterns('set ft=cmake', '*.poly', '*.node', '.ele')
 :call AuOnReadPatterns('set ft=cython', '*.pyx', '.pxd')
 :call AuOnReadPatterns('set ft=Autohotkey', '*.ahk')
+:call AuOnReadPatterns('set ft=conf', '*.conf')
 ":call AuOnReadPatterns('set ft=markdown', '*.md')
 au MyVimRC BufNewFile,BufReadPost *.md set filetype=markdown
 

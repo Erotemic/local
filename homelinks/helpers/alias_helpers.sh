@@ -26,6 +26,7 @@ alias cgrep='grep -I -ER \
     --exclude-dir "volumes" \
     --exclude-dir "*.egg-info" \
     --exclude "searchindex.js" \
+    --exclude "*.js" \
     --exclude "*.dot*" \
     --exclude "*.rst*" \
     --exclude "*.html*" \
