@@ -1,6 +1,10 @@
 " Functions that help program python code. 
 " These are mostly snippet-like things, there is some navigation stuff,
 " some autoformating
+"
+" TODO:
+"  - [ ] Any of these functions that are actually useful should get moved to 
+"  ~/local/vim/vimfiles/bundle/vimtk/autoload/vimtk.vim
 
 fu! REVERSE_DICT()
     :s/\([^{ :]*\): \([^,]*\),/\2: \1,/gc
@@ -304,59 +308,59 @@ EOF
 endfunc
 
 
-func! FUNC_AutoImport() 
-Python2or3 << EOF
+"func! FUNC_AutoImport() 
+"Python2or3 << EOF
 
-# TODO
-# - [ ] Push to vimtk
-import vim
-import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
-import xinspect
-import ubelt as ub
+"# TODO
+"# - [ ] Push to vimtk
+"import vim
+"import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+"import xinspect
+"import ubelt as ub
 
-from xinspect.autogen import Importables
+"from xinspect.autogen import Importables
 
-if True:
-    import imp
-    imp.reload(xinspect)
-    imp.reload(xinspect.autogen)
+"if True:
+"    import imp
+"    imp.reload(xinspect)
+"    imp.reload(xinspect.autogen)
 
-pyvim_funcs.ensure_normalmode()
+"pyvim_funcs.ensure_normalmode()
 
-if pyvim_funcs.is_module_pythonfile():
-    importable = Importables()  
-    importable._use_recommended_defaults()
-    importable.known.update({  
-        'it': 'import itertools as it',
-        'nh': 'import netharn as nh',
-        'np': 'import numpy as np',
-        'pd': 'import pandas as pd',
-        'ub': 'import ubelt as ub',
-        'nx': 'import networkx as nx',
-        'Image': 'from PIL import Image',
-        'mpl': 'import matplotlib as mpl',
-        'nn': 'from torch import nn',
-        'torch_data': 'import torch.utils.data as torch_data',
-        'F': 'import torch.nn.functional as F',
-        'math': 'import math',
-        # 'Variable': 'from torch.autograd import Variable',
-    })
-    fpath = pyvim_funcs.get_current_fpath()
-    lines = xinspect.autogen_imports(fpath=fpath, importable=importable)
+"if pyvim_funcs.is_module_pythonfile():
+"    importable = Importables()  
+"    importable._use_recommended_defaults()
+"    importable.known.update({  
+"        'it': 'import itertools as it',
+"        'nh': 'import netharn as nh',
+"        'np': 'import numpy as np',
+"        'pd': 'import pandas as pd',
+"        'ub': 'import ubelt as ub',
+"        'nx': 'import networkx as nx',
+"        'Image': 'from PIL import Image',
+"        'mpl': 'import matplotlib as mpl',
+"        'nn': 'from torch import nn',
+"        'torch_data': 'import torch.utils.data as torch_data',
+"        'F': 'import torch.nn.functional as F',
+"        'math': 'import math',
+"        # 'Variable': 'from torch.autograd import Variable',
+"    })
+"    fpath = pyvim_funcs.get_current_fpath()
+"    lines = xinspect.autogen_imports(fpath=fpath, importable=importable)
 
 
-    x = ub.group_items(lines, [x.startswith('from ') for x in lines])
-    ordered_lines = []
-    ordered_lines += sorted(x.get(False, []))
-    ordered_lines += sorted(x.get(True, []))
-    import_block = '\n'.join(ordered_lines)
-    # FIXME: doesnt work right when row=0
-    with pyvim_funcs.CursorContext(offset=len(lines)):
-        pyvim_funcs.prepend_import_block(import_block)
-else:
-    print('current file is not a pythonfile')
-#L______________
-EOF
-endfu 
-command! AutoImport call FUNC_AutoImport()
+"    x = ub.group_items(lines, [x.startswith('from ') for x in lines])
+"    ordered_lines = []
+"    ordered_lines += sorted(x.get(False, []))
+"    ordered_lines += sorted(x.get(True, []))
+"    import_block = '\n'.join(ordered_lines)
+"    # FIXME: doesnt work right when row=0
+"    with pyvim_funcs.CursorContext(offset=len(lines)):
+"        pyvim_funcs.prepend_import_block(import_block)
+"else:
+"    print('current file is not a pythonfile')
+"#L______________
+"EOF
+"endfu 
+"command! AutoImport call FUNC_AutoImport()
 
