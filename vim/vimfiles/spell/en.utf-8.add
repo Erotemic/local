@@ -502,3 +502,4 @@ kwplot
 ndsampler
 scriptconfig
 Kitware
+Cython
