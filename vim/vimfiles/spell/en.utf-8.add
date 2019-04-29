@@ -246,7 +246,6 @@ Voronoi
 WACV
 WAMI
 Weideman
-WildBook
 Wildbook
 Xia
 YOLO
@@ -259,8 +258,6 @@ Zisserman
 achieved
 ada
 algo
-alpha
-alpha
 alpha
 argmax
 args
@@ -341,7 +338,6 @@ heatmap
 hoc
 homography
 hypergeometric
-hypergeometric
 hyperparameter
 hyperparameters
 idf
@@ -362,10 +358,7 @@ k
 kNN
 kd
 keypoint
-keypoint
 keypoint's
-keypoint's
-keypoints
 keypoints
 kwarg
 kwargs
@@ -386,7 +379,6 @@ matplotlib
 maxout
 memoization
 metadata
-misdetections
 misdetections
 mislabelings
 mixin
@@ -431,7 +423,6 @@ r
 rasterize
 recomputation
 renormalize
-renormalize
 reprojection
 repurpose
 resampling
@@ -446,8 +437,6 @@ rsync
 s
 scriptconfig
 segfaults
-skinks
-skinks
 skinks
 softmax
 sprokit
@@ -464,8 +453,6 @@ subgraphs
 subpixel
 subwindow
 superpixel
-superpixel
-superpixels
 superpixels
 t
 tf
