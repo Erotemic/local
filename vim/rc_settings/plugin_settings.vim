@@ -283,21 +283,21 @@ let Tlist_Auto_Highlight_Tag = 1
 " PLUGIN: Buffergator
 " https://github.com/jeetsukumaran/vim-buffergator/blob/master/doc/buffergator.txt
 " Remove mappings that I dont like 
-if index(g:pathogen_disabled, 'vim-buffergator') < 0
-    echo "BAD"
-    silent! unmap!  <leader><S-Down>  
-    silent! unmap!  <leader><S-Right>  
-    silent! unmap!  <leader><S-Up>     
-    silent! unmap!  <leader><S-Left>   
-    silent! unmap!  <leader><Down>     
-    silent! unmap!  <leader><Right>    
-    silent! unmap!  <leader><Up>       
-    silent! unmap!  <leader><Left>     
-    silent! unmap!  <leader>T          
-    silent! unmap!  <leader>tc         
-    silent! unmap!  <leader>to         
-    silent! unmap!  <leader>t          
-endif 
+"if index(g:pathogen_disabled, 'vim-buffergator') < 0
+"    echo "BAD"
+"    silent! unmap!  <leader><S-Down>  
+"    silent! unmap!  <leader><S-Right>  
+"    silent! unmap!  <leader><S-Up>     
+"    silent! unmap!  <leader><S-Left>   
+"    silent! unmap!  <leader><Down>     
+"    silent! unmap!  <leader><Right>    
+"    silent! unmap!  <leader><Up>       
+"    silent! unmap!  <leader><Left>     
+"    silent! unmap!  <leader>T          
+"    silent! unmap!  <leader>tc         
+"    silent! unmap!  <leader>to         
+"    silent! unmap!  <leader>t          
+"endif 
 " 
 
 " VimTweak
