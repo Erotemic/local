@@ -110,6 +110,31 @@ EOF
 endfu 
 
 
+func! FormatJson() 
+Python2or3 << EOF
+# FIXME: Unfinished
+import vim
+import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+
+pyvim_funcs.ensure_normalmode()
+
+try:
+    print('formating json')
+    import json
+    import vim
+    text = '\n'.join(vim.current.buffer[:])
+    data = json.loads(text)
+    text = json.dumps(data, indent=4)
+    # pyvim_funcs.insert_codeblock_under_cursor(text)
+    pyvim_funcs.overwrite_text(text)
+except Exception as ex:
+    print('ex = {!r}'.format(ex))
+    print('error formating json')
+#L______________
+EOF
+endfu 
+
+
 func! AutoPep8Block() 
 Python2or3 << EOF
 # FIXME: Unfinished

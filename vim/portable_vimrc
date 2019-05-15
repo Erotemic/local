@@ -207,6 +207,7 @@ filetype plugin indent on
 syntax on
 
 "call virtualenv#activate('venv3')
+":VirtualEnvActivate
 " VirtualEnvActivate venv3
 
 
