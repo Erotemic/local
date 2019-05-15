@@ -64,6 +64,7 @@ CommandLine;
 """
 
 VIM_REPO_URLS, VIM_REPOS = repo_list([
+    'https://github.com/VundleVim/Vundle.vim.git',
     'https://github.com/chrisbra/unicode.vim.git',
 
     #'https://github.com/dbarsam/vim-vimtweak.git',
