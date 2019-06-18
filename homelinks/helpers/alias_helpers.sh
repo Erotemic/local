@@ -6,7 +6,9 @@
 # Unix aliases
 
 alias pytree='tree -P "*.py" --dirsfirst'
-alias ls='ls --color --human-readable --group-directories-first --hide="*.pyc" --hide="*.pyo"'
+#alias ls='ls --color --human-readable --group-directories-first --hide="*.pyc" --hide="*.pyo"'
+alias ls='ls --color --human-readable --group-directories-first'
+#--hide="*.pyc" --hide="*.pyo"'
 alias pygrep='grep -r --include "*.py"'
 alias clean_python='find . -regex ".*\(__pycache__\|\.py[co]\)" -delete || find . -iname *.pyc -delete || find . -iname *.pyo -delete'
 

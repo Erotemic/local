@@ -301,3 +301,5 @@ DID_MY_BASHRC_INIT="TRUE"
 # super trick: make multiprocessing actually use multiple cores
 # https://stackoverflow.com/questions/15639779/why-does-multiprocessing-use-only-a-single-core-after-i-import-numpy
 #export OPENBLAS_MAIN_FREE=1
+
+alias ls='ls --color --human-readable'
