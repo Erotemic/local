@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "
+__heredoc__="
 
 Need to ensure ~/.ssh/config has the remote setup
 
@@ -10,8 +10,11 @@ Example:
        User jon.crall
 
 Notes:
-    sshfs -o follow_symlinks,idmap=user aretha:/home/local/KHQ/jon.crall ~/aretha
-    sshfs -o follow_symlinks,idmap=user aretha: ~/aretha
+    sshfs -o follow_symlinks,idmap=user aretha:/home/local/KHQ/jon.crall ~/remote/aretha
+    sshfs -o follow_symlinks,idmap=user aretha: ~/remote/aretha
+
+    sshfs -o follow_symlinks,idmap=user videonas: ~/remote/videonas
+    fusermount -u ~/remote/videonas
 
 CommandLine:
 
@@ -19,7 +22,7 @@ CommandLine:
     source ~/local/scripts/mount-remotes.sh
     mount_remote namek
 
-" > /dev/null
+" 
 
 
 setup_local_pseudo_mount(){
@@ -179,5 +182,6 @@ fi
 
 # This works now that I have permission
 #mkdir -p ~/remote/videonas2/other
-#sudo mount -t cifs //videonas2/other -o username=jon.crall ~/remote/videonas2/other
+# 
+#sudo mount -t cifs //videonas/other -o username=jon.crall ~/remote/videonas/other
 #sudo umount ~/remote/videonas2/other
