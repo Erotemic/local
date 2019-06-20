@@ -12,9 +12,11 @@ Example:
 Notes:
     sshfs -o follow_symlinks,idmap=user aretha:/home/local/KHQ/jon.crall ~/remote/aretha
     sshfs -o follow_symlinks,idmap=user aretha: ~/remote/aretha
+    fusermount -u ~/remote/aretha
 
-    sshfs -o follow_symlinks,idmap=user videonas: ~/remote/videonas
-    fusermount -u ~/remote/videonas
+    mkdir -p ~/remote/videonas2/other
+    sudo mount -t cifs -o dir_mode=0777,file_mode=0777 -o username=jon.crall //videonas/other ~/remote/videonas/other
+    sudo umount ~/remote/videonas/other
 
 CommandLine:
 
