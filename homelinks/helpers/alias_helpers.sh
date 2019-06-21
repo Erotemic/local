@@ -257,6 +257,10 @@ alias sbrc='source ~//local/homelinks/bashrc'
 alias todo='gvim ~/Dropbox/Notes/TODO.txt'
 alias ebs='gvim ~/local/build_scripts/'
 
+
+# 
+alias drl='docker run -it $(docker image ls -a --format={{.ID}} | head -1) bash'
+
 # Edit Project
 ep()
 {
