@@ -1,9 +1,20 @@
-# Tutorials
-# http://feeding.cloud.geek.nz/posts/setting-up-raid-on-existing/
+
+# References
+# https://www.icc-usa.com/raid-calculator
+# https://www.tecmint.com/create-raid-10-in-linux/
+# https://superuser.com/questions/610538/convert-raid-1-to-raid-10-in-mdadm
+# https://serverfault.com/questions/43677/best-way-to-grow-linux-software-raid-1-to-raid-10/43712#43712
+
+# Problem References
+# https://ubuntuforums.org/showthread.php?t=2327837
+# https://askubuntu.com/questions/160946/mdadm-config-file
+# https://www.technibble.com/forums/threads/linux-softraid-5-array-mdadm-creation-problem-anyone-know-what-to-do.36159/
 
 
 resetup_raid_after_os_reinstall()
 {
+    # Tutorials
+    # http://feeding.cloud.geek.nz/posts/setting-up-raid-on-existing/
     # https://ubuntuforums.org/showthread.php?t=2002217
     # if you reinstalled your OS you just need to tell the system about the
     # raid to get things working again
@@ -24,7 +35,7 @@ sudo apt-get install gdisk -y
 # raid managment tool
 sudo apt-get install mdadm -y
 sudo apt-get install rsync -y
-sudo apt-get install initramfs-tools
+sudo apt-get install initramfs-tools -y
 #=================
 
     
