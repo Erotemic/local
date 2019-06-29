@@ -1411,3 +1411,8 @@ gnome_extensions(){
     https://extensions.gnome.org/extension/120/system-monitor/
     https://extensions.gnome.org/extension/9/systemmonitor/
 }
+
+install_travis_cmdline_tool(){
+    sudo apt install ruby ruby-dev
+    sudo gem install travis
+}

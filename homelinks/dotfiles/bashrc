@@ -303,3 +303,6 @@ DID_MY_BASHRC_INIT="TRUE"
 #export OPENBLAS_MAIN_FREE=1
 
 alias ls='ls --color --human-readable'
+
+# added by travis gem
+[ -f /home/joncrall/.travis/travis.sh ] && source /home/joncrall/.travis/travis.sh
