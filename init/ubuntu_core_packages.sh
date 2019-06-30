@@ -124,11 +124,72 @@ install_core()
 
 truely_ergonomic_keyboard_setup()
 {
+    
+    __readme__="""
+    Truly Ergonomic keyboard - Firmware Upgrade
+    -------------------------------------------
+
+    To upgrade the Firmware of your Truly Ergonomic keyboard, you need permission to access the raw usb device.
+
+    To give yourself this permission, copy 40-tek.rules into /etc/udev/rules.d.
+    Otherwise, you might have to run the tool as root.
+    """
+
+    # REQUIRES:
+    # libwx_gtk2u_webview-3.0.so.0
+    # https://packages.debian.org/jessie/amd64/libs/libwxbase3.0-0
+
+    #export LD_LIBRARY_PATH=$(realpath usr/lib/x86_64-linux-gnu):$LD_LIBRARY_PATH
+    export LD_LIBRARY_PATH=$(realpath .):$LD_LIBRARY_PATH
+    echo "LD_LIBRARY_PATH = $LD_LIBRARY_PATH"
+
+    wget http://ftp.us.debian.org/debian/pool/main/w/wxwidgets3.0/libwxbase3.0-0_3.0.2-1+b1_amd64.deb
+    wget http://ftp.us.debian.org/debian/pool/main/w/wxwidgets3.0/libwxgtk-webview3.0-0_3.0.2-1+b1_amd64.deb
+    wget http://ftp.us.debian.org/debian/pool/main/w/wxwidgets3.0/libwxgtk3.0-0_3.0.2-1+b1_amd64.deb
+    wget http://ftp.us.debian.org/debian/pool/main/w/wxwidgets3.0/libwxgtk-media3.0-0_3.0.2-1+b1_amd64.deb
+    wget http://ftp.us.debian.org/debian/pool/main/w/webkitgtk/libwebkitgtk-1.0-0_2.4.9-1~deb8u1_amd64.deb
+    wget http://ftp.us.debian.org/debian/pool/main/libp/libpng/libpng12-0_1.2.50-2+deb8u3_amd64.deb
+    wget http://ftp.us.debian.org/debian/pool/main/w/webkitgtk/libjavascriptcoregtk-1.0-0_2.4.9-1~deb8u1_amd64.deb
+    wget http://ftp.us.debian.org/debian/pool/main/i/icu/libicu52_52.1-8+deb8u7_amd64.deb
+
+    # Manually extract debian packages to the local directory
+    dpkg -x libwxbase3.0-0_3.0.2-1+b1_amd64.deb .
+    dpkg -x libwxgtk-media3.0-0_3.0.2-1+b1_amd64.deb .
+    dpkg -x libwxgtk-webview3.0-0_3.0.2-1+b1_amd64.deb .
+    dpkg -x libwxgtk3.0-0_3.0.2-1+b1_amd64.deb .
+    dpkg -x libwebkitgtk-1.0-0_2.4.9-1~deb8u1_amd64.deb .
+    dpkg -x libpng12-0_1.2.50-2+deb8u3_amd64.deb .
+    dpkg -x libjavascriptcoregtk-1.0-0_2.4.9-1~deb8u1_amd64.deb .
+    dpkg -x libicu52_52.1-8+deb8u7_amd64.deb .
+
+    ls -al usr/lib/x86_64-linux-gnu
+
+    # Move the libs into the cwd
+    mv usr/lib/x86_64-linux-gnu/* .
+    mv lib/x86_64-linux-gnu/* .
+
+    sudo LD_LIBRARY_PATH=$(realpath .):$LD_LIBRARY_PATH ./tek
+
+    # new link for the 229
+    # https://trulyergonomic.com/store/layout-designer--configurator--reprogrammable--truly-ergonomic-mechanical-keyboard.html#KTo7PD0+P0BBQkNERUw5394rNR4fICEi4yMkJSYnLS4xOBQaCBUXTBwYDBITLzDhBBYHCQorCw0ODzPl4B0bBhkFKhEQNjc05OfiSktOTSwoLFBSUU/mRQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAX2BhAAAAAAAAAAAAAAAAXF1eVlcAAAAAAAAAAABZWltVAAAAAAAAAAAAYgBjVAAAAAAAAAAAWCsAAAAAAACTAQAMAiMBAAwBigEADAIhAQAMAZQBAAwBkgEADAGDAQAMALYBAAwAzQEADAC1AQAMAOIBAAwA6gEADADpAQAMALhJAEYAAAAAAEitR64AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACk6Ozw9Pj9AQUJDREVMOd/eKzUeHyAhImQjJCUmJy4qLzAUGggVF0wcGAwSEzQx4wQWBwkKLQsNDg8z5+EdGwYZBSoREDY3OOXg4kpLTk0sKCxQUlFP5uQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAF9gYQAAAAAAAAAAAAAAAFxdXlZXAAAAAAAAAAAAWVpbVQAAAAAAAAAAAGIAY1QAAAAAAAAAAFgrAAAAAAAAkwEADAIjAQAMAYoBAAwCIQEADAGUAQAMAZIBAAwBgwEADAC2AQAMAM0BAAwAtQEADADiAQAMAOoBAAwA6QEADAC4SQBGAAAAAABIrUeuAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+
+
+    # OLD STUFF:
+    
+    #ar -x libwxbase3.0-0_3.0.2-1+b1_amd64.deb 
+    #tar -xzvf control.tar.gz
+    #tar -xzvf data.tar.gz
+
+    https://packages.debian.org/jessie/amd64/libwxbase3.0-0/download
+
+    # 
+    
     #sudo apt remove libwxbase3.0-0 libwxgtk3.0-0 libwxgtk-webview3.0-0
     #In Ubuntu before 15.04 vivid (or derivatives like Linux Mint 17.2) you have to:
     #1. add the ubuntu-toolchain-r/test ppa to get libstdc++6-4.9
     sudo add-apt-repository ppa:ubuntu-toolchain-r/test 
     sudo apt update
+    sudo apt upgrade
     sudo apt install libstdc++6
     wget http://security.ubuntu.com/ubuntu/pool/universe/w/wxwidgets3.0/libwxbase3.0-0_3.0.2-1_amd64.deb
     wget http://security.ubuntu.com/ubuntu/pool/universe/w/wxwidgets3.0/libwxgtk3.0-0_3.0.2-1_amd64.deb
@@ -143,7 +204,12 @@ truely_ergonomic_keyboard_setup()
     cd ~/tmp
     wget http://www.trulyergonomic.com/Truly_Ergonomic_Firmware_Upgrade_Linux_v2_0_0.tar.gz
     tar -xvf Truly_Ergonomic_Firmware_Upgrade_Linux_v2_0_0.tar.gz
-    cd tex-linux
+    cd /home/joncrall/tmp/tek-linux
+    cd ~/tmp/tex-linux
+
+    ls /etc/udev/rules.d/
+    sudo cp 40-tek.rules /etc/udev/rules.d/
+
     sudo ./tek
     # Now 
 }
