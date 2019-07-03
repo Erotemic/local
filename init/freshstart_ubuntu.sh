@@ -612,6 +612,12 @@ setup_conda_env(){
     #conda remove --name py36 --all
 }
 
+setup_conda_other(){
+
+    conda create -y -n py36 python=3.6
+    conda activate py36
+}
+
 
 setup_conda27_env(){
     conda update -y -n base conda
