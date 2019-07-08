@@ -8,7 +8,7 @@ dim.sh
 #xrandr --output DVI-I-3 --brightness .3
 
 
-if [ "$(which redshift)" != "" ]; then
+if [ "$(which redshift)" == "" ]; then
     echo "ERROR: REQUIRES REDSHIFT"
     echo "apt install redshift"
     exit 1
