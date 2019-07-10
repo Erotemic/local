@@ -714,7 +714,7 @@ def git_squash_streaks():
                         help=help_dict['timedelta'])
 
     parser.add_argument(*('--custom_streak',), nargs=2,
-                        help='hack to specify one custom streak')
+                        help='hack to specify one custom streak: older newer')
 
     parser.add_argument(*('--pattern',), type=str,
                         help=help_dict['pattern'])
