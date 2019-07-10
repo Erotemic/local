@@ -207,20 +207,31 @@ writeto()
 
 sudo_writeto()
 {
+    # NOTE: FAILS WITH QUOTES IN BODY
     fpath=$1
     text=$2
     fixed_text=$(codeblock "$text")
     # IS THERE A BETTER WAY TO FORWARD AN ENV TO SUDO SO sudo writeto works
     sudo sh -c "echo \"$fixed_text\" > $fpath"
+#    # Maybe this?
+#    sudo sh -c "cat > ${fpath} << EOF
+#${fixed_text}
+#"
 }
 
 sudo_appendto()
 {
+    # NOTE: FAILS WITH QUOTES IN BODY
     fpath=$1
     text=$2
     fixed_text=$(codeblock "$text")
     # IS THERE A BETTER WAY TO FORWARD AN ENV TO SUDO SO sudo writeto works
     sudo sh -c "echo \"$fixed_text\" >> $fpath"
+
+#    # Maybe this?
+#    sudo sh -c "cat >> ${fpath} << EOF
+#${fixed_text}
+#"
 }
 
 # Can we wrap sudo such we can allow utils to be used?
