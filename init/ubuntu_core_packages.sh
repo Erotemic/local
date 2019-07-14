@@ -1320,6 +1320,15 @@ mount_android()
     fusermount -u /media/droid
 }
 
+android-ftp(){
+    # https://www.omgubuntu.co.uk/2017/11/android-file-transfer-app-linux
+    sudo add-apt-repository ppa:samoilov-lex/aftl-stable
+    sudo apt-get update && sudo apt install android-file-transfer
+
+}
+
+
+
 python_keyring()
 {
 
