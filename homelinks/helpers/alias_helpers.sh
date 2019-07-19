@@ -22,6 +22,7 @@ alias df='df -x"squashfs" -x"tmpfs"'
 #alias cgrep='grep -I --exclude-dir "*build*" --exclude-dir .git -ER'
 alias cgrep='grep -I -ER \
     --exclude-dir "build" \
+    --exclude-dir "cmake-build" \
     --exclude-dir "build-*" \
     --exclude-dir "build_*" \
     --exclude-dir .git \

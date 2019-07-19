@@ -260,7 +260,7 @@ if [ "$DID_MY_BASHRC_INIT" == "" ]; then
     else
         #we py36
         #wenv py36
-        conda activate py36
+        conda activate py37
     fi
 
 elif [ "$VIRTUAL_ENV" != "" ]; then
