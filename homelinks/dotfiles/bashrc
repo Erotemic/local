@@ -256,7 +256,7 @@ if [ "$DID_MY_BASHRC_INIT" == "" ]; then
     # For some reason VIRTUAL_ENV is initialized as "", so unset it
     unset VIRTUAL_ENV
     if [[ "$HOSTNAME" == "namek"  ]]; then 
-        workon_py "$HOME/venv3"
+        workon_py "$HOME/venv3.6"
     else
         #we py36
         #wenv py36

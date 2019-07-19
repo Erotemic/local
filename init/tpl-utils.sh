@@ -1,7 +1,7 @@
 
 sync_tpl_push(){
-    remote=acidalia
-    REMOTES=( aretha arisia hermes klendathu acidalia )
+    remote=remote1
+    REMOTES=( remote1 remote2 remote3 remote4 remote5 )
     for remote in "${REMOTES[@]}"
     do
         rsync -auzpvR $HOME/./tpl-archive/ $remote:.
@@ -10,7 +10,7 @@ sync_tpl_push(){
 
 
 sync_tpl_pull(){
-    REMOTE=aretha
+    REMOTE=remote1
     # specify base relative to home
     BASE="."
     # specify the directory name to pull

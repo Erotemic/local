@@ -484,15 +484,15 @@ init_local_cuda(){
 
     # Sync between machines
     cd
-    rsync -avuzpR ~/./tpl-archive/ jon.crall@arisia.kitware.com:.
-    rsync -avzupR ~/./tpl-archive/ jon.crall@aretha.kitware.com:.
-    rsync -avzupR ~/./tpl-archive/ jon.crall@klendathu.kitware.com:.
-    rsync -avzupR ~/./tpl-archive/ joncrall@acidalia.kitware.com:.
+    rsync -avuzpR ~/./tpl-archive/ jon.crall@remote1.kitware.com:.
+    rsync -avzupR ~/./tpl-archive/ jon.crall@remote2.kitware.com:.
+    rsync -avzupR ~/./tpl-archive/ jon.crall@remote3.kitware.com:.
+    rsync -avzupR ~/./tpl-archive/ joncrall@remote4.kitware.com:.
 
-    rsync -avzupR joncrall@namek.kitware.com:./tpl-archive/ ~/.
+    rsync -avzupR joncrall@remote2.kitware.com:./tpl-archive/ ~/.
 
-    #rsync -avzup tpl-archive/cuda/ jon.crall@arisia.kitware.com:tpl-archive/cuda
-    #rsync -avzup tpl-archive/cuda/ jon.crall@aretha.kitware.com:tpl-archive/cuda
+    #rsync -avzup tpl-archive/cuda/ jon.crall@remote1.kitware.com:tpl-archive/cuda
+    #rsync -avzup tpl-archive/cuda/ jon.crall@remote2.kitware.com:tpl-archive/cuda
 
     tar -xf cuda_cluster_pkgs_9.1.85_ubuntu1604.tar.gz
     mv cuda_cluster_pkgs_ubuntu1604 ~/tmp

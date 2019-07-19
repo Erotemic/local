@@ -4,15 +4,14 @@ __heredoc__="
 Need to ensure ~/.ssh/config has the remote setup
 
 Example:
-   Host aretha
-       HostName aretha.kitware.com
+   Host remote1
+       HostName remote1.com
        Port 22
        User jon.crall
 
 Notes:
-    sshfs -o follow_symlinks,idmap=user aretha:/home/local/KHQ/jon.crall ~/remote/aretha
-    sshfs -o follow_symlinks,idmap=user aretha: ~/remote/aretha
-    fusermount -u ~/remote/aretha
+    sshfs -o follow_symlinks,idmap=user remote1: ~/remote/remote1
+    fusermount -u ~/remote/remote1
 
     mkdir -p ~/remote/videonas2/other
     sudo mount -t cifs -o dir_mode=0777,file_mode=0777 -o username=jon.crall //videonas/other ~/remote/videonas/other
@@ -22,7 +21,7 @@ CommandLine:
 
     # Force mount a specific remote
     source ~/local/scripts/mount-remotes.sh
-    mount_remote namek
+    mount_remote remotename
 
 " 
 
@@ -103,24 +102,6 @@ unmount_if_mounted()
 }
 
 
-mount_registered_remotes()
-{
-    echo "Mounting remotes"
-    mount_remote_if_available aretha 
-    mount_remote_if_available hermes 
-    mount_remote_if_available arisia 
-    mount_remote_if_available namek 
-    #mount_remote_if_available lev 
-}
-
-unmount_registered_remotes()
-{
-    echo "Unmounting remotes"
-    unmount_if_mounted aretha
-    unmount_if_mounted hermes 
-}
-
-
 # https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
 if [[ $# -gt 0 ]]; then
     POSITIONAL=()
@@ -159,23 +140,18 @@ if [[ $# -gt 0 ]]; then
             fi
         done
     else
-        # Do for all registered remotes
-        if [ "$UNMOUNT" == "YES" ]; then
-            unmount_registered_remotes
-        else
-            mount_registered_remotes
-        fi
+        echo "ERROR NEED TO SPECIFY REMOTE"
     fi
 fi
 
-#fusermount -u ~/aretha
+#fusermount -u ~/remote1
 
-#if [ "$(is_available aretha)" != "" ]; then
-#    mkdir -p ~/aretha    
+#if [ "$(is_available remote1)" != "" ]; then
+#    mkdir -p ~/remote1    
 #fi
 
 # FOR UNMOUNT
-# fusermount -u ~/aretha
+# fusermount -u ~/remote1
 
 
 # Didnt work

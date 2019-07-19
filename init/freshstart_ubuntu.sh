@@ -18,7 +18,7 @@ simple_setup_manual()
     simple_setup_auto
 
     if [ ! -d $HOME/internal ]; then
-        # Requires SSH keys
+        # Requires correct SSH keys
         git clone git@kwgitlab.kitware.com:jon.crall/internal.git $HOME/internal
     fi
 }
@@ -29,7 +29,6 @@ local_remote_presetup(){
     must be pushed to it (i.e. we cannot pull these files)
     "
     REMOTE=somemachine.com
-    REMOTE=hermes.kitware.com
     REMOTE_USER=jon.crall
     ssh-copy-id $REMOTE_USER@$REMOTE
     #In event of slowdown: sshpass -f <(printf '%s\n' kwpass=yourpass) ssh-copy-id $REMOTE_USER@$REMOTE
@@ -54,66 +53,33 @@ set_global_git_config(){
     git config --global core.autocrlf false
 }
 
-setup_kitware_ssh_keys(){
-    # DO THIS ONCE, THEN MOVE THESE KEY AROUND TO KITWARE MACHINES
+setup_remote_ssh_keys(){
+    # DO THIS ONCE, THEN MOVE THESE KEY AROUND TO REMOTE MACHINES. ROTATE REGULARLY
     mkdir -p ~/.ssh
     cd ~/.ssh
-    ssh-keygen -t rsa -b 8192 -C "jon.crall@kitware.com" -f id_joncrall_kitware_rsa -N ""
+    ssh-keygen -t rsa -b 8192 -C "jon.crall@kitware.com" -f id_myname_rsa -N ""
 
     # setup local machine with a special public / private key pair
-    ssh-add id_joncrall_kitware_rsa
+    ssh-add id_myname_rsa
 
     # Add this public key to remote authorized_keys so they recognize you.  
     # You may have to type in your password for each of these, but it will be
     # the last time.
-    ssh-copy-id jon.crall@hermes
-    ssh-copy-id jon.crall@aretha
-    ssh-copy-id jon.crall@arisia
-    ssh-copy-id jon.crall@klendathu
-    ssh-copy-id joncrall@namek
+    ssh-copy-id jon.crall@remote_machine
 
     # ENSURE YOU HAVE ALL COMPUTERS UPDATED IN YOUR SSH CONFIG
 
-    remote=namek
-
-    REMOTES=( aretha arisia hermes klendathu namek )
+    REMOTES=( remote1 remote2 remote3 remote4 remote5 )
     for remote in "${REMOTES[@]}"
     do
         echo "UPDATING remote = $remote"
         # move .ssh config to other computers
         rsync ~/.ssh/./config $remote:.ssh/./
-
-        # move public and private keys to other computers
-        #rsync ~/.ssh/./id_joncrall_kitware_rsa* $remote:.ssh/./
-
-        # Now make sure the special private id_rsa is registered on each remote
-        # Actually we dont do this because it only persists for one session 
-        # but we can add the key to the ssh/config to make it work.
-        #ssh -A $remote "ssh-add .ssh/id_joncrall_kitware_rsa"
     done
-    
-    #rsync ~/.ssh/./id_joncrall_kitware_rsa* aretha:.ssh/./
-    #rsync ~/.ssh/./id_joncrall_kitware_rsa* arisia:.ssh/./
-    #rsync ~/.ssh/./id_joncrall_kitware_rsa* hermes:.ssh/./
-    #rsync ~/.ssh/./id_joncrall_kitware_rsa* klendathu:.ssh/./
-    #rsync ~/.ssh/./id_joncrall_kitware_rsa* namek:.ssh/./
 
-    ## move .ssh config to other computers
-    #rsync ~/.ssh/./config aretha:.ssh/./
-    #rsync ~/.ssh/./config arisia:.ssh/./
-    #rsync ~/.ssh/./config hermes:.ssh/./
-    #rsync ~/.ssh/./config klendathu:.ssh/./
-    #rsync ~/.ssh/./config namek:.ssh/./
-
-    ## Now make sure the special private id_rsa is registered on each remote
-    #ssh -A aretha "ssh-add .ssh/id_joncrall_kitware_rsa"
-    #ssh -A arisia "ssh-add .ssh/id_joncrall_kitware_rsa"
-    #ssh -A hermes "ssh-add .ssh/id_joncrall_kitware_rsa"
-    #ssh -A klendathu "ssh-add .ssh/id_joncrall_kitware_rsa"
-
-    # Copy from a remote to my computer
-    rsync namek:.ssh/./id_joncrall_kitware_rsa* $HOME/.ssh/
-    rsync namek:.ssh/./config $HOME/.ssh/
+    # Copy from a remote to local computer
+    rsync remote_machine:.ssh/./id_myname_rsa* $HOME/.ssh/
+    rsync remote_machine:.ssh/./config $HOME/.ssh/
 }
 
 
@@ -130,11 +96,7 @@ simple_setup_auto(){
 
     if [ ! -d ~/.ssh ]; then
         mkdir -p ~/.ssh
-        # ADD MY PUBLIC KEY TO authorized_keys
-        #chmod 600 ~/.ssh/authorized_keys
-        # From local machine
         #ssh-copy-id username@remote
-        #ssh-copy-id jon.crall@klendathu.kitware.com 
     fi
 
     source ~/local/init/freshstart_ubuntu.sh 

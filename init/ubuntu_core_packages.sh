@@ -273,11 +273,11 @@ install_core_extras()
     sshfs -o idmap=user ibeis-hackathon:/home/ubuntu ~/ami
     sshfs -o idmap=user lev:/ ~/lev
 
-    mkdir -p ~/aretha    
-    sshfs -o follow_symlinks,idmap=user aretha:/home/local/KHQ/jon.crall ~/aretha
+    mkdir -p ~/remote_machinename    
+    sshfs -o follow_symlinks,idmap=user remote_machinename:/home/local/KHQ/jon.crall ~/remote_machinename
 
     # unmount
-    fusermount -u ~/aretha
+    fusermount -u ~/remote_machinename
     
 
 
@@ -1496,8 +1496,7 @@ EOL'
     # TEST
     docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi
 
-    rsync ~/docker/Dockerfile jon.crall@aretha.kitware.com:docker/Dockerfile
-    rsync ~/docker/Dockerfile jon.crall@arisia.kitware.com:docker/Dockerfile
+    rsync ~/docker/Dockerfile jon.crall@remote_machine.kitware.com:docker/Dockerfile
     
     # urban 
     nvidia-docker build -f ~/docker/Dockerfile -t joncrall/urban3d .
@@ -1508,7 +1507,7 @@ EOL'
 
     nvidia-docker run -v ~/data:/data -it joncrall/urban3d
 
-    rsync -avRP final_model jon.crall@arisia:docker/
+    rsync -avRP final_model jon.crall@remote_machine:docker/
 
     # stop all containers
     docker stop $(docker ps -a -q)
@@ -1604,8 +1603,7 @@ install_ipp(){
   mkdir -p ~/tpl-archive/ipp
   #mv ~/Downloads/l_ipp_2018.0.128.tgz ~/tpl-archive/ipp
 
-  rsync -arvp ~/tpl-archive/ipp arisia:tpl-archive/
-  rsync -arvp ~/tpl-archive/ipp aretha:tpl-archive/
+  rsync -arvp ~/tpl-archive/ipp remote_machine:tpl-archive/
 
   # Please download and install IPP from https://software.intel.com/en-us/intel-ipp
   mkdir -p ~/tmp

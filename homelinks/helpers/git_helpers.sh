@@ -69,7 +69,7 @@ alias ggss=gg-short-status
 #    #ssh $REMOTE "cd $RELPWD && git pull"
 #}
 #alias git-sync='git_sync'
-#complete -W "arisia aretha lev hyrule" "git_sync"
+#complete -W "remote1 remote2 remote3 remote4" "git_sync"
 
 
 USER_SSH_HOSTS=$(python -c "
@@ -85,7 +85,7 @@ if exists(ssh_config_path):
 #echo "USER_SSH_HOSTS = $USER_SSH_HOSTS"
 
 complete -W "$USER_SSH_HOSTS" "git-sync"
-#complete -W "acidalia arisia aretha lev hyrule" "git-sync"
+#complete -W "remote1 remote2 remote3 " "git-sync"
 
 
 git_lev_sync()
