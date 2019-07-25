@@ -251,6 +251,7 @@ def gitcmd(repo, command):
         import ubelt as ub
     except ImportError:
         print()
+        print('WARNING: NO UBELT')
         print("************")
         try:
             print('repo=%s' % ub.color_text(repo.dpath, 'yellow'))
