@@ -1,7 +1,7 @@
-import os 
+import os
 
-flickr_api_key = 'c1e8d61786a404d062d9088833b348e4'
-flickr_api_secret = 'a694eae746ae9f0f'
+flickr_api_key = os.environ.get('FLICKER_API_KEY')
+flickr_api_secret = os.environ.get('FLICKR_API_SECRET')
 
 def vd():
     os.system('vd')
@@ -15,7 +15,7 @@ def printableVal(val,type_bit=True):
         info = npArrInfo(val)
         if info.dtypestr == 'bool':
             _valstr = '{ shape:'+info.shapestr+' bittotal: '+info.bittotal+'}'# + '\n  |_____'
-        else: 
+        else:
             _valstr = '{ shape:'+info.shapestr+' mM:'+info.minmaxstr+' }'# + '\n  |_____'
     elif type(val) is types.StringType:
         _valstr = '\'%s\'' % val
@@ -37,7 +37,7 @@ def printableVal(val,type_bit=True):
     if _valstr.find('\n') > 0: # Indent if necessary
         _valstr = _valstr.replace('\n','\n    ')
         _valstr = '\n    '+_valstr
-    _valstr = re.sub('\n *$','', _valstr) # Replace empty lines 
+    _valstr = re.sub('\n *$','', _valstr) # Replace empty lines
     return _valstr
 
 
