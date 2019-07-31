@@ -28,8 +28,9 @@ https://github.com/Erotemic/xinspect.git
 
 # git@github.com:Erotemic/local.git $HOME
 # git@github.com:Erotemic/misc.git $HOME
+
 https://github.com/Erotemic/local.git $HOME
-https://@github.com:Erotemic/misc.git $HOME
+https://github.com:Erotemic/misc.git $HOME
 
 
 # git@hyrule.cs.rpi.edu:crall-candidacy-2015.git $HOME/latex

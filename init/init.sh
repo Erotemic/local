@@ -94,3 +94,11 @@ fi
 if [[ `which google-chrome` == "" ]]; then
     install_chrome
 fi
+
+
+# TODO: setup ssh keys
+
+
+# Clone all of my repos
+# gg-clone
+# developer setup my repos
