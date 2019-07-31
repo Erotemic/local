@@ -32,6 +32,7 @@
   [[joncrall]]
     background_color = "#292929"
     background_darkness = 0.81
+    cursor_color = "#ff9bf3"
     font = Ubuntu Mono 10
     foreground_color = "#ff9bf3"
     scrollback_lines = 5000

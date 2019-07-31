@@ -1,9 +1,8 @@
 # https://github.com/vim/vim/issues/1483
 
-co
-git clone https://github.com/vim/vim.git
-cd ~/code/vim
-
+clone_vim(){
+git clone https://github.com/vim/vim.git ~/code/
+}
 #mkdir tmpinstall
 
 prereq(){
@@ -23,6 +22,7 @@ help(){
     ./configure --help | grep python
 }
 
+prechecks(){
 #export CC=gcc
 #export =clang
 
@@ -62,7 +62,7 @@ make distclean
 #PYTHON3_CFLAGS="-I$VIRTUAL_ENV/include/python3.7m -DPYTHON3_HOME=L$VIRTUAL_ENV -pthread -fPIE"
 #PYTHON3_LIBS="-L$VIRTUAL_ENV/lib/python3.7/config-3.7m-x86_64-linux-gnu -lpython3.7m -lpthread -ldl -lutil -lm"
 #PYTHON3_CONFDIR="$VIRTUAL_ENV/lib/python3.7/config-3.7m-x86_64-linux-gnu"
-
+}
 
 vim_python37_version(){
     make distclean
@@ -140,6 +140,12 @@ with_conda_python36(){
     #cat src/auto/config.mk | grep GUI
 }
 
+do_vim_build(){
+
+if [ ! -d ~/code/vim ]; then
+    git clone https://github.com/vim/vim.git ~/code/vim
+fi
+cd $HOME/code/vim
 ./configure \
     --prefix=$HOME/.local \
     --enable-pythoninterp=no \
@@ -156,11 +162,12 @@ make -j$NCPUS
 
 # Test
 ~/code/vim/src/vim --version
-~/code/vim/src/vim -u NONE
+#~/code/vim/src/vim -u NONE
 # Install
 make install
 
 ls -al ~/.local/bin/*vim*
+}
 #ls tmpinstall/bin/
 #/usr/local/bin/gvim-8 --version
 #/usr/bin/gvim --version

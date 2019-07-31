@@ -53,11 +53,28 @@ set_global_git_config(){
     git config --global core.autocrlf false
 }
 
-setup_remote_ssh_keys(){
-    # DO THIS ONCE, THEN MOVE THESE KEY AROUND TO REMOTE MACHINES. ROTATE REGULARLY
+setup_single_use_ssh_keys(){
+    # References: https://security.stackexchange.com/questions/50878/ecdsa-vs-ecdh-vs-ed25519-vs-curve25519
     mkdir -p ~/.ssh
     cd ~/.ssh
-    ssh-keygen -t rsa -b 8192 -C "jon.crall@kitware.com" -f id_myname_rsa -N ""
+
+    # WHERES MY POST-QUANTUM CRYPTO AT?!  
+    # Unfortunately I think ED25519 cant be PQ-resistant because its fixed at 256 bits :(
+    # Note: add a passphrase in -N for extra secure
+    ssh-keygen -t ed25519 -b 256 -C "erotemic@gmail.com" -f id_${HOSTNAME}_${USER}_ed25519 -N ""
+
+    # Note: RSA with longer keys will be post-quantum resistant for longer
+    # The NSA recommends a minimum 3072 key length, probably should go longer than that
+    # ssh-keygen -t rsa -b 8192 -C "erotemic@gmail.com" -f id_${HOSTNAME}_${USER}_rsa -N ""
+
+}
+
+setup_remote_ssh_keys(){
+    # DO THIS ONCE, THEN MOVE THESE KEY AROUND TO REMOTE MACHINES. ROTATE REGULARLY
+    # IDEALLY MAKE ONE PER MACHINE: see setup_single_use_ssh_keys.
+    mkdir -p ~/.ssh
+    cd ~/.ssh
+    ssh-keygen -t rsa -b 8192 -C "erotemic@gmail.com" -f id_myname_rsa -N ""
 
     # setup local machine with a special public / private key pair
     ssh-add id_myname_rsa
@@ -915,7 +932,7 @@ install_chrome()
 install_fonts()
 {
     # Download fonts
-    sudo apt -y install nautilus-dropbox
+    #sudo apt -y install nautilus-dropbox
 
     mkdir -p ~/tmp 
     cd ~/tmp
@@ -974,6 +991,7 @@ virtualbox_ubuntu_init()
 
 nopassword_on_sudo()
 { 
+    # DEPRICATE: we dont do this anymore
     # CAREFUL. THIS IS HUGE SECURITY RISK
     # References: http://askubuntu.com/questions/147241/execute-sudo-without-password
     sudo cat /etc/sudoers > ~/tmp/sudoers.next  
@@ -1347,6 +1365,13 @@ resetup_ooo_after_os_reinstall()
     sudo apt-get install gdisk mdadm rsync -y
     # Simply scan for your preconfigured raid
     sudo mdadm --assemble --scan 
+    cat /proc/mdstat
+    sudo update-initramfs -u
+    
+    sudo mdadm --examine $RAID_PARTS
+    sudo mdadm --detail /dev/md0
+    
+
     # Mount the RAID (temporary. modify fstab to automount)
     sudo mkdir -p /media/joncrall/raid
     sudo mount /dev/md0 /media/joncrall/raid

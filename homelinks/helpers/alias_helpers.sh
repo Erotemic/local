@@ -777,6 +777,9 @@ untilfail()
  
 permit_erotemic_gitrepo()
 { 
+    __heredoc__="""
+    change git config from https to ssh
+    """
     #permit_gitrepo -i
     sed -i 's/https:\/\/github.com\/Erotemic/git@github.com:Erotemic/' .git/config
     sed -i 's/https:\/\/github.com\/WildbookOrg/git@github.com:WildbookOrg/' .git/config

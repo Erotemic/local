@@ -1800,3 +1800,9 @@ fix_resolvconf(){
     sudo ln -s ../run/resolvconf/resolv.conf /etc/resolv.conf
     sudo resolvconf -u
 }
+
+
+ubuntu_media_codecs(){
+    # https://help.ubuntu.com/community/RestrictedFormats
+    sudo apt-get install ubuntu-restricted-extras
+}
