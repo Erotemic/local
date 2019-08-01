@@ -1411,3 +1411,10 @@ install_travis_cmdline_tool(){
     sudo apt install ruby ruby-dev
     sudo gem install travis
 }
+
+disable_screen_lock(){
+    # References: https://askubuntu.com/questions/1041230/how-to-disable-screen-locking-in-ubuntu-18-04-gnome-shell
+    gsettings set org.gnome.desktop.screensaver lock-enabled false
+    
+    # also can do it via settings -> privacy -> screen lock
+}
