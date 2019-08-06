@@ -93,12 +93,23 @@ fi
 
 if [[ `which google-chrome` == "" ]]; then
     install_chrome
+
+    install_basic_extras
+
+    sh ~/local/build_scripts/install_zotero.sh
+
+    sudo apt install -y vlc redshift sshfs wmctrl xdotool tmux xclip htop tree astyle p7zip-full pgpgpg lm-sensors
+
+    sudo snap install spotify
+    
 fi
 
 
 # TODO: setup ssh keys
 
-
 # Clone all of my repos
 # gg-clone
 # developer setup my repos
+
+
+# TODO: setup nvidia drivers on appropriate systems: see init_cuda 

@@ -596,6 +596,7 @@ setup_conda_other(){
     conda create -y -n py37 python=3.7
     conda create -y -n py36 python=3.6
     conda create -y -n py27 python=2.7
+    conda create -y -n py26 python=2.6
     conda activate py36
 }
 
@@ -913,7 +914,14 @@ setup_venvpypy(){
 
     PYPY_VENV="$HOME/venvpypy"
     mkdir -p $PYPY_VENV
-    virtualenv-3.4 -p /usr/bin/pypy $PYPY_VENV 
+
+    #sudo apt install pypy pypy-pip
+
+    #pypy -m pip install pip
+    #pip -m install virtualenv --user
+    #pip install virtualenv
+    pypy -m ensurepip
+    virtualenv -p /usr/bin/pypy $PYPY_VENV 
 
     pypy -m ensurepip
     sudo apt install pypy-pip
@@ -1408,13 +1416,23 @@ gnome_extensions(){
 }
 
 install_travis_cmdline_tool(){
-    sudo apt install ruby ruby-dev
+    sudo apt install ruby ruby-dev -y
     sudo gem install travis
 }
 
 disable_screen_lock(){
     # References: https://askubuntu.com/questions/1041230/how-to-disable-screen-locking-in-ubuntu-18-04-gnome-shell
     gsettings set org.gnome.desktop.screensaver lock-enabled false
-    
     # also can do it via settings -> privacy -> screen lock
+}
+
+
+install_basic_extras(){
+    # Vera Crypt
+    sudo add-apt-repository ppa:unit193/encryption -y
+    sudo apt update
+    sudo apt install veracrypt -y
+
+    # Dropbox
+    sudo apt -y install nautilus-dropbox
 }

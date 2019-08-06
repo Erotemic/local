@@ -15,9 +15,19 @@ install_nivida_drivers_apt(){
 
     # It looks like this one works with the above PPA (maybe?)
 
-    sudo add-apt-repository ppa:graphics-drivers
+    sudo add-apt-repository ppa:graphics-drivers -y
     sudo apt update
-    sudo apt install nvidia-drivers-396
+    #sudo apt install nvidia-drivers-396
+    sudo apt install nvidia-driver-430
+
+
+    # Restart, ensure you have tpl-archive and then run 
+    ls ~/tpl-archive/cuda
+    source ~/local/init/init_cuda.sh
+    cuda_version=9.2
+    change_cuda_version $cuda_version
+    change_cudnn_version 9.2 7.0
+    
 }
 
 
@@ -26,7 +36,7 @@ preinstall_nvidia_drivers_run(){
     This should be run before installing nvidia drivers for the first time. 
     After running, reboot, then install nvidia drivers.
     "
-    sudo apt-get install freeglut3-dev build-essential libx11-dev libxmu-dev libxi-dev libgl1-mesa-glx libglu1-mesa libglu1-mesa-dev
+    sudo apt-get install freeglut3-dev build-essential libx11-dev libxmu-dev libxi-dev libgl1-mesa-glx libglu1-mesa libglu1-mesa-dev -y
 
     # Install nvidia drivers on the system level (required to be sudo)
     source $HOME/local/init/utils.sh
@@ -264,6 +274,7 @@ change_cudnn_version(){
 
         # (cuda_version, cudnn_version, os)
         ver = {}
+        ver[('9.2', '7.0', 'linux')] = 'cudnn-9.2-linux-x64-v7.6.2.24.tgz'
         ver[('9.1', '7.0', 'linux')] = 'cudnn-9.1-linux-x64-v7.tgz'
         ver[('9.0', '7.0', 'linux')] = 'cudnn-9.0-linux-x64-v7.tgz'
         ver[('8.0', '7.0', 'linux')] = 'cudnn-8.0-linux-x64-v7.tgz'
