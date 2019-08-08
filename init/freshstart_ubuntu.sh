@@ -1436,3 +1436,31 @@ install_basic_extras(){
     # Dropbox
     sudo apt -y install nautilus-dropbox
 }
+
+install_transcrypt(){
+    cd ~/code
+    git clone https://github.com/elasticdog/transcrypt.git
+    cd ~/code/transcrypt
+    ln -s $HOME/code/transcrypt/transcrypt $HOME/.local/bin/transcrypt
+
+    git clone https://github.com/Erotemic/roaming.git
+
+    # new roaming 
+    mkdir -p $HOME/code/roaming
+    cd $HOME/code/roaming
+    git init
+
+    # TODO: fixme to use GCM
+    transcrypt --cipher=aes-256-cbc
+    transcrypt --display
+    echo '*  filter=crypt diff=crypt' >> .gitattributes
+    echo 'secret plans' >> dummy_secrets
+
+    # Copy and paste the following command to initialize a cloned repository:
+    transcrypt -c aes-256-cbc -p 'pass1'
+
+    transcrypt --cipher=aes256-GCM
+
+    git clone https://github.com/Erotemic/roaming.git
+
+}
