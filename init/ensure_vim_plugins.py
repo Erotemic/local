@@ -224,6 +224,15 @@ def main():
         except Exception:
             os.system(command)
 
+    print('May need to init jedi-vim / vimtk')
+    print(ub.codeblock(
+        '''
+        cd /home/joncrall/.vim/bundle/jedi-vim/pythonx/parso
+        pip install -e .
+        cd /home/joncrall/.vim/bundle/jedi-vim/pythonx/jedi
+        pip install -e .
+        '''))
+
 
 if __name__ == '__main__':
     """

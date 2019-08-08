@@ -442,6 +442,11 @@ if 1:
 EOF
 
 Python2or3 << EOF
-from vimtk import jedi_monkeypatch
-jedi_monkeypatch.apply_monkey_patch_jedi()
+import vimtk
+from distutils.version import LooseVersion
+if LooseVersion(vimtk.__version__) >= LooseVersion('0.1.1'):
+    from vimtk import jedi_monkeypatch
+    jedi_monkeypatch.apply_monkey_patch_jedi()
+else:
+    print('VIMTK VERSION TO OLD: vimtk.__version__ = {!r}'.format(vimtk.__version__))
 EOF
