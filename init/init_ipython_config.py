@@ -1,4 +1,4 @@
-#/usr/bin/env python
+#!/usr/bin/env python
 from os.path import join
 import ubelt as ub
 

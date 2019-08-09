@@ -1438,12 +1438,21 @@ install_basic_extras(){
 }
 
 install_transcrypt(){
+    __heredoc__="""
+    References:
+
+        https://embeddedartistry.com/blog/2018/3/15/safely-storing-secrets-in-git
+        https://github.com/AGWA/git-crypt
+        https://github.com/elasticdog/transcrypt
+    """
     cd ~/code
-    git clone https://github.com/elasticdog/transcrypt.git
+    git clone git@github.com:Erotemic/transcrypt.git ~/code/transcrypt
+    #git clone https://github.com/elasticdog/transcrypt.git
     cd ~/code/transcrypt
     ln -s $HOME/code/transcrypt/transcrypt $HOME/.local/bin/transcrypt
 
     git clone https://github.com/Erotemic/roaming.git
+    git clone https://gitlab.com/Erotemic/erotemic.git
 
     # new roaming 
     mkdir -p $HOME/code/roaming
@@ -1462,5 +1471,6 @@ install_transcrypt(){
     transcrypt --cipher=aes256-GCM
 
     git clone https://github.com/Erotemic/roaming.git
+    git clone https://gitlab.com/Erotemic/erotemic.git
 
 }
