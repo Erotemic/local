@@ -47,8 +47,14 @@
 set nocompatible
 filetype off
 
+if has('win32')
+    let $HOME_DPATH = $USERPROFILE
+else
+    let $HOME_DPATH = $HOME
+endif
+
 if has("win32") || has("win16")
-    :set runtimepath+=$USERPROFILE\local\vim\portable_vimrc 
+    :set runtimepath+=$HOME_DPATH\local\vim\portable_vimrc 
 
     " TODO: the fix didnt work
     " https://stackoverflow.com/questions/24833970/get-e484-cant-open-file-tmp-foo-a-when-using-systemwget-in-vim
@@ -61,7 +67,7 @@ if has("win32") || has("win16")
 endif
 
 if has('win32')
-    set pythonthreedll=$USERPROFILE\Miniconda3\python36.dll
+    set pythonthreedll=$HOME_DPATH\Miniconda3\python36.dll
     echo $pythonthreedll
     "command! -nargs=1 Python2or3 python3 <args>
 endif
@@ -391,24 +397,18 @@ call QUICKOPEN_leader_tvio('N', '~/code/netharn/examples/yolo_voc.py')
 if has("win32") || has("win16")
     " Try to hack windows to recognize the custom syntax
     " Seems to work. Thank god.
-    autocmd Filetype tex,latex source $USERPROFILE\local\vim\vimfiles\after\syntax\tex.vim
+    autocmd Filetype tex,latex source $HOME_DPATH\local\vim\vimfiles\after\syntax\tex.vim
 endif
 
 " Source special local vim settings
-if has('win32')
-    if filereadable($USERPROFILE . "/.vimrc-local")
-        source ~/.vimrc-local
-    endif
-    if filereadable($USERPROFILE . "/.vimrc-internal")
-        source ~/.vimrc-internal
-    endif
-else
-    if filereadable($HOME . "/.vimrc-local")
-        source ~/.vimrc-local
-    endif
-    if filereadable($HOME . "/.vimrc-internal")
-        source ~/.vimrc-internal
-    endif
+if filereadable($HOME_DPATH . "/.vimrc-erotemic")
+    source ~/.vimrc-erotemic
+endif
+if filereadable($HOME_DPATH . "/.vimrc-internal")
+    source ~/.vimrc-internal
+endif
+if filereadable($HOME_DPATH . "/.vimrc-local")
+    source ~/.vimrc-local
 endif
 
         
@@ -417,7 +417,7 @@ endif
 "set noeb vb t_vb=
 
 " mkdir -p ~/.vim/files/info
-:set viminfo='100,n$HOME/.vim/files/info/viminfo
+:set viminfo='100,n$HOME_DPATH/.vim/files/info/viminfo
 let g:startify_bookmarks = ['~/.vimrc', '~/.bashrc']
 Python2or3 << EOF
 listvars = {

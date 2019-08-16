@@ -101,7 +101,6 @@ if [[ `which google-chrome` == "" ]]; then
     sudo apt install -y vlc redshift sshfs wmctrl xdotool tmux xclip htop tree astyle p7zip-full pgpgpg lm-sensors
 
     sudo snap install spotify
-    
 fi
 
 
@@ -111,5 +110,6 @@ fi
 # gg-clone
 # developer setup my repos
 
-
 # TODO: setup nvidia drivers on appropriate systems: see init_cuda 
+
+# TODO: setup secrets and internal state

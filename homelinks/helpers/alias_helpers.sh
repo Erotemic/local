@@ -781,10 +781,9 @@ permit_erotemic_gitrepo()
     change git config from https to ssh
     """
     #permit_gitrepo -i
-    sed -i 's/https:\/\/github.com\/Erotemic/git@github.com:Erotemic/' .git/config
-    sed -i 's/https:\/\/github.com\/WildbookOrg/git@github.com:WildbookOrg/' .git/config
-    sed -i 's/http:\/\/github.com\/Erotemic/git@github.com:Erotemic/' .git/config
-    sed -i 's/http:\/\/github.com\/WildbookOrg/git@github.com:WildbookOrg/' .git/config
+    sed -E -i 's/https?:\/\/github.com\/Erotemic/git@github.com:Erotemic/' .git/config
+    sed -E -i 's/https?:\/\/github.com\/WildbookOrg/git@github.com:WildbookOrg/' .git/config
+    sed -E -i 's/https?:\/\/gitlab.com\/Erotemic/git@gitlab.com:Erotemic/' .git/config
     #sed -i 's/https:\/\/github.com\/bluemellophone/git@github.com:bluemellophone/' .git/config
     #sed -i 's/https:\/\/github.com\/zmjjmz/git@github.com:zmjjmz/' .git/config
     #sed -i 's/https:\/\/github.com\//git@github.com:' .git/config

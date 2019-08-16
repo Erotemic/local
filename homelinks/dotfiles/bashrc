@@ -101,6 +101,11 @@ if [ -d "$HOME/.local" ]; then
 fi
 
 
+# Fix GPG signing for git commits
+# https://stackoverflow.com/a/42265848
+# https://www.gnupg.org/(it)/documentation/manuals/gnupg/Common-Problems.html
+export GPG_TTY=$(tty)
+
 
 # ----------- CUDA / CUDNN ---------
 # Determine if/where CUDA is installed
@@ -286,6 +291,9 @@ export CPATH=$(pathvar_clean CPATH)
 #fi
 
 # For machine-specific bashrc things that will not be published on github
+if [ -f "$HOME/.bashrc-erotemic.sh" ]; then 
+    source $HOME/.bashrc-erotemic.sh
+fi
 if [ -f "$HOME/.bashrc-internal.sh" ]; then 
     source $HOME/.bashrc-internal.sh
 fi
