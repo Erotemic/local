@@ -27,7 +27,8 @@ PROJECT_URLS = []
 # These will populate PROJECT_REPOS and PROJECT_URLS
 config_fpaths = [
     expanduser('~/local/repos.txt'),
-    expanduser('~/internal/repos.txt'),
+    # expanduser('~/internal/repos.txt'),
+    expanduser('~/code/erotemic/homelinks/repos.txt'),
 ]
 
 

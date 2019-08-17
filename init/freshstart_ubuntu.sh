@@ -1356,7 +1356,7 @@ big_apt_install(){
 }
 
 
-fix_vpn_issue(){
+fix_dns_issue(){
     # Reference: https://bugs.launchpad.net/ubuntu/+source/dnsmasq/+bug/1639776
     # Reference: https://askubuntu.com/questions/233222/how-can-i-disable-the-dns-that-network-manager-uses
     #There is a workaround for the openvpn issue on ubuntu

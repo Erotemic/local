@@ -1801,6 +1801,14 @@ fix_resolvconf(){
     sudo resolvconf -u
 }
 
+fix_resolvconf2(){
+    # https://superuser.com/questions/983681/my-etc-resolv-conf-file-has-stopped-updating-itself-in-ubuntu-14-04-3
+    sudo apt install resolvconf
+    sudo resolvconf -u
+    #sudo mv /etc/resolv.conf /etc/resolv.conf.bak
+    #sudo ln -s /run/resolvconf/resolv.conf /etc/resolv.conf
+}
+
 
 ubuntu_media_codecs(){
     # https://help.ubuntu.com/community/RestrictedFormats

@@ -36,60 +36,68 @@ def find_in_list(str_, tofind_list, agg_fn=all, case_insensitive=True):
 
 def __grepfile(fpath, tofind_list, case_insensitive=True, verbose=False):
     with open(fpath, 'r') as file:
-        lines = file.readlines()
-        found = []
-        # Search each line for the desired strings
-        for lx, line in enumerate(lines):
-            if find_in_list(line, tofind_list, any, case_insensitive):
-                found.append((lx, line))
-        # Print the results (if any)
-        if len(found) > 0:
-            ret = 'Found %d line(s) in %r: ' % (len(found), fpath)
-            if verbose:
-                print('----------------------')
-                print(ret)
-            name = split(fpath)[1]
-            max_line = len(lines)
-            ndigits = str(len(str(max_line)))
-            fmt_str = '%s : %' + ndigits + 'd |%s'
-            for (lx, line) in iter(found):
-                line = line.replace('\n', '')
+        try:
+            lines = file.readlines()
+        except UnicodeDecodeError:
+            print("UNABLE TO READ fpath={}".format(fpath))
+        else:
+            found = []
+            # Search each line for the desired strings
+            for lx, line in enumerate(lines):
+                if find_in_list(line, tofind_list, any, case_insensitive):
+                    found.append((lx, line))
+            # Print the results (if any)
+            if len(found) > 0:
+                ret = 'Found %d line(s) in %r: ' % (len(found), fpath)
                 if verbose:
-                    print(fmt_str % (name, lx, line))
-            return ret
+                    print('----------------------')
+                    print(ret)
+                name = split(fpath)[1]
+                max_line = len(lines)
+                ndigits = str(len(str(max_line)))
+                fmt_str = '%s : %' + ndigits + 'd |%s'
+                for (lx, line) in iter(found):
+                    line = line.replace('\n', '')
+                    if verbose:
+                        print(fmt_str % (name, lx, line))
+                return ret
     return None
 
 
 def __regex_grepfile(fpath, regexpr, verbose=True):
     ret = None
     with open(fpath, 'r') as file:
-        lines = file.readlines()
-        #found = []
-        found_lines = []
-        found_lxs = []
-        # Search each line for the desired regexpr
-        for lx, line in enumerate(lines):
-            match_object = re.search(regexpr, line)
-            if match_object is not None:
-                found_lines.append(line)
-                found_lxs.append(lx)
-                #found.append((lx, line))
-        found = list(zip(found_lxs, found_lines))
-        # Print the results (if any)
-        if len(found) > 0:
-            rel_fpath = relpath(fpath, os.getcwd())
-            ret = 'Found %d line(s) in %r: ' % (len(found), rel_fpath)
-            if verbose:
-                print('----------------------')
-                print(ret)
-            name = split(fpath)[1]
-            max_line = len(lines)
-            ndigits = str(len(str(max_line)))
-            fmt_str = '%s : %' + ndigits + 'd |%s'
-            for (lx, line) in iter(found):
-                line = line.replace('\n', '')
+        try:
+            lines = file.readlines()
+        except UnicodeDecodeError:
+            print("UNABLE TO READ fpath={}".format(fpath))
+        else:
+            #found = []
+            found_lines = []
+            found_lxs = []
+            # Search each line for the desired regexpr
+            for lx, line in enumerate(lines):
+                match_object = re.search(regexpr, line)
+                if match_object is not None:
+                    found_lines.append(line)
+                    found_lxs.append(lx)
+                    #found.append((lx, line))
+            found = list(zip(found_lxs, found_lines))
+            # Print the results (if any)
+            if len(found) > 0:
+                rel_fpath = relpath(fpath, os.getcwd())
+                ret = 'Found %d line(s) in %r: ' % (len(found), rel_fpath)
                 if verbose:
-                    print(fmt_str % (name, lx, line))
+                    print('----------------------')
+                    print(ret)
+                name = split(fpath)[1]
+                max_line = len(lines)
+                ndigits = str(len(str(max_line)))
+                fmt_str = '%s : %' + ndigits + 'd |%s'
+                for (lx, line) in iter(found):
+                    line = line.replace('\n', '')
+                    if verbose:
+                        print(fmt_str % (name, lx, line))
     return ret
 
 
@@ -123,7 +131,7 @@ def _sed(r, regexpr, repl, force=False, recursive=False, dpath_list=None):
 def _grep(r, tofind_list, recursive=True, case_insensitive=True, regex=False,
           dpath_list=None, invert=False):
     include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c',
-                        '*.h', '*.vim']  # , '*.txt']
+                        '*.h', '*.vim', '*.sh']  # , '*.txt']
     exclude_dirs = HS_EXCLUDE
     # ensure list input
     if isinstance(include_patterns, str):
