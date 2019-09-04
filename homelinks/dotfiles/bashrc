@@ -260,13 +260,13 @@ _CONDA_ROOT="$HOME/.local/conda/"
 if [ "$DID_MY_BASHRC_INIT" == "" ]; then
     # For some reason VIRTUAL_ENV is initialized as "", so unset it
     unset VIRTUAL_ENV
-    if [[ "$HOSTNAME" == "namek"  ]]; then 
-        workon_py "$HOME/venv3.6"
-    else
-        #we py36
-        #wenv py36
-        conda activate py37
-    fi
+    #if [[ "$HOSTNAME" == "namek"  ]]; then 
+    #    workon_py "$HOME/venv3.6"
+    #else
+    #we py36
+    #wenv py36
+    conda activate py37
+    #fi
 
 elif [ "$VIRTUAL_ENV" != "" ]; then
     # On reload use the same venv you were in
