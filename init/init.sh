@@ -59,7 +59,8 @@ fi
 if [ ! -d ~/.local/conda ]; then
     echo "SETUP CONDA ENV"
     setup_conda_env
-    pip install six ubelt xdoctest xdev
+    pip install six ubelt xdoctest xinspect xdev
+    pip install pyperclip psutil pep8 autopep8 flake8 pylint pytest
 fi
 
 source ~/.bashrc

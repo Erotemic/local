@@ -91,25 +91,30 @@ let g:markdown_fenced_languages = ['html', 'python', 'bash=sh']
 "===========PLUGINS==========="
 " PLUGIN: Vundle
 " git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+"
+" # Now using vim-plug instead of vundle
+" 
+" PLUGIN: vim-plug
+" https://github.com/junegunn/vim-plug
+Python2or3 << EOF
+"""
+# Install vim-plug into your autoload directory
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+"""
+EOF
 
-" alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
+call plug#begin('~/.vim/bundle')
 
-" let Vundle manage Vundle, required
-"Plugin 'VundleVim/Vundle.vim'
-Plugin 'VundleVim/Vundle.vim'
-Plugin 'slj/badwolf'
-"Plugin 'file:///home/joncrall/.vim/bundle/Vundle.vim/'
-"Plugin 'file:///home/joncrall/.vim/bundle/vimtk/'
-"Plugin 'file:///home/joncrall/.vim/bundle/jedi-vim/'
-"Plugin 'file:///home/joncrall/.vim/bundle/badwolf/'
+Plug 'sjl/badwolf'
+"Plug 'cjrh/vim-conda'
+"Plug 'file:///home/joncrall/.vim/bundle/vimtk/'
+"Plug 'file:///home/joncrall/.vim/bundle/jedi-vim/'
+"Plug 'file:///home/joncrall/.vim/bundle/badwolf/'
 
 Python2or3 << EOF
 
 # More programable syntax for plugins
-
 import sys
 #print('sys.executable = {!r}'.format(sys.executable))
 import os
@@ -164,7 +169,7 @@ def get_enabled_plugins():
         (flag, 'ultisnips'),
         (flag, 'vim-snippets'),
         (False, 'vim-powerline'),
-        (flag, 'vim-virtualenv'),
+        #(flag, 'vim-virtualenv'),
         (flag, 'vim-autopep8'),
 
         (flag, 'AnsiEsc.vim'),
@@ -187,7 +192,7 @@ def get_enabled_plugins():
         (False, 'vim-surround'), (False, 'vim-unimpaired'),
         (False, 'vim-vimtweak'),
         (False, 'pathogen'),
-        (False, 'Vundle.vim'),  # hack, we already enabled it
+        #(False, 'Vundle.vim'),  # hack, we already enabled it
     ] 
     file_enabled = ['file:///home/joncrall/.vim/bundle/' + name for flag, name in known_plugins if flag]
     #disabled = [name for flag, name in known_plugins if not flag]
@@ -202,12 +207,12 @@ def get_enabled_plugins():
 enabled = get_enabled_plugins()
 
 for name in enabled:
-    vim.command("Plugin '{}'".format(name))
+    vim.command("Plug '{}'".format(name))
 
 EOF
 
 " All of your Plugins must be added before the following line
-call vundle#end()            " required
+call plug#end()            " required
 filetype plugin indent on
 
 syntax on

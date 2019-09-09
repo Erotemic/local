@@ -501,10 +501,7 @@ install_python()
     #apt-get install -y python-tk
     pip install virtualenv
     pip install jedi
-    pip install pep8
-    pip install autopep8
-    pip install flake8
-    pip install pylint
+    pip install pep8 autopep8 flake8 pylint
     pip install line_profiler
     # pip install Xlib
     pip install requests
