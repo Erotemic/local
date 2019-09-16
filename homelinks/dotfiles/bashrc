@@ -35,7 +35,7 @@
 #export CUDA_HOST_COMPILER=/usr/bin/gcc-$GCC_VERSION
 #export CC=gcc-$GCC_VERSION
 #export CXX=g++-$GCC_VERSION
-echo """
+__heredoc__="""
 
 sudo apt install g++-5
 
@@ -48,7 +48,7 @@ CUDA_HOST_COMPILER=/usr/bin/gcc-$GCC_VERSION CC=gcc-$GCC_VERSION CXX=g++$GCC_VER
 CUDA_HOST_COMPILER=/usr/bin/gcc-5 CC=gcc-5 CXX=g++-5 python setup.py develop
 CUDA_HOST_COMPILER=/usr/bin/gcc-5 CC=gcc-5 CXX=g++-5 python setup.py build_ext --inplace
 
-""" > /dev/null
+"""
 
 
 # Test if I am logging into my own account.

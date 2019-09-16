@@ -821,6 +821,10 @@ pyversion(){
     python -c "import $1; print('$1.__version__ = ' + str($1.__version__))"
 }
 
+pywhich(){
+    python -c "import $1; print('$1.__file__ = ' + str($1.__file__))"
+}
+
 
 gitk(){
     # always spawn gitk in the background 
