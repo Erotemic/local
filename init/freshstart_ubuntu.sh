@@ -1474,3 +1474,10 @@ install_transcrypt(){
     git clone https://gitlab.com/Erotemic/erotemic.git
 
 }
+
+
+stop_evolution_cpu_hogging(){
+    # STOP USING MY CPU. EVOLUTION!
+    sudo chmod -x /usr/lib/evolution/evolution-calendar-factory
+    sudo chmod -x /usr/lib/evolution/evolution-*
+}
