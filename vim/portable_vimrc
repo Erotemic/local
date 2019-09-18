@@ -107,6 +107,7 @@ EOF
 call plug#begin('~/.vim/bundle')
 
 Plug 'sjl/badwolf'
+Plug 'osyo-manga/vim-over'
 "Plug 'cjrh/vim-conda'
 "Plug 'file:///home/joncrall/.vim/bundle/vimtk/'
 "Plug 'file:///home/joncrall/.vim/bundle/jedi-vim/'

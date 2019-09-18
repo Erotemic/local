@@ -494,3 +494,4 @@ rasterized
 traceback
 unicode
 hallucinator
+serializable
