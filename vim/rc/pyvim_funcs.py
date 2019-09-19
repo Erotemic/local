@@ -1261,7 +1261,7 @@ def search_candidate_paths(candidate_path_list, candidate_name_list=None,
 
 def find_and_open_path(path, mode='split', verbose=0,
                        enable_python=True,
-                       enable_url=True):
+                       enable_url=True, enable_cli=True):
     """
     Fancy-Find. Does some magic to try and find the correct path.
 
@@ -1324,6 +1324,20 @@ def find_and_open_path(path, mode='split', verbose=0,
         return None
 
     if enable_url:
+        def extract_url_embeding(word):
+            """
+            parse several common ways to embed url within a "word"
+            """
+            # rst url embedding
+            if word.startswith('<') and word.endswith('>`_'):
+                word = word[1:-3]
+            # markdown url embedding
+            if word.startswith('[') and word.endswith(')'):
+                import parse
+                pres = parse.parse('[{tag}]({ref})', word)
+                if pres:
+                    word = pres.named['ref']
+            return word
         # https://github.com/Erotemic
         url = extract_url_embeding(path)
         if is_url(url):
@@ -1341,6 +1355,12 @@ def find_and_open_path(path, mode='split', verbose=0,
     if try_open(os.path.expandvars(path)):
         return
 
+    if enable_cli:
+        # Strip off the --argname= prefix
+        match = re.match(r'--[\w_]*=', path)
+        if match:
+            path = path[match.end():]
+
     # path = 'sprokit/pipeline/pipeline.h'
     # base = os.getcwd()
     # base = '/home/joncrall/code/VIAME/packages/kwiver/sprokit/src/bindings/python/sprokit/pipeline'
@@ -1351,6 +1371,7 @@ def find_and_open_path(path, mode='split', verbose=0,
         path = path[1:-1]
     if path.endswith(':'):
         path = path[:-1]
+    path = os.path.expandvars(path)
     path = expanduser(path)  # expand again in case a prefix was removed
     if try_open(path):
         return
@@ -1394,22 +1415,6 @@ def find_and_open_path(path, mode='split', verbose=0,
                 return
         #vim.command('echoerr "Could not find path={}"'.format(path))
         print('Could not find path={!r}'.format(path))
-
-
-def extract_url_embeding(word):
-    """
-    parse several common ways to embed url within a "word"
-    """
-    # rst url embedding
-    if word.startswith('<') and word.endswith('>`_'):
-        word = word[1:-3]
-    # markdown url embedding
-    if word.startswith('[') and word.endswith(')'):
-        import parse
-        pres = parse.parse('[{tag}]({ref})', word)
-        if pres:
-            word = pres.named['ref']
-    return word
 
 
 def getvar(key, default=None, context='g'):
