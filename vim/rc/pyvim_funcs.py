@@ -1324,20 +1324,6 @@ def find_and_open_path(path, mode='split', verbose=0,
         return None
 
     if enable_url:
-        def extract_url_embeding(word):
-            """
-            parse several common ways to embed url within a "word"
-            """
-            # rst url embedding
-            if word.startswith('<') and word.endswith('>`_'):
-                word = word[1:-3]
-            # markdown url embedding
-            if word.startswith('[') and word.endswith(')'):
-                import parse
-                pres = parse.parse('[{tag}]({ref})', word)
-                if pres:
-                    word = pres.named['ref']
-            return word
         # https://github.com/Erotemic
         url = extract_url_embeding(path)
         if is_url(url):
@@ -1415,6 +1401,22 @@ def find_and_open_path(path, mode='split', verbose=0,
                 return
         #vim.command('echoerr "Could not find path={}"'.format(path))
         print('Could not find path={!r}'.format(path))
+
+
+def extract_url_embeding(word):
+    """
+    parse several common ways to embed url within a "word"
+    """
+    # rst url embedding
+    if word.startswith('<') and word.endswith('>`_'):
+        word = word[1:-3]
+    # markdown url embedding
+    if word.startswith('[') and word.endswith(')'):
+        import parse
+        pres = parse.parse('[{tag}]({ref})', word)
+        if pres:
+            word = pres.named['ref']
+    return word
 
 
 def getvar(key, default=None, context='g'):
