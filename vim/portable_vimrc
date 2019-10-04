@@ -388,7 +388,8 @@ call QUICKOPEN_leader_tvio('w', '~/code/VIAME/plugins/camtrawl/python/viame/proc
 call QUICKOPEN_leader_tvio('8', '~/local/misc/kwiver_places.sh')
 call QUICKOPEN_leader_tvio('y', '~/local/misc/kwiver_places.sh')
 call QUICKOPEN_leader_tvio('x', '~/code/xdoctest/xdoctest/core.py')
-call QUICKOPEN_leader_tvio('m', '~/misc/notes.sh')
+"call QUICKOPEN_leader_tvio('m', '~/misc/notes.sh')
+call QUICKOPEN_leader_tvio('m', '~/code/mmdetection/mmdet')
 
 call QUICKOPEN_leader_tvio('q', '~/local/vim/vimfiles/bundle/vimtk/vimtk/core.py')
 
