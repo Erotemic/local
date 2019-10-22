@@ -1825,3 +1825,9 @@ fix_ubuntu_18_04_sound_pop_issue(){
     sudo sh -c "echo N > /sys/module/snd_hda_intel/parameters/power_save_controller"
 }
 
+
+check_hdd_health(){
+    #https://unix.stackexchange.com/questions/487346/ubuntu-18-04-is-freezing-randomly
+    #https://help.ubuntu.com/community/Smartmontools
+    sudo apt-get install smartmontools
+}
