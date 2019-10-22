@@ -130,26 +130,49 @@ def ffmpeg_animate_frames(frame_fpaths, output_fpath, in_framerate=1, verbose=1)
         # evan_pad_option = '-filter:v pad="width=ceil(iw/2)*2:height=ceil(ih/2)*2"'
         # vid_options = '-c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p'
 
-        command = ' '.join([
-            'ffmpeg -y',
-            # GLOBAL OPTIONS
-            # INPUT OPTIONS
-            '-r {IN_FRAMERATE} ',
-            '-f concat -safe 0',
-            # '-framerate {IN_FRAMERATE} ',
-            '-i {IN}',
-            # OUTPUT OPTIONS
-            # vid_options,
-            # evan_pad_option,
-            # '-r {OUT_FRAMERATE}',
-            # '-filter:v scale=512:-1',
-            '{OUT}',
-        ]).format(
-            IN_FRAMERATE=in_framerate,
-            # OUT_FRAMERATE=5,
+        fmtkw = dict(
             IN=temp_fpath,
             OUT=output_fpath,
         )
+
+        global_options = []
+        input_options = [
+            '-r {IN_FRAMERATE} ',
+            '-f concat -safe 0',
+            # '-framerate {IN_FRAMERATE} ',
+        ]
+        fmtkw.update(dict(
+            IN_FRAMERATE=in_framerate,
+        ))
+
+        output_options = [
+            # '-qscale 0',
+            # '-crf 20',
+            # '-r {OUT_FRAMERATE}',
+            # '-filter:v scale=512:-1',
+        ]
+        fmtkw.update(dict(
+            # OUT_FRAMERATE=5,
+        ))
+
+        if output_fpath.endswith('.mp4'):
+            output_options += [
+                # MP4 needs even width
+                # https://stackoverflow.com/questions/20847674/ffmpeg-div2
+                '-filter:v pad="width=ceil(iw/2)*2:height=ceil(ih/2)*2"',
+            ]
+
+        cmd_fmt = ' '.join(
+            ['ffmpeg -y'] +
+            global_options +
+            input_options +
+            ['-i {IN}'] +
+            output_options +
+            ['{OUT}']
+        )
+
+        command = cmd_fmt.format(**fmtkw)
+
         if verbose > 0:
             print('Converting {} images to animation: {}'.format(len(frame_fpaths), output_fpath))
 

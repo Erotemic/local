@@ -18,16 +18,15 @@ install_nivida_drivers_apt(){
     sudo add-apt-repository ppa:graphics-drivers -y
     sudo apt update
     #sudo apt install nvidia-drivers-396
-    sudo apt install nvidia-driver-430
+    sudo apt install nvidia-driver-435
 
 
     # Restart, ensure you have tpl-archive and then run 
     ls ~/tpl-archive/cuda
     source ~/local/init/init_cuda.sh
-    cuda_version=9.2
+    cuda_version=10.1
     change_cuda_version $cuda_version
-    change_cudnn_version 9.2 7.0
-    
+    change_cudnn_version 10.1 7.0
 }
 
 
@@ -188,6 +187,12 @@ uninstall_local_cuda()
 }
 
 
+download_cuda_runfiles(){
+    cd ~/tpl-archive/cuda
+    wget http://developer.download.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda_10.1.243_418.87.00_linux.run
+}
+
+
 change_cuda_version()
 {
     __heredoc__='''
@@ -236,6 +241,16 @@ change_cuda_version()
         sh ~/tpl-archive/cuda/cuda-9.2/cuda-linux.9.2.148-24330188.run -prefix=$CUDA_PREFIX -noprompt -manifest $HOME/.local/cuda/manifest_cuda.txt -nosymlink 
         ln -s $CUDA_PREFIX $HOME/.local/cuda
     fi
+    if [ "$cuda_version" == "10.1" ]; then
+        unlink $HOME/.local/cuda
+        CUDA_PREFIX=$HOME/.local/cuda-10.1
+        mkdir -p $CUDA_PREFIX
+        ln -s $CUDA_PREFIX $HOME/.local/cuda
+        chmod +x ~/tpl-archive/cuda/cuda_10.1.243_418.87.00_linux.run
+        # Not sure if I installed cublas correctly via this command
+        sh ~/tpl-archive/cuda/cuda_10.1.243_418.87.00_linux.run --silent --toolkit --no-opengl-libs --no-man-page --toolkitpath=$CUDA_PREFIX  --defaultroot=$CUDA_PREFIX --tmpdir=$PWD
+    fi
+
     ls -al $HOME/.local/cuda
 
     # IS there any way to get these to work locally? No. These are nvidia drivers. They need to be system level
@@ -356,6 +371,16 @@ prep_cuda_runfile(){
     sh ~/tpl-archive/cuda/cuda_9.1.85_387.26_linux.run --silent --toolkitpath=$HOME/.local/cuda/ --no-opengl-libs --verbose --extract=$HOME/tpl-archive/cuda
     #rm $HOME/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run
     rm $HOME/tpl-archive/cuda/cuda-samples.9.1.85-23083092-linux.run
+
+    sh ~/tpl-archive/cuda/cuda_10.1.243_418.87.00_linux.run --silent --no-opengl-libs --extract=$HOME/tpl-archive/cuda
+    sh ~/tpl-archive/cuda/cuda_10.1.243_418.87.00_linux.run --no-opengl-libs --extract=$HOME/tpl-archive/cuda
+
+
+    mkdir -p $HOME/tpl-archive/cuda/extract
+    mkdir -p $HOME/tpl-archive/cuda/tmp
+    sh ~/tpl-archive/cuda/cuda_10.1.243_418.87.00_linux.run --no-opengl-libs --no-man-page --extract=$HOME/tpl-archive/cuda/extract --toolkitpath=$HOME/.local/cuda-10.1/ --toolkit --silent
+
+    sh cuda_10.1.243_418.87.00_linux.run --silent --toolkit --no-opengl-libs --no-man-page --extract=$PWD --toolkitpath=$PWD  --defaultroot=$PWD --tmpdir=$PWD
 }
 
 
