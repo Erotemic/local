@@ -12,6 +12,7 @@ __gpg_notes__(){
          .. [6] https://packaging.python.org/tutorials/packaging-projects/#uploading-your-project-to-pypi
          .. [7] https://python-security.readthedocs.io/packages.html
          .. [8] https://github.com/cristal-ise/kernel/wiki/Maven-Deploy-Travis-GPG2
+         .. [9] https://gist.github.com/romen/b7bac24d679d91acabb27bfcdabbee01
     """
 
     UserName="<firstname> <lastname>"
@@ -91,4 +92,39 @@ interact
     gpg --detach-sign -a $WHEEL_PATH
     gpg --verify $WHEEL_PATH.asc $WHEEL_PATH
     twine check $WHEEL_PATH $WHEEL_PATH.asc
+}
+
+
+__building_gpg__(){
+    # See Also:
+    # .. [9] https://gist.github.com/romen/b7bac24d679d91acabb27bfcdabbee01
+    # https://gnupg.org/download/
+    #mkdir -p $PREFIX
+    #echo $PREFIX
+    #OLD=$(pwd)
+    PREFIX=$HOME/.local
+    cd $PREFIX
+    mkdir -p tmp
+    cd tmp
+    wget https://gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-1.36.tar.bz2
+    wget https://gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-1.8.5.tar.bz2
+    wget https://gnupg.org/ftp/gcrypt/libksba/libksba-1.3.5.tar.bz2
+    wget https://gnupg.org/ftp/gcrypt/libassuan/libassuan-2.5.3.tar.bz2
+    wget https://gnupg.org/ftp/gcrypt/ntbtls/ntbtls-0.1.2.tar.bz2
+    wget https://gnupg.org/ftp/gcrypt/npth/npth-1.6.tar.bz2
+    wget https://gnupg.org/ftp/gcrypt/gnupg/gnupg-2.2.17.tar.bz2
+    tar xjf libgpg-error-1.36.tar.bz2
+    tar xjf libgcrypt-1.8.5.tar.bz2
+    tar xjf libksba-1.3.5.tar.bz2
+    tar xjf libassuan-2.5.3.tar.bz2
+    tar xjf ntbtls-0.1.2.tar.bz2
+    tar xjf npth-1.6.tar.bz2
+    tar xjf gnupg-2.2.17.tar.bz2
+    (cd libgpg-error-1.36 && ./configure --prefix=$PREFIX && make install)
+    (cd libgcrypt-1.8.5 && ./configure --prefix=$PREFIX && make install)
+    (cd libksba-1.3.5 && ./configure --prefix=$PREFIX && make install)
+    (cd libassuan-2.5.3 && ./configure --prefix=$PREFIX && make install)
+    (cd ntbtls-0.1.2 && ./configure --prefix=$PREFIX && make install)
+    (cd npth-1.6 && ./configure --prefix=$PREFIX && make install)
+    (cd gnupg-2.2.17 && ./configure --prefix=$PREFIX && make install)
 }
