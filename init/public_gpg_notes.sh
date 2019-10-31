@@ -11,6 +11,7 @@ __gpg_notes__(){
          .. [5] https://thoughtbot.com/blog/pgp-and-you
          .. [6] https://packaging.python.org/tutorials/packaging-projects/#uploading-your-project-to-pypi
          .. [7] https://python-security.readthedocs.io/packages.html
+         .. [8] https://github.com/cristal-ise/kernel/wiki/Maven-Deploy-Travis-GPG2
     """
 
     UserName="<firstname> <lastname>"
