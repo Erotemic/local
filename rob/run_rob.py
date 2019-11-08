@@ -63,9 +63,9 @@ def process_args(r, argv):
                 return 'r'
 
         func = getattr(rob_interface, cmd_name)
-        import utool as ut
         print('R.O.B. is evaling: ')
         try:
+            import utool as ut
             print('    ' + ut.func_str(func, (dummy_r(),) + tuple(args)))
         except ImportError:
             print('    ' + repr(func))
