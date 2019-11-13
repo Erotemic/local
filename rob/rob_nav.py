@@ -121,7 +121,11 @@ def extend_regex(regexpr):
 
 def _sed(r, regexpr, repl, force=False, recursive=False, dpath_list=None):
     import utool as ut
-    force = ut.smart_cast2(force)
+    # force = ut.smart_cast2(force)
+    if isinstance(force, six.string_types):
+        force = force.lower() == 'true'
+
+    # force = ut.smart_cast2(force)
     include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h', '*.pyx', '*.pxi', '*.cmake', 'CMakeLists.txt']
     ut.sed(regexpr, repl, force=force, recursive=recursive,
            dpath_list=dpath_list, verbose=True, include_patterns=include_patterns)
