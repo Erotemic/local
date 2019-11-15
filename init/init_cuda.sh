@@ -289,6 +289,7 @@ change_cudnn_version(){
 
         # (cuda_version, cudnn_version, os)
         ver = {}
+        ver[('10.1', '7.0', 'linux')] = 'cudnn-10.1-linux-x64-v7.6.5.32.tgz'
         ver[('9.2', '7.0', 'linux')] = 'cudnn-9.2-linux-x64-v7.6.2.24.tgz'
         ver[('9.1', '7.0', 'linux')] = 'cudnn-9.1-linux-x64-v7.tgz'
         ver[('9.0', '7.0', 'linux')] = 'cudnn-9.0-linux-x64-v7.tgz'
