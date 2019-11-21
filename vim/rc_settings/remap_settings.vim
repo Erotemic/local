@@ -54,7 +54,8 @@ noremap <c-M-G> :call PySelectAndFormatParagraphNoBreak()<CR>
 
 " Quick reference jumping
 noremap <leader>el :call PyCiteLookup()<CR>
-noremap <leader>es :call SmartSearchWordAtCursor()<CR>
+
+"noremap <leader>es :call SmartSearchWordAtCursor()<CR>
 noremap <leader>eg :call GrepWordAtCursor('normal')<CR>
 noremap <leader>ep :call GrepWordAtCursor('project')<CR>
 "noremap <leader>egg :call GrepWordAtCursor('normal')<CR>
@@ -68,8 +69,11 @@ vnoremap <m-b>   :call PyMakeWithEmbed(visualmode())<CR><Esc>
 inoremap <m-b> <Esc>:call PyMakeWithEmbed()<CR>i
 
 " Timing
-noremap  <c-M-B> :call PyMakeTimerit(mode())<CR><Esc>
-vnoremap <c-M-B> :call PyMakeTimerit(visualmode())<CR><Esc>
+"noremap  <c-M-B> :call PyMakeTimerit(mode())<CR><Esc>
+"vnoremap <c-M-B> :call PyMakeTimerit(visualmode())<CR><Esc>
+
+"noremap  <c-M-B> :call vimtk#insert_timerit(mode())<CR><Esc>
+"vnoremap <c-M-B> :call vimtk#insert_timerit(visualmode())<CR><Esc>
 
 " Python Autogen Snippets
 noremap <leader>d  :call InsertDocstr()<CR>
@@ -86,11 +90,13 @@ noremap <c-d> :call InsertDocstr()<CR>
 noremap <c-1> :call InsertDocstr()<CR>
 inoremap <c-1> :call InsertDocstr()<CR>
 
-inoremap <c-2> :call AutoPep8Block()<CR>
-noremap <c-2> :call AutoPep8Block()<CR>
+"inoremap <c-2> :call AutoPep8Block()<CR>
+"noremap <c-2> :call AutoPep8Block()<CR>
 
 " Misc python snippets
-noremap <leader>pv :call MakePrintVar()<CR>
+"noremap <leader>pv :call MakePrintVar()<CR>
+"noremap <leader>pv :call vimtk#insert_print_var_at_cursor()<CR>
+
 noremap <leader>pl :call MakePrintLine()<CR>
 " insert a NOQA
 noremap <leader>n A  # NOQA<Esc>
@@ -208,13 +214,13 @@ map <c-h> <c-w>h
 " Open file under cursor
 
 " In current v/split or new tab
-noremap <leader>go :call OpenPathAtCursor("e")<CR>
-noremap <leader>gf :call OpenPathAtCursor("e")<CR>
-noremap <leader>gi :call OpenPathAtCursor("split")<CR>
-noremap <leader>gv :call OpenPathAtCursor("vsplit")<CR>
-noremap <leader>gv :call OpenPathAtCursor("vsplit")<CR>
-noremap <leader>gt :call OpenPathAtCursor("tabe")<CR>
-noremap gi :call OpenPathAtCursor("split")<CR>
+"noremap <leader>go :call OpenPathAtCursor("e")<CR>
+"noremap <leader>gf :call OpenPathAtCursor("e")<CR>
+"noremap <leader>gi :call OpenPathAtCursor("split")<CR>
+"noremap <leader>gv :call OpenPathAtCursor("vsplit")<CR>
+"noremap <leader>gv :call OpenPathAtCursor("vsplit")<CR>
+"noremap <leader>gt :call OpenPathAtCursor("tabe")<CR>
+"noremap gi :call OpenPathAtCursor("split")<CR>
 
 "noremap <leader>gi :wincmd f<CR> 
 "noremap gi :wincmd f<CR> 
@@ -240,6 +246,9 @@ noremap <leader>+ :30winc ><CR>
 noremap <leader>_ :30winc <<CR>
 noremap <leader>= :FontIncrease<CR>
 noremap <leader>- :FontDecrease<CR>
+
+
+"noremap <leader>H :call vimtk#helloworld()<Esc>
 
 
 " UNSURE OF THESE 
