@@ -1,13 +1,16 @@
 # simple function that does nothing so we can write simple heredocs
 # we cant use it here though, otherwise it would infinite recurse!
 # Use it like this (sans leading comment symbols):
-# __heredoc__ '''
-# this is where your text goes. It can be multiline and indented, just dont
-# include the single quote character.  also note the surrounding triple
-# quotes just happen to be synatically correct and are not necessary,
-# although I do recomend them.
-# '''
-__heredoc__(){ NOOP=; }
+__heredoc__='''
+this is where your text goes. It can be multiline and indented, just dont
+include the single quote character.  also note the surrounding triple
+quotes just happen to be synatically correct and are not necessary,
+although I do recomend them.
+
+Usage:
+    source $HOME/local/init/utils.sh
+
+'''
 
 
 unlink_or_backup()
@@ -198,6 +201,18 @@ codeblock()
 
 writeto()
 {
+    __heredoc__="""
+
+    Usage:
+        writeto <fpath> <text>
+
+    Example:
+        writeto some-file.txt '''
+            # Text in this command is automatically dedented via codeblock
+            option=True
+            variable=False
+            '''
+    """
     fpath=$1
     text=$2
     fixed_text=$(codeblock "$text")
@@ -207,6 +222,19 @@ writeto()
 
 sudo_writeto()
 {
+    __heredoc__="""
+
+    Usage:
+        sudo_writeto <fpath> <text>
+
+    Example:
+        sudo_writeto /root-file '''
+            # Text in this command is automatically dedented via codeblock
+            option=True
+            variable=False
+            '''
+    """
+
     # NOTE: FAILS WITH QUOTES IN BODY
     fpath=$1
     text=$2

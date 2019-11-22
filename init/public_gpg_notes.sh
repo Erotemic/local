@@ -13,6 +13,7 @@ __gpg_notes__(){
          .. [7] https://python-security.readthedocs.io/packages.html
          .. [8] https://github.com/cristal-ise/kernel/wiki/Maven-Deploy-Travis-GPG2
          .. [9] https://gist.github.com/romen/b7bac24d679d91acabb27bfcdabbee01
+         .. [10] https://github.com/drduh/YubiKey-Guide
     """
 
     UserName="<firstname> <lastname>"
