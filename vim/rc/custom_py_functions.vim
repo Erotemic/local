@@ -135,23 +135,23 @@ EOF
 endfu 
 
 
-func! AutoPep8Block() 
-Python2or3 << EOF
-# FIXME: Unfinished
-import vim
-import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+"func! AutoPep8Block() 
+"Python2or3 << EOF
+"# FIXME: Unfinished
+"import vim
+"import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
 
-pyvim_funcs.ensure_normalmode()
+"pyvim_funcs.ensure_normalmode()
 
-if pyvim_funcs.is_module_pythonfile():
-    print('autopep8ing file')
-    text = pyvim_funcs.get_codelines_around_buffer()
-    pyvim_funcs.insert_codeblock_under_cursor(text)
-else:
-    print('current file is not a pythonfile')
-#L______________
-EOF
-endfu 
+"if pyvim_funcs.is_module_pythonfile():
+"    print('autopep8ing file')
+"    text = pyvim_funcs.get_codelines_around_buffer()
+"    pyvim_funcs.insert_codeblock_under_cursor(text)
+"else:
+"    print('current file is not a pythonfile')
+"#L______________
+"EOF
+"endfu 
 
 
 func! InsertKWargsDoc() 

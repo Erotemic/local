@@ -1312,7 +1312,7 @@ def find_and_open_path(path, mode='split', verbose=0,
         from xdoctest import static_analysis as static
         # Check if the path certainly looks like it could be a chain of python
         # attribute accessors.
-        if re.match('^[\w\d_.]*$', path):
+        if re.match(r'^[\w\d_.]*$', path):
             parts = path.split('.')
             for i in reversed(range(len(parts))):
                 prefix = '.'.join(parts[:i])
@@ -1394,9 +1394,9 @@ def find_and_open_path(path, mode='split', verbose=0,
             if try_open(pypath):
                 return
 
-        if re.match('--\w*=.*', path):
+        if re.match(r'--\w*=.*', path):
             # try and open if its a command line arg
-            stripped_path = expanduser(re.sub('--\w*=', '', path))
+            stripped_path = expanduser(re.sub(r'--\w*=', '', path))
             if try_open(stripped_path):
                 return
         #vim.command('echoerr "Could not find path={}"'.format(path))
