@@ -14,6 +14,8 @@
 
 
 " ~/code/vimtk/plugin/vimtk.vim
+" ~/code/vimtk/autoload/vimtk.vim
+" ~/code/vimtk/vimtk/core.py
 " ~/local/vim/vimfiles/bundle/vimtk/plugin/vimtk.vim
 
 
@@ -86,6 +88,7 @@ source ~/local/vim/rc/win32_presource.vim
 "source ~/local/vim/rc/venv_presource.vim
 set encoding=utf8
 let g:markdown_fenced_languages = ['html', 'python', 'bash=sh']
+let g:vimtk_default_mappings = 1
 
 
 "===========PLUGINS==========="
@@ -242,6 +245,9 @@ source ~/local/vim/rc_settings/plugins_latex.vim
 source ~/local/vim/rc_settings/plugins_latex2.vim
 
 
+"call VimTK_default_remap()
+
+
 let g:vim_markdown_math = 1
 let g:vim_markdown_folding_style_pythonic = 1
 
@@ -262,6 +268,8 @@ let g:vim_markdown_folding_style_pythonic = 1
 "    :exec 'noremap <leader>i'.key.' :split '.fname.'<CR>'
 "    :exec 'noremap <leader>o'.key.' :e '.fname.'<CR>'
 "endfu
+
+:call VimTK_default_remap()
 
 call vimtk#quickopen(',', '~/local/vim/portable_vimrc')
 call vimtk#quickopen('>', '~/code/flann/src/python/pyflann/index.py')
