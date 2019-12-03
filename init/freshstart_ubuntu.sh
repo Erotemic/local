@@ -600,12 +600,17 @@ setup_conda_other(){
     conda activate py36
 }
 
+setup_conda_test(){
+    conda remove --name py37_test --all
+    conda create -y -n py37_test python=3.7
+    conda activate py37_test
+}
+
 
 setup_conda27_env(){
     conda update -y -n base conda
     conda create -y -n py27 python=2.7
     conda activate py27
-    #conda remove --name py36 --all
 }
 
 install_conda_basics(){
