@@ -14,7 +14,10 @@
 " CUSOM VIM COMMAND PREFIX
 "
 " Remap colon to semicolon in normal and visual mode, but not interactive mode
-CMDSWAP : ;
+":call vimtk#remap_all_modes(':',';')
+":call vimtk#swap_keys : ;
+"VimTK_swap_keys : ;
+"CMDSWAP : ;
 "-------------------------
 
 "---------------------
@@ -276,15 +279,15 @@ inoremap <C-U> <C-G>u<C-U>
 nmap <leader>2 @
 
 " Define Macros
-let @q=',qw'
-let @2=',qw'
+"let @q=',qw'
+"let @2=',qw'
 
 "let @1='40j'
 "let @2='40k'
 
 " write a self. in normal mode
-let@s='iself.'
-let@e=':Align ='
+"let@s='iself.'
+"let@e=':Align ='
 
 
 """""""""""

@@ -210,7 +210,6 @@ set go-=a  " autoselect (automatic copy to clipboard)
 set clipboard-=autoselect
 
 
-set hlsearch
 " :s/\( *\):/:\1/gc
 ":set guitablabel=%N/\ %t
 :set guitablabel=%N/\ %t\ %M

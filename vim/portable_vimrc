@@ -110,6 +110,7 @@ call plug#begin('~/.vim/bundle')
 
 Plug 'sjl/badwolf'
 Plug 'osyo-manga/vim-over'
+Plug 'file:///home/joncrall/.vim/bundle/vimtk'
 "Plug 'Erotemic/vimtk'
 "Plug 'SirVer/ultisnips'
 "Plug 'cjrh/vim-conda'
@@ -159,7 +160,7 @@ def get_enabled_plugins():
 
     # Set flag to be false to disable plugin
     known_plugins = [
-        (flag, 'vimtk'),
+        #(flag, 'vimtk'),
 
         #(flag, 'vim-searchindex'),
         #(flag, 'vim-devicons'),
@@ -229,7 +230,7 @@ syntax on
 
 " PLUGIN: External non-plugin source files
 source ~/local/vim/rc/align.vim
-source ~/local/vim/rc/enable_code_snippets.vim
+"source ~/local/vim/rc/enable_code_snippets.vim
 source ~/local/vim/rc/custom_font_functions.vim
 source ~/local/vim/rc/custom_misc_functions.vim  
 source ~/local/vim/rc/custom_ipy_interact_funcs.vim  
@@ -270,6 +271,9 @@ let g:vim_markdown_folding_style_pythonic = 1
 "endfu
 
 :call VimTK_default_remap()
+
+" Swap colon and semicolon
+:call vimtk#swap_keys(':', ';')
 
 call vimtk#quickopen(',', '~/local/vim/portable_vimrc')
 call vimtk#quickopen('>', '~/code/flann/src/python/pyflann/index.py')
