@@ -590,9 +590,11 @@ install_virtualbox()
     sudo apt install virtualbox dkms
     # download addons and mount on guest machine
     #http://download.virtualbox.org/virtualbox/4.1.12/
-    utget 'http://download.virtualbox.org/virtualbox/4.1.12/VBoxGuestAdditions_4.1.12.iso'
-    utget 'http://mirror.solarvps.com/centos/7.0.1406/isos/x86_64/CentOS-7.0-1406-x86_64-DVD.iso'
-    python -c 'import utool; print(utool.grab_file_url("http://download.virtualbox.org/virtualbox/4.1.12/VBoxGuestAdditions_4.1.12.iso"))'
+    
+    python -c 'import ubelt; print(ubelt.grabdata("http://releases.ubuntu.com/16.04/ubuntu-16.04.6-desktop-i386.iso"))'
+    python -c 'import ubelt; print(ubelt.grabdata("http://download.virtualbox.org/virtualbox/4.1.12/VBoxGuestAdditions_4.1.12.iso"))'
+    python -c 'import ubelt; print(ubelt.grabdata("http://mirror.solarvps.com/centos/7.0.1406/isos/x86_64/CentOS-7.0-1406-x86_64-DVD.iso"))'
+    python -c 'import ubelt; print(ubelt.grabdata("http://download.virtualbox.org/virtualbox/4.1.12/VBoxGuestAdditions_4.1.12.iso"))'
     http://mirror.centos.org/centos/7/isos/x86_64/
     
 }

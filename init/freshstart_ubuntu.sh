@@ -595,6 +595,7 @@ setup_conda_other(){
 
     conda create -y -n py37 python=3.7
     conda create -y -n py36 python=3.6
+    conda create -y -n py35 python=3.5
     conda create -y -n py27 python=2.7
     conda create -y -n py26 python=2.6
     conda activate py36

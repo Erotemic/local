@@ -373,8 +373,8 @@ call vimtk#quickopen('s', '~/code/ibeis/ibeis/scripts/postdoc.py')
 "call vimtk#quickopen('T', '~/code/ibeis/ibeis/tag_funcs.py')
 call vimtk#quickopen('u', '~/code/utool/utool/__init__.py')
 "call vimtk#quickopen('U', '~/code/utool/utool/util_dev.py')
-"call vimtk#quickopen('v', '~/code/vtool/vtool/__init__.py')
-call vimtk#quickopen('V', '~/code/vtool/vtool/__init__.py')
+"call vimtk#quickopen('v', '~/code/vtool_ibeis/vtool_ibeis/__init__.py')
+call vimtk#quickopen('V', '~/code/vtool_ibeis/vtool_ibeis/__init__.py')
 "call vimtk#quickopen('W', '~/code/ibeis_cnn/ibeis_cnn/models/abstract_models.py')
 "call vimtk#quickopen('w', '~/code/ibeis/ibeis/web/apis_query.py')
 "call vimtk#quickopen('x', '~/code/ibeis/ibeis/viz/interact/interact_name.py')
@@ -447,7 +447,7 @@ listvars = {
         '~/.bashrc',
         '~/code/scikit-learn/sklearn/cluster/k_means.py',
         '~/code/ibeis/ibeis/algo/hots/vsone_pipeline.py',
-        '~/code/vtool/vtool/matching.py'
+        '~/code/vtool_ibeis/vtool_ibeis/matching.py'
     ]
 }
 for varname, list_ in listvars.items():
