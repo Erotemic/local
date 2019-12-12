@@ -931,6 +931,12 @@ setup_venvpypy(){
 
     pypy -m ensurepip
     sudo apt install pypy-pip
+    sudo apt install pypy3
+
+    sudo add-apt-repository ppa:pypy/ppa
+    sudo apt update
+    sudo apt install pypy3
+    
 }
 
 install_chrome()
