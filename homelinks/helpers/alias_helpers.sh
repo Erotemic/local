@@ -31,11 +31,8 @@ alias cgrep='grep -I -ER \
     --exclude-dir "volumes" \
     --exclude-dir "*.egg-info" \
     --exclude "searchindex.js" \
-    --exclude "*.js" \
     --exclude "*.dot*" \
     --exclude "*.rst*" \
-    --exclude "*.html*" \
-    --exclude "*.css*" \
     --exclude "profile_output.*" \
     --exclude "*.pipe*" \
     --exclude "*.zip*" \
@@ -45,6 +42,10 @@ alias cgrep='grep -I -ER \
     --exclude "*.o*" \
     --exclude "*.coverage*" \
     --exclude "tags"'
+
+    #--exclude "*.js" \
+    #--exclude "*.html*" \
+    #--exclude "*.css*" \
 
 
 #alias cgrep='grep -I --exclude-dir "*build*" --exclude-dir .git -ER'

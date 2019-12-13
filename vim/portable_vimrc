@@ -111,6 +111,22 @@ call plug#begin('~/.vim/bundle')
 Plug 'sjl/badwolf'
 Plug 'osyo-manga/vim-over'
 Plug 'file:///home/joncrall/.vim/bundle/vimtk'
+Plug 'posva/vim-vue'
+
+Plug 'vim-scripts/AnsiEsc.vim'
+Plug 'chrisbra/unicode.vim'
+Plug 'tell-k/vim-autopep8'
+Plug 'vim-syntastic/syntastic'
+
+Plug 'mhinz/vim-startify'
+Plug 'scrooloose/nerdcommenter'
+Plug 'scrooloose/nerdtree'
+Plug 'majutsushi/tagbar'
+
+Plug 'tpope/vim-markdown'
+
+Plug 'vim-scripts/taglist.vim'
+
 "Plug 'Erotemic/vimtk'
 "Plug 'SirVer/ultisnips'
 "Plug 'cjrh/vim-conda'
@@ -141,17 +157,17 @@ def get_enabled_plugins():
     flag = True
 
     github_enabled = [
-        'scrooloose/nerdtree',
-        'scrooloose/nerdcommenter',
-        'majutsushi/tagbar',
+        #'scrooloose/nerdtree',
+        #'scrooloose/nerdcommenter',
+        #'majutsushi/tagbar',
 
         (flag, 'google/vim-searchindex'),
         #(flag, 'vim-devicons'),
 
         (flag & UNIX, 'ervandew/supertab'),
-        (flag & UNIX, 'mhinz/vim-startify'),
+        # (flag & UNIX, 'mhinz/vim-startify'),
 
-        (flag & UNIX, 'vim-syntastic/syntastic'),
+        # (flag & UNIX, 'vim-syntastic/syntastic'),
         (flag, 'davidhalter/jedi-vim'),
         (flag, 'LaTeX-Box-Team/LaTeX-Box'),
         #(flag, 'vim-markdown'),
@@ -168,25 +184,26 @@ def get_enabled_plugins():
         #(flag & UNIX, 'syntastic'),
         #(flag, 'jedi-vim'),
         #(flag, 'LaTeX-Box'),
-        (flag, 'vim-markdown'),
-        (flag, 'vim-syntax-markdown'),
+        #(flag, 'vim-markdown'),
+        #(flag, 'vim-syntax-markdown'),
+        #(flag, 'vim-autopep8'),
         (False, 'vim-colors-solarized'),
 
         #(flag, 'ultisnips'),
         #(flag, 'vim-snippets'),
         (False, 'vim-powerline'),
         #(flag, 'vim-virtualenv'),
-        (flag, 'vim-autopep8'),
+        #(flag, 'vim-autopep8'),
 
-        (flag, 'AnsiEsc.vim'),
-        (flag, 'unicode.vim'),
+        #(flag, 'AnsiEsc.vim'),
+        #(flag, 'unicode.vim'),
         #(flag, 'badwolf' or 'sjl/badwolf'),
         #(flag, 'rainbow_parentheses.vim'),
         #(flag, 'closetag.vim'),
         #(flag, 'gruvbox'),
         #(flag, 'codeschool-vim-theme'),
         #(flag, 'phd'),
-        (flag & UNIX, 'taglist.vim'),  # ctags
+        #(flag & UNIX, 'taglist.vim'),  # ctags
 
         (False & UNIX, 'vim-buffergator'),
         #(False, 'vim-ipython'), 

@@ -125,6 +125,9 @@ au MyVimRC Filetype cmake setlocal tabstop=2
 au MyVimRC BufWritePre *.py :%s/\s\+$//e
 au MyVimRC BufWritePre *.py :%s/\+//e
 
+au MyVimRC BufWritePre *.vue :%s/\s\+$//e
+au MyVimRC BufWritePre *.vue :%s/\+//e
+
 
 "au! BufWritePre *.py :%s/\s\+$//e
 "au BufWritePre *.c :%s/\s\+$//e
