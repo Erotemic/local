@@ -25,6 +25,7 @@ alias cgrep='grep -I -ER \
     --exclude-dir "cmake-build" \
     --exclude-dir "build-*" \
     --exclude-dir "build_*" \
+    --exclude-dir "node_modules" \
     --exclude-dir .git \
     --exclude-dir .pytest_cache \
     --exclude-dir htmlcov \
