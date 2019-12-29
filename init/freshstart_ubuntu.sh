@@ -82,7 +82,9 @@ setup_remote_ssh_keys(){
     # Add this public key to remote authorized_keys so they recognize you.  
     # You may have to type in your password for each of these, but it will be
     # the last time.
-    ssh-copy-id jon.crall@remote_machine
+    REMOTE_USER=jon.crall
+    REMOTE_HOST=remote_machine
+    ssh-copy-id $REMOTE_USER@$REMOTE_HOST
 
     # ENSURE YOU HAVE ALL COMPUTERS UPDATED IN YOUR SSH CONFIG
 
@@ -593,6 +595,7 @@ setup_conda_env(){
 
 setup_conda_other(){
 
+    conda create -y -n py38 python=3.8
     conda create -y -n py37 python=3.7
     conda create -y -n py36 python=3.6
     conda create -y -n py35 python=3.5

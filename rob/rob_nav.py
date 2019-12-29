@@ -126,7 +126,10 @@ def _sed(r, regexpr, repl, force=False, recursive=False, dpath_list=None):
         force = force.lower() == 'true'
 
     # force = ut.smart_cast2(force)
-    include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h', '*.pyx', '*.pxi', '*.cmake', 'CMakeLists.txt']
+    include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c',
+                        '*.h', '*.pyx', '*.pxi', '*.cmake',
+                        '*.sh', '*.yml',
+                        'CMakeLists.txt']
     ut.sed(regexpr, repl, force=force, recursive=recursive,
            dpath_list=dpath_list, verbose=True, include_patterns=include_patterns)
     return
