@@ -129,11 +129,19 @@ clean_latex()
 
     latexmk -c
 }
+
+clean_emptydirs()
+{
+    # https://unix.stackexchange.com/questions/46322/how-can-i-recursively-delete-empty-directories-in-my-home-directory
+    find . -type d -empty -print
+    find . -type d -empty -delete
+}
+
 alias ipy='ipython'
-alias ipyk='ipython kernel'
+#alias ipyk='ipython kernel'
 #alias ipynb='ipython notebook'
-alias pyl='pylint --disable=C'
-alias pyf='pyflakes'
+#alias pyl='pylint --disable=C'
+#alias pyf='pyflakes'
 alias lls='ls -I *.aux -I *.bbl -I *.blg -I *.out -I *.log -I *.synctex'
 pdbpython()
 {
