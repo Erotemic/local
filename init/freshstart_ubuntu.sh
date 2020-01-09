@@ -1,6 +1,16 @@
 source $HOME/local/init/utils.sh
 
 
+basic_apt_install(){
+
+    # High priority
+    sudo apt install htop git tmux tree curl gcc g++ gfortran build-essential -y
+
+    # Mid priority
+    sudo apt install expect exuberant-ctags graphviz imagemagick gitk wmctrl xclip xdotool xsel vim-gnome p7zip-full valgrind -y
+}
+
+
 simple_setup_manual()
 {
     sudo apt install git -y

@@ -12,8 +12,43 @@ CommandLine:
     source ~/local/init/init.sh
 
 """
-source ~/local/init/freshstart_ubuntu.sh
+source $HOME/local/init/freshstart_ubuntu.sh
+source $HOME/local/init/utils.sh
 
+HAVE_SUDO=$(have_sudo)
+IS_HEADLESS=$(is_headless)
+echo "IS_HEADLESS = $IS_HEADLESS"
+echo "HAVE_SUDO = $HAVE_SUDO"
+
+
+if [ "$HAVE_SUDO" == "True" ]; then
+
+    if [[ `which git` == "" ]]; then
+        sudo apt install git -y
+    fi
+
+    if [[ `which gcc` == "" ]]; then
+        sudo apt install gcc g++ gfortran build-essential -y
+    fi
+
+    if [[ `which curl` == "" ]]; then
+        sudo apt install curl -y
+    fi
+
+    if [[ `which htop` == "" ]]; then
+        sudo apt install htop tmux tree -y
+    fi
+
+    if [[ `which sshfs` == "" ]]; then
+        sudo apt install sshfs -y
+    fi
+
+    if [[ `which astyle` == "" ]]; then
+        sudo apt install astyle p7zip-full pgpgpg lm-sensors -y
+    fi
+else
+    echo "We dont have sudo. Hopefully we wont need it"
+fi
 
 
 _GITUSER=$(git config --global user.name)
@@ -24,21 +59,25 @@ if [ "$_GITUSER" == "" ]; then
   mkdir -p ~/code
 fi
 
-if [ $(which terminator) = "" ]; then
-    echo "ENSURE TERMINATOR"
-        # Dont use buggy gtk2 version 
-        # https://bugs.launchpad.net/ubuntu/+source/terminator/+bug/1568132
-        sudo add-apt-repository ppa:gnome-terminator/nightly-gtk3
-        sudo apt update
-        sudo apt install terminator -y
-fi
+if [ "$IS_HEADLESS" == "False" ]; then
 
-if [ ! -e ~/.config/terminator ]; then
-    echo "ENSURE SYMLINKS"
-    source ~/local/init/ensure_symlinks.sh 
-    ensure_config_symlinks
-    # TODO: terminator doesnt configure to automatically use the joncrall profile in 
-    # the terminator config. Why?
+    if [ $(which terminator) = "" ]; then
+        echo "ENSURE TERMINATOR"
+            # Dont use buggy gtk2 version 
+            # https://bugs.launchpad.net/ubuntu/+source/terminator/+bug/1568132
+            sudo add-apt-repository ppa:gnome-terminator/nightly-gtk3
+            sudo apt update
+            sudo apt install terminator -y
+    fi
+
+    if [ ! -e ~/.config/terminator ]; then
+        echo "ENSURE SYMLINKS"
+        source ~/local/init/ensure_symlinks.sh 
+        ensure_config_symlinks
+        # TODO: terminator doesnt configure to automatically use the joncrall profile in 
+        # the terminator config. Why?
+    fi
+
 fi
 
 if [ ! -d ~/.ssh ]; then
@@ -51,11 +90,6 @@ if [ ! -d ~/.ssh ]; then
     fi 
 fi
 
-if [ $(which curl) = "" ]; then
-  echo "ENSURE CURL"
-  ensure_curl
-fi
-
 if [ ! -d ~/.local/conda ]; then
     echo "SETUP CONDA ENV"
     setup_conda_env
@@ -64,7 +98,6 @@ if [ ! -d ~/.local/conda ]; then
 fi
 
 source ~/.bashrc
-
 
 
 #vim-gnome  
@@ -87,21 +120,18 @@ fi
 python ~/local/init/init_ipython_config.py
 
 
-if [[ `which gfortran` == "" ]]; then
-    sudo apt install gcc g++ gfortran build-essential -y
-fi
+if [ "$IS_HEADLESS" == "False" ]; then
+    if [[ `which google-chrome` == "" ]]; then
+        install_chrome
 
+        install_basic_extras
 
-if [[ `which google-chrome` == "" ]]; then
-    install_chrome
+        sh ~/local/build_scripts/install_zotero.sh
 
-    install_basic_extras
+        sudo apt install -y vlc redshift sshfs wmctrl xdotool xclip 
 
-    sh ~/local/build_scripts/install_zotero.sh
-
-    sudo apt install -y vlc redshift sshfs wmctrl xdotool tmux xclip htop tree astyle p7zip-full pgpgpg lm-sensors
-
-    sudo snap install spotify
+        sudo snap install spotify
+    fi
 fi
 
 

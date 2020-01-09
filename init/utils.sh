@@ -65,6 +65,24 @@ have_sudo(){
 }
 
 
+is_headless(){
+    __heredoc__='''
+    Tests if we have a local display variable (i.e. not x11 forwarding)
+    if we dont then we are probably on a headless server
+    '''
+    if [ "$DISPLAY" == "" ]; then
+        echo "False"
+    else
+        _VAR=$(python -c "print('True' * '$DISPLAY'.startswith(':'))")
+        if [ "$_VAR" == "True" ]; then
+            echo "True"
+        else
+            echo "False"
+        fi
+    fi
+}
+
+
 has_pymodule(){
     __heredoc__='''
     Check if a python module is installed. Echos "True" or "False" to the

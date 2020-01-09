@@ -847,11 +847,9 @@ randpw(){
     #head -c${1:-512} /dev/random | sha512sum
     #head -c${1:-128} /dev/random | sha512sum
 
-
     #head -c${1:-128} /dev/random | python -c "import ubelt, sys; print(ubelt.hash_data(sys.stdin.read(), base='abc'))"
     #head -c${1:-128} /dev/urandom | sha512sum | python -c "import string, ubelt, sys; print(ubelt.hash_data(sys.stdin.read(), base=list(string.ascii_letters + string.digits))[0:32])"
-
-    head -c${1:-128} /dev/random | sha512sum | python -c "import string, ubelt, sys; print(ubelt.hash_data(sys.stdin.read(), base=list(string.ascii_letters + string.digits))[0:32])"
+    head -c${1:-128} /dev/random | sha512sum | python -c "import string, ubelt, sys; print(ubelt.hash_data(sys.stdin.read(), base=list(string.ascii_letters + string.digits)))"
 
 }
 
