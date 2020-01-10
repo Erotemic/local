@@ -865,3 +865,22 @@ randpw(){
 randint(){ 
     head -c${1:-128} /dev/random | sha512sum | python -c "import string, ubelt, sys; print(ubelt.hash_data(sys.stdin.read(), base=list(string.digits))[0:32])"
 }
+
+
+git-tarball-hash()
+{
+    __heredoc__='''
+    https://gist.github.com/simonw/a44af92b4b255981161eacc304417368
+
+    '''
+    CURRENT_COMMIT=$(git rev-parse HEAD)
+    #CURRENT_COMMIT=$(git log -n 1 | head -n 1 | sed -e 's/^commit //')
+    CURRENT_COMMIT=0418a4cf84b83a22a4d2aca704543f93677260d6
+    echo "CURRENT_COMMIT = $CURRENT_COMMIT"
+    git archive --format=tar.gz -o /tmp/temp-repo.tar.gz $(git rev-parse HEAD)
+    sha256sum /tmp/temp-repo.tar.gz 
+
+    md5sum /tmp/temp-repo.tar.gz 
+    sha1sum /tmp/temp-repo.tar.gz 
+    sha512sum /tmp/temp-repo.tar.gz 
+}
