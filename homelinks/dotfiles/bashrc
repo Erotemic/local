@@ -255,6 +255,8 @@ debug(){
 # HACK FOR ME
 _CONDA_ROOT="$HOME/.local/conda/"
 
+echo "workon"
+
 #echo "CONDA_PREFIX = $CONDA_PREFIX"
 #echo "CURRENT VIRTAL_ENV=$VIRTUAL_ENV"
 if [ "$DID_MY_BASHRC_INIT" == "" ]; then
