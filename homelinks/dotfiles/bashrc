@@ -191,19 +191,14 @@ else
     source $HOME/local/homelinks/helpers/bashrc_ubuntu.sh
 fi
 
-echo "utils"
 source $HOME/local/init/utils.sh
-echo "git"
 source $HOME/local/homelinks/helpers/git_helpers.sh
-echo "alias"
 source $HOME/local/homelinks/helpers/alias_helpers.sh
-echo "hist"
 
 
 # set history to not ignore leading whitespace
 export HISTCONTROL=
 
-echo "cplex"
 
 # If IBM CPLEX is installed
 CPLEX_PREFIX=/opt/ibm/ILOG/CPLEX_Studio_Community1263
@@ -261,8 +256,6 @@ debug(){
 # HACK FOR ME
 _CONDA_ROOT="$HOME/.local/conda/"
 
-echo "workon"
-
 #echo "CONDA_PREFIX = $CONDA_PREFIX"
 #echo "CURRENT VIRTAL_ENV=$VIRTUAL_ENV"
 if [ "$DID_MY_BASHRC_INIT" == "" ]; then
@@ -295,8 +288,6 @@ elif [ "$CONDA_PREFIX" != "" ]; then
     #echo "WORKON CONDA_PREFIX = $CONDA_PREFIX"
     workon_py $CONDA_PREFIX
 fi
-
-echo "do clean"
 
 # Clean paths again before workon stuff happens
 export PATH=$(pathvar_clean PATH)
