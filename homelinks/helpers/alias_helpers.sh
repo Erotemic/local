@@ -443,10 +443,24 @@ tmuxattach(){
 #    cp $1 ../flann/$1
 #}
 
+_system_python(){
+    __heredoc__="""
+    Return name of system python
+    """
+    if [ "$(which python)" != "" ]; then
+        echo "python"
+    elif [ "$(which python3)" != "" ]; then
+        echo "python3"
+    else
+        echo "python"
+    fi 
+}
+
 
 print_all_pathvars()
 {
-    python -c "$(codeblock "
+    _PYEXE=$(_system_python)
+    $_PYEXE -c "$(codeblock "
     import os
     vars = ['PATH', 'LD_LIBRARY_PATH', 'CPATH', 'CMAKE_PREFIX_PATH']
     for v in vars:
@@ -463,7 +477,8 @@ pathvar_print(){
 # pathvar_print LD_LIBRARY_PATH
 # pathvar_print PATH
 _VAR=$1
-python -c "
+_PYEXE=$(_system_python)
+$_PYEXE -c "
 if __name__ == '__main__':
     import os
     pathvar = [p for p in os.environ['$_VAR'].split(os.pathsep) if p]
@@ -478,7 +493,9 @@ pathvar_clean()
 # pathvar_clean LD_LIBRARY_PATH
 # pathvar_clean PATH
 _VAR=$1
-python -c "
+
+_PYEXE=$(_system_python)
+$_PYEXE -c "
 if __name__ == '__main__':
     import os
     parts = os.environ.get('$_VAR', '').split(os.pathsep)
@@ -499,7 +516,8 @@ pathvar_remove()
 # pathvar_clean PATH
 _VAR=$1
 _VAL=$2
-python -c "
+_PYEXE=$(_system_python)
+$_PYEXE -c "
 if __name__ == '__main__':
     import os
     from os.path import expanduser, abspath
