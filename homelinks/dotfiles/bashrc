@@ -1,7 +1,5 @@
 #!/bin/sh
 
-set -x
-
 ######################
 # Debugging code
 
@@ -289,6 +287,8 @@ elif [ "$CONDA_PREFIX" != "" ]; then
     #echo "WORKON CONDA_PREFIX = $CONDA_PREFIX"
     workon_py $CONDA_PREFIX
 fi
+
+echo "do clean"
 
 # Clean paths again before workon stuff happens
 export PATH=$(pathvar_clean PATH)
