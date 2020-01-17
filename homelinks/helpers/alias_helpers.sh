@@ -551,10 +551,11 @@ export CPATH=$(pathvar_remove CPATH $1)
 
 
 debug_paths(){
-    python -c "import os; path = os.environ['LD_LIBRARY_PATH'].split(os.pathsep); print('\n'.join(path))"
-    python -c "import os; path = os.environ['PATH'].split(os.pathsep); print('\n'.join(path))"
+    _PYEXE=$(_system_python)
+    $_PYEXE -c "import os; path = os.environ['LD_LIBRARY_PATH'].split(os.pathsep); print('\n'.join(path))"
+    $_PYEXE -c "import os; path = os.environ['PATH'].split(os.pathsep); print('\n'.join(path))"
 
-    python -c "import os; path = os.environ['LD_LIBRARY_PATH'].split(os.pathsep); print(os.pathsep.join(path))"
+    $_PYEXE -c "import os; path = os.environ['LD_LIBRARY_PATH'].split(os.pathsep); print(os.pathsep.join(path))"
 }
 
 
