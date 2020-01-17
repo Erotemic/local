@@ -104,8 +104,14 @@ fi
 if [ ! -d ~/.local/conda ]; then
     echo "SETUP CONDA ENV"
     setup_conda_env
+
     pip install six ubelt xdoctest xinspect xdev
     pip install pyperclip psutil pep8 autopep8 flake8 pylint pytest
+fi
+
+# Unset the python alias we set earlier because now we should be in a conda env
+if [ "$(alias | grep 'alias python=')" != "" ]; then
+    unalias python
 fi
 
 source ~/.bashrc

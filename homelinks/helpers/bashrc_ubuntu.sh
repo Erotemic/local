@@ -109,7 +109,7 @@ fi
 
 # DEPRICATE
 # some more ls aliases
-export name=Hyrule
+#export name=Hyrule
 export platform=linux2
 export CLOUD=~/Dropbox
 #export code=~/code
