@@ -72,7 +72,23 @@ alias ggss=gg-short-status
 #complete -W "remote1 remote2 remote3 remote4" "git_sync"
 
 
-USER_SSH_HOSTS=$(python -c "
+_system_python(){
+    __heredoc__="""
+    Return name of system python
+    """
+    if [ "$(which python)" != "" ]; then
+        echo "python"
+    elif [ "$(which python3)" != "" ]; then
+        echo "python3"
+    else
+        echo "python"
+    fi 
+}
+
+
+
+_PYEXE=$(_system_python)
+USER_SSH_HOSTS=$($_PYEXE -c "
 # READ known hostnames from ~/.ssh/config
 from os.path import expanduser, exists
 ssh_config_path = expanduser('~/.ssh/config')
