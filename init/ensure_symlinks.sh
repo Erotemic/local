@@ -2,13 +2,14 @@ source $HOME/local/init/utils.sh
 
 ensure_config_symlinks()
 {
-    __heredoc__ '''
+    __heredoc__='''
     CommandLine:
         source ~/local/init/ensure_symlinks.sh && ensure_config_symlinks
         source ~/local/init/ensure_symlinks.sh && ensure_config_symlinks --nosudo
     '''
 
     HAVE_SUDO=$(have_sudo)
+    echo "HAVE_SUDO = $HAVE_SUDO"
     NOSUDO=$1
 
     if [ "$(which symlinks)" = "" ] && ["$NOSUDO" != "--nosudo"]; then

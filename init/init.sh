@@ -12,6 +12,13 @@ CommandLine:
     source ~/local/init/init.sh
 
 """
+
+if [[ `which python` == "" ]]; then
+    if [[ `which python3` != "" ]]; then
+        alias python=python3
+    fi
+fi
+
 source $HOME/local/init/freshstart_ubuntu.sh
 source $HOME/local/init/utils.sh
 
@@ -59,6 +66,10 @@ if [ "$_GITUSER" == "" ]; then
   mkdir -p ~/code
 fi
 
+echo "ENSURE SYMLINKS"
+source ~/local/init/ensure_symlinks.sh 
+ensure_config_symlinks
+
 if [ "$IS_HEADLESS" == "False" ]; then
 
     if [ $(which terminator) = "" ]; then
@@ -70,13 +81,13 @@ if [ "$IS_HEADLESS" == "False" ]; then
             sudo apt install terminator -y
     fi
 
-    if [ ! -e ~/.config/terminator ]; then
-        echo "ENSURE SYMLINKS"
-        source ~/local/init/ensure_symlinks.sh 
-        ensure_config_symlinks
-        # TODO: terminator doesnt configure to automatically use the joncrall profile in 
-        # the terminator config. Why?
-    fi
+    #if [ ! -e ~/.config/terminator ]; then
+    #    echo "ENSURE SYMLINKS"
+    #    source ~/local/init/ensure_symlinks.sh 
+    #    ensure_config_symlinks
+    #    # TODO: terminator doesnt configure to automatically use the joncrall profile in 
+    #    # the terminator config. Why?
+    #fi
 
 fi
 
