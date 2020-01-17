@@ -191,13 +191,19 @@ else
     source $HOME/local/homelinks/helpers/bashrc_ubuntu.sh
 fi
 
+echo "utils"
 source $HOME/local/init/utils.sh
+echo "git"
 source $HOME/local/homelinks/helpers/git_helpers.sh
+echo "alias"
 source $HOME/local/homelinks/helpers/alias_helpers.sh
+echo "hist"
 
 
 # set history to not ignore leading whitespace
 export HISTCONTROL=
+
+echo "cplex"
 
 # If IBM CPLEX is installed
 CPLEX_PREFIX=/opt/ibm/ILOG/CPLEX_Studio_Community1263
