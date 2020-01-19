@@ -198,6 +198,10 @@ change_cuda_version()
     __heredoc__='''
         ls ~/tpl-archive/cuda
         source ~/local/init/init_cuda.sh
+
+        cuda_version=10.1
+        change_cuda_version $cuda_version
+
         cuda_version=9.2
         change_cuda_version $cuda_version
 
@@ -525,6 +529,8 @@ init_local_cuda(){
     rsync -avzupR ~/./tpl-archive/ jon.crall@remote2.kitware.com:.
     rsync -avzupR ~/./tpl-archive/ jon.crall@remote3.kitware.com:.
     rsync -avzupR ~/./tpl-archive/ joncrall@remote4.kitware.com:.
+
+    rsync -avzupR ~/./tpl-archive/ viame:.
 
     rsync -avzupR joncrall@remote2.kitware.com:./tpl-archive/ ~/.
 

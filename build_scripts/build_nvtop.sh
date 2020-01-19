@@ -7,6 +7,9 @@ Deps:
     sudo apt install libncurses5-dev
     sudo apt install libncursesw5-dev
 
+    yum install ncurses-devel
+    
+
 NOTES:
     DEACTIVATE YOUR CONDA ENVIRONMENT BEFORE RUNNING THIS SCRIPT
 '''

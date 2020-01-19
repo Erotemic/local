@@ -71,11 +71,28 @@ setup_single_use_ssh_keys(){
     # WHERES MY POST-QUANTUM CRYPTO AT?!  
     # Unfortunately I think ED25519 cant be PQ-resistant because its fixed at 256 bits :(
     # Note: add a passphrase in -N for extra secure
-    ssh-keygen -t ed25519 -b 256 -C "erotemic@gmail.com" -f id_${HOSTNAME}_${USER}_ed25519 -N ""
+    echo "USER = $USER"
+    echo "HOSTNAME = $HOSTNAME"
+    #EMAIL=erotemic@gmail.com
+    EMAIL=jon.crall@kitware.com
+    ssh-keygen -t ed25519 -b 256 -C "${EMAIL}" -f ~/.ssh/id_${HOSTNAME}_${USER}_ed25519 -N ""
+
+    chmod 700 ~/.ssh
+    chmod 400 ~/.ssh/id_*
+    chmod 644 ~/.ssh/id_*.pub
+
+    eval "$(ssh-agent -s)"
+    ssh-add ~/.ssh/id_${HOSTNAME}_${USER}_ed25519
+    
+    # register public key with appropriate services
+    # https://gitlab.kitware.com/profile/keys
+    cat ~/.ssh/id_${HOSTNAME}_${USER}_ed25519.pub
 
     # Note: RSA with longer keys will be post-quantum resistant for longer
     # The NSA recommends a minimum 3072 key length, probably should go longer than that
     # ssh-keygen -t rsa -b 8192 -C "erotemic@gmail.com" -f id_${HOSTNAME}_${USER}_rsa -N ""
+
+    # See: https://github.com/open-quantum-safe/liboqs
 
 }
 
