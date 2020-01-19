@@ -107,8 +107,10 @@ setup_remote_ssh_keys(){
     done
 
     # Copy from a remote to local computer
-    rsync remote_machine:.ssh/./id_myname_rsa* $HOME/.ssh/
-    rsync remote_machine:.ssh/./config $HOME/.ssh/
+    REMOTE_USER=jon.crall
+    REMOTE_HOST=remote_machine
+    rsync $REMOTE_HOST:.ssh/./id_* $HOME/.ssh/
+    rsync $REMOTE_HOST:.ssh/./config $HOME/.ssh/
 }
 
 
