@@ -13,9 +13,7 @@ Notes:
     sshfs -o follow_symlinks,idmap=user remote1: ~/remote/remote1
     fusermount -u ~/remote/remote1
 
-    mkdir -p ~/remote/videonas2/other
-    sudo mount -t cifs -o dir_mode=0777,file_mode=0777 -o username=jon.crall //videonas/other ~/remote/videonas/other
-    sudo umount ~/remote/videonas/other
+    sudo mount -t cifs -o dir_mode=0777,file_mode=0777 -osec=ntlmv2,domain=$DOMAIN,username=$USERNAME,password=$PASSWORD //$SMB_NAME $HOME/remote/$SMB_NAME
 
 CommandLine:
 
@@ -145,21 +143,8 @@ if [[ $# -gt 0 ]]; then
 fi
 
 #fusermount -u ~/remote1
-
 #if [ "$(is_available remote1)" != "" ]; then
 #    mkdir -p ~/remote1    
 #fi
-
 # FOR UNMOUNT
 # fusermount -u ~/remote1
-
-
-# Didnt work
-#mount_remote_if_available videonas2 
-# fusermount -u ~/videonas2
-
-# This works now that I have permission
-#mkdir -p ~/remote/videonas2/other
-# 
-#sudo mount -t cifs //videonas/other -o username=jon.crall ~/remote/videonas/other
-#sudo umount ~/remote/videonas2/other
