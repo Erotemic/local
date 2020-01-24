@@ -503,6 +503,7 @@ if __name__ == '__main__':
     fixed = []
     for p in parts:
         if p and p not in seen:
+            p = p.replace('//', '/')
             seen.add(p)
             fixed.append(p)
     print(os.pathsep.join(fixed))

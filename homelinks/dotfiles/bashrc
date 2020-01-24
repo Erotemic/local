@@ -263,11 +263,12 @@ if [ "$DID_MY_BASHRC_INIT" == "" ]; then
     unset VIRTUAL_ENV
 
     #if [ -d "$HOME/.local/conda/envs/py38" ]; then
-    #    we py38
     if [ -d "$HOME/.local/conda/envs/py37" ]; then
-        we py37
+        #we py37
+        conda activate py37
     elif [ -d "$HOME/.local/conda/envs/py36" ]; then
-        we py36
+        #we py36
+        conda activate py36
     fi 
     #if [[ "$HOSTNAME" == "namek"  ]]; then 
     #    #workon_py "$HOME/venv3.6"
