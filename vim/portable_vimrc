@@ -304,7 +304,7 @@ call vimtk#quickopen('2', '~/local/scripts/register_files.py')
 call vimtk#quickopen('@', '~/code/mtgmonte/mtgmonte.py')
 "call vimtk#quickopen('3', '~/code/guitool/guitool/api_item_model.py')
 call vimtk#quickopen('3', '~/code/guitool/guitool/guitool_components.py')
-call vimtk#quickopen('4', '~/local/init/ubuntu_core_packages.sh')
+call vimtk#quickopen('4', '~/local/init/freshstart_ubuntu.sh')
 call vimtk#quickopen('$', '~/local/build_scripts/')
 call vimtk#quickopen('5', '~/local/homelinks/dotfiles/bashrc')
 call vimtk#quickopen('%', '~/local/misc/learn.py')
@@ -479,12 +479,12 @@ if 1:
     vimtk.reload()
 EOF
 
-Python2or3 << EOF
-import vimtk
-from distutils.version import LooseVersion
-if LooseVersion(vimtk.__version__) >= LooseVersion('0.1.1'):
-    from vimtk import jedi_monkeypatch
-    jedi_monkeypatch.apply_monkey_patch_jedi()
-else:
-    print('VIMTK VERSION TO OLD: vimtk.__version__ = {!r}'.format(vimtk.__version__))
-EOF
+"Python2or3 << EOF
+"import vimtk
+"from distutils.version import LooseVersion
+"if LooseVersion(vimtk.__version__) >= LooseVersion('0.1.1'):
+"    from vimtk import jedi_monkeypatch
+"    jedi_monkeypatch.apply_monkey_patch_jedi()
+"else:
+"    print('VIMTK VERSION TO OLD: vimtk.__version__ = {!r}'.format(vimtk.__version__))
+"EOF

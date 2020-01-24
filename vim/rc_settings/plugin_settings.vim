@@ -105,7 +105,7 @@ flake8_errors = [
     'E301',  # expected 1 blank line, found 0
     'E305',  # expected 1 blank line after class / func
     'E306',  # expected 1 blank line before func
-    #'E402',  # moduel import not at top
+    #'E402',  # module import not at top
     'E501',  # line length > 79
     'W602',  # Old reraise syntax
     'E266',  # too many leading '#' for block comment
@@ -271,40 +271,6 @@ let Tlist_Auto_Update=1
 let Tlist_Auto_Highlight_Tag = 1
 "let Tlist_tex_settings = 'latex;s:sections;t:subsections;u:subsubsections'
 
-" Only for latex
-"set iskeyword=@,48-57,_,-,:,192-255
-
-
-"-------------------------
-" PLUGIN: Unimpaired
-"https://github.com/tpope/vim-unimpaired
-
-
-"-------------------------
-" PLUGIN: Buffergator
-" https://github.com/jeetsukumaran/vim-buffergator/blob/master/doc/buffergator.txt
-" Remove mappings that I dont like 
-"if index(g:pathogen_disabled, 'vim-buffergator') < 0
-"    echo "BAD"
-"    silent! unmap!  <leader><S-Down>  
-"    silent! unmap!  <leader><S-Right>  
-"    silent! unmap!  <leader><S-Up>     
-"    silent! unmap!  <leader><S-Left>   
-"    silent! unmap!  <leader><Down>     
-"    silent! unmap!  <leader><Right>    
-"    silent! unmap!  <leader><Up>       
-"    silent! unmap!  <leader><Left>     
-"    silent! unmap!  <leader>T          
-"    silent! unmap!  <leader>tc         
-"    silent! unmap!  <leader>to         
-"    silent! unmap!  <leader>t          
-"endif 
-" 
-
-" VimTweak
-let g:vimtweak_focus_transparency=0
-let s:ft=0
-
 
 "-------------------------
 "# Jedi?
@@ -363,57 +329,7 @@ let g:jedi#goto_definitions_command = "<leader>gd"
 " python autocomplete for supertab
 let g:SuperTabDefaultCompletionType = "context"
 
-"-------------------------
-" PLUGIN: IPython Vim
 
-
-
-
-"-------------------------
-" PLUGIN: PYMODE
-"let g:pymode_rope = 0
-" Python-mode
-" Activate rope
-" Keys:
-" K             Show python docs
-" <Ctrl-Space>  Rope autocomplete
-" <Ctrl-c>g     Rope goto definition
-" <Ctrl-c>d     Rope show documentation
-" <Ctrl-c>f     Rope find occurrences
-" <Leader>b     Set, unset breakpoint (g:pymode_breakpoint enabled)
-" [[            Jump on previous class or function (normal, visual, operator modes)
-" ]]            Jump on next class or function (normal, visual, operator modes)
-" [M            Jump on previous class or method (normal, visual, operator modes)
-" ]M            Jump on next class or method (normal, visual, operator modes)
-"let g:pymode_rope = 1
-
-"" Documentation
-"let g:pymode_doc = 1
-"let g:pymode_doc_key = 'K'
-
-""Linting
-"let g:pymode_lint = 1
-"let g:pymode_lint_checker = "pyflakes,pep8"
-"" Auto check on save
-"let g:pymode_lint_write = 0
-
-"" Support virtualenv
-"let g:pymode_virtualenv = 1
-
-"" Enable breakpoints plugin
-"let g:pymode_breakpoint = 1
-"let g:pymode_breakpoint_key = '<leader>b'
-
-"" syntax highlighting
-"let g:pymode_syntax = 1
-"let g:pymode_syntax_all = 1
-"let g:pymode_syntax_indent_errors = g:pymode_syntax_all
-"let g:pymode_syntax_space_errors = g:pymode_syntax_all
-
-"" Don't autofold code
-"let g:pymode_folding = 0
-"
-"
 "-------------------------
 " PLUGIN: Autopep8
 " https://github.com/tell-k/vim-autopep8

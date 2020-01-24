@@ -1803,7 +1803,7 @@ def get_prefered_browser(pref_list=[], fallback=True):
 
 
 if __name__ == '__main__':
-    r"""
+    """
     CommandLine:
         python ~/local/vim/rc/pyvim_funcs.py
     """

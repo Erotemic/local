@@ -64,29 +64,40 @@ noremap <leader>ep :call GrepWordAtCursor('project')<CR>
 "noremap <leader>egg :call GrepWordAtCursor('normal')<CR>
 
 " Python Debugging Snippets
-noremap  <c-b>   :call PyMakeEmbed()<CR><Esc>
-inoremap <c-b>   <Esc>:call PyMakeEmbed()<CR>i
+"noremap  <c-b>   :call PyMakeEmbed()<CR><Esc>
+"inoremap <c-b>   <Esc>:call PyMakeEmbed()<CR>i
+noremap  <c-b>   :call vimtk_snippets#insert_xdev_embed()<CR><Esc>
+inoremap <c-b>   <Esc>:call vimtk_snippets#insert_xdev_embed()<CR>i
 
-noremap  <m-b>   :call PyMakeWithEmbed(mode())<CR><Esc>
-vnoremap <m-b>   :call PyMakeWithEmbed(visualmode())<CR><Esc>
-inoremap <m-b> <Esc>:call PyMakeWithEmbed()<CR>i
+"noremap  <m-b>   :call PyMakeWithEmbed(mode())<CR><Esc>
+"vnoremap <m-b>   :call PyMakeWithEmbed(visualmode())<CR><Esc>
+"inoremap <m-b> <Esc>:call PyMakeWithEmbed()<CR>i
+noremap  <m-b>   :call vimtk_snippets#insert_xdev_embed_on_exception_context(mode())<CR><Esc>
+vnoremap <m-b>   :call vimtk_snippets#insert_xdev_embed_on_exception_context(visualmode())<CR><Esc>
+inoremap <m-b> <Esc>:call vimtk_snippets#insert_xdev_embed_on_exception_context()<CR>i
 
 " Timing
 "noremap  <c-M-B> :call PyMakeTimerit(mode())<CR><Esc>
 "vnoremap <c-M-B> :call PyMakeTimerit(visualmode())<CR><Esc>
 
-"noremap  <c-M-B> :call vimtk#insert_timerit(mode())<CR><Esc>
-"vnoremap <c-M-B> :call vimtk#insert_timerit(visualmode())<CR><Esc>
+noremap  <c-M-B> :call vimtk_snippets#insert_timerit(mode())<CR><Esc>
+vnoremap <c-M-B> :call vimtk_snippets#insert_timerit(visualmode())<CR><Esc>
 
 " Python Autogen Snippets
 noremap <leader>d  :call InsertDocstr()<CR>
 noremap <leader>ed :call InsertDocstr()<CR>
 noremap <leader>ea :call InsertDocstrOnlyArgs()<CR>
-noremap <leader>ec :call InsertDocstrOnlyCommandLine()<CR>
-noremap <leader>em :call InsertPyUtMain()<CR>
-noremap <leader>eh :call PyInsertHeader()<CR>
-noremap <leader>eH :call PyInsertHeader('script')<CR>
-noremap <leader>ek :call PyMakeXDevKwargs()<CR>
+"noremap <leader>ec :call InsertDocstrOnlyCommandLine()<CR>
+noremap <leader>ec :call vimtk_snippets#insert_docstr_commandline()<CR>
+
+"noremap <leader>em :call InsertPyMain()<CR>
+"noremap <leader>eh :call PyInsertHeader()<CR>
+"noremap <leader>eH :call PyInsertHeader('script')<CR>
+"noremap <leader>ek :call PyMakeXDevKwargs()<CR>
+noremap <leader>em :call vimtk_snippets#insert_python_main()<CR>
+noremap <leader>eh :call vimtk_snippets#insert_python_header()<CR>
+noremap <leader>eH :call vimtk_snippets#insert_python_header('script')<CR>
+noremap <leader>ek :call vimtk_snippets#insert_xdev_global_kwargs()<CR>
 
 
 noremap <c-d> :call InsertDocstr()<CR>
@@ -98,7 +109,7 @@ inoremap <c-1> :call InsertDocstr()<CR>
 
 " Misc python snippets
 "noremap <leader>pv :call MakePrintVar()<CR>
-"noremap <leader>pv :call vimtk#insert_print_var_at_cursor()<CR>
+"noremap <leader>pv :call vimtk_snippets#insert_print_var_at_cursor()<CR>
 
 noremap <leader>pl :call MakePrintLine()<CR>
 " insert a NOQA
@@ -107,8 +118,8 @@ noremap <leader>n A  # NOQA<Esc>
 noremap <leader>ro :s/^\( *\)\([^ ]\)/\1(\2/ <bar> '<,'>s/,$/),/ <bar> '<,'>s/:/,/<CR>
 
 " Doctest editing
-vnoremap gd :call PyFormatDoctest()<CR>
-vnoremap gu :call PyUnFormatDoctest()<CR>
+"vnoremap gd :call PyFormatDoctest()<CR>
+"vnoremap gu :call PyUnFormatDoctest()<CR>
 
 
 " -------- Interactive Editing

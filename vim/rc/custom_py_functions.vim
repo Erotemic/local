@@ -52,7 +52,7 @@ EOF
 endfu 
 
 
-func! InsertPyUtMain() 
+func! InsertPyMain() 
     " Imports a python __main__ block 
 Python2or3 << EOF
 import vim
