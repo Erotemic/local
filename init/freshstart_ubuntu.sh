@@ -1478,7 +1478,7 @@ install_basic_extras(){
     sudo apt install veracrypt -y
 
     # Dropbox
-    sudo apt -y install nautilus-dropbox
+    #sudo apt -y install nautilus-dropbox
 }
 
 install_transcrypt(){

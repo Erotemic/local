@@ -134,20 +134,55 @@ if [ ! -d ~/.local/share/vim ]; then
 fi
 
 
-#$PY_EXE -m pip install ubelt xdoctest xdev
+#if [ "$HAVE_SUDO" == "True" ]; then
+#    sudo apt install python3-pip
+#    $PY_EXE -m pip install ubelt xdoctest xdev
+#fi
+
+
+simple_check_install(){
+    for EXE_NAME in $@
+    do
+        if [[ "$EXE_NAME" == "" ]]; then
+            sudo apt install $EXE_NAME -y
+        else
+            echo "ALREADY HAVE $EXE_NAME"
+        fi
+    done
+}
+
+check_install2(){
+    EXE_NAME=$1
+    shift # past argument
+    if [[ "$EXE_NAME" == "" ]]; then
+        sudo apt install -y $@
+    else
+        echo "ALREADY HAVE $EXE_NAME"
+    fi
+}
+
+
 
 
 if [ "$IS_HEADLESS" == "False" ]; then
+    simple_check_install git curl htop tmux tree astyle vlc redshift sshfs wmctrl xdotool xclip git
+    check_install2 gcc gcc g++ gfortran build-essential
+    check_install2 7z p7zip-full
+    check_install2 gpg pgpgpg
+    check_install2 sensors lm-sensors
     if [[ "$(which google-chrome)" == "" ]]; then
         install_chrome
-
-        install_basic_extras
-
-        sh ~/local/build_scripts/install_zotero.sh
-
-        sudo apt install -y vlc redshift sshfs wmctrl xdotool xclip 
-
+    fi
+    if [ ! -e /snap/bin/spotify ]; then
         sudo snap install spotify
+    fi
+    if [[ "$(which zotero)" == "" ]]; then
+        sh ~/local/build_scripts/install_zotero.sh
+    fi
+    if [[ "$(which veracrypt)" == "" ]]; then
+        sudo add-apt-repository ppa:unit193/encryption -y
+        sudo apt update
+        sudo apt install veracrypt -y
     fi
 fi
 
