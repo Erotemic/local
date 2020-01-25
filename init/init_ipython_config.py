@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+"""
+DEPRICATED. THIS IS NOW A SYMLINK
+
+
+"""
 from os.path import join
 import ubelt as ub
 

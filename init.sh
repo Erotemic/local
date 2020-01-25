@@ -113,6 +113,9 @@ if [ "$(alias | grep 'alias python=')" != "" ]; then
 fi
 
 source ~/.bashrc
+deactivate_venv
+
+PY_EXE="$(system_python)"
 
 
 #vim-gnome  
@@ -123,7 +126,6 @@ if [ ! -d ~/.local/share/vim ]; then
     fi
 
     # sudo apt install -y vim-gnome
-    deactivate_venv
     source ~/local/build_scripts/init_vim.sh
     do_vim_build
 
@@ -132,8 +134,7 @@ if [ ! -d ~/.local/share/vim ]; then
 fi
 
 
-# TODO: this should just be a symlink
-"$(system_python)" ~/local/init/init_ipython_config.py
+$PY_EXE -m pip install ubelt xdoctest xdev
 
 
 if [ "$IS_HEADLESS" == "False" ]; then
@@ -160,3 +161,6 @@ fi
 # TODO: setup nvidia drivers on appropriate systems: see init_cuda 
 
 # TODO: setup secrets and internal state
+
+
+source ~/.bashrc
