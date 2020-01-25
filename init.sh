@@ -82,7 +82,7 @@ if [ "$IS_HEADLESS" == "False" ]; then
         echo "ENSURE TERMINATOR"
             # Dont use buggy gtk2 version 
             # https://bugs.launchpad.net/ubuntu/+source/terminator/+bug/1568132
-            sudo add-apt-repository ppa:gnome-terminator/nightly-gtk3
+            sudo add-apt-repository ppa:gnome-terminator/nightly-gtk3 -y
             sudo apt update
             sudo apt install terminator -y
     fi
