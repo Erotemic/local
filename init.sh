@@ -58,7 +58,7 @@ else
 fi
 
 
-_GITUSER=$(git config --global user.name)
+_GITUSER="$(git config --global user.name)"
 if [ "$_GITUSER" == "" ]; then
   echo "ENSURE GIT CONFIG"
   set_global_git_config
