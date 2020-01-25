@@ -133,7 +133,7 @@ fi
 
 
 # TODO: this should just be a symlink
-python ~/local/init/init_ipython_config.py
+"$(system_python)" ~/local/init/init_ipython_config.py
 
 
 if [ "$IS_HEADLESS" == "False" ]; then
