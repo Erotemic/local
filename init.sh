@@ -28,7 +28,7 @@ echo "IS_HEADLESS = $IS_HEADLESS"
 echo "HAVE_SUDO = $HAVE_SUDO"
 
 
-if [ "$HAVE_SUDO" == "True" ]; then
+if [[ "$HAVE_SUDO" == "True" ]]; then
 
     if [[ `which git` == "" ]]; then
         sudo apt install git -y
@@ -59,7 +59,7 @@ fi
 
 
 _GITUSER=$(git config --global user.name)
-if [ "$_GITUSER" == "" ]; then
+if [[ "$_GITUSER" == "" ]]; then
   echo "ENSURE GIT CONFIG"
   set_global_git_config
   mkdir -p ~/tmp
@@ -70,9 +70,9 @@ echo "ENSURE SYMLINKS"
 source ~/local/init/ensure_symlinks.sh 
 ensure_config_symlinks
 
-if [ "$IS_HEADLESS" == "False" ]; then
+if [[ "$IS_HEADLESS" == "False" ]]; then
 
-    if [ $(which terminator) = "" ]; then
+    if [[ $(which terminator) = "" ]]; then
         echo "ENSURE TERMINATOR"
             # Dont use buggy gtk2 version 
             # https://bugs.launchpad.net/ubuntu/+source/terminator/+bug/1568132
@@ -81,27 +81,19 @@ if [ "$IS_HEADLESS" == "False" ]; then
             sudo apt install terminator -y
     fi
 
-    #if [ ! -e ~/.config/terminator ]; then
-    #    echo "ENSURE SYMLINKS"
-    #    source ~/local/init/ensure_symlinks.sh 
-    #    ensure_config_symlinks
-    #    # TODO: terminator doesnt configure to automatically use the joncrall profile in 
-    #    # the terminator config. Why?
-    #fi
-
 fi
 
-if [ ! -d ~/.ssh ]; then
+if [[ ! -d ~/.ssh ]]; then
     echo "ENSURE SSH"
     mkdir -p ~/.ssh 
     chmod 700 ~/.ssh
-    if [ ! -f ~/.ssh/authorized_keys ]; then
+    if [[ ! -f ~/.ssh/authorized_keys ]]; then
         touch ~/.ssh/authorized_keys
         chmod 640 ~/.ssh/authorized_keys
     fi 
 fi
 
-if [ ! -d ~/.local/conda ]; then
+if [[ ! -d ~/.local/conda ]]; then
     echo "SETUP CONDA ENV"
     setup_conda_env
 
@@ -110,7 +102,7 @@ if [ ! -d ~/.local/conda ]; then
 fi
 
 # Unset the python alias we set earlier because now we should be in a conda env
-if [ "$(alias | grep 'alias python=')" != "" ]; then
+if [[ "$(alias | grep 'alias python=')" != "" ]]; then
     unalias python
 fi
 
@@ -118,8 +110,8 @@ source ~/.bashrc
 
 
 #vim-gnome  
-if [ ! -d ~/.local/share/vim ]; then
-    if [ $(which ctags) = "" ]; then
+if [[ ! -d ~/.local/share/vim ]]; then
+    if [[ $(which ctags) = "" ]]; then
         sudo apt install -y exuberant-ctags 
         sudo apt install libgtk-3-dev gnome-devel ncurses-dev build-essential libtinfo-dev -y 
     fi
@@ -137,7 +129,7 @@ fi
 python ~/local/init/init_ipython_config.py
 
 
-if [ "$IS_HEADLESS" == "False" ]; then
+if [[ "$IS_HEADLESS" == "False" ]]; then
     if [[ `which google-chrome` == "" ]]; then
         install_chrome
 

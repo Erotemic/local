@@ -13,33 +13,6 @@ Usage:
 '''
 
 
-unlink_or_backup()
-{
-    __heredoc__='''
-    Get a file or directory out of the way without removing it.
-
-    If TARGET exists, it is removed if it is a link, otherwise if it is a file or
-    directory it renames it based on a the current time. If it doesnt exist
-    nothing happens.
-
-    TODO:
-        move to a bash utils file
-
-    Args:
-        TARGET (str): a path to a directory, link, or file
-    '''
-
-    TARGET=$1
-    if [ -L $TARGET ]; then
-        # remove any previouly existing link
-        unlink $TARGET
-    elif [ -f $TARGET ] || [ -d $TARGET ] ; then
-        # backup any existing file or directory
-        mv $TARGET $TARGET."$(date +"%T")".old
-    fi
-}
-
-
 have_sudo(){
     __heredoc__='''
     Tests if we have the ability to use sudo.
@@ -285,3 +258,46 @@ sudo_appendto()
 #    echo "$@"
 #    #sudo bash -c "source $HOME/local/init/utils.sh; $@"
 #}
+
+
+safe_symlink(){
+    __heredoc__="""
+    Args:
+        real_path
+        link_path
+    """
+    real_path=$1
+    link_path=$2
+    echo "Safe symlink $real_path -> $link_path"
+    unlink_or_backup ${link_path}
+    ln -s "${real_path}" "${link_path}"
+}
+
+
+unlink_or_backup()
+{
+    __heredoc__='''
+    Get a file or directory out of the way without removing it.
+
+    If TARGET exists, it is removed if it is a link, otherwise if it is a file or
+    directory it renames it based on a the current time. If it doesnt exist
+    nothing happens.
+
+    TODO:
+        move to a bash utils file
+
+    Args:
+        TARGET (str): a path to a directory, link, or file
+    '''
+
+    TARGET=$1
+    if [ -L $TARGET ]; then
+        # remove any previouly existing link
+        unlink $TARGET
+    elif [ -f $TARGET ] || [ -d $TARGET ] ; then
+        # backup any existing file or directory
+        mv $TARGET $TARGET."$(date +"%T")".old
+    fi
+}
+
+

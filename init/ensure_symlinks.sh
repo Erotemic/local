@@ -53,8 +53,7 @@ ensure_config_symlinks()
     for p in $PNAMES; do 
         SOURCE=$HOMELINKS/$BASEDIR/$p
         TARGET=$RELHOME/.$p
-        unlink_or_backup $TARGET
-        ln -vs $SOURCE $TARGET;
+        safe_symlink $SOURCE $TARGET;
     done
     echo "* Convert to relative symlinks"
     symlinks -c $RELHOME/.$BASEDIR
@@ -77,8 +76,7 @@ ensure_config_symlinks()
     for p in $PNAMES; do 
         SOURCE=$HOMELINKS/$BASEDIR/$p
         TARGET=$RELHOME/.$BASEDIR/$p
-        unlink_or_backup $TARGET
-        ln -vs $SOURCE $TARGET;
+        safe_symlink $SOURCE $TARGET;
     done
     echo "* Convert to relative symlinks"
     symlinks -c $RELHOME/.$BASEDIR
@@ -101,8 +99,7 @@ ensure_config_symlinks()
     for p in $PNAMES; do 
         SOURCE=$HOMELINKS/$BASEDIR/$p
         TARGET=$RELHOME/.$BASEDIR/$p
-        unlink_or_backup $TARGET
-        ln -vs $SOURCE $TARGET;
+        safe_symlink $SOURCE $TARGET;
     done
     echo "* Convert to relative symlinks"
     symlinks -c $RELHOME/.$BASEDIR
@@ -110,29 +107,24 @@ ensure_config_symlinks()
     #================
 
     # Extras
+    echo "* --- START EXTRAS ---*"
 
-    if [ ! -L ~/.vim ]; then
-        ln -s ~/local/vim/vimfiles ~/.vim
-        symlinks -c ~
-        symlinks -d ~/.vim/
-        mkdir -p ~/local/vim/vimfiles/files/info
-    fi
-    if [ -d ~/scripts ]; then
-        unlink ~/scripts
-    fi
-    ln -s ~/local/scripts ~/scripts
-    ln -s ~/local/vim/vimfiles/bundle/vimtk ~/code/vimtk
+    mkdir -p ~/local/vim/vimfiles/files/info
+    safe_symlink ~/local/scripts ~/scripts
+    safe_symlink ~/local/vim/vimfiles/bundle/vimtk ~/code/vimtk
+    safe_symlink ~/local/vim/vimfiles ~/.vim
+    safe_symlink ~/local/vim/portable_vimrc ~/.vimrc
 
 
     #### DO EXTRA SYMLINK FIXES
-    symlinks -c $HOME
-    symlinks -cr $HOME/.local
-    symlinks -cr $HOME/code
-    symlinks -cr $HOME/local
+    #echo "* --- START FIXES ---*"
+    #symlinks -c $HOME
+    #symlinks -cr $HOME/.local
+    #symlinks -cr $HOME/code
+    #symlinks -cr $HOME/local
 
     #symlinks -crt $HOME | grep -v work | grep -v venv3.6 | grep -v .config
-
-    ls -lR $HOME | grep ^l
+    #ls -lR $HOME | grep ^l
 
     echo "==============================="
     echo "FINISHED ensure_config_symlinks"
