@@ -78,7 +78,7 @@ source ~/local/init/ensure_symlinks.sh
 ensure_config_symlinks
 
 if [ "$IS_HEADLESS" == "False" ]; then
-    if [ $(which terminator) = "" ]; then
+    if [ "$(which terminator)" == "" ]; then
         echo "ENSURE TERMINATOR"
             # Dont use buggy gtk2 version 
             # https://bugs.launchpad.net/ubuntu/+source/terminator/+bug/1568132
