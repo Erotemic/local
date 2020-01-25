@@ -67,11 +67,12 @@ if [ "$_GITUSER" == "" ]; then
 fi
 
 echo "ENSURE SYMLINKS"
+# TODO: terminator doesnt configure to automatically use the joncrall profile
+# in the terminator config. Why?
 source ~/local/init/ensure_symlinks.sh 
 ensure_config_symlinks
 
 if [ "$IS_HEADLESS" == "False" ]; then
-
     if [ $(which terminator) = "" ]; then
         echo "ENSURE TERMINATOR"
             # Dont use buggy gtk2 version 
@@ -80,15 +81,6 @@ if [ "$IS_HEADLESS" == "False" ]; then
             sudo apt update
             sudo apt install terminator -y
     fi
-
-    #if [ ! -e ~/.config/terminator ]; then
-    #    echo "ENSURE SYMLINKS"
-    #    source ~/local/init/ensure_symlinks.sh 
-    #    ensure_config_symlinks
-    #    # TODO: terminator doesnt configure to automatically use the joncrall profile in 
-    #    # the terminator config. Why?
-    #fi
-
 fi
 
 if [ ! -d ~/.ssh ]; then
