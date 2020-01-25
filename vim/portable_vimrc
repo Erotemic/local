@@ -237,7 +237,6 @@ EOF
 " All of your Plugins must be added before the following line
 call plug#end()            " required
 filetype plugin indent on
-
 syntax on
 
 "call virtualenv#activate('venv3')
@@ -271,28 +270,13 @@ let g:vim_markdown_folding_style_pythonic = 1
 
 "" Trial / project / temporary vimrc commands
 "" If they are good put them into a settings file
-""___________________
-"" Quick File Access:
-
-"func! QUICKOPEN_leader_tvio(...)
-"    " TODO: remove for plugin
-"    " Maps <leader>t<key> to tab open a filename
-"    " Maps <leader>s<key> to vsplit open a filename
-"    " Maps <leader>i<key> to split open a filename
-"    let key = a:1
-"    let fname = a:2
-"    :exec 'noremap <leader>t'.key.' :tabe '.fname.'<CR>'
-"    :exec 'noremap <leader>v'.key.' :vsplit '.fname.'<CR>'
-"    :exec 'noremap <leader>i'.key.' :split '.fname.'<CR>'
-"    :exec 'noremap <leader>o'.key.' :e '.fname.'<CR>'
-"endfu
 
 :call VimTK_default_remap()
 
 " Swap colon and semicolon
 :call vimtk#swap_keys(':', ';')
 
-call vimtk#quickopen(',', '~/local/vim/portable_vimrc')
+call vimtk#quickopen(',', '~/.vimrc')
 call vimtk#quickopen('>', '~/code/flann/src/python/pyflann/index.py')
 call vimtk#quickopen('.', '~/code/flann/src/cpp/flann/algorithms/nn_index.h')
 call vimtk#quickopen('<', '~/local/vim/rc/pyvim_funcs.py')

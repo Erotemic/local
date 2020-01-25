@@ -268,7 +268,7 @@ change_cudnn_version(){
     __heredoc__ '''
         ls ~/tpl-archive/cuda/cudnn
         source ~/local/init/init_cuda.sh
-        change_cudnn_version 9.1 7.0
+        change_cudnn_version 10.1 7.0
 
         ls ~/tpl-archive/cuda/cudnn
         source ~/local/init/init_cuda.sh
