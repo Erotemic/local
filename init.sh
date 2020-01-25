@@ -134,7 +134,7 @@ if [ ! -d ~/.local/share/vim ]; then
 fi
 
 
-$PY_EXE -m pip install ubelt xdoctest xdev
+#$PY_EXE -m pip install ubelt xdoctest xdev
 
 
 if [ "$IS_HEADLESS" == "False" ]; then
