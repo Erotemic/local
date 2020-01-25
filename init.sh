@@ -9,8 +9,13 @@ CommandLine:
     sudo apt install git -y
     cd ~
     git clone https://github.com/Erotemic/local.git
-    source ~/local/init/init.sh
 
+    sh ~/local/init.sh
+
+    or
+
+
+    source ~/local/init.sh
 """
 
 if [[ "$(which python)" == "" ]]; then
