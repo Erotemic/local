@@ -91,6 +91,7 @@ if [ ! -d ~/.ssh ]; then
         touch ~/.ssh/authorized_keys
         chmod 640 ~/.ssh/authorized_keys
     fi 
+    echo "TODO: YOU MUST MANUALLY SET UP YOUR KEYS"
 fi
 
 if [ ! -d ~/.local/conda ]; then
