@@ -13,6 +13,20 @@ Usage:
 '''
 
 
+find_python_exe(){
+    __heredoc__="""
+    Return name of system python
+    """
+    if [ "$(which python)" != "" ]; then
+        echo "python"
+    elif [ "$(which python3)" != "" ]; then
+        echo "python3"
+    else
+        echo "python"
+    fi 
+}
+
+
 have_sudo(){
     __heredoc__='''
     Tests if we have the ability to use sudo.
@@ -26,8 +40,8 @@ have_sudo(){
             we dont have sudo
         fi
     '''
-
-    python -c "$(codeblock "
+    _PYEXE=$(_system_python)
+    $_PYEXE -c "$(codeblock "
         import grp, pwd 
         user = '$(whoami)'
         groups = [g.gr_name for g in grp.getgrall() if user in g.gr_mem]
@@ -42,12 +56,18 @@ is_headless(){
     __heredoc__='''
     Tests if we have a local display variable (i.e. not x11 forwarding)
     if we dont then we are probably on a headless server
+
+    Example:
+        source $HOME/local/init/utils.sh
+        IS_HEADLESS=$(is_headless)
+        echo "IS_HEADLESS = $IS_HEADLESS"
     '''
     if [ "$DISPLAY" == "" ]; then
         echo "False"
     else
         # TODO: how do we test for headless in bash
-        _VAR=$(python -c "print('True' * '$DISPLAY'.startswith(':'))")
+        _PYEXE=$(_system_python)
+        _VAR=$($_PYEXE -c "print('True' * '$DISPLAY'.startswith(':'))")
         if [ "$_VAR" == "True" ]; then
             echo "False"
         else
@@ -72,7 +92,7 @@ has_pymodule(){
         PYEXE="$1"
         PYMOD="$2"
     else
-        PYEXE=python
+        PYEXE=$(_system_python)
         PYMOD="$1"
     fi
     pyblock "$PYEXE" "
@@ -137,7 +157,7 @@ pyblock(){
     fi
 
     # Default values
-    PYEXE=python
+    PYEXE=$(_system_python)
     TEXT=""
     if [ $# -gt 1 ] && [[ $(which "$1") != "" ]] ; then
         # If the first arg executable, then assume it is a python executable
@@ -185,7 +205,8 @@ codeblock()
     else
         # Prevents python indentation errors in bash
         #python -c "from textwrap import dedent; print(dedent('''$1''').strip('\n'))"
-        echo "$1" | python -c "import sys; from textwrap import dedent; print(dedent(sys.stdin.read()).strip('\n'))"
+        PYEXE=$(_system_python)
+        echo "$1" | $PYEXE -c "import sys; from textwrap import dedent; print(dedent(sys.stdin.read()).strip('\n'))"
     fi
 }
 
