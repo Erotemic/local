@@ -176,14 +176,14 @@ if [ "$IS_HEADLESS" == "False" ]; then
     if [ ! -e /snap/bin/spotify ]; then
         sudo snap install spotify
     fi
-    if [[ "$(which zotero)" == "" ]]; then
-        sh ~/local/build_scripts/install_zotero.sh
-    fi
     if [[ "$(which veracrypt)" == "" ]]; then
         sudo add-apt-repository ppa:unit193/encryption -y
         sudo apt update
         sudo apt install veracrypt -y
     fi
+    #if [[ "$(which zotero)" == "" ]]; then
+    #    sh ~/local/build_scripts/install_zotero.sh
+    #fi
 fi
 
 
