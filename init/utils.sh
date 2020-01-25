@@ -46,11 +46,12 @@ is_headless(){
     if [ "$DISPLAY" == "" ]; then
         echo "False"
     else
+        # TODO: how do we test for headless in bash
         _VAR=$(python -c "print('True' * '$DISPLAY'.startswith(':'))")
         if [ "$_VAR" == "True" ]; then
-            echo "True"
-        else
             echo "False"
+        else
+            echo "True"
         fi
     fi
 }
