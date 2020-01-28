@@ -198,3 +198,10 @@ fi
 
 
 source ~/.bashrc
+
+
+source $HOME/local/init/freshstart_ubuntu.sh
+setup_single_use_ssh_keys
+
+
+install_transcrypt

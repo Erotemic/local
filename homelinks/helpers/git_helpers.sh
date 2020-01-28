@@ -3,6 +3,11 @@ heredoc="""
 Depends on ~/local/init/util_git1.py
 """
 
+source $HOME/local/init/utils.sh
+
+
+system_python
+
 gg-recover()
 {
     git checkout $(git rev-list -n 1 HEAD -- "$1")^ -- "$1" == @a
@@ -10,28 +15,28 @@ gg-recover()
 
 gg-status()
 {
-    python ~/local/init/util_git1.py 'git status' == $@
+    $(system_python) ~/local/init/util_git1.py 'git status' == $@
     #python -m utool.util_git 
 }
 
 gg-pull()
 {
-    python ~/local/init/util_git1.py 'git pull' == $@
+    $(system_python) ~/local/init/util_git1.py 'git pull' == $@
 }
 
 gg-push()
 {
-    python ~/local/init/util_git1.py 'git push' == $@
+    $(system_python) ~/local/init/util_git1.py 'git push' == $@
 }
 
 gg-clone()
 {
-    python ~/local/init/util_git1.py 'clone_repos'
+    $(system_python) ~/local/init/util_git1.py 'clone_repos'
 }
 
 gg-cmd()
 {
-    python ~/local/init/util_git1.py $@
+    $(system_python) ~/local/init/util_git1.py $@
 }
 
 alias ggs=gg-status
@@ -50,7 +55,7 @@ alias gp='git pull'
 
 gg-short-status()
 {
-    python ~/local/init/util_git1.py 'short_status'
+    $(system_python) ~/local/init/util_git1.py 'short_status'
 }
 
 alias ggss=gg-short-status
@@ -76,9 +81,9 @@ _system_python(){
     __heredoc__="""
     Return name of system python
     """
-    if [ "$(which python)" != "" ]; then
+    if [ "$(type -P python)" != "" ]; then
         echo "python"
-    elif [ "$(which python3)" != "" ]; then
+    elif [ "$(type -P python3)" != "" ]; then
         echo "python3"
     else
         echo "python"
