@@ -50,7 +50,7 @@ set_global_git_config(){
     #git config --global user.email crallj@rpi.edu
     git config --global user.name $USER
     git config --global user.email erotemic@gmail.com
-    git config --global user.email jon.crall@kitware.com
+    #git config --global user.email jon.crall@kitware.com
     git config --global push.default current
 
     git config --global core.editor "vim"

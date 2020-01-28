@@ -10,16 +10,15 @@ CommandLine:
     cd ~
     git clone https://github.com/Erotemic/local.git
 
-    sh ~/local/init.sh
+    bash ~/local/init.sh
 
     or
-
 
     source ~/local/init.sh
 """
 
-if [[ "$(which python)" == "" ]]; then
-    if [[ "$(which python3)" != "" ]]; then
+if [[ "$(type -P python)" == "" ]]; then
+    if [[ "$(type -P python3)" != "" ]]; then
         alias python=python3
     fi
 fi
@@ -35,27 +34,27 @@ echo "HAVE_SUDO = $HAVE_SUDO"
 
 if [ "$HAVE_SUDO" == "True" ]; then
 
-    if [[ "$(which git)" == "" ]]; then
+    if [[ "$(type -P git)" == "" ]]; then
         sudo apt install git -y
     fi
 
-    if [[ "$(which gcc)" == "" ]]; then
+    if [[ "$(type -P gcc)" == "" ]]; then
         sudo apt install gcc g++ gfortran build-essential -y
     fi
 
-    if [[ "$(which curl)" == "" ]]; then
+    if [[ "$(type -P curl)" == "" ]]; then
         sudo apt install curl -y
     fi
 
-    if [[ "$(which htop)" == "" ]]; then
+    if [[ "$(type -P htop)" == "" ]]; then
         sudo apt install htop tmux tree -y
     fi
 
-    if [[ "$(which sshfs)" == "" ]]; then
+    if [[ "$(type -P sshfs)" == "" ]]; then
         sudo apt install sshfs -y
     fi
 
-    if [[ "$(which astyle)" == "" ]]; then
+    if [[ "$(type -P astyle)" == "" ]]; then
         sudo apt install astyle p7zip-full pgpgpg lm-sensors -y
     fi
 else
@@ -78,7 +77,7 @@ source ~/local/init/ensure_symlinks.sh
 ensure_config_symlinks
 
 if [ "$IS_HEADLESS" == "False" ]; then
-    if [ "$(which terminator)" == "" ]; then
+    if [ "$(type -P terminator)" == "" ]; then
         echo "ENSURE TERMINATOR"
             # Dont use buggy gtk2 version 
             # https://bugs.launchpad.net/ubuntu/+source/terminator/+bug/1568132
@@ -120,7 +119,7 @@ PY_EXE="$(system_python)"
 
 #vim-gnome  
 if [ ! -d ~/.local/share/vim ]; then
-    if [ "$(which ctags)" = "" ]; then
+    if [ "$(type -P ctags)" = "" ]; then
         sudo apt install -y exuberant-ctags 
         sudo apt install libgtk-3-dev gnome-devel ncurses-dev build-essential libtinfo-dev -y 
     fi
@@ -164,24 +163,24 @@ check_install2(){
 
 
 
-if [ "$IS_HEADLESS" == "False" ]; then
+if [[ "$IS_HEADLESS" == "False" ]]; then
     simple_check_install git curl htop tmux tree astyle vlc redshift sshfs wmctrl xdotool xclip git
     check_install2 gcc gcc g++ gfortran build-essential
     check_install2 7z p7zip-full
     check_install2 gpg pgpgpg
     check_install2 sensors lm-sensors
-    if [[ "$(which google-chrome)" == "" ]]; then
+    if [[ "$(type -P google-chrome)" == "" ]]; then
         install_chrome
     fi
     if [ ! -e /snap/bin/spotify ]; then
         sudo snap install spotify
     fi
-    if [[ "$(which veracrypt)" == "" ]]; then
+    if [[ "$(type -P veracrypt)" == "" ]]; then
         sudo add-apt-repository ppa:unit193/encryption -y
         sudo apt update
         sudo apt install veracrypt -y
     fi
-    #if [[ "$(which zotero)" == "" ]]; then
+    #if [[ "$(type -P zotero)" == "" ]]; then
     #    sh ~/local/build_scripts/install_zotero.sh
     #fi
 fi

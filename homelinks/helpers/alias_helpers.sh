@@ -904,3 +904,39 @@ git-tarball-hash()
     sha1sum /tmp/temp-repo.tar.gz 
     sha512sum /tmp/temp-repo.tar.gz 
 }
+
+
+sedr(){
+    __heredoc__="""
+    Recursive sed
+
+    Args:
+        search 
+        replace
+        pattern (defaults to *.py)
+
+    Example:
+        source ~/local/homelinks/helpers/alias_helpers.sh
+        sedr foo bar
+    """
+    SEARCH=$1
+    REPLACE=$2
+    PATTERN=$3
+    LIVE_RUN=$4
+
+    PATTERN=${PATTERN:="*.py"}
+
+    echo "
+    === sedr ===
+    SEARCH = '$SEARCH'
+    REPLACE = '$REPLACE'
+    PATTERN = '$PATTERN'
+    LIVE_RUN = '$LIVE_RUN'
+    "
+
+    if [[ "$LIVE_RUN" == "True" ]]; then
+        find . -type f -iname '*.py' -exec sed -i "s|${SEARCH}|${REPLACE}|g" {} + 
+    else
+        find . -type f -iname '*.py' -exec sed "s|${SEARCH}|${REPLACE}|g" {} + | grep "${REPLACE}"
+    fi
+}
