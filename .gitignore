@@ -36,3 +36,5 @@ test_times.txt
 vim/vimfiles/view/*
 vim/vimfiles/files/
 *.swp
+
+homelinks/config/ipython/profile_default/history.sqlite
