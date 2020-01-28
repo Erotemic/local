@@ -17,9 +17,9 @@ system_python(){
     __heredoc__="""
     Return name of system python
     """
-    if [ "$(which python)" != "" ]; then
+    if [ "$(type -P python)" != "" ]; then
         echo "python"
-    elif [ "$(which python3)" != "" ]; then
+    elif [ "$(type -P python3)" != "" ]; then
         echo "python3"
     else
         echo "python"
@@ -159,7 +159,7 @@ pyblock(){
     # Default values
     PYEXE=$(system_python)
     TEXT=""
-    if [ $# -gt 1 ] && [[ $(which "$1") != "" ]] ; then
+    if [ $# -gt 1 ] && [[ $(type -P "$1") != "" ]] ; then
         # If the first arg executable, then assume it is a python executable
         PYEXE=$1
         # In this case the second arg must be text
