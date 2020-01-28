@@ -73,9 +73,10 @@ setup_single_use_ssh_keys(){
     # Note: add a passphrase in -N for extra secure
     echo "USER = $USER"
     echo "HOSTNAME = $HOSTNAME"
-    #EMAIL=erotemic@gmail.com
+    EMAIL=erotemic@gmail.com
     EMAIL=jon.crall@kitware.com
-    ssh-keygen -t ed25519 -b 256 -C "${EMAIL}" -f ~/.ssh/id_${HOSTNAME}_${USER}_ed25519 -N ""
+    FPATH="$HOME/.ssh/id_${HOSTNAME}_${USER}_ed25519"
+    ssh-keygen -t ed25519 -b 256 -C "${EMAIL}" -f $FPATH -N ""
 
     chmod 700 ~/.ssh
     chmod 400 ~/.ssh/id_*
@@ -84,8 +85,9 @@ setup_single_use_ssh_keys(){
     eval "$(ssh-agent -s)"
     ssh-add ~/.ssh/id_${HOSTNAME}_${USER}_ed25519
     
-    # register public key with appropriate services
-    # https://gitlab.kitware.com/profile/keys
+    echo "TODO: Register public key with appropriate services"
+    echo " https://github.com/profile/keys "
+    echo " https://gitlab.com/profile/keys "
     cat ~/.ssh/id_${HOSTNAME}_${USER}_ed25519.pub
 
     # Note: RSA with longer keys will be post-quantum resistant for longer
@@ -618,7 +620,9 @@ setup_conda_env(){
 
     conda update -y -n base conda
     conda create -y -n py38 python=3.8
-    conda activate py38
+    conda create -y -n py37 python=3.7
+    #conda create -y -n py36 python=3.6
+    conda activate py37
     #conda remove --name py36 --all
 }
 
@@ -1490,33 +1494,41 @@ install_transcrypt(){
         https://github.com/elasticdog/transcrypt
     """
     cd ~/code
-    git clone git@github.com:Erotemic/transcrypt.git ~/code/transcrypt
+    #git clone git@github.com:Erotemic/transcrypt.git ~/code/transcrypt
     #git clone https://github.com/elasticdog/transcrypt.git
+    git clone https://github.com/Erotemic/transcrypt.git ~/code/transcrypt
     cd ~/code/transcrypt
-    ln -s $HOME/code/transcrypt/transcrypt $HOME/.local/bin/transcrypt
 
-    git clone https://github.com/Erotemic/roaming.git
+    source $HOME/local/init/utils.sh
+    safe_symlink $HOME/code/transcrypt/transcrypt $HOME/.local/bin/transcrypt
+
+    #git clone https://github.com/Erotemic/roaming.git
     git clone https://gitlab.com/Erotemic/erotemic.git
+    cd $HOME/code/erotemic
 
     # new roaming 
-    mkdir -p $HOME/code/roaming
-    cd $HOME/code/roaming
-    git init
+    #mkdir -p $HOME/code/roaming
+    #cd $HOME/code/roaming
 
     # TODO: fixme to use GCM
+    __doc__="""
+    # How to init a new encrypted repo
+
+    #git init
     transcrypt --cipher=aes-256-cbc
     transcrypt --display
     echo '*  filter=crypt diff=crypt' >> .gitattributes
     echo 'secret plans' >> dummy_secrets
 
     # Copy and paste the following command to initialize a cloned repository:
+    transcrypt -c aes-256-cbc 
     transcrypt -c aes-256-cbc -p 'pass1'
-
     transcrypt --cipher=aes256-GCM
+    """
+    #git clone https://gitlab.com/Erotemic/erotemic.git
 
-    git clone https://github.com/Erotemic/roaming.git
-    git clone https://gitlab.com/Erotemic/erotemic.git
-
+    # The user must supply a password here
+    transcrypt -c aes-256-cbc 
 }
 
 
