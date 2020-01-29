@@ -158,6 +158,7 @@ noremap  <leader>ft :call FocusTerm()<CR>
 " Hotkey:
 " Refreshing the vim RC / syntax
 noremap <leader>r :source ~/local/vim/portable_vimrc<CR>
+noremap <leader>R :source ~/local/vim/portable_vimrc<CR>
 
 
 " Hack to reload vimtk plugin as well
@@ -167,7 +168,6 @@ let g:loaded_vimtk_autoload=0
 source ~/local/vim/vimfiles/bundle/vimtk/plugin/vimtk.vim
 source ~/local/vim/vimfiles/bundle/vimtk/autoload/vimtk.vim
 
-noremap <leader>R :source ~/local/vim/portable_vimrc<CR>
 
 noremap <leader>rs :syntax sync minlines=500.<CR>
 
