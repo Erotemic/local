@@ -6,8 +6,6 @@ Depends on ~/local/init/util_git1.py
 source $HOME/local/init/utils.sh
 
 
-system_python
-
 gg-recover()
 {
     git checkout $(git rev-list -n 1 HEAD -- "$1")^ -- "$1" == @a

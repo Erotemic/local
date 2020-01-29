@@ -443,23 +443,12 @@ tmuxattach(){
 #    cp $1 ../flann/$1
 #}
 
-_system_python(){
-    __heredoc__="""
-    Return name of system python
-    """
-    if [ "$(which python)" != "" ]; then
-        echo "python"
-    elif [ "$(which python3)" != "" ]; then
-        echo "python3"
-    else
-        echo "python"
-    fi 
-}
+source $HOME/local/init/utils.sh
 
 
 print_all_pathvars()
 {
-    _PYEXE=$(_system_python)
+    _PYEXE=$(system_python)
     $_PYEXE -c "$(codeblock "
     import os
     vars = ['PATH', 'LD_LIBRARY_PATH', 'CPATH', 'CMAKE_PREFIX_PATH']
@@ -477,7 +466,7 @@ pathvar_print(){
 # pathvar_print LD_LIBRARY_PATH
 # pathvar_print PATH
 _VAR=$1
-_PYEXE=$(_system_python)
+_PYEXE=$(system_python)
 $_PYEXE -c "
 if __name__ == '__main__':
     import os
@@ -494,7 +483,7 @@ pathvar_clean()
 # pathvar_clean PATH
 _VAR=$1
 
-_PYEXE=$(_system_python)
+_PYEXE=$(system_python)
 $_PYEXE -c "
 if __name__ == '__main__':
     import os
@@ -517,7 +506,7 @@ pathvar_remove()
 # pathvar_clean PATH
 _VAR=$1
 _VAL=$2
-_PYEXE=$(_system_python)
+_PYEXE=$(system_python)
 $_PYEXE -c "
 if __name__ == '__main__':
     import os
@@ -552,7 +541,7 @@ export CPATH=$(pathvar_remove CPATH $1)
 
 
 debug_paths(){
-    _PYEXE=$(_system_python)
+    _PYEXE=$(system_python)
     $_PYEXE -c "import os; path = os.environ['LD_LIBRARY_PATH'].split(os.pathsep); print('\n'.join(path))"
     $_PYEXE -c "import os; path = os.environ['PATH'].split(os.pathsep); print('\n'.join(path))"
 
