@@ -171,6 +171,8 @@ if [[ "$IS_HEADLESS" == "False" ]]; then
     check_install2 sensors lm-sensors
     if [[ "$(type -P google-chrome)" == "" ]]; then
         install_chrome
+
+        sudo apt-get install chrome-gnome-shell # for gnome shell extension integration
     fi
     if [ ! -e /snap/bin/spotify ]; then
         sudo snap install spotify
