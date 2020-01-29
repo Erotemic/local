@@ -218,8 +218,9 @@ class Repo(object):
         with ChdirContext(repo.dpath, verbose=False):
             info = ub.cmd('git status', verbose=False)
             out = info['out']
+            out = out.replace('-', ' ')
             # parse git status
-            is_clean_msg1 = 'Your branch is up-to-date with'
+            is_clean_msg1 = 'Your branch is up to date with'
             is_clean_msgs = [
                 'nothing to commit, working directory clean',
                 'nothing to commit, working tree clean',
