@@ -29,4 +29,4 @@ https://github.com/Erotemic/xdev.git
 https://github.com/Erotemic/xinspect.git
 
 https://github.com/Erotemic/local.git $HOME
-https://github.com:Erotemic/misc.git $HOME
+https://github.com/Erotemic/misc.git $HOME
