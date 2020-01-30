@@ -63,7 +63,7 @@ is_headless(){
         echo "IS_HEADLESS = $IS_HEADLESS"
     '''
     if [ "$DISPLAY" == "" ]; then
-        echo "False"
+        echo "True"
     else
         # TODO: how do we test for headless in bash
         _PYEXE=$(system_python)
