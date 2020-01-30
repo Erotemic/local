@@ -206,4 +206,16 @@ source $HOME/local/init/freshstart_ubuntu.sh
 setup_single_use_ssh_keys
 
 
-install_transcrypt
+if [[ "$IS_HEADLESS" == "False" ]]; then
+    git clone https://github.com/Erotemic/transcrypt.git ~/code/transcrypt
+
+    source $HOME/local/init/utils.sh
+    safe_symlink $HOME/code/transcrypt/transcrypt $HOME/.local/bin/transcrypt
+
+    echo "YOU WILL NEED TO INPUT PASSWORDS"
+    git clone https://gitlab.com/Erotemic/erotemic.git
+    cd $HOME/code/erotemic
+
+    # The user must supply a password here
+    transcrypt -c aes-256-cbc 
+fi
