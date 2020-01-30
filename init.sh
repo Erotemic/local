@@ -119,17 +119,21 @@ PY_EXE="$(system_python)"
 
 #vim-gnome  
 if [ ! -d ~/.local/share/vim ]; then
-    if [ "$(type -P ctags)" = "" ]; then
-        sudo apt install -y exuberant-ctags 
-        sudo apt install libgtk-3-dev gnome-devel ncurses-dev build-essential libtinfo-dev -y 
+    if [ "$HAVE_SUDO" == "True" ]; then
+        if [ "$(type -P ctags)" = "" ]; then
+            sudo apt install -y exuberant-ctags 
+            sudo apt install libgtk-3-dev gnome-devel ncurses-dev build-essential libtinfo-dev -y 
+        fi
     fi
-
     # sudo apt install -y vim-gnome
-    source ~/local/build_scripts/init_vim.sh
-    do_vim_build
+    #source ~/local/build_scripts/init_vim.sh
+    #do_vim_build
+    #python ~/local/init/ensure_vim_plugins.py 
+fi
 
-    source ~/local/vim/init_vim.sh
-    python ~/local/init/ensure_vim_plugins.py 
+source ~/local/vim/init_vim.sh
+if [ ! -d ~/.vim/autoload/plug.vim ]; then
+    curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 fi
 
 
@@ -207,6 +211,7 @@ setup_single_use_ssh_keys
 
 
 if [[ "$IS_HEADLESS" == "False" ]]; then
+    #install_transcrypt
     git clone https://github.com/Erotemic/transcrypt.git ~/code/transcrypt
 
     source $HOME/local/init/utils.sh

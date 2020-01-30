@@ -4,7 +4,7 @@ source ~/local/init/utils.sh
 safe_symlink ~/local/vim/vimfiles ~/.vim
 safe_symlink ~/local/vim/portable_vimrc ~/.vimrc
 
-mkdir ~/.vim_tmp
+mkdir -p ~/.vim_tmp
 
 #ln -s 
 #VIMRC_FPATH=$HOME/.vimrc
