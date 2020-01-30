@@ -30,3 +30,11 @@ https://github.com/Erotemic/xinspect.git
 
 https://github.com/Erotemic/local.git $HOME
 https://github.com/Erotemic/misc.git $HOME
+
+
+git@gitlab.kitware.com:computer-vision/ndsampler.git
+git@gitlab.kitware.com:computer-vision/kwarray.git 
+git@gitlab.kitware.com:computer-vision/kwimage.git 
+git@gitlab.kitware.com:computer-vision/kwplot.git 
+git@gitlab.kitware.com:computer-vision/scriptconfig.git 
+git@gitlab.kitware.com:computer-vision/netharn.git 
