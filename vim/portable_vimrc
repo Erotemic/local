@@ -127,6 +127,10 @@ Plug 'tpope/vim-markdown'
 
 Plug 'vim-scripts/taglist.vim'
 
+"Plug 'jmcantrell/vim-virtualenv'
+"Plug 'cjrh/vim-conda'
+
+
 "Plug 'Erotemic/vimtk'
 "Plug 'SirVer/ultisnips'
 "Plug 'cjrh/vim-conda'
@@ -414,6 +418,9 @@ call vimtk#quickopen('q', '~/local/vim/vimfiles/bundle/vimtk/vimtk/core.py')
 call vimtk#quickopen('n', '~/code/netharn/netharn/fit_harn.py')
 call vimtk#quickopen('N', '~/code/netharn/examples/yolo_voc.py')
 call vimtk#quickopen('B', '~/code/bioharn/bioharn/detect_fit.py')
+
+
+let g:vimtk_sys_path = ['$HOME/.local/conda/envs/py38/lib/python3.8/site-packages']
 
 
 if has("win32") || has("win16")
