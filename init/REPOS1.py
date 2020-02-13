@@ -26,9 +26,9 @@ PROJECT_URLS = []
 # New more configurable stuff
 # These will populate PROJECT_REPOS and PROJECT_URLS
 config_fpaths = [
-    expanduser('~/local/repos.txt'),
-    # expanduser('~/internal/repos.txt'),
     expanduser('~/code/erotemic/homelinks/repos.txt'),
+    expanduser('~/internal/repos.txt'),
+    expanduser('~/local/repos.txt'),
 ]
 
 
@@ -160,6 +160,7 @@ VIM_REPOS_WITH_SUBMODULES = [
 def _parse_custom_urls():
     dpath_to_url = defaultdict(list)
 
+    seen = set([])
     for fpath in config_fpaths:
         if os.path.exists(fpath):
             for line in open(fpath, 'r').read().splitlines():
@@ -183,6 +184,9 @@ def _parse_custom_urls():
                         if not os.path.exists(dpath):
                             os.makedirs(dpath)
 
+                    if (dpath, url) in seen:
+                        continue
+                    seen.add((dpath, url))
                     dpath_to_url[dpath].append(url)
     return dpath_to_url
 
