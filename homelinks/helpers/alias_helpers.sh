@@ -259,8 +259,10 @@ alias hskill='rob hskill'
 alias nr='rob grepnr'
 alias rgrep='rob grepnr'
 alias rsc='rob research_clipboard None 3'
+
 #alias rob='python $PORT_CODE/Rob/for f in *.png; do ffmpeg -i "$f" "${f%.png}.jpg"; done'
 alias rob='python ~/local/rob/run_rob.py'
+
 alias rls='rob ls'
 alias er='gvim $prob'
 alias v='gvim'
