@@ -1,8 +1,9 @@
-from sys         import platform as os_type
-from platform    import node     as comp_name
-from rob_helpers import *  # NOQA
+from sys import platform as os_type
+import sys
+import os
+from platform import node as comp_name
 from os.path import exists
-import rob_helpers as robh
+from rob import rob_helpers as robh
 
 # Add shortcuts for Prog Files 64 <-> 32
 # Change Icons?
@@ -81,7 +82,7 @@ def get_pip_packages():
 class ROB_Files:
     def __init__(f, d):
         #if sys.platform == 'win32':
-            #f.calc_exe    = d.SYSTEM32    + '/calc.exe'
+        #    f.calc_exe    = d.SYSTEM32    + '/calc.exe'
 
         #f.console_exe = d.PORT_APPS   + '/Console2/Console.exe'
         #f.rap_ee_exe  = d.PORT_APPS   + '/RapidEnvirornmentEditor/RapidEE.exe'
@@ -156,7 +157,7 @@ class ROB_Directories:
         d.MEDIA       =  media_map[os_type]
         if comp_name() == 'BakerStreet':  # uses this now
             d.USERNAME = 'jon.crall'
-            d.MEDIA   =  'D:\sys\e'
+            d.MEDIA   =  r'D:\sys\e'
 
         d.INSTALLERS  = d.STORE + '/Installers'
         d.DATADIR     = d.STORE + '/data'

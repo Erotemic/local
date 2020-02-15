@@ -3,12 +3,11 @@ from os.path import split, relpath, join, isdir, isfile
 import os
 import fnmatch
 import re
-from rob_interface import robos
-import rob_util as rutil
+from rob import rob_util as rutil
 try:
-    import six
+    from six import string_types
 except ImportError:
-    pass
+    string_types = (str,)
 
 HS_EXCLUDE = ['_graveyard',
               '_broken',
@@ -107,7 +106,7 @@ def extend_regex(regexpr):
         r'\>': r'\b(?!\w)',
         ('UNSAFE', r'\x08'): r'\b',
     }
-    for key, repl in six.iteritems(regex_map):
+    for key, repl in regex_map.items():
         if isinstance(key, tuple):
             search = key[1]
         else:
@@ -148,7 +147,7 @@ def _ut_matching_fpaths(dpath_list, include_patterns, exclude_dirs=[],
         >>> result = list(fpath_gen)
         >>> print('\n'.join(result))
     """
-    if isinstance(dpath_list, six.string_types):
+    if isinstance(dpath_list, string_types):
         dpath_list = [dpath_list]
 
     def pathsplit_full(path):
@@ -244,7 +243,7 @@ def _ut_sed(regexpr, repl, force=False, recursive=False, dpath_list=None,
 
 
 def _sed(r, regexpr, repl, force=False, recursive=False, dpath_list=None):
-    if isinstance(force, six.string_types):
+    if isinstance(force, string_types):
         force = force.lower() == 'true'
 
     include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c',
@@ -531,15 +530,3 @@ def _ut_print_difftext(text, other=None):
         import unicodedata
         colortext = unicodedata.normalize('NFKD', colortext).encode('ascii', 'ignore')
         print(colortext)
-
-
-def win32_default(r, assisted=False):
-    #robos.default_envvars(r)
-    #robos.default_path(r)
-    robos.default_registry(r)
-    print('Finished defaulting regisitry')
-    os.system('%PORT_SETTINGS%/install_ipython.bat')
-    if assisted:
-        robos.default_assisted(r)
-    else:
-        print("win32_default: Run this command with True as an argument to get assisted options")

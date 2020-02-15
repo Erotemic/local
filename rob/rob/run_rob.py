@@ -4,8 +4,8 @@
 import sys
 import platform
 import signal
-import rob_settings
-import rob_interface
+from rob import rob_settings
+from rob import rob_interface
 # from rob_helpers import ens
 # from rob_interface import *  # NOQA
 
@@ -16,8 +16,8 @@ class ROB(object):
         r.d = rob_settings.ROB_Directories()
         r.f = rob_settings.ROB_Files(r.d)
         # Populate Envirornment Variables
-        r.env_vars_list   = rob_settings.get_ENVVARS(r)
-        r.path_vars_list  = rob_settings.get_PATH(r)
+        r.env_vars_list = rob_settings.get_ENVVARS(r)
+        r.path_vars_list = rob_settings.get_PATH(r)
 
 
 def is_string_int(string):
@@ -80,13 +80,13 @@ def process_args(r, argv):
             print(ret)
 
 
-def main():
+def invoke():
     r = ROB()
     print('Run main: %r: ' % (sys.argv,))
     if len(sys.argv) > 1:
         ARG_SEP = ';'
         ARG_SEP = '--'
-        #Arguemnts are broken up with semicolons
+        # Arguemnts are broken up with semicolons
         semi_pos = [i for i, a in enumerate(sys.argv) if a == ARG_SEP] + [-1]
         pre = 1
         for post in semi_pos:
@@ -99,42 +99,47 @@ def main():
     return r
 
 
-if __name__ == '__main__':
-    ascii_rob_small = """
+def main():
+    import textwrap
+    ascii_rob_small = textwrap.dedent(r"""
 
+    __________________________________
 
-__________________________________
+                         __________
+                       |== ======|+
+                       ||  ;|  ;||/
+                        =========/
+                            ||$
+                          Z<$$$$$,
+                       MMMMMMMNMO~R
+                    MMM  MMMMMMMMM~R
+                  MMM         |:| MM
+                MMMMF     /MMMMMMMM9
+                NMM   /MMMMMR |:|  8
+                      MMMMM   |:|  9
+                              |:| 6
+                          /MMMMMMMM
+                      MMMMMMMMMMMMMMM
+                     MMMM.MMM. .M.MMMM
+                    MMMMMMM.M..MMMMMMM
+                        MMMMMMMMMMMM
 
-                     __________
-                   |== ======|+
-                   ||  ;|  ;||/
-                    =========/
-                        ||$
-                      Z<$$$$$,
-                   MMMMMMMNMO~R
-                MMM  MMMMMMMMM~R
-              MMM         |:| MM
-            MMMMF     /MMMMMMMM9
-            NMM   /MMMMMR |:|  8
-                  MMMMM   |:|  9
-                          |:| 6
-                      /MMMMMMMM
-                  MMMMMMMMMMMMMMM
-                 MMMM.MMM. .M.MMMM
-                MMMMMMM.M..MMMMMMM
-                    MMMMMMMMMMMM
-
-____  ____  ___      _ ____    ____ _  _ _    _ _  _ ____
-|__/  |  |  |__]     | [__     |  | |\ | |    | |\ | |___
-|  \. |__| .|__] .   | ___]    |__| | \| |___ | | \| |___
-__________________________________"""
+    ____  ____  ___      _ ____    ____ _  _ _    _ _  _ ____
+    |__/  |  |  |__]     | [__     |  | |\ | |    | |\ | |___
+    |  \. |__| .|__] .   | ___]    |__| | \| |___ | | \| |___
+    __________________________________""").strip('\n')
 
     def signal_handler(signal, frame):
-            print('Rob caught Ctrl+C')
-            sys.exit(0)
+        print('Rob caught Ctrl+C')
+        sys.exit(0)
     signal.signal(signal.SIGINT, signal_handler)
 
     print(ascii_rob_small)
-    r = main()
+    r = invoke()
     print('\n\nR.O.B. signing off')
     print("================")
+    return r
+
+
+if __name__ == '__main__':
+    main()

@@ -1,29 +1,25 @@
 # -*- coding: utf-8 -*-
 # from __future__ import absolute_import, division, print_function, unicode_literals
 import os
-from rob_helpers import *  # NOQA
-from rob_helpers import call
+# from rob.rob_helpers import *  # NOQA
+from rob.rob_helpers import call
 from six.moves import input
 import sys
-import rob_helpers
+from rob import rob_helpers
 from datetime import datetime  # NOQA
-import robos
 import re
-try:
-    from itertools import izip as zip
-except ImportError:
-    pass
 from os.path import split
 import shutil
 import platform
 from os.path import basename, expanduser
-from os.path import (normpath, realpath, join, isdir, exists, dirname,
-                     splitext)
-from rob_alarm import *  # NOQA
-from rob_nav import *  # NOQA
-import rob_nav
-#
+from os.path import (normpath, join, exists, dirname, splitext)
 import textwrap  # NOQA
+
+from rob import rob_nav
+if sys.platform == 'win32':
+    from rob import rob_helpers_windows as robos
+else:
+    from rob import rob_linux_helpers as robos
 
 try:
     import psutil
@@ -38,7 +34,7 @@ except ImportError:
 
 def make_complete(r):
     import utool as ut
-    import rob_interface
+    from rob import rob_interface
     modname = 'rob'
     testnames = [ut.get_funcname(func) for func in
                  ut.get_module_owned_functions(rob_interface)]
@@ -57,51 +53,6 @@ def write_rob_pathcache(pathlist):
     with open(fname, 'a') as file:
         for path in pathlist:
             file.write('\n%s' % path)
-
-
-def add_path(r, path_):
-    print('Requested adding %r to the PATH' % path_)
-    dpath = normpath(realpath(path_))
-    #print('Exists? %r' % exists(dpath))
-    #print('IsDir? %r' % isdir(dpath))
-    #print('IsFile? %r' % isfile(dpath))
-    if not exists(dpath):
-        raise Exception('%r must exist' % dpath)
-    if not isdir(dpath):
-        raise Exception('%r must be a directory' % dpath)
-    print(' * Adding adding %r to the PATH' % dpath)
-    write_rob_pathcache([dpath])
-    robos.add_path_vars([dpath])
-    fixpath2(r)
-
-
-def fixpath2(r):
-    print('Hack fix this in a bit. Make general')
-    os.environ['PATH']  = robos.get_env_var('PATH')
-    print('Killing Autohokey')
-    kill(r, 'AutoHotkey')
-    print('Changeing dir to: %r' % r.d.AHK_SCRIPTS)
-    cwd = os.getcwd()
-    os.chdir(r.d.AHK_SCRIPTS)
-    print('Starting Autohotkey')
-    os.system('start crallj.ahk')
-    os.system(r'echo set PATH=%PATH% > C:\newest_path.bat')
-    print('Changeing dir to: %r' % cwd)
-    os.chdir(cwd)
-    print(r'Run C:\newest_path.bat')
-
-
-def update_path(r):
-    """
-    this is the right command August31
-    newpath.bat will do everything
-    """
-    pathvar_list = r.path_vars_list
-    for pathvar in pathvar_list:
-        print(pathvar)
-    #robos.add_path_vars(pathvar_list)
-    print('\n\nSend, #r newpath {enter}')
-    print('Please run newpath.bat')
 
 
 def update_env(r):
@@ -313,16 +264,16 @@ def preprocess_research(input_str):
     # print('input_str = %r' % (input_str,))
     # print('emdash = %r' % (emdash,))
     # print('emdash = %s' % (emdash,))
-    input_str = re.sub('\s?' + re.escape('---') + '\s?', pause, input_str)
-    input_str = re.sub('\s?' + emdash + '\s?', pause, input_str)
+    input_str = re.sub(r'\s?' + re.escape('---') + r'\s?', pause, input_str)
+    input_str = re.sub(r'\s?' + emdash + r'\s?', pause, input_str)
     # print('input_str = %r' % (input_str,))
     input_str = re.sub('\\\\cite{[^}]*}', '', input_str)
-    input_str = re.sub('et al.', 'et all', input_str)  # Let rob say et al.
-    input_str = re.sub(' i\.e\.', ' i e ' + pause, input_str)  # Let rob say et al.
+    input_str = re.sub('et al.', 'et all', input_str)  # say et al.
+    input_str = re.sub(r' i\.e\.', ' i e ' + pause, input_str)  # say et al.
     input_str = re.sub(r'\\r', '', input_str)  #
     input_str = re.sub(r'\\n', '', input_str)  #
     input_str = re.sub('\\\\', '', input_str)  #
-    #input_str = re.sub('[a-z]?[a-z]', 'et all', input_str) # Let rob say et al.
+    #input_str = re.sub('[a-z]?[a-z]', 'et all', input_str) # say et al.
     input_str = re.sub('\\.[^a-zA-Z0-1]+', '.\n', input_str)  # Split the document at periods
     input_str = re.sub('\r\n', '\n', input_str)
     input_str = re.sub('^ *$\n', '', input_str)
@@ -467,7 +418,7 @@ def research(r, start_line_str=None, rate='3', sentence_mode=True, open_file=Fal
 
 def info(r):
     """ Provides interface help """
-    import rob_interface
+    from rob import rob_interface
     import pydoc
     print("===================\n")
     print(pydoc.render_doc(rob_interface))
@@ -496,7 +447,7 @@ def symlink(r, source=None, target=None):
 
 
 def make_dpath(r, dpath):
-    if not os.path.exists(dpath):
+    if not exists(dpath):
         os.makedirs(dpath)
 
 
@@ -600,7 +551,7 @@ def write_env(r):
     rtype = 'REG_EXPAND_SZ'
     write_dir = join(r.d.HOME, 'Sync/win7/registry')
     envtxt_fpath = normpath(join(write_dir, 'UPDATE_ENVARS.reg'))
-    key = '[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment]'
+    key = r'[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment]'
     write_regfile(envtxt_fpath, key, r.env_vars_list, rtype)
     rob_helpers.view_directory(write_dir)
 
@@ -616,7 +567,7 @@ def write_path(r):
     import utool
     write_dir = join(r.d.HOME, 'Sync/win7/registry')
     path_fpath = normpath(join(write_dir, 'UPDATE_PATH.reg'))
-    key = '[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment]'
+    key = r'[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment]'
     rtype = 'REG_EXPAND_SZ'
     pathsep = os.path.pathsep
     # Read current PATH values
@@ -676,46 +627,6 @@ def fix_youtube_names_ccl(r):
         #break
 
 
-def fix_path(r):
-    """ Removes duplicates from the path Variable """
-    PATH_SEP = os.path.pathsep
-    pathstr = robos.get_env_var('PATH')
-    import ubelt as ub
-
-    pathlist = list(ub.unique(pathstr.split(PATH_SEP)))
-
-    new_path = ''
-    failed_bit = False
-    for p in pathlist:
-        if os.path.exists(p):
-            new_path = new_path + p + PATH_SEP
-        elif p == '':
-            pass
-        elif p.find('%') > -1 or p.find('$') > -1:
-            print('PATH=%s has a envvar. Not checking existance' % p)
-            new_path = new_path + p + PATH_SEP
-        else:
-            print('PATH=%s does not exist!!' % p)
-            failed_bit = True
-    #remove trailing semicolons
-
-    if failed_bit:
-        ans = input('Should I overwrite the path? yes/no?')
-        if ans == 'yes':
-            failed_bit = False
-
-    if len(new_path) > 0 and new_path[-1] == PATH_SEP:
-        new_path = new_path[0:-1]
-
-    if failed_bit is True:
-        print("Path FIXING Failed. A Good path should be: \n%s" % new_path)
-        print("\n\n====\n\n The old path was:\n%s" % pathstr)
-    elif pathstr == new_path:
-        print("The path was already clean")
-    else:
-        robos.set_env_var('PATH', new_path)
-
-
 def create_shortcut(r, what, where=''):
     # TODO Move to windows helpers
     print('\n\n+---- Creating Shortcut ----')
@@ -763,3 +674,8 @@ def find_in_path(r, pattern):
     for dpath, fpaths_list in zip(PATH, fpaths_list):
         for x in fnmatch.filter(fpaths_list, 'msvcr90.dll'):
             print('Found %r in %r' % (x, dpath))
+
+
+def speak(r, to_speak, rate=-5):
+    from rob.robos import speak
+    speak(r, to_speak=to_speak, rate=rate)

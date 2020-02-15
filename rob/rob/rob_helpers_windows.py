@@ -5,7 +5,7 @@ try:
     import internal.win_registry as registry
     import internal.new_win_reg as registry2
 except Exception as ex:
-    print('win32con is not fully functional')
+    print('win32con is not fully functional: {}'.format(ex))
 import rob_helpers
 import os
 
@@ -77,6 +77,7 @@ def FindWindow():
     WindowName : string
     '''
     hwnd = win32gui.FindWindow
+    print('hwnd = {!r}'.format(hwnd))
     #hwnd = win32gui.FindWindowEx
 
 
@@ -100,8 +101,8 @@ def GetWindowText(hwnd, optional=None):
     return 1
 
 
-def MinimizeWindow():
-    win32gui.ShowWindow(firefox[0], win32con.SW_MINIMIZE)
+# def MinimizeWindow():
+#     win32gui.ShowWindow(firefox[0], win32con.SW_MINIMIZE)
 
 
 def EnumWindowTest():
@@ -132,12 +133,12 @@ def add_path_vars(pathvar_list):
 def add_env_vars(r, envvar_list):
     print('\nAdding environment variables...')
     for name, rob_val in envvar_list:
-        print(' * ENVAR: '+name+' '+rob_val)
+        print(' * ENVAR: ' + name + ' ' + rob_val)
         win_val = registry2.get_user_env(name)
         if win_val is None:
             registry2.set_user_env(name, rob_val)
         else:
-            print(' * COM: '+name+' '+rob_val+' '+win_val)
+            print(' * COM: ' + name + ' ' + rob_val + ' ' + win_val)
             #ans == 'y'
             if rob_val != win_val:
                 ans = input('Conflict continue? ')
@@ -164,33 +165,33 @@ def default_registry(r):
 
 def __show_sidebar_computer():
     registry.set_key_value(
-        'HKEY_CLASSES_ROOT\CLSID\{20D04FE0-3AEA-1069-A2D8-08002B30309D}\ShellFolder', 'Attributes', 'b094010c', 'DWORD')
+        r'HKEY_CLASSES_ROOT\CLSID\{20D04FE0-3AEA-1069-A2D8-08002B30309D}\ShellFolder', 'Attributes', 'b094010c', 'DWORD')
 
 
 def __remove_sidebar_network():
     registry.set_key_value(
-        'HKEY_CLASSES_ROOT\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}ShellFolder', 'Attributes', 'b0040064', 'DWORD')
+        r'HKEY_CLASSES_ROOT\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}ShellFolder', 'Attributes', 'b0040064', 'DWORD')
 
 
 def __disable_winL_lock():  # Dont lock screeon on WIN+L
     registry.set_key_value(regkey('SYSTEM_POL'),
-                           'DisableLockWorkstation', 1,       'DWORD')
+                           'DisableLockWorkstation', 1, 'DWORD')
 
 
 def __hide_file_bit(bit=0):  # Don't Hide File Extensions
     bit = bool(bit)
     registry.set_key_value(regkey('EXPLORER_ADV'),
-                           'HideFileExt', 0,                  'DWORD')
+                           'HideFileExt', 0, 'DWORD')
 
 
 def __autohotkey_editor(editor):  # Autohotkey will use the right editor
     registry.set_key_value(regkey('AHK_CMD'),
-                           '(Default)', '"'+editor+'" "%1"', 'SZ')
+                           '(Default)', '"' + editor + '" "%1"', 'SZ')
 
 
 def __disable_areo_shake():  # Disable Aero Shake
     registry.set_key_value(regkey('EXPLORER_POL'),
-                           'NoWindowMinimizingShortcuts', 1,  'DWORD')
+                           'NoWindowMinimizingShortcuts', 1, 'DWORD')
 
 
 def __nav_pane():  # Setup windows explorer sidebar
@@ -217,7 +218,7 @@ def __cmd_fonts():  # Get opendyslexic working in cmd
                            '000000', 'Mono_Dyslexic', 'SZ')
 
 
-#-------
+# -------
 def get_env_var(var):
     try:
         return registry.get_key_value(regkey('LOCAL_ENVVAR'), var)
@@ -235,16 +236,16 @@ def set_env_var(var, val):
 
 
 def speak(r, text, rate):
-    nircmd(r, 'speak text '+rob_helpers.ens(text, '"')+' '+str(rate))
+    nircmd(r, 'speak text ' + rob_helpers.ens(text, '"') + ' ' + str(rate))
 
 
 def set_volume(r, percent):
-    volume = str(float(percent)*65535/100)
+    volume = str(float(percent) * 65535 / 100)
     nircmd(r, 'setvolume 0 ' + volume + ' ' + volume)
 
 
 def monitor(r, monitor_state):
-    nircmd(r, 'monitor '+monitor_state)
+    nircmd(r, 'monitor ' + monitor_state)
 
 
 def nircmd(r, command):
@@ -295,11 +296,11 @@ def save_power_settings_pref(r):
     outlines = out.split('\n')
     for line in outlines:
         if '(Balanced)' in line:
-            guid_begin_pos = 19
+            # guid_begin_pos = 19
             guid_str = line[19:55]
-    rob_helpers.dircheck(r.d.PORT_SETTINGS + '\WinPowerDir')
+    rob_helpers.dircheck(r.d.PORT_SETTINGS + r'\WinPowerDir')
     rob_helpers.call(
-        r'POWERCFG -EXPORT "%PORT_SETTINGS%\WinPowerDir"\ '+guid_str)
+        r'POWERCFG -EXPORT "%PORT_SETTINGS%\WinPowerDir"\ ' + guid_str)
 
 
 # def append_to_path(to_add):
@@ -316,18 +317,18 @@ def test_devmgr():
     print(grep_registry('Presonus'))
     # MANUALLY FOUND
     # HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run
-    to_delete = r'''
-        HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{554BB593-3543-4AEB-A192-2AC87EC3FF31}_is1
-        HKEY_LOCAL_MACHINE\SOFTWARE\PreSonus\Devices\audioboxdevice
-        HKEY_LOCAL_MACHINE\SOFTWARE\PreSonus
-        HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\PreSonus\Devices\audioboxdevice
-        HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\PreSonus
-        '''
+    # to_delete = r'''
+    #     HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{554BB593-3543-4AEB-A192-2AC87EC3FF31}_is1
+    #     HKEY_LOCAL_MACHINE\SOFTWARE\PreSonus\Devices\audioboxdevice
+    #     HKEY_LOCAL_MACHINE\SOFTWARE\PreSonus
+    #     HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\PreSonus\Devices\audioboxdevice
+    #     HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\PreSonus
+    #     '''
 
-    legacy_item = r"HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Enum\Root"
+    # legacy_item = r"HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Enum\Root"
     #devmgr_key = r"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services"
-    presonus = r'HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Class\{40EA0DC9-6AAB-440D-ACE5-C079DF364E23}'
-    presonus = r'HKEY_LOCAL_MACHINE\SYSTEM\ControlSet002\Control\Class'
+    # presonus = r'HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Class\{40EA0DC9-6AAB-440D-ACE5-C079DF364E23}'
+    # presonus = r'HKEY_LOCAL_MACHINE\SYSTEM\ControlSet002\Control\Class'
 
     dm1 = r'HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Class'
     dm2 = r'HKEY_LOCAL_MACHINE\SYSTEM\ControlSet002\Control\Class'
@@ -345,6 +346,7 @@ def test_devmgr():
                 provider_name = registry.get_key_value(key2, 'ProviderName')
                 if Defaults2 is None and DriverDesc is None:
                     continue
+                class_desc = None  # ???
                 dvmgr[key2] = (DriverDesc, Defaults2,
                                provider_name, class_desc)
             _class = registry.get_key_value(key, 'Class')
@@ -363,7 +365,7 @@ def test_devmgr():
     to_find_joint = [(u'audio', u'box'), (u'pre', u'sonus'),
                      (u'unknown', 'usb')]
     to_find = [_.lower() for _ in to_find]
-    tkey = 'HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Class\{40EA0DC9-6AAB-440D-ACE5-C079DF364E23}'
+    tkey = r'HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Class\{40EA0DC9-6AAB-440D-ACE5-C079DF364E23}'
     for key, val in dvmgr.iteritems():
         in_find = multifind(val, to_find) + multifind(key, to_find)
         in_multifind = multifind_joint(
