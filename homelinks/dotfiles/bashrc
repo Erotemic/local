@@ -262,13 +262,11 @@ if [ "$DID_MY_BASHRC_INIT" == "" ]; then
     # For some reason VIRTUAL_ENV is initialized as "", so unset it
     unset VIRTUAL_ENV
 
-    #if [ -d "$HOME/.local/conda/envs/py38" ]; then
-    #    conda activate py38
-    if [ -d "$HOME/.local/conda/envs/py37" ]; then
-        #we py37
+    if [ -d "$HOME/.local/conda/envs/py38" ]; then
+        conda activate py38
+    elif [ -d "$HOME/.local/conda/envs/py37" ]; then
         conda activate py37
     elif [ -d "$HOME/.local/conda/envs/py36" ]; then
-        #we py36
         conda activate py36
     fi 
 

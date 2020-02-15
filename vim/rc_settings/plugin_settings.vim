@@ -6,31 +6,29 @@ Python2or3 << EOF
 import vim
 def nerdtree_withbat():
     # Define ignored suffixes
-    ignore_pysuffix  = [
-        '.pyo', '.pyc', '.shelf'
-    ]
-    ignore_texsuffix = [
-        '.aux', '.masv', '.bbl', '.bst', '.bcf', '.blg', '.brf',
-        '.synctex', '.upa', '.upb',
-        '.pdf', 
-        #'.out',
-        #'.log',
-        #'.latexmain',
-        '.glo', '.toc', '.xdy', '.lof', '.lot',
-        '.fls', '.fdb_latexmk',
-        #'.bib',
-    ]
-    ignore_imgsuffix = ['.png']
-    ignore_suffixes = ignore_pysuffix + ignore_texsuffix + ignore_imgsuffix
+    ignore_suffix_types = {
+        'python': [
+            '.pyo', '.pyc', '.shelf'
+        ],
+        'latex': [
+            '.aux', '.masv', '.bbl', '.bst', '.bcf', '.blg', '.brf',
+            '.synctex', '.upa', '.upb', '.pdf', '.glo', '.toc', '.xdy',
+            '.lof', '.lot', '.fls', '.fdb_latexmk',
+        ],
+        'images': [
+            '.png'
+        ],
+    }
+    ignore_suffixes = [val for vals in ignore_suffix_types.values()
+                       for val in vals]
 
     # Define ignored files
     ignore_files = [
-    #'README.md', 
-    'LICENCE',
-    "\'", 
-    #"~", 
+        #'README.md', 
+        #'LICENCE',
+        #"\'", 
+        #"~", 
     ]
-    # FIXME: Fix the tilde
 
     # Convert files and suffixes to regexes
     ignore_suffix_regexes = [suffix.replace('.', '\\\\.') + '$' for suffix in ignore_suffixes]
@@ -40,17 +38,12 @@ def nerdtree_withbat():
     # build nerdtreeignore command
     nerdtree_ignore = '[%s]' % (','.join(['"%s"' % str(regex) for regex in ignore_regexes]))
     nerdtree_ignore_cmd = 'let g:NERDTreeIgnore = %s' % nerdtree_ignore
-    #print(nerdtree_ignore_cmd)
     vim.command(nerdtree_ignore_cmd)
 nerdtree_withbat()
 EOF
-"let NERDTreeIgnore = ['\.o$', '\~$', '\.pyc$',  '\.pyo$', '\.aux$', '\.masv$', '\.bbl$', '\.bcf$', '\.blg$', '\.brf$', '\.synctex$', '\.upa$', '\.upb$', '\.pdf$', '\.out$', '\.log', '\.latexmain', '\.bib', '\.shelf', 'README.md', 'LICENSE']
 endfu
 
 call NERD_TREE_WITH_BAT()
-
-"
-"
 
 
 "-------------------------
@@ -64,29 +57,9 @@ let g:syntastic_style_warning_symbol = 's>'
 let g:syntastic_always_populate_loc_list = 1
 
 "-------------------------
-" PLUGIN: Syntastic C++
-"let g:syntastic_gpp_include_dirs=['$INSTALL_32/OpenCV/include']
-"let g:syntastic_cpp_include_dirs=['C:/Program Files (x86)/OpenCV/include']
-let g:syntastic_cpp_check_header = 0
-let g:syntastic_cpp_no_include_search = 1
-let g:syntastic_cpp_no_default_include_dirs =1
-let g:syntastic_cpp_remove_include_errors = 1
-"let g:syntastic_cpp_compiler = 'clang++'
-let g:syntastic_cpp_compiler_options = ' -std=c++11 -stdlib=libc++ -lstdc++'
-let g:syntastic_cpp_compiler_options = ' -std=c++11 -stdlib=libc++'
-
-"let g:syntastic_cpp_include_dirs = ['include', '../include']
-"let g:syntastic_cpp_compiler = 'clang++'
-"let g:syntastic_c_include_dirs = ['include', '../include']
-"let g:syntastic_c_compiler = 'clang'
-
-"-------------------------
 " PLUGIN: Syntastic Python
 " SyntasticInfo
 let g:syntastic_python_checkers=['flake8'] " ignores lines containng # NOQA
-
-" SCRIPTING VIM IN PYTHON 
-" http://orestis.gr/blog/2008/08/10/scripting-vim-with-python/
 
 Python2or3 << EOF
 import vim
@@ -120,12 +93,10 @@ flake8_errors = [
 ] 
 flake8_args_list = [
     '--max-line-length 79',
-    #'--max-line-length 100',
     '--ignore=' + ','.join(flake8_errors)
 ]
 flake8_args = ' '.join(flake8_args_list)
 vim.command('let g:syntastic_python_flake8_args = "%s"' % flake8_args)
-
 
 # Needed to hack syntastic cython checker
 vim.command('let g:syntastic_cython_checkers = ["flake8"]')
@@ -140,12 +111,28 @@ cython_flake8_errors = flake8_errors + [
 ]
 cython_flake8_args_list = [
     '--max-line-length 79',
-    #'--max-line-length 100',
     '--ignore=' + ','.join(cython_flake8_errors)
 ]
 cython_flake8_args = ' '.join(cython_flake8_args_list)
 vim.command('let g:syntastic_cython_flake8_args = "%s"' % cython_flake8_args)
 EOF
+
+"-------------------------
+" PLUGIN: Syntastic C++
+"let g:syntastic_gpp_include_dirs=['$INSTALL_32/OpenCV/include']
+"let g:syntastic_cpp_include_dirs=['C:/Program Files (x86)/OpenCV/include']
+let g:syntastic_cpp_check_header = 0
+let g:syntastic_cpp_no_include_search = 1
+let g:syntastic_cpp_no_default_include_dirs =1
+let g:syntastic_cpp_remove_include_errors = 1
+"let g:syntastic_cpp_compiler = 'clang++'
+let g:syntastic_cpp_compiler_options = ' -std=c++11 -stdlib=libc++ -lstdc++'
+let g:syntastic_cpp_compiler_options = ' -std=c++11 -stdlib=libc++'
+
+"let g:syntastic_cpp_include_dirs = ['include', '../include']
+"let g:syntastic_cpp_compiler = 'clang++'
+"let g:syntastic_c_include_dirs = ['include', '../include']
+"let g:syntastic_c_compiler = 'clang'
 
 
 
@@ -335,3 +322,8 @@ let g:SuperTabDefaultCompletionType = "context"
 " https://github.com/tell-k/vim-autopep8
 
 let g:autopep8_aggressive=1
+
+
+
+" References:
+"     SCRIPTING VIM IN PYTHON - http://orestis.gr/blog/2008/08/10/scripting-vim-with-python/

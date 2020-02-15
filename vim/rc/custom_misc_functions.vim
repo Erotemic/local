@@ -408,6 +408,7 @@ Python2or3 << EOF
 import vim
 import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
 import utool as ut
+import ubelt as ub
 nargs = int(vim.eval('a:0'))
 # Simulate kwargs with cfgdict-like strings
 default_kwargs = {
