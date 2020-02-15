@@ -1,3 +1,4 @@
+from os.path import dirname
 from sys import platform as os_type
 import sys
 import os
@@ -103,8 +104,6 @@ class ROB_Files:
         f.alarm_videos = {
         }
 
-        # Weird Variables go Here
-        f.git_bash_sc = d.MSYS + '/../Git Bash'
         # Fix Slashes
         members = f.__dict__.keys()
         for mem in members:
@@ -118,6 +117,7 @@ class ROB_Files:
 # Change this to Environment Variables
 class ROB_Directories:
     def __init__(d):
+        import ubelt as ub
         # Cross platform names
         root_map  = {'win32': 'C:',     'linux2': '', 'linux': ''}  # /'s are never last
         store_map = {'win32': 'D:',     'linux2': '/media/Store', 'linux': '/media/Store'}
@@ -125,29 +125,24 @@ class ROB_Directories:
         home_map  = {'win32': '/Users', 'linux2': '/home', 'linux': '/home'}
 
         d.COMPUTER_NAME  = comp_name()
+        d.HOME       = ub.userhome()
 
-        d.USERNAME    =   'joncrall'
+        d.USERNAME    =   os.environ.get('USER', dirname(d.HOME))
         d.ROOT        =   root_map[os_type]
         d.STORE       =  store_map[os_type]
-        d.MEDIA       =  media_map[os_type]
-        if comp_name() == 'BakerStreet':  # uses this now
-            d.USERNAME = 'jon.crall'
-            d.MEDIA   =  r'D:\sys\e'
+
+        d.MEDIA       =  os.environ.get('ROB_MEDIA_DIR', media_map[os_type])
 
         d.INSTALLERS  = d.STORE + '/Installers'
         d.DATADIR     = d.STORE + '/data'
         d.WORK        = d.STORE + '/data/work'
 
-        d.HOME       = d.ROOT + home_map[os_type] + '/' + d.USERNAME
         d.LOCAL      = d.HOME + '/local'
         d.LOCAL_DIR  = d.HOME + '/local'
         d.CODE       = d.HOME + '/code'
         d.CODE_DIR   = d.HOME + '/code'
         d.LATEX      = d.HOME + '/latex'
         d.CLOUD      = d.HOME + '/Dropbox'
-
-        d.MINGW = d.ROOT + '/MinGW'
-        d.MSYS  = d.MINGW + '/msys/1.0'
 
         d.DESKTOP   = d.HOME + '/Desktop'
 
@@ -161,13 +156,11 @@ class ROB_Directories:
         d.pvimrc        = d.LOCAL + '/vim/portable_vimrc'
         d.AHK_SCRIPTS   = d.LOCAL + '/ahk_scripts'
 
-        d.ROB          = d.LOCAL + '/rob'
-        d.HOTSPOTTER   = d.CODE + '/hotspotter'
-        d.HS           = d.HOTSPOTTER
+        d.ROB          = d.LOCAL + '/rob/rob'
 
         #WINDOWS
-        d.TV            = d.MEDIA + '/TV'
-        d.DOCUMENTARIES = d.MEDIA + '/Documentaries'
+        d.TV            = os.environ.get('ROB_TV_DIR', d.MEDIA + '/TV')
+        d.DOCUMENTARIES = os.environ.get('ROB_DOCUMENTARY_DIR', d.MEDIA + '/Documentaries')
 
         # Operating System Specific
         if sys.platform == 'win32':
@@ -209,27 +202,6 @@ class ROB_Directories:
     def print_members(d):
         for mem in d.__dict__.keys():
             print(mem + ' = ' + d.__dict__[mem])
-
-
-def WINDOWS_DEFAULT_VAR_DICT(d):
-    w = robh.DynStruct()
-    # Envvars that come with windows, so keep it happy
-    w.SystemDrive       =  d.ROOT
-    w.SystemRoot        =  d.WINDOWS
-    w.WinDir            =  d.WINDOWS
-    w.SystemDirectory   =  d.SYSTEM32
-    w.ComSpec           =  d.SYSTEM32 + '/cmd.exe'
-    w.ProgramFiles      =  d.INSTALL32
-    w.ProgramFiles      =  d.INSTALL32
-    w.ProgramFilesW6432 =  d.INSTALL64
-    w.TEMP              =  d.WINDOWS + '/TEMP'
-    w.TMP               =  d.WINDOWS + '/TEMP'
-    w.HOMEDRIVE         =  d.ROOT
-    w.HOMEDRIVE         =  '/Users/' + d.USERNAME
-    w.OS                =  'Windows_NT'
-    w.USERDOMAIN        =  d.COMPUTER_NAME
-    w.USERNAME          =  d.USERNAME
-    w.USERPROFILE       =  d.HOME
 
 
 if __name__ == "__main__":
