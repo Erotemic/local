@@ -1,4 +1,0 @@
-
-C:\Users\joncrall\code\numba-windows-binaries\llvm-binary\llvm-mingw\bin
-C:\Users\joncrall\code\numba-windows-binaries\llvm-binary\llvm-mingw\bin
-C:\Users\joncrall\code\numba-windows-binaries\llvm-binary\llvm-mingw\bin

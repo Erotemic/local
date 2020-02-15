@@ -1,35 +1,22 @@
 # -*- coding: utf-8 -*-
-# from __future__ import absolute_import, division, print_function, unicode_literals
 import os
-# from rob.rob_helpers import *  # NOQA
-from rob.rob_helpers import call
 from six.moves import input
 import sys
-from rob import rob_helpers
-from datetime import datetime  # NOQA
 import re
 from os.path import split
 import shutil
 import platform
 from os.path import basename, expanduser
 from os.path import (normpath, join, exists, dirname, splitext)
-import textwrap  # NOQA
 
+from rob.rob_helpers import call
+from rob import rob_helpers
 from rob import rob_nav
+
 if sys.platform == 'win32':
-    from rob import rob_helpers_windows as robos
+    from rob import rob_helpers_win32s as robos
 else:
-    from rob import rob_linux_helpers as robos
-
-try:
-    import psutil
-except ImportError:
-    pass
-
-try:
-    import six  # NOQA
-except ImportError:
-    pass
+    from rob import rob_helpers_linux as robos
 
 
 def make_complete(r):
@@ -43,154 +30,23 @@ def make_complete(r):
     print(line)
 
 
-def focus(r, window_name):
-    print(robos.EnumWindowTest())
-    print(robos.GetForegroundWindow())
-
-
 def write_rob_pathcache(pathlist):
     fname = join(dirname(__file__), 'pathcache%s.txt' % sys.platform)
     with open(fname, 'a') as file:
         for path in pathlist:
             file.write('\n%s' % path)
 
-
-def update_env(r):
-    envvar_list = r.env_vars_list
-    for name, rob_val in envvar_list:
-        print(' * ENVAR: %s %s' % (name, rob_val))
-    robos.add_env_vars(r, envvar_list)
-
-
-# https://code.google.com/p/psutil/
-def ps(r, flags=None):
-    for pid in psutil.get_pid_list():
-        proc = psutil.Process(pid)
-        if flags is not None and \
-           (proc.name.find(flags) == -1 and ' '.join(proc.cmdline).find(flags) == -1):
-            continue
-        #print(proc)
-        #print(proc.get_cpu_percent())
-        #print(proc.get_cpu_times())
-        printproc_2(proc)
-
-
-def printproc_2(proc):
-    print('pid=%r; username=%r; name=%r' % (proc.pid, proc.username, proc.name))
-    print('cmdline=%r' % (proc.cmdline))
-    #print('parent: '   +repr(proc.parent))
-    print('----')
-
-
-def printproc_(proc):
-    if sys.platform == 'win32':
-        attr_list = ['parent', 'status', 'pid', 'ppid',
-                     'cmdline', 'name', 'username']
-    else:
-        attr_list = ['nice', 'pid', 'ppid', 'cmdline', 'exe',
-                     'name', 'terminal', 'username']
-    for attr in attr_list:
-        try:
-            val = eval('proc.%s' % attr)
-            print('proc.%s=%r' % (attr, val))
-        except Exception:
-            print('proc.%s' % attr)
-    try:
-        print('proc.parent = %r' % proc.parent)
-    except Exception:
-        print('proc.parent')
-
-
-def pykill(r, scriptname, needbash=True):
-    needbash = bool(needbash)
-    print(needbash)
-    script_fname = '%s.py' % scriptname
-    to_kill = []
-    for proc in psutil.process_iter():
-        if 'python' == proc.name:
-            cmdstr = ' '.join(proc.cmdline)
-            if proc.parent.name != 'bash' and not needbash:
-                continue
-            #printproc_2(proc)
-            #print(cmdstr)
-            #print(script_fname)
-            if cmdstr.find(script_fname) == -1:
-                continue
-            to_kill.append(proc)
-    for proc in to_kill:
-        print(' --- killing ---')
-        printproc_2(proc)
-        proc.kill()
-
-
-def hskill(r):
-    pykill(r, '<defunct>')
-
-
-def kill(r, procname):
-    for proc in psutil.process_iter():
-        if procname in proc.name:
-            print(' killing: ')
-            printproc_(proc)
-            proc.kill()
-    print('Finished killing tasks.')
-    # windows only: os.system('taskkill /f /im exampleProcess.exe')
-    ''' # Unix Only
-    import subprocess, signal
-    p = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE)
-    out, err = p.communicate()
-    for line in out.splitlines():
-        if procname in line:
-            pid = int(line.split(None, 1)[0])
-            os.kill(pid, signal.SIGKILL)'''
-
-
 def project_dpaths():
-    def import_module_from_fpath(module_fpath_, addpath=False):
-        """ imports module from a file path """
-        python_version = platform.python_version()
-        module_fpath = expanduser(module_fpath_)
-        modname = splitext(basename(module_fpath))[0]
-        if addpath:
-            import sys
-            module_dpath = dirname(module_fpath)
-            sys.path.append(module_dpath)
-        if python_version.startswith('2'):
-            import imp
-            module = imp.load_source(modname, module_fpath)
-        elif python_version.startswith('3'):
-            import importlib.machinery
-            loader = importlib.machinery.SourceFileLoader(modname, module_fpath)
-            module = loader.load_module()
-        else:
-            raise AssertionError('invalid python version')
-        return module
-    REPOS1 = import_module_from_fpath('~/local/init/REPOS1.py', True)
+    import ubelt as ub
+    REPOS1 = ub.import_module_from_path(ub.expandpath('~/local/init/REPOS1.py'))
     project_list = REPOS1.PROJECT_REPOS
     return project_list
-    #project_list = [
-    #    #'~/code/hotspotter',
-    #    '~/code/hesaff',
-    #    '~/code/ibeis',
-    #    '~/code/vtool',
-    #    '~/code/utool',
-    #    '~/code/guitool',
-    #    '~/code/plottool',
-    #    '~/code/cyth',
-    #    '~/code/detecttools',
-    #    '~/code/pyrf',
-    #    '~/code/gzc-client',
-    #    '~/code/gzc-server',
-    #]
-    #return map(expanduser, project_list)
 
 
 # Grep my projects
 def gp(r, regexp):
     import utool as ut
-    # exclude_fpaths = ut.get_argval(('--exclude_fpath', '--xf'), type_=list, default=None)
     ut.grep_projects([regexp], recursive=True)
-    # rob_nav._grep(r, [regexp], recursive=True, dpath_list=project_dpaths(), regex=True)
 
 
 # Sed my projects
@@ -200,13 +56,7 @@ def sp(r, regexpr, repl, force=False):
 
 def grep(r, *tofind_list):
     import utool as ut
-    #include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h', '*.vim']
     ut.grep(tofind_list, recursive=True, verbose=True)
-    #rob_nav._grep(r, tofind_list, recursive=True)
-
-
-def invgrep(r, *tofind_list):
-    rob_nav._grep(r, tofind_list, recursive=True, invert=True)
 
 
 def grepnr(r, *tofind_list):
@@ -609,24 +459,6 @@ def setup_global():
     pass
 
 
-def fix_youtube_names_ccl(r):
-    import utool
-    cwd = os.getcwd()
-    fpath_list = utool.glob(cwd, '*.mp4')
-    for fpath in fpath_list:
-        #print(fpath)
-        dpath, fname = split(fpath)
-        found = utool.regex_search(r'Crash Course .*-', fname)
-        if found is not None:
-            found = found.replace('English', '').replace('-', ' - ')
-            new_fpath = join(dpath, found + fname.replace(found, ''))
-            print(new_fpath)
-            shutil.move(fpath, new_fpath)
-        #start = re.search(
-        #print(fpath[start.pos:start.endpos])
-        #break
-
-
 def create_shortcut(r, what, where=''):
     # TODO Move to windows helpers
     print('\n\n+---- Creating Shortcut ----')
@@ -661,7 +493,7 @@ def create_shortcut(r, what, where=''):
 
 
 def send(r, keys, pause=.05):
-    import SendKeys
+    from rob.win32 import SendKeys
     pause = float(pause)
     SendKeys.SendKeys(keys, pause=pause, with_spaces=False, with_tabs=True,
                       with_newlines=False, turn_off_numlock=True)

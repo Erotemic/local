@@ -97,3 +97,107 @@ def win32_default(r, assisted=False):
         robos.default_assisted(r)
     else:
         print("win32_default: Run this command with True as an argument to get assisted options")
+
+
+def focus(r, window_name):
+    print(robos.EnumWindowTest())
+    print(robos.GetForegroundWindow())
+
+
+def update_env(r):
+    envvar_list = r.env_vars_list
+    for name, rob_val in envvar_list:
+        print(' * ENVAR: %s %s' % (name, rob_val))
+    robos.add_env_vars(r, envvar_list)
+
+
+# https://code.google.com/p/psutil/
+def ps(r, flags=None):
+    import psutil
+    for pid in psutil.get_pid_list():
+        proc = psutil.Process(pid)
+        if flags is not None and \
+           (proc.name.find(flags) == -1 and ' '.join(proc.cmdline).find(flags) == -1):
+            continue
+        #print(proc)
+        #print(proc.get_cpu_percent())
+        #print(proc.get_cpu_times())
+        printproc_2(proc)
+
+
+def printproc_2(proc):
+    print('pid=%r; username=%r; name=%r' % (proc.pid, proc.username, proc.name))
+    print('cmdline=%r' % (proc.cmdline))
+    #print('parent: '   +repr(proc.parent))
+    print('----')
+
+
+def printproc_(proc):
+    if sys.platform == 'win32':
+        attr_list = ['parent', 'status', 'pid', 'ppid',
+                     'cmdline', 'name', 'username']
+    else:
+        attr_list = ['nice', 'pid', 'ppid', 'cmdline', 'exe',
+                     'name', 'terminal', 'username']
+    for attr in attr_list:
+        try:
+            val = eval('proc.%s' % attr)
+            print('proc.%s=%r' % (attr, val))
+        except Exception:
+            print('proc.%s' % attr)
+    try:
+        print('proc.parent = %r' % proc.parent)
+    except Exception:
+        print('proc.parent')
+
+
+def pykill(r, scriptname, needbash=True):
+    import psutil
+    needbash = bool(needbash)
+    print(needbash)
+    script_fname = '%s.py' % scriptname
+    to_kill = []
+    for proc in psutil.process_iter():
+        if 'python' == proc.name:
+            cmdstr = ' '.join(proc.cmdline)
+            if proc.parent.name != 'bash' and not needbash:
+                continue
+            #printproc_2(proc)
+            #print(cmdstr)
+            #print(script_fname)
+            if cmdstr.find(script_fname) == -1:
+                continue
+            to_kill.append(proc)
+    for proc in to_kill:
+        print(' --- killing ---')
+        printproc_2(proc)
+        proc.kill()
+
+
+def hskill(r):
+    pykill(r, '<defunct>')
+
+
+def kill(r, procname):
+    import psutil
+    for proc in psutil.process_iter():
+        if procname in proc.name:
+            print(' killing: ')
+            printproc_(proc)
+            proc.kill()
+    print('Finished killing tasks.')
+    # windows only: os.system('taskkill /f /im exampleProcess.exe')
+    ''' # Unix Only
+    import subprocess, signal
+    p = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE)
+    out, err = p.communicate()
+    for line in out.splitlines():
+        if procname in line:
+            pid = int(line.split(None, 1)[0])
+            os.kill(pid, signal.SIGKILL)'''
+
+
+def invgrep(r, *tofind_list):
+    rob_nav._grep(r, tofind_list, recursive=True, invert=True)
+
+

@@ -3,7 +3,9 @@ from rob import robos
 
 
 def watch_rand_vid(r):
-    'Function that gets called during wakeup'
+    """
+    Function that gets called during wakeup
+    """
     (playlist, vid_name) = get_random_playlist(r)
     first_item = playlist[0]
     show_name2 = os.path.split(first_item)[0].replace(r'D:\sys\e','').replace('E:','').replace('\\',' ').replace(':','').replace('TV','')
@@ -24,14 +26,7 @@ def get_random_playlist(r):
     import random
     random.seed()
     vid_files = []
-    #TVDIRS = [r.d.TV, 'E:\\Documentaries']
-    TVDIRS = [
-        #r.d.TV + '\\Scrubs',
-        #r.d.TV + '\\Bob Ross',
-        r.d.TV + '\\Flight of the Conchords',
-        r.d.TV + '\\Bill Nye The Science Guy',
-        r.d.TV + '\\Monty Pythons Flying Circus'
-    ]
+    TVDIRS = [r.d.TV, 'E:\\Documentaries']
 
     # Enforce existence
     TVDIRS2 = []
@@ -83,28 +78,10 @@ def play_playlist(r, playlist=None):
 
     subprocess.Popen(arg_list)
 
-    #C:\Program Files (x86)\VideoLAN\VLC\vlc.exe "D:\sys\e\TV\Monty Pythons Flying Circus\Monty Pythons flying circus - Season 2\mpfc 14 - Face The Press.avi"
-
-
-def get_night_videos(r):
-    night_videos = [
-        r.d.TV + '/Futurama',
-        r.d.TV + '/Dr Horrible',
-        r.d.TV + '/Mythbusters',
-        r.d.TV + '/Adventure Time',
-        r.d.TV + '/Dragonball Z',
-    ]
-    return night_videos
-
-
-def get_morning_videos(r):
-    morning_videos = [
-        r.d.TV + '/Bill Nye the Science Guy',
-    ]
-    return morning_videos
-
 
 def video(r):
+    import glob
+    morning_videos = list(glob.glob(join(r.d.TV, '*')))
     videos = (get_night_videos(r) +
               get_morning_videos(r))
     random_video(r, video_paths=videos)
@@ -114,18 +91,10 @@ def v(r):
     video(r)
 
 
-def night_video(r):
-    night_videos = get_night_videos(r)
-    random_video(r, video_paths=night_videos)
-
-
 def random_video(r, video_paths=None):
     from glob import glob
     import subprocess
     import numpy as np
-
-    if video_paths == None:
-        video_paths = [r.d.TV + '/Bill Nye the Science Guy']
 
     video_weights = np.ones(len(video_paths))
     video_weights /= len(video_paths)
@@ -154,8 +123,11 @@ def random_video(r, video_paths=None):
 
 
 def get_readable_time(r):
-    week_strs = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-    month_strs = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    week_strs = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday',
+                 'Saturday', 'Sunday']
+    month_strs = ['January', 'February', 'March', 'April', 'May', 'June',
+                  'July', 'August', 'September', 'October', 'November',
+                  'December']
     week_int = datetime.now().weekday()
     t = datetime.now()
     hour = str(((t.hour-1) % 12) +1)
@@ -182,43 +154,11 @@ def wake_up(r, WAKE_UP_MODE=0):
     if type(WAKE_UP_MODE) == type(''):
         WAKE_UP_MODE = int(WAKE_UP_MODE)
     (year, month, day, weekday, hour, minu, ampm) = get_readable_time(r)
-    #if r.computer_name == "BakerStreet":
-        #set_volume(r, 40)
-    #else:
-        #set_volume(r, 30)
     if WAKE_UP_MODE == 411:
         #set_volume(r, 50)
         webbrowser.open('http://www.youtube.com/watch?v=eh7lp9umG2I')
         return
-    elif WAKE_UP_MODE == 0:
-        wake_up_text = ''
-    elif WAKE_UP_MODE == 2:
-        wake_up_text = '''
-        day na day na
-        hey listen day na. Listen Listen!
-        day na and jon
-        I have something to tell you
-        guess what
-        did you guess yet
-        ok, well here it is
-        I have good news!
-        You dont have to wake up.
-        Isnt it wonderful?
-        Do you love me yet day na?
-        I just want to make you happy and this is the only way I know how
-        '''
-    elif WAKE_UP_MODE == 3:
-        wake_up_text = '''
-        ok
-        this is going to suck a little bit
-        but don't worry
-        there is good news, and there is bad news.
-
-        The bad news is it is around %s %s %s
-        The date is %s %s, %s
-        ... But here is the good news. it is %s, and %s is a fine day for science!
-        ''' % ( hour, minu, ampm, month, day, year, weekday, weekday )
-    elif WAKE_UP_MODE == 1:
+    else:
         wake_up_text = '''
         wake up!
         wake up!
@@ -239,34 +179,8 @@ def wake_up(r, WAKE_UP_MODE=0):
         rate_of_speach = rate_of_speach_base + (8 * np.sqrt(percent_through))
         robos.speak(r, line, rate_of_speach)
 
-
-    OLD_VID = False
-    if OLD_VID:
-        selectables = ['Bill Nye', 'Bob Ross', 'BBC Life', 'Sheep in the Big City']
-        selection = 3
-        show_name = selectables[selection]
-        show_dir  = r.f.alarm_videos[show_name]
-        robos.speak(r, 'How about some '+show_name2, -2)
-        random_video(r, [show_dir])
-    else:
-        watch_rand_vid(r)
-
-
-def WAKE_UP_MODE1(r):
-        '''
-        You are dreaming.
-        You are dreaming.
-        Jon and Day na please wake up.
-        You are dreaming. You are dreaming. Jon and Day na please wake up.
-        please wake up. please wake up. please wake up. Jon and Day na. pretty please wake up.
-        This is not a dream. This is ROB. Im your robot friend.
-        I realize this isnt very personal but you told me to wake you up, and Im trying.
-
-        ok
-        this is going to suck a little bit
-        but dont worry
-
-        There is good news, and there is bad news.'''
+    robos.speak(r, 'How about a random video ', -2)
+    watch_rand_vid(r)
 
 
 def sc(r, rate=-5):

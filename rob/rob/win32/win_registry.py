@@ -62,14 +62,10 @@ def env_keys(user=True):
     """
     Returns windows root / subkey corresponding to environment variables
 
-    CommandLine:
-        python -m xdoctest C:/Users/erote/local/rob/internal/win_registry.py env_keys
-
     Example:
         >>> root, subkey = env_keys()
         >>> print('root = {!r}'.format(root))
         >>> print('subkey = {!r}'.format(subkey))
-
     """
     if user:
         root, subkey = env_keys_user()
@@ -199,9 +195,6 @@ def set_key_value(key_str, var_str, value, type_str):
 
 def get_subkeys(instr):
     """
-    CommandLine:
-        python -m xdoctest C:/Users/erote/local/rob/internal/win_registry.py get_subkeys
-
     Example:
         >>> subkeys = get_subkeys('HKEY_CURRENT_USER/Environment')
         >>> print('subkeys = {!r}'.format(subkeys))
@@ -341,12 +334,3 @@ def __keystr2_winreg(instr):
         if instr.find(root_str) == 0:
             return (root_map[root_str], instr[len(root_str) + 1:])
     raise Exception('WinRegistryException', instr + ' is not a valid hive')
-
-
-if __name__ == '__main__':
-    r"""
-    CommandLine:
-        python C:/Users/erote/local/rob/internal/win_registry.py
-    """
-    import xdoctest
-    xdoctest.doctest_module(__file__)
