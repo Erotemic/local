@@ -102,9 +102,23 @@ def preprocess_research(input_str):
     test of an em --- dash
     test of an em — dash
     """
-    import utool as ut
     import ubelt as ub
-    inside = ut.named_field('ref', '.*?')
+    def named_field(key, regex, vim=False):
+        """
+        Creates a named regex group that can be referend via a backref.
+        If key is None the backref is referenced by number.
+
+        References:
+            https://docs.python.org/2/library/re.html#regular-expression-syntax
+        """
+        if key is None:
+            #return regex
+            return r'(%s)' % (regex,)
+        if vim:
+            return r'\(%s\)' % (regex)
+        else:
+            return r'(?P<%s>%s)' % (key, regex)
+    inside = named_field('ref', '.*?')
     input_str = re.sub(r'\\emph{' + inside + '}', ut.bref_field('ref'), input_str)
     # input_str = input_str.decode('utf-8')
     input_str = ub.ensure_unicode(input_str)
@@ -142,21 +156,7 @@ def process_research_line(line):
     line = re.sub('  *', ' ', line)
     line = re.sub('  *', ' ', line)
     line = re.sub('NBNN', 'Naive Bayes Nearest Neighbor', line)
-    if True:
-        try:
-            import utool as ut
-            nesting = ut.parse_nestings(line)
-            transformed = []
-            for item in nesting:
-                if item[0] == 'curl' and item[1][1][1].startswith('displaystyle'):
-                    # Skip the wiki displaystyle
-                    pass
-                else:
-                    transformed.append(item)
-            line = ut.recombine_nestings(transformed)
-        except Exception:
-            pass
-        # For wiki formatting
+
     line = re.sub('\\bdisplaystyle\\b', '', line)
     line = re.sub('\\(i\\)', '1)', line)
     line = re.sub('\\(ii\\)', '2)', line)
@@ -171,9 +171,7 @@ def process_research_line(line):
 
 
 def research_clipboard(r, start_line_str=None, rate='2', sentence_mode=True, open_file=False):
-    import utool as ut
-    to_speak = ut.get_clipboard()
-    #to_speak = robos.get_clipboard()
+    to_speak = robos.get_clipboard()
     write_research(r, to_speak)
     research(r, start_line_str='0', rate=rate, sentence_mode=True, open_file=False)
 
@@ -410,11 +408,8 @@ def write_path(r):
     """
     Writes a script to update the PATH variable into the sync registry
     The PATH update mirrors the current RobSettings
-
-    SeeAlso:
-        utool.util_win32.add_to_win32_PATH
     """
-    import utool
+    import ubelt as ub
     write_dir = join(r.d.HOME, 'Sync/win7/registry')
     path_fpath = normpath(join(write_dir, 'UPDATE_PATH.reg'))
     key = r'[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment]'
@@ -423,7 +418,7 @@ def write_path(r):
     # Read current PATH values
     win_pathlist = list(os.environ['PATH'].split(os.path.pathsep))
     rob_pathlist = list(map(normpath, r.path_vars_list))
-    new_path_list = utool.unique_ordered(win_pathlist + rob_pathlist)
+    new_path_list = list(ub.oset(win_pathlist + rob_pathlist))
     #new_path_list = unique_ordered(win_pathlist, rob_pathlist)
     print('\n'.join(new_path_list))
     pathtxt = pathsep.join(new_path_list)
@@ -511,3 +506,6 @@ def find_in_path(r, pattern):
 def speak(r, to_speak, rate=-5):
     from rob.robos import speak
     speak(r, to_speak=to_speak, rate=rate)
+
+
+from .rob_alarm import random_video

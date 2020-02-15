@@ -1,5 +1,3 @@
-from __future__ import print_function, division
-
 
 def cast(var, type_):
     if type_ is bool:

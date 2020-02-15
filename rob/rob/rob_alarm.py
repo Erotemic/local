@@ -96,6 +96,11 @@ def random_video(r, video_paths=None):
     import subprocess
     import numpy as np
 
+    import xdev
+    xdev.embed()
+    if video_paths is None:
+        print('r = {!r}'.format(r))
+
     video_weights = np.ones(len(video_paths))
     video_weights /= len(video_paths)
 
