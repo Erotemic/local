@@ -197,6 +197,12 @@ if __name__ == '__main__':
         url='https://github.com/Erotemic/rob',
         license='Apache 2',
         packages=find_packages('rob*'),
+        entry_points={
+            # the console_scripts entry point creates the rob executable
+            'console_scripts': [
+                'rob = rob.__main__:main'
+            ]
+        },
         classifiers=[
             # List of classifiers available at:
             # https://pypi.python.org/pypi?%3Aaction=list_classifiers

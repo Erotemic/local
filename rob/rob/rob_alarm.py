@@ -1,5 +1,5 @@
-from rob_interface import *
-import robos
+from rob import rob_interface
+from rob import robos
 
 
 def watch_rand_vid(r):

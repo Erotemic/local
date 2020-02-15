@@ -34,7 +34,7 @@ except ImportError:
 
 def make_complete(r):
     import utool as ut
-    import rob_interface
+    from rob import rob_interface
     modname = 'rob'
     testnames = [ut.get_funcname(func) for func in
                  ut.get_module_owned_functions(rob_interface)]
@@ -418,7 +418,7 @@ def research(r, start_line_str=None, rate='3', sentence_mode=True, open_file=Fal
 
 def info(r):
     """ Provides interface help """
-    import rob_interface
+    from rob import rob_interface
     import pydoc
     print("===================\n")
     print(pydoc.render_doc(rob_interface))
@@ -674,3 +674,8 @@ def find_in_path(r, pattern):
     for dpath, fpaths_list in zip(PATH, fpaths_list):
         for x in fnmatch.filter(fpaths_list, 'msvcr90.dll'):
             print('Found %r in %r' % (x, dpath))
+
+
+def speak(r, to_speak, rate=-5):
+    from rob.robos import speak
+    speak(r, to_speak=to_speak, rate=rate)

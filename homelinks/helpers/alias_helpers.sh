@@ -260,7 +260,8 @@ alias rgrep='rob grepnr'
 alias rsc='rob research_clipboard None 3'
 
 #alias rob='python $PORT_CODE/Rob/for f in *.png; do ffmpeg -i "$f" "${f%.png}.jpg"; done'
-alias rob='python ~/local/rob/run_rob.py'
+#alias rob='python ~/local/rob/run_rob.py'
+# rob is now an executable
 
 alias rls='rob ls'
 alias er='gvim $prob'
