@@ -1,1 +1,0 @@
-services.msc -> Program Compatibility Assistance Service -> Right Click -> Properties -> Startup Type -> Disabled. 

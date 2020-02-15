@@ -1,4 +1,3 @@
-#from rob_interface import *
 from os.path import split, relpath, join, isdir, isfile
 import os
 import fnmatch

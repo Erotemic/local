@@ -12,10 +12,6 @@ from rob import rob_helpers as robh
 
 
 def get_PATH(r):
-    #ROOT  + '/gnuwin32/bin'
-    #ROOT  + '/gnuwin32/lib'
-    #ROOT  + '/gnuwin32/include'
-    #INSTALL64 + '/SlikSvn/bin'
     if sys.platform == 'win32':
         path_str = """
         AHK_SCRIPTS
@@ -106,21 +102,9 @@ class ROB_Files:
             f.mk_shortcut_vbs   = d.WIN_SCRIPTS + '/Helpers/CreateShortcutHelper.vbs'
 
         f.alarm_videos = {
-            'BBC Life':              d.DOCUMENTARIES + '/BBC Life',
-            'Bill Nye':              d.TV + '/Bill Nye the Science Guy',
-            'Bob Ross':              d.TV + '/Bob Ross',
-            'Freakazoid':            d.TV + '/Freakazoid',
-            'Sheep in the Big City': d.TV + '/Sheep in the Big City',
         }
 
         # Weird Variables go Here
-        #chrome_root  = d.HOME + '/AppData/Local' if comp_name() in ['Ooo']  else d.INSTALL32
-        #f.chrome_exe =  chrome_root + '/Google/Chrome/Application/chrome.exe'
-        if comp_name() == "Termina":
-            f.spotify_exe = 'C:/Users/jon.crall/AppData/Roaming/Spotify/spotify.exe'
-        if comp_name() == "Ooo":
-            f.spotify_exe = 'C:/Program Files (x86)/Spotify/spotify.exe'
-        # Shortcut Tuples
         f.git_bash_sc = d.MSYS + '/../Git Bash'
         # Fix Slashes
         members = f.__dict__.keys()
@@ -140,14 +124,6 @@ class ROB_Directories:
         store_map = {'win32': 'D:',     'linux2': '/media/Store', 'linux': '/media/Store'}
         media_map = {'win32': 'E:',     'linux2': '/media/Media', 'linux': '/media/Store'}
         home_map  = {'win32': '/Users', 'linux2': '/home', 'linux': '/home'}
-
-        #d.CC='gcc'
-        #d.CFLAGS = 'O2'
-        #d.CFLAGS='-O2'
-        #d.CXX='g++'
-        #d CXXFLAGS='-O3'
-        #export LDFLAGS=''
-        #export CXXPP
 
         d.COMPUTER_NAME  = comp_name()
 
@@ -189,7 +165,6 @@ class ROB_Directories:
         d.ROB          = d.LOCAL + '/rob'
         d.HOTSPOTTER   = d.CODE + '/hotspotter'
         d.HS           = d.HOTSPOTTER
-        #d.CRALL_QUALS  = d.LATEX + 'crall-quals-2013'
 
         #WINDOWS
         d.TV            = d.MEDIA + '/TV'
@@ -205,16 +180,6 @@ class ROB_Directories:
             #d.SYSTEM32   = d.WINDOWS + '/system32'
 
             d.VIM_BIN    = d.INSTALL32  + '/Vim/vim74'
-            #d.VIM        = d.INSTALL32  + '/Vim'
-            #d.VIMFILES   = d.INSTALL32  + '/Vim/vimfiles'
-            #d.VIMRUNTIME = d.INSTALL32  + '/Vim/vim74'
-
-            #if comp_name() == 'BakerStreet':
-            #    d.VS2010_VC        = d.INSTALL32  + '/Microsoft Visual Studio 10.0/VC'
-            #    d.VS90COMMONTOOLS  = d.INSTALL32  + '/Microsoft Visual Studio 10.0/VC'
-            #VS110COMNTOOLS
-            #VS100COMNTOOLS
-            # Need to run this command so python can find things SET VS90COMNTOOLS=%VS100COMNTOOLS% for vs2010
 
             d.IPYTHONDIR = d.HOME + '/.ipython'
 
@@ -226,10 +191,6 @@ class ROB_Directories:
             d.GIT_CMD      = d.LOCAL + '/git/cmd'
             d.LOCALPATH    = d.LOCAL + '/PATH'
 
-            #d.GIT_SSH      = d.PUTTY + '/plink.exe'
-            #d.PUTTY        = d.PORT_APPS    + '/putty'
-            #d.BOOST        = d.ROOT + '/boost_1_53_0'
-
             d.PYTHON       = d.ROOT + '/Python27'
             d.PYTHON_SCRIPTS  = d.PYTHON + '/Scripts'
             d.PYTHON_SITE_PACKAGES = d.PYTHON + '/Lib/site-packages'
@@ -240,15 +201,6 @@ class ROB_Directories:
                 d.CODE,
                 d.PORT_CODE,
                 d.HOTSPOTTER])
-            #,
-            #d.PORT_CODE]
-
-        #elif os_type == 'linux2':
-            #d.GUI_CMD = 'gnome-terminal'
-            #d.VIMFILES   = d.HOME + '/.vim'
-            #d.INSTALL32 = d.HOME + '/.wine/drive_c/Program Files'
-            #d.INSTALL64 = d.HOME + '/.wine/drive_c/Program Files'
-            #pass
 
         # Fix Slashes
         members = d.__dict__.keys()
