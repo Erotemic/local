@@ -90,6 +90,9 @@ flake8_errors = [
     'N811',  # constant name imported as non constant
     'N813',  # camel case
     'W504',  # line break after binary operator
+
+    'I201',  # Newline between Third party import groups
+    'I100',  # Wrong import order
 ] 
 flake8_args_list = [
     '--max-line-length 79',
