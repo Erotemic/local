@@ -1,3 +1,8 @@
+import datetime
+import os
+import subprocess
+import webbrowser
+from os.path import join
 from rob import rob_interface
 from rob import robos
 from rob.rob_helpers import slash_fix, random_pick, find_files
@@ -91,11 +96,9 @@ def v(r):
 
 
 def random_video(r, video_paths=None):
-    from glob import glob
+    import glob
     import subprocess
     import numpy as np
-    import xdev
-    xdev.embed()
 
     if video_paths is None:
         video_paths = list(glob.glob(join(r.d.TV, '*')))
@@ -126,8 +129,6 @@ def random_video(r, video_paths=None):
     vlc_exe = ub.find_exe('vlc')
     arg_list = [vlc_exe, rand_vid_file];
     ub.cmd(arg_list, detach=True)
-
-    subprocess.Popen(arg_list)
 
 
 def get_readable_time(r):
