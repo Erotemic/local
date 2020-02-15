@@ -15,7 +15,7 @@ def watch_rand_vid(r):
     (playlist, vid_name) = get_random_playlist(r)
     first_item = playlist[0]
     show_name2 = os.path.split(first_item)[0].replace(r'D:\sys\e','').replace('E:','').replace('\\',' ').replace(':','').replace('TV','')
-    print("vidname: %r " % (first_item,))
+    print('first_item = {!r}'.format(first_item))
     robos.speak(r, 'How about some '+show_name2, -3)
     play_playlist(r, playlist)
 
