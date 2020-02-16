@@ -20,15 +20,6 @@ class ROB(object):
         r.path_vars_list = rob_settings.get_PATH(r)
 
 
-def is_string_int(string):
-    print("CHECKING " + string)
-    try:
-        int(string.strip())
-    except ValueError:
-        return False
-    return True
-
-
 def process_args(r, argv):
     args = tuple()
     if len(argv) > 0:
@@ -39,24 +30,6 @@ def process_args(r, argv):
             # cmd = cmd_name + '(r)'
         else:
             args = argv[1:]
-            # if cmd_name == 'write_research':
-            #     print("WRITING RESEARCH")
-            #     arg_str = ',"' + (' '.join(args)).replace('"', '').replace('\'', '') + '"'
-            #     print(arg_str)
-            # elif cmd_name == 'speak':
-            #     rate_of_speach = -5
-            #     if is_string_int(args[-1]):
-            #         rate_of_speach = int(args[-1])
-            #         args[-1] = ''
-
-            #     arg_str = "," + ens(' '.join(args), '"') + "," + str(rate_of_speach)
-            #     #arg_str = arg_str + ', -5'
-            # else:
-            #     arg_str = ''
-            #     for a in args:
-            #         arg_str = arg_str + ', \'' + a + '\''
-            #     #arg_str = ','.join(args)
-            # cmd = cmd_name + '(r' + arg_str + ' )'
 
         class dummy_r(object):
             def __repr__(self):
@@ -64,12 +37,8 @@ def process_args(r, argv):
 
         func = getattr(rob_interface, cmd_name)
         print('R.O.B. is evaling: ')
-        try:
-            import utool as ut
-            print('    ' + ut.func_str(func, (dummy_r(),) + tuple(args)))
-        except ImportError:
-            print('    ' + repr(func))
-        print("__________________________________")
+        print('    {!r}'.format(func))
+        print('__________________________________')
         print()
 
         ret = func(r, *args)
@@ -101,7 +70,7 @@ def invoke():
 
 def main():
     import textwrap
-    ascii_rob_small = textwrap.dedent(r"""
+    ascii_rob_small = textwrap.dedent(r'''
 
     __________________________________
 
@@ -127,7 +96,7 @@ def main():
     ____  ____  ___      _ ____    ____ _  _ _    _ _  _ ____
     |__/  |  |  |__]     | [__     |  | |\ | |    | |\ | |___
     |  \. |__| .|__] .   | ___]    |__| | \| |___ | | \| |___
-    __________________________________""").strip('\n')
+    __________________________________''').strip('\n')
 
     def signal_handler(signal, frame):
         print('Rob caught Ctrl+C')

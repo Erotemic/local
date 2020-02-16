@@ -14,10 +14,7 @@ HS_EXCLUDE = ['_graveyard',
               'CompilerIdC',
               'build',
               'old',
-              #'vim',
-              #'src',
               ]
-__DEBUG__ = True
 
 
 def find_in_list(str_, tofind_list, agg_fn=all, case_insensitive=True):
@@ -358,11 +355,9 @@ def _matching_fnames(dpath_list, include_patterns, exclude_dirs=None, recursive=
     recursive = rutil.cast(recursive, bool)
     if exclude_dirs is None:
         exclude_dirs = HS_EXCLUDE
-    if __DEBUG__:
-        print('Excluding: %r' % (exclude_dirs,))
-        #exclude_dirs = HS_EXCLUDE
-        #exclude_dirs = []
-    #fname_list = []
+
+    print('Excluding: %r' % (exclude_dirs,))
+
     for dpath in dpath_list:
         for root, dname_list, fname_list in os.walk(dpath):
             # Look at all subdirs

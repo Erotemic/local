@@ -1,5 +1,11 @@
+import datetime
+import os
+import subprocess
+import webbrowser
+from os.path import join
 from rob import rob_interface
 from rob import robos
+from rob.rob_helpers import slash_fix, random_pick, find_files
 
 
 def watch_rand_vid(r):
@@ -9,7 +15,7 @@ def watch_rand_vid(r):
     (playlist, vid_name) = get_random_playlist(r)
     first_item = playlist[0]
     show_name2 = os.path.split(first_item)[0].replace(r'D:\sys\e','').replace('E:','').replace('\\',' ').replace(':','').replace('TV','')
-    print("vidname: %r " % (first_item,))
+    print('first_item = {!r}'.format(first_item))
     robos.speak(r, 'How about some '+show_name2, -3)
     play_playlist(r, playlist)
 
@@ -81,9 +87,7 @@ def play_playlist(r, playlist=None):
 
 def video(r):
     import glob
-    morning_videos = list(glob.glob(join(r.d.TV, '*')))
-    videos = (get_night_videos(r) +
-              get_morning_videos(r))
+    videos = list(glob.glob(join(r.d.TV, '*')))
     random_video(r, video_paths=videos)
 
 
@@ -92,9 +96,12 @@ def v(r):
 
 
 def random_video(r, video_paths=None):
-    from glob import glob
+    import glob
     import subprocess
     import numpy as np
+
+    if video_paths is None:
+        video_paths = list(glob.glob(join(r.d.TV, '*')))
 
     video_weights = np.ones(len(video_paths))
     video_weights /= len(video_paths)
@@ -107,7 +114,7 @@ def random_video(r, video_paths=None):
         video_files = []
         for ext in video_extensions:
             glob_str = slash_fix( path + '/*'+ext )
-            video_files.extend(glob(glob_str))
+            video_files.extend(glob.glob(glob_str))
         if video_files is not None:
             files.extend( video_files )
             new_weights = [video_weights[count]] * len(video_files)
@@ -116,10 +123,12 @@ def random_video(r, video_paths=None):
 
     randInt = random_pick(range(0, len(files)), weights) #random.randint(0,len(files));
     rand_vid_file =  files[randInt]
+    print('rand_vid_file = {!r}'.format(rand_vid_file))
 
-    vlc_cmd = r.f.vlc_exe
-    arg_list = [vlc_cmd, rand_vid_file];
-    subprocess.Popen(arg_list)
+    import ubelt as ub
+    vlc_exe = ub.find_exe('vlc')
+    arg_list = [vlc_exe, rand_vid_file];
+    ub.cmd(arg_list, detach=True)
 
 
 def get_readable_time(r):
