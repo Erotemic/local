@@ -38,3 +38,5 @@ vim/vimfiles/files/
 *.swp
 
 homelinks/config/ipython/profile_default/history.sqlite
+
+*/*.egg-info

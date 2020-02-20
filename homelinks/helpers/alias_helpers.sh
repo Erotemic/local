@@ -4,6 +4,7 @@
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 
 # Unix aliases
+source $HOME/local/init/utils.sh
 
 alias pytree='tree -P "*.py" --dirsfirst'
 #alias ls='ls --color --human-readable --group-directories-first --hide="*.pyc" --hide="*.pyo"'
@@ -11,7 +12,6 @@ alias ls='ls --color --human-readable --group-directories-first'
 #--hide="*.pyc" --hide="*.pyo"'
 alias pygrep='grep -r --include "*.py"'
 alias clean_python='find . -regex ".*\(__pycache__\|\.py[co]\)" -delete || find . -iname *.pyc -delete || find . -iname *.pyo -delete'
-
 
 # watch with a higher frequency
 alias watch='watch -n .5'
@@ -50,64 +50,73 @@ alias cgrep='grep -I -ER \
     #--exclude "*.css*" \
 
 
-#alias cgrep='grep -I --exclude-dir "*build*" --exclude-dir .git -ER'
-alias cmakecache_grep='grep -I -ER --exclude-dir .git --include "CMakeCache.txt"'
+alias ipy='ipython'
 
-fzfind()
-{
-    #find . -iname "*$1*"
-    #find . -type d \( -path "./build*" -o -path builds \) -prune -o -iname "*$1*"
-    python -c "$(codeblock "
-    import sys
-    import os
-    from fnmatch import fnmatch
-    from os.path import join
+# General navigation
+alias home='cd ~'
+alias data='cd ~/data'
+alias loc='cd ~/local'
+alias lc='cd ~/local'
+alias mi='cd ~/misc'
+alias vf='cd ~/local/vim/vimfiles'
+alias vfb='cd ~/local/vim/vimfiles/bundle'
+alias lb='cd ~/latex/crall-lab-notebook/'
+alias lt='cd ~/latex/'
+alias ca='cd ~/latex/crall-thesis-2017/'
+alias ic='cd ~/latex/crall-iccvw-2017/'
+alias scr='cd ~/scripts'
+# Special navigation
+alias code='cd $CODE_DIR'
+alias co='cd $CODE_DIR'
 
-    exclude = ['build*', '.git']
-    patterns = ['*' + p + '*' for p in sys.argv[1:]]
+alias nh='cd $CODE_DIR/netharn'
+alias nd='cd $HOME/code/ndsampler'
+alias sc='cd $HOME/code/scriptconfig'
+alias kwa='cd $HOME/code/kwarray'
+alias kwi='cd $HOME/code/kwimage'
+alias kwp='cd $HOME/code/kwplot'
 
-    def imatches(patterns, strings):
-        for item in strings:
-            item = item.lower()
-            if any(fnmatch(item, pat) for pat in patterns):
-                yield item
+alias cv='cd $CODE_DIR/opencv'
+#alias fl='cd $CODE_DIR/fletch/'
+alias kw='cd $CODE_DIR/kwiver/'
+alias vi='cd $CODE_DIR/VIAME/'
+alias nx='cd $CODE_DIR/networkx'
+alias gr='cd $CODE_DIR/graphid'
+alias hs='cd $CODE_DIR/ibeis/ibeis/algo/hots'
+alias smk='cd $CODE_DIR/ibeis/ibeis/algo/smk'
+alias ib='cd $CODE_DIR/ibeis/'
+alias sk='cd $CODE_DIR/scikit-learn/'
+alias db='cd ~/Dropbox/'
+alias desk='cd ~/Desktop/'
+alias dl='cd ~/Downloads/'
+alias rf='cd $CODE_DIR/pyrf/'
+alias mtg='cd $CODE_DIR/mtgmonte/'
 
-    for root, dirs, files in os.walk('.'):
-        # Prune any directory matching the bad pattern
-        to_remove = [dx for dx, dname in enumerate(dirs) 
-                     if any(fnmatch(dname, pat) for pat in exclude)]
-        for dx in reversed(to_remove):
-            del dirs[dx]
+alias pysite='cd $(python -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_lib())")'
 
-        # print any paths matching the name
-        for dname in imatches(patterns, dirs):
-            print(join(root, dname))
-        for fname in imatches(patterns, files):
-            print(join(root, fname))
-    ")" "$@"
-}
+alias ub='cd $CODE_DIR/ubelt'
+alias xo='cd $CODE_DIR/xdoctest'
+alias ut='cd $CODE_DIR/utool'
+alias fl='cd $CODE_DIR/flann/'
+alias li='cd $CODE_DIR/line_profiler'
+alias vt='cd $CODE_DIR/vtool_ibeis'
+alias dt='cd $CODE_DIR/dtool_ibeis'
+alias gt='cd $CODE_DIR/guitool_ibeis'
+alias pt='cd $CODE_DIR/plottool_ibeis'
+alias fk='cd $CODE_DIR/ibeis-flukematch-module/'
+alias mk='cd $CODE_DIR/mkinit'
+alias hes='cd $CODE_DIR/hesaff'
+alias work='cd ~/work'
 
-#clean_python(){
-#    # Recursively delete compiled python files
-#    find . -iname *.pyc -delete
-#    find . -iname *.pyo -delete
-#}
-#find . | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
 
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
-alias psu='ps -o uname:20,pid,pcpu,pmem,time,cmd'
-alias utarbz2='tar jxf'
-alias unzip-tar-gz='tar xvzf '
-alias unzip-tar-bz='tar xvjf '
-alias unzip-tar='tar xvf '
-#ipython --pdb -c "%run report_results2.py --BOW --no-print-checks"
+alias vdd='vd ~/work'
+alias ebrc='gvim ~/.bashrc'
+alias ea='gvim ~/local/homelinks/helpers/alias_helpers.sh'
 
-#x - extract
-#v - verbose output (lists all files as they are extracted)
-#j - deal with bzipped file
-#f - read from a file, rather than a tape device
+alias drl='docker run -it $(docker image ls -a --format={{.ID}} | head -1) bash'
+
+alias dmsg=dmesg
+
 
 clean_latex()
 {
@@ -137,145 +146,6 @@ clean_emptydirs()
     find . -type d -empty -delete
 }
 
-alias ipy='ipython'
-#alias ipyk='ipython kernel'
-#alias ipynb='ipython notebook'
-#alias pyl='pylint --disable=C'
-#alias pyf='pyflakes'
-alias lls='ls -I *.aux -I *.bbl -I *.blg -I *.out -I *.log -I *.synctex'
-pdbpython()
-{
-    ipython --pdb -c "\"%run $@\""
-}
-#Find and replace in dir
-search_replace_dir()
-{
-    echo find ./ -type f -exec sed -i "s/$1/$2/g" {} \;
-}
-# Download entire webpage
-alias wget_all='wget --mirror --no-parent'
-# Convert images
-alias png2jpg='for f in *.png; do ffmpeg -i "$f" "${f%.png}.jpg"; done'
-
-hyrule_get(){
-    git clone git@hyrule.cs.rpi.edu:$1
-}
-alias hyrule='hyrule.sh'
-
-# General navigation
-alias home='cd ~'
-alias data='cd ~/data'
-alias loc='cd ~/local'
-alias lc='cd ~/local'
-alias mi='cd ~/misc'
-alias vf='cd ~/local/vim/vimfiles'
-alias vfb='cd ~/local/vim/vimfiles/bundle'
-alias lb='cd ~/latex/crall-lab-notebook/'
-alias lt='cd ~/latex/'
-alias ca='cd ~/latex/crall-thesis-2017/'
-alias ic='cd ~/latex/crall-iccvw-2017/'
-alias scr='cd ~/scripts'
-# Special navigation
-alias code='cd $CODE_DIR'
-alias co='cd $CODE_DIR'
-alias cl='cd $CODE_DIR/clab'
-alias nh='cd $CODE_DIR/netharn'
-alias cv='cd $CODE_DIR/opencv'
-#alias fl='cd $CODE_DIR/fletch/'
-alias flb='cd $CODE_DIR/fletch/build'
-alias kw='cd $CODE_DIR/kwiver/'
-alias kwb='cd $CODE_DIR/kwiver/build'
-alias vi='cd $CODE_DIR/VIAME/'
-alias vib='cd $CODE_DIR/VIAME/build'
-alias vikw='cd $CODE_DIR/VIAME/packages/kwiver/'
-alias sp='cd $CODE_DIR/VIAME/packages/kwiver/sprokit'
-alias sseg='cd ~/sseg'
-alias vikwb='cd $CODE_DIR/VIAME/build/build/src/kwiver-build/'
-alias vikwi='cd /home/joncrall/code/VIAME/build/install/lib/python2.7/site-packages'
-alias vicam='cd $CODE_DIR/VIAME/plugins/camtrawl/python'
-#alias cv='cd $CODE_DIR/opencv3'
-alias nx='cd $CODE_DIR/networkx'
-alias hs='cd $CODE_DIR/ibeis/ibeis/algo/hots'
-#alias gr='cd $CODE_DIR/ibeis/ibeis/algo/graph'
-alias gr='cd $CODE_DIR/graphid'
-alias smk='cd $CODE_DIR/ibeis/ibeis/algo/smk'
-alias ju='cd ~/.config/ibeis_cnn/training_junction'
-alias ib='cd $CODE_DIR/ibeis/'
-alias gn='cd $CODE_DIR/Lasagne/'
-alias sk='cd $CODE_DIR/scikit-learn/'
-alias cn='cd $CODE_DIR/ibeis_cnn/'
-alias db='cd ~/Dropbox/'
-alias desk='cd ~/Desktop/'
-alias dl='cd ~/Downloads/'
-alias rf='cd $CODE_DIR/pyrf/'
-#alias dt='cd $CODE_DIR/detecttools/'
-alias mtg='cd $CODE_DIR/mtgmonte/'
-
-#python -c "import site; print(site.getusersitepackages())"
-#python -c "import site; print(site.getsitepackages())"
-
-# https://github.com/pypa/virtualenv/issues/355
-# ['/usr/local/lib/python2.7/dist-packages', '/usr/lib/python2.7/dist-packages']
-#alias pysite='cd $(python -c "import site; print(site.getsitepackages()[0])")'
-alias pysite='cd $(python -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_lib())")'
-#alias vrc='cd $(python -c "import site; print(site.getsitepackages()[0]))"'
-
-
-alias pydist='cd $CODE_DIR/pyrf/'
-
-alias ya='cd $CODE_DIR/yael'
-alias ub='cd $CODE_DIR/ubelt'
-alias xo='cd $CODE_DIR/xdoctest'
-alias ut='cd $CODE_DIR/utool'
-alias fl='cd $CODE_DIR/flann/'
-alias li='cd $CODE_DIR/line_profiler'
-alias vt='cd $CODE_DIR/vtool_ibeis'
-alias dt='cd $CODE_DIR/dtool_ibeis'
-alias gt='cd $CODE_DIR/guitool_ibeis'
-alias pt='cd $CODE_DIR/plottool_ibeis'
-alias fk='cd $CODE_DIR/ibeis-flukematch-module/'
-alias ibi='cd $CODE_DIR/ibeis/ibeis'
-alias ibc='cd $CODE_DIR/ibeis/ibeis/control'
-alias ibv='cd $CODE_DIR/ibeis/ibeis/view'
-alias iba='cd $CODE_DIR/ibeis/ibeis/algo'
-alias ibs='cd $CODE_DIR/ibeis/ibeis/scripts'
-#alias ibg='cd $CODE_DIR/graphid'
-alias mk='cd $CODE_DIR/mkinit'
-alias hes='cd $CODE_DIR/hesaff'
-alias work='cd ~/work'
-alias mtest='cd ~/work/PZ_MTEST/_ibsdb'
-alias lnote='cd ~/latex/crall-lab-notebook'
-alias cvp='cd ~/latex/crall-cvpr-15'
-alias cvpr='cd ~/latex/crall-cvpr-15'
-
-alias vdd='vd ~/work'
-#alias ..="cd .."
-#alias l='ls $LS_OPTIONS -lAhF'
-
-
-# ROB
-alias hskill='rob hskill'
-alias nr='rob grepnr'
-alias rgrep='rob grepnr'
-alias rsc='rob research_clipboard None 3'
-
-#alias rob='python $PORT_CODE/Rob/for f in *.png; do ffmpeg -i "$f" "${f%.png}.jpg"; done'
-#alias rob='python ~/local/rob/run_rob.py'
-# rob is now an executable
-
-alias rls='rob ls'
-alias er='gvim $prob'
-alias v='gvim'
-alias ebrc='gvim ~/.bashrc'
-alias ea='gvim ~/local/homelinks/helpers/alias_helpers.sh'
-alias emc='gvim ~/local/modulechanges.sh'
-alias sbrc='source ~//local/homelinks/bashrc'
-alias todo='gvim ~/Dropbox/Notes/TODO.txt'
-alias ebs='gvim ~/local/build_scripts/'
-
-
-# 
-alias drl='docker run -it $(docker image ls -a --format={{.ID}} | head -1) bash'
 
 # Edit Project
 ep()
@@ -290,63 +160,27 @@ ep()
     #wmctrl -r ":ACTIVE:" -t 1  # move to desktop 1
 }
 
-#hyhspull()
-#{
-#    echo "Pushing from Hyrule"
-#    #Outer quote = " (This marks the beginning and end of the string)
-#    #Inner quote = \" (Escaped as to not flag "beginning/end of string")
-#    #Third-tier quote = ' (Literal quote)
-#    #Fourth-tier quote = \' (Literal quote that will be generated as an escaped outer quote)
-#    ssh -t cralljp@linux.cs.rpi.edu "ssh -t joncrall@hyrule.cs.rpi.edu \"cd $CODE_DIR/hotspotter; git commit -am 'hyhs wip'; git push\""
-    
-#    echo "Pulling from Local"
-#    git pull
-#}
-
 # Reload profile
 # FIXME if I work on a mac
 #alias rrr='source ~/.profile'
 alias rrr='source ~/.bashrc'
-#update_profile()
-#{
-#    pushd .
-#    loc
-#    git pull
-#    rrr
-#    popd
-#}
-#commit_profile()
-#{
-#    pushd .
-#    loc
-#    git commit -am "profile wip"
-#    git push
-#    popd
-#}
-#alias upp=update_profile
-#alias cop=commit_profile
 
 
 cls()
 {
-    # References:
-    # https://askubuntu.com/questions/25077/how-to-really-clear-the-terminal
+    __heredoc__="""
+    Clears the terminal screen
+
+    References:
+        https://askubuntu.com/questions/25077/how-to-really-clear-the-terminal
+    """
     tput reset
-    #for i in {1..100}
-    #do
-    #    echo ""
-    #done
 }
 
 
 read_clip()
 {
     xsel --clipboard < ~/clipboard.txt
-}
-
-utget()
-{
-    python -c "import utool; print(utool.grab_file_url(\"$@\", spoof=True))"
 }
 
 astyle_cpp()
@@ -433,19 +267,6 @@ tmuxattach(){
     change_terminal_title "TMUX $HOSTNAME ATTACHED"
     tmux attach -t default_session
 }
-
-
-#utzget()
-#{
-#python -c "import utool as ut; ut.grab_zipped_url(\"$1\", download_dir=\".\")"
-#}
-
-#tcp()
-#{
-#    cp $1 ../flann/$1
-#}
-
-source $HOME/local/init/utils.sh
 
 
 print_all_pathvars()
@@ -719,8 +540,6 @@ we-pypy()
 }
 
 
-alias dmsg=dmesg
-alias dmsgt='dmesg | tail'
 
 
 pyfile()
@@ -729,73 +548,12 @@ pyfile()
     python -c "import $1; print($1.__file__.replace(\".pyc\", \".py\"))"
 }
 
-#alias rpivpn='sudo openconnect -b vpn.net.rpi.edu -uyour_school_username -ucrallj'
-#alias rpivpn='rpivpn.sh'
-#sudo openconnect -b vpn.net.rpi.edu -ucrallj'
-#alias lev='lev.sh'
-
-
-gte()
-{
-    python -m utool.util_ubuntu XCtrl.current_gvim_edit tabe $1
-}
-
-gvs()
-{
-    python -m utool.util_ubuntu XCtrl.current_gvim_edit vs $1
-}
-
-gsp()
-{
-    python -m utool.util_ubuntu XCtrl.current_gvim_edit sp $1
-}
-
-ge()
-{
-    python -m utool.util_ubuntu XCtrl.current_gvim_edit e $1
-}
-
-mylayout(){
-    python -m utool.util_ubuntu XCtrl.move_window GVIM special2
-    python -m utool.util_ubuntu XCtrl.move_window joncrall special2
-}
-
-
-codeblock()
-{
-    if [ "-h" == "$1" ] || [ "--help" == "$1" ]; then 
-        # Use codeblock to show the usage of codeblock, so you can use
-        # codeblock while you codeblock.
-        echo "$(codeblock '
-            Unindents code before its executed so you can maintain a pretty
-            indentation in your code file. Multiline strings simply begin  
-            with 
-                "$(codeblock "
-            and end with 
-                ")"
-
-            Example:
-               echo "$(codeblock "
-                    a long
-                    multiline string.
-                    this is the last line that will be considered.
-                    ")"
-        ')"
-    else
-        # Prevents python indentation errors in bash
-        #python -c "from textwrap import dedent; print(dedent('''$1''').strip('\n'))"
-        echo "$1" | python -c "import sys; from textwrap import dedent; print(dedent(sys.stdin.read()).strip('\n'))"
-    fi
-}
 
 untilfail()
 {
     while $@; do :; done
 }
 
-
-
-#export OMP_NUM_THREADS=7
  
 permit_erotemic_gitrepo()
 { 
