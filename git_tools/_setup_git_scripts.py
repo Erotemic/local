@@ -2,8 +2,11 @@
 """
 Looks at the `git_*.{sh,ph}` scripts and makes corresponding `git-*` scripts
 """
+from os.path import basename
+from os.path import dirname
+from os.path import join
+from os.path import splitext
 import glob
-from os.path import dirname, join, basename, splitext
 import ubelt as ub
 
 

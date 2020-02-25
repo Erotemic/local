@@ -54,7 +54,7 @@ set_global_git_config(){
     git config --global push.default current
 
     git config --global core.editor "vim"
-    git config --global rerere.enabled true
+    git config --global rerere.enabled false
     git config --global core.fileMode false
     git config --global alias.co checkout
     git config --global alias.submodpull 'submodule update --init --recursive'
