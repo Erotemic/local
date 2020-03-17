@@ -1,3 +1,6 @@
+__heredoc__='''
+source ~/local/build_scripts/install_zotero.sh
+'''
 #mkdir ~/tmp
 #cd ~/tmp
 #wget http://download.zotero.org/standalone/4.0.11/Zotero-4.0.11_linux-x86_64.tar.bz2

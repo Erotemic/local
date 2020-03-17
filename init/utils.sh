@@ -275,6 +275,44 @@ sudo_appendto()
 #"
 }
 
+
+append_if_missing()
+{
+    __heredoc__='''
+    Appends a line to the end of a file only if that line does not exist.
+
+    Args:
+        fpath: the file path
+        text: the line to append. Leading indentation is removed.
+
+    Example:
+        source $HOME/local/init/utils.sh
+        
+        fpath="/tmp/foo.txt"
+        text="my config option"
+
+        # Initialize an empty file
+        echo "" > /tmp/foo.txt
+        cat /tmp/foo.txt
+
+        # This should append the text to the end
+        append_if_missing "/tmp/foo.txt" "my config option"
+        cat /tmp/foo.txt
+
+        # This should not append the text to the end because it already exists
+        append_if_missing "/tmp/foo.txt" "my config option"
+        cat /tmp/foo.txt
+    '''
+    fpath=$1
+    text=$2
+    fixed_text=$(codeblock "$text")
+    # Apppend the text only if it doesn't exist
+    found="$(grep -F "$fixed_text" "$fpath")"
+    if [ "$found" == "" ]; then
+        sh -c "echo \"$fixed_text\" >> $fpath"
+    fi
+}
+
 # Can we wrap sudo such we can allow utils to be used?
 #util_sudo(){
 #    echo "$@"

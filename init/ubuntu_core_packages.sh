@@ -1815,19 +1815,6 @@ ubuntu_media_codecs(){
 }
 
 
-fix_ubuntu_18_04_sound_pop_issue(){
-    # References: https://www.youtube.com/watch?v=Pdmy8dMWitg
-
-    cat /sys/module/snd_hda_intel/parameters/power_save
-    cat /sys/module/snd_hda_intel/parameters/power_save_controller
-
-    # Flip the one to a zero
-    sudo sh -c "echo 0 > /sys/module/snd_hda_intel/parameters/power_save"
-    # Flip the Y to a N
-    sudo sh -c "echo N > /sys/module/snd_hda_intel/parameters/power_save_controller"
-}
-
-
 check_hdd_health(){
     #https://unix.stackexchange.com/questions/487346/ubuntu-18-04-is-freezing-randomly
     #https://help.ubuntu.com/community/Smartmontools

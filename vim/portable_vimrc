@@ -358,7 +358,7 @@ call vimtk#quickopen('o', '~/code/ibeis/ibeis/algo/verif/vsone.py')
 "call vimtk#quickopen('o', '~/code/ibeis/ibeis/algo/preproc/preproc_annot.py')
 "call vimtk#quickopen('O', '~/code/ibeis/ibeis/algo/preproc/preproc_chip.py')
 """"""""""""""
-call vimtk#quickopen('p', '~/code/plottool/plottool/__init__.py')
+call vimtk#quickopen('p', '~/code/plottool_ibeis/plottool_ibeis/__init__.py')
 "call vimtk#quickopen('P', '~/code/plottool/plottool/draw_func2.py')
 """"""""""""""
 "call vimtk#quickopen('q', '~/code/ibeis/ibeis/algo/hots/query_request.py')
