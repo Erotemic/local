@@ -92,19 +92,18 @@ let g:vimtk_default_mappings = 1
 
 
 "===========PLUGINS==========="
-" PLUGIN: Vundle
-" git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-"
-" # Now using vim-plug instead of vundle
-" 
-" PLUGIN: vim-plug
-" https://github.com/junegunn/vim-plug
-Python2or3 << EOF
-"""
-# Install vim-plug into your autoload directory
-curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-"""
-EOF
+
+"""""""""""""""
+" # Automatically install vim-plug into your autoload directory
+" " See: https://github.com/junegunn/vim-plug
+"""""""""""""""
+if empty(glob('~/.vim/autoload/plug.vim'))
+  " Automatic installation if vim plug does not exist
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
 
 call plug#begin('~/.vim/bundle')
 
