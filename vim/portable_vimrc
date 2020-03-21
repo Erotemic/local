@@ -105,7 +105,7 @@ if !filereadable($VIMFILES . "/autoload/plug.vim")
 endif
 
 
-call plug#begin('~/.vim/bundle')
+call plug#begin($VIMFILES . '/bundle')
 
 Plug 'sjl/badwolf'
 Plug 'osyo-manga/vim-over'
@@ -454,7 +454,7 @@ endif
 "set noeb vb t_vb=
 
 " mkdir -p ~/.vim/files/info
-:set viminfo='100,n$HOME_DPATH/.vim/files/info/viminfo
+:set viminfo='100,n$VIMFILES/files/info/viminfo
 let g:startify_bookmarks = ['~/.vimrc', '~/.bashrc']
 "Python2or3 << EOF
 "listvars = {
