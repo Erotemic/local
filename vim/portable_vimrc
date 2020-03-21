@@ -99,8 +99,7 @@ let g:vimtk_default_mappings = 1
 """""""""""""""
 if !filereadable($VIMFILES . "/autoload/plug.vim")
   " Automatic installation if vim plug does not exist
-  !curl -fLo $VIMFILES/autoload/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  execute "!curl -fLo " . $VIMFILES . "/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
