@@ -19,8 +19,8 @@ set fileformats=unix,dos
 
 " Set backup directory
 if has("win32") || has("win16")
-    set backupdir=D:/sys/vim_tmp/
-    set undodir=D:/sys/vim_tmp/
+    "set backupdir=D:/sys/vim_tmp/
+    "set undodir=D:/sys/vim_tmp/
 else
     set backupdir=~/.vim_tmp/
 endif
@@ -97,7 +97,7 @@ set wildignore=*.o,*~,*.pyc,*.aux,*.masv,*.bbl,*.bcf,*.blg,*.brf,*.synctex,*.upa
 set wildmode=longest,list,full
 set wildmenu
 
-set shellslash
+"set shellslash
 set grepprg=grep\ -nH\ $*
 
 set shiftwidth=4

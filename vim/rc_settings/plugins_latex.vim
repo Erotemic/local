@@ -6,9 +6,9 @@
 " SumatraPDF forward search
 " References: http://forums.fofou.org/sumatrapdf/topic?id=3184510&comments=2
 
-if has("win32") || has("win16")
-    set shellslash
-endif
+"if has("win32") || has("win16")
+"    set shellslash
+"endif
 
 " Remove open dyslexic
 func! SetLaTeX()
