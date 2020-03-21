@@ -1,8 +1,17 @@
 #!/bin/sh
 # Different on windows  
 source ~/local/init/utils.sh
-safe_symlink ~/local/vim/vimfiles ~/.vim
+#safe_symlink ~/local/vim/vimfiles ~/.vim
 safe_symlink ~/local/vim/portable_vimrc ~/.vimrc
+
+vim -en -c ":q"
+
+if [[ -d "$HOME/code/vimtk" ]]; then
+    rm ~/.vim/bundle/vimtk
+    safe_symlink $HOME/code/vimtk ~/.vim/bundle/vimtk
+fi
+    
+
 
 mkdir -p ~/.vim_tmp
 
