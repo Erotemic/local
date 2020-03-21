@@ -97,7 +97,7 @@ let g:vimtk_default_mappings = 1
 " # Automatically install vim-plug into your autoload directory
 " " See: https://github.com/junegunn/vim-plug
 """""""""""""""
-if empty(glob('~/.vim/autoload/plug.vim'))
+if empty(glob('$HOME_DPATH/.vim/autoload/plug.vim'))
   " Automatic installation if vim plug does not exist
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -274,149 +274,151 @@ let g:vim_markdown_folding_style_pythonic = 1
 "" Trial / project / temporary vimrc commands
 "" If they are good put them into a settings file
 
-:call VimTK_default_remap()
+if exists("g:loaded_vimtk_autoload") 
+    call VimTK_default_remap()
 
-" Swap colon and semicolon
-:call vimtk#swap_keys(':', ';')
+    " Swap colon and semicolon
+    call vimtk#swap_keys(':', ';')
 
-call vimtk#quickopen(',', '~/.vimrc')
-call vimtk#quickopen('>', '~/code/flann/src/python/pyflann/index.py')
-call vimtk#quickopen('.', '~/code/flann/src/cpp/flann/algorithms/nn_index.h')
-call vimtk#quickopen('<', '~/local/vim/rc/pyvim_funcs.py')
-call vimtk#quickopen('/', '~/code/ibeis_cnn')
-call vimtk#quickopen('!', '~/local/vim/rc/pyvim_funcs.py')
-call vimtk#quickopen('*', '~/code/hesaff/pyhesaff/_pyhesaff.py')
-call vimtk#quickopen('1', '~/code/ibeis/ibeis/control/manual_annot_funcs.py')
-call vimtk#quickopen('2', '~/local/scripts/register_files.py')
-call vimtk#quickopen('@', '~/code/mtgmonte/mtgmonte.py')
-"call vimtk#quickopen('3', '~/code/guitool/guitool/api_item_model.py')
-call vimtk#quickopen('3', '~/code/guitool/guitool/guitool_components.py')
-call vimtk#quickopen('4', '~/local/init/freshstart_ubuntu.sh')
-call vimtk#quickopen('$', '~/local/build_scripts/')
-call vimtk#quickopen('5', '~/local/homelinks/dotfiles/bashrc')
-call vimtk#quickopen('%', '~/local/misc/learn.py')
-call vimtk#quickopen('7', '~/local/vim/rc/custom_font_functions.vim')
-call vimtk#quickopen('^', '~/code/Lasagne')
-call vimtk#quickopen('6', '~/code/scikit-learn/sklearn/')
-call vimtk#quickopen('8', '~/code/hesaff/src/hesaff.cpp')
-call vimtk#quickopen('9', '~/local/misc/modulechanges.sh')
+    call vimtk#quickopen(',', '~/.vimrc')
+    call vimtk#quickopen('>', '~/code/flann/src/python/pyflann/index.py')
+    call vimtk#quickopen('.', '~/code/flann/src/cpp/flann/algorithms/nn_index.h')
+    call vimtk#quickopen('<', '~/local/vim/rc/pyvim_funcs.py')
+    call vimtk#quickopen('/', '~/code/ibeis_cnn')
+    call vimtk#quickopen('!', '~/local/vim/rc/pyvim_funcs.py')
+    call vimtk#quickopen('*', '~/code/hesaff/pyhesaff/_pyhesaff.py')
+    call vimtk#quickopen('1', '~/code/ibeis/ibeis/control/manual_annot_funcs.py')
+    call vimtk#quickopen('2', '~/local/scripts/register_files.py')
+    call vimtk#quickopen('@', '~/code/mtgmonte/mtgmonte.py')
+    "call vimtk#quickopen('3', '~/code/guitool/guitool/api_item_model.py')
+    call vimtk#quickopen('3', '~/code/guitool/guitool/guitool_components.py')
+    call vimtk#quickopen('4', '~/local/init/freshstart_ubuntu.sh')
+    call vimtk#quickopen('$', '~/local/build_scripts/')
+    call vimtk#quickopen('5', '~/local/homelinks/dotfiles/bashrc')
+    call vimtk#quickopen('%', '~/local/misc/learn.py')
+    call vimtk#quickopen('7', '~/local/vim/rc/custom_font_functions.vim')
+    call vimtk#quickopen('^', '~/code/Lasagne')
+    call vimtk#quickopen('6', '~/code/scikit-learn/sklearn/')
+    call vimtk#quickopen('8', '~/code/hesaff/src/hesaff.cpp')
+    call vimtk#quickopen('9', '~/local/misc/modulechanges.sh')
 
-call vimtk#quickopen('0', '~/local/vim/rc/custom_regex_commands.vim')
-call vimtk#quickopen('_', '$VIMRUNTIME/../_vimrc')
-call vimtk#quickopen('A', '~/code/ibeis/ibeis/expt/annotation_configs.py')
-call vimtk#quickopen('a', '~/code/ibeis/ibeis/core_annots.py')
-"call vimtk#quickopen('b', '~/code/pgmpy/pgmpy/factors/Factor.py')
-call vimtk#quickopen('b', '~/code/scikit-learn/sklearn/cluster/k_means_.py')
-call vimtk#quickopen('8', '~/code/hesaff/src/hesaff.cpp')
-call vimtk#quickopen('b', '~/code/ubelt/ubelt/__init__.py')
-"call vimtk#quickopen('b', '~/code/pgmpy/pgmpy/factors/Factor.py')
-"call vimtk#quickopen('B', '~/code/ibeis_cnn/ibeis_cnn/models/abstract_models.py')
-call vimtk#quickopen('c', '~/code/ibeis/ibeis/control/IBEISControl.py')
-call vimtk#quickopen('C', '~/code/ibeis/ibeis/core_annots.py')
-call vimtk#quickopen('D', '~/code/')
-call vimtk#quickopen('db', '~/code/dtool/dtool/base.py')
-call vimtk#quickopen('ds', '~/code/dtool/dtool/sql_control.py')
-call vimtk#quickopen('dc', '~/code/dtool/dtool/depcache_control.py')
-call vimtk#quickopen('d ', '~/code/dtool/dtool/depcache_control.py')
-call vimtk#quickopen('de', '~/code/dtool/dtool/example_depcache.py')
-call vimtk#quickopen('dt', '~/code/dtool/dtool/depcache_table.py')
-call vimtk#quickopen('e', '~/code/ibeis/ibeis/expt/experiment_drawing.py')
-call vimtk#quickopen('ed', '~/code/ibeis/ibeis/expt/experiment_drawing.py')
-call vimtk#quickopen('eh', '~/code/ibeis/ibeis/expt/harness.py')
-call vimtk#quickopen('ep', '~/code/ibeis/ibeis/expt/experiment_printres.py')
-call vimtk#quickopen('tr', '~/code/ibeis/ibeis/expt/test_result.py')
-call vimtk#quickopen('E', '~/code/ibeis/ibeis/expt/experiment_configs.py')
-call vimtk#quickopen('f', '~/code/fletch/CMake')
-call vimtk#quickopen('F', '~/code/ibeis/ibeis/init/filter_annots.py')
-"call vimtk#quickopen('g', '~/code/ibeis/ibeis/gui/inspect_gui.py')
-"call vimtk#quickopen('G', '~/code/ibeis/ibeis/gui/newgui.py')
-""""""""""""""
-call vimtk#quickopen('H', '~/code/ibeis/ibeis/algo/hots/pipeline.py')
-call vimtk#quickopen('h', '~/code/graphid/graphid/core/annot_inference.py')
-""""""""""""""
-"call vimtk#quickopen('i', '~/code/ibeis/ibeis/__init__.py')
-"call vimtk#quickopen('I', '~/code/ibeis/ibeis/other/dbinfo.py')
-"call vimtk#quickopen('j', '~/code/ibeis/ibeis/dbio/export_subset.py')
-"call vimtk#quickopen('J', '~/local/vim/vimfiles/bundle/jedi-vim/jedi_vim.py')
-"call vimtk#quickopen('k', '~/code/ibeis/ibeis/algo/hots/chip_match.py')
-"call vimtk#quickopen('K', '~/code/ibeis-flukematch-module/ibeis_flukematch/plugin.py')
-"call vimtk#quickopen('k', '~/code/ibeis/ibeis/algo/smk/smk_pipeline.py')
-call vimtk#quickopen('l', '~/latex/crall-thesis-2017/main.tex')
-"call vimtk#quickopen('L', '~/latex/crall-iccvw-2017/main.tex')
-call vimtk#quickopen('L', '~/latex/crall-fishnet-2018/main.tex')
-"call vimtk#quickopen('L', '~/latex/crall-thesis-2017/sec-3-4-expt.tex')
-"call vimtk#quickopen('m', '~/code/ibeis/ibeis/init/main_helpers.py')
-"call vimtk#quickopen('M', '~/code/ibeis/ibeis/main_module.py')
-""""""""""""""
-"call vimtk#quickopen('n', '~/code/ibeis/ibeis/algo/Config.py')
-"call vimtk#quickopen('n', '~/code/networkx/networkx/algorithms/connectivity')
-"call vimtk#quickopen('N', '~/code/ibeis/ibeis/algo/hots/score_normalization.py')
-"call vimtk#quickopen('N', '~/code/ibeis_cnn/ibeis_cnn/custom_layers.py')
-""""""""""""""
-call vimtk#quickopen('o', '~/code/ibeis/ibeis/algo/verif/vsone.py')
-"call vimtk#quickopen('o', '~/code/ibeis/ibeis/algo/preproc/preproc_annot.py')
-"call vimtk#quickopen('O', '~/code/ibeis/ibeis/algo/preproc/preproc_chip.py')
-""""""""""""""
-call vimtk#quickopen('p', '~/code/plottool_ibeis/plottool_ibeis/__init__.py')
-"call vimtk#quickopen('P', '~/code/plottool/plottool/draw_func2.py')
-""""""""""""""
-"call vimtk#quickopen('q', '~/code/ibeis/ibeis/algo/hots/query_request.py')
-"call vimtk#quickopen('Q', '~/code/ibeis/ibeis/algo/hots/hots_query_result.py')
-""""""""""""""
-"call vimtk#quickopen('r', '~/code/ibeis/ibeis/algo/graph/core.py')
-"call vimtk#quickopen('R', '~/code/ibeis/README.md')
-"call vimtk#quickopen('s', '~/code/ibeis/ibeis/scripts/gen_cand_expts.py')
-"call vimtk#quickopen('s', '~/code/ibeis/ibeis/scripts/specialdraw.py')
-"call vimtk#quickopen('s', '~/code/ibeis/ibeis/scripts/classify_shark.py')
-"call vimtk#quickopen('s', '~/code/ibeis/ibeis/scripts/script_vsone.py')
-"call vimtk#quickopen('s', '~/code/ibeis/ibeis/scripts/iccv.py')
-"call vimtk#quickopen('s', '~/code/ibeis/ibeis/scripts/thesis.py')
-call vimtk#quickopen('S', '~/code/ibeis/setup.py')
-call vimtk#quickopen('s', '~/code/ibeis/ibeis/scripts/postdoc.py')
-"call vimtk#quickopen('t', '~/code/ibeis/ibeis/templates/generate_notebook.py')
-"call vimtk#quickopen('T', '~/code/ibeis/ibeis/tag_funcs.py')
-call vimtk#quickopen('u', '~/code/utool/utool/__init__.py')
-"call vimtk#quickopen('U', '~/code/utool/utool/util_dev.py')
-"call vimtk#quickopen('v', '~/code/vtool_ibeis/vtool_ibeis/__init__.py')
-call vimtk#quickopen('V', '~/code/vtool_ibeis/vtool_ibeis/__init__.py')
-"call vimtk#quickopen('W', '~/code/ibeis_cnn/ibeis_cnn/models/abstract_models.py')
-"call vimtk#quickopen('w', '~/code/ibeis/ibeis/web/apis_query.py')
-"call vimtk#quickopen('x', '~/code/ibeis/ibeis/viz/interact/interact_name.py')
-"call vimtk#quickopen('X', '~/code/ibeis/ibeis/algo/hots/multi_index.py')
-"call vimtk#quickopen('y', '~/code/ibeis/ibeis/algo/hots/vsone_pipeline.py')
-"call vimtk#quickopen('Y', '~/code/cyth/cyth/cyth_script.py')
-"call vimtk#quickopen('z', '~/code/ibeis/ibeis/viz/viz_graph2.py')
-"call vimtk#quickopen('Z', '~/code/ibeis/ibeis/algo/hots/neighbor_index.py')
+    call vimtk#quickopen('0', '~/local/vim/rc/custom_regex_commands.vim')
+    call vimtk#quickopen('_', '$VIMRUNTIME/../_vimrc')
+    call vimtk#quickopen('A', '~/code/ibeis/ibeis/expt/annotation_configs.py')
+    call vimtk#quickopen('a', '~/code/ibeis/ibeis/core_annots.py')
+    "call vimtk#quickopen('b', '~/code/pgmpy/pgmpy/factors/Factor.py')
+    call vimtk#quickopen('b', '~/code/scikit-learn/sklearn/cluster/k_means_.py')
+    call vimtk#quickopen('8', '~/code/hesaff/src/hesaff.cpp')
+    call vimtk#quickopen('b', '~/code/ubelt/ubelt/__init__.py')
+    "call vimtk#quickopen('b', '~/code/pgmpy/pgmpy/factors/Factor.py')
+    "call vimtk#quickopen('B', '~/code/ibeis_cnn/ibeis_cnn/models/abstract_models.py')
+    call vimtk#quickopen('c', '~/code/ibeis/ibeis/control/IBEISControl.py')
+    call vimtk#quickopen('C', '~/code/ibeis/ibeis/core_annots.py')
+    call vimtk#quickopen('D', '~/code/')
+    call vimtk#quickopen('db', '~/code/dtool/dtool/base.py')
+    call vimtk#quickopen('ds', '~/code/dtool/dtool/sql_control.py')
+    call vimtk#quickopen('dc', '~/code/dtool/dtool/depcache_control.py')
+    call vimtk#quickopen('d ', '~/code/dtool/dtool/depcache_control.py')
+    call vimtk#quickopen('de', '~/code/dtool/dtool/example_depcache.py')
+    call vimtk#quickopen('dt', '~/code/dtool/dtool/depcache_table.py')
+    call vimtk#quickopen('e', '~/code/ibeis/ibeis/expt/experiment_drawing.py')
+    call vimtk#quickopen('ed', '~/code/ibeis/ibeis/expt/experiment_drawing.py')
+    call vimtk#quickopen('eh', '~/code/ibeis/ibeis/expt/harness.py')
+    call vimtk#quickopen('ep', '~/code/ibeis/ibeis/expt/experiment_printres.py')
+    call vimtk#quickopen('tr', '~/code/ibeis/ibeis/expt/test_result.py')
+    call vimtk#quickopen('E', '~/code/ibeis/ibeis/expt/experiment_configs.py')
+    call vimtk#quickopen('f', '~/code/fletch/CMake')
+    call vimtk#quickopen('F', '~/code/ibeis/ibeis/init/filter_annots.py')
+    "call vimtk#quickopen('g', '~/code/ibeis/ibeis/gui/inspect_gui.py')
+    "call vimtk#quickopen('G', '~/code/ibeis/ibeis/gui/newgui.py')
+    """"""""""""""
+    call vimtk#quickopen('H', '~/code/ibeis/ibeis/algo/hots/pipeline.py')
+    call vimtk#quickopen('h', '~/code/graphid/graphid/core/annot_inference.py')
+    """"""""""""""
+    "call vimtk#quickopen('i', '~/code/ibeis/ibeis/__init__.py')
+    "call vimtk#quickopen('I', '~/code/ibeis/ibeis/other/dbinfo.py')
+    "call vimtk#quickopen('j', '~/code/ibeis/ibeis/dbio/export_subset.py')
+    "call vimtk#quickopen('J', '~/local/vim/vimfiles/bundle/jedi-vim/jedi_vim.py')
+    "call vimtk#quickopen('k', '~/code/ibeis/ibeis/algo/hots/chip_match.py')
+    "call vimtk#quickopen('K', '~/code/ibeis-flukematch-module/ibeis_flukematch/plugin.py')
+    "call vimtk#quickopen('k', '~/code/ibeis/ibeis/algo/smk/smk_pipeline.py')
+    call vimtk#quickopen('l', '~/latex/crall-thesis-2017/main.tex')
+    "call vimtk#quickopen('L', '~/latex/crall-iccvw-2017/main.tex')
+    call vimtk#quickopen('L', '~/latex/crall-fishnet-2018/main.tex')
+    "call vimtk#quickopen('L', '~/latex/crall-thesis-2017/sec-3-4-expt.tex')
+    "call vimtk#quickopen('m', '~/code/ibeis/ibeis/init/main_helpers.py')
+    "call vimtk#quickopen('M', '~/code/ibeis/ibeis/main_module.py')
+    """"""""""""""
+    "call vimtk#quickopen('n', '~/code/ibeis/ibeis/algo/Config.py')
+    "call vimtk#quickopen('n', '~/code/networkx/networkx/algorithms/connectivity')
+    "call vimtk#quickopen('N', '~/code/ibeis/ibeis/algo/hots/score_normalization.py')
+    "call vimtk#quickopen('N', '~/code/ibeis_cnn/ibeis_cnn/custom_layers.py')
+    """"""""""""""
+    call vimtk#quickopen('o', '~/code/ibeis/ibeis/algo/verif/vsone.py')
+    "call vimtk#quickopen('o', '~/code/ibeis/ibeis/algo/preproc/preproc_annot.py')
+    "call vimtk#quickopen('O', '~/code/ibeis/ibeis/algo/preproc/preproc_chip.py')
+    """"""""""""""
+    call vimtk#quickopen('p', '~/code/plottool_ibeis/plottool_ibeis/__init__.py')
+    "call vimtk#quickopen('P', '~/code/plottool/plottool/draw_func2.py')
+    """"""""""""""
+    "call vimtk#quickopen('q', '~/code/ibeis/ibeis/algo/hots/query_request.py')
+    "call vimtk#quickopen('Q', '~/code/ibeis/ibeis/algo/hots/hots_query_result.py')
+    """"""""""""""
+    "call vimtk#quickopen('r', '~/code/ibeis/ibeis/algo/graph/core.py')
+    "call vimtk#quickopen('R', '~/code/ibeis/README.md')
+    "call vimtk#quickopen('s', '~/code/ibeis/ibeis/scripts/gen_cand_expts.py')
+    "call vimtk#quickopen('s', '~/code/ibeis/ibeis/scripts/specialdraw.py')
+    "call vimtk#quickopen('s', '~/code/ibeis/ibeis/scripts/classify_shark.py')
+    "call vimtk#quickopen('s', '~/code/ibeis/ibeis/scripts/script_vsone.py')
+    "call vimtk#quickopen('s', '~/code/ibeis/ibeis/scripts/iccv.py')
+    "call vimtk#quickopen('s', '~/code/ibeis/ibeis/scripts/thesis.py')
+    call vimtk#quickopen('S', '~/code/ibeis/setup.py')
+    call vimtk#quickopen('s', '~/code/ibeis/ibeis/scripts/postdoc.py')
+    "call vimtk#quickopen('t', '~/code/ibeis/ibeis/templates/generate_notebook.py')
+    "call vimtk#quickopen('T', '~/code/ibeis/ibeis/tag_funcs.py')
+    call vimtk#quickopen('u', '~/code/utool/utool/__init__.py')
+    "call vimtk#quickopen('U', '~/code/utool/utool/util_dev.py')
+    "call vimtk#quickopen('v', '~/code/vtool_ibeis/vtool_ibeis/__init__.py')
+    call vimtk#quickopen('V', '~/code/vtool_ibeis/vtool_ibeis/__init__.py')
+    "call vimtk#quickopen('W', '~/code/ibeis_cnn/ibeis_cnn/models/abstract_models.py')
+    "call vimtk#quickopen('w', '~/code/ibeis/ibeis/web/apis_query.py')
+    "call vimtk#quickopen('x', '~/code/ibeis/ibeis/viz/interact/interact_name.py')
+    "call vimtk#quickopen('X', '~/code/ibeis/ibeis/algo/hots/multi_index.py')
+    "call vimtk#quickopen('y', '~/code/ibeis/ibeis/algo/hots/vsone_pipeline.py')
+    "call vimtk#quickopen('Y', '~/code/cyth/cyth/cyth_script.py')
+    "call vimtk#quickopen('z', '~/code/ibeis/ibeis/viz/viz_graph2.py')
+    "call vimtk#quickopen('Z', '~/code/ibeis/ibeis/algo/hots/neighbor_index.py')
 
 
-call vimtk#quickopen('l', '~/code/VIAME/plugins')
-"call vimtk#quickopen('s', '~/code/VIAME/packages/kwiver/sprokit')
-"call vimtk#quickopen('v', '~/code/VIAME/packages/kwiver/vital')
-"call vimtk#quickopen('a', '~/code/VIAME/packages/kwiver/arrows')
+    call vimtk#quickopen('l', '~/code/VIAME/plugins')
+    "call vimtk#quickopen('s', '~/code/VIAME/packages/kwiver/sprokit')
+    "call vimtk#quickopen('v', '~/code/VIAME/packages/kwiver/vital')
+    "call vimtk#quickopen('a', '~/code/VIAME/packages/kwiver/arrows')
 
-"call vimtk#quickopen('k', '~/code/kwiver')
-"call vimtk#quickopen('K', '~/code/VIAME/packages/kwiver')
+    "call vimtk#quickopen('k', '~/code/kwiver')
+    "call vimtk#quickopen('K', '~/code/VIAME/packages/kwiver')
 
-call vimtk#quickopen('r', '~/code/kwiver/sprokit')
-call vimtk#quickopen('R', '~/code/VIAME/packages/kwiver/sprokit')
+    call vimtk#quickopen('r', '~/code/kwiver/sprokit')
+    call vimtk#quickopen('R', '~/code/VIAME/packages/kwiver/sprokit')
 
-"call vimtk#quickopen('c', '~/code/VIAME/plugins/camtrawl/python/run_camtrawl.py')
-call vimtk#quickopen('w', '~/code/VIAME/plugins/camtrawl/python/viame/processes/camtrawl/processes.py')
-call vimtk#quickopen('8', '~/local/misc/kwiver_places.sh')
-call vimtk#quickopen('y', '~/local/misc/kwiver_places.sh')
-call vimtk#quickopen('x', '~/code/xdoctest/xdoctest/core.py')
-"call vimtk#quickopen('m', '~/misc/notes.sh')
-call vimtk#quickopen('m', '~/code/mmdetection/mmdet')
+    "call vimtk#quickopen('c', '~/code/VIAME/plugins/camtrawl/python/run_camtrawl.py')
+    call vimtk#quickopen('w', '~/code/VIAME/plugins/camtrawl/python/viame/processes/camtrawl/processes.py')
+    call vimtk#quickopen('8', '~/local/misc/kwiver_places.sh')
+    call vimtk#quickopen('y', '~/local/misc/kwiver_places.sh')
+    call vimtk#quickopen('x', '~/code/xdoctest/xdoctest/core.py')
+    "call vimtk#quickopen('m', '~/misc/notes.sh')
+    call vimtk#quickopen('m', '~/code/mmdetection/mmdet')
 
-call vimtk#quickopen('q', '~/local/vim/vimfiles/bundle/vimtk/vimtk/core.py')
+    call vimtk#quickopen('q', '~/local/vim/vimfiles/bundle/vimtk/vimtk/core.py')
 
-"call vimtk#quickopen('a', '~/sseg/pysseg')
-"call vimtk#quickopen('a', '~/code/clab/clab/live/')
-"call vimtk#quickopen('c', '~/code/clab/clab')
-"call vimtk#quickopen('a', '~/code/clab/clab/fit_harness.py')
-call vimtk#quickopen('n', '~/code/netharn/netharn/fit_harn.py')
-call vimtk#quickopen('N', '~/code/netharn/examples/yolo_voc.py')
-call vimtk#quickopen('B', '~/code/bioharn/bioharn/detect_fit.py')
+    "call vimtk#quickopen('a', '~/sseg/pysseg')
+    "call vimtk#quickopen('a', '~/code/clab/clab/live/')
+    "call vimtk#quickopen('c', '~/code/clab/clab')
+    "call vimtk#quickopen('a', '~/code/clab/clab/fit_harness.py')
+    call vimtk#quickopen('n', '~/code/netharn/netharn/fit_harn.py')
+    call vimtk#quickopen('N', '~/code/netharn/examples/yolo_voc.py')
+    call vimtk#quickopen('B', '~/code/bioharn/bioharn/detect_fit.py')
+endif
 
 
 let g:vimtk_sys_path = ['$HOME/.local/conda/envs/py38/lib/python3.8/site-packages']
@@ -447,27 +449,27 @@ endif
 " mkdir -p ~/.vim/files/info
 :set viminfo='100,n$HOME_DPATH/.vim/files/info/viminfo
 let g:startify_bookmarks = ['~/.vimrc', '~/.bashrc']
-Python2or3 << EOF
-listvars = {
-    'startify_bookmarks': [
-        '~/local/vim/portable_vimrc',
-        '~/.bashrc',
-        '~/code/scikit-learn/sklearn/cluster/k_means.py',
-        '~/code/ibeis/ibeis/algo/hots/vsone_pipeline.py',
-        '~/code/vtool_ibeis/vtool_ibeis/matching.py'
-    ]
-}
-for varname, list_ in listvars.items():
-    liststr = '[' + ', '.join('"%s"' % v for v in list_) + ']'
-    vim.command('let g:' + varname + ' = ' + liststr)
+"Python2or3 << EOF
+"listvars = {
+"    'startify_bookmarks': [
+"        '~/local/vim/portable_vimrc',
+"        '~/.bashrc',
+"        '~/code/scikit-learn/sklearn/cluster/k_means.py',
+"        '~/code/ibeis/ibeis/algo/hots/vsone_pipeline.py',
+"        '~/code/vtool_ibeis/vtool_ibeis/matching.py'
+"    ]
+"}
+"for varname, list_ in listvars.items():
+"    liststr = '[' + ', '.join('"%s"' % v for v in list_) + ']'
+"    vim.command('let g:' + varname + ' = ' + liststr)
 
-if 1:
-    import vimtk
-    #import logging
-    #logging.basicConfig()
-    #logging.getLogger().setLevel(logging.DEBUG)
-    vimtk.reload()
-EOF
+"if 1:
+"    import vimtk
+"    #import logging
+"    #logging.basicConfig()
+"    #logging.getLogger().setLevel(logging.DEBUG)
+"    vimtk.reload()
+"EOF
 
 "Python2or3 << EOF
 "import vimtk
