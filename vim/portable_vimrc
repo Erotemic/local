@@ -57,8 +57,8 @@ endif
 
 if has("win32") || has("win16")
     :set runtimepath+=$HOME_DPATH\local\vim\portable_vimrc 
-    let VIMFILES = $HOME_DPATH . "/vimfiles"
-    echo $VIMFILES
+    let $VIMFILES_DPATH = $HOME_DPATH . "/vimfiles"
+    echo "VIMFILES_DPATH = " . $VIMFILES_DPATH
     " TODO: the fix didnt work
     " https://stackoverflow.com/questions/24833970/get-e484-cant-open-file-tmp-foo-a-when-using-systemwget-in-vim
     "set noshelltemp
@@ -67,6 +67,8 @@ if has("win32") || has("win16")
     
     " Fix issue where system() breaks when running from git-bash on win32
     set shell=C:\WINDOWS\system32\cmd.exe
+else
+    let $VIMFILES_DPATH = $HOME_DPATH . "/.vim"
 endif
 
 if has('win32')
@@ -98,15 +100,15 @@ let g:vimtk_default_mappings = 1
 " # Automatically install vim-plug into your autoload directory
 " " See: https://github.com/junegunn/vim-plug
 """""""""""""""
-if !filereadable($VIMFILES . "/autoload/plug.vim")
+if !filereadable($VIMFILES_DPATH . "/autoload/plug.vim")
   " Automatic installation if vim plug does not exist
   echo "Installing Vim Plug"
-  execute '!curl -fLo ' . $VIMFILES . '/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  execute '!curl -fLo ' . $VIMFILES_DPATH . '/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
 
-call plug#begin($VIMFILES . '/bundle')
+call plug#begin($VIMFILES_DPATH . '/bundle')
 
 Plug 'sjl/badwolf'
 Plug 'osyo-manga/vim-over'
@@ -455,7 +457,7 @@ endif
 "set noeb vb t_vb=
 
 " mkdir -p ~/.vim/files/info
-:set viminfo='100,n$VIMFILES/files/info/viminfo
+:set viminfo='100,n$VIMFILES_DPATH/files/info/viminfo
 let g:startify_bookmarks = ['~/.vimrc', '~/.bashrc']
 "Python2or3 << EOF
 "listvars = {
