@@ -57,9 +57,7 @@ endif
 
 if has("win32") || has("win16")
     :set runtimepath+=$HOME_DPATH\local\vim\portable_vimrc 
-
-    let VIMFILES=$HOME_DPATH\vimfiles
-
+    let VIMFILES = $HOME_DPATH\vimfiles
     " TODO: the fix didnt work
     " https://stackoverflow.com/questions/24833970/get-e484-cant-open-file-tmp-foo-a-when-using-systemwget-in-vim
     "set noshelltemp
