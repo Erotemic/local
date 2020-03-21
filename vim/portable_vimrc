@@ -97,7 +97,10 @@ else
 endif
 
 set runtimepath+=~/local/vim/vimfiles/
-source ~/local/vim/rc/win32_presource.vim
+
+source $VIMRUNTIME/mswin.vim
+behave mswin
+
 "source ~/local/vim/rc/venv_presource.vim
 set encoding=utf8
 let g:markdown_fenced_languages = ['html', 'python', 'bash=sh']
@@ -128,6 +131,11 @@ Plug 'tpope/vim-markdown'
 
 Plug 'vim-scripts/taglist.vim'
 
+Plug 'google/vim-searchindex'
+Plug 'ervandew/supertab'
+Plug 'davidhalter/jedi-vim'
+Plug 'LaTeX-Box-Team/LaTeX-Box'
+
 "Plug 'jmcantrell/vim-virtualenv'
 "Plug 'cjrh/vim-conda'
 
@@ -139,105 +147,22 @@ Plug 'vim-scripts/taglist.vim'
 "Plug 'file:///home/joncrall/.vim/bundle/jedi-vim/'
 "Plug 'file:///home/joncrall/.vim/bundle/badwolf/'
 
-Python2or3 << EOF
-
-# More programable syntax for plugins
-import sys
-#print('sys.executable = {!r}'.format(sys.executable))
-import os
-import vim
-
-def get_enabled_plugins():
-    """
-    Returns a list of disabled plugin names
-
-    SeeAlso:
-        ~/local/init/ensure_vim_plugins.py
-        # list of plugins are in
-        ~/local/init/REPOS1.py
-    """
-    WIN32 = sys.platform.startswith('win32')
-    UNIX = not WIN32
-    UNIX = True  # HACK
-    flag = True
-
-    github_enabled = [
-        #'scrooloose/nerdtree',
-        #'scrooloose/nerdcommenter',
-        #'majutsushi/tagbar',
-
-        (flag, 'google/vim-searchindex'),
-        #(flag, 'vim-devicons'),
-
-        (flag & UNIX, 'ervandew/supertab'),
-        # (flag & UNIX, 'mhinz/vim-startify'),
-
-        # (flag & UNIX, 'vim-syntastic/syntastic'),
-        (flag, 'davidhalter/jedi-vim'),
-        (flag, 'LaTeX-Box-Team/LaTeX-Box'),
-        #(flag, 'vim-markdown'),
-        #(flag, 'vim-syntax-markdown'),
-    ]
-
-    # Set flag to be false to disable plugin
-    known_plugins = [
-        #(flag, 'vimtk'),
-
-        #(flag, 'vim-searchindex'),
-        #(flag, 'vim-devicons'),
-
-        #(flag & UNIX, 'syntastic'),
-        #(flag, 'jedi-vim'),
-        #(flag, 'LaTeX-Box'),
-        #(flag, 'vim-markdown'),
-        #(flag, 'vim-syntax-markdown'),
-        #(flag, 'vim-autopep8'),
-        (False, 'vim-colors-solarized'),
-
-        #(flag, 'ultisnips'),
-        #(flag, 'vim-snippets'),
-        (False, 'vim-powerline'),
-        #(flag, 'vim-virtualenv'),
-        #(flag, 'vim-autopep8'),
-
-        #(flag, 'AnsiEsc.vim'),
-        #(flag, 'unicode.vim'),
-        #(flag, 'badwolf' or 'sjl/badwolf'),
-        #(flag, 'rainbow_parentheses.vim'),
-        #(flag, 'closetag.vim'),
-        #(flag, 'gruvbox'),
-        #(flag, 'codeschool-vim-theme'),
-        #(flag, 'phd'),
-        #(flag & UNIX, 'taglist.vim'),  # ctags
-
-        (False & UNIX, 'vim-buffergator'),
-        #(False, 'vim-ipython'), 
-        #(False, 'vim-quickopen-tvio'),
-        (False, 'vim-fugitive'), (False, 'csv.vim'), (False, 'grep.vim'), 
-        (False, 'vim-repeat'), (False, 'Conque-Shell'),
-        (False, 'highlight.vim'), (False, 'vim-airline'), 
-        (False, 'vim-multiple-cursors'), (False, 'vim-sensible'), 
-        (False, 'vim-surround'), (False, 'vim-unimpaired'),
-        (False, 'vim-vimtweak'),
-        (False, 'pathogen'),
-        #(False, 'Vundle.vim'),  # hack, we already enabled it
-    ] 
-    file_enabled = ['file:///home/joncrall/.vim/bundle/' + name for flag, name in known_plugins if flag]
-    #disabled = [name for flag, name in known_plugins if not flag]
-
-    enabled = file_enabled + github_enabled
-    enabled = [a if not isinstance(a, tuple) else (a[1] if a[0] else None) for a in enabled]
-    enabled = [a for a in enabled if a]
-
-    return enabled
-
-
-enabled = get_enabled_plugins()
-
-for name in enabled:
-    vim.command("Plug '{}'".format(name))
-
-EOF
+" #(flag, 'vim-devicons'),
+"#(flag, 'vim-snippets'),
+"(False, 'vim-powerline'),
+"#(flag, 'rainbow_parentheses.vim'),
+"#(flag, 'closetag.vim'),
+"#(flag, 'gruvbox'),
+"#(flag, 'codeschool-vim-theme'),
+"(flag, 'phd'),
+"(False, 'vim-fugitive'), (False, 'csv.vim'), (False, 'grep.vim'), 
+"(False, 'vim-repeat'), (False, 'Conque-Shell'),
+"(False, 'highlight.vim'), (False, 'vim-airline'), 
+"(False, 'vim-multiple-cursors'), (False, 'vim-sensible'), 
+"(False, 'vim-surround'), (False, 'vim-unimpaired'),
+"(False, 'vim-vimtweak'),
+"(False & UNIX, 'vim-buffergator'),
+"#(False, 'vim-ipython'), 
 
 " All of your Plugins must be added before the following line
 call plug#end()            " required
@@ -285,7 +210,6 @@ let g:vim_markdown_folding_style_pythonic = 1
 " We can hack around this by explicitly sourcing the vimtk plugin
 source $VIMFILES_DPATH/bundle/vimtk/plugin/vimtk.vim
 if exists("g:loaded_vimtk") 
-    echo g:loaded_vimtk
     call VimTK_default_remap()
 
     " Swap colon and semicolon
