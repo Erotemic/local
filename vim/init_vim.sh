@@ -4,14 +4,14 @@ source ~/local/init/utils.sh
 #safe_symlink ~/local/vim/vimfiles ~/.vim
 safe_symlink ~/local/vim/portable_vimrc ~/.vimrc
 
+# Run vim once to install plugins
 vim -en -c ":q"
+vim -en -c ":PlugInstall | qa"
 
 if [[ -d "$HOME/code/vimtk" ]]; then
-    rm ~/.vim/bundle/vimtk
-    safe_symlink $HOME/code/vimtk ~/.vim/bundle/vimtk
+    rm -rf $HOME/.vim/bundle/vimtk
+    safe_symlink $HOME/code/vimtk $HOME/.vim/bundle/vimtk
 fi
-    
-
 
 mkdir -p ~/.vim_tmp
 
