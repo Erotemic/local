@@ -109,7 +109,8 @@ call plug#begin('~/.vim/bundle')
 
 Plug 'sjl/badwolf'
 Plug 'osyo-manga/vim-over'
-Plug 'file:///home/joncrall/.vim/bundle/vimtk'
+"Plug 'file:///home/joncrall/.vim/bundle/vimtk'
+Plug 'Erotemic/vimtk'
 Plug 'posva/vim-vue'
 
 Plug 'vim-scripts/AnsiEsc.vim'
@@ -274,7 +275,8 @@ let g:vim_markdown_folding_style_pythonic = 1
 "" Trial / project / temporary vimrc commands
 "" If they are good put them into a settings file
 
-if exists("g:loaded_vimtk_autoload") 
+if exists("g:loaded_vimtk") 
+    echo g:loaded_vimtk
     call VimTK_default_remap()
 
     " Swap colon and semicolon
@@ -418,6 +420,8 @@ if exists("g:loaded_vimtk_autoload")
     call vimtk#quickopen('n', '~/code/netharn/netharn/fit_harn.py')
     call vimtk#quickopen('N', '~/code/netharn/examples/yolo_voc.py')
     call vimtk#quickopen('B', '~/code/bioharn/bioharn/detect_fit.py')
+else
+    echo "vimtk not loaded"
 endif
 
 

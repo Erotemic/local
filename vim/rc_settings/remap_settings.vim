@@ -163,10 +163,10 @@ noremap <leader>R :source ~/local/vim/portable_vimrc<CR>
 
 " Hack to reload vimtk plugin as well
 
-let g:loaded_vimtk=0
-let g:loaded_vimtk_autoload=0
-source ~/local/vim/vimfiles/bundle/vimtk/plugin/vimtk.vim
-source ~/local/vim/vimfiles/bundle/vimtk/autoload/vimtk.vim
+"let g:loaded_vimtk=0
+"let g:loaded_vimtk_autoload=0
+"source ~/local/vim/vimfiles/bundle/vimtk/plugin/vimtk.vim
+"source ~/local/vim/vimfiles/bundle/vimtk/autoload/vimtk.vim
 
 
 noremap <leader>rs :syntax sync minlines=500.<CR>
