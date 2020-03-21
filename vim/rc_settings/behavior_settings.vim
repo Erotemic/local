@@ -14,8 +14,8 @@ if has('mouse')
 endif
 
 
-set fileformat=unix
-set fileformats=unix,dos
+"set fileformat=unix
+"set fileformats=unix,dos
 
 " Set backup directory
 if has("win32") || has("win16")
@@ -38,7 +38,14 @@ endif
 "colorscheme slate
 "colorscheme gruvbox
 "colorscheme phd
-colorscheme badwolf
+try 
+  colorscheme badwolf
+  catch
+  try 
+    colorscheme murphy
+    catch
+  endtry
+endtry
 "colorscheme codeschool
 "colorscheme murphy
 set bg=light  " setting this first causes slate to look nicer

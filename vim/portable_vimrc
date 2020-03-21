@@ -97,9 +97,9 @@ let g:vimtk_default_mappings = 1
 " # Automatically install vim-plug into your autoload directory
 " " See: https://github.com/junegunn/vim-plug
 """""""""""""""
-if empty(glob('$HOME_DPATH/.vim/autoload/plug.vim'))
+if !filereadable($VIMFILES . "/autoload/plug.vim")
   " Automatic installation if vim plug does not exist
-  silent !curl -fLo $HOME_DPATH/.vim/autoload/plug.vim --create-dirs
+  silent !curl -fLo $VIMFILES/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
