@@ -16,7 +16,7 @@
 " ~/code/vimtk/plugin/vimtk.vim
 " ~/code/vimtk/autoload/vimtk.vim
 " ~/code/vimtk/vimtk/core.py
-" ~/local/vim/vimfiles/bundle/vimtk/plugin/vimtk.vim
+" ~/.vim/bundle/vimtk/plugin/vimtk.vim
 
 
 " Spell Files
