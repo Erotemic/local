@@ -35,6 +35,7 @@ https://github.com/Erotemic/misc.git $HOME
 
 https://gitlab.kitware.com/utils/scriptconfig.git 
 https://gitlab.kitware.com/computer-vision/ndsampler.git
+https://gitlab.kitware.com/computer-vision/kwcoco.git 
 https://gitlab.kitware.com/computer-vision/kwarray.git 
 https://gitlab.kitware.com/computer-vision/kwimage.git 
 https://gitlab.kitware.com/computer-vision/kwplot.git 

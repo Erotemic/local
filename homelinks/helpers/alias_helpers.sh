@@ -71,6 +71,7 @@ alias co='cd $CODE_DIR'
 
 alias nh='cd $CODE_DIR/netharn'
 alias nd='cd $HOME/code/ndsampler'
+alias kwc='cd $HOME/code/kwcoco'
 alias sc='cd $HOME/code/scriptconfig'
 alias kwa='cd $HOME/code/kwarray'
 alias kwi='cd $HOME/code/kwimage'
