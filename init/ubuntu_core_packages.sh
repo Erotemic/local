@@ -744,6 +744,9 @@ install_screen_capture()
     #sudo apt install recordmydesktop gtk-recordmydesktop
     sudo add-apt-repository ppa:obsproject/obs-studio -y
     sudo apt update && sudo apt install obs-studio -y
+
+    sudo apt install kdenlive
+    
 }
 
 

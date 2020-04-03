@@ -1390,7 +1390,9 @@ big_apt_install(){
 
     sudo add-apt-repository ppa:obsproject/obs-studio -y
     sudo apt update && sudo apt install obs-studio -y
-    
+
+
+    sudo apt install kdenlive
 
 
     # SeeAlso ~/local/build_scripts/build_obs.sh
@@ -1412,9 +1414,11 @@ brio_webcam(){
     # https://www.kurokesu.com/main/2016/01/16/manual-usb-camera-settings-in-linux/
     sudo apt-get install v4l-utils
     v4l2-ctl --list-devices
+
     v4l2-ctl -d /dev/video0 --list-ctrls
     v4l2-ctl -d /dev/video0 --set-ctrl=focus_auto=1
-    v4l2-ctl -d /dev/video0 --set-ctrl=exposure_auto_priority=0
+    v4l2-ctl -d /dev/video0 --set-ctrl=exposure_auto_priority=1
+    v4l2-ctl -d /dev/video0 --set-ctrl=backlight_compensation=0
     
 
 }
