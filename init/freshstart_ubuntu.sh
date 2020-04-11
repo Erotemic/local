@@ -1408,6 +1408,11 @@ big_apt_install(){
     sudo add-apt-repository ppa:unit193/encryption -y
     sudo apt update
     sudo apt install veracrypt -y
+
+
+    sudo add-apt-repository ppa:linrunner/tlp -y
+    sudo apt update -y
+    sudo apt install tlp tlp-rdw -y
 }
 
 brio_webcam(){
