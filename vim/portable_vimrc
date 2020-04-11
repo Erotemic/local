@@ -341,8 +341,8 @@ if exists("g:loaded_vimtk")
     call vimtk#quickopen('8', '~/local/misc/kwiver_places.sh')
     call vimtk#quickopen('y', '~/local/misc/kwiver_places.sh')
     call vimtk#quickopen('x', '~/code/xdoctest/xdoctest/core.py')
-    "call vimtk#quickopen('m', '~/misc/notes.sh')
-    call vimtk#quickopen('m', '~/code/mmdetection/mmdet')
+    call vimtk#quickopen('m', '~/misc/bump_versions.sh')
+    "call vimtk#quickopen('m', '~/code/mmdetection/mmdet')
 
     call vimtk#quickopen('q', '~/local/vim/vimfiles/bundle/vimtk/vimtk/core.py')
 
