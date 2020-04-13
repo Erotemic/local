@@ -1,15 +1,57 @@
 
 wine_1_9()
 {
-    sudo add-apt-repository ppa:wine/wine-builds
-    sudo apt-get update
-    sudo apt-get install --install-recommends wine-staging
-    #sudo apt-get install winehq-staging
-    sudo apt-get install winehq-devel
+    # http://ubuntuhandbook.org/index.php/2020/01/install-wine-5-0-stable-ubuntu-18-04-19-10/
+
+    sudo dpkg --add-architecture i386
+
+    wget https://dl.winehq.org/wine-builds/Release.key
+    sudo apt-key add Release.key
+
+    wget -qO - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add -
+    
+    wget -nc https://dl.winehq.org/wine-builds/winehq.key
+    sudo apt-key add winehq.key
+
+
+    # For pre 19.10
+    sudo add-apt-repository ppa:cybermax-dexter/sdl2-backport -y
+    sudo apt-add-repository "deb https://dl.winehq.org/wine-builds/ubuntu $(lsb_release -cs) main" -y
+    sudo apt update && sudo apt install --install-recommends winehq-stable -y
+
+    
+    #sudo apt update -y
+    #sudo apt-add-repository 'https://dl.winehq.org/wine-builds/ubuntu/'
+
+    #sudo add-apt-repository ppa:wine/wine-builds -y
+    #sudo apt-get update -y
+    #sudo apt-get install --install-recommends wine-staging -y
+    #sudo apt-get install wine-staging -y
+    ##sudo apt-get install winehq-staging
+    #sudo apt-get install winehq-devel
+    #sudo apt-get install wine-devel
 
     #sudo apt-get remove winehq-staging
     #sudo apt-get remove winehq-staging
     #sudo add-apt-repository --remove ppa:wine/wine-builds
+}
+
+starcraft2(){
+    # https://askubuntu.com/questions/846651/installing-starcraft-2-playonlinux
+    # https://gaming.stackexchange.com/questions/341111/is-there-a-painless-way-to-run-starcraft-2-on-linux
+    # https://www.reddit.com/r/starcraft/comments/5w0wyv/how_to_play_sc2_on_linux_a_full_walk_through/
+    sudo apt install ttf-mscorefonts-installer -y
+
+    wget -O Battle.net-Setup.exe https://www.battle.net/download/getInstallerForGame?os=win&locale=enUS&version=LIVE&gameProgram=BATTLENET_APP
+    
+
+
+    sudo add-apt-repository ppa:alexlarsson/flatpak
+    sudo apt-get update
+    sudo apt install --install-recommends flatpak
+    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+    flatpak remote-add --if-not-exists winepak https://dl.winepak.org/repo/winepak.flatpakrepo
+    flatpak install winepak com.blizzard.StarCraft2
 }
 
 get_latest_winetricks(){
