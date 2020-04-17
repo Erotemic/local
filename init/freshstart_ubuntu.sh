@@ -1415,6 +1415,14 @@ big_apt_install(){
     sudo apt install tlp tlp-rdw -y
 }
 
+
+retro_console(){
+    # https://github.com/Swordfish90/cool-retro-term 
+    wget https://github.com/Swordfish90/cool-retro-term/releases/download/1.1.1/Cool-Retro-Term-1.1.1-x86_64.AppImage
+    chmod a+x Cool-Retro-Term-1.1.1-x86_64.AppImage
+    ./Cool-Retro-Term-1.1.1-x86_64.AppImage
+}
+
 brio_webcam(){
     # https://www.kurokesu.com/main/2016/01/16/manual-usb-camera-settings-in-linux/
     sudo apt-get install v4l-utils
