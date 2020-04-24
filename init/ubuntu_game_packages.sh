@@ -36,22 +36,68 @@ wine_1_9()
     #sudo add-apt-repository --remove ppa:wine/wine-builds
 }
 
+cleanup_sources_list(){
+    sudo apt install python3-apt
+    sudo python3 -m pip install git+https://github.com/Erotemic/aptsources-cleanup.git
+    #https://askubuntu.com/questions/760896/how-can-i-fix-apt-error-w-target-packages-is-configured-multiple-times
+}
+
 starcraft2(){
+    __heredoc__ = """
+    https://www.reddit.com/r/starcraft/comments/9ugzrz/definitive_linux_sc2_guide/
+    https://lutris.net/games/starcraft-ii/
+    """
+
+    sudo apt-get install libvulkan1 libvulkan1:i386
+    #sudo apt-get install mesa-vulkan-drivers mesa-vulkan-drivers:i386
+
+    # Install lutris
+    sudo add-apt-repository ppa:lutris-team/lutris -y
+    sudo apt-get update -y
+    sudo apt-get install lutris -y
+
+    # See https://github.com/lutris/lutris/wiki/Installing-drivers#installing-vulkan
+    # for 18.04 (needs update for 19.04 / 20.04)
+    sudo add-apt-repository ppa:kisak/kisak-mesa -y
+    #sudo add-apt-repository --remove ppa:kisak/kisak-mesa
+    sudo apt install ppa-purge
+    sudo ppa-purge ppa:kisak/kisak-mesa
+    
+    sudo dpkg --add-architecture i386 
+    sudo apt update && sudo apt upgrade -y
+
+}
+
+starcraft2_OLD(){
     # https://askubuntu.com/questions/846651/installing-starcraft-2-playonlinux
     # https://gaming.stackexchange.com/questions/341111/is-there-a-painless-way-to-run-starcraft-2-on-linux
     # https://www.reddit.com/r/starcraft/comments/5w0wyv/how_to_play_sc2_on_linux_a_full_walk_through/
     sudo apt install ttf-mscorefonts-installer -y
 
+    cd ~/Downloads
+    # broken link
     wget -O Battle.net-Setup.exe https://www.battle.net/download/getInstallerForGame?os=win&locale=enUS&version=LIVE&gameProgram=BATTLENET_APP
+
+    # /home/joncrall/Downloads/StarCraft-II-Setup.exe
+
+    # DOUBLE CLICKED .EXE AND DID MANUAL SETUP
     
 
 
-    sudo add-apt-repository ppa:alexlarsson/flatpak
-    sudo apt-get update
+    sudo add-apt-repository ppa:alexlarsson/flatpak -y
+    sudo apt-get update -y 
     sudo apt install --install-recommends flatpak
     flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
     flatpak remote-add --if-not-exists winepak https://dl.winepak.org/repo/winepak.flatpakrepo
     flatpak install winepak com.blizzard.StarCraft2
+
+
+    # winecfg
+    # Graphics -> Emulate a virtual desktop @ 1920x1080
+
+    sudo apt-get install winetricks winbind
+    sudo apt-get purge winetricks
+    winetricks corefonts vcrun2005 vcrun2008 vcrun2015
 }
 
 get_latest_winetricks(){
