@@ -98,6 +98,6 @@ def git_sync():
 if __name__ == '__main__':
     r"""
     CommandLine:
-        python ~/local/git_tools/git_sync.py arthea --dry
+        python ~/local/git_tools/git_sync.py remote_name --dry
     """
     git_sync()
