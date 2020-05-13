@@ -64,6 +64,7 @@ mount_remote(){
 
 mount_remote_if_available(){
     REMOTE=$1
+    FORCE=$2
     mkdir -p $HOME/remote
     MOUNTPOINT=$HOME/remote/$REMOTE
 
@@ -87,10 +88,11 @@ mount_remote_if_available(){
 unmount_if_mounted()
 {
     REMOTE=$1
+    FORCE=$2
     MOUNTPOINT=$HOME/remote/$REMOTE
     # Check if the directory is non-empty (proxy for checking mounted)
     #if test "$(ls -A "$MOUNTPOINT")"; then
-    if [ "$(already_mounted $MOUNTPOINT)" != "" ]; then
+    if ["$FORCE" != ""] || ["$(already_mounted $MOUNTPOINT)" != ""]; then
         # if so, then unmount it
         echo "Unmounting MOUNTPOINT = $MOUNTPOINT"
         fusermount -u $MOUNTPOINT
@@ -132,9 +134,9 @@ if [[ $# -gt 0 ]]; then
         do :
             echo "REMOTE = $REMOTE"
             if [ "$UNMOUNT" == "YES" ]; then
-                unmount_if_mounted $REMOTE
+                unmount_if_mounted $REMOTE $FORCE
             else
-                mount_remote_if_available $REMOTE
+                mount_remote_if_available $REMOTE $FORCE
             fi
         done
     else
