@@ -64,6 +64,7 @@ let g:syntastic_python_checkers=['flake8'] " ignores lines containng # NOQA
 Python2or3 << EOF
 import vim
 flake8_errors = [
+    'E123',  # closing braket indentation
     'E126',  # continuation line hanging-indent
     'E127',  # continuation line over-indented for visual indent
     'E201',  # whitespace after '('

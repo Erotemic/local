@@ -18,6 +18,7 @@ def github_add_fork(new_user, dry=False):
     known_servers = [
         'github.com',
         'gitlab.com',
+        'gitlab.kitware.com',
     ]
 
     repo_names = set()
@@ -31,7 +32,7 @@ def github_add_fork(new_user, dry=False):
                 server = _server
 
     if len(repo_names) != 1:
-        raise Exception('Conflicting repo names')
+        raise Exception('Conflicting repo names: {}'.format(repo_names))
 
     gitname = list(repo_names)[0]
 
