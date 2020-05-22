@@ -1823,3 +1823,27 @@ check_hdd_health(){
     #https://help.ubuntu.com/community/Smartmontools
     sudo apt-get install smartmontools
 }
+
+
+ttygif(){
+    sudo apt-get install imagemagick ttyrec gcc x11-apps make git -y
+    cd $HOME/code
+    git clone https://github.com/icholy/ttygif.git
+    cd ttygif
+    PREFIX=$HOME/.local make 
+    PREFIX=$HOME/.local make install
+
+    __notes__="""
+
+    ttyrec progiter_record3
+    ipython
+    import progiter
+    import time
+    for i in progiter.ProgIter(range(1000)):
+        time.sleep(0.02)
+
+    export WINDOWID=$(xdotool getwindowfocus)
+    ttygif progiter_record3 -f
+
+    """
+}
