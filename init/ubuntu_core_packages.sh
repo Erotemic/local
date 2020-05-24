@@ -1833,6 +1833,8 @@ ttygif(){
     PREFIX=$HOME/.local make 
     PREFIX=$HOME/.local make install
 
+    import pyperclip
+
     __notes__="""
 
     ttyrec progiter_record3
