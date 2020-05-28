@@ -549,6 +549,25 @@ pyfile()
     python -c "import $1; print($1.__file__.replace(\".pyc\", \".py\"))"
 }
 
+pyedit()
+{
+    __heredoc__="""
+    Open a python module's source code in your favorite editor.
+
+    Args:
+        modname (str): module name
+
+    Example:
+        source ~/local/homelinks/helpers/alias_helpers.sh
+        modname=typing
+        pyedit typing
+    """
+    modname=$1
+    cmd="python -c \"import ${modname}, xdev; xdev.editfile(${modname}.__file__)\""
+    echo "$cmd"
+    bash -c "${cmd}"
+}
+
 
 untilfail()
 {
