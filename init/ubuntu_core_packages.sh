@@ -1849,3 +1849,22 @@ ttygif(){
 
     """
 }
+
+
+home_printer(){
+    __heredoc__="""
+    Brother HL-L3290CDW
+
+    https://support.brother.com/g/b/downloadlist.aspx?c=us&lang=en&prod=hll3290cdw_us&os=128
+
+    https://askubuntu.com/questions/314314/laser-printer-scanner-brother-dcp-8110dn-ubuntu-what-is-its-uri
+    """
+
+    cd Downloads
+    mv $HOME/Downloads/linux-brprinter-installer-2.2.2-1.gz $HOME/tmp
+    cd $HOME/tmp
+    gunzip linux-brprinter-installer-2.2.2-1.gz
+    sudo bash linux-brprinter-installer-2.2.2-1 MFC-J880DW
+
+    
+}
