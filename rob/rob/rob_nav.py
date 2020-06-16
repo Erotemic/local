@@ -194,7 +194,7 @@ def _ut_sed(regexpr, repl, force=False, recursive=False, dpath_list=None,
     import ubelt as ub
     #_grep(r, [repl], dpath_list=dpath_list, recursive=recursive)
     if include_patterns is None:
-        include_patterns = ['*.py', '*.pyx', '*.pxi', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h', '*.html', '*.tex']
+        include_patterns = ['*.py', '*.pyx', '*.pxi', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c', '*.h', '*.html', '*.tex', '*.rst', '*.md']
     if dpath_list is None:
         dpath_list = [os.getcwd()]
     if verbose is None:
@@ -244,7 +244,7 @@ def _sed(r, regexpr, repl, force=False, recursive=False, dpath_list=None):
 
     include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c',
                         '*.h', '*.pyx', '*.pxi', '*.cmake',
-                        '*.sh', '*.yml',
+                        '*.sh', '*.yml', '*.md', '*.rst',
                         'CMakeLists.txt']
     _ut_sed(regexpr, repl, force=force, recursive=recursive,
             dpath_list=dpath_list, verbose=True,
@@ -255,7 +255,7 @@ def _sed(r, regexpr, repl, force=False, recursive=False, dpath_list=None):
 def _grep(r, tofind_list, recursive=True, case_insensitive=True, regex=False,
           dpath_list=None, invert=False):
     include_patterns = ['*.py', '*.cxx', '*.cpp', '*.hxx', '*.hpp', '*.c',
-                        '*.h', '*.vim', '*.sh']  # , '*.txt']
+                        '*.h', '*.vim', '*.sh', '*.md', '*.rst']  # , '*.txt']
     exclude_dirs = HS_EXCLUDE
     # ensure list input
     if isinstance(include_patterns, str):

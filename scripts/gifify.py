@@ -3,7 +3,7 @@
 """
 A gif-ify script
 
-Wrapper around imgmagik convert
+Wrapper around imgmagik convert or ffmpeg
 """
 
 import ubelt as ub
@@ -19,7 +19,7 @@ def main():
 
     parser.add_argument('image_list', nargs='*', help='list of images')
     parser.add_argument('-i', '--input', nargs='*', help='alternate way to specify list of images')
-    parser.add_argument('-d', '--delay', nargs=1, type=int, default=10, help='delay between frames')
+    parser.add_argument('-d', '--delay', nargs=1, type=float, default=10, help='delay between frames')
     parser.add_argument('-o', '--output', default='out.gif', help='output file')
     args, unknown = parser.parse_known_args()
     # print('unknown = {!r}'.format(unknown))
@@ -70,12 +70,13 @@ def main():
             print(info['out'])
             print(info['err'])
             raise RuntimeError(info['err'])
+        return info['err']
     elif backend == 'ffmpeg':
         output_fpath = ns['output']
-        ffmpeg_animate_frames(frame_fpaths, output_fpath)
-        pass
-
-    return info['err']
+        ns['delay']
+        # ns['delay']
+        in_framerate = 10
+        ffmpeg_animate_frames(frame_fpaths, output_fpath, in_framerate=in_framerate)
 
 
 def ffmpeg_animate_frames(frame_fpaths, output_fpath, in_framerate=1, verbose=1):
