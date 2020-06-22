@@ -104,6 +104,7 @@ if exists(ssh_config_path):
 #echo "USER_SSH_HOSTS = $USER_SSH_HOSTS"
 
 complete -W "$USER_SSH_HOSTS" "git-sync"
+complete -W "$USER_SSH_HOSTS" "mount-remotes.sh"
 #complete -W "remote1 remote2 remote3 " "git-sync"
 
 

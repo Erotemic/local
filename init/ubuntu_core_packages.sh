@@ -1868,3 +1868,20 @@ home_printer(){
 
     
 }
+
+
+install_fun_packages(){
+    # Fun packages
+
+    # Cool Retro Term
+    # https://github.com/Swordfish90/cool-retro-term
+    mkdir -p $HOME/tmp
+    cd $HOME/tmp
+    wget https://github.com/Swordfish90/cool-retro-term/releases/download/1.1.1/Cool-Retro-Term-1.1.1-x86_64.AppImage
+    chmod a+x Cool-Retro-Term-1.1.1-x86_64.AppImage
+    ./Cool-Retro-Term-1.1.1-x86_64.AppImage
+
+    # cmatrix
+    # https://github.com/abishekvashok/cmatrix
+    sudo apt-get install language-pack-ja
+}
