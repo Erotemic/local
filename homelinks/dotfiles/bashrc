@@ -249,7 +249,17 @@ debug(){
     grep -r VIRTUAL_ENV $HOME/local
     grep -r VIRTUAL_ENV $HOME
 
+    echo "PATH = "
     pathvar_print PATH
+
+    echo "LD_LIBRARY_PATH = "
+    pathvar_print LD_LIBRARY_PATH
+
+    echo "CPATH = "
+    pathvar_print CPATH
+
+    echo "CMAKE_PREFIX_PATH = "
+    pathvar_print CMAKE_PREFIX_PATH
 }
 
 

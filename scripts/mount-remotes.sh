@@ -92,9 +92,12 @@ unmount_if_mounted()
     MOUNTPOINT=$HOME/remote/$REMOTE
     # Check if the directory is non-empty (proxy for checking mounted)
     #if test "$(ls -A "$MOUNTPOINT")"; then
-    if ["$FORCE" != ""] || ["$(already_mounted $MOUNTPOINT)" != ""]; then
+    if [[ "$FORCE" != "" || "$(already_mounted $MOUNTPOINT)" != "" ]]; then
         # if so, then unmount it
         echo "Unmounting MOUNTPOINT = $MOUNTPOINT"
+        # Note, if the ssh session is cut then try
+        # kill -9 $(pgrep -lf sshfs | cut -d " " -f2)
+        # or user the lazy -z option with fusermount
         fusermount -u $MOUNTPOINT
     else
         echo "Was not mounted MOUNTPOINT = $MOUNTPOINT"
@@ -134,6 +137,8 @@ if [[ $# -gt 0 ]]; then
         do :
             echo "REMOTE = $REMOTE"
             if [ "$UNMOUNT" == "YES" ]; then
+                echo "FORCE = $FORCE"
+                echo "REMOTE = $REMOTE"
                 unmount_if_mounted $REMOTE $FORCE
             else
                 mount_remote_if_available $REMOTE $FORCE
