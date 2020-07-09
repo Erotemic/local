@@ -302,10 +302,18 @@ export CPATH=$(pathvar_clean CPATH)
 #    print_all_pathvars
 #fi
 
-# For machine-specific bashrc things that will not be published on github
-#if [ -f "$HOME/.bashrc-erotemic.sh" ]; then 
-#    source $HOME/.bashrc-erotemic.sh
-#fi
+
+
+if [ -f "$HOME/.bashrc-erotemic.sh" ]; then 
+    # For machine-specific bashrc things that will not be published on github
+    # Hueristic to check if the file is decrypted. (better way to to do this)
+    #NUM_SPACES=$(head -n 4 $HOME/.bashrc-erotemic.sh | grep " "  | wc | sed "s/  */ /g" | cut -d' ' -f3)
+    NUM_SPACES=$(head -n 4 $HOME/.bashrc-erotemic.sh | grep " "  | wc -c)
+    #echo "NUM_SPACES = $NUM_SPACES"
+    if [ "$NUM_SPACES" -gt "1" ]; then
+        source $HOME/.bashrc-erotemic.sh
+    fi
+fi
 if [ -f "$HOME/.bashrc-internal.sh" ]; then 
     source $HOME/.bashrc-internal.sh
 fi
