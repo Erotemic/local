@@ -148,6 +148,13 @@ def find_chain(head, authors=None, preserve_tags=True, oldest_commit=None):
     chain = []
     commit = head
 
+    repo = head.repo
+
+    if oldest_commit is not None:
+        stop_object = repo.commit(oldest_commit)
+    else:
+        stop_object = None
+
     if preserve_tags:
         tags = head.repo.tags
         if isinstance(preserve_tags, (set, list, tuple)):
@@ -174,11 +181,9 @@ def find_chain(head, authors=None, preserve_tags=True, oldest_commit=None):
 
             break
 
-        if oldest_commit is not None:
-            if commit.hexsha.startswith(oldest_commit):
-                break
-
-            if oldest_commit in tagged_commits:
+        if stop_object is not None:
+            if stop_object == commit:
+                print('Stop chain at stop_object = {!r}'.format(stop_object))
                 break
 
         if preserve_tags:
@@ -195,7 +200,7 @@ def find_chain(head, authors=None, preserve_tags=True, oldest_commit=None):
     return chain
 
 
-def find_streaks(chain, authors, timedelta='sameday', pattern=None):
+def find_streaks(chain, authors=None, timedelta='sameday', pattern=None):
     """
     Given a chain, finds subchains (called streaks) that have the same author
     and are within a timedelta threshold of each other.
@@ -206,14 +211,11 @@ def find_streaks(chain, authors, timedelta='sameday', pattern=None):
         timedelta (float or str): minimum time between commits in seconds
             or a categorical value such as 'sameday' or 'alltime'
         pattern (str): instead of squashing messages with the same name, squash
-            only if they match this pattern (Default: None)
+            only if they match this pattern (Default: None), None means
+            the consecutive messages should match.
     """
     if len(chain) == 0:
         raise ValueError('No continuous commits exist')
-
-    # Find contiguous streaks
-    streaks = []
-    streak_ids = []
 
     def matches_time(streak, commit):
         if timedelta == 'alltime':
@@ -236,13 +238,15 @@ def find_streaks(chain, authors, timedelta='sameday', pattern=None):
     def matches_message(streak, commit):
         if pattern is None:
             flag = streak.start.message == commit.message
+            # flag |= streak.start.message.strip() == commit.message.strip()
         else:
             flag = re.match(pattern, commit.message) is not None
         return flag
 
     def continues_streak(streak, commit):
-        if commit.author.name not in authors:
-            return False
+        if authors is not None:
+            if commit.author.name not in authors:
+                return False
         if len(streak) == 0:
             return True
         if matches_message(streak, commit):
@@ -251,28 +255,45 @@ def find_streaks(chain, authors, timedelta='sameday', pattern=None):
         return False
 
     LEN_THRESH = 2
-    child = None
+    # Find contiguous streaks
+    streaks = []
 
-    def log_streak(streak):
-        if len(streak) < LEN_THRESH:
-            streak_ids.extend([None] * max(1, len(streak)))
-        else:
-            streaks.append(streak)
-            streak_ids.extend([len(streaks)] * len(streak))
-        pass
+    if True:
+        # New fixed logic, with lookahead, much easier to follow.
+        import itertools as it
+        prev = None
+        streak = None
 
-    streak = Streak(child, [])
-    for commit in chain:
-        if continues_streak(streak, commit):
-            streak.append(commit)
-        else:
-            # Streak is broken
-            log_streak(streak)
-            child = commit
-            streak = Streak(child, [])
+        # Look at each commit and its successor
+        for commit, next_commit in ub.iter_window(it.chain(chain, [None]), size=2):
+            print('CHECK commit.message = {!r}, {!r}'.format(commit.message, commit))
+            if streak is None:
+                streak = Streak(prev, [])
+                streak.append(commit)
+                if next_commit is not None and continues_streak(streak, next_commit):
+                    # If the next commit will start a streak, then initialize
+                    print(ub.color_text('... new candidate streak, len={}'.format(len(streak)), 'yellow'))
+                else:
+                    # Don't even bother unless we will start a streak
+                    print(ub.color_text('... no streak', 'red'))
+                    streak = None
+            else:
+                # If we have started a streak, then this commit MUST continue
+                # the current streak because we already checked it last
+                # iteration when it was the next commit.
+                streak.append(commit)
+                print(ub.color_text('... add to streak, len={}'.format(len(streak)), 'blue'))
 
-    # Corner case where the streak goes until the end of the chain
-    log_streak(streak)
+                # Check if the next commit will break the streak, and either
+                # accept or reject the current streak
+                if next_commit is None or not continues_streak(streak, next_commit):
+                    if len(streak) < LEN_THRESH:
+                        print(ub.color_text('... Next commit breaks streak of len {}, reject'.format(len(streak)), 'red'))
+                    else:
+                        print(ub.color_text('... Next commit breaks streak of len {}, accept'.format(len(streak)), 'green'))
+                        streaks.append(streak)
+                    streak = None
+            prev = commit
     return streaks
 
 
@@ -391,8 +412,12 @@ def _squash_between(repo, start, stop, dry=False, verbose=True):
     summary = '\n'.join(unique_messages)
     if summary == 'wip\n':
         summary = summary.strip('\n')
-    new_msg = '{} - Squashed {} commits from <{}> to <{}>\n'.format(
-        summary, len(commits), ts_start, ts_stop_short)
+
+    if False:
+        new_msg = '{} - Squashed {} commits from <{}> to <{}>\n'.format(
+            summary, len(commits), ts_start, ts_stop_short)
+    else:
+        new_msg = '{} - Squashed {} commits'.format(summary.strip(), len(commits))
 
     if verbose:
         print(' * Creating new commit with message:')
@@ -412,7 +437,7 @@ def _squash_between(repo, start, stop, dry=False, verbose=True):
         # Undo commits from start to stop by softly reseting to just before the start
         before_start = start.parents[0]
         if verbose:
-            print(' * reseting to before <start>')
+            print(' * reseting to before <start>: {}'.format(before_start.hexsha))
         repo.git.reset(before_start.hexsha, soft=True)
 
         # Commit the changes in a new squashed commit and presever authored date
@@ -517,7 +542,7 @@ def do_tags(verbose=True, inplace=False, dry=True, auto_rollback=False):
             # Start is the commit further back in time
             _squash_between(repo, streak.start, streak.stop, dry=dry,
                             verbose=verbose)
-    except Exception as ex:
+    except Exception:
         print_exc(sys.exc_info())
         print('ERROR: squash_streaks failed.')
         if not dry and auto_rollback:
@@ -564,7 +589,8 @@ def squash_streaks(authors, timedelta='sameday', pattern=None, inplace=False,
             squashed. (Default: 'sameday').
             Valid values: ['sameday', 'alltime', <n_seconds:float>]
         pattern (str): instead of squashing messages with the same name, squash
-            only if they match this pattern (Default: None)
+            only if they match this pattern (Default: None). Default of None
+            means that squash two commits if they have the same message.
         inplace (bool): if True changes will be applied directly to the current
             branch otherwise a temporary branch will be created. Then you must
             manually reset the current branch to this branch and delete the
@@ -573,7 +599,9 @@ def squash_streaks(authors, timedelta='sameday', pattern=None, inplace=False,
             if any errors occur. (Default: True)
         dry (bool): if True this only executes a dry run, that prints the
             chains that would be squashed (Default: False)
-        verbose (bool): verbosity flag (Default: True)
+
+        verbose (bool, default=True): verbosity flag
+
         custom_streak(tuple): hack, specify two commits to explicitly squash
             only this streak is used. We do not automatically check for others.
         preserve_tags (bool, default=True): if True the chain is not allowed
@@ -620,13 +648,17 @@ def squash_streaks(authors, timedelta='sameday', pattern=None, inplace=False,
         chain = find_chain(head, authors=authors, preserve_tags=preserve_tags,
                            oldest_commit=oldest_commit)
         if verbose:
-            print('Found chain of length %r' % (len(chain)))
+            # ISO_8601 = '%Y-%m-%d %H:%M:%S %z'  # NOQA
+            # ts_start = start.authored_datetime.
+            # print(ub.repr2([(c.message.strip(), c.author.name, c.authored_datetime.strftime(ISO_8601)) for c in chain]))
             # print(ub.repr2(chain, nl=1))
+            print('Found chain of length {!r}'.format(len(chain)))
 
         streaks = find_streaks(chain, authors=authors, timedelta=timedelta,
                                pattern=pattern)
     if verbose:
         print('Found %r streaks' % (len(streaks)))
+        # sys.exit(0)
 
     # Switch to a temp branch before we start working
     if not dry:
@@ -639,9 +671,11 @@ def squash_streaks(authors, timedelta='sameday', pattern=None, inplace=False,
             if verbose:
                 print('Squashing streak = %r' % (str(streak),))
             # Start is the commit further back in time
+            # print('streak = {!r}'.format(streak))
+            # print('streak.start = {!r}, {}'.format(streak.start, streak.start.message))
             _squash_between(repo, streak.start, streak.stop, dry=dry,
                             verbose=verbose)
-    except Exception as ex:
+    except Exception:
         print_exc(sys.exc_info())
         print('ERROR: squash_streaks failed.')
         if not dry and auto_rollback:
@@ -704,9 +738,8 @@ def git_squash_streaks():
     import argparse
     try:
         import argcomplete
-    except ImportError:
+    except Exception:
         argcomplete = None
-        raise
     description, help_dict = _autoparse_desc(squash_streaks)
 
     parser = argparse.ArgumentParser(description=description)
@@ -735,7 +768,8 @@ def git_squash_streaks():
 
     parser.add_argument('--authors', type=str,
                         help=(help_dict['authors'] +
-                              ' Defaults to your git config user.name'))
+                              ' Only squash commits from these authors. '
+                              ' Set to <config> to use your git config'))
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument(*('-n', '--dry'), dest='dry', action='store_true',
@@ -779,6 +813,8 @@ def git_squash_streaks():
             raise ValueError('timedelta = {}'.format(ns['timedelta']))
 
     if ns['authors'] is None:
+        pass
+    elif ns['authors'] == '<user>':
         ns['authors'] = {git.Git().config('user.name')}
         # HACK: for me. todo user alias
         # SEE: .mailmap file to auto extract?

@@ -334,3 +334,9 @@ alias ls='ls --color --human-readable'
 
 # added by travis gem
 [ -f /home/joncrall/.travis/travis.sh ] && source /home/joncrall/.travis/travis.sh
+
+
+
+# Disable the terminal bell
+# https://linuxconfig.org/turn-off-beep-bell-on-linux-terminal
+set bell-style none
