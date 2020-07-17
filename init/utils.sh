@@ -11,10 +11,10 @@ Usage:
     source $HOME/local/init/utils.sh
 
 '
-if [ "$__SOURCED_UTILS__" = "1" ]; then
+if [ "$__SOURCED_EROTEMIC_UTILS__" = "1" ]; then
    return
 fi
-__SOURCED_UTILS__=1
+__SOURCED_EROTEMIC_UTILS__=1
 
 
 system_python(){
@@ -215,7 +215,6 @@ codeblock()
 writeto()
 {
     __heredoc__="
-
     Usage:
         writeto <fpath> <text>
 
