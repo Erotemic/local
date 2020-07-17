@@ -135,9 +135,9 @@ setup_remote_ssh_keys(){
 
 
 simple_setup_auto(){
-    __heredoc__="""
+    __heredoc__="
     Does setup on machines without root access
-    """
+    "
     # Just in case
     deactivate
 
@@ -343,11 +343,11 @@ entry_prereq_git_and_local()
 
 freshtart_ubuntu_script()
 { 
-    __heredoc__="""
+    __heredoc__="
     CommandLine:
         source ~/local/init/freshstart_ubuntu.sh
         freshtart_ubuntu_script
-    """
+    "
     mkdir -p ~/tmp
     mkdir -p ~/code
     cd ~
@@ -541,10 +541,10 @@ ensure_curl(){
 }
 
 setup_venv3(){
-    __heredoc__="""
+    __heredoc__="
     CommandLine:
         source ~/local/init/freshstart_ubuntu.sh && setup_venv3
-    """
+    "
     # Ensure PIP, setuptools, and virtual are on the SYSTEM
     if [ "$(has_pymodule python3 pip)" == "False" ]; then
     #if [ "$(which pip3)" == "" ]; then
@@ -585,9 +585,9 @@ setup_venv3(){
 }
 
 dev_fix_venv_mismatched_version(){
-    __heredoc__="""
+    __heredoc__="
     This might fix the cmath import issue?
-    """
+    "
     # Check if the virtualenv and system python are on the same patch version
     # IF THEY HAVE DIFFERENT MAJOR/MINOR VERSONS DO NOTHING HERE!
     $VIRTUAL_ENV/bin/python --version
@@ -709,10 +709,10 @@ install_conda_basics(){
 
 
 setup_venv2(){
-    __heredoc__="""
+    __heredoc__="
     CommandLine:
         source ~/local/init/freshstart_ubuntu.sh && setup_venv2
-    """
+    "
     # Ensure PIP, setuptools, and virtual are on the SYSTEM
     if [ "$(has_pymodule python2 pip)" == "False" ]; then
     #if [ "$(which pip2)" == "" ]; then
@@ -763,10 +763,10 @@ setup_venv2(){
 
 
 patch_venv_with_shared_libs(){
-    __heredoc__="""
+    __heredoc__="
     References:
         https://github.com/pypa/virtualenv/pull/1045/files
-    """
+    "
 
     pyblock "
         import shutil
@@ -790,7 +790,7 @@ patch_venv_with_shared_libs(){
                     rpaths = ldflags[idx+1].split(os.pathsep)
                     for rpath in rpaths:
                         rpath = rpath.strip()
-                        if rpath.startswith(''''$'ORIGIN'''):
+                        if rpath.startswith(''$'ORIGIN'):
                             return True
                     idx += 1
                 idx += 1
@@ -906,36 +906,36 @@ patch_venv_with_ld_library(){
             for old_lineno, line in enumerate(lines, start=1):
                 new_lines.append(line)
                 if old_lineno == 10:
-                    new_lines.extend(absindent('''
+                    new_lines.extend(absindent('
                             C_INCLUDE_PATH=\"\$_OLD_C_INCLUDE_PATH\"
                             LD_LIBRARY_PATH=\"\$_OLD_VIRTUAL_LD_LIBRARY_PATH\"
 
-                        ''', ' ' * 8))
+                        ', ' ' * 8))
                 elif old_lineno == 11:
-                    new_lines.extend(absindent('''
+                    new_lines.extend(absindent('
                             export C_INCLUDE_PATH
                             export LD_LIBRARY_PATH
 
                             unset _OLD_C_INCLUDE_PATH
                             unset _OLD_VIRTUAL_LD_LIBRARY_PATH
-                        ''', ' ' * 8))
+                        ', ' ' * 8))
                 elif old_lineno == 46:
-                    new_lines.extend(absindent('''
+                    new_lines.extend(absindent('
                             _OLD_C_INCLUDE_PATH=\"\$C_INCLUDE_PATH\"
                             _OLD_VIRTUAL_LD_LIBRARY_PATH=\"\$LD_LIBRARY_PATH\"
 
-                        '''))
+                        '))
                 elif old_lineno == 47:
-                    new_lines.extend(absindent('''
+                    new_lines.extend(absindent('
                             C_INCLUDE_PATH=\"\$VIRTUAL_ENV/include:\$C_INCLUDE_PATH\"
                             LD_LIBRARY_PATH=\"\$VIRTUAL_ENV/lib:\$LD_LIBRARY_PATH\"
 
-                        '''))
+                        '))
                 elif old_lineno == 48:
-                    new_lines.extend(absindent('''
+                    new_lines.extend(absindent('
                             export C_INCLUDE_PATH
                             export LD_LIBRARY_PATH
-                        '''))
+                        '))
             new_text = ''.join(new_lines)
             open(new_path, 'w').write(new_text)
     "
@@ -1064,14 +1064,14 @@ nopassword_on_sudo()
  
 nautilus_hide_unwanted_sidebar_items()
 {
-    __heredoc__="""
+    __heredoc__="
     CommandLine:
         source ~/local/init/freshstart_ubuntu.sh && nautilus_hide_unwanted_sidebar_items
 
     Refernces:
         https://askubuntu.com/questions/762591/how-to-remove-unwanted-default-bookmarks-in-nautilus
         https://askubuntu.com/questions/79150/how-to-remove-bookmarks-from-the-nautilus-sidebar/1042059#1042059
-    """
+    "
 
     echo "Removing unwanted nautilus sidebar items"
 
@@ -1169,11 +1169,11 @@ setup_ibeis()
 
 
 setup_development_environment(){
-    __heredoc__="""
+    __heredoc__="
     CommandLine:
         source ~/local/init/freshstart_ubuntu.sh
         setup_development_environment
-    """
+    "
 
     pip install bs4
     pip install pyperclip
@@ -1518,13 +1518,13 @@ install_basic_extras(){
 }
 
 install_transcrypt(){
-    __heredoc__="""
+    __heredoc__="
     References:
 
         https://embeddedartistry.com/blog/2018/3/15/safely-storing-secrets-in-git
         https://github.com/AGWA/git-crypt
         https://github.com/elasticdog/transcrypt
-    """
+    "
     cd ~/code
     #git clone git@github.com:Erotemic/transcrypt.git ~/code/transcrypt
     #git clone https://github.com/elasticdog/transcrypt.git
@@ -1543,7 +1543,7 @@ install_transcrypt(){
     #cd $HOME/code/roaming
 
     # TODO: fixme to use GCM
-    __doc__="""
+    __doc__="
     # How to init a new encrypted repo
 
     #git init
@@ -1556,7 +1556,7 @@ install_transcrypt(){
     transcrypt -c aes-256-cbc 
     transcrypt -c aes-256-cbc -p 'pass1'
     transcrypt --cipher=aes256-GCM
-    """
+    "
     #git clone https://gitlab.com/Erotemic/erotemic.git
 
     # The user must supply a password here
@@ -1572,13 +1572,13 @@ stop_evolution_cpu_hogging(){
 
 
 fix_ubuntu_18_04_sound_pop_issue(){
-    __heredoc__="""
+    __heredoc__="
     Script that fixes a popping sound due to a power saving feature
 
     References:
         https://superuser.com/questions/1493096/linux-ubuntu-speakers-popping-every-few-seconds
         https://www.youtube.com/watch?v=Pdmy8dMWitg
-    """
+    "
     sudo echo "obtaining sudo"
     # First, there are two system files that need modification
     # Changing the values here should fix the issue in your current session. 

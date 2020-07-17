@@ -1,7 +1,7 @@
 # simple function that does nothing so we can write simple heredocs
 # we cant use it here though, otherwise it would infinite recurse!
 # Use it like this (sans leading comment symbols):
-__heredoc__='''
+__heredoc__='
 this is where your text goes. It can be multiline and indented, just dont
 include the single quote character.  also note the surrounding triple
 quotes just happen to be synatically correct and are not necessary,
@@ -10,7 +10,7 @@ although I do recomend them.
 Usage:
     source $HOME/local/init/utils.sh
 
-'''
+'
 if [ "$__SOURCED_UTILS__" = "1" ]; then
    return
 fi
@@ -18,9 +18,9 @@ __SOURCED_UTILS__=1
 
 
 system_python(){
-    __heredoc__="""
+    __heredoc__="
     Return name of system python
-    """
+    "
     if [ "$(type -P python)" != "" ]; then
         echo "python"
     elif [ "$(type -P python3)" != "" ]; then
@@ -32,7 +32,7 @@ system_python(){
 
 
 have_sudo(){
-    __heredoc__='''
+    __heredoc__='
     Tests if we have the ability to use sudo.
     Returns the string "True" if we do.
 
@@ -43,7 +43,7 @@ have_sudo(){
         else
             we dont have sudo
         fi
-    '''
+    '
     _PYEXE=$(system_python)
     $_PYEXE -c "$(codeblock "
         import grp, pwd 
@@ -57,7 +57,7 @@ have_sudo(){
 
 
 is_headless(){
-    __heredoc__='''
+    __heredoc__='
     Tests if we have a local display variable (i.e. not x11 forwarding)
     if we dont then we are probably on a headless server
 
@@ -65,7 +65,7 @@ is_headless(){
         source $HOME/local/init/utils.sh
         IS_HEADLESS=$(is_headless)
         echo "IS_HEADLESS = $IS_HEADLESS"
-    '''
+    '
     if [ "$DISPLAY" == "" ]; then
         echo "True"
     else
@@ -82,7 +82,7 @@ is_headless(){
 
 
 has_pymodule(){
-    __heredoc__='''
+    __heredoc__='
     Check if a python module is installed. Echos "True" or "False" to the
     command line depending on the result.
 
@@ -90,7 +90,7 @@ has_pymodule(){
         source $HOME/local/init/utils.sh
         has_pymodule sys
         has_pymodule fake_module
-    '''
+    '
 
     if [ "$2" ]; then
         PYEXE="$1"
@@ -116,7 +116,7 @@ has_pymodule(){
 }
 
 pyblock(){
-    __heredoc__='''
+    __heredoc__='
     Executes python code and handles nice indentation.  Need to be slightly
     careful about the type of quotes used.  Typically stick to doublequotes
     around the code and singlequotes inside python code. Sometimes it will be
@@ -155,7 +155,7 @@ pyblock(){
         echo "OUTPUT = $OUTPUT"
 
         OUTPUT = /usr/bin/pypy
-    '''
+    '
     if [[ $# -eq 0 ]]; then
         echo "MUST SUPPLY AN ARGUMENT: USAGE IS: pyblock [PYEXE] TEXT [ARGS...]"
     fi
@@ -205,7 +205,7 @@ codeblock()
         ')"
     else
         # Prevents python indentation errors in bash
-        #python -c "from textwrap import dedent; print(dedent('''$1''').strip('\n'))"
+        #python -c "from textwrap import dedent; print(dedent('$1').strip('\n'))"
         PYEXE=$(system_python)
         echo "$1" | $PYEXE -c "import sys; from textwrap import dedent; print(dedent(sys.stdin.read()).strip('\n'))"
     fi
@@ -214,18 +214,18 @@ codeblock()
 
 writeto()
 {
-    __heredoc__="""
+    __heredoc__="
 
     Usage:
         writeto <fpath> <text>
 
     Example:
-        writeto some-file.txt '''
+        writeto some-file.txt '
             # Text in this command is automatically dedented via codeblock
             option=True
             variable=False
-            '''
-    """
+            '
+    "
     fpath=$1
     text=$2
     fixed_text=$(codeblock "$text")
@@ -235,18 +235,18 @@ writeto()
 
 sudo_writeto()
 {
-    __heredoc__="""
+    __heredoc__="
 
     Usage:
         sudo_writeto <fpath> <text>
 
     Example:
-        sudo_writeto /root-file '''
+        sudo_writeto /root-file '
             # Text in this command is automatically dedented via codeblock
             option=True
             variable=False
-            '''
-    """
+            '
+    "
 
     # NOTE: FAILS WITH QUOTES IN BODY
     fpath=$1
@@ -278,7 +278,7 @@ sudo_appendto()
 
 append_if_missing()
 {
-    __heredoc__='''
+    __heredoc__='
     Appends a line to the end of a file only if that line does not exist.
 
     Args:
@@ -302,7 +302,7 @@ append_if_missing()
         # This should not append the text to the end because it already exists
         append_if_missing "/tmp/foo.txt" "my config option"
         cat /tmp/foo.txt
-    '''
+    '
     fpath=$1
     text=$2
     fixed_text=$(codeblock "$text")
@@ -321,11 +321,11 @@ append_if_missing()
 
 
 safe_symlink(){
-    __heredoc__="""
+    __heredoc__="
     Args:
         real_path
         link_path
-    """
+    "
     real_path=$1
     link_path=$2
     echo "Safe symlink $real_path -> $link_path"
@@ -336,7 +336,7 @@ safe_symlink(){
 
 unlink_or_backup()
 {
-    __heredoc__='''
+    __heredoc__='
     Get a file or directory out of the way without removing it.
 
     If TARGET exists, it is removed if it is a link, otherwise if it is a file or
@@ -348,7 +348,7 @@ unlink_or_backup()
 
     Args:
         TARGET (str): a path to a directory, link, or file
-    '''
+    '
 
     TARGET=$1
     if [ -L $TARGET ]; then
