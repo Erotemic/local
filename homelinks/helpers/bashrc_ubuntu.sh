@@ -1,17 +1,3 @@
-# if running bash
-#if [ -n "$BASH_VERSION" ]; then
-    ## include .bashrc if it exists
-    #if [ -f "$HOME/.bashrc" ]; then
-	#. "$HOME/.bashrc"
-    #fi
-#fi
-
-# set PATH so it includes user's private bin if it exists
-#if [ -d "$HOME/bin" ] ; then
-    #PATH="$HOME/bin:$PATH"
-#fi
-
-
 #Jon's Note: .profile runs this
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
@@ -105,79 +91,32 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
 
+#export platform=linux2
+#export CLOUD=~/Dropbox
+
+#export VIMFILES=~/.vim
+#export IPYTHONDIR=~/.ipython
+#export LATEX='~/latex/'
 #sudo ssh-agent ~/.ssh/id_rsa
-
-# DEPRICATE
-# some more ls aliases
-#export name=Hyrule
-export platform=linux2
-export CLOUD=~/Dropbox
-#export code=~/code
-#export latex=~/latex
-#export pvimrc=~/local/vim/portable_vimrc
-#export prob_interface=~/local/rob/ROB/rob_interface.py
-#export prob=~/local/rob/rob_interface.py
-#export prob_dir=~/local/rob
-
-export VIMFILES=~/.vim
-export IPYTHONDIR=~/.ipython
-export LATEX='~/latex/'
-#export SITE_PACKAGES=/usr/local/lib/python2.7/dist-packages/
-
-
-# MY PATH
-#export PATH=$PATH:~/scripts/:/usr/local/MATLAB/R2013a/bin
-#export PYTHONPATH=$PYTHONPATH
-
-#export mothers=/data/work/HSDB_
-export VIEW_CMD=nautilus
-vd ()
-{
-    if [ $# -eq 0 ]; then
-        $VIEW_CMD .& > /dev/null 2>&1
-    else
-        $VIEW_CMD $1& > /dev/null 2>&1
-    fi
-}
-
-#http://stackoverflow.com/questions/7031126/switching-between-gcc-and-clang-llvm-using-cmake
-#export CC=/usr/local/bin/clang
-#export CXX=/usr/local/bin/clang++
-#alias cmake="cmake -DCMAKE_USER_MAKE_RULES_OVERRIDE=~/local/ClangOverrides.txt -D_CMAKE_TOOLCHAIN_PREFIX=llvm-"
+#export VIEW_CMD=nautilus
  
 # Windows-like commands
-alias explorer=nautilus
-alias start=nautilus
-alias cmd=bash
+#alias explorer=nautilus
+#alias start=nautilus
+#alias cmd=bash
+#alias say='espeak -v en '
+#alias diskutility='palimpsest'
+#alias realrm='/bin/rm'
+#alias trash-list='gvfs-ls trash://'
+#alias trash-put='gvfs-trash'
+#alias trash-empty='gvfs-trash --empty'
+#alias viewimage='eog'
 
-
-#alias gvim=gvim_ubuntu_hack 
-#if [ -f ~/bin/gvim ]; then
-#    gvim_ubuntu_hack()
-#    {
-#        ~/bin/gvim -f $@ 2> /dev/null &
-#    }
-#else
-#    gvim_ubuntu_hack()
-#    {
-#        /usr/bin/gvim -f $@ 2> /dev/null &
-#    }
-#fi
-
-
-#alias resetftp='/etc/init.d/vsftpd restart'
-#alias noip='/usr/local/bin/noip2'
-
-alias say='espeak -v en '
-
-#alias sumatrapdf='wine "C:\Program Files (x86)\SumatraPDF\SumatraPDF"'
-alias diskutility='palimpsest'
-alias realrm='/bin/rm'
-#alias rm='trash-put'
-#alias rm='gvfs-trash'
-alias trash-list='gvfs-ls trash://'
-alias trash-put='gvfs-trash'
-alias trash-empty='gvfs-trash --empty'
-alias viewimage='eog'
-
-#source ~/scripts/install_llvm.sh
+vd()
+{
+    if [ $# -eq 0 ]; then
+        nautilus .& > /dev/null 2>&1
+    else
+        nautilus $1& > /dev/null 2>&1
+    fi
+}

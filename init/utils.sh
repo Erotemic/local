@@ -11,6 +11,10 @@ Usage:
     source $HOME/local/init/utils.sh
 
 '''
+if [ "$__SOURCED_UTILS__" = "1" ]; then
+   return
+fi
+__SOURCED_UTILS__=1
 
 
 system_python(){
@@ -179,9 +183,6 @@ pyblock(){
 }
 
 
-#alias pycmd=pyblock
-
-
 codeblock()
 {
     if [ "-h" == "$1" ] || [ "--help" == "$1" ]; then 
@@ -209,7 +210,6 @@ codeblock()
         echo "$1" | $PYEXE -c "import sys; from textwrap import dedent; print(dedent(sys.stdin.read()).strip('\n'))"
     fi
 }
-
 
 
 writeto()
@@ -359,5 +359,3 @@ unlink_or_backup()
         mv $TARGET $TARGET."$(date +"%T")".old
     fi
 }
-
-

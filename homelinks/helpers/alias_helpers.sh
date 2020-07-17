@@ -4,7 +4,7 @@
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 
 # Unix aliases
-source $HOME/local/init/utils.sh
+#source $HOME/local/init/utils.sh
 
 alias pytree='tree -P "*.py" --dirsfirst'
 #alias ls='ls --color --human-readable --group-directories-first --hide="*.pyc" --hide="*.pyo"'
@@ -58,12 +58,16 @@ alias data='cd ~/data'
 alias loc='cd ~/local'
 alias lc='cd ~/local'
 alias mi='cd ~/misc'
-alias vf='cd ~/local/vim/vimfiles'
-alias vfb='cd ~/local/vim/vimfiles/bundle'
-alias lb='cd ~/latex/crall-lab-notebook/'
+
+#alias vf='cd ~/local/vim/vimfiles'
+#alias vfb='cd ~/local/vim/vimfiles/bundle'
+#alias lb='cd ~/latex/crall-lab-notebook/'
+
 alias lt='cd ~/latex/'
-alias ca='cd ~/latex/crall-thesis-2017/'
-alias ic='cd ~/latex/crall-iccvw-2017/'
+
+#alias ca='cd ~/latex/crall-thesis-2017/'
+#alias ic='cd ~/latex/crall-iccvw-2017/'
+
 alias scr='cd ~/scripts'
 # Special navigation
 alias code='cd $CODE_DIR'
@@ -83,15 +87,15 @@ alias kw='cd $CODE_DIR/kwiver/'
 alias vi='cd $CODE_DIR/VIAME/'
 alias nx='cd $CODE_DIR/networkx'
 alias gr='cd $CODE_DIR/graphid'
-alias hs='cd $CODE_DIR/ibeis/ibeis/algo/hots'
-alias smk='cd $CODE_DIR/ibeis/ibeis/algo/smk'
+#alias hs='cd $CODE_DIR/ibeis/ibeis/algo/hots'
+#alias smk='cd $CODE_DIR/ibeis/ibeis/algo/smk'
 alias ib='cd $CODE_DIR/ibeis/'
-alias sk='cd $CODE_DIR/scikit-learn/'
+#alias sk='cd $CODE_DIR/scikit-learn/'
 alias db='cd ~/Dropbox/'
 alias desk='cd ~/Desktop/'
 alias dl='cd ~/Downloads/'
-alias rf='cd $CODE_DIR/pyrf/'
-alias mtg='cd $CODE_DIR/mtgmonte/'
+#alias rf='cd $CODE_DIR/pyrf/'
+#alias mtg='cd $CODE_DIR/mtgmonte/'
 
 alias pysite='cd $(python -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_lib())")'
 
@@ -104,7 +108,7 @@ alias vt='cd $CODE_DIR/vtool_ibeis'
 alias dt='cd $CODE_DIR/dtool_ibeis'
 alias gt='cd $CODE_DIR/guitool_ibeis'
 alias pt='cd $CODE_DIR/plottool_ibeis'
-alias fk='cd $CODE_DIR/ibeis-flukematch-module/'
+#alias fk='cd $CODE_DIR/ibeis-flukematch-module/'
 alias mk='cd $CODE_DIR/mkinit'
 alias hes='cd $CODE_DIR/hesaff'
 alias work='cd ~/work'
@@ -255,19 +259,19 @@ astyle_cpp()
 # References: 
 #     http://lukaszwrobel.pl/blog/tmux-tutorial-split-terminal-windows-easily
 #     https://gist.github.com/MohamedAlaa/2961058
-change_terminal_title()
-    {
-    echo -en "\033]0;$@\a"
-    }
+#change_terminal_title()
+#    {
+#    echo -en "\033]0;$@\a"
+#    }
 
-tmuxnew(){
-    change_terminal_title "TMUX $HOSTNAME NEW"
-    tmux new -s default_session
-}
-tmuxattach(){
-    change_terminal_title "TMUX $HOSTNAME ATTACHED"
-    tmux attach -t default_session
-}
+#tmuxnew(){
+#    change_terminal_title "TMUX $HOSTNAME NEW"
+#    tmux new -s default_session
+#}
+#tmuxattach(){
+#    change_terminal_title "TMUX $HOSTNAME ATTACHED"
+#    tmux attach -t default_session
+#}
 
 
 print_all_pathvars()

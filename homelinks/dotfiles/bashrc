@@ -184,10 +184,11 @@ fi
 
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    export NCPUS=$(sysctl -n hw.ncpu)
+    :
+    #export NCPUS=$(sysctl -n hw.ncpu)
     #source $HOME/local/homelinks/helpers/bashrc_mac.sh
 else
-    export NCPUS=$(grep -c ^processor /proc/cpuinfo)
+    #export NCPUS=$(grep -c ^processor /proc/cpuinfo)
     source $HOME/local/homelinks/helpers/bashrc_ubuntu.sh
 fi
 
