@@ -1609,3 +1609,7 @@ fix_ubuntu_18_04_sound_pop_issue(){
         exit 1
     fi
 }
+
+install_keepass(){
+    sudo apt install keepass2
+}

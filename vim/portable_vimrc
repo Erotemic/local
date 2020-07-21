@@ -368,8 +368,14 @@ if has("win32") || has("win16")
 endif
 
 " Source special local vim settings
+"
 if filereadable($HOME_DPATH . "/.vimrc-erotemic")
-    source ~/.vimrc-erotemic
+    " # For machine-specific bashrc things that will not be published on github
+    " # Hueristic to check if the file is decrypted. (better way to to do this)
+    let num_spaces=system('head -n 4 $HOME/.bashrc-erotemic.sh | grep " "  | wc -c')
+    if num_spaces != "0"
+        source ~/.vimrc-erotemic
+    endif
 endif
 if filereadable($HOME_DPATH . "/.vimrc-internal")
     source ~/.vimrc-internal
