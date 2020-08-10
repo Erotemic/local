@@ -73,6 +73,8 @@ alias scr='cd ~/scripts'
 alias code='cd $CODE_DIR'
 alias co='cd $CODE_DIR'
 
+alias remote='cd ~/remote'
+
 alias nh='cd $CODE_DIR/netharn'
 alias nd='cd $HOME/code/ndsampler'
 alias kwc='cd $HOME/code/kwcoco'
@@ -712,4 +714,66 @@ sedr(){
     else
         find . -type f -iname '*.py' -exec sed "s|${SEARCH}|${REPLACE}|g" {} + | grep "${REPLACE}"
     fi
+}
+
+
+search_remotes(){
+    __heredoc__="""
+    Attempt to massage a path native to a remote to a local path that works
+    with the 'Erotemic mounted remote scheme': i.e. where you sshfs mount your
+    remote machines onto ~/remote
+
+    Args:
+        target_dpath : path to a directory thats on a remote
+
+    Ignore:
+        target_dpath = '/home/joncrall/work/sealions'  
+    """
+    target_dpath=$1
+
+    pyblock """
+    import ubelt as ub
+    import glob
+    from os.path import join
+
+    target_dpath = '$target_dpath'
+    remote_dpath = ub.expandpath('~/remote')
+
+    remote_cands = glob.glob(join(remote_dpath, '*'))
+
+    # Need to populate with what my user directory might be called
+    # Is there any way to auto-determine this?
+    valid_userdirs = [
+        '/home/joncrall/',
+        '/home/local/KHQ/jon.crall/'
+    ]
+    valid_suffixes = []
+    for cand in valid_userdirs:
+        if target_dpath.startswith(cand):
+            suffix = target_dpath.replace(cand, '', 1)
+            valid_suffixes.append(suffix)
+
+    assert valid_suffixes
+
+    local_candidates = []
+    for suffix in valid_suffixes:
+        found = ub.find_path(suffix, path=remote_cands)
+        local_candidates.extend(list(found))
+
+    if len(local_candidates) == 0:
+        print('NOT FOUND')
+    if len(local_candidates) == 1:
+        print(local_candidates[0])
+    else:
+        print(local_candidates)
+    """
+}
+
+
+clean_empty_dirs(){
+    __heredoc__="
+    References:
+        https://unix.stackexchange.com/questions/24134/remove-empty-directory-trees-removing-as-many-directories-as-possible-but-no-fi
+    "
+    find . -type d -empty -delete
 }

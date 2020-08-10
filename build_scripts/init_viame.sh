@@ -64,6 +64,8 @@ build_viame(){
 
     PYTHON_VERSION=$(python -c "import sys; info = sys.version_info; print('{}.{}'.format(info.major, info.minor))")
     PYTHON_MAJOR_VERSION==$(python -c "import sys; info = sys.version_info; print('{}'.format(info.major))")
+    echo "PYTHON_VERSION = $PYTHON_VERSION"
+    echo "PYTHON_MAJOR_VERSION = $PYTHON_MAJOR_VERSION"
     # Check if we have a venv setup
     # The prefered case where we are in a virtual environment
 
@@ -80,7 +82,7 @@ build_viame(){
     mkdir -p $VIAME_BUILD
     cd $VIAME_BUILD
 
-    cmake -G "Ninja" \
+    cmake \
         -D VIAME_ENABLE_PYTHON:BOOL=True \
         -D VIAME_DISABLE_PYTHON_CHECK:BOOL=True \
         -D VIAME_SYMLINK_PYTHON:BOOL=True \
@@ -97,4 +99,47 @@ build_viame(){
 
 
         #-D VIAME_ENABLE_KWANT:BOOL=True \
+}
+
+
+build_noenv_python(){
+
+    #sysconfig.get_config_vars()['SO']  # .cpython-38-x86_64-linux-gnu.so
+    #sysconfig.get_config_vars()['multiarchsubdir']  # /x86_64-linux-gnu
+    #sysconfig.get_config_vars()['SOABI']  # cpython-36m-x86_64-linux-gnu
+    #sysconfig.get_config_vars()['PY3LIBRARY']  # libpython3.so
+    #sysconfig.get_config_vars()['MULTIARCH']  # x86_64-linux-gnu
+    #sysconfig.get_config_vars()['LIBPL']  # /usr/lib/python3.6/config-3.6m-x86_64-linux-gnu
+    #sysconfig.get_config_vars()['LDLIBRARY']  # libpython3.6m.so
+    #sysconfig.get_config_vars()['.cpython-38-x86_64-linux-gnu.so']
+
+    PYTHON_EXECUTABLE=$(which python3)
+    PYTHON_VERSION=$($PYTHON_EXECUTABLE -c "import sys; print('{}.{}'.format(*sys.version_info[0:2]))")
+    PYTHON_INCLUDE_DIR=$($PYTHON_EXECUTABLE -c "import sysconfig; print(sysconfig.get_paths()['include'])")
+    PYTHON_LIBRARY=$($PYTHON_EXECUTABLE -c "import sysconfig; print(sysconfig.get_config_vars()['LIBPL'] + '/' + sysconfig.get_config_vars()['LDLIBRARY'])")
+
+
+    export CUDA_SDK_ROOT_DIR=$CUDA_TOOLKIT_ROOT_DIR
+    export CUDA_HOST_COMPILER=$(which nvcc)
+
+    export __PYTHON_ARGS__="
+        -D PYTHON_VERSION=3.6 
+        -D PYTHON_EXECUTABLE=$PYTHON_EXECUTABLE 
+        -D PYTHON_LIBRARY=$PYTHON_LIBRARY 
+        -D PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR 
+    "
+
+    export __CUDA_ARGS__="
+        -D CUDA_HOST_COMPILER=$CUDA_HOST_COMPILER 
+        -D CUDA_SDK_ROOT_DIR=$CUDA_SDK_ROOT_DIR 
+        -D CUDA_TOOLKIT_ROOT_DIR=$CUDA_TOOLKIT_ROOT_DIR 
+    "
+    echo "__PYTHON_ARGS__ = $__PYTHON_ARGS__"
+    echo "__CUDA_ARGS__ = $__CUDA_ARGS__"
+
+    CMAKE_ARGS="\
+        $(echo $__PYTHON_ARGS__ | tr -d '\n') \
+        $(echo $__CUDA_ARGS__ | tr -d '\n') \
+    "
+    cmake $CMAKE_ARGS ..
 }

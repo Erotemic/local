@@ -63,6 +63,13 @@ mount_remote(){
 }
 
 mount_remote_if_available(){
+    __heredoc__="""
+    Tests if a remote is available, and if it is attempts to mount it.
+
+    Args:
+        REMOTE : name of the remote machine
+        FORCE : non-empty implies True, forces the mount even if not available.
+    """
     REMOTE=$1
     FORCE=$2
     mkdir -p $HOME/remote
@@ -70,17 +77,28 @@ mount_remote_if_available(){
 
     if [ "$(which sshfs)" == "" ];  then
         echo "Error: sshf is not installed. sudo apt install sshfs"
+        exit 1
+    fi
+
+    if [ "$REMOTE" == "$HOSTNAME" ];  then
+        echo "Attempting to mount self. Ensuring symlink instead"
+        if [ ! -L $MOUNTPOINT ]; then
+            echo "Creating symlink to home"
+            ln -s $HOME $MOUNTPOINT
+        fi
+        exit 0
     fi
 
     if [ "$(already_mounted $MOUNTPOINT)" != "" ]; then
         echo "Already mounted: $REMOTE"
     else
-        if [ "$(is_available $REMOTE)" != "" ]; then
+        if [ "$FORCE" != "" ]; then
             mount_remote "$REMOTE"
-        elif [ "$FORCE" != "" ]; then
+        elif [ "$(is_available $REMOTE)" != "" ]; then
             mount_remote "$REMOTE"
         else
             echo "Unavailable: $REMOTE"
+            exit 1
         fi
     fi
 }
@@ -106,6 +124,7 @@ unmount_if_mounted()
 
 
 # https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
+
 if [[ $# -gt 0 ]]; then
     POSITIONAL=()
     while [[ $# -gt 0 ]]

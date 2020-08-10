@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 # PYTHON_ARGCOMPLETE_OK
 # -*- coding: utf-8 -*-
+"""
+Requirements:
+    pip install ubelt
+    pip install GitPython
+"""
 from __future__ import print_function, unicode_literals
 import sys
 import re
@@ -9,6 +14,11 @@ import git
 import warnings
 import email.utils
 import ubelt as ub
+import itertools as it
+
+
+EXPERIMENTAL_PSEUDO_CHAIN = 1
+EXPERIMENTAL_REBASE = 1
 
 
 def print_exc(exc_info=None):
@@ -21,7 +31,6 @@ def print_exc(exc_info=None):
         >>>     exc_info = sys.exc_info()
         >>>     print_exc(exc_info)
     """
-    import sys
     import traceback
     if exc_info is None:
         exc_info = sys.exc_info()
@@ -30,7 +39,6 @@ def print_exc(exc_info=None):
 
     colored = False
     if colored:
-        import ubelt as ub
         def color_text(text):
             ub.color_text(text)
         def color_pytb(text):
@@ -100,6 +108,187 @@ class Streak(ub.NiceRepr):
         return self._streak[0]
 
 
+def find_pseudo_chain(head, oldest_commit=None, preserve_tags=True):
+    """
+    Finds start and end points that can be safely squashed between
+
+    Example:
+        >>> import sys, ubelt
+        >>> sys.path.append(ubelt.expandpath('~/local/git_tools'))
+        >>> from git_squash_streaks import *  # NOQA
+        >>> repo = git.Repo()
+        >>> head = repo.commit('HEAD')
+        >>> pseudo_chain = find_pseudo_chain(head)
+    """
+    import networkx as nx
+
+    graph = git_nx_graph(head, oldest_commit, preserve_tags=preserve_tags)
+    # for idx, node in enumerate(nx.dfs_preorder_nodes(graph)):
+    #     print('{}, {!r}'.format(idx, graph.nodes[node]['commit'].message))
+
+    sinks = {node for node in graph.nodes if len(graph.succ[node]) == 0}
+    sources = {node for node in graph.nodes if len(graph.pred[node]) == 0}
+    assert len(sources) == 1
+    assert len(sinks) == 1
+
+    source = ub.peek(sources)
+    sink = ub.peek(sinks)
+
+    # all_paths = list(nx.all_simple_paths(graph, source, sink))
+    # all_paths = list(map(ub.oset, all_paths))
+    # common_path = ub.oset.intersection(*all_paths)
+
+    ugraph = nx.to_undirected(graph)
+
+    # These are all the commits that break chains
+
+    branchy_bunches = [cc for cc in nx.algorithms.connectivity.k_edge_components(ugraph, 2) if len(cc) > 1]
+
+    collapsed = nx.algorithms.connectivity.edge_augmentation.collapse(graph, branchy_bunches)
+    uncollapsed = ub.invert_dict(collapsed.graph['mapping'], unique_vals=False)
+    collapsed_nodes = [k for k, v in uncollapsed.items() if len(v) > 1]
+
+    # Having a start and endpoint for each branchy section will let us treat
+    # the rest of the git history as a chain and operate within it
+    bunch_terminals = []
+    for node in collapsed_nodes:
+        terminals = []
+        collapsed_group = uncollapsed[node]
+        children = collapsed.pred[node]
+        parents = collapsed.succ[node]
+
+        assert len(children) <= 1
+        assert len(parents) <= 1
+
+        for child in children:
+            candidate_s = uncollapsed[child]
+            found = []
+            for u, v in it.product(collapsed_group, candidate_s):
+                if ugraph.has_edge(u, v):
+                    found.append(u)
+            assert len(found) == 1
+            terminals.append(found[0])
+
+        for parent in parents:
+            candidate_t = uncollapsed[parent]
+            found = []
+            for u, v in it.product(collapsed_group, candidate_t):
+                if ugraph.has_edge(u, v):
+                    found.append(u)
+            assert len(found) == 1
+            terminals.append(found[0])
+        bunch_terminals.append(terminals)
+
+    # There should be exactly one path between the start and the first terminal
+    # Likewise, if we skip all nodes between terminals a and b, there should
+    # only be one path "our pseudo-chain" between them
+    src = source
+    pseudo_chain_parts = []
+    for terminal_a, terminal_b in bunch_terminals:
+        dst = terminal_a
+        all_paths = list(nx.all_simple_paths(graph, src, dst))
+        assert len(all_paths) == 1
+        path = all_paths[0]
+        pseudo_chain_parts.append(path)
+        src = terminal_b
+    # Finally link to the sink
+    dst = sink
+    all_paths = list(nx.all_simple_paths(graph, src, dst))
+    assert len(all_paths) == 1
+    path = all_paths[0]
+    pseudo_chain_parts.append(path)
+
+    repo = head.repo
+    pseudo_chain = [repo.commit(sha) for sha in ub.flatten(pseudo_chain_parts)]
+    return pseudo_chain
+
+
+def git_nx_graph(head, oldest_commit, preserve_tags=False):
+    """
+    Example:
+        >>> import sys, ubelt
+        >>> sys.path.append(ubelt.expandpath('~/local/git_tools'))
+        >>> from git_squash_streaks import *  # NOQA
+        >>> #head = git.Repo().head.commit
+        >>> repo = git.Repo()
+        >>> head = repo.commit('HEAD')
+        >>> oldest_commit = 'master'
+        >>> oldest_commit = None
+        >>> graph = git_nx_graph(head, oldest_commit)
+
+    """
+    repo = head.repo
+
+    if oldest_commit:
+        stop_object = repo.commit(oldest_commit)
+    else:
+        stop_object = None
+
+    if preserve_tags:
+        tags = head.repo.tags
+        if isinstance(preserve_tags, (set, list, tuple)):
+            tags = {tag for tag in tags if tag.name in preserve_tags}
+        tagged_hexshas = {tag.commit.hexsha for tag in tags}
+    else:
+        tagged_hexshas = set()
+
+    def neighbors(s):
+        return iter(s.parents)
+
+    def git_dfs_edges(source, depth_limit=None):
+        nodes = [source]
+        visited = set()
+        if depth_limit is None:
+            depth_limit = float('inf')
+        for start in nodes:
+            if start.hexsha in visited:
+                continue
+            visited.add(start.hexsha)
+            stack = [(start, depth_limit, neighbors(start))]
+            while stack:
+                parent, depth_now, children = stack[-1]
+                try:
+                    child = next(children)
+                    if stop_object is not None and stop_object.hexsha == parent.hexsha:
+                        continue
+
+                    if preserve_tags:
+                        # If we are preserving tags, break the chain once we find one
+                        if parent.hexsha in tagged_hexshas:
+                            break
+                    yield parent, child
+                    if child.hexsha not in visited:
+                        visited.add(child.hexsha)
+                        if depth_now > 1:
+                            stack.append((child, depth_now - 1, neighbors(child)))
+                except StopIteration:
+                    stack.pop()
+
+    source = head
+    edges = list(git_dfs_edges(source))
+
+    import networkx as nx
+    graph = nx.DiGraph()
+    for e1, e2 in edges:
+        graph.add_node(e1.hexsha, commit=e1)
+        graph.add_node(e2.hexsha, commit=e2)
+        graph.add_edge(e1.hexsha, e2.hexsha)
+
+    if 0:
+        nx.set_node_attributes(graph, values='', name='label')
+        for node in graph.nodes:
+            node_data = graph.nodes[node]
+            node_data['commit'] = repo.commit(node)
+            node_data['label'] = node_data['commit'].message[0:10]
+        import kwplot
+        kwplot.autompl()
+        from graphid.util import show_nx
+        show_nx(graph, layoutkw={'prog': 'dot'}, with_labels=False, arrow_width=1, fnum=1)
+        nx.draw_networkx(graph)
+
+    return graph
+
+
 def find_chain(head, authors=None, preserve_tags=True, oldest_commit=None):
     """
     Find a chain of commits starting at the HEAD.  If `authors` is specified
@@ -136,7 +325,9 @@ def find_chain(head, authors=None, preserve_tags=True, oldest_commit=None):
 
     Args:
         head (git.Commit): starting point
+
         authors (set): valid authors
+
         preserve_tags (bool, default=True): if True the chain is not allowed
             to extend past any tags. If a set, then we will not procede past
             any tag with a name in the set.
@@ -159,9 +350,12 @@ def find_chain(head, authors=None, preserve_tags=True, oldest_commit=None):
         tags = head.repo.tags
         if isinstance(preserve_tags, (set, list, tuple)):
             tags = {tag for tag in tags if tag.name in preserve_tags}
-        tagged_commits = {tag.commit for tag in tags}
+        tagged_hexshas = {tag.commit.hexsha for tag in tags}
+    else:
+        tagged_hexshas = set()
 
     while len(commit.parents) <= 1:
+
         if authors is not None and commit.author.name not in authors:
             break
         if len(commit.parents) == 0:
@@ -188,7 +382,7 @@ def find_chain(head, authors=None, preserve_tags=True, oldest_commit=None):
 
         if preserve_tags:
             # If we are preserving tags, break the chain once we find one
-            if commit in tagged_commits:
+            if commit.hexsha in tagged_hexshas:
                 break
 
         chain.append(commit)
@@ -217,8 +411,11 @@ def find_streaks(chain, authors=None, timedelta='sameday', pattern=None):
     if len(chain) == 0:
         raise ValueError('No continuous commits exist')
 
+    if timedelta is None:
+        timedelta = 'none'
+
     def matches_time(streak, commit):
-        if timedelta == 'alltime':
+        if timedelta == 'alltime' or str(timedelta).lower() == 'none':
             return True
         elif timedelta is not None:
             # only continue on streaks within the timedelta
@@ -247,8 +444,13 @@ def find_streaks(chain, authors=None, timedelta='sameday', pattern=None):
         if authors is not None:
             if commit.author.name not in authors:
                 return False
+
+        if len(commit.parents) > 1:
+            return False
+
         if len(streak) == 0:
             return True
+
         if matches_message(streak, commit):
             if matches_time(streak, commit):
                 return True
@@ -258,42 +460,40 @@ def find_streaks(chain, authors=None, timedelta='sameday', pattern=None):
     # Find contiguous streaks
     streaks = []
 
-    if True:
-        # New fixed logic, with lookahead, much easier to follow.
-        import itertools as it
-        prev = None
-        streak = None
+    # New fixed logic, with lookahead, much easier to follow.
+    prev = None
+    streak = None
 
-        # Look at each commit and its successor
-        for commit, next_commit in ub.iter_window(it.chain(chain, [None]), size=2):
-            print('CHECK commit.message = {!r}, {!r}'.format(commit.message, commit))
-            if streak is None:
-                streak = Streak(prev, [])
-                streak.append(commit)
-                if next_commit is not None and continues_streak(streak, next_commit):
-                    # If the next commit will start a streak, then initialize
-                    print(ub.color_text('... new candidate streak, len={}'.format(len(streak)), 'yellow'))
-                else:
-                    # Don't even bother unless we will start a streak
-                    print(ub.color_text('... no streak', 'red'))
-                    streak = None
+    # Look at each commit and its successor
+    for commit, next_commit in ub.iter_window(it.chain(chain, [None]), size=2):
+        print('CHECK commit.message = {!r}, {!r}'.format(commit.message, commit))
+        if streak is None:
+            streak = Streak(prev, [])
+            streak.append(commit)
+            if next_commit is not None and continues_streak(streak, next_commit):
+                # If the next commit will start a streak, then initialize
+                print(ub.color_text('... new candidate streak, len={}'.format(len(streak)), 'yellow'))
             else:
-                # If we have started a streak, then this commit MUST continue
-                # the current streak because we already checked it last
-                # iteration when it was the next commit.
-                streak.append(commit)
-                print(ub.color_text('... add to streak, len={}'.format(len(streak)), 'blue'))
+                # Don't even bother unless we will start a streak
+                print(ub.color_text('... no streak', 'red'))
+                streak = None
+        else:
+            # If we have started a streak, then this commit MUST continue
+            # the current streak because we already checked it last
+            # iteration when it was the next commit.
+            streak.append(commit)
+            print(ub.color_text('... add to streak, len={}'.format(len(streak)), 'blue'))
 
-                # Check if the next commit will break the streak, and either
-                # accept or reject the current streak
-                if next_commit is None or not continues_streak(streak, next_commit):
-                    if len(streak) < LEN_THRESH:
-                        print(ub.color_text('... Next commit breaks streak of len {}, reject'.format(len(streak)), 'red'))
-                    else:
-                        print(ub.color_text('... Next commit breaks streak of len {}, accept'.format(len(streak)), 'green'))
-                        streaks.append(streak)
-                    streak = None
-            prev = commit
+            # Check if the next commit will break the streak, and either
+            # accept or reject the current streak
+            if next_commit is None or not continues_streak(streak, next_commit):
+                if len(streak) < LEN_THRESH:
+                    print(ub.color_text('... Next commit breaks streak of len {}, reject'.format(len(streak)), 'red'))
+                else:
+                    print(ub.color_text('... Next commit breaks streak of len {}, accept'.format(len(streak)), 'green'))
+                    streaks.append(streak)
+                streak = None
+        prev = commit
     return streaks
 
 
@@ -451,11 +651,27 @@ def _squash_between(repo, start, stop, dry=False, verbose=True):
             if verbose:
                 print(' * fixing up the head')
             try:
-                # above_commits = commits_between(repo, stop, old_head)
-                # print('above_commits = {}'.format(ub.repr2(above_commits, si=True)))
                 above = stop.hexsha + '..' + old_head.hexsha
-                # above = streak.child.hexsha + '..' + old_head
-                repo.git.cherry_pick(above, allow_empty=True)
+                if 0:
+                    above_commits = commits_between(repo, stop, old_head)
+                    print('above_commits = {}'.format(ub.repr2(above_commits, si=True)))
+                    print('above = {!r}'.format(above))
+
+                if EXPERIMENTAL_REBASE:
+                    # above = streak.child.hexsha + '..' + old_head
+                    # repo.git.cherry_pick(above, allow_empty=True, mainline=1)
+
+                    # git rebase --onto master topicA topicB
+                    # git rebase --onto <current> <stop> <old_head>
+                    repo.git.rebase(stop, old_head, preserve_merges=True, onto='HEAD')
+
+                    # git rebase --preserve-merges --onto dev/0.9.2-squash-temp 52f34a11b837d27f9979d002391c0d8d6bee4957 9e2c03c0df13d9ce3c74aa0ff619abe21afe51b1
+
+                    # repo.git.rebase(above, allow_empty=True, mainline=1)
+                else:
+                    # Fixme, do this with rebase to preserve merges?
+                    repo.git.cherry_pick(above, allow_empty=True)
+                # sys.exit(1)
             except git.GitCommandError:
                 print('ERROR: need to roll back')
                 raise
@@ -575,28 +791,34 @@ def do_tags(verbose=True, inplace=False, dry=True, auto_rollback=False):
             print('Or, to automatically accept changes run with --inplace')
 
 
-def squash_streaks(authors, timedelta='sameday', pattern=None, inplace=False,
+def squash_streaks(authors, timedelta='sameday', pattern=None,
+                   inplace=False,
                    auto_rollback=True, dry=False, verbose=True,
                    custom_streak=None, preserve_tags=True, oldest_commit=None):
     """
-    Squashes consecutive commits with the same message within a time range.
+    Squashes consecutive commits that meet a specified criteiron.
 
     Args:
         authors (set): "level-set" of authors who's commits can be squashed
             together.
+
         timedelta (str or int): strategy mode or max number of seconds to
             determine how far appart two commits can be before they are
             squashed. (Default: 'sameday').
-            Valid values: ['sameday', 'alltime', <n_seconds:float>]
+            Valid values: ['sameday', 'alltime', 'none', <n_seconds:float>]
+
         pattern (str): instead of squashing messages with the same name, squash
             only if they match this pattern (Default: None). Default of None
             means that squash two commits if they have the same message.
+
         inplace (bool): if True changes will be applied directly to the current
             branch otherwise a temporary branch will be created. Then you must
             manually reset the current branch to this branch and delete the
             temp branch. (Default: False)
+
         auto_rollback (bool): if True the repo will be reset to a clean state
             if any errors occur. (Default: True)
+
         dry (bool): if True this only executes a dry run, that prints the
             chains that would be squashed (Default: False)
 
@@ -604,9 +826,11 @@ def squash_streaks(authors, timedelta='sameday', pattern=None, inplace=False,
 
         custom_streak(tuple): hack, specify two commits to explicitly squash
             only this streak is used. We do not automatically check for others.
+
         preserve_tags (bool, default=True): if True the chain is not allowed
             to extend past any tags. If a set, then we will not procede past
             any tag with a name in the set.
+
         oldest_commit (str, default=None): if specified we will only squash
             commits toplogically after this commit in the graph.
     """
@@ -645,8 +869,16 @@ def squash_streaks(authors, timedelta='sameday', pattern=None, inplace=False,
         # assert repo.is_ancestor(ancestor_rev=b, rev=a)
         streaks = [Streak(a, _streak=[a, b])]
     else:
-        chain = find_chain(head, authors=authors, preserve_tags=preserve_tags,
-                           oldest_commit=oldest_commit)
+
+        if EXPERIMENTAL_PSEUDO_CHAIN:
+            chain = find_pseudo_chain(
+                    head,
+                    preserve_tags=preserve_tags,
+                    oldest_commit=oldest_commit)
+        else:
+            chain = find_chain(head, authors=authors, preserve_tags=preserve_tags,
+                               oldest_commit=oldest_commit)
+
         if verbose:
             # ISO_8601 = '%Y-%m-%d %H:%M:%S %z'  # NOQA
             # ts_start = start.authored_datetime.
@@ -783,6 +1015,9 @@ def git_squash_streaks():
     group.add_argument(*('-q', '--quiet'), dest='verbose', action='store_const',
                        const=0, help='suppress output')
 
+    # parser.add_argument(*('--inplace',), action='store_true',
+    #                     help=help_dict['inplace'])
+
     parser.set_defaults(
         tags=False,
         inplace=False,
@@ -808,7 +1043,8 @@ def git_squash_streaks():
     try:
         ns['timedelta'] = float(ns['timedelta'])
     except ValueError:
-        valid_timedelta_categories = ['sameday', 'alltime']
+        ns['timedelta'] = str(ns['timedelta']).lower()
+        valid_timedelta_categories = ['sameday', 'alltime', 'none']
         if ns['timedelta'] not in valid_timedelta_categories:
             raise ValueError('timedelta = {}'.format(ns['timedelta']))
 
@@ -850,6 +1086,10 @@ if __name__ == '__main__':
         # Squash between two commits
 
         git-squash-streaks --custom_streak 7b30a46af68169e3ea38d1f821440f11c25f929f 1dcf7a4ed744feb202e05717e475c1f3bb7ec842
+
+        git-squash-streaks --oldest-commit=master --timedelta=None
+
+        git-squash-streaks --timedelta=None
 
 
     """
