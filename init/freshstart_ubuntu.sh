@@ -607,10 +607,18 @@ dev_fix_venv_mismatched_version(){
 
 
 setup_conda_env(){
+
+    # Miniconda3-latest-Linux-ppc64le.sh
+    # Miniconda3-latest-Linux-x86_64.sh
+    # Miniconda3-latest-MacOSX-x86_64.pkg
+    # Miniconda3-latest-MacOSX-x86_64.sh
+    # Miniconda3-latest-Windows-x86.exe
+    # Miniconda3-latest-Windows-x86_64.exe
     mkdir -p ~/tmp
     cd ~/tmp
     CONDA_INSTALL_SCRIPT=Miniconda3-latest-Linux-x86_64.sh
-    curl https://repo.continuum.io/miniconda/$CONDA_INSTALL_SCRIPT > $CONDA_INSTALL_SCRIPT
+    curl https://repo.anaconda.com/miniconda/$CONDA_INSTALL_SCRIPT > $CONDA_INSTALL_SCRIPT
+    cat $CONDA_INSTALL_SCRIPT
     chmod +x $CONDA_INSTALL_SCRIPT 
 
     # Install miniconda to user local directory
