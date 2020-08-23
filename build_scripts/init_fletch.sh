@@ -14,36 +14,41 @@ simple(){
         git pull source master
     fi
 
+    # Setup a build directory and build fletch
+    FLETCH_BUILD=$HOME/code/fletch/build-py$PYTHON_VERSION
+    FLETCH_REPO=$HOME/code/fletch
 
-    OpenCV_SELECT_VERSION="3.4.0"
+
+    #OpenCV_SELECT_VERSION="3.4.0"
     #OpenCV_SELECT_VERSION=$(python -c "import cv2; print(cv2.__version__)")
 
+    #PYTHON_EXECUTABLE=$(which python)
     PYTHON_VERSION=$(python -c "import sys; info = sys.version_info; print('{}.{}'.format(info.major, info.minor))")
-    PYTHON_MAJOR_VERSION==$(python -c "import sys; info = sys.version_info; print('{}'.format(info.major))")
+    #PYTHON_MAJOR_VERSION==$(python -c "import sys; info = sys.version_info; print('{}'.format(info.major))")
     # Check if we have a venv setup
     # The prefered case where we are in a virtual environment
-    LOCAL_PREFIX=$VIRTUAL_ENV/
-    PYTHON_PACKAGES_PATH=$LOCAL_PREFIX/lib/python$PY_VERSION/site-packages
-    PYTHON_INCLUDE_DIR=$LOCAL_PREFIX/include/python"$PY_VERSION"m
-    PYTHON_LIBRARY=$LOCAL_PREFIX/lib/python$PY_VERSION/config-"$PY_VERSION"m-x86_64-linux-gnu/libpython"$PY_VERSION".so
+    #LOCAL_PREFIX=$VIRTUAL_ENV/
+    #PYTHON_PACKAGES_PATH=$LOCAL_PREFIX/lib/python$PYTHON_VERSION/site-packages
+    #PYTHON_INCLUDE_DIR=$LOCAL_PREFIX/include/python"$PYTHON_VERSION"m
+    #PYTHON_LIBRARY=$LOCAL_PREFIX/lib/python$PYTHON_VERSION/config-"$PYTHON_VERSION"m-x86_64-linux-gnu/libpython"$PYTHON_VERSION".so
 
     echo "
     ======================
     VARIABLE CONFIGURATION
     ======================
     # Intermediate vars
-    PY_VERSION=$PY_VERSION
-    PLAT_NAME=$PLAT_NAME
+    PYTHON_VERSION=$PYTHON_VERSION
     # Final vars
-    REPO_DIR=$REPO_DIR
-    BUILD_DIR=$BUILD_DIR
-    LOCAL_PREFIX=$LOCAL_PREFIX
-    PYTHON_EXECUTABLE=$PYTHON_EXECUTABLE
-    PYTHON_LIBRARY=$PYTHON_LIBRARY
-    PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR
-    PYTHON_PACKAGES_PATH=$PYTHON_PACKAGES_PATH
-    OpenCV_SELECT_VERSION=$OpenCV_SELECT_VERSION
+    FLETCH_REPO=$FLETCH_REPO
+    FLETCH_BUILD=$FLETCH_BUILD
     "
+
+    #LOCAL_PREFIX=$LOCAL_PREFIX
+    #PYTHON_EXECUTABLE=$PYTHON_EXECUTABLE
+    #PYTHON_LIBRARY=$PYTHON_LIBRARY
+    #PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR
+    #PYTHON_PACKAGES_PATH=$PYTHON_PACKAGES_PATH
+    #OpenCV_SELECT_VERSION=$OpenCV_SELECT_VERSION
 
     # splitting out dependencies for easier visibility
     # dont build opencv with cuda, I dont think we use it
@@ -59,7 +64,6 @@ simple(){
 
     export CAFFE_DEPENDS="
         -D fletch_ENABLE_Protobuf:BOOL=True \
-        -D Protobuf_SELECT_VERSION=3.4.1 \
         -D fletch_ENABLE_LevelDB:BOOL=True \
         -D fletch_ENABLE_HDF5:BOOL=True \
         -D fletch_ENABLE_Snappy:BOOL=True \
@@ -82,14 +86,17 @@ simple(){
 
     export BIG_OPTIONS="
         -D fletch_ENABLE_GeographicLib=True \
-        -D fletch_ENABLE_VTK:BOOL=ON \
+        -D fletch_ENABLE_VTK:BOOL=OFF \
         -D fletch_ENABLE_PROJ4:BOOL=ON \
         -D fletch_ENABLE_libkml:BOOL=ON \
-        -D fletch_ENABLE_TinyXML:BOOL=True \
-        -D fletch_ENABLE_Qt:BOOL=ON"
+        -D fletch_ENABLE_ZeroMQ:BOOL=ON \
+        -D fletch_ENABLE_Qt:BOOL=OFF"
 
-    # Setup a build directory and build fletch
-    FLETCH_BUILD=$HOME/code/fletch/build-py$PYTHON_VERSION
+    #-D Protobuf_SELECT_VERSION=3.4.1 \
+    #-D fletch_ENABLE_Caffe:BOOL=True \
+    #-D fletch_PYTHON_MAJOR_VERSION=$PYTHON_MAJOR_VERSION \
+    #-D CMAKE_INSTALL_PREFIX=$LOCAL_PREFIX \
+    #-D OpenCV_SELECT_VERSION=$OpenCV_SELECT_VERSION \
 
     mkdir -p $FLETCH_BUILD
     cd $FLETCH_BUILD
@@ -97,11 +104,7 @@ simple(){
         -D fletch_BUILD_WITH_CUDA:BOOL=True \
         -D fletch_BUILD_WITH_CUDNN:BOOL=True \
         -D fletch_BUILD_WITH_PYTHON:BOOL=True \
-        -D fletch_ENABLE_Caffe:BOOL=True \
-        -D fletch_PYTHON_MAJOR_VERSION=$PYTHON_MAJOR_VERSION \
-        -D CMAKE_INSTALL_PREFIX=$LOCAL_PREFIX \
         -D fletch_PYTHON_MAJOR_VERSION=3 \
-        -D OpenCV_SELECT_VERSION=$OpenCV_SELECT_VERSION \
         $OPENCV_DEPENDS $CAFFE_DEPENDS $OTHER_OPTIONS $BIG_OPTIONS \
         ..
 
