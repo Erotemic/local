@@ -703,16 +703,20 @@ sedr(){
 
     echo "
     === sedr ===
-    SEARCH = '$SEARCH'
-    REPLACE = '$REPLACE'
-    PATTERN = '$PATTERN'
-    LIVE_RUN = '$LIVE_RUN'
+    argv[1] = SEARCH = '$SEARCH' - text to search
+    argv[2] = REPLACE = '$REPLACE' - text to replace
+    argv[3] = PATTERN = '$PATTERN' - filename patterns to match
+    argv[4] = LIVE_RUN = '$LIVE_RUN' - set to 'True' to do the run for real
     "
 
+    find . -type f -iname "${PATTERN}" 
+
     if [[ "$LIVE_RUN" == "True" ]]; then
-        find . -type f -iname '*.py' -exec sed -i "s|${SEARCH}|${REPLACE}|g" {} + 
+        find . -type f -iname "${PATTERN}" -exec sed -i "s|${SEARCH}|${REPLACE}|g" {} + 
     else
-        find . -type f -iname '*.py' -exec sed "s|${SEARCH}|${REPLACE}|g" {} + | grep "${REPLACE}"
+        # https://unix.stackexchange.com/questions/97297/how-to-report-sed-in-place-changes
+        #find . -type f -iname "${PATTERN}" -exec sed "s|${SEARCH}|${REPLACE}|g" {} + | grep "${REPLACE}"
+        find . -type f -iname "${PATTERN}" -exec sed --quiet "s|${SEARCH}|${REPLACE}|gp" {} + | grep "${REPLACE}" -C 100
     fi
 }
 
