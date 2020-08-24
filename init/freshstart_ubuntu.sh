@@ -1621,3 +1621,31 @@ fix_ubuntu_18_04_sound_pop_issue(){
 install_keepass(){
     sudo apt install keepass2
 }
+
+
+install_go(){
+    # Install GO
+    python -c "import ubelt as ub; print(ub.grabdata(
+        'https://golang.org/dl/go1.15.linux-amd64.tar.gz',
+        hash_prefix='2d75848ac606061efe52a8068d0e647b35ce487a15bb52272c427df485193602',
+        hasher='sha256',
+        dpath=ub.ensuredir('$HOME/tmp'), verbose=3))"
+    mkdir $HOME/.local
+    tar -C $HOME/.local -xzf go1.15.linux-amd64.tar.gz
+    # Add $HOME/.local/go to your path or make symlinks
+    ln -s $HOME/.local/go/bin/go $HOME/.local/bin/go 
+    ln -s $HOME/.local/go/bin/gofmt $HOME/.local/bin/gofmt
+}
+
+
+github_gh_api(){
+    # Ensure that go1.15+ is installed
+    mkdir $HOME/code/github
+    git clone https://github.com/cli/cli.git $HOME/code/github/cli
+    cd $HOME/code/github/cli
+    make
+
+    $HOME/code/github/cli/bin/gh version
+    $HOME/code/github/cli/bin/gh help
+    
+}
