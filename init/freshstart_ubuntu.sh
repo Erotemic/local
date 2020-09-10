@@ -1649,3 +1649,7 @@ github_gh_api(){
     $HOME/code/github/cli/bin/gh help
     
 }
+
+circlci_cli(){
+    curl -fLSs https://raw.githubusercontent.com/CircleCI-Public/circleci-cli/master/install.sh | DESTDIR=$HOME/.local/bin bash
+}

@@ -1,27 +1,27 @@
-import six
+# import six
 c = get_config()  # NOQA
 c.InteractiveShellApp.exec_lines = []
-if six.PY2:
-    future_line = (
-        'from __future__ import absolute_import, division, print_function, with_statement, unicode_literals')
-    c.InteractiveShellApp.exec_lines.append(future_line)
-    # Fix sip versions
-    try:
-        import sip
-        # http://stackoverflow.com/questions/21217399/pyqt4-qtcore-qvariant-object-instead-of-a-string
-        sip.setapi('QVariant', 2)
-        sip.setapi('QString', 2)
-        sip.setapi('QTextStream', 2)
-        sip.setapi('QTime', 2)
-        sip.setapi('QUrl', 2)
-        sip.setapi('QDate', 2)
-        sip.setapi('QDateTime', 2)
-        if hasattr(sip, 'setdestroyonexit'):
-            sip.setdestroyonexit(False)  # This prevents a crash on windows
-    except ImportError:
-        pass
-    except ValueError as ex:
-        print('Warning: Value Error: %s' % str(ex))
+# if six.PY2:
+#     future_line = (
+#         'from __future__ import absolute_import, division, print_function, with_statement, unicode_literals')
+#     c.InteractiveShellApp.exec_lines.append(future_line)
+#     # Fix sip versions
+#     try:
+#         import sip
+#         # http://stackoverflow.com/questions/21217399/pyqt4-qtcore-qvariant-object-instead-of-a-string
+#         sip.setapi('QVariant', 2)
+#         sip.setapi('QString', 2)
+#         sip.setapi('QTextStream', 2)
+#         sip.setapi('QTime', 2)
+#         sip.setapi('QUrl', 2)
+#         sip.setapi('QDate', 2)
+#         sip.setapi('QDateTime', 2)
+#         if hasattr(sip, 'setdestroyonexit'):
+#             sip.setdestroyonexit(False)  # This prevents a crash on windows
+#     except ImportError:
+#         pass
+#     except ValueError as ex:
+#         print('Warning: Value Error: %s' % str(ex))
 
 
 c.InteractiveShellApp.exec_lines.append('%load_ext autoreload')
@@ -29,15 +29,15 @@ c.InteractiveShellApp.exec_lines.append('%autoreload 2')
 #c.InteractiveShellApp.exec_lines.append('%pylab qt4')
 c.InteractiveShellApp.exec_lines.append('import numpy as np')
 c.InteractiveShellApp.exec_lines.append('import ubelt as ub')
-c.InteractiveShellApp.exec_lines.append('import xdev')
-c.InteractiveShellApp.exec_lines.append('import pandas as pd')
-c.InteractiveShellApp.exec_lines.append('pd.options.display.max_columns = 40')
-c.InteractiveShellApp.exec_lines.append('pd.options.display.width = 160')
-c.InteractiveShellApp.exec_lines.append('pd.options.display.max_rows = 20')
-c.InteractiveShellApp.exec_lines.append('pd.options.display.float_format = lambda x: \'%.4f\' % (x,)')
-c.InteractiveShellApp.exec_lines.append('import networkx as nx')
+# c.InteractiveShellApp.exec_lines.append('import xdev')
+# c.InteractiveShellApp.exec_lines.append('import pandas as pd')
+# c.InteractiveShellApp.exec_lines.append('pd.options.display.max_columns = 40')
+# c.InteractiveShellApp.exec_lines.append('pd.options.display.width = 160')
+# c.InteractiveShellApp.exec_lines.append('pd.options.display.max_rows = 20')
+# c.InteractiveShellApp.exec_lines.append('pd.options.display.float_format = lambda x: \'%.4f\' % (x,)')
+# c.InteractiveShellApp.exec_lines.append('import networkx as nx')
 c.InteractiveShellApp.exec_lines.append('from os.path import *')
-c.InteractiveShellApp.exec_lines.append('from six.moves import cPickle as pickle')
+# c.InteractiveShellApp.exec_lines.append('from six.moves import cPickle as pickle')
 
 
 #c.InteractiveShellApp.exec_lines.append('if \'verbose\' not in vars():\\n    verbose = True')
@@ -78,6 +78,6 @@ except ImportError:
 #c.InteractiveShell.colors = 'LightBG'
 #c.InteractiveShell.confirm_exit = False
 #c.InteractiveShell.deep_reload = True
-c.InteractiveShell.editor = 'gvim'
+# c.InteractiveShell.editor = 'gvim'
 #c.InteractiveShell.xmode = 'Context'
 # ENDBOCK

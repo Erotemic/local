@@ -1200,3 +1200,114 @@ def num_particles():
 
 
     n_years = 1 / r * np.log(N_humans_earth / N_humans_now)
+
+
+def negative_std():
+    import sympy as sym
+    a, b, c = sym.symbols('a, b, c', complex=True)
+    expr = sym.sqrt(((a - (a + b) / 2) ** 2 + (b - (a + b) / 2) ** 2) / 2)
+    sym.simplify(expr)
+
+    from sympy import sqrt
+
+    real = [-2, -1, 0, 1, 2]
+    imag = [-2, -1, 0, 1, 2]
+
+    import numpy as np
+    import itertools as it
+    from sympy.core.assumptions import assumptions
+    for r, i in it.product(real, imag):
+        a = r + i * 1j
+        result = np.sqrt(a ** 2)
+        if result.real < 0:
+            print("NEG REAL")
+            print('a = {!r}'.format(a))
+            print('result = {!r}'.format(result))
+        if result.imag < 0:
+            print("NEG IMAG")
+            print('a = {!r}'.format(a))
+            print('result = {!r}'.format(result))
+
+
+def negative_std_proof():
+    # Setup:
+    # Given a vector x = [x_1, x_2, ..., x_n]
+    # where each element x_i is in the complex domain
+    #
+    # The expression for standard deviation can be written as
+    # sqrt(sum((x - x.mean()) ** 2) / len(x))
+
+    # Claim: the real part of the standard deviation is always non-negative
+
+    # Proof:
+    # Without loss of generality we can assign the scalar
+    # u = (x - x.mean()) / sqrt(len(x))
+    # We note that the value of u is also complex because complex numbers are
+    # closed under multiplication, and addition.
+    #
+    # Having defined u, we rewrite the standard deviation expression as
+    # sqrt((u) ** 2)
+    #
+    # Now we can rewrite u = a + bj where a and b are real numbers.
+    #
+    # Thus we have the standard deviation as:
+    # sqrt((a + (b * j)) ** 2)
+    #
+    # We can encode this expression in sympy.
+    import sympy as sym
+    from sympy import sqrt
+    from sympy.core.assumptions import assumptions
+    a = sym.symbols('a', real=True)
+    b = sym.symbols('b', real=True)
+    expr = sqrt((a + (b * sym.I)) ** 2)
+    expr = sym.simplify(expr)
+
+    print(assumptions(a))
+    print(assumptions(b))
+
+    # Using sympy we can break the expression into imaginary and real parts
+    real_part, imag_part = expr.as_real_imag()
+
+    # We only need to focus on the real part and prove it is non-negative:
+    # (4*a**2*b**2 + (a**2 - b**2)**2)**(1/4) * cos(atan2(2*a*b, a**2 - b**2)/2)
+
+    # The outer expression is a multiplcation of two numbers, if we show they
+    # are both non-negative than the entire expression must also be
+    # non-negative
+    assert real_part.func == sym.core.mul.Mul
+    p1, p2 = real_part.args
+    # p1 = (4*a**2*b**2 + (a**2 - b**2)**2)**(1/4)
+    # sympy tells use that p1 is never negative, easy to show.  a and b are
+    # both real numbers, so their square is always non-negative, and the rest
+    # of the operations are between positive numbers and addition or
+    # multiplication operations (which will always be non-negative), except for
+    # one subtraction, which is subsequently squared resulting in a
+    # non-negative number. Thus p1 is always non-negative.
+    assert not p1.is_negative
+    print(assumptions(p1))
+
+    # However, sympy isn't smart enough to show that p2 is always non_negative
+    # (even though it is), we will show that.
+    #
+    # Need to prove that p3 is never negative
+    # p2 = cos(atan2(2*a*b, a**2 - b**2)/2)
+    assert p2.func == sym.cos  # −1 ≤ cos(x) ≤ 1
+    p3 = p2.args[0]
+
+    assert p3.func == sym.core.mul.Mul
+    one_half, p4 = p3.args  # Mul
+    assert one_half == .5
+
+    # p4 = atan2(2*a*b, a**2 - b**2)
+    assert p4.func == sym.atan2  # -π ≤ atan2(y, x) ≤ π
+    p5, p6 = p4.args
+
+    # Atan2 always produces a value between [-π, π].
+    # The results of atan2 is always divided by 2.
+    # So, the argument to cos is always between [-π / 2, π / 2].
+    # Cos always produces a non-negative value when its domain is restricted to
+    # [-π / 2, π / 2].
+    # Thus p2 is non_negative.
+
+    # p1 and p2 are non-negative and multiplied, which is a result that is
+    # always non-negative. QED
