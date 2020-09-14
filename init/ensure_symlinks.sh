@@ -114,7 +114,7 @@ ensure_config_symlinks()
     safe_symlink ~/local/vim/vimfiles/bundle/vimtk ~/code/vimtk
     safe_symlink ~/local/vim/vimfiles ~/.vim
     safe_symlink ~/local/vim/portable_vimrc ~/.vimrc
-    safe_symlink ~/local/homelinks/config/ipython ~/.ipython
+    safe_symlink ~/local/homelinks/ipython ~/.ipython
 
 
     #### DO EXTRA SYMLINK FIXES

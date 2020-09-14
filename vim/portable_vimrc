@@ -209,6 +209,8 @@ let g:vim_markdown_folding_style_pythonic = 1
 " or get some sort of install-hook pip install command to happen
 " We can hack around this by explicitly sourcing the vimtk plugin
 source $VIMFILES_DPATH/bundle/vimtk/plugin/vimtk.vim
+source $HOME/.vim/bundle/vimtk/plugin/vimtk.vim
+
 if exists("g:loaded_vimtk") 
     call VimTK_default_remap()
 
