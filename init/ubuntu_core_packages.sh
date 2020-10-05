@@ -1857,6 +1857,14 @@ home_printer(){
 
     https://support.brother.com/g/b/downloadlist.aspx?c=us&lang=en&prod=hll3290cdw_us&os=128
 
+    # Manually download the scanner driver due to EULA
+    # It is a deb file: /home/joncrall/Downloads/brscan4-0.4.9-1.amd64.deb
+
+    # Add Scanner to network
+    sudo brsaneconfig4 -a name=BrotherScanner 'model=Brother HL-L3290CDW series' ip=192.168.222.229
+    brsaneconfig4 -q 
+    
+
     https://askubuntu.com/questions/314314/laser-printer-scanner-brother-dcp-8110dn-ubuntu-what-is-its-uri
     """
 
@@ -1866,6 +1874,7 @@ home_printer(){
     gunzip linux-brprinter-installer-2.2.2-1.gz
     sudo bash linux-brprinter-installer-2.2.2-1 MFC-J880DW
 
+    sudo usermod -a -G scanner $USER
     
 }
 

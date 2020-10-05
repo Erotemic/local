@@ -80,6 +80,7 @@ alias nd='cd $HOME/code/ndsampler'
 alias kwc='cd $HOME/code/kwcoco'
 alias sc='cd $HOME/code/scriptconfig'
 alias kwa='cd $HOME/code/kwarray'
+alias kwn='cd $HOME/code/kwannot'
 alias kwi='cd $HOME/code/kwimage'
 alias kwp='cd $HOME/code/kwplot'
 
@@ -780,4 +781,24 @@ clean_empty_dirs(){
         https://unix.stackexchange.com/questions/24134/remove-empty-directory-trees-removing-as-many-directories-as-possible-but-no-fi
     "
     find . -type d -empty -delete
+}
+
+
+all_dir_sizes(){
+    __heredoc__="
+
+    sudo du -sh * | sort -h
+
+    sudo find . -maxdepth 1 -iregex '.*/..*' -exec du -sh {} \; 
+    sudo find . -maxdepth 1 -iregex '.*/..*' -exec echo {} \; | sort -h
+    sudo find . -maxdepth 1 -iregex '.*/..*' -exec echo {} \; | sort -h
+
+    find . -maxdepth 1 -exec du -sh {} + 
+    | sort -h
+
+    "
+    find . -maxdepth 1 -type d -iregex ".*/..*" -exec du -sh {} + | sort -h
+    sudo find . -maxdepth 1 -iregex ".*/..*" -exec du -sh {} + | sort -h
+
+    du -sh * | sort -h
 }

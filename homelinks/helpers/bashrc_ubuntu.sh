@@ -112,11 +112,16 @@ fi
 #alias trash-empty='gvfs-trash --empty'
 #alias viewimage='eog'
 
-vd()
+view-directory()
 {
     if [ $# -eq 0 ]; then
         nautilus .& > /dev/null 2>&1
     else
         nautilus $1& > /dev/null 2>&1
     fi
+}
+
+vd()
+{
+    view-directory $@
 }

@@ -1653,3 +1653,20 @@ github_gh_api(){
 circlci_cli(){
     curl -fLSs https://raw.githubusercontent.com/CircleCI-Public/circleci-cli/master/install.sh | DESTDIR=$HOME/.local/bin bash
 }
+
+android_studio(){
+    # Stupid need-to-manually download and install software
+    # https://developer.android.com/studio/install#linux
+    sudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386 -y
+
+    mkdir -p $HOME/.local/opt
+    tar -C $HOME/.local/opt -vxzf /home/joncrall/Downloads/android-studio-ide-193.6626763-linux.tar.gz
+
+    # Need to enable kvm virtualization in bios
+    # https://android.stackexchange.com/questions/117669/avd-doesnt-work-after-installing-android-studio
+    sudo apt-get install qemu-kvm libvirt-bin ubuntu-vm-builder bridge-utils
+
+    kvm-ok
+
+    sudo modprobe kvm_intel
+}
