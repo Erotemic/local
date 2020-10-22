@@ -550,12 +550,6 @@ we-pypy()
 
 
 
-pyfile()
-{
-    echo "python -c \"import $1; print($1.__file__)\""
-    python -c "import $1; print($1.__file__.replace(\".pyc\", \".py\"))"
-}
-
 pyedit()
 {
     __heredoc__="""
@@ -631,6 +625,13 @@ pyversion(){
 pywhich(){
     python -c "import $1; print('$1.__file__ = ' + str($1.__file__))"
 }
+
+pyfile()
+{
+    echo "python -c \"import $1; print($1.__file__)\""
+    python -c "import $1; print($1.__file__.replace(\".pyc\", \".py\"))"
+}
+
 
 
 gitk(){
@@ -801,4 +802,24 @@ all_dir_sizes(){
     sudo find . -maxdepth 1 -iregex ".*/..*" -exec du -sh {} + | sort -h
 
     du -sh * | sort -h
+}
+
+
+clean_python2(){
+
+    find . -regex ".*\(__pycache__\|\.py[co]\)" -delete || find . -iname *.pyc -delete || find . -iname *.pyo -delete
+    find . -type d -empty -delete
+
+    pyblock " 
+
+    import os
+    dpath = '.'
+    for r, ds, fs in os.walk(dpath):
+        if r.endswith('__pycache__'):
+            break
+        pass
+
+    "
+
+    
 }

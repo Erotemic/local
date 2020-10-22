@@ -14,6 +14,11 @@ CommandLine:
 
     or
 
+    # Customize settings (if unset they will choose sensible defaults)
+    HAVE_SUDO=False
+    IS_HEADLESS=True
+    WITH_SSH_KEYS=False
+
     source ~/local/init.sh
 """
 
@@ -26,8 +31,16 @@ fi
 source $HOME/local/init/freshstart_ubuntu.sh
 source $HOME/local/init/utils.sh
 
-HAVE_SUDO=$(have_sudo)
-IS_HEADLESS=$(is_headless)
+if [ "$HAVE_SUDO" == "" ]; then
+    HAVE_SUDO=$(have_sudo)
+fi
+if [ "$IS_HEADLESS" == "" ]; then
+    IS_HEADLESS=$(is_headless)
+fi
+if [ "$WITH_SSH_KEYS" == "" ]; then
+    WITH_SSH_KEYS="True"
+fi
+
 echo "IS_HEADLESS = $IS_HEADLESS"
 echo "HAVE_SUDO = $HAVE_SUDO"
 

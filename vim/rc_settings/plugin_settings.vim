@@ -90,6 +90,7 @@ flake8_errors = [
     'N806',  # variable in function should be lowercase [N806]
     'N811',  # constant name imported as non constant
     'N813',  # camel case
+    'W503',  # line break before binary operator
     'W504',  # line break after binary operator
 
     'I201',  # Newline between Third party import groups
