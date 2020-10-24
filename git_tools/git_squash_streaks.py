@@ -17,8 +17,8 @@ import ubelt as ub
 import itertools as it
 
 
-EXPERIMENTAL_PSEUDO_CHAIN = 1
-EXPERIMENTAL_REBASE = 1
+EXPERIMENTAL_PSEUDO_CHAIN = 0
+EXPERIMENTAL_REBASE = 0
 
 
 def print_exc(exc_info=None):

@@ -1670,3 +1670,12 @@ android_studio(){
 
     sudo modprobe kvm_intel
 }
+
+setup_ssh_server(){
+    # https://linuxize.com/post/how-to-enable-ssh-on-ubuntu-18-04/
+
+    sudo apt update -y
+    sudo apt install -y openssh-server
+    sudo systemctl status ssh
+    sudo ufw allow ssh
+}
