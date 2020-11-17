@@ -1306,6 +1306,7 @@ fix_wacom(){
     for wacom_dev in "${WACOM_DEVICES[@]}"; do 
         xsetwacom --set "$wacom_dev" Rotate half
     done
+}
 
 mount_android()
 {
@@ -1568,12 +1569,37 @@ make_private_permissions()
     # TODO: setup umask so new directories are created with the same permissions?
 }
 
-apt-add-repository-remove()
+list-all-ppas(){
+
+    # listppa Script to get all the PPA installed on a system ready to share for reininstall
+    #https://askubuntu.com/questions/148932/how-can-i-get-a-list-of-all-repositories-and-ppas-from-the-command-line-into-an
+
+    for APT in `find /etc/apt/ -name \*.list`; do
+        grep -o "^deb http://ppa.launchpad.net/[a-z0-9\-]\+/[a-z0-9\-]\+" $APT | while read ENTRY ; do
+            echo "ENTRY = $ENTRY"
+            USER=`echo $ENTRY | cut -d/ -f4`
+            PPA=`echo $ENTRY | cut -d/ -f5`
+            echo ppa:$USER
+            echo ppa:$USER/$PPA
+        done
+    done
+
+}
+
+apt-add-repository-remove-ppa()
 {
     # https://askubuntu.com/questions/307/how-can-ppas-be-removed
-    # cat /etc/apt/sources.list
+
+    # List sources
+    cat /etc/apt/sources.list
+
+    ls /etc/apt/sources.list.d/
+    cat /etc/apt/sources.list.d/*.list | grep terminator
+
     sudo add-apt-repository --remove ppa;whatever/ppa
 
+    http://ppa.launchpad.net/gnome-terminator/nightly-gtk3/ubuntu
+    sudo add-apt-repository --remove ppa:gnome-terminator/ubuntu
 }
 
 
@@ -1873,7 +1899,6 @@ home_printer(){
     cd $HOME/tmp
     gunzip linux-brprinter-installer-2.2.2-1.gz
     sudo bash linux-brprinter-installer-2.2.2-1 MFC-J880DW
-
     sudo usermod -a -G scanner $USER
     
 }
@@ -1893,4 +1918,32 @@ install_fun_packages(){
     # cmatrix
     # https://github.com/abishekvashok/cmatrix
     sudo apt-get install language-pack-ja
+}
+
+fix_spotify_at_4k(){
+    __heredoc__="
+    https://community.spotify.com/t5/Desktop-Linux/Linux-client-barely-usable-on-HiDPI-displays/td-p/1067272
+    "
+    FNAME=spotify.desktop
+
+    # Set to 1 to see what changes would be made without making them
+    DRY_RUN=0
+
+    # Break multiline output into an array
+    CANDIDATES=($(locate $FNAME))
+    for IDX in "${!CANDIDATES[@]}"
+    do
+        FPATH=${CANDIDATES[$IDX]}
+        echo "---"
+        echo "IDX=$IDX"
+        echo "FPATH=$FPATH"
+
+        # This pattern will either add the scale factor or change an existing scale factor
+        SED_PATTERN='s|spotify *\(--force-device-scale-factor=[^ ]*\)* *%U|spotify --force-device-scale-factor=1.5 %U|'
+        sed "${SED_PATTERN}" $FPATH | colordiff $FPATH -
+        if [ "$DRY_RUN" == "0" ]; then
+            sudo sed -i "${SED_PATTERN}" $FPATH
+        fi
+    done
+
 }
