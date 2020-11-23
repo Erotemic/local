@@ -619,10 +619,16 @@ normalize_newline_eof()
 }
 
 pyversion(){
+    __heredoc__="
+    Display the version of a Python module
+    "
     python -c "import $1; print('$1.__version__ = ' + str($1.__version__))"
 }
 
 pywhich(){
+    __heredoc__="
+    Display the location of a Python module
+    "
     python -c "import $1; print('$1.__file__ = ' + str($1.__file__))"
 }
 

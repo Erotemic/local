@@ -1,7 +1,7 @@
 # simple function that does nothing so we can write simple heredocs
 # we cant use it here though, otherwise it would infinite recurse!
 # Use it like this (sans leading comment symbols):
-__heredoc__='
+__doc__='
 this is where your text goes. It can be multiline and indented, just dont
 include the single quote character.  also note the surrounding triple
 quotes just happen to be synatically correct and are not necessary,
@@ -18,7 +18,7 @@ __SOURCED_EROTEMIC_UTILS__=1
 
 
 system_python(){
-    __heredoc__="
+    __doc__="
     Return name of system python
     "
     if [ "$(type -P python)" != "" ]; then
@@ -32,7 +32,7 @@ system_python(){
 
 
 have_sudo(){
-    __heredoc__='
+    __doc__='
     Tests if we have the ability to use sudo.
     Returns the string "True" if we do.
 
@@ -57,7 +57,7 @@ have_sudo(){
 
 
 is_headless(){
-    __heredoc__='
+    __doc__='
     Tests if we have a local display variable (i.e. not x11 forwarding)
     if we dont then we are probably on a headless server
 
@@ -82,7 +82,7 @@ is_headless(){
 
 
 has_pymodule(){
-    __heredoc__='
+    __doc__='
     Check if a python module is installed. Echos "True" or "False" to the
     command line depending on the result.
 
@@ -116,7 +116,7 @@ has_pymodule(){
 }
 
 pyblock(){
-    __heredoc__='
+    __doc__='
     Executes python code and handles nice indentation.  Need to be slightly
     careful about the type of quotes used.  Typically stick to doublequotes
     around the code and singlequotes inside python code. Sometimes it will be
@@ -214,7 +214,7 @@ codeblock()
 
 writeto()
 {
-    __heredoc__="
+    __doc__="
     Usage:
         writeto <fpath> <text>
 
@@ -234,7 +234,7 @@ writeto()
 
 sudo_writeto()
 {
-    __heredoc__="
+    __doc__="
 
     Usage:
         sudo_writeto <fpath> <text>
@@ -277,7 +277,7 @@ sudo_appendto()
 
 append_if_missing()
 {
-    __heredoc__='
+    __doc__='
     Appends a line to the end of a file only if that line does not exist.
 
     Args:
@@ -320,7 +320,7 @@ append_if_missing()
 
 
 safe_symlink(){
-    __heredoc__="
+    __doc__="
     Args:
         real_path
         link_path
@@ -335,7 +335,7 @@ safe_symlink(){
 
 unlink_or_backup()
 {
-    __heredoc__='
+    __doc__='
     Get a file or directory out of the way without removing it.
 
     If TARGET exists, it is removed if it is a link, otherwise if it is a file or

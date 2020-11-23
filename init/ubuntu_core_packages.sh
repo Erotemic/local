@@ -1671,7 +1671,7 @@ SIGNING_ENABLED=no
 
 
   # Enter the following commands
-  __heredoc__ "
+  __doc__ "
       ENTER
       q
       accept
@@ -1878,7 +1878,7 @@ ttygif(){
 
 
 home_printer(){
-    __heredoc__="""
+    __doc__="""
     Brother HL-L3290CDW
 
     https://support.brother.com/g/b/downloadlist.aspx?c=us&lang=en&prod=hll3290cdw_us&os=128
@@ -1921,7 +1921,7 @@ install_fun_packages(){
 }
 
 fix_spotify_at_4k(){
-    __heredoc__="
+    __doc__="
     https://community.spotify.com/t5/Desktop-Linux/Linux-client-barely-usable-on-HiDPI-displays/td-p/1067272
     "
     FNAME=spotify.desktop
@@ -1945,5 +1945,55 @@ fix_spotify_at_4k(){
             sudo sed -i "${SED_PATTERN}" $FPATH
         fi
     done
+
+}
+
+fix_bluetooth_headphones(){
+    __doc__="
+    https://askubuntu.com/questions/1139404/sony-noise-cancelling-headphones-wh-1000xm2-3-and-bluetooth-initial-autoconnec
+    https://www.reddit.com/r/Ubuntu/comments/fwz6r4/sony_wh1000xm3_with_ubuntu_2004/
+    "
+    #mkdir -p $HOME/tmp/bluetooth_helpers
+    #cd $HOME/tmp/bluetooth_helpers
+    #wget https://launchpad.net/ubuntu/+source/bluez/5.52-0ubuntu2/+build/18277594/+files/bluez_5.52-0ubuntu2_amd64.deb
+    #wget https://launchpad.net/ubuntu/+source/bluez/5.52-0ubuntu2/+build/18277594/+files/libbluetooth3_5.52-0ubuntu2_amd64.deb
+    #wget https://launchpad.net/ubuntu/+source/bluez/5.52-0ubuntu2/+build/18277594/+files/bluez-cups_5.52-0ubuntu2_amd64.deb
+    #wget https://launchpad.net/ubuntu/+source/bluez/5.52-0ubuntu2/+build/18277594/+files/bluez-obexd_5.52-0ubuntu2_amd64.deb 
+    #sudo dpkg -i *.deb
+
+
+    sudo apt install libsbc-dev -y
+    sudo apt-get install bluez libbluetooth-dev -y
+
+    MODDIR=`pkg-config --variable=modlibexecdir libpulse`
+    echo "MODDIR = $MODDIR"
+
+    find $MODDIR -regex ".*\(bluez5\|bluetooth\).*\.so.*" -exec sha1sum {} \;
+
+    for FPATH in $(find $MODDIR -regex ".*\(bluez5\|bluetooth\).*\.so"); do
+        SHA=$(sha1sum $FPATH | cut -d " " -f 1 | cut -c1-16)
+        NEW_FPATH=$FPATH.${SHA}.bak
+        sudo cp $FPATH $NEW_FPATH
+    done
+
+    # pull sources
+    cd $HOME/code
+    git clone https://github.com/EHfive/pulseaudio-modules-bt.git
+    cd pulseaudio-modules-bt
+    git submodule update --init
+
+    TARGET_VERSION=v$(pkg-config libpulse --modversion|sed 's/[^0-9.]*\([0-9.]*\).*/\1/')
+    echo "TARGET_VERSION = $TARGET_VERSION"
+    git -C pa/ checkout  $TARGET_VERSION
+
+    # install
+    mkdir build && cd build
+    cmake ..
+    make
+    sudo make install -n
+
+    # Load modules
+    pulseaudio -k
+    pulseaudio --start
 
 }

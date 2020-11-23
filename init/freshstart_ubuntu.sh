@@ -135,7 +135,7 @@ setup_remote_ssh_keys(){
 
 
 simple_setup_auto(){
-    __heredoc__="
+    __doc__="
     Does setup on machines without root access
     "
     # Just in case
@@ -343,7 +343,7 @@ entry_prereq_git_and_local()
 
 freshtart_ubuntu_script()
 { 
-    __heredoc__="
+    __doc__="
     CommandLine:
         source ~/local/init/freshstart_ubuntu.sh
         freshtart_ubuntu_script
@@ -541,7 +541,7 @@ ensure_curl(){
 }
 
 setup_venv3(){
-    __heredoc__="
+    __doc__="
     CommandLine:
         source ~/local/init/freshstart_ubuntu.sh && setup_venv3
     "
@@ -585,7 +585,7 @@ setup_venv3(){
 }
 
 dev_fix_venv_mismatched_version(){
-    __heredoc__="
+    __doc__="
     This might fix the cmath import issue?
     "
     # Check if the virtualenv and system python are on the same patch version
@@ -717,7 +717,7 @@ install_conda_basics(){
 
 
 setup_venv2(){
-    __heredoc__="
+    __doc__="
     CommandLine:
         source ~/local/init/freshstart_ubuntu.sh && setup_venv2
     "
@@ -771,7 +771,7 @@ setup_venv2(){
 
 
 patch_venv_with_shared_libs(){
-    __heredoc__="
+    __doc__="
     References:
         https://github.com/pypa/virtualenv/pull/1045/files
     "
@@ -872,7 +872,7 @@ patch_venv_with_shared_libs(){
 }
 
 patch_venv_with_ld_library(){
-    __heredoc__="
+    __doc__="
     CommandLine:
         source ~/local/init/freshstart_ubuntu.sh && patch_venv_with_ld_library
 
@@ -1072,7 +1072,7 @@ nopassword_on_sudo()
  
 nautilus_hide_unwanted_sidebar_items()
 {
-    __heredoc__="
+    __doc__="
     CommandLine:
         source ~/local/init/freshstart_ubuntu.sh && nautilus_hide_unwanted_sidebar_items
 
@@ -1177,7 +1177,7 @@ setup_ibeis()
 
 
 setup_development_environment(){
-    __heredoc__="
+    __doc__="
     CommandLine:
         source ~/local/init/freshstart_ubuntu.sh
         setup_development_environment
@@ -1526,7 +1526,7 @@ install_basic_extras(){
 }
 
 install_transcrypt(){
-    __heredoc__="
+    __doc__="
     References:
 
         https://embeddedartistry.com/blog/2018/3/15/safely-storing-secrets-in-git
@@ -1580,7 +1580,7 @@ stop_evolution_cpu_hogging(){
 
 
 fix_ubuntu_18_04_sound_pop_issue(){
-    __heredoc__="
+    __doc__="
     Script that fixes a popping sound due to a power saving feature
 
     References:
