@@ -1996,4 +1996,5 @@ fix_bluetooth_headphones(){
     pulseaudio -k
     pulseaudio --start
 
+    sudo apt install pavucontrol -y
 }

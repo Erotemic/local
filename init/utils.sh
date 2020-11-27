@@ -202,6 +202,13 @@ codeblock()
                     multiline string.
                     this is the last line that will be considered.
                     ")"
+
+               # No indentation errors
+               python -c "$(codeblock "
+                   import math
+                   for i in range(10):
+                       print(math.factorial(i))
+                   ")"
         ')"
     else
         # Prevents python indentation errors in bash
