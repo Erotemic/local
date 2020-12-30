@@ -171,6 +171,8 @@ def process_research_line(line):
 
 def research_clipboard(r, start_line_str=None, rate='2', sentence_mode=True, open_file=False):
     to_speak = robos.get_clipboard()
+    import ubelt as ub
+    to_speak = ub.ensure_unicode(to_speak)
     write_research(r, to_speak)
     research(r, start_line_str='0', rate=rate, sentence_mode=True, open_file=False)
 

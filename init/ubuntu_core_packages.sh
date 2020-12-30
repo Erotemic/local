@@ -237,7 +237,7 @@ install_core_extras()
     sudo apt-get install nautilus-copypaste-images
 
     # Not commonly used but frequently forgotten
-    sudo apt install -y valgrind synaptic vlc gitg expect
+    sudo apt install -y valgrind synaptic gitg expect
     sudo apt install -y sysstat
     sudo apt install -y subversion
     sudo apt install -y remmina 
@@ -257,6 +257,7 @@ install_core_extras()
     sudo apt install fluxgui -y
 
     # 7zip
+
 
     # Make vlc default app
     # http://askubuntu.com/questions/91701/how-to-set-vlc-as-default-video-player
