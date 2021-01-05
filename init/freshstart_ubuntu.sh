@@ -49,8 +49,8 @@ set_global_git_config(){
 
     #git config --global user.email crallj@rpi.edu
     git config --global user.name $USER
-    git config --global user.email erotemic@gmail.com
-    #git config --global user.email jon.crall@kitware.com
+    #git config --global user.email erotemic@gmail.com
+    git config --global user.email jon.crall@kitware.com
     git config --global push.default current
 
     git config --global core.editor "vim"
@@ -114,11 +114,11 @@ setup_remote_ssh_keys(){
     # the last time.
     REMOTE_USER=jon.crall
     REMOTE_HOST=remote_machine
+    # ENSURE YOU HAVE ALL COMPUTERS UPDATED IN YOUR SSH CONFIG
+    REMOTES=( remote1 remote2 remote3 remote4 remote5 )
+
     ssh-copy-id $REMOTE_USER@$REMOTE_HOST
 
-    # ENSURE YOU HAVE ALL COMPUTERS UPDATED IN YOUR SSH CONFIG
-
-    REMOTES=( remote1 remote2 remote3 remote4 remote5 )
     for remote in "${REMOTES[@]}"
     do
         echo "UPDATING remote = $remote"
@@ -126,11 +126,13 @@ setup_remote_ssh_keys(){
         rsync ~/.ssh/./config $remote:.ssh/./
     done
 
+    ###
+    # ALTERNATE
     # Copy from a remote to local computer
-    REMOTE_USER=jon.crall
-    REMOTE_HOST=remote_machine
-    rsync $REMOTE_HOST:.ssh/./id_* $HOME/.ssh/
-    rsync $REMOTE_HOST:.ssh/./config $HOME/.ssh/
+    REMOTE_USER=joncrall
+    REMOTE_HOST=namek
+    rsync $REMOTE_USER@$REMOTE_HOST:.ssh/./id_* $HOME/.ssh/
+    rsync $REMOTE_USER@$REMOTE_HOST:.ssh/./config $HOME/.ssh/
 }
 
 
@@ -618,7 +620,7 @@ setup_conda_env(){
     cd ~/tmp
     CONDA_INSTALL_SCRIPT=Miniconda3-latest-Linux-x86_64.sh
     curl https://repo.anaconda.com/miniconda/$CONDA_INSTALL_SCRIPT > $CONDA_INSTALL_SCRIPT
-    cat $CONDA_INSTALL_SCRIPT
+    #cat $CONDA_INSTALL_SCRIPT
     chmod +x $CONDA_INSTALL_SCRIPT 
 
     # Install miniconda to user local directory

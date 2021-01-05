@@ -19,6 +19,9 @@ CommandLine:
     IS_HEADLESS=True
     WITH_SSH_KEYS=False
 
+    HAVE_SUDO=True
+    IS_HEADLESS=False
+
     source ~/local/init.sh
 """
 
@@ -38,7 +41,7 @@ if [ "$IS_HEADLESS" == "" ]; then
     IS_HEADLESS=$(is_headless)
 fi
 if [ "$WITH_SSH_KEYS" == "" ]; then
-    WITH_SSH_KEYS="True"
+    WITH_SSH_KEYS="True"  # doesnt do anything atm
 fi
 
 echo "IS_HEADLESS = $IS_HEADLESS"
@@ -78,6 +81,7 @@ fi
 _GITUSER="$(git config --global user.name)"
 if [ "$_GITUSER" == "" ]; then
   echo "ENSURE GIT CONFIG"
+  # TODO: need to determine the right user.email depending on the system being set up
   set_global_git_config
   mkdir -p ~/tmp
   mkdir -p ~/code
@@ -220,7 +224,13 @@ source ~/.bashrc
 
 
 source $HOME/local/init/freshstart_ubuntu.sh
-setup_single_use_ssh_keys
+if [[ "" == "" ]]; then
+    # 
+    setup_single_use_ssh_keys
+
+    # Or copy data from another machine
+    # See setup_remote_ssh_keys
+fi
 
 
 if [[ "$IS_HEADLESS" == "False" ]]; then
