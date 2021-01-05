@@ -134,20 +134,38 @@ deactivate_venv
 PY_EXE="$(system_python)"
 
 
-#vim-gnome  
-if [ ! -d ~/.local/share/vim ]; then
-    if [ "$HAVE_SUDO" == "True" ]; then
+apt_ensure(){
+    DEBIAN_PKG_NAME=$1
+    RESULT=$(dpkg -l | grep "ii $DEBIAN_PKG_NAME")
+    if [ "$RESULT" == "" ]; then 
+        echo "Do not have DEBIAN_PKG_NAME='$DEBIAN_PKG_NAME'"
+        sudo apt install -y $DEBIAN_PKG_NAME
+    else
+        echo "Already have DEBIAN_PKG_NAME='$DEBIAN_PKG_NAME'"
+    fi
+}
+
+apt_ensure python3-pip
+
+if [ "$HAVE_SUDO" == "True" ]; then
+    apt_ensure vim-gnome
+    if [ ! -d ~/.local/share/vim ]; then
         if [ "$(type -P ctags)" = "" ]; then
             sudo apt install -y exuberant-ctags 
             sudo apt install libgtk-3-dev gnome-devel ncurses-dev build-essential libtinfo-dev -y 
         fi
     fi
-    # sudo apt install -y vim-gnome
+
+    # If you need to build from scratch
     #source ~/local/build_scripts/init_vim.sh
     #do_vim_build
+
+    # Old code, no longer needed I think
     #python ~/local/init/ensure_vim_plugins.py 
 fi
 
+
+# 
 source ~/local/vim/init_vim.sh
 if [ ! -d ~/.vim/autoload/plug.vim ]; then
     curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -219,7 +237,6 @@ fi
 
 # TODO: setup secrets and internal state
 
-
 source ~/.bashrc
 
 
@@ -235,15 +252,21 @@ fi
 
 if [[ "$IS_HEADLESS" == "False" ]]; then
     #install_transcrypt
-    git clone https://github.com/Erotemic/transcrypt.git ~/code/transcrypt
+    git clone https://github.com/Erotemic/transcrypt.git $HOME/code/transcrypt
 
     source $HOME/local/init/utils.sh
+    mkdir -p $HOME/.local/bin
     safe_symlink $HOME/code/transcrypt/transcrypt $HOME/.local/bin/transcrypt
 
     echo "YOU WILL NEED TO INPUT PASSWORDS"
-    git clone https://gitlab.com/Erotemic/erotemic.git
+    # NOTE: if you have valid gitlab ssh keys, you can change to a git@ url
+    git clone https://gitlab.com/Erotemic/erotemic.git $HOME/code/erotemic
+    # Input username
+    # Input password
     cd $HOME/code/erotemic
 
     # The user must supply a password here
     transcrypt -c aes-256-cbc 
+    # Reply no to using a random password
+    # Input password
 fi

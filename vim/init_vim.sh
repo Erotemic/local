@@ -15,6 +15,11 @@ fi
 
 mkdir -p ~/.vim_tmp
 
+
+# TODO: ensure we pip install vimtk requirements
+# ubelt, pyperclip
+
+
 #ln -s 
 #VIMRC_FPATH=$HOME/.vimrc
 #if [[ -L "$VIMRC_FPATH" ]]; then 
