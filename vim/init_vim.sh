@@ -19,6 +19,12 @@ mkdir -p ~/.vim_tmp
 # TODO: ensure we pip install vimtk requirements
 # ubelt, pyperclip
 
+hack_vimtk_deps(){
+    deactivate_venv
+    pip3 install pyperclip psutil pep8 autopep8 flake8 pylint pytest --user
+
+}
+
 
 #ln -s 
 #VIMRC_FPATH=$HOME/.vimrc

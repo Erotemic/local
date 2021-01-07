@@ -134,20 +134,8 @@ deactivate_venv
 PY_EXE="$(system_python)"
 
 
-apt_ensure(){
-    DEBIAN_PKG_NAME=$1
-    RESULT=$(dpkg -l | grep "ii $DEBIAN_PKG_NAME")
-    if [ "$RESULT" == "" ]; then 
-        echo "Do not have DEBIAN_PKG_NAME='$DEBIAN_PKG_NAME'"
-        sudo apt install -y $DEBIAN_PKG_NAME
-    else
-        echo "Already have DEBIAN_PKG_NAME='$DEBIAN_PKG_NAME'"
-    fi
-}
-
-apt_ensure python3-pip
-
 if [ "$HAVE_SUDO" == "True" ]; then
+    apt_ensure python3-pip
     apt_ensure vim-gnome
     if [ ! -d ~/.local/share/vim ]; then
         if [ "$(type -P ctags)" = "" ]; then
@@ -178,36 +166,18 @@ fi
 #fi
 
 
-simple_check_install(){
-    for EXE_NAME in $@
-    do
-        if [[ "$EXE_NAME" == "" ]]; then
-            sudo apt install $EXE_NAME -y
-        else
-            echo "ALREADY HAVE $EXE_NAME"
-        fi
-    done
-}
-
-check_install2(){
-    EXE_NAME=$1
-    shift # past argument
-    if [[ "$EXE_NAME" == "" ]]; then
-        sudo apt install -y $@
-    else
-        echo "ALREADY HAVE $EXE_NAME"
-    fi
-}
-
-
 
 
 if [[ "$IS_HEADLESS" == "False" ]]; then
-    simple_check_install git curl htop tmux tree astyle vlc redshift sshfs wmctrl xdotool xclip git
-    check_install2 gcc gcc g++ gfortran build-essential
-    check_install2 7z p7zip-full
-    check_install2 gpg pgpgpg
-    check_install2 sensors lm-sensors
+    #apt_ensure git curl htop tmux tree astyle vlc redshift sshfs wmctrl xdotool xclip git
+    #apt_ensure git curl htop tmux tree astyle vlc sshfs wmctrl xdotool xclip git
+    apt_ensure git curl htop tmux tree sshfs wmctrl xdotool xclip 
+    apt_ensure gcc gcc g++ gfortran build-essential
+    apt_ensure 7z p7zip-full
+    apt_ensure gpg pgpgpg
+    apt_ensure net-tools
+    
+    apt_ensure sensors lm-sensors
     if [[ "$(type -P google-chrome)" == "" ]]; then
         install_chrome
 
@@ -270,3 +240,10 @@ if [[ "$IS_HEADLESS" == "False" ]]; then
     # Reply no to using a random password
     # Input password
 fi
+
+## 
+## TODO: get the netharn supersetup working with my "repos"
+## Do this after the encrypted repo is setup
+## Then do it once more, as we may pull more secret repos
+# $(system_python) ~/local/init/util_git1.py 'clone_repos'
+# $(system_python) ~/local/init/util_git1.py 'clone_repos'

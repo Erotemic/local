@@ -365,3 +365,43 @@ unlink_or_backup()
         mv $TARGET $TARGET."$(date +"%T")".old
     fi
 }
+
+
+apt_ensure(){
+    __doc__="
+    Checks to see if the pacakges are installed (avoiding sudo if possible) and
+    installs the packages if needed.
+
+    Args:
+        *ARGS : one or more requested packages 
+
+    Example:
+        apt_ensure git curl htop 
+
+    Ignore:
+        REQUESTED_PKGS=(git curl htop) 
+    "
+    # Note the $@ is not actually an array, but we can convert it to one
+    # https://linuxize.com/post/bash-functions/#passing-arguments-to-bash-functions
+    ARGS=("$@")
+    MISS_PKGS=()
+    HIT_PKGS=()
+    for PKG_NAME in ${ARGS[@]}
+    do
+        #apt_ensure_single $EXE_NAME
+        RESULT=$(dpkg -l "$PKG_NAME" | grep "^ii *$PKG_NAME")
+        if [ "$RESULT" == "" ]; then 
+            echo "Do not have PKG_NAME='$PKG_NAME'"
+            MISS_PKGS=(${MISS_PKGS[@]} "$PKG_NAME")
+        else
+            echo "Already have PKG_NAME='$PKG_NAME'"
+            HIT_PKGS=(${HIT_PKGS[@]} "$PKG_NAME")
+        fi
+    done
+
+    if [ "${#MISS_PKGS}" -gt 0 ]; then
+        sudo apt install -y "${MISS_PKGS[@]}"
+    else
+        echo "No missing packages"
+    fi
+}
