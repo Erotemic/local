@@ -369,8 +369,10 @@ unlink_or_backup()
 
 apt_ensure(){
     __doc__="
-    Checks to see if the pacakges are installed (avoiding sudo if possible) and
-    installs the packages if needed.
+    Checks to see if the pacakges are installed and installs them if needed.
+
+    The main reason to use this over normal apt install is that it avoids sudo
+    if we already have all requested packages.
 
     Args:
         *ARGS : one or more requested packages 

@@ -49,30 +49,13 @@ echo "HAVE_SUDO = $HAVE_SUDO"
 
 
 if [ "$HAVE_SUDO" == "True" ]; then
-
-    if [[ "$(type -P git)" == "" ]]; then
-        sudo apt install git -y
-    fi
-
-    if [[ "$(type -P gcc)" == "" ]]; then
-        sudo apt install gcc g++ gfortran build-essential -y
-    fi
-
-    if [[ "$(type -P curl)" == "" ]]; then
-        sudo apt install curl -y
-    fi
-
-    if [[ "$(type -P htop)" == "" ]]; then
-        sudo apt install htop tmux tree -y
-    fi
-
-    if [[ "$(type -P sshfs)" == "" ]]; then
-        sudo apt install sshfs -y
-    fi
-
-    if [[ "$(type -P astyle)" == "" ]]; then
-        sudo apt install astyle p7zip-full pgpgpg lm-sensors -y
-    fi
+    apt_ensure git 
+    apt_ensure gcc g++ build-essential 
+    apt_ensure gfortran 
+    apt_ensure curl 
+    apt_ensure htop tmux tree 
+    apt_ensure sshfs 
+    apt_ensure astyle p7zip-full pgpgpg lm-sensors
 else
     echo "We dont have sudo. Hopefully we wont need it"
 fi
@@ -139,8 +122,8 @@ if [ "$HAVE_SUDO" == "True" ]; then
     apt_ensure vim-gnome
     if [ ! -d ~/.local/share/vim ]; then
         if [ "$(type -P ctags)" = "" ]; then
-            sudo apt install -y exuberant-ctags 
-            sudo apt install libgtk-3-dev gnome-devel ncurses-dev build-essential libtinfo-dev -y 
+            apt_ensure exuberant-ctags 
+            apt_ensure libgtk-3-dev gnome-devel ncurses-dev build-essential libtinfo-dev -y 
         fi
     fi
 
@@ -169,15 +152,16 @@ fi
 
 
 if [[ "$IS_HEADLESS" == "False" ]]; then
-    #apt_ensure git curl htop tmux tree astyle vlc redshift sshfs wmctrl xdotool xclip git
+    #apt_ensure redshift astyle
+    sshfs wmctrl xdotool xclip git
     #apt_ensure git curl htop tmux tree astyle vlc sshfs wmctrl xdotool xclip git
     apt_ensure git curl htop tmux tree sshfs wmctrl xdotool xclip 
     apt_ensure gcc gcc g++ gfortran build-essential
     apt_ensure 7z p7zip-full
     apt_ensure gpg pgpgpg
     apt_ensure net-tools
-    
     apt_ensure sensors lm-sensors
+
     if [[ "$(type -P google-chrome)" == "" ]]; then
         install_chrome
 
