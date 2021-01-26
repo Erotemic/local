@@ -1413,6 +1413,21 @@ gmail_api(){
     pip install --upgrade google-api-python-client
 }
 
+#install_docker_snap(){
+#    sudo snap connect docker:home
+#    #If you are using an alternative snap-compatible Linux distribution
+#    #("classic" in snap lingo), and would like to run docker as a normal user:
+
+#    # Add self to docker group
+#    sudo groupadd docker
+#    sudo usermod -aG docker $USER
+#    # NEED TO LOGOUT / LOGIN to revaluate groups
+#    su - $USER  # or we can do this
+
+#    sudo snap disable docker
+#    sudo snap enable docker
+#}
+
 
 docker(){
     # https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/#set-up-the-repository
@@ -1421,15 +1436,7 @@ docker(){
      sudo apt install apt-transport-https ca-certificates curl software-properties-common
      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
      sudo apt-key fingerprint 0EBFCD88
-     IS_1604=$(python -c "import ubelt as ub; print('16.04' in ub.cmd('lsb_release -a')['out'])")
-     IS_1804=$(python -c "import ubelt as ub; print('18.04' in ub.cmd('lsb_release -a')['out'])")
-     if [ "$IS_1604" == "True" ]; then
-         sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-     fi
-     if [ "$IS_1804" == "True" ]; then
-         # Hack: docker-ce doesnt have an 18.04 package yet.
-         sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu artful stable"
-     fi
+     sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
      
      sudo apt update
      sudo apt install -y docker-ce
