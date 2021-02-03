@@ -123,7 +123,7 @@ if [ "$HAVE_SUDO" == "True" ]; then
     if [ ! -d ~/.local/share/vim ]; then
         if [ "$(type -P ctags)" = "" ]; then
             apt_ensure exuberant-ctags 
-            apt_ensure libgtk-3-dev gnome-devel ncurses-dev build-essential libtinfo-dev -y 
+            apt_ensure libgtk-3-dev gnome-devel ncurses-dev build-essential libtinfo-dev
         fi
     fi
 
@@ -152,14 +152,14 @@ fi
 
 
 if [[ "$IS_HEADLESS" == "False" ]]; then
-    #apt_ensure redshift astyle
-    sshfs wmctrl xdotool xclip git
-    #apt_ensure git curl htop tmux tree astyle vlc sshfs wmctrl xdotool xclip git
-    apt_ensure git curl htop tmux tree sshfs wmctrl xdotool xclip 
+    #apt_ensure redshift  # ubuntu has nightlight now
+    apt_ensure caffeine vlc
+    apt_ensure sshfs wmctrl xdotool xclip git astyle
+    apt_ensure git curl htop tmux tree 
     apt_ensure gcc gcc g++ gfortran build-essential
     apt_ensure 7z p7zip-full
     apt_ensure gpg pgpgpg
-    apt_ensure net-tools
+    apt_ensure net-tools nmap
     apt_ensure sensors lm-sensors
 
     if [[ "$(type -P google-chrome)" == "" ]]; then
