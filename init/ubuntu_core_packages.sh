@@ -1413,6 +1413,22 @@ gmail_api(){
     pip install --upgrade google-api-python-client
 }
 
+podman(){
+
+    sudo rm /etc/apt/sources.list.d/nvidia-docker.*
+    
+
+    cat /etc/apt/sources.list
+
+    ls /etc/apt/sources.list.d/
+    cat /etc/apt/sources.list.d/*.list | grep nvidia-docker
+
+    # https://clouding.io/hc/en-us/articles/360011382320-How-to-Install-and-Use-Podman-on-Ubuntu-18-04
+    sudo apt-get install software-properties-common -y
+    sudo add-apt-repository -y ppa:projectatomic/ppa
+    sudo apt-get install podman -y
+}
+
 
 docker(){
     # https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/#set-up-the-repository
@@ -1445,7 +1461,7 @@ docker(){
     docker run hello-world
     sudo docker run hello-world
 
-
+    # OLD DO NOT USE
     # NVIDIA-Docker
     curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | \
       sudo apt-key add -
@@ -1998,4 +2014,25 @@ fix_bluetooth_headphones(){
     pulseaudio --start
 
     sudo apt install pavucontrol -y
+}
+
+
+compress_image_directory(){
+    __doc__="
+
+    https://www.riksoft.it/wikiriks/software/7zip-maximum-compression-settings-for-images
+    https://superuser.com/questions/281573/what-are-the-best-options-to-use-when-compressing-files-using-7-zip
+
+    ### 7z archive options
+
+    -mx=<num> # compression level between 0-9 (5 is default).
+
+    -m0=<method>  # deflate lzma ppmd
+    "
+    # create an lzma archive with maximum compression
+    7z a -m0=lzma -mx=9 archive.7z dpath
+
+    # "ultra" settings
+
+    7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on archive.7z dir1
 }
