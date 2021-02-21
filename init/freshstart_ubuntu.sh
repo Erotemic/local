@@ -1010,18 +1010,25 @@ install_fonts()
     7z x cm-unicode-0.7.0-ttf.tar.xz && 7z x cm-unicode-0.7.0-ttf.tar && rm cm-unicode-0.7.0-ttf.tar
 
     _SUDO ""
-    FONT_DIR=$HOME/.fonts
-
     #_SUDO sudo
     #FONT_DIR=/usr/share/fonts
-
+    FONT_DIR=$HOME/.fonts
     TTF_FONT_DIR=$FONT_DIR/truetype
     OTF_FONT_DIR=$FONT_DIR/truetype
-
     mkdir -p $TTF_FONT_DIR
     mkdir -p $OTF_FONT_DIR
 
+    cp $HOME/code/erotemic/safe/assets/DyslexicBundle.zip $HOME/tmp
+    mkdir -p $HOME/tmp/DyslexicBundle
+    rm -rf $HOME/tmp/DyslexicBundle
+    mkdir -p $HOME/tmp/DyslexicBundle
+    unzip DyslexicBundle.zip -d $HOME/tmp/DyslexicBundle
+    ls $HOME/tmp/DyslexicBundle
+    $_SUDO cp -v $HOME/tmp/DyslexicBundle/*.ttf $TTF_FONT_DIR/
+    $_SUDO cp -v $HOME/tmp/DyslexicBundle/*.otf $OTF_FONT_DIR/
 
+    ls ~/Dropbox/Fonts/
+    cd ~/Dropbox/Fonts/
     $_SUDO cp -v ~/Dropbox/Fonts/*.ttf $TTF_FONT_DIR/
     $_SUDO cp -v ~/Dropbox/Fonts/*.otf $OTF_FONT_DIR/
     $_SUDO cp -v ~/tmp/open-dyslexic-master/otf/*.otf $OTF_FONT_DIR/

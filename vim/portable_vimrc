@@ -136,6 +136,8 @@ Plug 'ervandew/supertab'
 Plug 'davidhalter/jedi-vim'
 Plug 'LaTeX-Box-Team/LaTeX-Box'
 
+Plug 'https://github.com/airblade/vim-gitgutter'
+
 "Plug 'jmcantrell/vim-virtualenv'
 "Plug 'cjrh/vim-conda'
 
