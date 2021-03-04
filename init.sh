@@ -91,6 +91,7 @@ if [ ! -d ~/.ssh ]; then
     echo "ENSURE SSH"
     mkdir -p ~/.ssh 
     chmod 700 ~/.ssh
+
     if [ ! -f ~/.ssh/authorized_keys ]; then
         touch ~/.ssh/authorized_keys
         chmod 640 ~/.ssh/authorized_keys

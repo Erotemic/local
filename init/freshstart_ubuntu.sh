@@ -4,10 +4,13 @@ source $HOME/local/init/utils.sh
 basic_apt_install(){
 
     # High priority
-    sudo apt install htop git tmux tree curl gcc g++ gfortran build-essential -y
+    sudo apt install htop git tmux tree curl gcc g++ gfortran build-essential p7zip-full curl -y
 
     # Mid priority
-    sudo apt install expect exuberant-ctags graphviz imagemagick gitk wmctrl xclip xdotool xsel vim-gnome p7zip-full valgrind -y
+    sudo apt install sshfs pgpgpg sensors lm-sensors -y
+
+    # Mid priority
+    sudo apt install expect exuberant-ctags graphviz imagemagick gitk wmctrl xclip xdotool xsel vim-gnome  valgrind -y
 }
 
 
