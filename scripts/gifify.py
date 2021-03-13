@@ -21,6 +21,8 @@ def main():
     parser.add_argument('-i', '--input', nargs='*', help='alternate way to specify list of images')
     parser.add_argument('-d', '--delay', nargs=1, type=float, default=10, help='delay between frames')
     parser.add_argument('-o', '--output', default='out.gif', help='output file')
+    parser.add_argument('--max_width', default=None, type=int, help='resize to max width')
+    parser.add_argument('--frames_per_second', default=10, type=int, help='number of frames per second')
     args, unknown = parser.parse_known_args()
     # print('unknown = {!r}'.format(unknown))
     # print('args = {!r}'.format(args))
@@ -75,11 +77,13 @@ def main():
         output_fpath = ns['output']
         ns['delay']
         # ns['delay']
-        in_framerate = 10
-        ffmpeg_animate_frames(frame_fpaths, output_fpath, in_framerate=in_framerate)
+        in_framerate = ns['frames_per_second']
+        ffmpeg_animate_frames(frame_fpaths, output_fpath,
+                              in_framerate=in_framerate,
+                              max_width=ns['max_width'])
 
 
-def ffmpeg_animate_frames(frame_fpaths, output_fpath, in_framerate=1, verbose=1):
+def ffmpeg_animate_frames(frame_fpaths, output_fpath, in_framerate=1, verbose=1, max_width=None):
     """
     Use ffmpeg to transform a series of frames into a video.
 
@@ -92,6 +96,9 @@ def ffmpeg_animate_frames(frame_fpaths, output_fpath, in_framerate=1, verbose=1)
 
         in_framerate (int): number of input frames per second to use (lower is
             slower)
+
+    References:
+        https://superuser.com/questions/624563/how-to-resize-a-video-to-make-it-smaller-with-ffmpeg
 
     Example:
         >>> import ndsampler
@@ -155,6 +162,11 @@ def ffmpeg_animate_frames(frame_fpaths, output_fpath, in_framerate=1, verbose=1)
         fmtkw.update(dict(
             # OUT_FRAMERATE=5,
         ))
+
+        if max_width is not None:
+            output_options += [
+                '-vf scale="{}:-1"'.format(max_width)
+            ]
 
         if output_fpath.endswith('.mp4'):
             output_options += [
