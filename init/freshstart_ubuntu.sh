@@ -1025,7 +1025,7 @@ install_fonts()
     mkdir -p $HOME/tmp/DyslexicBundle
     rm -rf $HOME/tmp/DyslexicBundle
     mkdir -p $HOME/tmp/DyslexicBundle
-    unzip DyslexicBundle.zip -d $HOME/tmp/DyslexicBundle
+    unzip $HOME/code/erotemic/safe/assets/DyslexicBundle.zip -d $HOME/tmp/DyslexicBundle
     ls $HOME/tmp/DyslexicBundle
     $_SUDO cp -v $HOME/tmp/DyslexicBundle/*.ttf $TTF_FONT_DIR/
     $_SUDO cp -v $HOME/tmp/DyslexicBundle/*.otf $OTF_FONT_DIR/
