@@ -116,6 +116,8 @@ alias mk='cd $CODE_DIR/mkinit'
 alias hes='cd $CODE_DIR/hesaff'
 alias work='cd ~/work'
 
+alias vid='cd ~/data/dvc-repos/viame_dvc'
+
 
 alias vdd='vd ~/work'
 alias ebrc='gvim ~/.bashrc'
