@@ -407,3 +407,151 @@ apt_ensure(){
         echo "No missing packages"
     fi
 }
+
+exthist(){
+    __doc__="
+    Create a histogram of unique extensions in a directory.
+
+    Usage:
+       exthist [-r] [dpath...]
+
+    Args:
+        dpath
+            One or more directories to perform this action on. If unspecified
+            uses the cwd.
+
+        -r, --recursive
+            if specified do this recursively
+
+    References:
+        https://stackoverflow.com/questions/1842254/distinct-extensions-in-a-folder
+
+    Example:
+        __SOURCED_EROTEMIC_UTILS__=0
+        source $HOME/local/init/utils.sh
+        exthist /bin /etc -r
+        exthist $HOME
+    "
+    local RECURSIVE=""
+    local DPATH_LIST=()
+    local DPATH=""
+    local SUB_DPATH=""
+    while [[ $# -gt 0 ]]
+    do
+        local key="$1"
+        case $key in
+            -r|--recursive)
+            RECURSIVE=True
+            shift # past argument
+            ;;
+            *)    # unknown option
+            echo $1
+            # all other positional args specify directories
+            DPATH_LIST+=("$1") 
+            shift # past argument
+            ;;
+        esac
+    done
+    if [[ ${#DPATH_LIST[@]} -eq 0 ]]; then
+        # Default to cwd
+        DPATH_LIST=(.)
+    fi
+
+    for DPATH in "${DPATH_LIST[@]}"; do
+        if [ "$RECURSIVE" == "True" ]; then
+            # TODO: could pass more arguments to find to restrict recursion
+            local FIND_RESULT=$(find $DPATH -type d)
+            for SUB_DPATH in $FIND_RESULT; do
+                echo "SUB_DPATH=$SUB_DPATH"
+                find $SUB_DPATH -maxdepth 1 -type f  | rev | cut -d. -f1 | cut -d/ -f1 | rev  | tr '[:upper:]' '[:lower:]' | sort | uniq --count | sort -rn
+            done
+        else
+            echo "DPATH=$DPATH"
+            # Logic is
+            # reverse the string, 
+            # remove everything after the "first" . and / 
+            # reverse again (aka we got everything after the last . or /)
+            # convert to lowercase
+            # sort, unique, and count
+            find $DPATH -maxdepth 1 -type f  | rev | cut -d. -f1 | cut -d/ -f1 | rev  | tr '[:upper:]' '[:lower:]' | sort | uniq --count | sort -rn
+        fi
+    done 
+}
+
+
+bash_array_repr(){
+    __doc__='
+    Given a bash array, this should print a literal copy-pastable
+    representation
+
+    Example:
+        ARR=(1 "2 3" 4)
+        bash_array_repr "${ARR[@]}"
+    '
+    ARGS=("$@")
+    if [ "${#ARGS}" -gt 0 ]; then
+        # Not sure if the double or single quotes is better here
+        echo "($(printf "'%s' " "${ARGS[@]}"))"
+        #echo "($(printf "\'%s\' " "${ARGS[@]}"))"
+    else
+        echo "()"
+    fi
+}
+
+
+#recursive_ext_hist(){
+#    ROOT=$1
+#    FIND_RESULT=$(find $ROOT -type d)
+#    for dpath in $FIND_RESULT; do
+#        ext_hist $dpath
+#    done
+#}
+
+#__parse_args(){
+#    __doc__="
+#    TODO: Can we develop a simple version of something like argparse for bash
+#    "
+#    if [[ $# -gt 0 ]]; then
+#        POSITIONAL=()
+#        while [[ $# -gt 0 ]]
+#        do
+#            key="$1"
+
+#            case $key in
+#                -u|--unmount)
+#                UNMOUNT=YES
+#                shift # past argument
+#                ;;
+#                -f|--force)
+#                FORCE=YES
+#                shift # past argument
+#                ;;
+#                *)    # unknown option
+#                POSITIONAL+=("$1") # save it in an array for later
+#                shift # past argument
+#                ;;
+#            esac
+#        done
+#        set -- "${POSITIONAL[@]}" # restore positional parameters
+
+#        if [[ ${#POSITIONAL[@]} -gt 0 ]]; then
+#            # User specified a specific set of remotes
+#            # Always force when user specifies the remotes
+#            FORCE=YES
+#            for REMOTE in "${POSITIONAL[@]}" 
+#            do :
+#                echo "REMOTE = $REMOTE"
+#                if [ "$UNMOUNT" == "YES" ]; then
+#                    echo "FORCE = $FORCE"
+#                    echo "REMOTE = $REMOTE"
+#                    unmount_if_mounted $REMOTE $FORCE
+#                else
+#                    mount_remote_if_available $REMOTE $FORCE
+#                fi
+#            done
+#        else
+#            echo "ERROR NEED TO SPECIFY REMOTE"
+#        fi
+#    fi
+    
+#}
