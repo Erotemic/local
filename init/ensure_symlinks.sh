@@ -8,7 +8,7 @@ ensure_config_symlinks()
         source ~/local/init/ensure_symlinks.sh && ensure_config_symlinks --nosudo
     '''
 
-    HAVE_SUDO=$(have_sudo)
+    HAVE_SUDO=${HAVE_SUDO:=$(have_sudo)}
     echo "HAVE_SUDO = $HAVE_SUDO"
     NOSUDO=$1
 

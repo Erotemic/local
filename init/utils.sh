@@ -408,6 +408,25 @@ apt_ensure(){
     fi
 }
 
+compress_path(){
+    __doc__="
+    Replace explicit home dir with tilde
+
+    References:
+        https://stackoverflow.com/questions/10036255/is-there-a-good-way-to-replace-home-directory-with-tilde-in-bash
+
+    Example:
+        compress_path $HOME/hello
+        compress_path /hello
+    "
+    local name=$1
+    if [[ "$name" =~ ^"$HOME"(/|$) ]]; then
+        name="~${name#$HOME}"
+        echo $name
+    fi
+    echo $name
+}
+
 exthist(){
     __doc__="
     Create a histogram of unique extensions in a directory.
@@ -463,7 +482,7 @@ exthist(){
             local FIND_RESULT=$(find $DPATH -type d)
             for SUB_DPATH in $FIND_RESULT; do
                 echo "SUB_DPATH=$SUB_DPATH"
-                find $SUB_DPATH -maxdepth 1 -type f  | rev | cut -d. -f1 | cut -d/ -f1 | rev  | tr '[:upper:]' '[:lower:]' | sort | uniq --count | sort -rn
+                find $SUB_DPATH -maxdepth 1 -xtype f  | rev | cut -d. -f1 | cut -d/ -f1 | rev  | tr '[:upper:]' '[:lower:]' | sort | uniq --count | sort -rn
             done
         else
             echo "DPATH=$DPATH"
@@ -473,7 +492,7 @@ exthist(){
             # reverse again (aka we got everything after the last . or /)
             # convert to lowercase
             # sort, unique, and count
-            find $DPATH -maxdepth 1 -type f  | rev | cut -d. -f1 | cut -d/ -f1 | rev  | tr '[:upper:]' '[:lower:]' | sort | uniq --count | sort -rn
+            find $DPATH -maxdepth 1 -xtype f  | rev | cut -d. -f1 | cut -d/ -f1 | rev  | tr '[:upper:]' '[:lower:]' | sort | uniq --count | sort -rn
         fi
     done 
 }

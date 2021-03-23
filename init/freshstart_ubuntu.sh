@@ -1452,7 +1452,15 @@ brio_webcam(){
     v4l2-ctl -d /dev/video0 --set-ctrl=focus_auto=1
     v4l2-ctl -d /dev/video0 --set-ctrl=exposure_auto_priority=1
     v4l2-ctl -d /dev/video0 --set-ctrl=backlight_compensation=0
+    v4l2-ctl -d /dev/video0 --set-ctrl=focus_absolute=10
+    v4l2-ctl -d /dev/video0 --set-ctrl=zoom_absolute=100
     
+    #v4l2-ctl -d /dev/video0 --set-ctrl=focus_auto=0
+    #v4l2-ctl -d /dev/video0 --set-ctrl=focus_absolute=255
+    #v4l2-ctl -d /dev/video0 --set-ctrl=focus_absolute=0
+    #v4l2-ctl -d /dev/video0 --set-ctrl=zoom_absolute=100
+    v4l2-ctl -d /dev/video0 --set-ctrl=zoom_absolute=150
+    v4l2-ctl -d /dev/video0 --set-ctrl=zoom_absolute=180
 
 }
 

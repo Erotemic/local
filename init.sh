@@ -15,13 +15,14 @@ CommandLine:
     or
 
     # Customize settings (if unset they will choose sensible defaults)
-    HAVE_SUDO=False
-    IS_HEADLESS=True
-    WITH_SSH_KEYS=False
+    export HAVE_SUDO=False
+    export IS_HEADLESS=True
+    export WITH_SSH_KEYS=False
+    source ~/local/init.sh
 
-    HAVE_SUDO=True
-    IS_HEADLESS=False
-
+    export HAVE_SUDO=True
+    export IS_HEADLESS=False
+    export WITH_SSH_KEYS=False
     source ~/local/init.sh
 """
 
