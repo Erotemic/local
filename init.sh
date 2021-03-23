@@ -197,7 +197,7 @@ source ~/.bashrc
 
 
 source $HOME/local/init/freshstart_ubuntu.sh
-if [[ "" == "" ]]; then
+if [[ "$WITH_SSH_KEYS" == "True" ]]; then
     # 
     setup_single_use_ssh_keys
 

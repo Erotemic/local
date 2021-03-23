@@ -621,8 +621,25 @@ setup_conda_env(){
     # Miniconda3-latest-Windows-x86_64.exe
     mkdir -p ~/tmp
     cd ~/tmp
-    CONDA_INSTALL_SCRIPT=Miniconda3-latest-Linux-x86_64.sh
+
+    https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+
+    # See https://docs.conda.io/en/latest/miniconda_hashes.html for updating
+    # to newer versions
+
+    #CONDA_INSTALL_SCRIPT=Miniconda3-latest-Linux-x86_64.sh
+    CONDA_INSTALL_SCRIPT=Miniconda3-py38_4.9.2-Linux-x86_64.sh
+    CONDA_EXPECTED_SHA256_HASH=1314b90489f154602fd794accfc90446111514a5a72fe1f71ab83e07de9504a7
     curl https://repo.anaconda.com/miniconda/$CONDA_INSTALL_SCRIPT > $CONDA_INSTALL_SCRIPT
+    CONDA_GOT_SHA256_HASH=$(sha256sum $CONDA_INSTALL_SCRIPT | cut -d' ' -f1)
+
+    if [[ "$CONDA_GOT_SHA256_HASH" != "$CONDA_EXPECTED_SHA256_HASH" ]]; then
+        echo "Downloaded file does not match hash! DO NOT CONTINUE!"
+        exit 1;
+    else
+        echo "Downloaded file matches expected hash"
+    fi
+
     #cat $CONDA_INSTALL_SCRIPT
     chmod +x $CONDA_INSTALL_SCRIPT 
 
