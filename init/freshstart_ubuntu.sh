@@ -610,6 +610,59 @@ dev_fix_venv_mismatched_version(){
 }
 
 
+setup_poetry_env(){
+
+    mkdir -p ~/tmp
+    cd ~/tmp
+    URL=https://raw.githubusercontent.com/python-poetry/poetry/1.1.5/get-poetry.py
+    EXPECT_SHA256=e973b3badb95a916bfe250c22eeb7253130fd87312afa326eb02b8bdcea8f4a7
+    curl -sSL $URL > get-poetry.py
+    GOT_SHA256=$(sha256sum get-poetry.py | cut -d' ' -f1)
+    # For security, it is important to verify the hash
+    if [[ "$GOT_SHA256" != "$EXPECT_SHA256" ]]; then
+        echo "Downloaded file does not match hash! DO NOT CONTINUE!"
+        exit 1;
+    fi
+    python get-poetry.py
+
+    #$HOME/.poetry/bin/poetry self update
+    #$HOME/.poetry/bin/poetry env info
+
+    PYENV_PREFIX=$(pyenv prefix)
+    VENV_PREFIX=$PYENV_PREFIX/envs
+    mkdir -p $VENV_PREFIX
+
+    python -m venv $VENV_PREFIX/py38
+    source $VENV_PREFIX/py38/bin/activate
+    
+}
+
+setup_pyenv(){
+    git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+    cd ~/.pyenv && src/configure && make -C src
+
+    export PYENV_ROOT="$HOME/.pyenv"
+    export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(~/.pyenv/bin/pyenv init -)"
+
+    #sudo apt install libbz2-dev
+    #sudo apt install libreadline-dev
+    sudo apt-get install -y \
+        make build-essential libssl-dev zlib1g-dev \
+        libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
+        libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl
+    
+    pyenv install 3.8.8
+
+    pyenv global 3.8.8
+    pyenv shell 3.8.8
+    
+    
+    
+}
+
+
+
 
 setup_conda_env(){
 
@@ -628,26 +681,28 @@ setup_conda_env(){
     # to newer versions
 
     #CONDA_INSTALL_SCRIPT=Miniconda3-latest-Linux-x86_64.sh
-    CONDA_INSTALL_SCRIPT=Miniconda3-py38_4.9.2-Linux-x86_64.sh
-    CONDA_EXPECTED_SHA256_HASH=1314b90489f154602fd794accfc90446111514a5a72fe1f71ab83e07de9504a7
-    curl https://repo.anaconda.com/miniconda/$CONDA_INSTALL_SCRIPT > $CONDA_INSTALL_SCRIPT
-    CONDA_GOT_SHA256_HASH=$(sha256sum $CONDA_INSTALL_SCRIPT | cut -d' ' -f1)
+    #curl_check(){
+    #}
 
-    if [[ "$CONDA_GOT_SHA256_HASH" != "$CONDA_EXPECTED_SHA256_HASH" ]]; then
+    # To update to a newer version see:
+    # https://docs.conda.io/en/latest/miniconda_hashes.html for updating
+    CONDA_INSTALL_SCRIPT=Miniconda3-py38_4.9.2-Linux-x86_64.sh
+    CONDA_EXPECTED_SHA256=1314b90489f154602fd794accfc90446111514a5a72fe1f71ab83e07de9504a7
+    curl https://repo.anaconda.com/miniconda/$CONDA_INSTALL_SCRIPT > $CONDA_INSTALL_SCRIPT
+    CONDA_GOT_SHA256=$(sha256sum $CONDA_INSTALL_SCRIPT | cut -d' ' -f1)
+    # For security, it is important to verify the hash
+    if [[ "$CONDA_GOT_SHA256" != "$CONDA_EXPECTED_SHA256_HASH" ]]; then
         echo "Downloaded file does not match hash! DO NOT CONTINUE!"
         exit 1;
-    else
-        echo "Downloaded file matches expected hash"
     fi
-
-    #cat $CONDA_INSTALL_SCRIPT
     chmod +x $CONDA_INSTALL_SCRIPT 
 
     # Install miniconda to user local directory
     _CONDA_ROOT=$HOME/.local/conda
     sh $CONDA_INSTALL_SCRIPT -b -p $_CONDA_ROOT
-
     source $_CONDA_ROOT/etc/profile.d/conda.sh
+
+    #cat $CONDA_INSTALL_SCRIPT
 
     conda update -y -n base conda
     conda create -y -n py38 python=3.8

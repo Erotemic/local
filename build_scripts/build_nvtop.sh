@@ -3,7 +3,7 @@ bash ~/local/build_scripts/build_nvtop.sh
 
 Deps:
     sudo apt install cmake libncurses5-dev git
-    sudo apt install libncurses5-dev
+    sudo apt install libncurses5-dev libncursesw5-dev
     sudo apt install libncursesw5-dev
 
     yum install ncurses-devel
