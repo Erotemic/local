@@ -3,6 +3,16 @@
 function! ToggleFont(...) 
 Python2or3 << endpython3
 import vim
+#import sys
+#print(sys.version_info)
+#print(sys.prefix)
+#print(sys.executable)
+# We got this weirdness at one point
+# not sure why sys.version was 3.8.5, but exe was 3.9.2
+#sys.version_info(major=3, minor=8, micro=5, releaselevel='final', serial=0)
+#/home/joncrall/.pyenv/versions/3.9.2/envs/py39
+#/home/joncrall/.pyenv/versions/3.9.2/envs/py39/bin/python3
+
 def python_toggle_font():
     import vim
     import pyvim_funcs
@@ -28,6 +38,8 @@ endfunction
 
 function! SetFuzzyFont(fontid)
 Python2or3 << endpython3
+import sys
+print(sys.version_info)
 import pyvim_funcs
 request = vim.eval('a:fontid')
 pyvim_funcs.pyrun_fuzzyfont(request)
@@ -44,8 +56,8 @@ command! FontDecrease call FontDecrease()
 function! FontMenu()
 Python2or3 << endpython3
 import pyvim_funcs
-import imp
-imp.reload(pyvim_funcs)
+#import imp
+#imp.reload(pyvim_funcs)
 known_fonts = pyvim_funcs.available_fonts()
 request = pyvim_funcs.vim_popup_menu(known_fonts)
 pyvim_funcs.pyrun_fuzzyfont(request)

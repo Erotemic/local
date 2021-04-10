@@ -638,27 +638,58 @@ setup_poetry_env(){
 }
 
 setup_pyenv(){
-    git clone https://github.com/pyenv/pyenv.git ~/.pyenv
-    cd ~/.pyenv && src/configure && make -C src
-
-    export PYENV_ROOT="$HOME/.pyenv"
-    export PATH="$PYENV_ROOT/bin:$PATH"
-    eval "$(~/.pyenv/bin/pyenv init -)"
-
-    #sudo apt install libbz2-dev
-    #sudo apt install libreadline-dev
+    # Install requirements for building Python
     sudo apt-get install -y \
         make build-essential libssl-dev zlib1g-dev \
         libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
         libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl
-    
-    pyenv install 3.8.8
 
-    pyenv global 3.8.8
-    pyenv shell 3.8.8
+    # Download pyenv
+    export PYENV_ROOT="$HOME/.pyenv"
+    if [[ ! -d "$PYENV_ROOT" ]]; then
+        git clone https://github.com/pyenv/pyenv.git $PYENV_ROOT
+        (cd $PYENV_ROOT && src/configure && make -C src)
+    fi
+
+    # We will need to add something similar in your bashrc
+    if [ -d "$PYENV_ROOT" ]; then
+        export PATH="$PYENV_ROOT/bin:$PATH"
+        eval "$($PYENV_ROOT/bin/pyenv init -)"
+        source $PYENV_ROOT/completions/pyenv.bash
+    fi
+
+    # About Optimizations
+    # https://github.com/docker-library/python/issues/160#issuecomment-509426916
+    # https://gist.github.com/nszceta/ec6efc9b5e54df70deeec7bceead0a1d
+    PYTHON_CFLAGS="-march=native -O2 -pipe" \
+    PYTHON_CONFIGURE_OPTS="--enable-shared --enable-optimizations --with-computed-gotos" \
+    pyenv install 3.9.2 --verbose
+    pyenv shell 3.9.2
+    # Set your global pyenv version, so your prefix maps correctly.
+    pyenv global 3.9.2
+
+    # Create the virtual environment
+    PYENV_PREFIX=$(pyenv prefix)
+    python -m venv $PYENV_PREFIX/envs/py39
+
+    # Add this to your bashrc so you start in a virtual environment
+
+    #### START BASHRC PART ###
+
+    # Add the pyenv command to our environment if it exists
+    export PYENV_ROOT="$HOME/.pyenv"
+    if [ -d "$PYENV_ROOT" ]; then
+        export PATH="$PYENV_ROOT/bin:$PATH"
+        eval "$($PYENV_ROOT/bin/pyenv init -)"
+        source $PYENV_ROOT/completions/pyenv.bash
+        export PYENV_PREFIX=$(pyenv prefix)
+    fi
     
-    
-    
+    if [ -d "$PYENV_PREFIX/envs/py39" ]; then
+        source $PYENV_PREFIX/envs/py39/bin/activate
+    fi
+
+    #### END BASHRC PART ####
 }
 
 
@@ -687,7 +718,7 @@ setup_conda_env(){
     # To update to a newer version see:
     # https://docs.conda.io/en/latest/miniconda_hashes.html for updating
     CONDA_INSTALL_SCRIPT=Miniconda3-py38_4.9.2-Linux-x86_64.sh
-    CONDA_EXPECTED_SHA256=1314b90489f154602fd794accfc90446111514a5a72fe1f71ab83e07de9504a7
+    CONDA_EXPECTED_SHA256_HASH=1314b90489f154602fd794accfc90446111514a5a72fe1f71ab83e07de9504a7
     curl https://repo.anaconda.com/miniconda/$CONDA_INSTALL_SCRIPT > $CONDA_INSTALL_SCRIPT
     CONDA_GOT_SHA256=$(sha256sum $CONDA_INSTALL_SCRIPT | cut -d' ' -f1)
     # For security, it is important to verify the hash

@@ -5,6 +5,18 @@
 """
 
 
+func! EnsureCustomPyModPath()
+Python2or3 << EOF
+import sys
+from os.path import expanduser
+path = expanduser('~/local/vim/rc')
+if path not in sys.path:
+    sys.path.append(path)
+EOF
+endfu
+call EnsureCustomPyModPath()
+
+
 func! SpellcheckOn()
     :set spell
     :setlocal spell spelllang=en_us
@@ -104,19 +116,6 @@ command! TextWidthLineOn call FUNC_TextWidthLineOn()
 " NAVIGATION
 
 
-func! EnsureCustomPyModPath()
-Python2or3 << EOF
-import sys
-from os.path import expanduser
-path = expanduser('~/local/vim/rc')
-if path not in sys.path:
-    sys.path.append(path)
-EOF
-endfu
-
-call EnsureCustomPyModPath()
-
-
 """"""""""""""""""""""""""""""""""
 
 
@@ -173,21 +172,10 @@ endfu
 command! MYINFOCMD call MYINFO() <C-R>
 
 
-func! FUNC_UtoolReload(...) 
-Python2or3 << EOF
-import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
-import utool as ut
-print('reloading utool')
-ut.rrrr(0)
-EOF
-endfunc
-command! UtoolReload call FUNC_UtoolReload()
-
-
 func! CopyCurrentFpath()
 Python2or3 << EOF
 import vim
-import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+import pyvim_funcs
 import ubelt as ub
 fpath = pyvim_funcs.get_current_fpath()
 if not ub.WIN32:
@@ -210,7 +198,7 @@ SeeAlso:
     ~/local/vim/rc_settings/remap_settings.vim
 """
 import vim
-import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+import pyvim_funcs
 word = pyvim_funcs.get_word_at_cursor()
 
 bibtex_dict = pyvim_funcs.get_bibtex_dict()
@@ -226,7 +214,7 @@ endfunc
 func! MarkdownPreview() 
 Python2or3 << EOF
 import vim
-import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+import pyvim_funcs
 buffer_name = vim.current.buffer.name
 print('mdview buffer_name = %r' % (buffer_name,))
 os.system('mdview ' + buffer_name + '&')
@@ -237,7 +225,7 @@ endfunc
 func! SmartSearchWordAtCursor() 
 Python2or3 << EOF
 import vim
-import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+import pyvim_funcs
 word = pyvim_funcs.get_word_at_cursor(url_ok=True)
 
 word = pyvim_funcs.extract_url_embeding(word)
@@ -269,7 +257,7 @@ Python2or3 << EOF
 Does a fancy open of a path specified as an function arg.
 """
 import vim
-import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+import pyvim_funcs
 import re
 from os.path import exists, expanduser
 argv = pyvim_funcs.vim_argv(defaults=[None, 'split'])
@@ -290,7 +278,7 @@ Python2or3 << EOF
 Does a fancy open of a path at the current cursor position in vim
 """
 import vim
-import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+import pyvim_funcs
 import re
 from os.path import exists, expanduser
 
@@ -317,7 +305,7 @@ endfunc
 func! GrepWordAtCursor(...) 
 Python2or3 << EOF
 import vim
-import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+import pyvim_funcs
 import re
 
 argv = pyvim_funcs.vim_argv(defaults=['project'])
@@ -335,8 +323,7 @@ endfunc
 func! FUNC_GrepProject(...) 
 Python2or3 << EOF
 import vim
-import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
-
+import pyvim_funcs
 argv = pyvim_funcs.vim_argv(defaults=[None])
 pat = argv[0]
 #pat, mode = argv
@@ -350,7 +337,7 @@ command! -nargs=1 GrepProject call FUNC_GrepProject(<f-args>)
 func! FUNC_Grep(...) 
 Python2or3 << EOF
 import vim
-import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+import pyvim_funcs
 
 argv = pyvim_funcs.vim_argv(defaults=[None])
 pat = argv[0]
@@ -365,7 +352,7 @@ command! -nargs=1 Grep call FUNC_Grep(<f-args>)
 func! FUNC_GrepRepo(...) 
 Python2or3 << EOF
 import vim
-import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+import pyvim_funcs
 
 argv = pyvim_funcs.vim_argv(defaults=[None])
 pat = argv[0]
@@ -380,7 +367,7 @@ command! -nargs=1 GrepRepo call FUNC_GrepRepo(<f-args>)
 func! PyFormatParagraph() range
 Python2or3 << EOF
 import vim
-import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+import pyvim_funcs
 import utool as ut
 text = pyvim_funcs.get_selected_text(select_at_cursor=False)
 ##wrapped_text = ut.format_single_paragraph_sentences(text)
@@ -406,7 +393,7 @@ endfunc
 func! PySelectAndFormatParagraph(...) 
 Python2or3 << EOF
 import vim
-import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+import pyvim_funcs
 import utool as ut
 import ubelt as ub
 nargs = int(vim.eval('a:0'))
@@ -444,7 +431,7 @@ endfunc
 func! PySelectAndFormatParagraphNoBreak() 
 Python2or3 << EOF
 import vim
-import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+import pyvim_funcs
 import utool as ut
 import ubelt as ub
 row1, row2 = pyvim_funcs.get_paragraph_line_range_at_cursor()
@@ -461,7 +448,7 @@ endfunc
 func! MakePrintVar() 
 Python2or3 << EOF
 import vim
-import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+import pyvim_funcs
 import ubelt as ub
 
 expr = pyvim_funcs.get_word_at_cursor()
@@ -513,7 +500,7 @@ endfunc
 func! MakePrintLine() 
 Python2or3 << EOF
 import vim
-import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+import pyvim_funcs
 line = pyvim_funcs.get_line_at_cursor()
 expr = line.strip(' ')
 indent = pyvim_funcs.get_cursor_py_indent()
@@ -544,7 +531,7 @@ Ignore:
     >>> pyvim_funcs.dummy_import_vim('~/code/kwiver/vital/logger/kwiver_logger.cxx')
     >>> import vim
 """
-import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+import pyvim_funcs
 pattern = 'Copyright .* by .* THE POSSIBILITY OF SUCH DAMAGE'
 pyvim_funcs.close_matching_folds(pattern, search_range=(0, 50), limit=1)
 EOF
@@ -557,7 +544,7 @@ Python2or3 << EOF
 Search and replace while ignoring caps 
 """
 import vim
-import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+import pyvim_funcs
 import re
 from os.path import exists, expanduser
 argv = pyvim_funcs.vim_argv(defaults=[None, None])

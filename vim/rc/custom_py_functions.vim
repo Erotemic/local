@@ -194,7 +194,7 @@ endfu
 func! InsertDocstrOnlyCommandLine() 
 Python2or3 << EOF
 import vim
-import imp
+#import imp
 import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
 
 if pyvim_funcs.is_module_pythonfile():

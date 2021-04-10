@@ -293,6 +293,8 @@ if [ "$DID_MY_BASHRC_INIT" == "" ]; then
 
     if [ -d "$PYENV_PREFIX/envs/py39" ]; then
         source $PYENV_PREFIX/envs/py39/bin/activate
+    elif [ -d "$PYENV_PREFIX/envs/py385" ]; then
+        source $PYENV_PREFIX/envs/py385/bin/activate
     elif [ -d "$HOME/.local/conda/envs/py38" ]; then
         conda activate py38
     elif [ -d "$HOME/.local/conda/envs/py37" ]; then

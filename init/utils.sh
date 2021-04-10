@@ -329,7 +329,7 @@ append_if_missing()
 safe_symlink(){
     __doc__="
     Args:
-        real_path
+        link_path
         link_path
     "
     real_path=$1

@@ -21,12 +21,14 @@ import re
 import itertools as it
 
 
-try:
-    import importlib
-    reload = importlib.reload
-except (AttributeError, ImportError):
-    import imp
-    reload = imp.reload
+# try:
+#     import importlib
+#     reload = importlib.reload
+# except (AttributeError, ImportError) as ex:
+#     # print('ex = {!r}'.format(ex))
+#     # import imp
+#     raise
+#     # reload = imp.reload
 
 
 def get_bibtex_dict():
@@ -111,7 +113,11 @@ def pyrun_fuzzyfont(request):
     Sets a font from an index or a string
     """
     import vim
-    import six
+    try:
+        import six
+        string_types = six.string_types
+    except Exception:
+        string_types = (str,)
     from operator import itemgetter
 
     def vimprint(message):
@@ -131,7 +137,7 @@ def pyrun_fuzzyfont(request):
         is_integer_str = all([_ in int_str for _ in request])
     except TypeError:
         is_integer_str = False
-    if isinstance(request, six.string_types) and not is_integer_str:
+    if isinstance(request, string_types) and not is_integer_str:
         # Calcualate edit distance to each known font
         try:
             import Levenshtein  # Edit distance algorithm
@@ -842,8 +848,6 @@ def auto_cmdline():
     import ubelt as ub
     from xdoctest import static_analysis as static
     import vim
-    # import imp
-    # imp.reload(static)
     modname, moddir = get_current_modulename()
     findfunc_info = find_pyfunc_above_cursor()
     funcname = findfunc_info['funcname']
