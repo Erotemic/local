@@ -121,7 +121,7 @@ PY_EXE="$(system_python)"
 
 if [ "$HAVE_SUDO" == "True" ]; then
     apt_ensure python3-pip
-    apt_ensure vim-gnome
+    apt_ensure vim-gtk3
     if [ ! -d ~/.local/share/vim ]; then
         if [ "$(type -P ctags)" = "" ]; then
             apt_ensure exuberant-ctags 
