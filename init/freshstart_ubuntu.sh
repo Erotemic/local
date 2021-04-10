@@ -661,21 +661,27 @@ setup_pyenv(){
     # About Optimizations
     # https://github.com/docker-library/python/issues/160#issuecomment-509426916
     # https://gist.github.com/nszceta/ec6efc9b5e54df70deeec7bceead0a1d
+    CHOSEN_PYTHON_VERSION=3.8.5
+
     PYTHON_CFLAGS="-march=native -O2 -pipe" \
-    PYTHON_CONFIGURE_OPTS="--enable-shared --enable-optimizations --with-computed-gotos" \
-    pyenv install 3.9.2 --verbose
-    pyenv shell 3.9.2
+    PYTHON_CONFIGURE_OPTS="--enable-shared --enable-optimizations --with-computed-gotos --with-lto" \
+    PROFILE_TASK="-m test.regrtest --pgo test_array test_base64 test_binascii test_binhex test_binop test_c_locale_coercion test_csv test_json test_hashlib test_unicode test_codecs test_traceback test_decimal test_math test_compile test_threading test_time test_fstring test_re test_float test_class test_cmath test_complex test_iter test_struct test_slice test_set test_dict test_long test_bytes test_memoryview test_io test_pickle" \
+    pyenv install $CHOSEN_PYTHON_VERSION --verbose
+
     # Set your global pyenv version, so your prefix maps correctly.
-    pyenv global 3.9.2
+    pyenv shell $CHOSEN_PYTHON_VERSION
+    pyenv global $CHOSEN_PYTHON_VERSION
 
     # Create the virtual environment
     PYENV_PREFIX=$(pyenv prefix)
-    python -m venv $PYENV_PREFIX/envs/py39
+    python -m venv $PYENV_PREFIX/envs/pyenv$CHOSEN_PYTHON_VERSION
 
     # Add this to your bashrc so you start in a virtual environment
 
     #### START BASHRC PART ###
-
+    echo "#### ADD THIS TO YOUR BASH RC ####"
+    BASHRC_CONTENTS=$(codeblock '
+    CHOSEN_PYTHON_VERSION=3.8.5
     # Add the pyenv command to our environment if it exists
     export PYENV_ROOT="$HOME/.pyenv"
     if [ -d "$PYENV_ROOT" ]; then
@@ -685,10 +691,12 @@ setup_pyenv(){
         export PYENV_PREFIX=$(pyenv prefix)
     fi
     
-    if [ -d "$PYENV_PREFIX/envs/py39" ]; then
+    if [ -d "$PYENV_PREFIX/envs/pyenv$CHOSEN_PYTHON_VERSION" ]; then
         source $PYENV_PREFIX/envs/py39/bin/activate
     fi
-
+    ')
+    echo "#### ADD THE ABOVE TO YOUR BASH RC ####"
+    echo $BASHRC_CONTENTS
     #### END BASHRC PART ####
 }
 
@@ -705,9 +713,7 @@ setup_conda_env(){
     # Miniconda3-latest-Windows-x86_64.exe
     mkdir -p ~/tmp
     cd ~/tmp
-
-    https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-
+    #https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
     # See https://docs.conda.io/en/latest/miniconda_hashes.html for updating
     # to newer versions
 
@@ -718,11 +724,11 @@ setup_conda_env(){
     # To update to a newer version see:
     # https://docs.conda.io/en/latest/miniconda_hashes.html for updating
     CONDA_INSTALL_SCRIPT=Miniconda3-py38_4.9.2-Linux-x86_64.sh
-    CONDA_EXPECTED_SHA256_HASH=1314b90489f154602fd794accfc90446111514a5a72fe1f71ab83e07de9504a7
+    CONDA_EXPECTED_SHA256=1314b90489f154602fd794accfc90446111514a5a72fe1f71ab83e07de9504a7
     curl https://repo.anaconda.com/miniconda/$CONDA_INSTALL_SCRIPT > $CONDA_INSTALL_SCRIPT
     CONDA_GOT_SHA256=$(sha256sum $CONDA_INSTALL_SCRIPT | cut -d' ' -f1)
     # For security, it is important to verify the hash
-    if [[ "$CONDA_GOT_SHA256" != "$CONDA_EXPECTED_SHA256_HASH" ]]; then
+    if [[ "$CONDA_GOT_SHA256" != "$CONDA_EXPECTED_SHA256" ]]; then
         echo "Downloaded file does not match hash! DO NOT CONTINUE!"
         exit 1;
     fi
@@ -735,11 +741,12 @@ setup_conda_env(){
 
     #cat $CONDA_INSTALL_SCRIPT
 
-    conda update -y -n base conda
-    conda create -y -n py38 python=3.8
+    #conda update -y -n base conda 
+    conda create -y -n conda38 python=3.8 --override-channels --channel conda-forge
+    #conda create -y -n conda39 python=3.9
     #conda create -y -n py37 python=3.7
     #conda create -y -n py36 python=3.6
-    conda activate py38
+    conda activate conda38
     #conda remove --name py36 --all
 }
 

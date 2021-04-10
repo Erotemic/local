@@ -26,24 +26,19 @@ CommandLine:
     source ~/local/init.sh
 """
 
-if [[ "$(type -P python)" == "" ]]; then
-    if [[ "$(type -P python3)" != "" ]]; then
-        alias python=python3
-    fi
-fi
+#if [[ "$(type -P python)" == "" ]]; then
+#    if [[ "$(type -P python3)" != "" ]]; then
+#        alias python=python3
+#    fi
+#fi
 
 source $HOME/local/init/freshstart_ubuntu.sh
 source $HOME/local/init/utils.sh
 
-if [ "$HAVE_SUDO" == "" ]; then
-    HAVE_SUDO=$(have_sudo)
-fi
-if [ "$IS_HEADLESS" == "" ]; then
-    IS_HEADLESS=$(is_headless)
-fi
-if [ "$WITH_SSH_KEYS" == "" ]; then
-    WITH_SSH_KEYS="True"  # doesnt do anything atm
-fi
+HAVE_SUDO=${HAVE_SUDO:=$(have_sudo)}
+IS_HEADLESS=${IS_HEADLESS:=$(is_headless)}
+WITH_SSH_KEYS=${WITH_SSH_KEYS:="False"}
+SETUP_PYTHON=${SETUP_PYTHON:="False"}
 
 echo "IS_HEADLESS = $IS_HEADLESS"
 echo "HAVE_SUDO = $HAVE_SUDO"
@@ -100,22 +95,6 @@ if [ ! -d ~/.ssh ]; then
     echo "TODO: YOU MUST MANUALLY SET UP YOUR KEYS"
 fi
 
-if [ ! -d ~/.local/conda ]; then
-    echo "SETUP CONDA ENV"
-    setup_conda_env
-
-    pip install six ubelt xdoctest xinspect xdev
-    pip install pyperclip psutil pep8 autopep8 flake8 pylint pytest
-fi
-
-# Unset the python alias we set earlier because now we should be in a conda env
-if [ "$(alias | grep 'alias python=')" != "" ]; then
-    unalias python
-fi
-
-source ~/.bashrc
-deactivate_venv
-
 PY_EXE="$(system_python)"
 
 
@@ -128,29 +107,16 @@ if [ "$HAVE_SUDO" == "True" ]; then
             apt_ensure libgtk-3-dev gnome-devel ncurses-dev build-essential libtinfo-dev
         fi
     fi
-
     # If you need to build from scratch
     #source ~/local/build_scripts/init_vim.sh
     #do_vim_build
-
-    # Old code, no longer needed I think
-    #python ~/local/init/ensure_vim_plugins.py 
 fi
 
 
 # 
-source ~/local/vim/init_vim.sh
 if [ ! -d ~/.vim/autoload/plug.vim ]; then
     curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 fi
-
-
-#if [ "$HAVE_SUDO" == "True" ]; then
-#    sudo apt install python3-pip
-#    $PY_EXE -m pip install ubelt xdoctest xdev
-#fi
-
-
 
 
 if [[ "$IS_HEADLESS" == "False" ]]; then
@@ -165,6 +131,7 @@ if [[ "$IS_HEADLESS" == "False" ]]; then
     apt_ensure sensors lm-sensors
 
     if [[ "$(type -P google-chrome)" == "" ]]; then
+        source $HOME/local/init/freshstart_ubuntu.sh
         install_chrome
 
         sudo apt-get install chrome-gnome-shell # for gnome shell extension integration
@@ -174,35 +141,11 @@ if [[ "$IS_HEADLESS" == "False" ]]; then
     fi
     if [[ "$(type -P veracrypt)" == "" ]]; then
         sudo add-apt-repository ppa:unit193/encryption -y
-        sudo apt update
-        sudo apt install veracrypt -y
+        sudo apt update && sudo apt install veracrypt -y
     fi
     #if [[ "$(type -P zotero)" == "" ]]; then
     #    sh ~/local/build_scripts/install_zotero.sh
     #fi
-fi
-
-
-# TODO: setup ssh keys
-
-# Clone all of my repos
-# gg-clone
-# developer setup my repos
-
-# TODO: setup nvidia drivers on appropriate systems: see init_cuda 
-
-# TODO: setup secrets and internal state
-
-source ~/.bashrc
-
-
-source $HOME/local/init/freshstart_ubuntu.sh
-if [[ "$WITH_SSH_KEYS" == "True" ]]; then
-    # 
-    setup_single_use_ssh_keys
-
-    # Or copy data from another machine
-    # See setup_remote_ssh_keys
 fi
 
 
@@ -226,6 +169,55 @@ if [[ "$IS_HEADLESS" == "False" ]]; then
     # Reply no to using a random password
     # Input password
 fi
+
+
+if [[ "$WITH_SSH_KEYS" == "True" ]]; then
+    source $HOME/local/init/freshstart_ubuntu.sh
+    setup_single_use_ssh_keys
+    # Or copy data from another machine
+    # See setup_remote_ssh_keys
+fi
+
+
+
+if [[ "$SETUP_PYTHON" == "True" ]]; then
+    if [[ ! -d "$HOME/.pyenv" ]]; then
+        source $HOME/local/init/freshstart_ubuntu.sh
+        setup_pyenv
+    fi
+
+
+    # TODO: Dont use conda anymore, use pyenv or something else instead
+    #if [ ! -d ~/.local/conda ]; then
+    #    echo "SETUP CONDA ENV"
+    #    setup_conda_env
+    #    source $HOME/local/init/freshstart_ubuntu.sh
+    #    pip install six ubelt xdoctest xinspect xdev
+    #    pip install pyperclip psutil pep8 autopep8 flake8 pylint pytest
+    #fi
+
+fi
+
+# Unset the python alias we set earlier because now we should be in a conda env
+#if [ "$(alias | grep 'alias python=')" != "" ]; then
+#    unalias python
+#fi
+
+
+#source ~/local/vim/init_vim.sh
+
+# TODO: setup ssh keys
+
+# Clone all of my repos
+# gg-clone
+# developer setup my repos
+
+# TODO: setup nvidia drivers on appropriate systems: see init_cuda 
+
+# TODO: setup secrets and internal state
+
+#source ~/.bashrc
+#deactivate_venv
 
 ## 
 ## TODO: get the netharn supersetup working with my "repos"
