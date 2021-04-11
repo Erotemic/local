@@ -226,3 +226,35 @@ fi
 ## Then do it once more, as we may pull more secret repos
 # $(system_python) ~/local/init/util_git1.py 'clone_repos'
 # $(system_python) ~/local/init/util_git1.py 'clone_repos'
+
+ensure_dev_versions_of_my_libs(){
+
+    mylibs=(
+    ubelt 
+    xdoctest 
+    mkinit
+    xdoctest
+    git_sync
+    xdev)
+
+    for name in "${mylibs[@]}" 
+    do
+        dpath=$HOME/code/$name
+        if [[ -d $dpath ]]; then
+            base_fpath=$(python -c "import $name; print($name.__file__)")
+            result=$?
+            if [[ "$result" == "1" ]]; then
+                echo "ensuring dpath = $dpath"
+                pip uninstall $name -y
+                pip uninstall $name -y
+                pip install -e $dpath
+            else
+                echo "already have dpath = $dpath"
+            fi
+        else
+            echo "does not exist dpath = $dpath"
+        fi
+    done
+
+}
+
