@@ -185,7 +185,9 @@ if [[ "$SETUP_PYTHON" == "True" ]]; then
         source $HOME/local/init/freshstart_ubuntu.sh
         setup_pyenv
     fi
-
+    python ~/local/init/util_git1.py 'clone_repos'
+    pip install -e ~/local/rob
+    
     # TODO: Dont use conda anymore, use pyenv or something else instead
     #if [ ! -d ~/.local/conda ]; then
     #    echo "SETUP CONDA ENV"
