@@ -186,7 +186,6 @@ if [[ "$SETUP_PYTHON" == "True" ]]; then
         setup_pyenv
     fi
 
-
     # TODO: Dont use conda anymore, use pyenv or something else instead
     #if [ ! -d ~/.local/conda ]; then
     #    echo "SETUP CONDA ENV"

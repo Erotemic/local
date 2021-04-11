@@ -290,9 +290,10 @@ _CONDA_ROOT="$HOME/.local/conda/"
 if [ "$DID_MY_BASHRC_INIT" == "" ]; then
     # For some reason VIRTUAL_ENV is initialized as "", so unset it
     unset VIRTUAL_ENV
+    CHOSEN_PYTHON_VERSION=3.8.5
 
-    if [ -d "$PYENV_PREFIX/envs/py39" ]; then
-        source $PYENV_PREFIX/envs/py39/bin/activate
+    if [ -d "$PYENV_PREFIX/envs/pyenv$CHOSEN_PYTHON_VERSION" ]; then
+        source $PYENV_PREFIX/envs/pyenv$CHOSEN_PYTHON_VERSION/bin/activate
     elif [ -d "$PYENV_PREFIX/envs/py385" ]; then
         source $PYENV_PREFIX/envs/py385/bin/activate
     elif [ -d "$HOME/.local/conda/envs/py38" ]; then

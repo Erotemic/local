@@ -720,6 +720,7 @@ build_vim_for_pyenv(){
     git checkout v8.1.2424
 
     deactivate
+    deactivate_venv
 
     #PREFIX=${VIRTUAL_ENV:=$HOME/.local}
     #CONFIG_DIR=$(python-config --configdir)
@@ -746,8 +747,10 @@ build_vim_for_pyenv(){
     #./src/vim -u NONE --cmd "source test.vim"
     make install
 
-    unlink_or_backup $HOME/.vim/bundle/vimtk
-    ln -s $HOME/code/vimtk $HOME/.vim/bundle/vimtk
+    if [[ -d "$HOME/code/vimtk" ]]; then
+        unlink_or_backup $HOME/.vim/bundle/vimtk
+        ln -s $HOME/code/vimtk $HOME/.vim/bundle/vimtk
+    fi
 }
 
 
