@@ -701,6 +701,55 @@ setup_pyenv(){
 }
 
 
+build_vim_for_pyenv(){
+    if [[ ! -d "$HOME/code/vim" ]]; then 
+        git clone https://github.com/vim/vim.git ~/code/vim
+    else 
+        cd $HOME/code/vim
+        git pull
+    fi
+
+
+    source $HOME/local/init/utils.sh
+    apt_ensure build-essential libtinfo-dev ncurses-dev gnome-devel libgtk-3-dev
+    #./configure --help
+    #./configure --help | grep python
+    cd $HOME/code/vim
+
+    # https://github.com/vim/vim/issues/6457
+    git checkout v8.1.2424
+
+    deactivate
+
+    #PREFIX=${VIRTUAL_ENV:=$HOME/.local}
+    #CONFIG_DIR=$(python-config --configdir)
+
+    #https://github.com/ycm-core/YouCompleteMe/issues/3760
+
+    PREFIX=$(pyenv prefix)
+    CONFIG_DIR=$($(pyenv prefix)/bin/python-config --configdir)
+    echo "PREFIX = $PREFIX"
+    echo "CONFIG_DIR = $CONFIG_DIR"
+
+    # THIS WORKS! 
+    export LDFLAGS="-rdynamic"
+    make distclean
+    ./configure \
+        --prefix=$PREFIX \
+        --enable-pythoninterp=no \
+        --enable-python3interp=yes \
+        --with-python3-config-dir=$CONFIG_DIR \
+        --enable-gui=gtk3
+    cat src/auto/config.mk 
+    cat src/auto/config.mk | grep PYTHON3
+    make -j9
+    #./src/vim -u NONE --cmd "source test.vim"
+    make install
+
+    unlink_or_backup $HOME/.vim/bundle/vimtk
+    ln -s $HOME/code/vimtk $HOME/.vim/bundle/vimtk
+}
+
 
 
 setup_conda_env(){
