@@ -235,6 +235,7 @@ ensure_dev_versions_of_my_libs(){
     mkinit
     xdoctest
     git_sync
+    vimtk
     xdev)
 
     for name in "${mylibs[@]}" 
