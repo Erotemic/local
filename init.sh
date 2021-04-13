@@ -155,7 +155,7 @@ if [[ "$IS_HEADLESS" == "False" ]]; then
 
     source $HOME/local/init/utils.sh
     mkdir -p $HOME/.local/bin
-    safe_symlink $HOME/code/transcrypt/transcrypt $HOME/.local/bin/transcrypt
+    safe_symlink $HOME/.local/bin/transcrypt $HOME/code/transcrypt/transcrypt 
 
     echo "YOU WILL NEED TO INPUT PASSWORDS"
     # NOTE: if you have valid gitlab ssh keys, you can change to a git@ url
@@ -174,13 +174,17 @@ fi
 if [[ "$WITH_SSH_KEYS" == "True" ]]; then
     source $HOME/local/init/freshstart_ubuntu.sh
     setup_single_use_ssh_keys
-    # Or copy data from another machine
-    # See setup_remote_ssh_keys
 fi
 
 
 
 if [[ "$SETUP_PYTHON" == "True" ]]; then
+
+    # Dependencies for building Python
+    apt_ensure make build-essential libssl-dev zlib1g-dev \
+        libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
+        libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev 
+
     if [[ ! -d "$HOME/.pyenv" ]]; then
         source $HOME/local/init/freshstart_ubuntu.sh
         setup_pyenv
