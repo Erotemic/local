@@ -329,12 +329,23 @@ append_if_missing()
 safe_symlink(){
     __doc__="
     Args:
-        link_path
-        link_path
+        link_path (the location that you want to point to the real file)
+        real_path (the real file you want to point to)
+
+    Example:
+        mkdir -p ~/tmp/test_safe_symlink
+        rm -rf ~/tmp/test_safe_symlink
+        mkdir -p ~/tmp/test_safe_symlink
+        cd ~/tmp/test_safe_symlink
+        touch real_file
+        mkdir -p real_dir
+        safe_symlink link_file real_file 
+        safe_symlink link_dir real_dir 
+        ls -al
     "
-    real_path=$1
-    link_path=$2
-    echo "Safe symlink $real_path -> $link_path"
+    link_path=$1
+    real_path=$2
+    echo "Safe symlink $link_path -> $real_path"
     unlink_or_backup ${link_path}
     ln -s "${real_path}" "${link_path}"
 }

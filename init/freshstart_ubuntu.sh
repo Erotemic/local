@@ -661,11 +661,29 @@ setup_pyenv(){
     # About Optimizations
     # https://github.com/docker-library/python/issues/160#issuecomment-509426916
     # https://gist.github.com/nszceta/ec6efc9b5e54df70deeec7bceead0a1d
+    # https://clearlinux.org/news-blogs/boosting-python-profile-guided-platform-specific-optimizations
     CHOSEN_PYTHON_VERSION=3.8.5
 
-    PYTHON_CFLAGS="-march=native -O2 -pipe" \
-    PYTHON_CONFIGURE_OPTS="--enable-shared --enable-optimizations --with-computed-gotos --with-lto" \
-    PROFILE_TASK="-m test.regrtest --pgo test_array test_base64 test_binascii test_binhex test_binop test_c_locale_coercion test_csv test_json test_hashlib test_unicode test_codecs test_traceback test_decimal test_math test_compile test_threading test_time test_fstring test_re test_float test_class test_cmath test_complex test_iter test_struct test_slice test_set test_dict test_long test_bytes test_memoryview test_io test_pickle" \
+    PROFILE_TASK="-m test.regrtest 
+        --pgo test_array test_base64 test_binascii test_binhex test_binop
+        test_c_locale_coercion test_csv test_json test_hashlib test_unicode
+        test_codecs test_traceback test_decimal test_math test_compile
+        test_threading test_time test_fstring test_re test_float test_class
+        test_cmath test_complex test_iter test_struct test_slice test_set
+        test_dict test_long test_bytes test_memoryview test_io test_pickle"
+
+    PYTHON_CONFIGURE_OPTS="
+        --enable-shared 
+        --enable-optimizations 
+        --with-computed-gotos
+        --with-lto"
+
+    #PYTHON_CFLAGS="-march=native -O2 -pipe" 
+    PYTHON_CFLAGS="-march=native -O3 -pipe" 
+
+    #PROFILE_TASK=$PROFILE_TASK \
+    PYTHON_CFLAGS="$PYTHON_CFLAGS" \
+    PYTHON_CONFIGURE_OPTS="$PYTHON_CONFIGURE_OPTS" \
     pyenv install $CHOSEN_PYTHON_VERSION --verbose
 
     # Set your global pyenv version, so your prefix maps correctly.
