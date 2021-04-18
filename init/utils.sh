@@ -17,6 +17,25 @@ fi
 __SOURCED_EROTEMIC_UTILS__=1
 
 
+_handle_help(){
+    __internal_doc__='
+    Internal helper used to add --help support to commands in this file.
+    The commands must define a __doc__ variable then they must call
+    this function as such:
+
+        _handle_help $@ || return 
+    '
+    for var in "$@"
+    do
+        if [[ "$var" == "--help" || "$var" == "-h" ]]; then
+            echo "$__doc__"
+            return 1
+        fi
+    done
+    return 0
+}
+
+
 system_python(){
     __doc__="
     Return name of system python
@@ -328,23 +347,29 @@ append_if_missing()
 
 safe_symlink(){
     __doc__="
+    REAL PATH FIRST, LINK PATH SECOND
+
     Args:
-        link_path (the location that you want to point to the real file)
         real_path (the real file you want to point to)
+        link_path (the location that you want to point to the real file)
 
     Example:
+        __SOURCED_EROTEMIC_UTILS__=0
+        source ~/local/init/utils.sh
+
         mkdir -p ~/tmp/test_safe_symlink
         rm -rf ~/tmp/test_safe_symlink
         mkdir -p ~/tmp/test_safe_symlink
         cd ~/tmp/test_safe_symlink
         touch real_file
         mkdir -p real_dir
-        safe_symlink link_file real_file 
-        safe_symlink link_dir real_dir 
+        safe_symlink real_file link_file
+        safe_symlink real_dir link_dir
         ls -al
     "
-    link_path=$1
-    real_path=$2
+    _handle_help $@ || return 0
+    real_path=$1
+    link_path=$2
     echo "Safe symlink $link_path -> $real_path"
     unlink_or_backup ${link_path}
     ln -s "${real_path}" "${link_path}"
@@ -366,6 +391,7 @@ unlink_or_backup()
     Args:
         TARGET (str): a path to a directory, link, or file
     '
+    _handle_help $@ || return 0
 
     TARGET=$1
     if [ -L $TARGET ]; then

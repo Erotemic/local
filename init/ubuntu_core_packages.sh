@@ -2128,3 +2128,10 @@ android_studio(){
     adb logcat -v long,descriptive  | tee logcat.txt
 
 }
+
+disable_gpu_lights(){
+    # Some of the LEDS can be disabled in the bios for the MOBO
+
+    # Only dims one of the lights
+    nvidia-settings --assign GPULogoBrightness=100
+}
