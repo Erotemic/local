@@ -155,7 +155,7 @@ if [[ "$IS_HEADLESS" == "False" ]]; then
 
     source $HOME/local/init/utils.sh
     mkdir -p $HOME/.local/bin
-    safe_symlink $HOME/.local/bin/transcrypt $HOME/code/transcrypt/transcrypt 
+    safe_symlink $HOME/code/transcrypt/transcrypt $HOME/.local/bin/transcrypt
 
     echo "YOU WILL NEED TO INPUT PASSWORDS"
     # NOTE: if you have valid gitlab ssh keys, you can change to a git@ url
