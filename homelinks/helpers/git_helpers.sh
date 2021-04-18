@@ -26,10 +26,10 @@ gg-push()
     $(system_python) ~/local/init/util_git1.py 'git push' == $@
 }
 
-#gg-clone()
-#{
-#    $(system_python) ~/local/init/util_git1.py 'clone_repos'
-#}
+gg-clone()
+{
+    $(system_python) ~/local/init/util_git1.py 'clone_repos'
+}
 
 #gg-cmd()
 #{

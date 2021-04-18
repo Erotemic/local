@@ -771,6 +771,46 @@ build_vim_for_pyenv(){
     fi
 }
 
+pyenv_packages(){
+    pip install pip -U
+    pip install numpy
+    pip install torch torchvision
+    pip install scipy networkx scikit-learn scikit-image
+    pip install psutil networkx Pillow scikit-image sympy
+    pip install numpy scipy matplotlib pandas seaborn
+    pip install pyqt5
+    pip install pyyaml ipython
+    pip install line_profiler
+    pip install six pep8 autopep8 flake8 pylint 
+    pip install pygtrie 
+    pip install dvc[all]
+    pip install pytest
+    pip install parse
+    pip install jedi
+    pip install scikit-build cmake ninja
+    pip install tensorboard
+
+    pip install opencv-python-headless
+
+    pip install tensorflow
+
+    # Try installing gdal without conda
+    sudo add-apt-repository ppa:ubuntugis/ppa -y
+    sudo apt-get update -y
+    sudo apt-get install gdal-bin libgdal-dev -y
+
+    GDAL_PREFIX=$(gdal-config --prefix)
+    CFLAGS=$(gdal-config --cflags)
+    GDAL_VERSION=$(gdal-config --version)
+    echo "GDAL_PREFIX = $GDAL_PREFIX"
+    echo "GDAL_VERSION = $GDAL_VERSION"
+    CFLAGS=$CFLAGS pip install GDAL==$GDAL_VERSION
+    #CFLAGS=$CFLAGS CPLUS_INCLUDE_PATH=$GDAL_PREFIX/include/gdal C_INCLUDE_PATH=$GDAL_PREFIX/gdal pip install GDAL==$GDAL_VERSION
+    python -c "import osgeo"
+    python -c "from osgeo import gdal; print(gdal.Open)"
+    # python -c "import osr"
+}
+
 
 
 setup_conda_env(){
