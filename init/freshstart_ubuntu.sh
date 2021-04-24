@@ -1866,3 +1866,8 @@ fix_ubuntu_18_04_sound_pop_issue(){
         exit 1
     fi
 }
+
+test_lan_speed(){
+    # https://askubuntu.com/questions/7976/how-do-you-test-the-network-speed-between-two-boxes
+    sudo apt install iperf
+}
