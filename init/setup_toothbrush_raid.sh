@@ -108,9 +108,14 @@ zfs-notes(){
     # Wow, zfs is simple to use.
 
     _sync_="
-    rsync -avrpR ooo:/data/./Documents /data/
-    rsync -avrpR ooo:/data/./Media /data/
+    rsync -avrpR ooo:/data/./Documents /data/store/
+    rsync -avrpR ooo:/data/./Media /data/store/
     "
+
+    mkdir -p /data/$USER
+    ln -s /data/$USER $HOME/data 
+
+
 }
 
 

@@ -662,6 +662,7 @@ setup_pyenv(){
     # https://github.com/docker-library/python/issues/160#issuecomment-509426916
     # https://gist.github.com/nszceta/ec6efc9b5e54df70deeec7bceead0a1d
     # https://clearlinux.org/news-blogs/boosting-python-profile-guided-platform-specific-optimizations
+    #CHOSEN_PYTHON_VERSION=2.7.18
     CHOSEN_PYTHON_VERSION=3.8.5
 
     PROFILE_TASK="-m test.regrtest 
@@ -690,9 +691,17 @@ setup_pyenv(){
     pyenv shell $CHOSEN_PYTHON_VERSION
     pyenv global $CHOSEN_PYTHON_VERSION
 
-    # Create the virtual environment
-    PYENV_PREFIX=$(pyenv prefix)
-    python -m venv $PYENV_PREFIX/envs/pyenv$CHOSEN_PYTHON_VERSION
+    if [[ $CHOSEN_PYTHON_VERSION == 2.7.* ]]; then
+        echo "2.7"
+        pip install virtualenv
+        PYENV_PREFIX=$(pyenv prefix)
+        python -m virtualenv $PYENV_PREFIX/envs/pyenv$CHOSEN_PYTHON_VERSION
+    else
+        echo "3.x"
+        # Create the virtual environment
+        PYENV_PREFIX=$(pyenv prefix)
+        python -m venv $PYENV_PREFIX/envs/pyenv$CHOSEN_PYTHON_VERSION
+    fi
 
     # Add this to your bashrc so you start in a virtual environment
 
@@ -710,7 +719,7 @@ setup_pyenv(){
     fi
     
     if [ -d "$PYENV_PREFIX/envs/pyenv$CHOSEN_PYTHON_VERSION" ]; then
-        source $PYENV_PREFIX/envs/py39/bin/activate
+        source $PYENV_PREFIX/envs/pyenv$CHOSEN_PYTHON_VERSION/bin/activate
     fi
     ')
     echo "#### ADD THE ABOVE TO YOUR BASH RC ####"

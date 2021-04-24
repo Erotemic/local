@@ -1952,6 +1952,8 @@ fix_spotify_at_4k(){
     # Set to 1 to see what changes would be made without making them
     DRY_RUN=0
 
+    apt_ensure colordiff
+
     # Break multiline output into an array
     CANDIDATES=($(locate $FNAME))
     for IDX in "${!CANDIDATES[@]}"
@@ -2134,4 +2136,54 @@ disable_gpu_lights(){
 
     # Only dims one of the lights
     nvidia-settings --assign GPULogoBrightness=100
+}
+
+
+docker_modern_2021_04_22(){
+    # https://docs.docker.com/engine/install/ubuntu/
+    # https://docs.docker.com/engine/install/linux-postinstall/
+    # https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker
+
+     sudo apt install apt-transport-https ca-certificates curl gnupg lsb-release -y
+
+     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+     echo \
+      "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+      $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+     sudo apt update -y
+     sudo apt install docker-ce docker-ce-cli containerd.io -y
+     
+    # Add self to docker group
+    sudo groupadd docker
+    sudo usermod -aG docker $USER
+    # NEED TO LOGOUT / LOGIN to revaluate groups
+    su - $USER  # or we can do this
+
+     # Test
+     docker run hello-world
+
+
+    # Change docker to use storage on an external drive
+    # Ubuntu/Debian: edit your /etc/default/docker file with the -g option: 
+    cat /etc/default/docker
+    sudo sed -ie 's|^#* *DOCKER_OPTS.*|DOCKER_OPTS="-g /data/docker"|g' /etc/default/docker
+    sudo sed -ie 's|^#* *export DOCKER_TMPDIR.*|export DOCKER_TMPDIR=/data/docker-tmp|g' /etc/default/docker
+    cat /etc/default/docker
+
+
+
+    # Install the NVIDIA Runtime:
+    distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
+       && curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add - \
+       && curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+
+    sudo apt-get update -y
+    sudo apt-get install -y nvidia-docker2
+    sudo systemctl restart docker
+
+    sudo docker run --rm --gpus all nvidia/cuda:11.0-base nvidia-smi
+    
+
 }

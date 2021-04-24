@@ -17,16 +17,16 @@ source ~/local/build_scripts/install_zotero.sh
 mkdir -p ~/tmp
 cd ~/tmp
 
-https://www.zotero.org/download/client/dl?channel=release&platform=linux-x86_64&version=5.0.84
+#https://www.zotero.org/download/client/dl?channel=release&platform=linux-x86_64&version=5.0.96.2
+#req = requests.get('https://www.zotero.org/download/client/dl?channel=release&platform=linux-x86_64&version=5.0.84')
 source $HOME/local/init/utils.sh
 pyblock """
 import requests
-#req = requests.get('https://www.zotero.org/download/client/dl?channel=release&platform=linux-x86_64&version=5.0.84')
 req = requests.get('https://www.zotero.org/download/client/dl?channel=release&platform=linux-x86_64')
 with open('zotero.tar.bz2', 'wb') as file:
     file.write(req.content)
 """
-tar jxf zotero.tar.bz2
+tar jxvf zotero.tar.bz2
 mkdir -p ~/.local/opt/
 mv Zotero_linux-x86_64 ~/.local/opt/
 ~/.local/opt/Zotero_linux-x86_64/set_launcher_icon

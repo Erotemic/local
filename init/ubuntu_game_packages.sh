@@ -47,21 +47,29 @@ starcraft2(){
     https://www.reddit.com/r/starcraft/comments/9ugzrz/definitive_linux_sc2_guide/
     https://lutris.net/games/starcraft-ii/
     """
-
-    sudo apt-get install libvulkan1 libvulkan1:i386
-    #sudo apt-get install mesa-vulkan-drivers mesa-vulkan-drivers:i386
+    #sudo apt-get install libvulkan1 libvulkan1:i386
+    ##sudo apt-get install mesa-vulkan-drivers mesa-vulkan-drivers:i386
 
     # Install lutris
     sudo add-apt-repository ppa:lutris-team/lutris -y
     sudo apt-get update -y
     sudo apt-get install lutris -y
 
+    # Change preferences so games are downloaded to /data/lutris or wherever
+    # you have space
+
+
     # See https://github.com/lutris/lutris/wiki/Installing-drivers#installing-vulkan
     # for 18.04 (needs update for 19.04 / 20.04)
-    sudo add-apt-repository ppa:kisak/kisak-mesa -y
-    #sudo add-apt-repository --remove ppa:kisak/kisak-mesa
-    sudo apt install ppa-purge
-    sudo ppa-purge ppa:kisak/kisak-mesa
+    #sudo add-apt-repository ppa:kisak/kisak-mesa -y
+    ##sudo add-apt-repository --remove ppa:kisak/kisak-mesa
+    #sudo apt install ppa-purge
+    #sudo ppa-purge ppa:kisak/kisak-mesa
+
+    manual_steps="
+    navigate here: https://lutris.net/games/starcraft-ii/
+    click install
+    "
     
     sudo dpkg --add-architecture i386 
     sudo apt update && sudo apt upgrade -y

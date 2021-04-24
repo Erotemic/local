@@ -49,6 +49,7 @@ if [ "$HAVE_SUDO" == "True" ]; then
     apt_ensure gcc g++ build-essential 
     apt_ensure gfortran 
     apt_ensure curl 
+    apt_ensure jq expect
     apt_ensure htop tmux tree 
     apt_ensure sshfs 
     apt_ensure astyle p7zip-full pgpgpg lm-sensors
