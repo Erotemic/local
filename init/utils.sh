@@ -11,10 +11,12 @@ Usage:
     source $HOME/local/init/utils.sh
 
 '
-if [ "$__SOURCED_EROTEMIC_UTILS__" = "1" ]; then
+__EROTEMIC_UTILS_VERSION__="0.1.1"
+if [ "$__SOURCED_EROTEMIC_UTILS__" = "$__EROTEMIC_UTILS_VERSION__" ]; then
+   # Prevent reloading if the version hasnt changed
    return
 fi
-__SOURCED_EROTEMIC_UTILS__=1
+__SOURCED_EROTEMIC_UTILS__="$__EROTEMIC_UTILS_VERSION__"
 
 
 _handle_help(){
@@ -175,6 +177,7 @@ pyblock(){
 
         OUTPUT = /usr/bin/pypy
     '
+    _handle_help $@ || return 0
     if [[ $# -eq 0 ]]; then
         echo "MUST SUPPLY AN ARGUMENT: USAGE IS: pyblock [PYEXE] TEXT [ARGS...]"
     fi
@@ -420,6 +423,7 @@ apt_ensure(){
     Ignore:
         REQUESTED_PKGS=(git curl htop) 
     "
+    _handle_help $@ || return 0
     # Note the $@ is not actually an array, but we can convert it to one
     # https://linuxize.com/post/bash-functions/#passing-arguments-to-bash-functions
     ARGS=("$@")
@@ -485,9 +489,12 @@ exthist(){
     Example:
         __SOURCED_EROTEMIC_UTILS__=0
         source $HOME/local/init/utils.sh
+        exthist --help
         exthist /bin /etc -r
         exthist $HOME
     "
+    _handle_help $@ || return 0
+
     local RECURSIVE=""
     local DPATH_LIST=()
     local DPATH=""
@@ -544,6 +551,8 @@ bash_array_repr(){
         ARR=(1 "2 3" 4)
         bash_array_repr "${ARR[@]}"
     '
+    _handle_help $@ || return 0
+
     ARGS=("$@")
     if [ "${#ARGS}" -gt 0 ]; then
         # Not sure if the double or single quotes is better here

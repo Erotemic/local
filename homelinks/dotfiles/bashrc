@@ -292,10 +292,10 @@ if [ "$DID_MY_BASHRC_INIT" == "" ]; then
     unset VIRTUAL_ENV
     CHOSEN_PYTHON_VERSION=3.8.5
 
-    if [ -d "$PYENV_PREFIX/envs/pyenv$CHOSEN_PYTHON_VERSION" ]; then
-        source $PYENV_PREFIX/envs/pyenv$CHOSEN_PYTHON_VERSION/bin/activate
-    elif [ -d "$PYENV_PREFIX/envs/py385" ]; then
-        source $PYENV_PREFIX/envs/py385/bin/activate
+    #if [ -d "$PYENV_PREFIX/envs/pyenv$CHOSEN_PYTHON_VERSION" ]; then
+    if [ -d "$PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION" ]; then
+        pyenv shell $CHOSEN_PYTHON_VERSION
+        source $PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION/bin/activate
     elif [ -d "$HOME/.local/conda/envs/py38" ]; then
         conda activate py38
     elif [ -d "$HOME/.local/conda/envs/py37" ]; then

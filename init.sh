@@ -53,6 +53,7 @@ if [ "$HAVE_SUDO" == "True" ]; then
     apt_ensure htop tmux tree 
     apt_ensure sshfs 
     apt_ensure astyle p7zip-full pgpgpg lm-sensors
+    apt_ensure synaptic
 else
     echo "We dont have sudo. Hopefully we wont need it"
 fi

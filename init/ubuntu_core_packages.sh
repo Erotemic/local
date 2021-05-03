@@ -1918,10 +1918,10 @@ home_printer(){
     """
 
     cd Downloads
-    mv $HOME/Downloads/linux-brprinter-installer-2.2.2-1.gz $HOME/tmp
+    cp $HOME/Downloads/linux-brprinter-installer-2.2.2-2.gz $HOME/tmp
     cd $HOME/tmp
-    gunzip linux-brprinter-installer-2.2.2-1.gz
-    sudo bash linux-brprinter-installer-2.2.2-1 MFC-J880DW
+    gunzip linux-brprinter-installer-2.2.2-2.gz
+    sudo bash linux-brprinter-installer-2.2.2-2 MFC-J880DW
     sudo usermod -a -G scanner $USER
     
 }
@@ -2175,9 +2175,10 @@ docker_modern_2021_04_22(){
 
 
     # Install the NVIDIA Runtime:
-    distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
-       && curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add - \
-       && curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+    DISTRIBUTION=$(. /etc/os-release;echo $ID$VERSION_ID) 
+    echo "DISTRIBUTION = $DISTRIBUTION"
+    curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add - 
+    curl -s -L https://nvidia.github.io/nvidia-docker/$DISTRIBUTION/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
 
     sudo apt-get update -y
     sudo apt-get install -y nvidia-docker2

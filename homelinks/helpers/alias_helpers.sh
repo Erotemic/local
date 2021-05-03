@@ -355,116 +355,115 @@ complete -W "PATH LD_LIBRARY_PATH CPATH CMAKE_PREFIX_PATH" "pathvar_remove"
 
 
 
-remove_ld_library_path_entry()
-{
-# http://stackoverflow.com/questions/370047/what-is-the-most-elegant-way-to-remove-a-path-from-the-path-variable-in-bash
-export LD_LIBRARY_PATH=$(pathvar_remove LD_LIBRARY_PATH $1)
-}
+#remove_ld_library_path_entry()
+#{
+## http://stackoverflow.com/questions/370047/what-is-the-most-elegant-way-to-remove-a-path-from-the-path-variable-in-bash
+#export LD_LIBRARY_PATH=$(pathvar_remove LD_LIBRARY_PATH $1)
+#}
 
-remove_path_entry()
-{
-# http://stackoverflow.com/questions/370047/what-is-the-most-elegant-way-to-remove-a-path-from-the-path-variable-in-bash
-export PATH=$(pathvar_remove PATH $1)
-}
+#remove_path_entry()
+#{
+## http://stackoverflow.com/questions/370047/what-is-the-most-elegant-way-to-remove-a-path-from-the-path-variable-in-bash
+#export PATH=$(pathvar_remove PATH $1)
+#}
 
-remove_cpath_entry()
-{
-export CPATH=$(pathvar_remove CPATH $1)
-}
-
-
-debug_paths(){
-    _PYEXE=$(system_python)
-    $_PYEXE -c "import os; path = os.environ['LD_LIBRARY_PATH'].split(os.pathsep); print('\n'.join(path))"
-    $_PYEXE -c "import os; path = os.environ['PATH'].split(os.pathsep); print('\n'.join(path))"
-
-    $_PYEXE -c "import os; path = os.environ['LD_LIBRARY_PATH'].split(os.pathsep); print(os.pathsep.join(path))"
-}
+#remove_cpath_entry()
+#{
+#export CPATH=$(pathvar_remove CPATH $1)
+#}
 
 
-deactivate_venv()
-{
+#debug_paths(){
+#    _PYEXE=$(system_python)
+#    $_PYEXE -c "import os; path = os.environ['LD_LIBRARY_PATH'].split(os.pathsep); print('\n'.join(path))"
+#    $_PYEXE -c "import os; path = os.environ['PATH'].split(os.pathsep); print('\n'.join(path))"
 
-    # https://stackoverflow.com/questions/85880/determine-if-a-function-exists-in-bash
-    if [ -n "$(type -t conda)" ] && [ "$(type -t conda)" = function ]; then
-        conda deactivate
-    fi
+#    $_PYEXE -c "import os; path = os.environ['LD_LIBRARY_PATH'].split(os.pathsep); print(os.pathsep.join(path))"
+#}
 
-    OLD_VENV=$VIRTUAL_ENV
-    # echo "deactivate_venv OLD_VENV=$OLD_VENV"
-    if [ "$OLD_VENV" != "" ]; then
-        #if [ -n "$(type -t rvm)" ] && [ "$(type -t rvm)" = function ]; then
-        #    echo rvm is a function; 
-        #else
-        #    echo rvm is NOT a function;
-        #fi
-        if [ -n "$(type -t deactivate)" ] && [ "$(type -t deactivate)" = function ]; then
-            # deactivate bash function exists
-            deactivate
-            # reset LD_LIBRARY_PATH 
-            remove_ld_library_path_entry $OLD_VENV/local/lib
-            remove_ld_library_path_entry $OLD_VENV/lib
-            remove_path_entry $OLD_VENV/bin
-            remove_cpath_entry $OLD_VENV/include
-        fi
-    fi
-    # Hack for personal symlinks.  I'm not sure why these are populated
-    remove_ld_library_path_entry ~/venv3/local/lib
-    remove_ld_library_path_entry ~/venv3/lib
-    remove_path_entry ~/venv3/bin
-    remove_cpath_entry ~/venv3/include
-}
 
-workon_py()
-{
-    NEW_VENV=$1
-    #echo "WEVN1: NEW_VENV = $NEW_VENV"
+#deactivate_venv()
+#{
 
-    if [ ! -f $NEW_VENV/bin/activate ]; then
-        # Check if it is the name of a conda or virtual env
-        # First try conda, then virtualenv
-        TEMP_PATH=$_CONDA_ROOT/envs/$NEW_VENV
-        #echo "TEMP_PATH = $TEMP_PATH"
-        if [ -d $TEMP_PATH ]; then
-            NEW_VENV=$TEMP_PATH
-        else
-            TEMP_PATH=$HOME/$NEW_VENV
-            if [ -d $TEMP_PATH ]; then
-                NEW_VENV=$TEMP_PATH
-            fi
-        fi
-    fi
-    #echo "WEVN2: NEW_VENV = $NEW_VENV"
-    #echo "TRY NEW VENV"
+#    # https://stackoverflow.com/questions/85880/determine-if-a-function-exists-in-bash
+#    if [ -n "$(type -t conda)" ] && [ "$(type -t conda)" = function ]; then
+#        conda deactivate
+#    fi
 
-    if [ -d $NEW_VENV/conda-meta ]; then
-        #echo "NEW CONDA VENV"
-        deactivate_venv
-        # Use a conda environment
-        conda activate $NEW_VENV
-        export LD_LIBRARY_PATH=$NEW_VENV/lib:$LD_LIBRARY_PATH
-        export CPATH=$NEW_VENV/include:$CPATH
-        #echo "CPATH = $CPATH"
-        #echo "LD_LIBRARY_PATH = $LD_LIBRARY_PATH"
-        #echo "activated conda NEW_VENV=$NEW_VENV"
-    elif [ -d $NEW_VENV ]; then
-        #echo "NEW VENV"
-        # Ensure the old env is deactivated
-        deactivate_venv
-        # Use a virtualenv environment
-        # Activate the new venv
-        export LD_LIBRARY_PATH=$NEW_VENV/local/lib:$LD_LIBRARY_PATH
-        export LD_LIBRARY_PATH=$NEW_VENV/lib:$LD_LIBRARY_PATH
-        source $NEW_VENV/bin/activate
-        #echo "activated virtualenv NEW_VENV=$NEW_VENV"
-        # echo "activated NEW_VENV=$NEW_VENV"
-    fi
-    # echo "new venv doesn't exist"
-}
+#    OLD_VENV=$VIRTUAL_ENV
+#    # echo "deactivate_venv OLD_VENV=$OLD_VENV"
+#    if [ "$OLD_VENV" != "" ]; then
+#        #if [ -n "$(type -t rvm)" ] && [ "$(type -t rvm)" = function ]; then
+#        #    echo rvm is a function; 
+#        #else
+#        #    echo rvm is NOT a function;
+#        #fi
+#        if [ -n "$(type -t deactivate)" ] && [ "$(type -t deactivate)" = function ]; then
+#            # deactivate bash function exists
+#            deactivate
+#            # reset LD_LIBRARY_PATH 
+#            remove_ld_library_path_entry $OLD_VENV/local/lib
+#            remove_ld_library_path_entry $OLD_VENV/lib
+#            remove_path_entry $OLD_VENV/bin
+#            remove_cpath_entry $OLD_VENV/include
+#        fi
+#    fi
+#    # Hack for personal symlinks.  I'm not sure why these are populated
+#    remove_ld_library_path_entry ~/venv3/local/lib
+#    remove_ld_library_path_entry ~/venv3/lib
+#    remove_path_entry ~/venv3/bin
+#    remove_cpath_entry ~/venv3/include
+#}
 
-we(){
-    workon_py $@
-}
+#workon_py()
+#{
+#    NEW_VENV=$1
+#    #echo "WEVN1: NEW_VENV = $NEW_VENV"
+
+#    if [ ! -f $NEW_VENV/bin/activate ]; then
+#        # Check if it is the name of a conda or virtual env
+#        # First try conda, then virtualenv
+#        TEMP_PATH=$_CONDA_ROOT/envs/$NEW_VENV
+#        #echo "TEMP_PATH = $TEMP_PATH"
+#        if [ -d $TEMP_PATH ]; then
+#            NEW_VENV=$TEMP_PATH
+#        else
+#            TEMP_PATH=$HOME/$NEW_VENV
+#            if [ -d $TEMP_PATH ]; then
+#                NEW_VENV=$TEMP_PATH
+#            fi
+#        fi
+#    fi
+#    #echo "WEVN2: NEW_VENV = $NEW_VENV"
+#    #echo "TRY NEW VENV"
+
+#    if [ -d $NEW_VENV/conda-meta ]; then
+#        #echo "NEW CONDA VENV"
+#        deactivate_venv
+#        # Use a conda environment
+#        conda activate $NEW_VENV
+#        export LD_LIBRARY_PATH=$NEW_VENV/lib:$LD_LIBRARY_PATH
+#        export CPATH=$NEW_VENV/include:$CPATH
+#        #echo "CPATH = $CPATH"
+#        #echo "LD_LIBRARY_PATH = $LD_LIBRARY_PATH"
+#        #echo "activated conda NEW_VENV=$NEW_VENV"
+#    elif [ -d $NEW_VENV ]; then
+#        #echo "NEW VENV"
+#        # Ensure the old env is deactivated
+#        deactivate_venv
+#        # Use a virtualenv environment
+#        # Activate the new venv
+#        export LD_LIBRARY_PATH=$NEW_VENV/local/lib:$LD_LIBRARY_PATH
+#        export LD_LIBRARY_PATH=$NEW_VENV/lib:$LD_LIBRARY_PATH
+#        source $NEW_VENV/bin/activate
+#        #echo "activated virtualenv NEW_VENV=$NEW_VENV"
+#        # echo "activated NEW_VENV=$NEW_VENV"
+#    fi
+#    # echo "new venv doesn't exist"
+#}
+
+
+source $HOME/local/tools/pyenv_ext/pyenv_ext_commands.sh
 
 refresh_conda_autocomplete(){
     if [ -d "$_CONDA_ROOT" ]; then
@@ -662,13 +661,14 @@ randpw(){
     #head -c${1:-128} /dev/random | sha512sum
 
     #head -c${1:-128} /dev/random | python -c "import ubelt, sys; print(ubelt.hash_data(sys.stdin.read(), base='abc'))"
-    #head -c${1:-128} /dev/random | sha512sum | python -c "import string, ubelt, sys; print(ubelt.hash_data(sys.stdin.read(), base=list(string.ascii_letters + string.digits)))"
-    head -c${1:-128} /dev/urandom | sha512sum | python -c "import string, ubelt, sys; print(ubelt.hash_data(sys.stdin.read(), base='hex')[0:32])"
+    #head -c16777216 /dev/random | sha512sum | python -c "import string, ubelt, sys; print(ubelt.hash_data(sys.stdin.read(), base=list(string.ascii_letters + string.digits + '_')))"
+    head -c16777216 /dev/urandom | sha512sum | python -c "import string, ubelt, sys; print(ubelt.hash_data(sys.stdin.read(), base='hex')[0:32])"
+    #head -c18446744073709551616 /dev/urandom | sha512sum | python -c "import string, ubelt, sys; print(ubelt.hash_data(sys.stdin.read(), base='alphanum')[0:32])"
 }
 
 
 randint(){ 
-    head -c${1:-128} /dev/random | sha512sum | python -c "import string, ubelt, sys; print(ubelt.hash_data(sys.stdin.read(), base=list(string.digits))[0:32])"
+    head -c128 /dev/random | sha512sum | python -c "import string, ubelt, sys; print(ubelt.hash_data(sys.stdin.read(), base=list(string.digits))[0:32])"
 }
 
 

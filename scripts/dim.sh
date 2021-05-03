@@ -23,9 +23,11 @@ fi
 
 # Simple cases:
 if [ "$ARG_0" == "-u" ]; then
-    redshift -O 6500 -b 1.0
+    #redshift -O 6500 -b 1.0
+    redshift -x
 elif [ "$ARG_0" == "0" ]; then
-    redshift -O 6500 -b 1.0
+    #redshift -O 6500 -b 1.0
+    redshift -x
 elif [ "$ARG_0" == "1" ]; then
     redshift -O 3000 -b 0.6
 elif [ "$ARG_0" == "2" ]; then
