@@ -620,3 +620,29 @@ bash_array_repr(){
 #    fi
     
 #}
+
+
+curl_verify_sha256(){
+    __doc__="
+    Args:
+        URL
+        DST
+        EXPECTED_SHA256
+    "
+    _handle_help $@ || return 0
+    URL=$1
+    DST=$2
+    EXPECTED_SHA256=$3
+
+    curl $URL --output $DST
+    GOT_SHA256=$(sha256sum $DST | cut -d' ' -f1)
+    echo "GOT_SHA256      = $GOT_SHA256"
+    echo "EXPECTED_SHA256 = $EXPECTED_SHA256"
+    # For security, it is important to verify the hash
+    if [[ "$GOT_SHA256" != $EXPECTED_SHA256* ]]; then
+        echo "Downloaded file does not match hash!"
+        echo "DO NOT CONTINUE WITHOUT VALIDATING NEW VERSION AND UPDATING THE HASH!"
+    else
+        echo "Hashes match well enough"
+    fi
+}

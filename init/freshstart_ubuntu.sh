@@ -1871,3 +1871,22 @@ test_lan_speed(){
     # https://askubuntu.com/questions/7976/how-do-you-test-the-network-speed-between-two-boxes
     sudo apt install iperf
 }
+
+latest_clickclose_gnome(){
+    # https://github.com/p91paul/middleclickclose
+    
+    mkdir -p $HOME/tmp
+    cd $HOME/tmp
+    #curl_verify_sha256 https://codeload.github.com/p91paul/middleclickclose/zip/7c1653bf00da0bc28296ce921cc79ccf4d91e6d4 middleclickclose.zip f0890d8ad6d967844
+    curl https://codeload.github.com/p91paul/middleclickclose/zip/7c1653bf00da0bc28296ce921cc79ccf4d91e6d4 -o middleclickclose.zip 
+    7z x middleclickclose.zip
+    cd middleclickclose-7c1653bf00da0bc28296ce921cc79ccf4d91e6d4
+
+    mkdir -p $HOME/.local/share/gnome-shell/extensions
+    cp -r middleclickclose@paolo.tranquilli.gmail.com $HOME/.local/share/gnome-shell/extensions/
+    glib-compile-schemas $HOME/.local/share/gnome-shell/extensions/middleclickclose@paolo.tranquilli.gmail.com/schemas
+
+    # reload gnome shell (alternative to alt-f2 + r)
+    killall -3 gnome-shell
+    
+}
