@@ -666,6 +666,75 @@ randpw(){
     #head -c16777216 /dev/urandom | sha512sum | python -c "import string, ubelt, sys; print(ubelt.hash_data(sys.stdin.read(), base='alphanum')[0:64])"
 }
 
+randpw_words(){
+    # pip install english-words (25487) words
+    # pip install diceware
+    diceware -n 8
+    #pyblock "
+    #if 0:
+    #    # Word security level 
+    #    import math
+    #    vocab_size = 25487
+    #    vocab_size = 7776
+    #    security_levels = {}
+    #    security_levels['words-4'] = vocab_size ** 4
+    #    security_levels['words-5'] = vocab_size ** 5
+    #    security_levels['words-6'] = vocab_size ** 6
+    #    security_levels['words-7'] = vocab_size ** 7
+    #    security_levels['words-8'] = vocab_size ** 8
+    #    security_levels['words-12'] = vocab_size ** 12
+    #    security_levels['words-35'] = vocab_size ** 35
+    #    security_levels['sha1']   = 16 ** 40
+    #    security_levels['sha256'] = 16 ** 64
+    #    security_levels['sha512'] = 16 ** 128
+    #    security_levels['abc-20'] = 26 ** 20
+    #    security_levels['hex-12'] = 16 ** 12
+    #    security_levels['hex-20'] = 16 ** 20
+    #    security_levels['hex-32'] = 16 ** 32
+    #    security_levels['hex-16'] = 16 ** 16
+
+
+    #    # Type 1 Civ Adversarial Actor
+    #    # population = 7.674e9
+    #    # num_devices = population * 10
+
+    #    # Type 0 Civ Adversarial Actor
+    #    population = 3e8
+    #    num_devices = population * 1
+
+    #    # Large Adversarial Actor
+    #    num_devices = 1e6
+
+    #    # https://gist.github.com/Chick3nman/e4fcee00cb6d82874dace72106d73fef
+    #    device_attempts_per_second = 3934 * 1000  # Based on rtx3090 attacking eth wallet
+
+    #    attempts_per_second = device_attempts_per_second * num_devices
+    #    def years_to_crack(x):
+    #        return (x / attempts_per_second) / 60 / 60 / 24 / 365
+    #    security_bits = ub.map_vals(lambda x: math.log(x) / math.log(2), security_levels)
+    #    security_years = ub.map_vals(years_to_crack, security_levels)
+
+    #    print(ub.repr2(ub.sorted_vals(security_bits), align=':', precision=2))
+    #    print(ub.repr2(ub.sorted_vals(security_years), align=':', precision=2))
+
+    #    bits_to_years = {
+    #        b: years_to_crack((2 ** b)) for b in range(40, 160, 5)
+    #    }
+    #    print(ub.repr2(ub.sorted_vals(bits_to_years), align=':', precision=6))
+    #    # number of words to hit 80 bits of entropy with diceware
+    #    vocab_size = 7776
+    #    vocab_size ** X == 2 ** 80
+    #    math.log(vocab_size ** 8) / math.log(2)
+    #    math.log(2 ** 80) / math.log(vocab_size)
+    #import english_words
+    #import random
+    #pool = list(english_words.english_words_set)
+    #rng = random.SystemRandom()
+    #chosen = rng.choices(pool, k=8)
+    #print('_'.join(chosen))
+    #"
+}
+
 
 randint(){ 
     head -c128 /dev/random | sha512sum | python -c "import string, ubelt, sys; print(ubelt.hash_data(sys.stdin.read(), base=list(string.digits))[0:32])"

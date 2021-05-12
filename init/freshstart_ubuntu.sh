@@ -1890,3 +1890,23 @@ latest_clickclose_gnome(){
     killall -3 gnome-shell
     
 }
+
+
+htop_like_resource_monitors(){
+
+    # nmon shows usage per disk (and others info)
+    sudo apt install nmon
+
+    # Network monitor tools
+    # bmon shows usage network interface
+    sudo apt install bmon
+
+    # Requires sudo shows usge per program
+    sudo apt install nethogs
+
+    # requires sudo, not obvious what it does
+    sudo apt install iftop
+
+
+    # https://itsfoss.com/linux-system-monitoring-tools/
+}
