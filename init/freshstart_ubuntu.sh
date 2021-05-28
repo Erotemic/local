@@ -862,10 +862,11 @@ setup_conda_env(){
 
     #conda update -y -n base conda 
     conda create -y -n conda38 python=3.8 --override-channels --channel conda-forge
+    conda activate conda38
+
     #conda create -y -n conda39 python=3.9
     #conda create -y -n py37 python=3.7
     #conda create -y -n py36 python=3.6
-    conda activate conda38
     #conda remove --name py36 --all
 }
 

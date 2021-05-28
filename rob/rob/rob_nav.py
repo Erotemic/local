@@ -386,10 +386,13 @@ def _matching_fnames(dpath_list, include_patterns, exclude_dirs=None, recursive=
 def __regex_sedfile(fpath, regexpr, repl, force=False):
     path, name = split(fpath)
     new_file_lines = []
-    with open(fpath, 'r') as file:
-        file_lines = file.readlines()
-        # Search each line for the desired regexpr
-        new_file_lines = [re.sub(regexpr, repl, line) for line in file_lines]
+    try:
+        with open(fpath, 'r') as file:
+            file_lines = file.readlines()
+            # Search each line for the desired regexpr
+            new_file_lines = [re.sub(regexpr, repl, line) for line in file_lines]
+    except UnicodeDecodeError:
+        return []
 
     changed_lines = [(newline, line)
                      for newline, line in zip(new_file_lines, file_lines)

@@ -1964,7 +1964,7 @@ fix_spotify_at_4k(){
         echo "FPATH=$FPATH"
 
         # This pattern will either add the scale factor or change an existing scale factor
-        SED_PATTERN='s|spotify *\(--force-device-scale-factor=[^ ]*\)* *%U|spotify --force-device-scale-factor=1.5 %U|'
+        SED_PATTERN='s|spotify *\(--force-device-scale-factor=[^ ]*\)* *%U|spotify --force-device-scale-factor=1.0 %U|'
         sed "${SED_PATTERN}" $FPATH | colordiff $FPATH -
         if [ "$DRY_RUN" == "0" ]; then
             sudo sed -i "${SED_PATTERN}" $FPATH
