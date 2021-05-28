@@ -78,7 +78,6 @@ deactivate_venv()
             # reset LD_LIBRARY_PATH 
             remove_ld_library_path_entry $OLD_VENV/local/lib
             remove_ld_library_path_entry $OLD_VENV/lib
-            echo "Remove path: $OLD_VENV/bin"
             remove_path_entry $OLD_VENV/bin
             remove_cpath_entry $OLD_VENV/include
         fi
@@ -119,7 +118,6 @@ workon_py()
     #VENV_NAME_CAND1=pyenv$NEW_VENV
     #PYENV_ACTIVATE_CAND1=$(pyenv root)/versions/$NEW_VENV/envs/$VENV_NAME_CAND1/bin/activate
     PYENV_ACTIVATE_CAND1=$(echo $(pyenv root)/versions/*/envs/$NEW_VENV/bin/activate)
-    echo "PYENV_ACTIVATE_CAND1 = $PYENV_ACTIVATE_CAND1"
 
     if [ -f "$PYENV_ACTIVATE_CAND1" ]; then
         deactivate_venv
