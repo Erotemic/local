@@ -210,9 +210,14 @@ else
     source $HOME/local/homelinks/helpers/bashrc_ubuntu.sh
 fi
 
+
 source $HOME/local/init/utils.sh
 source $HOME/local/homelinks/helpers/git_helpers.sh
 source $HOME/local/homelinks/helpers/alias_helpers.sh
+
+
+# Source in alias helpers
+#source $HOME/local/tools/pyenv_ext/pyenv_ext_commands.sh
 
 
 # set history to not ignore leading whitespace
@@ -255,7 +260,6 @@ fi
 complete -W "gp focus kill project_dpaths sync_clipboard_to grepnr printproc_2 send add_path write_env print_path grepc grepr grep research_clipboard fix_path foo fixpath2 write_rob_pathcache sed reg_disable_automatic_reboot_122614 find write_regfile pykill symlink update_path printproc_ write_path search update_env make_dpath invgrep send_command research ps send_clipboard_to make_complete pref_env print_env create_shortcut info hskill process_research_line write_research find_in_path get_regstr preprocess_research sedr update setup_global sp print_clipboard upenv fix_youtube_names_ccl dump_clipboard" "rob"
 
 #source $HOME/.config/ibeis/ibeis_bash_complete.sh
-
 export PATH=$(pathvar_clean PATH)
 export LD_LIBRARY_PATH=$(pathvar_clean LD_LIBRARY_PATH)
 export CMAKE_PREFIX_PATH=$(pathvar_clean CMAKE_PREFIX_PATH)
@@ -294,7 +298,7 @@ if [ "$DID_MY_BASHRC_INIT" == "" ]; then
 
     #if [ -d "$PYENV_PREFIX/envs/pyenv$CHOSEN_PYTHON_VERSION" ]; then
     if [ -d "$PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION" ]; then
-        pyenv shell $CHOSEN_PYTHON_VERSION
+        #pyenv shell $CHOSEN_PYTHON_VERSION
         source $PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION/bin/activate
     elif [ -d "$HOME/.local/conda/envs/py38" ]; then
         conda activate py38

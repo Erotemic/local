@@ -13,7 +13,7 @@ if __name__ == '__main__':
     import os
     from os.path import expanduser, abspath
     val = abspath(expanduser('$_VAL'))
-    oldpathvar = os.environ['$_VAR'].split(os.pathsep)  
+    oldpathvar = '${!_VAR}'.split(os.pathsep)
     newpathvar = [p for p in oldpathvar if p and abspath(p) != val]
     print(os.pathsep.join(newpathvar))
 "
@@ -65,7 +65,7 @@ deactivate_venv()
     fi
 
     OLD_VENV=$VIRTUAL_ENV
-    # echo "deactivate_venv OLD_VENV=$OLD_VENV"
+    echo "deactivate_venv OLD_VENV=$OLD_VENV"
     if [ "$OLD_VENV" != "" ]; then
         #if [ -n "$(type -t rvm)" ] && [ "$(type -t rvm)" = function ]; then
         #    echo rvm is a function; 
@@ -78,6 +78,7 @@ deactivate_venv()
             # reset LD_LIBRARY_PATH 
             remove_ld_library_path_entry $OLD_VENV/local/lib
             remove_ld_library_path_entry $OLD_VENV/lib
+            echo "Remove path: $OLD_VENV/bin"
             remove_path_entry $OLD_VENV/bin
             remove_cpath_entry $OLD_VENV/include
         fi
@@ -115,8 +116,10 @@ workon_py()
     #echo "TRY NEW VENV"
 
     # Try to find the environment the user requested
-    VENV_NAME_CAND1=pyenv$NEW_VENV
-    PYENV_ACTIVATE_CAND1=$(pyenv root)/versions/$NEW_VENV/envs/$VENV_NAME_CAND1/bin/activate
+    #VENV_NAME_CAND1=pyenv$NEW_VENV
+    #PYENV_ACTIVATE_CAND1=$(pyenv root)/versions/$NEW_VENV/envs/$VENV_NAME_CAND1/bin/activate
+    PYENV_ACTIVATE_CAND1=$(echo $(pyenv root)/versions/*/envs/$NEW_VENV/bin/activate)
+    echo "PYENV_ACTIVATE_CAND1 = $PYENV_ACTIVATE_CAND1"
 
     if [ -f "$PYENV_ACTIVATE_CAND1" ]; then
         deactivate_venv
@@ -144,6 +147,29 @@ workon_py()
 we(){
     workon_py $@
 }
+
+
+refresh_workon_autocomplete(){
+    if [ -d "$_CONDA_ROOT" ]; then
+        KNOWN_CONDA_ENVS="$(/bin/ls -1 $_CONDA_ROOT/envs | sort)"
+    else
+        KNOWN_CONDA_ENVS=""
+    fi 
+    KNOWN_VIRTUAL_ENVS="$(/bin/ls -1 $HOME | grep venv | sort)"
+
+    KNOWN_PYENV_ENVS=$(find $(pyenv root)/versions/*/envs/* -maxdepth 0 -type d -printf "%f\n")
+    #readarray -d '' KNOWN_PYENV_ENVS < <(find $(pyenv root)/versions/*/envs/* -maxdepth 0 -type d -printf "%f\n")
+
+    #echo "KNOWN_VIRTUAL_ENVS = $KNOWN_VIRTUAL_ENVS"
+    #echo "KNOWN_CONDA_ENVS = $KNOWN_CONDA_ENVS"
+    #echo "KNOWN_PYENV_ENVS = $KNOWN_PYENV_ENVS"
+
+    # Remove newlines
+    KNOWN_ENVS=$(echo "$KNOWN_CONDA_ENVS $KNOWN_VIRTUAL_ENVS $KNOWN_PYENV_ENVS" | tr '\n' ' ')
+    complete -W "$KNOWN_ENVS" "workon_py"
+    complete -W "$KNOWN_ENVS" "we"
+}
+refresh_workon_autocomplete
 
 
 

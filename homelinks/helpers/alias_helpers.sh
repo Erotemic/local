@@ -288,6 +288,7 @@ print_all_pathvars()
     for v in vars:
         print('------')
         print(v)
+        # FIXME: dont use environ
         value = os.environ.get(v, '')
         plist = [p for p in value.split(os.pathsep) if p]
         print('    ' + (os.linesep + '    ').join(plist))
@@ -303,7 +304,8 @@ _PYEXE=$(system_python)
 $_PYEXE -c "
 if __name__ == '__main__':
     import os
-    pathvar = [p for p in os.environ['$_VAR'].split(os.pathsep) if p]
+    oldval = '${!_VAR}'
+    pathvar = [p for p in oldval.split(os.pathsep) if p]
     print('\n'.join(pathvar))
 "
 }
@@ -315,12 +317,13 @@ pathvar_clean()
 # pathvar_clean LD_LIBRARY_PATH
 # pathvar_clean PATH
 _VAR=$1
-
 _PYEXE=$(system_python)
 $_PYEXE -c "
 if __name__ == '__main__':
     import os
-    parts = os.environ.get('$_VAR', '').split(os.pathsep)
+    # Note: dont use environ because it is modified when python is called
+    oldval = '${!_VAR}'
+    parts = oldval.split(os.pathsep)
     seen = set([])
     fixed = []
     for p in parts:
@@ -345,7 +348,7 @@ if __name__ == '__main__':
     import os
     from os.path import expanduser, abspath
     val = abspath(expanduser('$_VAL'))
-    oldpathvar = os.environ['$_VAR'].split(os.pathsep)  
+    oldpathvar = '${!_VAR}'.split(os.pathsep)
     newpathvar = [p for p in oldpathvar if p and abspath(p) != val]
     print(os.pathsep.join(newpathvar))
 "
@@ -464,22 +467,6 @@ complete -W "PATH LD_LIBRARY_PATH CPATH CMAKE_PREFIX_PATH" "pathvar_remove"
 
 
 source $HOME/local/tools/pyenv_ext/pyenv_ext_commands.sh
-
-refresh_conda_autocomplete(){
-    if [ -d "$_CONDA_ROOT" ]; then
-        KNOWN_CONDA_ENVS="$(/bin/ls -1 $_CONDA_ROOT/envs | sort)"
-    else
-        KNOWN_CONDA_ENVS=""
-    fi 
-    KNOWN_VIRTUAL_ENVS="$(/bin/ls -1 $HOME | grep venv | sort)"
-    #echo "KNOWN_VIRTUAL_ENVS = $KNOWN_VIRTUAL_ENVS"
-    #echo "KNOWN_CONDA_ENVS = $KNOWN_CONDA_ENVS"
-    # Remove newlines
-    KNOWN_ENVS=$(echo "$KNOWN_CONDA_ENVS $KNOWN_VIRTUAL_ENVS" | tr '\n' ' ')
-    complete -W "$KNOWN_ENVS" "workon_py"
-    complete -W "$KNOWN_ENVS" "we"
-}
-refresh_conda_autocomplete
 
 
 workon_pysys()
