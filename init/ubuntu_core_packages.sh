@@ -2188,3 +2188,28 @@ docker_modern_2021_04_22(){
     
 
 }
+
+world_community_grid(){
+    ___doc__="
+    Instructions for installing worldcommunitygrid
+    https://www.worldcommunitygrid.org/join.action#os-linux-debian
+
+    TODO:
+        - [ ] How do we hook contributing to WCG up to ETH or some other cyrpto as a proof-of-useful-work mechanism?
+    "
+    #1. In a terminal window, run the following command:
+    sudo apt install boinc-client boinc-manager
+    #2. Set the BOINC client to automatically start after you restart your computer:
+    sudo systemctl enable boinc-client
+    #3. Start the BOINC client:
+    sudo systemctl start boinc-client
+    #4. Allow group access to client access file:
+    sudo chmod g+r /var/lib/boinc-client/gui_rpc_auth.cfg
+    #5. Add your Linux user to the BOINC group to allow the BOINC Manager to communicate with the BOINC client
+    sudo usermod -a -G boinc $USER
+    #6. Allow your terminal to pick up the privileges of the new group:
+    exec su $USER
+    #7. In the same terminal window, start the BOINC Manager:
+    boincmgr -d /var/lib/boinc-client
+    
+}
