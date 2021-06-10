@@ -1895,6 +1895,8 @@ latest_clickclose_gnome(){
 
 htop_like_resource_monitors(){
 
+    sudo apt install iotop
+
     # nmon shows usage per disk (and others info)
     sudo apt install nmon
 
@@ -1911,4 +1913,12 @@ htop_like_resource_monitors(){
     # https://itsfoss.com/linux-system-monitoring-tools/
 
     # https://www.reddit.com/r/linux/comments/na637t/diskgraph_for_if_youre_wondering_what_your_disk/
+}
+
+
+check_hdd_health(){
+    # https://superuser.com/questions/171195/how-to-check-the-health-of-a-hard-drive
+    sudo smartctl -a /dev/sda | less
+    
+    sudo apt-get install gsmartcontrol
 }
