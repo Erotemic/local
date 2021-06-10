@@ -190,6 +190,16 @@ uninstall_local_cuda()
 download_cuda_runfiles(){
     cd ~/tpl-archive/cuda
     wget http://developer.download.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda_10.1.243_418.87.00_linux.run
+
+
+    cd ~/tpl-archive/cuda
+    wget https://developer.download.nvidia.com/compute/cuda/11.2.1/local_installers/cuda_11.2.1_460.32.03_linux.run
+    
+    sudo sh cuda_11.2.1_460.32.03_linux.run
+
+    cd ~/tpl-archive/cuda
+    wget https://developer.download.nvidia.com/compute/cuda/11.1.1/local_installers/cuda_11.1.1_455.32.00_linux.run
+    
 }
 
 
@@ -255,6 +265,28 @@ change_cuda_version()
         sh ~/tpl-archive/cuda/cuda_10.1.243_418.87.00_linux.run --silent --toolkit --no-opengl-libs --no-man-page --toolkitpath=$CUDA_PREFIX  --defaultroot=$CUDA_PREFIX --tmpdir=$PWD
     fi
 
+    if [ "$cuda_version" == "11.1" ]; then
+        unlink $HOME/.local/cuda
+        CUDA_PREFIX=$HOME/.local/cuda-11.1
+        mkdir -p $CUDA_PREFIX
+        ln -s $CUDA_PREFIX $HOME/.local/cuda
+        cd ~/tpl-archive/cuda
+        chmod +x ~/tpl-archive/cuda/cuda_11.1.1_455.32.00_linux.run
+        # Not sure if I installed cublas correctly via this command
+        sh ~/tpl-archive/cuda/cuda_11.1.1_455.32.00_linux.run --silent --toolkit --no-opengl-libs --no-man-page --toolkitpath=$CUDA_PREFIX  --defaultroot=$CUDA_PREFIX --tmpdir=$PWD 
+        # Had to hack in the version file, no txt or json
+    fi
+
+    if [ "$cuda_version" == "11.2" ]; then
+        unlink $HOME/.local/cuda
+        CUDA_PREFIX=$HOME/.local/cuda-11.2
+        mkdir -p $CUDA_PREFIX
+        ln -s $CUDA_PREFIX $HOME/.local/cuda
+        chmod +x ~/tpl-archive/cuda/cuda_11.2.1_460.32.03_linux.run
+        # Not sure if I installed cublas correctly via this command
+        sh ~/tpl-archive/cuda/cuda_11.2.1_460.32.03_linux.run --silent --toolkit --no-opengl-libs --no-man-page --toolkitpath=$CUDA_PREFIX  --defaultroot=$CUDA_PREFIX --tmpdir=$PWD
+    fi
+
     ls -al $HOME/.local/cuda
 
     # IS there any way to get these to work locally? No. These are nvidia drivers. They need to be system level
@@ -308,6 +340,7 @@ change_cudnn_version(){
         cuda_dpath = ub.ensuredir((install_prefix, 'cuda'))  # this should by symlinked to a cuda version
 
         try:
+            # FIXME: in cuda 11 this is now version.json
             cuda_version_ = '.'.join(ub.readfrom(join(cuda_dpath, 'version.txt')).strip().split()[-1].split('.')[0:2])
         except Exception:
             pass
