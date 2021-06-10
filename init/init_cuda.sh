@@ -188,17 +188,21 @@ uninstall_local_cuda()
 
 
 download_cuda_runfiles(){
+    mkdir -p ~/tpl-archive/cuda
     cd ~/tpl-archive/cuda
     wget http://developer.download.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda_10.1.243_418.87.00_linux.run
+    wget https://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_440.33.01_linux.run
+    wget https://developer.download.nvidia.com/compute/cuda/11.2.1/local_installers/cuda_11.2.1_460.32.03_linux.run
+    wget https://developer.download.nvidia.com/compute/cuda/11.1.1/local_installers/cuda_11.1.1_455.32.00_linux.run
 
+    # Older versions have to be downloaded manually via https://developer.nvidia.com/cuda-toolkit-archive
 
     cd ~/tpl-archive/cuda
-    wget https://developer.download.nvidia.com/compute/cuda/11.2.1/local_installers/cuda_11.2.1_460.32.03_linux.run
     
     sudo sh cuda_11.2.1_460.32.03_linux.run
 
     cd ~/tpl-archive/cuda
-    wget https://developer.download.nvidia.com/compute/cuda/11.1.1/local_installers/cuda_11.1.1_455.32.00_linux.run
+    
     
 }
 
