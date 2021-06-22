@@ -117,7 +117,9 @@ export GPG_TTY=$(tty)
 # ----------- CUDA / CUDNN ---------
 # Determine if/where CUDA is installed
 
-if [ -f "$HOME/.local/cuda/version.txt" ]; then
+if [ -f "$HOME/.local/cuda/version.json" ]; then
+    _CUDA_ROOT="$HOME/.local/cuda"
+elif [ -f "$HOME/.local/cuda/version.txt" ]; then
     _CUDA_ROOT="$HOME/.local/cuda"
 elif [ -f "/usr/local/cuda/version.txt" ]; then
     _CUDA_ROOT="/usr/local/cuda"
