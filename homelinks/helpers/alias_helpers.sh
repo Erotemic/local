@@ -887,3 +887,30 @@ clean_python2(){
 
     
 }
+
+
+json_pp2(){
+    __doc__="
+    Use ubelt to pretty-print a json string
+    "
+    NL="-1"
+
+    POSITIONAL=()
+    while [[ $# -gt 0 ]]
+    do
+    key="$1"
+    case $key in
+        -n|--nl|--newlines)
+        shift # past argument
+        NL="$1"
+        shift # past argument
+        ;;
+        *)    # unknown option
+        POSITIONAL+=("$1") # save it in an array for later
+        shift # past argument
+        ;;
+    esac
+    done
+    echo "NL = $NL"
+    python -c "import ubelt, sys, json; print(ubelt.highlight_code(ubelt.repr2(json.loads(sys.stdin.read()), nl=$NL, sort=False)))" $POSITIONAL
+}

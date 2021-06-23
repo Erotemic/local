@@ -2213,3 +2213,19 @@ world_community_grid(){
     sudo boincmgr -d /var/lib/boinc-client
     
 }
+
+
+voice_terminal(){
+    __doc__="
+    https://mitchellharle.medium.com/how-to-execute-terminal-commands-with-your-voice-on-linux-eb1f6de58bff
+    "
+    sudo apt install portaudio19-dev swig libatlas-base-dev -y
+    git clone https://github.com/synesthesiam/voice2json
+    cd voice2json
+    ./configure --prefix=$HOME/.local
+    make -j9
+    make install
+
+    voice2json train-profile
+
+}

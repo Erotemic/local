@@ -117,7 +117,9 @@ export GPG_TTY=$(tty)
 # ----------- CUDA / CUDNN ---------
 # Determine if/where CUDA is installed
 
-if [ -f "$HOME/.local/cuda/version.txt" ]; then
+if [ -f "$HOME/.local/cuda/version.json" ]; then
+    _CUDA_ROOT="$HOME/.local/cuda"
+elif [ -f "$HOME/.local/cuda/version.txt" ]; then
     _CUDA_ROOT="$HOME/.local/cuda"
 elif [ -f "/usr/local/cuda/version.txt" ]; then
     _CUDA_ROOT="/usr/local/cuda"
@@ -298,7 +300,7 @@ if [ "$DID_MY_BASHRC_INIT" == "" ]; then
 
     #if [ -d "$PYENV_PREFIX/envs/pyenv$CHOSEN_PYTHON_VERSION" ]; then
     if [ -d "$PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION" ]; then
-        #pyenv shell $CHOSEN_PYTHON_VERSION
+        pyenv shell $CHOSEN_PYTHON_VERSION
         source $PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION/bin/activate
     elif [ -d "$HOME/.local/conda/envs/py38" ]; then
         conda activate py38
