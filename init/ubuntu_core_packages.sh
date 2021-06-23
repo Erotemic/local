@@ -2210,6 +2210,6 @@ world_community_grid(){
     #6. Allow your terminal to pick up the privileges of the new group:
     exec su $USER
     #7. In the same terminal window, start the BOINC Manager:
-    boincmgr -d /var/lib/boinc-client
+    sudo boincmgr -d /var/lib/boinc-client
     
 }
