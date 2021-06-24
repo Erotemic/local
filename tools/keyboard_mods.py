@@ -43,10 +43,12 @@ DevNotes:
     grep -i tab /usr/share/X11/xkb/symbols/*
     grep -i enter /usr/share/X11/xkb/symbols/*
     grep -i return /usr/share/X11/xkb/symbols/inet
+    grep -i space /usr/share/X11/xkb/symbols/*
 
     cat /usr/share/X11/xkb/symbols/inet | grep '"evdev"' -C 200
     cat /usr/share/X11/xkb/symbols/inet | grep '"evdev"' -C 200 | grep XF86Launch8
     cat /usr/share/X11/xkb/symbols/inet | grep '"evdev"' -C 200 | grep Toggle
+    cat /usr/share/X11/xkb/symbols/inet | grep '"evdev"' -C 200 | grep FK
     cat /usr/share/X11/xkb/symbols/inet | grep '"evdev"' -C 200 | grep FK
 
 #For left space and center shift
@@ -142,7 +144,7 @@ def ensure_config_files():
 
                 replace key <FK16> { [ f ] };  // Back-tab
 
-                replace key <FK17> { [ Super_L ] };   // Left Space
+                replace key <FK17> { [ space ] };  // Left Space
                 replace key <FK18> { [ Return ] }; // Center Shift
 
                 replace key <FK19> { [ Tab ] };  // center delete
