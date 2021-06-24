@@ -34,8 +34,7 @@ TO RESET CLEAVE:
     Fn-Esc-(CENTER_SHIFT) -> 8
 
 
-
-See Also:
+DevNotes:
     ls /usr/share/X11/xkb/symbols
     cat /usr/share/X11/xkb/symbols/pc
     cat /usr/share/X11/xkb/symbols/us
@@ -46,10 +45,9 @@ See Also:
     grep -i return /usr/share/X11/xkb/symbols/inet
 
     cat /usr/share/X11/xkb/symbols/inet | grep '"evdev"' -C 200
-
+    cat /usr/share/X11/xkb/symbols/inet | grep '"evdev"' -C 200 | grep XF86Launch8
+    cat /usr/share/X11/xkb/symbols/inet | grep '"evdev"' -C 200 | grep Toggle
     cat /usr/share/X11/xkb/symbols/inet | grep '"evdev"' -C 200 | grep FK
-
-
 
 #For left space and center shift
 
@@ -68,117 +66,149 @@ KeyPress event, serial 37, synthetic NO, window 0x4600001,
     XFilterEvent returns: False
 
 """
+import ubelt as ub
+from os.path import join
 
 
-def setup_config_files():
-    import ubelt as ub
-    ub.ensuredir(ub.expandpath('$HOME/.xkb/keymap'))
-    ub.ensuredir(ub.expandpath('$HOME/.xkb/symbols'))
-    info = ub.cmd('setxkbmap -print')
+def ensure_config_files():
+    dpath = ub.ensuredir(ub.expandpath('$HOME/.xkb/'))
+    kbd_dpath = ub.ensuredir((dpath, 'keymap'))
+    sym_dpath = ub.ensuredir((dpath, 'symbols'))
 
-    default_text = info['out'].replace('\t', ' ')
-    # Looks something like this
-    """
-    xkb_keymap {
-     xkb_keycodes  { include "evdev+aliases(qwerty)" };
-     xkb_types     { include "complete" };
-     xkb_compat    { include "complete" };
-     xkb_symbols   { include "pc+us+us:2+inet(evdev)" };
-     xkb_geometry  { include "pc(pc105)" };
-    };
-    """
+    # Each profile will have a db config file which points to a sym symbols
+    # file that does the actual remap
+    profile_info = {
+        'default': {
+            'kdb_fpath': join(kbd_dpath, 'kbd_default'),
+            'sym_fpath': join(sym_dpath, 'sym_default'),
+        },
+        'tek_cleave': {
+            'kdb_fpath': join(kbd_dpath, 'kbd_tek_cleave'),
+            'sym_fpath': join(sym_dpath, 'sym_tek_cleave'),
+        }
+    }
 
-    # Modify the default text.
-    # Add the symbols line to the xkb_symbols section
-    # mykbd_text = default_text.copy()
-    # Append custom code to the default
-    # TODO: add with a parser?
-    mykbd_text = ub.codeblock(
+    stamp = ub.CacheStamp('gen_keymap_stamp', dpath=dpath,
+                          depends=ub.hash_file(__file__))
+    if stamp.expired():
+        default_text = ub.cmd('setxkbmap -print')['out'].replace('\t', ' ')
+
+        # Looks something like this
+        if __debug__:
+            expected_default_text = ub.codeblock(
+                """
+                xkb_keymap {
+                    xkb_keycodes  { include "evdev+aliases(qwerty)" };
+                    xkb_types     { include "complete" };
+                    xkb_compat    { include "complete" };
+                    xkb_symbols   { include "pc+us+us:2+inet(evdev)" };
+                    xkb_geometry  { include "pc(pc105)" };
+                };
+                """
+            )
+
+            if not ub.allsame([_.replace(' ', '') for _ in [expected_default_text, default_text]]):
+                # print('warning')
+                pass
+
+        profile = profile_info['default']
+        profile['kdb_text'] = default_text
+
+        """
+        CLEAVE Custom Layout looks like:
+        BACK_TAB( F16 )      PASTE( F22 )             UNDO( F23 e
+                             CUT( F20 )               COPY( F21 )
+                             CENTER_DELETE( FK19 )     BACKSPACE(----)
+        LEFT_SPACEBAR( F18 ) CENTER_SHIFT( FK17 )
+        """
+        profile = profile_info['tek_cleave']
+        # TODO: Modify with a parsed representation
+        profile['kdb_text'] = ub.codeblock(
+            '''
+            xkb_keymap {
+             xkb_keycodes  { include "evdev+aliases(qwerty)" };
+             xkb_types     { include "complete" };
+             xkb_compat    { include "complete" };
+             xkb_symbols   { include "pc+us+us:2+inet(evdev)+sym_tek_cleave(sym_custom_cleave)" };
+             xkb_geometry  { include "pc(pc105)" };
+            };
+            ''')
+        profile['sym_text'] = ub.codeblock(
+            '''
+            partial modifier_keys
+            xkb_symbols "sym_custom_cleave" {
+                replace key <LCTL>  { [ Shift_L ] };
+                replace key <LFSH> { [ Control_L ] };
+
+                replace key <FK16> { [ f ] };  // Back-tab
+
+                replace key <FK17> { [ Super_L ] };   // Left Space
+                replace key <FK18> { [ Return ] }; // Center Shift
+
+                replace key <FK19> { [ Tab ] };  // center delete
+                replace key <FK20> { [ Tab ] };  // Cut
+                replace key <FK21> { [ Tab ] };  // Copy
+                replace key <FK22> { [ Super_L ] };  // Paste
+                replace key <FK23> { [ Super_L ] };  // Undo
+            };
+            ''')
+
+        for profile in profile_info.values():
+
+            fpath = profile.get('kdb_fpath', None)
+            text = profile.get('kdb_text', None)
+            if fpath is not None and text is not None:
+                with open(fpath, 'w') as file:
+                    file.write(text)
+
+                print('fpath = {!r}'.format(fpath))
+                print(ub.readfrom(fpath))
+
+            fpath = profile.get('sym_fpath', None)
+            text = profile.get('sym_text', None)
+            if fpath is not None and text is not None:
+                with open(fpath, 'w') as file:
+                    file.write(text)
+
+                print('fpath = {!r}'.format(fpath))
+                print(ub.readfrom(fpath))
+
         '''
-        xkb_keymap {
-         xkb_keycodes  { include "evdev+aliases(qwerty)" };
-         xkb_types     { include "complete" };
-         xkb_compat    { include "complete" };
-         xkb_symbols   { include "pc+us+us:2+inet(evdev)+mysym(custom_cleave)" };
-         xkb_geometry  { include "pc(pc105)" };
-        };
-        ''')
-    # mykbd_text = ub.codeblock(
-    #     '''
-    #     xkb_keymap {
-    #      xkb_keycodes  { include "evdev+aliases(qwerty)" };
-    #      xkb_types     { include "complete" };
-    #      xkb_compat    { include "complete" };
-    #      xkb_symbols   { include "pc+us+us:2+inet(evdev)+mysym(custom_cleave)" };
-    #      xkb_geometry  { include "pc(pc105)" };
-    #     };
-    #     ''')
-
-    """
-    cat /usr/share/X11/xkb/symbols/inet | grep '"evdev"' -C 200 | grep XF86Launch8
-    cat /usr/share/X11/xkb/symbols/inet | grep '"evdev"' -C 200 | grep Toggle
-
-    CLEAVE Custom Layout looks like:
-
-
-    BACK_TAB( F16 )      PASTE( F22 )             UNDO( F23 )
-
-                         CUT( F20 )               COPY( F21 )
-
-                         CENTER_DELETE( FK19 )     BACKSPACE(----)
-
-    LEFT_SPACEBAR( F18 ) CENTER_SHIFT( FK17 )
-    """
-
-    mysym_text = ub.codeblock(
+        Reload commands:
+            ls $HOME/.xkb/keymap
+            xkbcomp -I$HOME/.xkb $HOME/.xkb/keymap/kbd_tek_cleave $DISPLAY
+            xkbcomp -w0 -I$HOME/.xkb $HOME/.xkb/keymap/kdb_default $DISPLAY
         '''
-        partial modifier_keys
-        xkb_symbols "custom_cleave" {
-            replace key <LCTL>  { [ Shift_L ] };
-            replace key <LFSH> { [ Control_L ] };
 
-            replace key <FK16> { [ f ] };  // Back-tab
+        stamp.renew()
 
-            replace key <FK17> { [ Super_L ] };   // Left Space
-            replace key <FK18> { [ Return ] }; // Center Shift
+    return profile_info
 
-            replace key <FK19> { [ a ] };  // center delete
-            replace key <FK20> { [ Tab ] };  // Cut
-            replace key <FK21> { [ Tab ] };  // Copy
-            replace key <FK22> { [ Super_L ] };  // Paste
-            replace key <FK23> { [ Super_L ] };  // Undo
-        };
-        ''')
 
-    default_fpath = ub.expandpath('$HOME/.xkb/keymap/default_kbd')
-    with open(default_fpath, 'w') as file:
-        file.write(default_text)
+def use_profile(profile_name):
+    if profile_name == 'auto':
+        info = ub.cmd('hwinfo --keyboard --short', verbose=3)
+        CLEAVE_NAME = 'TrulyErgonomic.com Truly Ergonomic CLEAVE Keyboard'
+        if CLEAVE_NAME in info['out']:
+            profile_name = 'tek_cleave'
+        else:
+            profile_name = 'default'
 
-    mykbd_fpath = ub.expandpath('$HOME/.xkb/keymap/mykbd')
-    with open(mykbd_fpath, 'w') as file:
-        file.write(mykbd_text)
+    print('profile_name = {!r}'.format(profile_name))
+    profile_info = ensure_config_files()
 
-    mysym_fpath = ub.expandpath('$HOME/.xkb/symbols/mysym')
-    with open(mysym_fpath, 'w') as file:
-        file.write(mysym_text)
+    if profile_name not in profile_info:
+        raise KeyError(profile_name)
 
-    print(ub.readfrom(mykbd_fpath))
-    print(ub.readfrom(mysym_fpath))
-    # print(ub.readfrom(defa_fpath))
-
-    reload_command = ub.codeblock(
+    profile = profile_info[profile_name]
+    cmd_text = ub.paragraph(
         '''
-        xkbcomp -I$HOME/.xkb $HOME/.xkb/keymap/mykbd $DISPLAY
-        ''')
-
-    default_command = ub.codeblock(
-        '''
-        xkbcomp -w0 -I$HOME/.xkb $HOME/.xkb/keymap/default_kbd $DISPLAY
-        ''')
+        xkbcomp -w0 -I$HOME/.xkb {kdb_fpath} $DISPLAY
+        ''').format(**profile)
+    ub.cmd(cmd_text, shell=True, verbose=3, check=True)
 
 
-def main():
-    import ubelt as ub
+def cli():
     import click
 
     context_settings = {
@@ -186,27 +216,24 @@ def main():
         'allow_extra_args': True,
         'ignore_unknown_options': True}
 
-    setup_config_files()
-
     @click.group(context_settings=context_settings)
     def cli_group():
         pass
 
     @cli_group.add_command
-    @click.command('mysym', context_settings=context_settings)
-    def mysym():
-        ub.cmd(ub.paragraph(
-            '''
-            xkbcomp -w0 -I$HOME/.xkb $HOME/.xkb/keymap/mykbd $DISPLAY
-            '''), shell=True, verbose=3)
+    @click.command('auto', context_settings=context_settings)
+    def auto():
+        use_profile('auto')
+
+    @cli_group.add_command
+    @click.command('tek_cleave', context_settings=context_settings)
+    def tek_cleave():
+        use_profile('tek_cleave')
 
     @cli_group.add_command
     @click.command('default', context_settings=context_settings)
     def default():
-        ub.cmd(ub.paragraph(
-            '''
-            xkbcomp -w0 -I$HOME/.xkb $HOME/.xkb/keymap/default_kbd $DISPLAY
-            '''), shell=True, verbose=3)
+        use_profile('default')
 
     cli_group()
 
@@ -214,7 +241,10 @@ def main():
 if __name__ == '__main__':
     """
     CommandLine:
-        python ~/local/tools/keyboard_mods.py mysym
+        xkbcomp -w0 -I$HOME/.xkb $HOME/.xkb/keymap/default_kbd $DISPLAY
+
+        python ~/local/tools/keyboard_mods.py tek_cleave
         python ~/local/tools/keyboard_mods.py default
+        python ~/local/tools/keyboard_mods.py
     """
-    main()
+    cli()
