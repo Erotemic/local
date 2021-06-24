@@ -193,13 +193,13 @@ def use_profile(profile_name):
             profile_name = 'tek_cleave'
         else:
             profile_name = 'default'
-
-    print('profile_name = {!r}'.format(profile_name))
     profile_info = ensure_config_files()
-
     if profile_name not in profile_info:
-        raise KeyError(profile_name)
-
+        raise KeyError(ub.paragraph(
+            '''
+            Got profile_name={}. Valid choices are: auto, {}
+            '''.format(profile_name, ', '.join(profile_info.keys()))
+        ))
     profile = profile_info[profile_name]
     cmd_text = ub.paragraph(
         '''

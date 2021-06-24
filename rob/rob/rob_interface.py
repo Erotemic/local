@@ -508,9 +508,12 @@ def speak(r, to_speak, rate=-5):
 from rob.rob_alarm import random_video  # NOQA
 
 
-def set_keymap(r, profile="auto"):
+def set_keymap(r, profile=None):
     import ubelt as ub
     mod_fpath = ub.expandpath('$HOME/local/tools/keyboard_mods.py')
     keyboard_mods = ub.import_module_from_path(mod_fpath)
     keyboard_mods.use_profile(profile)
     # ub.cmd(ub.expandpath('python $HOME/local/tools/keyboard_mods.py tek_cleave {}'.format(profile)), verbose=3)
+
+
+setkb = set_keymap
