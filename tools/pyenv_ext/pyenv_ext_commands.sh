@@ -154,8 +154,10 @@ refresh_workon_autocomplete(){
         KNOWN_CONDA_ENVS=""
     fi 
     KNOWN_VIRTUAL_ENVS="$(/bin/ls -1 $HOME | grep venv | sort)"
-
-    KNOWN_PYENV_ENVS=$(find $(pyenv root)/versions/*/envs/* -maxdepth 0 -type d -printf "%f\n")
+    
+    if [[ "$(which pyenv)" ]]; then
+        KNOWN_PYENV_ENVS=$(find $(pyenv root)/versions/*/envs/* -maxdepth 0 -type d -printf "%f\n")
+    fi
     #readarray -d '' KNOWN_PYENV_ENVS < <(find $(pyenv root)/versions/*/envs/* -maxdepth 0 -type d -printf "%f\n")
 
     #echo "KNOWN_VIRTUAL_ENVS = $KNOWN_VIRTUAL_ENVS"
