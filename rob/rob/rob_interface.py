@@ -511,6 +511,12 @@ def speak(r, to_speak, rate=-5):
 from rob.rob_alarm import random_video  # NOQA
 
 
+def fix_opencv(r):
+    import ubelt as ub
+    ub.cmd('pip uninstall opencv-python opencv-python-headless -y', shell=True, verbose=3)
+    ub.cmd('pip install opencv-python-headless', shell=True, verbose=3)
+
+
 def set_keymap(r, profile=None):
     import ubelt as ub
     mod_fpath = ub.expandpath('$HOME/local/tools/keyboard_mods.py')
