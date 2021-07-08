@@ -170,6 +170,11 @@ refresh_workon_autocomplete(){
 refresh_workon_autocomplete
 
 
+_strip_double_whitespace(){
+    echo "$@" | sed -zE 's/[ \n]+/ /g'
+}
+
+
 
 pyenv_create_virtualenv(){
     __doc__="
@@ -179,8 +184,8 @@ pyenv_create_virtualenv(){
     This command will seek to do something similar
 
     Args:
-        venv_name (str)
-        python_version (str) 
+        PYTHON_VERSION (str) 
+        OPTIMIZE_PRESET (str, default=most): can be off, most, or full
 
     Example:
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
@@ -189,13 +194,19 @@ pyenv_create_virtualenv(){
         PYTHON_VERSION=3.8.5
         CHOSEN_PYTHON_VERSION=3.8.5
 
-        PYTHON_VERSION=3.8.9
-        CHOSEN_PYTHON_VERSION=3.8.9
+        PYTHON_VERSION=3.8.8
+        CHOSEN_PYTHON_VERSION=3.8.8
+
+        # See Available versions
+        pyenv install --list
+
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        pyenv_create_virtualenv 3.8.6 most
     "
     _handle_help $@ || return 0
 
     PYTHON_VERSION=$1
-    #VENV_NAME=$2
+    OPTIMIZE_PRESET=${2:="most"}
 
     CHOSEN_PYTHON_VERSION=$PYTHON_VERSION
     BEST_MATCH=$(_pyenv_best_version_match $PYTHON_VERSION)
@@ -206,46 +217,49 @@ pyenv_create_virtualenv(){
     fi
     CHOSEN_PYTHON_VERSION=$BEST_MATCH
 
-    OPTIMIZE_PRESET="2"
-    OPTIMIZE_PRESET="1"
-    OPTIMIZE_PRESET="0"
+    #OPTIMIZE_PRESET="2"
+    #OPTIMIZE_PRESET="1"
+    #OPTIMIZE_PRESET="0"
 
-    if [[ "$OPTIMIZE_PRESET" == "2" ]]; then
-        PROFILE_TASK="-m test.regrtest 
+    if [[ "$OPTIMIZE_PRESET" == "full" ]]; then
+        PROFILE_TASK=$(_strip_double_whitespace "-m test.regrtest 
             --pgo test_array test_base64 test_binascii test_binhex test_binop
             test_c_locale_coercion test_csv test_json test_hashlib test_unicode
             test_codecs test_traceback test_decimal test_math test_compile
             test_threading test_time test_fstring test_re test_float test_class
             test_cmath test_complex test_iter test_struct test_slice test_set
-            test_dict test_long test_bytes test_memoryview test_io test_pickle"
+            test_dict test_long test_bytes test_memoryview test_io test_pickle")
 
-        PYTHON_CONFIGURE_OPTS="
+        PYTHON_CONFIGURE_OPTS=$(_strip_double_whitespace "
             --enable-shared 
             --enable-optimizations 
             --with-computed-gotos
-            --with-lto"
+            --with-lto")
 
         PYTHON_CFLAGS="-march=native -O3 -pipe" 
-    elif [[ "$OPTIMIZE_PRESET" == "1" ]]; then
-        PROFILE_TASK="-m test.regrtest 
+    elif [[ "$OPTIMIZE_PRESET" == "most" ]]; then
+        PROFILE_TASK=$(_strip_double_whitespace "-m test.regrtest 
             --pgo test_array test_base64 test_binascii test_binhex test_binop
             test_c_locale_coercion test_csv test_json test_hashlib test_unicode
             test_codecs test_traceback test_decimal test_math test_compile
             test_threading test_time test_fstring test_re test_float test_class
             test_cmath test_complex test_iter test_struct test_slice test_set
-            test_dict test_long test_bytes test_memoryview test_io test_pickle"
+            test_dict test_long test_bytes test_memoryview test_io test_pickle")
 
-        PYTHON_CONFIGURE_OPTS="
+        PYTHON_CONFIGURE_OPTS=$(_strip_double_whitespace "
             --enable-shared 
             --enable-optimizations 
             --with-computed-gotos
-            --with-lto"
+            --with-lto")
 
         PYTHON_CFLAGS="-march=native -O3 -pipe" 
-    elif [[ "$OPTIMIZE_PRESET" == "0" ]]; then
+    elif [[ "$OPTIMIZE_PRESET" == "off" ]]; then
         PROFILE_TASK=""
         PYTHON_CONFIGURE_OPTS="--enable-shared"
         PYTHON_CFLAGS="-march=native -O2 -pipe" 
+    else
+        echo "UNKNOWN OPT PRESET"
+        return 1
     fi
 
     PROFILE_TASK="$PROFILE_TASK" \

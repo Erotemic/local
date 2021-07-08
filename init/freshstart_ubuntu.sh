@@ -638,6 +638,9 @@ setup_poetry_env(){
 }
 
 setup_pyenv(){
+    # See Also: 
+    # ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+
     # Install requirements for building Python
     sudo apt-get install -y \
         make build-essential libssl-dev zlib1g-dev \

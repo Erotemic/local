@@ -41,3 +41,5 @@ https://gitlab.kitware.com/computer-vision/kwarray.git
 https://gitlab.kitware.com/computer-vision/kwimage.git 
 https://gitlab.kitware.com/computer-vision/kwplot.git 
 https://gitlab.kitware.com/computer-vision/netharn.git 
+
+https://github.com/Erotemic/supersetup.git
