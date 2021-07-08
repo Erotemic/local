@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
+"""
+Every function here is a CLI command
+"""
 import os
 from six.moves import input
 import sys
 import re
 from os.path import split
-import shutil
-import platform
-from os.path import basename, expanduser
-from os.path import (normpath, join, exists, dirname, splitext)
+from os.path import basename
+from os.path import (normpath, join, exists, dirname)
 
 from rob.rob_helpers import call
 from rob import rob_helpers
@@ -17,8 +18,9 @@ from rob import robos
 
 def make_complete(r):
     from rob import rob_interface
-    modname = 'rob'
     import xdoctest
+    module = rob_interface
+    modname = 'rob'
     calldefs = list(
         list(xdoctest.core.package_calldefs(module.__file__))[0][0].items())
     testnames = [kv[0] for kv in calldefs]
@@ -32,6 +34,7 @@ def write_rob_pathcache(pathlist):
     with open(fname, 'a') as file:
         for path in pathlist:
             file.write('\n%s' % path)
+
 
 def project_dpaths():
     import ubelt as ub
@@ -280,7 +283,7 @@ def symlink(r, source=None, target=None):
     if source is None:
         raise Exception('must at least specify a source')
     #if target == None:
-        #target = slash_fix('C:/tmp/'+os.path.basename(source))
+        #target = slash_fix('C:/tmp/'+basename(source))
     if sys.platform == 'win32':
         if os.path.isdir(source):
             call('MKLINK /D "%s" "%s"' % (target, source))
@@ -471,7 +474,7 @@ def create_shortcut(r, what, where=''):
     else:
         import ubelt as ub
         ub.ensuredir(where)
-        base_what = os.path.basename(what)
+        base_what = basename(what)
         if len(base_what) > 0:
             if base_what[-1] in ['"', "'"]:
                 base_what = base_what[0:-1]
@@ -505,4 +508,21 @@ def speak(r, to_speak, rate=-5):
     speak(r, to_speak=to_speak, rate=rate)
 
 
-from rob.rob_alarm import random_video
+from rob.rob_alarm import random_video  # NOQA
+
+
+def fix_opencv(r):
+    import ubelt as ub
+    ub.cmd('pip uninstall opencv-python opencv-python-headless -y', shell=True, verbose=3)
+    ub.cmd('pip install opencv-python-headless', shell=True, verbose=3)
+
+
+def set_keymap(r, profile=None):
+    import ubelt as ub
+    mod_fpath = ub.expandpath('$HOME/local/tools/keyboard_mods.py')
+    keyboard_mods = ub.import_module_from_path(mod_fpath)
+    keyboard_mods.use_profile(profile)
+    # ub.cmd(ub.expandpath('python $HOME/local/tools/keyboard_mods.py tek_cleave {}'.format(profile)), verbose=3)
+
+
+setkb = set_keymap

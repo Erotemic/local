@@ -658,8 +658,12 @@ randpw_words(){
     # pip install english-words (25487) words
     # pip install diceware
     diceware -n 8
+    # See: ~/misc/notes/password_model.py
     #pyblock "
     #if 0:
+
+    #    # 7 words from a 7776 dictionary should beat the Type0-Adversary
+
     #    # Word security level 
     #    import math
     #    vocab_size = 25487
@@ -691,7 +695,7 @@ randpw_words(){
     #    num_devices = population * 1
 
     #    # Large Adversarial Actor
-    #    num_devices = 1e6
+    #    #num_devices = 1e6
 
     #    # https://gist.github.com/Chick3nman/e4fcee00cb6d82874dace72106d73fef
     #    device_attempts_per_second = 3934 * 1000  # Based on rtx3090 attacking eth wallet

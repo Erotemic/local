@@ -1356,6 +1356,9 @@ install_octave(){
 
 remap_capslock_as_shift
 {
+
+    # ALSO SEE $HOME/local/tools/keyboard_mods.py
+
     # resets xkbmap
     setxkbmap us
 
