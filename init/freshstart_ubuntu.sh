@@ -798,7 +798,7 @@ build_vim_for_pyenv(){
     # Ensure the version of python matches (there are cases due to system
     # configs where it might not)
     cat src/auto/config.mk | grep 'PYTHON3\|prefix'
-    make -j9
+    make -j$(nproc)
     #./src/vim -u NONE --cmd "source test.vim"
     make install
 
@@ -900,6 +900,7 @@ setup_conda_env(){
 
 setup_conda_other(){
 
+    conda create -y -n py39 python=3.9
     conda create -y -n py38 python=3.8
     conda create -y -n py37 python=3.7
     conda create -y -n py36 python=3.6

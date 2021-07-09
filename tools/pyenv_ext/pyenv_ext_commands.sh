@@ -171,6 +171,23 @@ refresh_workon_autocomplete(){
 refresh_workon_autocomplete
 
 
+install_pyenv(){
+    # Install requirements for building Python
+    sudo apt-get install -y \
+        make build-essential libssl-dev zlib1g-dev \
+        libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
+        libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl
+
+    # Download pyenv
+    export PYENV_ROOT="$HOME/.pyenv"
+    if [[ ! -d "$PYENV_ROOT" ]]; then
+        git clone https://github.com/pyenv/pyenv.git $PYENV_ROOT
+        (cd $PYENV_ROOT && src/configure && make -C src)
+    fi
+
+}
+
+
 _strip_double_whitespace(){
     echo "$@" | sed -zE 's/[ \n]+/ /g'
 }
@@ -203,6 +220,12 @@ pyenv_create_virtualenv(){
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
         pyenv_create_virtualenv 3.8.6 most
+
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        pyenv_create_virtualenv 3.7.10 off
+
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        pyenv_create_virtualenv 3.7.9 off
     "
     _handle_help $@ || return 0
 
@@ -218,10 +241,10 @@ pyenv_create_virtualenv(){
     fi
     CHOSEN_PYTHON_VERSION=$BEST_MATCH
 
-    #OPTIMIZE_PRESET="2"
-    #OPTIMIZE_PRESET="1"
-    #OPTIMIZE_PRESET="0"
-
+    # About Optimizations
+    # https://github.com/docker-library/python/issues/160#issuecomment-509426916
+    # https://gist.github.com/nszceta/ec6efc9b5e54df70deeec7bceead0a1d
+    # https://clearlinux.org/news-blogs/boosting-python-profile-guided-platform-specific-optimizations
     if [[ "$OPTIMIZE_PRESET" == "full" ]]; then
         PROFILE_TASK=$(_strip_double_whitespace "-m test.regrtest 
             --pgo test_array test_base64 test_binascii test_binhex test_binop

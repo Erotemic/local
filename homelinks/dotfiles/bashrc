@@ -1,12 +1,12 @@
 #!/bin/sh
 ######################
 # Debugging code
-
 # DEBUG WHERE SOMETHING CAME FROM
 #set -x
 #if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
 #    source /etc/profile.d/vte.sh
 #fi
+#return
 
 # I don't know why this is populated to begin with
 #echo "PATH(pre-bashrc) = $PATH"
@@ -306,7 +306,7 @@ if [[ "$_AUTOSTART_VENV" == "1" ]]; then
     if [ "$DID_MY_BASHRC_INIT" == "" ]; then
         # For some reason VIRTUAL_ENV is initialized as "", so unset it
         unset VIRTUAL_ENV
-        CHOSEN_PYTHON_VERSION=3.8.5
+        CHOSEN_PYTHON_VERSION=3.8.6
         if [ -d "$PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION" ]; then
             pyenv shell $CHOSEN_PYTHON_VERSION
             source $PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION/bin/activate
