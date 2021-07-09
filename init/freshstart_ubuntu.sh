@@ -1951,3 +1951,7 @@ check_hdd_health(){
     
     sudo apt-get install gsmartcontrol
 }
+
+fix_ubuntu_permissions_cmd_not_found(){
+    sudo chmod ugo+r /var/lib/command-not-found/commands.db
+}

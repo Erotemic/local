@@ -1451,14 +1451,14 @@ docker(){
     # https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/#set-up-the-repository
     # https://github.com/NVIDIA/nvidia-docker
 
-     sudo apt install apt-transport-https ca-certificates curl software-properties-common
+     sudo apt update
+     sudo apt install apt-transport-https ca-certificates curl software-properties-common -y
      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
      sudo apt-key fingerprint 0EBFCD88
      sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
      
      sudo apt update
      sudo apt install -y docker-ce
-
 
     # Add self to docker group
     sudo groupadd docker
@@ -1470,6 +1470,27 @@ docker(){
     docker run hello-world
     sudo docker run hello-world
 
+
+
+    # New Nvidia Docker Install Guide
+    # https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker
+    distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
+       && curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add - \
+       && curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+    sudo apt-get update
+    sudo apt-get install -y nvidia-docker2
+    sudo systemctl restart docker
+
+    # TEST
+    sudo docker run --rm --gpus all nvidia/cuda:11.0-base nvidia-smi
+    
+
+
+
+
+    ############################
+    ############################
+    ############################
     # OLD DO NOT USE
     # NVIDIA-Docker
     curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | \

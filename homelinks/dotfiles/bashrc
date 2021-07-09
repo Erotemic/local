@@ -6,7 +6,6 @@
 #if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
 #    source /etc/profile.d/vte.sh
 #fi
-#return
 
 # I don't know why this is populated to begin with
 #echo "PATH(pre-bashrc) = $PATH"
