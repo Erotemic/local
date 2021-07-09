@@ -1471,7 +1471,6 @@ docker(){
     sudo docker run hello-world
 
 
-
     # New Nvidia Docker Install Guide
     # https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker
     distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \

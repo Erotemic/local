@@ -172,11 +172,14 @@ refresh_workon_autocomplete
 
 
 install_pyenv(){
+    __doc__='
+    eval "$($PYENV_ROOT/bin/pyenv init -)"
+    '
     # Install requirements for building Python
     sudo apt-get install -y \
         make build-essential libssl-dev zlib1g-dev \
         libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
-        libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl
+        libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl python3-openssl
 
     # Download pyenv
     export PYENV_ROOT="$HOME/.pyenv"
@@ -219,7 +222,7 @@ pyenv_create_virtualenv(){
         pyenv install --list
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        pyenv_create_virtualenv 3.8.6 most
+        pyenv_create_virtualenv 3.8.6 full
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
         pyenv_create_virtualenv 3.7.10 off
