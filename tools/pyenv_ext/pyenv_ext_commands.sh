@@ -173,6 +173,8 @@ refresh_workon_autocomplete
 
 install_pyenv(){
     __doc__='
+    export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$($PYENV_ROOT/bin/pyenv init -)"
     eval "$($PYENV_ROOT/bin/pyenv init -)"
     '
     # Install requirements for building Python
@@ -265,6 +267,7 @@ pyenv_create_virtualenv(){
 
         PYTHON_CFLAGS="-march=native -O3 -pipe" 
     elif [[ "$OPTIMIZE_PRESET" == "most" ]]; then
+        # FIXME: most and full are the same, what is the real breakdown?
         PROFILE_TASK=$(_strip_double_whitespace "-m test.regrtest 
             --pgo test_array test_base64 test_binascii test_binhex test_binop
             test_c_locale_coercion test_csv test_json test_hashlib test_unicode
