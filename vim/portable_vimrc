@@ -434,3 +434,26 @@ let g:startify_bookmarks = ['~/.vimrc', '~/.bashrc']
 "else:
 "    print('VIMTK VERSION TO OLD: vimtk.__version__ = {!r}'.format(vimtk.__version__))
 "EOF
+
+
+" In Vim82 it seems that the ctrl+shift+c / ctrl+shift+v no longer do copy /
+" paste, so add them explicitly here
+if has("clipboard")
+    ":call vimtk#remap_all_modes('<C-S-X>', '"+x')
+    ":call vimtk#remap_all_modes('<C-S-C>', '"+y')
+    ":call vimtk#remap_all_modes('<C-S-V>', '"+gP')
+    noremap <C-S-X> "+x
+    noremap <C-S-C> "+y
+    noremap <C-S-V> "+gP
+
+    "vnoremap <C-S-X> "+x
+    "vnoremap <C-S-C> "+y
+    "vnoremap <C-S-V> "+gP
+
+    "inoremap <C-S-X> "+x
+    "inoremap <C-S-C> "+y
+
+    exec 'inoremap <script> <C-S-V> <C-G>u' . paste#paste_cmd['i']
+    exec 'vnoremap <script> <C-S-V> ' . paste#paste_cmd['v']
+
+endif

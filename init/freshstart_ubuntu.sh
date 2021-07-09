@@ -739,27 +739,47 @@ build_vim_for_pyenv(){
         git pull
     fi
 
-
     source $HOME/local/init/utils.sh
-    apt_ensure build-essential libtinfo-dev ncurses-dev gnome-devel libgtk-3-dev
+    apt_ensure build-essential libtinfo-dev libncurses-dev gnome-devel libgtk-3-dev libxt-dev
+
     #./configure --help
     #./configure --help | grep python
     cd $HOME/code/vim
 
     # https://github.com/vim/vim/issues/6457
-    git checkout v8.1.2424
+    #git checkout v8.1.2424
+    git checkout v8.2.3113
 
-    deactivate
+    # Build in virtualenv?
+    # deactivate
     deactivate_venv
+
+    BUILD_IN_VIRTUALENV=0
+    if [[ "$BUILD_IN_VIRTUALENV" == "1" ]]; then
+        #PREFIX=$VIRTUAL_ENV
+        # I Think the config has to point to the actual python install and not
+        # the virtualenv
+        PREFIX=$(pyenv prefix)
+        EXEC_PREFIX=$VIRTUAL_ENV
+        CONFIG_DIR=$($(pyenv prefix)/bin/python-config --configdir)
+        #CONFIG_DIR=$($VIRTUAL_ENV/bin/python-config --configdir)
+        PYTHON_CMD=$(which python)
+    else
+        # Seems like this doesnt always work
+        PREFIX=$(pyenv prefix)
+        EXEC_PREFIX="$PREFIX"
+        CONFIG_DIR=$($(pyenv prefix)/bin/python-config --configdir)
+        PYTHON_CMD=$(pyenv which python)
+    fi
 
     #PREFIX=${VIRTUAL_ENV:=$HOME/.local}
     #CONFIG_DIR=$(python-config --configdir)
 
     #https://github.com/ycm-core/YouCompleteMe/issues/3760
-
-    PREFIX=$(pyenv prefix)
-    CONFIG_DIR=$($(pyenv prefix)/bin/python-config --configdir)
+    #PREFIX=$(pyenv prefix)
+    #CONFIG_DIR=$($(pyenv prefix)/bin/python-config --configdir)
     echo "PREFIX = $PREFIX"
+    echo "EXEC_PREFIX = $EXEC_PREFIX"
     echo "CONFIG_DIR = $CONFIG_DIR"
 
     # THIS WORKS! 
@@ -767,12 +787,17 @@ build_vim_for_pyenv(){
     make distclean
     ./configure \
         --prefix=$PREFIX \
+        --exec-prefix=$EXEC_PREFIX \
         --enable-pythoninterp=no \
         --enable-python3interp=yes \
+        --with-python3-command=$PYTHON_CMD \
         --with-python3-config-dir=$CONFIG_DIR \
         --enable-gui=gtk3
     cat src/auto/config.mk 
-    cat src/auto/config.mk | grep PYTHON3
+
+    # Ensure the version of python matches (there are cases due to system
+    # configs where it might not)
+    cat src/auto/config.mk | grep 'PYTHON3\|prefix'
     make -j9
     #./src/vim -u NONE --cmd "source test.vim"
     make install

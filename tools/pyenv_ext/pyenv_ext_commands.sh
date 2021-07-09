@@ -2,12 +2,11 @@ __doc__="
 SeeAlso:
     ~/local/homelinks/helpers/alias_helpers.sh
 "
-
 pathvar_remove()
 {
-_VAR=$1
-_VAL=$2
-_PYEXE=$(system_python)
+local _VAR=$1
+local _VAL=$2
+local _PYEXE=$(system_python)
 $_PYEXE -c "
 if __name__ == '__main__':
     import os
@@ -94,20 +93,20 @@ workon_py()
     __doc__="
     Switch virtual environments
     "
-    NEW_VENV=$1
+    local NEW_VENV=$1
     echo "workon_py: NEW_VENV = $NEW_VENV"
 
     if [ ! -f $NEW_VENV/bin/activate ]; then
         # Check if it is the name of a conda or virtual env
         # First try conda, then virtualenv
-        TEMP_PATH=$_CONDA_ROOT/envs/$NEW_VENV
+        local TEMP_PATH=$_CONDA_ROOT/envs/$NEW_VENV
         #echo "TEMP_PATH = $TEMP_PATH"
         if [ -d $TEMP_PATH ]; then
             NEW_VENV=$TEMP_PATH
         else
-            TEMP_PATH=$HOME/$NEW_VENV
+            local TEMP_PATH=$HOME/$NEW_VENV
             if [ -d $TEMP_PATH ]; then
-                NEW_VENV=$TEMP_PATH
+                local NEW_VENV=$TEMP_PATH
             fi
         fi
     fi
@@ -149,14 +148,14 @@ we(){
 
 refresh_workon_autocomplete(){
     if [ -d "$_CONDA_ROOT" ]; then
-        KNOWN_CONDA_ENVS="$(/bin/ls -1 $_CONDA_ROOT/envs | sort)"
+        local KNOWN_CONDA_ENVS="$(/bin/ls -1 $_CONDA_ROOT/envs | sort)"
     else
-        KNOWN_CONDA_ENVS=""
+        local KNOWN_CONDA_ENVS=""
     fi 
-    KNOWN_VIRTUAL_ENVS="$(/bin/ls -1 $HOME | grep venv | sort)"
+    local KNOWN_VIRTUAL_ENVS="$(/bin/ls -1 $HOME | grep venv | sort)"
     
     if [[ "$(which pyenv)" ]]; then
-        KNOWN_PYENV_ENVS=$(find $(pyenv root)/versions/*/envs/* -maxdepth 0 -type d -printf "%f\n")
+        local KNOWN_PYENV_ENVS=$(find $(pyenv root)/versions/*/envs/* -maxdepth 0 -type d -printf "%f\n")
     fi
     #readarray -d '' KNOWN_PYENV_ENVS < <(find $(pyenv root)/versions/*/envs/* -maxdepth 0 -type d -printf "%f\n")
 
@@ -165,7 +164,7 @@ refresh_workon_autocomplete(){
     #echo "KNOWN_PYENV_ENVS = $KNOWN_PYENV_ENVS"
 
     # Remove newlines
-    KNOWN_ENVS=$(echo "$KNOWN_CONDA_ENVS $KNOWN_VIRTUAL_ENVS $KNOWN_PYENV_ENVS" | tr '\n' ' ')
+    local KNOWN_ENVS=$(echo "$KNOWN_CONDA_ENVS $KNOWN_VIRTUAL_ENVS $KNOWN_PYENV_ENVS" | tr '\n' ' ')
     complete -W "$KNOWN_ENVS" "workon_py"
     complete -W "$KNOWN_ENVS" "we"
 }
@@ -207,11 +206,11 @@ pyenv_create_virtualenv(){
     "
     _handle_help $@ || return 0
 
-    PYTHON_VERSION=$1
-    OPTIMIZE_PRESET=${2:="most"}
+    local PYTHON_VERSION=$1
+    local OPTIMIZE_PRESET=${2:="most"}
 
-    CHOSEN_PYTHON_VERSION=$PYTHON_VERSION
-    BEST_MATCH=$(_pyenv_best_version_match $PYTHON_VERSION)
+    local CHOSEN_PYTHON_VERSION=$PYTHON_VERSION
+    local BEST_MATCH=$(_pyenv_best_version_match $PYTHON_VERSION)
     echo "BEST_MATCH = $BEST_MATCH"
     if [[ $BEST_MATCH == "None" ]]; then
         echo "failed to find match"

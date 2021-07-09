@@ -1,5 +1,4 @@
 #!/bin/sh
-
 ######################
 # Debugging code
 
@@ -22,6 +21,15 @@
 ## /etc/bash.bashrc
 #EOF 
 
+
+# TODO:
+# There seems to be some situations where environment variables will persist
+# even if you close the terminal and open a new one. I'm not sure exactly what
+# is going on. Perhaps it is because I'm in a gnome session and something in
+# gnome deals with environs on startup. Running (env) at the top of this script
+# can show what environns are set before we get in here.
+
+
 #echo "PATH = $PATH"
 #echo "CPATH = $CPATH"
 #echo "LD_LIBRARY_PATH = $LD_LIBRARY_PATH"
@@ -35,7 +43,7 @@
 #export CUDA_HOST_COMPILER=/usr/bin/gcc-$GCC_VERSION
 #export CC=gcc-$GCC_VERSION
 #export CXX=g++-$GCC_VERSION
-__heredoc__="""
+__doc__='
 
 sudo apt install g++-5
 
@@ -47,9 +55,7 @@ CUDA_HOST_COMPILER=/usr/bin/gcc-$GCC_VERSION CC=gcc-$GCC_VERSION CXX=g++$GCC_VER
 
 CUDA_HOST_COMPILER=/usr/bin/gcc-5 CC=gcc-5 CXX=g++-5 python setup.py develop
 CUDA_HOST_COMPILER=/usr/bin/gcc-5 CC=gcc-5 CXX=g++-5 python setup.py build_ext --inplace
-
-"""
-
+'
 
 # Test if I am logging into my own account.
 if [ "$USER" = "jon.crall" ] || [ "$USER" = "joncrall" ] ; then
@@ -194,10 +200,14 @@ if [ -f "$HOME/.local/conda/etc/profile.d/conda.sh" ]; then
 fi
 
 # Add the pyenv command to our environment if it exists
+
+
 export PYENV_ROOT="$HOME/.pyenv"
 if [ -d "$PYENV_ROOT" ]; then
     export PATH="$PYENV_ROOT/bin:$PATH"
-    eval "$($PYENV_ROOT/bin/pyenv init -)"
+    #eval "$($PYENV_ROOT/bin/pyenv init -)"
+    #eval "$(pyenv init --path)"
+    eval "$(pyenv init -)"
     source $PYENV_ROOT/completions/pyenv.bash
     export PYENV_PREFIX=$(pyenv prefix)
 fi
@@ -291,33 +301,33 @@ debug(){
 # HACK FOR ME
 _CONDA_ROOT="$HOME/.local/conda/"
 
-#echo "CONDA_PREFIX = $CONDA_PREFIX"
-#echo "CURRENT VIRTAL_ENV=$VIRTUAL_ENV"
-if [ "$DID_MY_BASHRC_INIT" == "" ]; then
-    # For some reason VIRTUAL_ENV is initialized as "", so unset it
-    unset VIRTUAL_ENV
-    CHOSEN_PYTHON_VERSION=3.8.5
+_AUTOSTART_VENV=1
+if [[ "$_AUTOSTART_VENV" == "1" ]]; then
+    if [ "$DID_MY_BASHRC_INIT" == "" ]; then
+        # For some reason VIRTUAL_ENV is initialized as "", so unset it
+        unset VIRTUAL_ENV
+        CHOSEN_PYTHON_VERSION=3.8.5
+        if [ -d "$PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION" ]; then
+            pyenv shell $CHOSEN_PYTHON_VERSION
+            source $PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION/bin/activate
+        elif [ -d "$HOME/.local/conda/envs/py38" ]; then
+            conda activate py38
+        elif [ -d "$HOME/.local/conda/envs/py37" ]; then
+            conda activate py37
+        elif [ -d "$HOME/.local/conda/envs/py36" ]; then
+            conda activate py36
+        fi 
 
-    #if [ -d "$PYENV_PREFIX/envs/pyenv$CHOSEN_PYTHON_VERSION" ]; then
-    if [ -d "$PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION" ]; then
-        pyenv shell $CHOSEN_PYTHON_VERSION
-        source $PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION/bin/activate
-    elif [ -d "$HOME/.local/conda/envs/py38" ]; then
-        conda activate py38
-    elif [ -d "$HOME/.local/conda/envs/py37" ]; then
-        conda activate py37
-    elif [ -d "$HOME/.local/conda/envs/py36" ]; then
-        conda activate py36
-    fi 
+    elif [ "$VIRTUAL_ENV" != "" ]; then
+        # On reload use the same venv you were in
+        #echo "WORKON VIRTUAL_ENV = $VIRTUAL_ENV"
+        workon_py $VIRTUAL_ENV
+    elif [ "$CONDA_PREFIX" != "" ]; then
+        # On reload use the same venv you were in
+        #echo "WORKON CONDA_PREFIX = $CONDA_PREFIX"
+        workon_py $CONDA_PREFIX
+    fi
 
-elif [ "$VIRTUAL_ENV" != "" ]; then
-    # On reload use the same venv you were in
-    #echo "WORKON VIRTUAL_ENV = $VIRTUAL_ENV"
-    workon_py $VIRTUAL_ENV
-elif [ "$CONDA_PREFIX" != "" ]; then
-    # On reload use the same venv you were in
-    #echo "WORKON CONDA_PREFIX = $CONDA_PREFIX"
-    workon_py $CONDA_PREFIX
 fi
 
 # Clean paths again before workon stuff happens
@@ -331,8 +341,6 @@ export CPATH=$(pathvar_clean CPATH)
 #if [ "$DEBUG_BASHRC" == "True" ]; then
 #    print_all_pathvars
 #fi
-
-
 
 if [ -f "$HOME/.bashrc-erotemic.sh" ]; then 
     # For machine-specific bashrc things that will not be published on github
