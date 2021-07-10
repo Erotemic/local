@@ -258,6 +258,9 @@ pyenv_create_virtualenv(){
     # https://github.com/docker-library/python/issues/160#issuecomment-509426916
     # https://gist.github.com/nszceta/ec6efc9b5e54df70deeec7bceead0a1d
     # https://clearlinux.org/news-blogs/boosting-python-profile-guided-platform-specific-optimizations
+
+    # List all presets
+    # python3 -m test.regrtest --pgo
     if [[ "$OPTIMIZE_PRESET" == "full" ]]; then
         PROFILE_TASK=$(_strip_double_whitespace "-m test.regrtest --pgo
             test_array

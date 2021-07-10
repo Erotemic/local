@@ -1942,6 +1942,8 @@ htop_like_resource_monitors(){
     # https://itsfoss.com/linux-system-monitoring-tools/
 
     # https://www.reddit.com/r/linux/comments/na637t/diskgraph_for_if_youre_wondering_what_your_disk/
+
+    bashtop
 }
 
 
