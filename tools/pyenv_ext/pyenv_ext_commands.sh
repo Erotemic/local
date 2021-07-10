@@ -224,7 +224,7 @@ pyenv_create_virtualenv(){
         pyenv install --list
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        pyenv_create_virtualenv 3.8.6 full
+        pyenv_create_virtualenv 3.8.6 most
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
         pyenv_create_virtualenv 3.7.10 off
@@ -246,18 +246,64 @@ pyenv_create_virtualenv(){
     fi
     CHOSEN_PYTHON_VERSION=$BEST_MATCH
 
+    #PYTHON_CFLAGS="
+    #    -march=x86-64
+    #    -march=rocketlake
+    #    -march=native
+    #    -O2
+    #    -O3
+    #"
+
     # About Optimizations
     # https://github.com/docker-library/python/issues/160#issuecomment-509426916
     # https://gist.github.com/nszceta/ec6efc9b5e54df70deeec7bceead0a1d
     # https://clearlinux.org/news-blogs/boosting-python-profile-guided-platform-specific-optimizations
     if [[ "$OPTIMIZE_PRESET" == "full" ]]; then
-        PROFILE_TASK=$(_strip_double_whitespace "-m test.regrtest 
-            --pgo test_array test_base64 test_binascii test_binhex test_binop
-            test_c_locale_coercion test_csv test_json test_hashlib test_unicode
-            test_codecs test_traceback test_decimal test_math test_compile
-            test_threading test_time test_fstring test_re test_float test_class
-            test_cmath test_complex test_iter test_struct test_slice test_set
-            test_dict test_long test_bytes test_memoryview test_io test_pickle")
+        PROFILE_TASK=$(_strip_double_whitespace "-m test.regrtest --pgo
+            test_array
+            test_base64 
+            test_binascii 
+            test_binop 
+            test_bisect 
+            test_bytes 
+            test_bz2 
+            test_cmath 
+            test_codecs 
+            test_collections 
+            test_complex 
+            test_dataclasses 
+            test_datetime 
+            test_decimal 
+            test_difflib 
+            test_embed 
+            test_float 
+            test_fstring 
+            test_functools 
+            test_generators 
+            test_hashlib 
+            test_heapq 
+            test_int 
+            test_itertools 
+            test_json 
+            test_long 
+            test_lzma 
+            test_math 
+            test_memoryview 
+            test_operator 
+            test_ordered_dict 
+            test_pickle 
+            test_pprint 
+            test_re 
+            test_set 
+            test_sqlite 
+            test_statistics 
+            test_struct 
+            test_tabnanny 
+            test_time 
+            test_unicode 
+            test_xml_etree 
+            test_xml_etree_c 
+        ")
 
         PYTHON_CONFIGURE_OPTS=$(_strip_double_whitespace "
             --enable-shared 
@@ -265,7 +311,7 @@ pyenv_create_virtualenv(){
             --with-computed-gotos
             --with-lto")
 
-        PYTHON_CFLAGS="-march=native -O3 -pipe" 
+        PYTHON_CFLAGS="-march=native -O2 -pipe" 
     elif [[ "$OPTIMIZE_PRESET" == "most" ]]; then
         # FIXME: most and full are the same, what is the real breakdown?
         PROFILE_TASK=$(_strip_double_whitespace "-m test.regrtest 
@@ -282,6 +328,9 @@ pyenv_create_virtualenv(){
             --with-computed-gotos
             --with-lto")
 
+        # -march option: https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html
+        # -pipe option: https://gcc.gnu.org/onlinedocs/gcc-4.1.2/gcc/Overall-Options.html
+        # TODO: maybe use --mtune=intel?
         PYTHON_CFLAGS="-march=native -O2 -pipe" 
         MAKE_OPTS=""
     elif [[ "$OPTIMIZE_PRESET" == "off" ]]; then
