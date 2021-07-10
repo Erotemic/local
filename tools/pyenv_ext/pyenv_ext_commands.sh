@@ -282,7 +282,8 @@ pyenv_create_virtualenv(){
             --with-computed-gotos
             --with-lto")
 
-        PYTHON_CFLAGS="-march=native -O3 -pipe" 
+        PYTHON_CFLAGS="-march=native -O2 -pipe" 
+        MAKE_OPTS=""
     elif [[ "$OPTIMIZE_PRESET" == "off" ]]; then
         PROFILE_TASK=""
         PYTHON_CONFIGURE_OPTS="--enable-shared"
@@ -292,6 +293,10 @@ pyenv_create_virtualenv(){
         return 1
     fi
 
+    MAKE_OPTS=""
+    MAKE_OPTS="-j$(nproc)"
+
+    MAKE_OPTS="$MAKE_OPTS" \
     PROFILE_TASK="$PROFILE_TASK" \
     PYTHON_CFLAGS="$PYTHON_CFLAGS" \
     PYTHON_CONFIGURE_OPTS="$PYTHON_CONFIGURE_OPTS" \
