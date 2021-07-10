@@ -1943,8 +1943,14 @@ htop_like_resource_monitors(){
 
     # https://www.reddit.com/r/linux/comments/na637t/diskgraph_for_if_youre_wondering_what_your_disk/
 
+    #sudo apt install bashtop
     bashtop
+
+    #sudo add-apt-repository ppa:bashtop-monitor/bashtop
+    #sudo apt update
+    #sudo apt install bashtop
 }
+
 
 
 check_hdd_health(){
