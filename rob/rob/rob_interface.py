@@ -526,3 +526,4 @@ def set_keymap(r, profile=None):
 
 
 setkb = set_keymap
+fixkb = set_keymap
