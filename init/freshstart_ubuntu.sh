@@ -1927,6 +1927,11 @@ latest_clickclose_gnome(){
 
 htop_like_resource_monitors(){
 
+    # Core: Also
+    nvtop
+    htop
+
+    # Disk monitor
     sudo apt install iotop
 
     # nmon shows usage per disk (and others info)
@@ -1948,6 +1953,7 @@ htop_like_resource_monitors(){
 
     #sudo apt install bashtop
     bashtop
+    pip install bpytop 
 
     #sudo add-apt-repository ppa:bashtop-monitor/bashtop
     #sudo apt update

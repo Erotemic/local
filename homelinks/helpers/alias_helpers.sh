@@ -615,17 +615,17 @@ pyversion(){
     python -c "import $1; print('$1.__version__ = ' + str($1.__version__))"
 }
 
+pyfile()
+{
+    echo "python -c \"import $1; print($1.__file__)\""
+    python -c "import $1; print($1.__file__.replace(\".pyc\", \".py\"))"
+}
+
 pywhich(){
     __heredoc__="
     Display the location of a Python module
     "
     python -c "import $1; print('$1.__file__ = ' + str($1.__file__))"
-}
-
-pyfile()
-{
-    echo "python -c \"import $1; print($1.__file__)\""
-    python -c "import $1; print($1.__file__.replace(\".pyc\", \".py\"))"
 }
 
 
