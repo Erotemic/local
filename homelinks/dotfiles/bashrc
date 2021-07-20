@@ -204,9 +204,10 @@ fi
 export PYENV_ROOT="$HOME/.pyenv"
 if [ -d "$PYENV_ROOT" ]; then
     export PATH="$PYENV_ROOT/bin:$PATH"
-    #eval "$($PYENV_ROOT/bin/pyenv init -)"
+    eval "$($PYENV_ROOT/bin/pyenv init -)"
+    eval "$($PYENV_ROOT/bin/pyenv init --path)"
     #eval "$(pyenv init --path)"
-    eval "$(pyenv init -)"
+    #eval "$(pyenv init -)"
     source $PYENV_ROOT/completions/pyenv.bash
     export PYENV_PREFIX=$(pyenv prefix)
 fi
@@ -268,33 +269,33 @@ fi
 
 # TODO: can this be done on the fly?
 # I think it can with argcomplete
-complete -W "gp focus kill project_dpaths sync_clipboard_to grepnr printproc_2 send add_path write_env print_path grepc grepr grep research_clipboard fix_path foo fixpath2 write_rob_pathcache sed reg_disable_automatic_reboot_122614 find write_regfile pykill symlink update_path printproc_ write_path search update_env make_dpath invgrep send_command research ps send_clipboard_to make_complete pref_env print_env create_shortcut info hskill process_research_line write_research find_in_path get_regstr preprocess_research sedr update setup_global sp print_clipboard upenv fix_youtube_names_ccl dump_clipboard" "rob"
+#complete -W "gp focus kill project_dpaths sync_clipboard_to grepnr printproc_2 send add_path write_env print_path grepc grepr grep research_clipboard fix_path foo fixpath2 write_rob_pathcache sed reg_disable_automatic_reboot_122614 find write_regfile pykill symlink update_path printproc_ write_path search update_env make_dpath invgrep send_command research ps send_clipboard_to make_complete pref_env print_env create_shortcut info hskill process_research_line write_research find_in_path get_regstr preprocess_research sedr update setup_global sp print_clipboard upenv fix_youtube_names_ccl dump_clipboard" "rob"
 
 #source $HOME/.config/ibeis/ibeis_bash_complete.sh
-export PATH=$(pathvar_clean PATH)
-export LD_LIBRARY_PATH=$(pathvar_clean LD_LIBRARY_PATH)
-export CMAKE_PREFIX_PATH=$(pathvar_clean CMAKE_PREFIX_PATH)
-export CPATH=$(pathvar_clean CPATH)
+#export PATH=$(pathvar_clean PATH)
+#export LD_LIBRARY_PATH=$(pathvar_clean LD_LIBRARY_PATH)
+#export CMAKE_PREFIX_PATH=$(pathvar_clean CMAKE_PREFIX_PATH)
+#export CPATH=$(pathvar_clean CPATH)
 
 
 # https://unix.stackexchange.com/questions/813/how-to-determine-where-an-environment-variable-came-from 
-debug(){
-    sudo grep -r VIRTUAL_ENV /etc
-    grep -r VIRTUAL_ENV $HOME/local
-    grep -r VIRTUAL_ENV $HOME
+#debug(){
+#    sudo grep -r VIRTUAL_ENV /etc
+#    grep -r VIRTUAL_ENV $HOME/local
+#    grep -r VIRTUAL_ENV $HOME
 
-    echo "PATH = "
-    pathvar_print PATH
+#    echo "PATH = "
+#    pathvar_print PATH
 
-    echo "LD_LIBRARY_PATH = "
-    pathvar_print LD_LIBRARY_PATH
+#    echo "LD_LIBRARY_PATH = "
+#    pathvar_print LD_LIBRARY_PATH
 
-    echo "CPATH = "
-    pathvar_print CPATH
+#    echo "CPATH = "
+#    pathvar_print CPATH
 
-    echo "CMAKE_PREFIX_PATH = "
-    pathvar_print CMAKE_PREFIX_PATH
-}
+#    echo "CMAKE_PREFIX_PATH = "
+#    pathvar_print CMAKE_PREFIX_PATH
+#}
 
 
 # HACK FOR ME
@@ -330,10 +331,10 @@ if [[ "$_AUTOSTART_VENV" == "1" ]]; then
 fi
 
 # Clean paths again before workon stuff happens
-export PATH=$(pathvar_clean PATH)
-export LD_LIBRARY_PATH=$(pathvar_clean LD_LIBRARY_PATH)
-export CMAKE_PREFIX_PATH=$(pathvar_clean CMAKE_PREFIX_PATH)
-export CPATH=$(pathvar_clean CPATH)
+#export PATH=$(pathvar_clean PATH)
+#export LD_LIBRARY_PATH=$(pathvar_clean LD_LIBRARY_PATH)
+#export CMAKE_PREFIX_PATH=$(pathvar_clean CMAKE_PREFIX_PATH)
+#export CPATH=$(pathvar_clean CPATH)
 
 
 #DEBUG_BASHRC=0

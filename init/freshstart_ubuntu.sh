@@ -798,6 +798,7 @@ build_vim_for_pyenv(){
     # Ensure the version of python matches (there are cases due to system
     # configs where it might not)
     cat src/auto/config.mk | grep 'PYTHON3\|prefix'
+
     make -j$(nproc)
     #./src/vim -u NONE --cmd "source test.vim"
     make install
@@ -806,6 +807,8 @@ build_vim_for_pyenv(){
         unlink_or_backup $HOME/.vim/bundle/vimtk
         ln -s $HOME/code/vimtk $HOME/.vim/bundle/vimtk
     fi
+
+    pip install ubelt pyperclip
 }
 
 pyenv_packages(){

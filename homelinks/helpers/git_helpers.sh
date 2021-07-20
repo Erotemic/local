@@ -58,37 +58,29 @@ gg-short-status()
 alias ggss=gg-short-status
 
 
-_system_python(){
-    __heredoc__="""
-    Return name of system python
-    """
-    if [ "$(type -P python)" != "" ]; then
-        echo "python"
-    elif [ "$(type -P python3)" != "" ]; then
-        echo "python3"
-    else
-        echo "python"
-    fi 
-}
-
 
 # This is probably slow for bashrc sourcing, can we lazy compute this?
-_PYEXE=$(_system_python)
-USER_SSH_HOSTS=$($_PYEXE -c "
-# READ known hostnames from ~/.ssh/config
-from os.path import expanduser, exists
-ssh_config_path = expanduser('~/.ssh/config')
-if exists(ssh_config_path):
-    lines = open(ssh_config_path, 'r').read().split('\n')
-    lines = [line for line in lines if line.startswith('Host ')]
-    hosts = [line.split(' ')[1] for line in lines]
-    print(' '.join(sorted(hosts)))
-")
-#echo "USER_SSH_HOSTS = $USER_SSH_HOSTS"
 
-complete -W "$USER_SSH_HOSTS" "git-sync"
-complete -W "$USER_SSH_HOSTS" "mount-remotes.sh"
-#complete -W "remote1 remote2 remote3 " "git-sync"
+if [[ "1" == "2" ]]; then
+    # TODO: this is slow, dont do that
+    source $HOME/local/init/utils.sh
+    _PYEXE=$(system_python)
+
+    USER_SSH_HOSTS=$($_PYEXE -c "
+    # READ known hostnames from ~/.ssh/config
+    from os.path import expanduser, exists
+    ssh_config_path = expanduser('~/.ssh/config')
+    if exists(ssh_config_path):
+        lines = open(ssh_config_path, 'r').read().split('\n')
+        lines = [line for line in lines if line.startswith('Host ')]
+        hosts = [line.split(' ')[1] for line in lines]
+        print(' '.join(sorted(hosts)))
+    ")
+    #echo "USER_SSH_HOSTS = $USER_SSH_HOSTS"
+
+    complete -W "$USER_SSH_HOSTS" "git-sync"
+    complete -W "$USER_SSH_HOSTS" "mount-remotes.sh"
+fi
 
 
 #git_lev_sync()
