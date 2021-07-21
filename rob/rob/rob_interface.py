@@ -517,7 +517,7 @@ def fix_opencv(r):
     ub.cmd('pip install opencv-python-headless', shell=True, verbose=3)
 
 
-def set_keymap(r, profile=None):
+def set_keymap(r, profile='auto'):
     import ubelt as ub
     mod_fpath = ub.expandpath('$HOME/local/tools/keyboard_mods.py')
     keyboard_mods = ub.import_module_from_path(mod_fpath)
