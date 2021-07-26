@@ -2252,3 +2252,9 @@ voice_terminal(){
     voice2json train-profile
 
 }
+
+install_slack(){
+    # Need to manually grab the .deb
+    #  https://slack.com/downloads/instructions/ubuntu
+
+}
