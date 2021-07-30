@@ -231,11 +231,20 @@ pyenv_create_virtualenv(){
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
         pyenv_create_virtualenv 3.7.9 off
+
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        pyenv_create_virtualenv 2.7.18
+        
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        pyenv_create_virtualenv 3.4.10
+
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        pyenv_create_virtualenv 3.5.10
     "
     _handle_help $@ || return 0
 
     local PYTHON_VERSION=$1
-    local OPTIMIZE_PRESET=${2:="most"}
+    local OPTIMIZE_PRESET=${2:-"most"}
 
     local CHOSEN_PYTHON_VERSION=$PYTHON_VERSION
     local BEST_MATCH=$(_pyenv_best_version_match $PYTHON_VERSION)
