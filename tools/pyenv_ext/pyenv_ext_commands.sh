@@ -224,6 +224,9 @@ pyenv_create_virtualenv(){
         pyenv install --list
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        pyenv_create_virtualenv 3.8.5 all
+
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
         pyenv_create_virtualenv 3.8.6 most
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
