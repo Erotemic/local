@@ -305,7 +305,6 @@ if [[ "$_AUTOSTART_VENV" == "1" ]]; then
         # For some reason VIRTUAL_ENV is initialized as "", so unset it
         unset VIRTUAL_ENV
         CHOSEN_PYTHON_VERSION=3.8.6
-        echo "CHOSEN_PYTHON_VERSION = $CHOSEN_PYTHON_VERSION"
         if [ -d "$PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION" ]; then
             pyenv shell $CHOSEN_PYTHON_VERSION
             source $PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION/bin/activate  
