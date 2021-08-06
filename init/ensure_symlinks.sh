@@ -111,10 +111,10 @@ ensure_config_symlinks()
 
     mkdir -p ~/local/vim/vimfiles/files/info
     safe_symlink ~/local/scripts ~/scripts
-    safe_symlink ~/local/vim/vimfiles/bundle/vimtk ~/code/vimtk
     safe_symlink ~/local/vim/vimfiles ~/.vim
     safe_symlink ~/local/vim/portable_vimrc ~/.vimrc
     safe_symlink ~/local/homelinks/ipython ~/.ipython
+    #safe_symlink ~/code/vimtk ~/local/vim/vimfiles/bundle/vimtk
 
 
     #### DO EXTRA SYMLINK FIXES

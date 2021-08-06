@@ -871,33 +871,32 @@ setup_conda_env(){
     # See https://docs.conda.io/en/latest/miniconda_hashes.html for updating
     # to newer versions
 
-    #CONDA_INSTALL_SCRIPT=Miniconda3-latest-Linux-x86_64.sh
-    #curl_check(){
-    #}
-
     # To update to a newer version see:
     # https://docs.conda.io/en/latest/miniconda_hashes.html for updating
     CONDA_INSTALL_SCRIPT=Miniconda3-py38_4.9.2-Linux-x86_64.sh
-    CONDA_EXPECTED_SHA256=1314b90489f154602fd794accfc90446111514a5a72fe1f71ab83e07de9504a7
     curl https://repo.anaconda.com/miniconda/$CONDA_INSTALL_SCRIPT > $CONDA_INSTALL_SCRIPT
-    CONDA_GOT_SHA256=$(sha256sum $CONDA_INSTALL_SCRIPT | cut -d' ' -f1)
+
     # For security, it is important to verify the hash
-    if [[ "$CONDA_GOT_SHA256" != "$CONDA_EXPECTED_SHA256" ]]; then
+    CONDA_EXPECTED_SHA256=1314b90489f154602fd794accfc90446111514a5a72fe1f71ab83e07de9504a7
+    echo "${CONDA_EXPECTED_SHA256}  ${CONDA_INSTALL_SCRIPT}" > conda_expected_hash.sha256 
+    if ! sha256sum --status -c conda_expected_hash.sha256; then
         echo "Downloaded file does not match hash! DO NOT CONTINUE!"
-        exit 1;
+    else
+        echo "Hash verified, continue with install"
+        chmod +x $CONDA_INSTALL_SCRIPT 
+        # Install miniconda to user local directory
+        _CONDA_ROOT=$HOME/.local/conda
+        sh $CONDA_INSTALL_SCRIPT -b -p $_CONDA_ROOT
+        # Activate the basic conda environment
+        source $_CONDA_ROOT/etc/profile.d/conda.sh
+        # Update the base 
+        conda update --name base conda --yes 
+
+        #conda update -y -n base conda 
+        conda create -y -n conda38 python=3.8 --override-channels --channel conda-forge
+        conda activate conda38
     fi
-    chmod +x $CONDA_INSTALL_SCRIPT 
 
-    # Install miniconda to user local directory
-    _CONDA_ROOT=$HOME/.local/conda
-    sh $CONDA_INSTALL_SCRIPT -b -p $_CONDA_ROOT
-    source $_CONDA_ROOT/etc/profile.d/conda.sh
-
-    #cat $CONDA_INSTALL_SCRIPT
-
-    #conda update -y -n base conda 
-    conda create -y -n conda38 python=3.8 --override-channels --channel conda-forge
-    conda activate conda38
 
     #conda create -y -n conda39 python=3.9
     #conda create -y -n py37 python=3.7

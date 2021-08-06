@@ -170,6 +170,10 @@ if [[ "$IS_HEADLESS" == "False" ]]; then
     transcrypt -c aes-256-cbc 
     # Reply no to using a random password
     # Input password
+
+    # Run:
+    sh $HOME/code/erotemic/init.sh
+
 fi
 
 

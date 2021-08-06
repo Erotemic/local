@@ -9,8 +9,13 @@ vim -en -c ":q"
 vim -en -c ":PlugInstall | qa"
 
 if [[ -d "$HOME/code/vimtk" ]]; then
+
+
     rm -rf $HOME/.vim/bundle/vimtk
     safe_symlink $HOME/code/vimtk $HOME/.vim/bundle/vimtk
+else 
+    git clone git@github.com:Erotemic/vimtk.git $HOME/code/vimtk
+    echo "no vimtk dev"
 fi
 
 mkdir -p ~/.vim_tmp

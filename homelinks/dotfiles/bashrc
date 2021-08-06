@@ -194,7 +194,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:
 if [ -f "$HOME/.local/conda/etc/profile.d/conda.sh" ]; then
     # Add the conda command to the environment if conda is installed 
     # (note this does not modify the path or add conda python)
-    source $HOME/.local/conda/etc/profile.d/conda.sh
+    source $HOME/.local/conda/etc/profile.d/conda.sh  
     complete -W "deactivate activate env clean config create help info install list package remove uninstall search update upgrade -h --help -V --version" "conda"
 fi
 
@@ -305,9 +305,10 @@ if [[ "$_AUTOSTART_VENV" == "1" ]]; then
         # For some reason VIRTUAL_ENV is initialized as "", so unset it
         unset VIRTUAL_ENV
         CHOSEN_PYTHON_VERSION=3.8.6
+        echo "CHOSEN_PYTHON_VERSION = $CHOSEN_PYTHON_VERSION"
         if [ -d "$PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION" ]; then
             pyenv shell $CHOSEN_PYTHON_VERSION
-            source $PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION/bin/activate
+            source $PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION/bin/activate  
         elif [ -d "$HOME/.local/conda/envs/py38" ]; then
             conda activate py38
         elif [ -d "$HOME/.local/conda/envs/py37" ]; then
@@ -370,6 +371,11 @@ alias ls='ls --color --human-readable'
 
 # added by travis gem
 [ -f /home/joncrall/.travis/travis.sh ] && source /home/joncrall/.travis/travis.sh
+
+
+# Prevent dollar sign from being escaped on tab complete
+# https://askubuntu.com/questions/1245016/how-to-disable-automatic-backslash-insert-when-using-environment-variable-names
+shopt -s direxpand
 
 
 

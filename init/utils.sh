@@ -402,7 +402,7 @@ unlink_or_backup()
         unlink $TARGET
     elif [ -f $TARGET ] || [ -d $TARGET ] ; then
         # backup any existing file or directory
-        mv $TARGET $TARGET."$(date +"%T")".old
+        mv $TARGET $TARGET."$(date --iso-8601=seconds)".old
     fi
 }
 
