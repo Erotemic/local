@@ -200,7 +200,8 @@ fi
 
 # Add the pyenv command to our environment if it exists
 
-
+# Source in alias helpers
+#source $HOME/local/tools/pyenv_ext/pyenv_ext_commands.sh
 export PYENV_ROOT="$HOME/.pyenv"
 if [ -d "$PYENV_ROOT" ]; then
     export PATH="$PYENV_ROOT/bin:$PATH"
@@ -227,9 +228,6 @@ source $HOME/local/init/utils.sh
 source $HOME/local/homelinks/helpers/git_helpers.sh
 source $HOME/local/homelinks/helpers/alias_helpers.sh
 
-
-# Source in alias helpers
-#source $HOME/local/tools/pyenv_ext/pyenv_ext_commands.sh
 
 
 # set history to not ignore leading whitespace

@@ -178,7 +178,8 @@ install_pyenv(){
     eval "$($PYENV_ROOT/bin/pyenv init -)"
     '
     # Install requirements for building Python
-    sudo apt-get install -y \
+    #sudo apt-get install -y \
+    apt_ensure \
         make build-essential libssl-dev zlib1g-dev \
         libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
         libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl python3-openssl

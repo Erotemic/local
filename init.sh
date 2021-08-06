@@ -188,13 +188,29 @@ if [[ "$SETUP_PYTHON" == "True" ]]; then
         libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev 
 
     if [[ ! -d "$HOME/.pyenv" ]]; then
-        source $HOME/local/init/freshstart_ubuntu.sh
-        setup_pyenv
+        #source $HOME/local/init/freshstart_ubuntu.sh
+        source $HOME/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        install_pyenv
+
+        export PYENV_ROOT="$HOME/.pyenv"
+        if [ -d "$PYENV_ROOT" ]; then
+            export PATH="$PYENV_ROOT/bin:$PATH"
+            eval "$($PYENV_ROOT/bin/pyenv init -)"
+            eval "$($PYENV_ROOT/bin/pyenv init --path)"
+            #eval "$(pyenv init --path)"
+            #eval "$(pyenv init -)"
+            source $PYENV_ROOT/completions/pyenv.bash
+            export PYENV_PREFIX=$(pyenv prefix)
+            pyenv_create_virtualenv 3.8.6 most
+        fi
     fi
+
     python ~/local/init/util_git1.py 'clone_repos'
     pip install -e ~/local/rob
     
     # TODO: Dont use conda anymore, use pyenv or something else instead
+    # Hmm, maybe use conda when we need something quick and without ANY root
+    # privledges?
     #if [ ! -d ~/.local/conda ]; then
     #    echo "SETUP CONDA ENV"
     #    setup_conda_env

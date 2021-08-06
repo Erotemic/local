@@ -132,10 +132,14 @@ setup_remote_ssh_keys(){
     ###
     # ALTERNATE
     # Copy from a remote to local computer
-    REMOTE_USER=joncrall
-    REMOTE_HOST=namek
+    REMOTE_USER=jon.crall
+    REMOTE_HOST=hocus-pocus
     rsync $REMOTE_USER@$REMOTE_HOST:.ssh/./id_* $HOME/.ssh/
     rsync $REMOTE_USER@$REMOTE_HOST:.ssh/./config $HOME/.ssh/
+
+    REMOTE_ALIAS=
+    rsync -avprPRL $HOME/.ssh/./id_*  $REMOTE_ALIAS:.ssh/
+    rsync -avprPRL $HOME/.ssh/./config $REMOTE_ALIAS:.ssh/
 }
 
 
