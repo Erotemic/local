@@ -54,6 +54,7 @@ if [ "$HAVE_SUDO" == "True" ]; then
     apt_ensure sshfs 
     apt_ensure astyle p7zip-full pgpgpg lm-sensors
     apt_ensure synaptic
+    apt_ensure rsync valgrind symlinks
 else
     echo "We dont have sudo. Hopefully we wont need it"
 fi
@@ -131,6 +132,8 @@ if [[ "$IS_HEADLESS" == "False" ]]; then
     apt_ensure gpg pgpgpg
     apt_ensure net-tools nmap
     apt_ensure sensors lm-sensors
+    apt_ensure psensor
+    apt_ensure gitk gparted okular remmina rsync gitk xsel graphviz 
 
     if [[ "$(type -P google-chrome)" == "" ]]; then
         source $HOME/local/init/freshstart_ubuntu.sh
