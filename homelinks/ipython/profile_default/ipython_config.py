@@ -1,4 +1,4 @@
-# import six
+import six
 c = get_config()  # NOQA
 c.InteractiveShellApp.exec_lines = []
 # if six.PY2:
@@ -37,6 +37,13 @@ c.InteractiveShellApp.exec_lines.append('import ubelt as ub')
 # c.InteractiveShellApp.exec_lines.append('pd.options.display.float_format = lambda x: \'%.4f\' % (x,)')
 # c.InteractiveShellApp.exec_lines.append('import networkx as nx')
 c.InteractiveShellApp.exec_lines.append('from os.path import *')
+
+if not six.PY2:
+    c.InteractiveShellApp.exec_lines.append('import pathlib')
+    c.InteractiveShellApp.exec_lines.append('from pathlib import Path')
+
+c.InteractiveShellApp.exec_lines.append('import xdev as xd')
+
 # c.InteractiveShellApp.exec_lines.append('from six.moves import cPickle as pickle')
 
 
