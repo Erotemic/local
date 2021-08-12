@@ -11,6 +11,9 @@ basic_apt_install(){
 
     # Mid priority
     sudo apt install expect exuberant-ctags graphviz imagemagick gitk wmctrl xclip xdotool xsel valgrind -y
+
+    # Other
+    sudo apt install yamllint
 }
 
 

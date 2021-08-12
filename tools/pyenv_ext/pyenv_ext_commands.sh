@@ -390,6 +390,31 @@ pyenv_create_virtualenv(){
 }
 
 
+new_pyenv_venv(){
+    __doc__="
+    Create a new pyenv virtual environment 
+
+    # Uninstall everything
+    pip uninstall $(echo $(pip freeze | sed -e 's/==.*//')) -y
+
+    source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+    new_pyenv_venv new_env$(date --iso-8601=m)
+    VENV_NAME=temp_env
+    "
+    VENV_NAME=$1
+
+    VERSION_PREFIX=$(pyenv prefix $CHOSEN_PYTHON_VERSION)
+    CHOSEN_PYEXE=$VERSION_PREFIX/bin/python
+
+    VENV_NAME=$VENV_NAME
+
+    VENV_PATH=$VERSION_PREFIX/envs/$VENV_NAME
+    $CHOSEN_PYEXE -m venv $VENV_PATH
+
+    workon_py $VENV_NAME
+}
+
+
 _pyenv_best_version_match(){
     __doc__="
     Finds a valid pyenv version that matches a user request

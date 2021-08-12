@@ -133,7 +133,7 @@ if [[ "$IS_HEADLESS" == "False" ]]; then
     apt_ensure net-tools nmap
     apt_ensure sensors lm-sensors
     apt_ensure psensor
-    apt_ensure gitk gparted okular remmina rsync gitk xsel graphviz 
+    apt_ensure gitk gparted okular remmina rsync gitk xsel graphviz feh
 
     if [[ "$(type -P google-chrome)" == "" ]]; then
         source $HOME/local/init/freshstart_ubuntu.sh
