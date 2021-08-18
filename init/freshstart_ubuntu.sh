@@ -1979,3 +1979,15 @@ check_hdd_health(){
 fix_ubuntu_permissions_cmd_not_found(){
     sudo chmod ugo+r /var/lib/command-not-found/commands.db
 }
+
+benchmark()
+{
+    # https://linuxconfig.org/how-to-benchmark-your-linux-system
+
+    sudo apt install sysbench
+    sysbench cpu run
+    sysbench memory run
+    sysbench fileio --file-test-mode=seqwr run
+
+    time (python -m pip install xdoctest && python -m xdoctest xdoctest)
+}

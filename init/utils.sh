@@ -11,10 +11,15 @@ Usage:
     source $HOME/local/init/utils.sh
 
 '
-__EROTEMIC_UTILS_VERSION__="0.1.1"
-if [ "$__SOURCED_EROTEMIC_UTILS__" = "$__EROTEMIC_UTILS_VERSION__" ]; then
-   # Prevent reloading if the version hasnt changed
-   return
+
+__EROTEMIC_RELOAD_MODE__="${__EROTEMIC_RELOAD_MODE__:=1}"
+__EROTEMIC_UTILS_VERSION__="0.1.2"
+
+if [ "$__EROTEMIC_RELOAD_MODE__" = "0" ]; then
+    if [ "$__SOURCED_EROTEMIC_UTILS__" = "$__EROTEMIC_UTILS_VERSION__" ]; then
+       # Prevent reloading if the version hasnt changed
+       return
+    fi
 fi
 __SOURCED_EROTEMIC_UTILS__="$__EROTEMIC_UTILS_VERSION__"
 
@@ -488,23 +493,34 @@ exthist(){
 
     Example:
         __SOURCED_EROTEMIC_UTILS__=0
-        source $HOME/local/init/utils.sh
+        __EROTEMIC_RELOAD_MODE__=1
+        source $HOME/local/init/utils.sh && exthist $HOME/code/ubelt -a -r
+        source $HOME/local/init/utils.sh && exthist $HOME/local -r
+        source $HOME/local/init/utils.sh && exthist $HOME/local 
+        exthist $HOME/local -r 
+        exthist $HOME/local
+
         exthist --help
         exthist /bin /etc -r
-        exthist $HOME
+        exthist $HOME/local/init -r
+        exthist -r
     "
     _handle_help $@ || return 0
 
-    local RECURSIVE=""
-    local DPATH_LIST=()
-    local DPATH=""
-    local SUB_DPATH=""
+    local RECURSIVE="0"
+    DPATH_LIST=()
+    local IGNORE_HIDDEN="1"
+
     while [[ $# -gt 0 ]]
     do
         local key="$1"
         case $key in
             -r|--recursive)
             RECURSIVE=True
+            shift # past argument
+            ;;
+            -a|--all)
+            IGNORE_HIDDEN="0"
             shift # past argument
             ;;
             *)    # unknown option
@@ -520,25 +536,100 @@ exthist(){
         DPATH_LIST=(.)
     fi
 
+    #echo "
+    #* RECURSIVE = $RECURSIVE
+    #* DPATH_LIST = $DPATH_LIST
+    #* IGNORE_HIDDEN = $IGNORE_HIDDEN
+    #"
+
+    local DPATH=""
+    local SUB_DPATH=""
+    #DPATH=""
+    #SUB_DPATH=""
     for DPATH in "${DPATH_LIST[@]}"; do
         if [ "$RECURSIVE" == "True" ]; then
             # TODO: could pass more arguments to find to restrict recursion
-            local FIND_RESULT=$(find $DPATH -type d)
-            for SUB_DPATH in $FIND_RESULT; do
-                echo "SUB_DPATH=$SUB_DPATH"
-                find $SUB_DPATH -maxdepth 1 -xtype f  | rev | cut -d. -f1 | cut -d/ -f1 | rev  | tr '[:upper:]' '[:lower:]' | sort | uniq --count | sort -rn
-            done
+            if [ "$IGNORE_HIDDEN" == "1" ]; then
+                # trouble with bash, reading find into arrays. Is there a better way?
+                ALL_SUBDIRS=()
+                while IFS=  read -r -d $'\0'; do
+                    ALL_SUBDIRS+=("$REPLY")
+                done < <(find $DPATH -xtype d -not -path '*/\.*' -print0)
+
+            else
+                #ALL_SUBDIRS="$(find $DPATH)"
+                ALL_SUBDIRS=()
+                while IFS=  read -r -d $'\0'; do
+                    ALL_SUBDIRS+=("$REPLY")
+                done < <(find $DPATH -xtype d -print0 )
+            fi
+
+            #echo "ALL_SUBDIRS = $(bash_array_repr "${ALL_SUBDIRS[@]}")"
+            #echo "n=${#ALL_SUBDIRS[@]}"
+            #find "${ALL_SUBDIRS[@]}" -maxdepth 1 -xtype f -path '*/*.*' 
+
+            # TODO: breakup dirs option
+            # TODO: 
+            find "${ALL_SUBDIRS[@]}" -maxdepth 1 -xtype f -path '*/*.*' | rev | cut -d. -f1 | cut -d/ -f1 | rev  | tr '[:upper:]' '[:lower:]' | sort | uniq --count | sort -rn
+
         else
-            echo "DPATH=$DPATH"
             # Logic is
             # reverse the string, 
             # remove everything after the "first" . and / 
             # reverse again (aka we got everything after the last . or /)
             # convert to lowercase
             # sort, unique, and count
-            find $DPATH -maxdepth 1 -xtype f  | rev | cut -d. -f1 | cut -d/ -f1 | rev  | tr '[:upper:]' '[:lower:]' | sort | uniq --count | sort -rn
+            find $DPATH -maxdepth 1 -xtype f | rev | cut -d. -f1 | cut -d/ -f1 | rev  | tr '[:upper:]' '[:lower:]' | sort | uniq --count | sort -rn
         fi
     done 
+
+    #echo "
+    #* RECURSIVE = $RECURSIVE
+    #* DPATH_LIST = $DPATH_LIST
+    #* IGNORE_HIDDEN = $IGNORE_HIDDEN
+    #"
+}
+
+escape_bash_string(){
+    __doc__='
+    Escapes the input string so the program that it is passed to sees exactly
+    the given input string.
+
+    TODO:
+        - [ ] Add to erotemic.utils
+
+    Args:
+        The string to escape
+
+    Returns:
+        The escaped string
+
+    Example:
+        escape_bash_string "one-word" && echo ""
+        escape_bash_string "two words" && echo ""
+        escape_bash_string "\"a quoted phrase\"" && echo ""
+        escape_bash_string "\"a literal \" quoted phrase\"" && echo ""
+        escape_bash_string "oh \" no \" so \" my \" ba \" \"\" \\ hm" && echo ""
+        escape_bash_string "backslashes \\\\\\\\" && echo ""
+        escape_bash_string "three words" && echo ""
+        escape_bash_string "path\"o\"log ic" && echo ""
+    '
+    printf "%q" "$1"
+}
+
+_extlist_group(){
+    __doc__="
+    helper that lists all the extensions
+    "
+    FIND_FILE_OPTS=${FIND_FILE_OPTS:=""}
+    #echo "+!!FIND_FILE_OPTS = $FIND_FILE_OPTS"
+    #local _DPATH
+    for _DPATH in "$@"; do
+        #find $_DPATH -maxdepth 1 -xtype f "$FIND_FILE_OPTS" | rev | cut -d. -f1 | cut -d/ -f1 | rev  | tr '[:upper:]' '[:lower:]' 
+        find "$_DPATH" -maxdepth 1 -xtype f | rev | cut -d. -f1 | cut -d/ -f1 | rev  | tr '[:upper:]' '[:lower:]' 
+        #echo "-!! _DPATH = $_DPATH"
+    done
+    #echo "!!FIND_FILE_OPTS = $FIND_FILE_OPTS"
 }
 
 
@@ -564,7 +655,7 @@ bash_array_repr(){
 }
 
 
-#recursive_ext_hist(){
+#recursive_exthist(){
 #    ROOT=$1
 #    FIND_RESULT=$(find $ROOT -type d)
 #    for dpath in $FIND_RESULT; do
@@ -645,4 +736,31 @@ curl_verify_sha256(){
     else
         echo "Hashes match well enough"
     fi
+}
+
+
+escape_bash_string(){
+    __doc__='
+    Escapes the input string so the program that it is passed to sees exactly
+    the given input string.
+
+    Args:
+        The string to escape
+
+    Returns:
+        The escaped string
+
+    Example:
+        __SOURCED_EROTEMIC_UTILS__=0
+        source $HOME/local/init/utils.sh
+        escape_bash_string "one-word" && echo ""
+        escape_bash_string "two words" && echo ""
+        escape_bash_string "\"a quoted phrase\"" && echo ""
+        escape_bash_string "\"a literal \" quoted phrase\"" && echo ""
+        escape_bash_string "oh \" no \" so \" my \" ba \" \"\" \\ hm" && echo ""
+        escape_bash_string "backslashes \\\\\\\\" && echo ""
+        escape_bash_string "three words" && echo ""
+        escape_bash_string "path\"o\"log ic" && echo ""
+    '
+    printf "%q" "$1"
 }
