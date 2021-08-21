@@ -757,7 +757,7 @@ git-tarball-hash()
 }
 
 
-sedr(){
+orig_sedr(){
     __heredoc__="""
     Recursive sed
 

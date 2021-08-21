@@ -12,10 +12,12 @@ Usage:
 
 '
 
-__EROTEMIC_RELOAD_MODE__="${__EROTEMIC_RELOAD_MODE__:=1}"
+# set to 0 to prevent this script from running more than once
+# set to 1 for editable "development" mode
+__EROTEMIC_ALLOW_RELOAD__="${__EROTEMIC_ALLOW_RELOAD__:=1}"
 __EROTEMIC_UTILS_VERSION__="0.1.2"
 
-if [ "$__EROTEMIC_RELOAD_MODE__" = "0" ]; then
+if [ "$__EROTEMIC_ALLOW_RELOAD__" = "0" ]; then
     if [ "$__SOURCED_EROTEMIC_UTILS__" = "$__EROTEMIC_UTILS_VERSION__" ]; then
        # Prevent reloading if the version hasnt changed
        return
@@ -473,6 +475,81 @@ compress_path(){
     echo $name
 }
 
+
+sedfile(){
+    local FILEPATH=$1
+    local SEARCH=$2
+    local REPLACE=$3
+    local INPLACE=$4
+
+    echo "search: $FILEPATH"
+    #echo "FILEPATH='$FILEPATH'"
+    #echo "SEARCH='$SEARCH'"
+    #echo "REPLACE='$REPLACE'"
+    #echo "INPLACE='$INPLACE'"
+    # Do replace into a temp file 
+    # https://stackoverflow.com/questions/15965073/return-value-of-sed-for-no-match/15966279
+    grep -q -m 1 "${SEARCH}" "${FILEPATH}"
+    RED_CODE="$?"
+    if [[ $RET_CODE -eq 0 ]]; then
+        echo "replacing: $FILEPATH"
+        sed "s|${SEARCH}|${REPLACE}|gp" $FILEPATH > $FILEPATH.sedr.tmp
+        diff -u $FILEPATH.sedr.tmp $FILEPATH | colordiff
+        rm $FILEPATH.sedr.tmp
+    fi
+}
+# Needs to be global for find
+export -f sedfile
+
+
+sedr(){
+    __doc__="""
+    Recursive sed
+
+    Args:
+        search 
+        replace
+        pattern (passed as -iname to find defaults to *.py)
+        live_run 
+
+    Example:
+        __SOURCED_EROTEMIC_UTILS__=0
+        __EROTEMIC_ALLOW_RELOAD__=1
+        cd $HOME/code/ubelt/ubelt
+        source $HOME/local/init/utils.sh && PATTERN='*.py' sedr not-a-thing daft
+        source $HOME/local/init/utils.sh && PATTERN='*.py' sedr def daft
+        source $HOME/local/init/utils.sh && PATTERN='*.py' sedr util_io fds
+        
+    """
+    _handle_help $@ || return 0
+
+    local SEARCH=${1:-${SEARCH:-""}}
+    local REPLACE=${2:-${REPLACE:-""}}
+    local PATTERN=${3:-${PATTERN:-'*'}}
+    local INPLACE=${4:-${INPLACE:-"False"}}
+
+    echo "
+    === sedr ===
+    argv[1] = SEARCH = '$SEARCH' - text to search
+    argv[2] = REPLACE = '$REPLACE' - text to replace
+    argv[3] = PATTERN = '$PATTERN' - filename patterns to match
+    argv[4] = INPLACE = '$INPLACE' - set to 'True' modify the files inplace
+    "
+
+    #find . -type f -iname "${PATTERN}" -print
+    if [[ "$INPLACE" == "True" ]]; then
+        # Live RUN
+        find . -type f -iname "${PATTERN}" -exec sed -i "s|${SEARCH}|${REPLACE}|g" {} + 
+    else
+        # https://unix.stackexchange.com/questions/97297/how-to-report-sed-in-place-changes
+        #find . -type f -iname "${PATTERN}" -exec sed "s|${SEARCH}|${REPLACE}|g" {} + | grep "${REPLACE}"
+        #find . -type f -iname "${PATTERN}" -exec sed --quiet "s|${SEARCH}|${REPLACE}|gp" {} + | grep "${REPLACE}" -C 100
+        find . -type f -iname "${PATTERN}" -exec /bin/bash -c "sedfile \"\$1\" \"$SEARCH\" \"$REPLACE\" \"$INPLACE\" " bash {} \;
+    fi
+}
+
+
+
 exthist(){
     __doc__="
     Create a histogram of unique extensions in a directory.
@@ -493,7 +570,7 @@ exthist(){
 
     Example:
         __SOURCED_EROTEMIC_UTILS__=0
-        __EROTEMIC_RELOAD_MODE__=1
+        __EROTEMIC_ALLOW_RELOAD__=1
         source $HOME/local/init/utils.sh && exthist $HOME/code/ubelt -a -r
         source $HOME/local/init/utils.sh && exthist $HOME/local -r
         source $HOME/local/init/utils.sh && exthist $HOME/local 
@@ -714,27 +791,94 @@ bash_array_repr(){
 
 
 curl_verify_sha256(){
-    __doc__="
+    __doc__='
+    The idea is that this should be a think wrapper around curl that adds the
+    feature where it will return a failure integer code if the hash of the
+    downloaded file does not match an expected version.
+
     Args:
         URL
         DST
         EXPECTED_SHA256
-    "
-    _handle_help $@ || return 0
-    URL=$1
-    DST=$2
-    EXPECTED_SHA256=$3
+        HASHER
+        CURL_OPTS
+        VERBOSE
 
-    curl $URL --output $DST
-    GOT_SHA256=$(sha256sum $DST | cut -d' ' -f1)
-    echo "GOT_SHA256      = $GOT_SHA256"
-    echo "EXPECTED_SHA256 = $EXPECTED_SHA256"
-    # For security, it is important to verify the hash
-    if [[ "$GOT_SHA256" != $EXPECTED_SHA256* ]]; then
-        echo "Downloaded file does not match hash!"
-        echo "DO NOT CONTINUE WITHOUT VALIDATING NEW VERSION AND UPDATING THE HASH!"
+    Example:
+        URL=https://file-examples-com.github.io/uploads/2017/02/file_example_JSON_1kb.json
+        DST=file_example_JSON_1kb.json
+        EXPECTED_HASH="fdsfsd"
+
+        __EROTEMIC_ALLOW_RELOAD__=1
+        source $HOME/local/init/utils.sh 
+
+        URL=https://file-examples-com.github.io/uploads/2017/02/file_example_JSON_1kb.json \
+        VERBOSE=0 \
+        EXPECTED_HASH="aa20e971f6a0a7c482f3ed70cc6edc" \
+            curl_verify_sha256
+
+        URL=https://file-examples-com.github.io/uploads/2017/02/file_example_JSON_1kb.json \
+        EXPECTED_HASH="aaf20" \
+            curl_verify_sha256
+
+        __EROTEMIC_ALLOW_RELOAD__=1
+        source $HOME/local/init/utils.sh 
+        URL="https://golang.org/dl/go1.17.linux-amd64.tar.gz"
+        BASENAME=$(basename $URL)
+        curl_verify_sha256 $URL $BASENAME "6bf89fc4f5ad763871cf7eac80a2d594492de7a818303283f1366a7f6a30372d" "sha256sum" " -L"
+        
+    '
+    _handle_help $@ || return 0
+
+    URL=${1:-${URL:-""}}
+    DEFAULT_DST=$(basename $URL)
+    DST=${2:-${DST:-$DEFAULT_DST}}
+    EXPECTED_HASH=${3:-${EXPECTED_HASH:-'*'}}
+    HASHER=${4:-sha256sum}
+    CURL_OPTS=${5:-"${CURL_OPTS}"}
+    VERBOSE=${6:-${VERBOSE:-"3"}}
+
+    python -c "import sys; sys.exit(0 if ('$HASHER' in {'sha256sum', 'sha512sum'}) else 1)"
+
+    if [ $? -ne 0 ]; then
+        echo "HASHER = $HASHER is not in the known list"
+        return 1
+    fi
+
+    if [ $VERBOSE -ge 3 ]; then
+        codeblock "
+            curl_verify_sha256
+                * URL='$URL'
+                * DST='$DST'
+                * CURL_OPTS='$CURL_OPTS'
+            "
+    fi
+
+    # Download the file
+    curl $CURL_OPTS "$URL" --output "$DST"
+    # Get the hash
+    GOT_HASH=$($HASHER $DST | cut -d' ' -f1)
+
+    # Verify the hash
+    if [[ "$GOT_HASH" != $EXPECTED_HASH* ]]; then
+        codeblock "
+            Checking hash
+                * GOT_HASH      = '$GOT_HASH'
+                * EXPECTED_HASH = '$EXPECTED_HASH'
+            Downloaded file does not match hash!
+            DO NOT CONTINUE WITHOUT VALIDATING NEW VERSION AND UPDATING THE HASH!
+        "
+        return 1
     else
-        echo "Hashes match well enough"
+        if [ $VERBOSE -ge 1 ]; then
+            codeblock "
+                Checking hash
+                    * GOT_HASH      = '$GOT_HASH'
+                    * EXPECTED_HASH = '$EXPECTED_HASH'
+                Hash prefixes match
+                "
+        fi
+        return 0
     fi
 }
 

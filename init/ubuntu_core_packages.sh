@@ -2073,21 +2073,6 @@ install_keepass(){
 }
 
 
-install_go(){
-    # Install GO
-    python -c "import ubelt as ub; print(ub.grabdata(
-        'https://golang.org/dl/go1.15.linux-amd64.tar.gz',
-        hash_prefix='2d75848ac606061efe52a8068d0e647b35ce487a15bb52272c427df485193602',
-        hasher='sha256',
-        dpath=ub.ensuredir('$HOME/tmp'), verbose=3))"
-    mkdir $HOME/.local
-    tar -C $HOME/.local -xzf go1.15.linux-amd64.tar.gz
-    # Add $HOME/.local/go to your path or make symlinks
-    ln -s $HOME/.local/go/bin/go $HOME/.local/bin/go 
-    ln -s $HOME/.local/go/bin/gofmt $HOME/.local/bin/gofmt
-}
-
-
 github_gh_api(){
     # Ensure that go1.15+ is installed
     mkdir $HOME/code/github
@@ -2254,7 +2239,60 @@ voice_terminal(){
 }
 
 install_slack(){
+    ""
     # Need to manually grab the .deb
     #  https://slack.com/downloads/instructions/ubuntu
+}
 
+
+install_go(){
+    __doc__="
+    https://golang.org/doc/install
+
+    https://golang.org/dl/
+    https://golang.org/dl/go1.17.linux-amd64.tar.gz
+    "
+    # Install GO
+    #python -c "import ubelt as ub; print(ub.grabdata(
+    #    'https://golang.org/dl/go1.15.linux-amd64.tar.gz',
+    #    hash_prefix='2d75848ac606061efe52a8068d0e647b35ce487a15bb52272c427df485193602',
+    #    hasher='sha256',
+    #    dpath=ub.ensuredir('$HOME/tmp'), verbose=3))"
+
+    #__EROTEMIC_ALLOW_RELOAD__=1
+    #source $HOME/local/init/utils.sh 
+
+    #URL="https://golang.org/dl/go1.15.linux-amd64.tar.gz"
+    #BASENAME=$(basename $URL)
+    #curl_verify_sha256 $URL $BASENAME "2d75848ac606061efe52a8068d0e647b35ce487a15bb52272c427df485193602" sha256sum "-L"
+
+    URL="https://golang.org/dl/go1.17.linux-amd64.tar.gz"
+    BASENAME=$(basename $URL)
+    curl_verify_sha256 $URL $BASENAME "6bf89fc4f5ad763871cf7eac80a2d594492de7a818303283f1366a7f6a30372d" sha256sum "-L"
+
+    mkdir $HOME/.local
+    tar -C $HOME/.local -xzf $BASENAME
+    # Add $HOME/.local/go to your path or make symlinks
+    ln -s $HOME/.local/go/bin/go $HOME/.local/bin/go 
+    ln -s $HOME/.local/go/bin/gofmt $HOME/.local/bin/gofmt
+}
+
+
+
+install_ipfs(){
+    __doc__="
+    https://docs.ipfs.io/how-to/command-line-quick-start/#prerequisites
+    https://docs.ipfs.io/install/command-line/
+    https://dist.ipfs.io/#go-ipfs
+    "
+    source ~/local/init/utils.sh
+    mkdir -p $HOME/temp/setup-ipfs
+    cd $HOME/temp/setup-ipfs
+    URL="https://dist.ipfs.io/go-ipfs/v0.9.0/go-ipfs_v0.9.0_linux-amd64.tar.gz"
+    BASENAME=$(basename $URL)
+    CURL_OPTS=""
+    curl_verify_sha256 $URL $BASENAME "e737fd6ccbd1917d302fcdc9e8d29" sha256sum
+    
+    tar -xvzf $BASENAME
+    cp go-ipfs/ipfs $HOME/.local/bin
 }
