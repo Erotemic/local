@@ -2295,4 +2295,93 @@ install_ipfs(){
     
     tar -xvzf $BASENAME
     cp go-ipfs/ipfs $HOME/.local/bin
+
+    # That should install IPFS now, lets set it up
+
+    mkdir -p $HOME/data/ipfs
+    cd $HOME/data/ipfs
+
+    # Maybe server is not the best profile?
+    # https://docs.ipfs.io/how-to/command-line-quick-start/#prerequisites
+    ipfs init --profile server
+
+    __results__="
+    generating ED25519 keypair...done
+    peer identity: 12D3KooWQWMkq2gK91xxBEdkKhd8EysLdQ2bUh4MTYyyqXA3bC3J
+    initializing IPFS node at /home/joncrall/.ipfs
+    to get started, enter:
+
+        ipfs cat /ipfs/QmQPeNsJPyVWPFDVHb77w8G42Fvo15z4bG2X8D2GhfbSXc/readme
+        ipfs cat /ipfs/QmQPeNsJPyVWPFDVHb77w8G42Fvo15z4bG2X8D2GhfbSXc/quick-start
+        ipfs cat /ipfs/QmQPeNsJPyVWPFDVHb77w8G42Fvo15z4bG2X8D2GhfbSXc/security-notes
+        ipfs cat /ipfs/QmQPeNsJPyVWPFDVHb77w8G42Fvo15z4bG2X8D2GhfbSXc/about
+    "
+
+    # In a background tmux session? 
+    ipfs daemon
+
+    ipfs swarm peers
+
+    ipfs cat /ipfs/QmSgvgwxZGaBLqkGyWemEDqikCqU52XxsYLKtdy3vGZ8uq > spaceship-launch.jpg
+
+    MY_MSG="Hello Universe! My name is $(whoami) and I'm excited to start using IPFS!"
+
+    msg_hash=$(echo "Hello Universe! My name is $(whoami) and I'm excited to start using IPFS!" | ipfs add -q)
+
+    curl "https://ipfs.io/ipfs/QmRrfsFGsjuJZRiNb22eGTvX6RDoHSUaSrzNRxiMGPEUd1"
+    # We should be able to see our local network
+    curl "http://127.0.0.1:8080/ipfs/$msg_hash"
+
+    # We are not exposed to the world by default
+    # But if we were this would work: 
+    curl "https://ipfs.io/ipfs/$msg_hash"
+
+    IDENTIFIER="Erotemic (Valid"
+    KEYID=$(gpg --list-keys --keyid-format LONG "$IDENTIFIER" | head -n 2 | tail -n 1 | awk '{print $1}' | tail -c 9)
+    codeblock "
+    Hello Universe! Again, The last message was cool, but lame in comparison.
+
+    QmRrfsFGsjuJZRiNb22eGTvX6RDoHSUaSrzNRxiMGPEUd1 
+    QmNiNW6W1cjg8JddZy1FyEjZJfUjLAn433eWYNdqDDYq7m
+    QmXhQGNHnU46mX48w62jpyK6RWCjxBsPdxBkfrji66MWjC
+
+    This is much cooler. BTW: I know my sig comment says:
+        Erotemic (Valid Aug 2019 to Aug 2020. Version 1) <erotemic@gmail.com>
+
+    And I'm planning on EVENTUALLY generating a new ID and rotating all my
+    keys. This message posted on 2021-08-20 may serve as some evidence, that
+    that the note regarding validity should be disregarded. I'm still me
+    $USER@$HOSTNAME. Next time I'll do this gpg thing right with a master and
+    subkeys.
+
+    Anyways, isn't it cool how easy it is to make a unique message? 
+    It's also really cool how easy it is to uses hashes as message ids. 
+
+    I certainly hope we can make it through these troubled times.
+    " > _tosign.txt
+    gpg --local-user $KEYID --clearsign --yes -o _signed.txt _tosign.txt
+    cat _signed.txt
+    gpg --verify _signed.txt
+
+    MSG_HASH=$(cat _signed.txt | ipfs add -q)
+    echo "MSG_HASH = $MSG_HASH"
+
+    curl "http://127.0.0.1:8080/ipfs/QmSN2YW4zKEfXgxnSiLYuGvzgYBL6Gqz8WXjUcCq9eov43"
+    # Can view web UI via: http://localhost:5001/ipfs/bafybeid26vjplsejg7t3nrh7mxmiaaxriebbm4xxrxxdunlk7o337m5sqq/#/ipfs/QmSN2YW4zKEfXgxnSiLYuGvzgYBL6Gqz8WXjUcCq9eov43
+    # Can view web UI via: http://localhost:5001/ipfs/bafybeid26vjplsejg7t3nrh7mxmiaaxriebbm4xxrxxdunlk7o337m5sqq/#/ipfs/QmXhQGNHnU46mX48w62jpyK6RWCjxBsPdxBkfrji66MWjC
+
+    # https://github.com/ipfs/go-ipfs/blob/master/docs/fuse.md
+
+    ipfs key gen test
+    ipfs key export -o todo-hide-secret-file-test.key test
+
+    # https://stackoverflow.com/questions/39803954/ipfs-how-to-add-a-file-to-an-existing-folder
+    
+    k51qzi5uqu5dhdij66ntfd6bsozesxh82pfkgys54n2qsmck96nwkr6mvlimk1
+    ipfs name publish -k test k51qzi5uqu5dhdij66ntfd6bsozesxh82pfkgys54n2qsmck96nwkr6mvlimk1
+
+    ipfs cat /ipns/k51qzi5uqu5dkqxbxeulacqmz5ekmopr3nsh9zmgve1dji0dccdy86uqyhq1m0
+    ipfs cat /ipns/k51qzi5uqu5dhdij66ntfd6bsozesxh82pfkgys54n2qsmck96nwkr6mvlimk1
+    
+    
 }
