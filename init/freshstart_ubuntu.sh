@@ -1988,6 +1988,11 @@ benchmark()
 
     sysbench cpu run
 
+    sysbench cpu run --threads=1 --cpu-max-prime=10000
+    sysbench cpu run --threads=1 --cpu-max-prime=100000
+    sysbench cpu run --threads=4 --cpu-max-prime=400000
+    sysbench cpu run --threads=8 --cpu-max-prime=8000000
+
     sysbench memory run
 
     sysbench fileio --file-test-mode=seqwr run
