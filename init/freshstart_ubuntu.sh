@@ -1985,9 +1985,86 @@ benchmark()
     # https://linuxconfig.org/how-to-benchmark-your-linux-system
 
     sudo apt install sysbench
+
     sysbench cpu run
+
     sysbench memory run
+
     sysbench fileio --file-test-mode=seqwr run
 
-    time (python -m pip install xdoctest && python -m xdoctest xdoctest)
+    #time (python -m pip install xdoctest && python -m xdoctest xdoctest)
+
+
+    # https://hewlettpackard.github.io/dlcookbook-dlbs/#/
+    git clone https://github.com/HewlettPackard/dlcookbook-dlbs.git ./dlbs   # Install benchmarking suite
+    cd ./dlbs  
+    source ./scripts/environment.sh                                          # Initialize host environment
+    python ./python/dlbs/experimenter.py help --frameworks                   # List supported DL frameworks
+    docker pull nvcr.io/nvidia/pytorch:18.06-py3                             # Pull PyTorch docker image from NGC
+    docker pull nvcr.io/nvidia/pytorch:18.06-py3
+
+    export BENCH_ROOT="."
+    . ./scripts/environment.sh
+    # MASSIVE HACK:
+    # fixes dlbs scripts that use the old "nvida-docker" to use "docker <arg1> --runtime=nvidia <arg-rest>"
+    mkdir -p hack_bin
+    codeblock()
+    {
+        __doc__="helper to deindent text in bash scripts"
+        PYEXE=python
+        echo "$1" | $PYEXE -c "import sys; from textwrap import dedent; print(dedent(sys.stdin.read()).strip('\n'))"
+    }
+    echo "$(codeblock '
+    FIRST=$1
+    shift
+    nvidia-docker $FIRST --runtime=nvidia $@
+    ')" > ./hack_bin/nvidia-docker
+    chmod +x ./hack_bin/nvidia-docker
+    PATH="$PWD/hack_bin:$PATH"
+
+    rm -rf ./pytorch ./logs
+    python $DLBS_ROOT/python/dlbs/experimenter.py run \
+        --log-level="debug" \
+        -Pexp.framework='"pytorch"' \
+        -Vexp.gpus='"1"' \
+        -Vexp.rerun='"always"' \
+        -Ppytorch.cudnn_benchmark=false \
+        -Ppytorch.cudnn_fastest=true \
+        -Ppytorch.num_loader_threads=4 \
+        -Pexp.device_type='"gpu"' \
+        -Pexp.dtype='"float32"' \
+        -Pexp.num_batches='2' \
+        -Pexp.phase='"inference"' \
+        -Vexp.model='"resnet50"' \
+        -Pexp.docker=true \
+        -Pexp.log_file='"${BENCH_ROOT}/pytorch/${exp.model}_${exp.effective_batch}_${exp.num_gpus}.log"' \
+        -Pexp.docker_args='"--rm --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864"'
+
+    params="exp.status,exp.framework_title,exp.effective_batch,results.time,results.throughput,exp.model_title,exp.docker_image"
+
+    python $logparser ./pytorch/logs/*.log --output_file './results.json' 
+
+    python $reporter --summary_file '${HOME}/dlbs/results.json'\             # Parse summary file and build
+                     --type 'weak-scaling'\                                  #     weak scaling report
+                     --target_variable 'results.time'                        #     using batch time as performance metric
+
+
+    python $DLBS_ROOT/python/dlbs/bench_data.py parse ./pytorch/*.log  --output results.json
+
+    python $DLBS_ROOT/python/dlbs/bench_data.py summary  results.json 
+
+    python $DLBS_ROOT/python/dlbs/bench_data.py report  results.json --report strong
+    python $DLBS_ROOT/python/dlbs/bench_data.py report  results.json --report regular
+    python $DLBS_ROOT/python/dlbs/bench_data.py report  results.json --report '{"inputs": ["exp.status","exp.framework_title","exp.effective_batch","results.time","results.throughput","exp.model_title","exp.docker_image"], "output": "exp.num_gpus", "report_efficiency": true}'
+    echo "params = $params"
+
+
+    python $DLBS_ROOT/python/dlbs/bench_data.py summary results.json --report weak
+    python $DLBS_ROOT/python/dlbs/bench_data.py summary results.json --report string
+    --output_params ${params}                           
+    
+    
+    docker run -ti nvcr.io/nvidia/tensorflow:18.07-py3 /bin/bash
+    nvidia-docker run -ti nvcr.io/nvidia/tensorflow:18.07-py3 /bin/bash
+    
 }
