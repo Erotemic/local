@@ -51,7 +51,7 @@ def permission_histogram():
             key = repr(info)
             if key not in hist:
                 prog.ensure_newline()
-                print('New key: {}'.format(key))
+                print('new key = {}'.format(ub.repr2(key, nl=1)))
             hist[key] += 1
             prog.step()
 
@@ -61,7 +61,7 @@ def permission_histogram():
             key = repr(info)
             if key not in hist:
                 prog.ensure_newline()
-                print('New key: {}'.format(key))
+                print('new key = {}'.format(ub.repr2(key, nl=1)))
             hist[key] += 1
             prog.step()
 
