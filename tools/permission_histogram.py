@@ -67,3 +67,11 @@ def permission_histogram():
 
     prog.end()
     print('hist = {!r}'.format(hist))
+
+
+if __name__ == '__main__':
+    """
+    CommandLine:
+        python ~/local/tools/permission_histogram.py
+    """
+    permission_histogram()
