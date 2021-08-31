@@ -1,23 +1,28 @@
 # simple function that does nothing so we can write simple heredocs
-# we cant use it here though, otherwise it would infinite recurse!
+# we cant use it here though, otherwise it would infinitely recurse!
 # Use it like this (sans leading comment symbols):
 __doc__='
 this is where your text goes. It can be multiline and indented, just dont
-include the single quote character.  also note the surrounding triple
-quotes just happen to be synatically correct and are not necessary,
-although I do recomend them.
+include the single quote character.  Also note the surrounding triple
+quotes just happen to be syntactically correct and are not necessary,
+although I do recommend them.
+
+TODO:
+    - [ ] Refeactor into a standalone bash library
+    - [ ] Provide an easy and secure installation mechanism
+    - [ ] Provide an easy and secure update mechanism
+    - [ ] Write high-level documentation
 
 Usage:
     source $HOME/local/init/utils.sh
-
 '
 
 # set to 0 to prevent this script from running more than once
 # set to 1 for editable "development" mode
-__EROTEMIC_ALLOW_RELOAD__="${__EROTEMIC_ALLOW_RELOAD__:=1}"
+__EROTEMIC_ALWAYS_RELOAD__="${__EROTEMIC_ALWAYS_RELOAD__:=0}"
 __EROTEMIC_UTILS_VERSION__="0.1.2"
 
-if [ "$__EROTEMIC_ALLOW_RELOAD__" = "0" ]; then
+if [ "$__EROTEMIC_ALWAYS_RELOAD__" = "0" ]; then
     if [ "$__SOURCED_EROTEMIC_UTILS__" = "$__EROTEMIC_UTILS_VERSION__" ]; then
        # Prevent reloading if the version hasnt changed
        return
@@ -514,7 +519,7 @@ sedr(){
 
     Example:
         __SOURCED_EROTEMIC_UTILS__=0
-        __EROTEMIC_ALLOW_RELOAD__=1
+        __EROTEMIC_ALWAYS_RELOAD__=1
         cd $HOME/code/ubelt/ubelt
         source $HOME/local/init/utils.sh && PATTERN='*.py' sedr not-a-thing daft
         source $HOME/local/init/utils.sh && PATTERN='*.py' sedr def daft
@@ -570,7 +575,7 @@ exthist(){
 
     Example:
         __SOURCED_EROTEMIC_UTILS__=0
-        __EROTEMIC_ALLOW_RELOAD__=1
+        __EROTEMIC_ALWAYS_RELOAD__=1
         source $HOME/local/init/utils.sh && exthist $HOME/code/ubelt -a -r
         source $HOME/local/init/utils.sh && exthist $HOME/local -r
         source $HOME/local/init/utils.sh && exthist $HOME/local 
@@ -790,42 +795,45 @@ bash_array_repr(){
 #}
 
 
-curl_verify_sha256(){
+curl_verify_hash(){
     __doc__='
-    The idea is that this should be a think wrapper around curl that adds the
-    feature where it will return a failure integer code if the hash of the
-    downloaded file does not match an expected version.
+    A thin wrapper around curl that adds the feature where it will return a
+    failure integer code if the hash of the downloaded file does not match an
+    expected version.
 
     Args:
-        URL
-        DST
-        EXPECTED_SHA256
-        HASHER
-        CURL_OPTS
-        VERBOSE
+        URL : the url to download
+        DST : the destination for the file
+        EXPECTED_HASH : the prefix of the expected hash
+        HASHER : the hasher to use use (defaults to sha256sum)
+        CURL_OPTS : any additional options to CURL
+        VERBOSE : for debugging
+
+    References:
+        https://github.com/curl/curl/issues/1399
 
     Example:
         URL=https://file-examples-com.github.io/uploads/2017/02/file_example_JSON_1kb.json
         DST=file_example_JSON_1kb.json
         EXPECTED_HASH="fdsfsd"
 
-        __EROTEMIC_ALLOW_RELOAD__=1
+        __EROTEMIC_ALWAYS_RELOAD__=1
         source $HOME/local/init/utils.sh 
 
         URL=https://file-examples-com.github.io/uploads/2017/02/file_example_JSON_1kb.json \
         VERBOSE=0 \
         EXPECTED_HASH="aa20e971f6a0a7c482f3ed70cc6edc" \
-            curl_verify_sha256
+            curl_verify_hash
 
         URL=https://file-examples-com.github.io/uploads/2017/02/file_example_JSON_1kb.json \
         EXPECTED_HASH="aaf20" \
-            curl_verify_sha256
+            curl_verify_hash
 
-        __EROTEMIC_ALLOW_RELOAD__=1
+        __EROTEMIC_ALWAYS_RELOAD__=1
         source $HOME/local/init/utils.sh 
         URL="https://golang.org/dl/go1.17.linux-amd64.tar.gz"
         BASENAME=$(basename $URL)
-        curl_verify_sha256 $URL $BASENAME "6bf89fc4f5ad763871cf7eac80a2d594492de7a818303283f1366a7f6a30372d" "sha256sum" " -L"
+        curl_verify_hash $URL $BASENAME "6bf89fc4f5ad763871cf7eac80a2d594492de7a818303283f1366a7f6a30372d" "sha256sum" " -L"
         
     '
     _handle_help $@ || return 0
@@ -847,7 +855,7 @@ curl_verify_sha256(){
 
     if [ $VERBOSE -ge 3 ]; then
         codeblock "
-            curl_verify_sha256
+            curl_verify_hash
                 * URL='$URL'
                 * DST='$DST'
                 * CURL_OPTS='$CURL_OPTS'

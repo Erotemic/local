@@ -2264,11 +2264,11 @@ install_go(){
 
     #URL="https://golang.org/dl/go1.15.linux-amd64.tar.gz"
     #BASENAME=$(basename $URL)
-    #curl_verify_sha256 $URL $BASENAME "2d75848ac606061efe52a8068d0e647b35ce487a15bb52272c427df485193602" sha256sum "-L"
+    #curl_verify_hash $URL $BASENAME "2d75848ac606061efe52a8068d0e647b35ce487a15bb52272c427df485193602" sha256sum "-L"
 
     URL="https://golang.org/dl/go1.17.linux-amd64.tar.gz"
     BASENAME=$(basename $URL)
-    curl_verify_sha256 $URL $BASENAME "6bf89fc4f5ad763871cf7eac80a2d594492de7a818303283f1366a7f6a30372d" sha256sum "-L"
+    curl_verify_hash $URL $BASENAME "6bf89fc4f5ad763871cf7eac80a2d594492de7a818303283f1366a7f6a30372d" sha256sum "-L"
 
     mkdir $HOME/.local
     tar -C $HOME/.local -xzf $BASENAME
@@ -2291,7 +2291,7 @@ install_ipfs(){
     URL="https://dist.ipfs.io/go-ipfs/v0.9.0/go-ipfs_v0.9.0_linux-amd64.tar.gz"
     BASENAME=$(basename $URL)
     CURL_OPTS=""
-    curl_verify_sha256 $URL $BASENAME "e737fd6ccbd1917d302fcdc9e8d29" sha256sum
+    curl_verify_hash $URL $BASENAME "e737fd6ccbd1917d302fcdc9e8d29" sha256sum
     
     tar -xvzf $BASENAME
     cp go-ipfs/ipfs $HOME/.local/bin
