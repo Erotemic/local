@@ -353,6 +353,49 @@ append_if_missing()
     fi
 }
 
+exists(){
+    __doc__='
+    Bash version of os.path.exists from Python 
+
+    Returns 0 if the path exists, otherwise returns 1
+
+    Args:
+        FS_PATH : path to check
+
+    Equivalent to [ -e $FS_PATH ]
+
+    Example:
+        __EROTEMIC_ALWAYS_RELOAD__=1
+        source ~/local/init/utils.sh
+
+        # This path does not exist
+        FS_PATH=$HOME/does-not-exist
+        exists $FS_PATH
+        echo $?
+        [ -e $FS_PATH ]
+        echo $?
+        if exists "$FS_PATH"; then
+            echo "FS_PATH=$FS_PATH exists"
+        else
+            echo "FS_PATH=$FS_PATH does not exist"
+        fi
+
+        # This path does exist
+        FS_PATH=$HOME
+        exists $FS_PATH
+        echo $?
+        [ -e $FS_PATH ]
+        echo $?
+        if exists "$FS_PATH"; then
+            echo "FS_PATH=$FS_PATH exists"
+        else
+            echo "FS_PATH=$FS_PATH does not exist"
+        fi
+    '
+    [ -e "$1" ]
+    return $?
+}
+
 # Can we wrap sudo such we can allow utils to be used?
 #util_sudo(){
 #    echo "$@"
@@ -369,7 +412,7 @@ safe_symlink(){
         link_path (the location that you want to point to the real file)
 
     Example:
-        __SOURCED_EROTEMIC_UTILS__=0
+        __EROTEMIC_ALWAYS_RELOAD__=1
         source ~/local/init/utils.sh
 
         mkdir -p ~/tmp/test_safe_symlink
@@ -518,7 +561,6 @@ sedr(){
         live_run 
 
     Example:
-        __SOURCED_EROTEMIC_UTILS__=0
         __EROTEMIC_ALWAYS_RELOAD__=1
         cd $HOME/code/ubelt/ubelt
         source $HOME/local/init/utils.sh && PATTERN='*.py' sedr not-a-thing daft
@@ -574,7 +616,6 @@ exthist(){
         https://stackoverflow.com/questions/1842254/distinct-extensions-in-a-folder
 
     Example:
-        __SOURCED_EROTEMIC_UTILS__=0
         __EROTEMIC_ALWAYS_RELOAD__=1
         source $HOME/local/init/utils.sh && exthist $HOME/code/ubelt -a -r
         source $HOME/local/init/utils.sh && exthist $HOME/local -r
@@ -903,7 +944,7 @@ escape_bash_string(){
         The escaped string
 
     Example:
-        __SOURCED_EROTEMIC_UTILS__=0
+        __EROTEMIC_ALWAYS_RELOAD__=1
         source $HOME/local/init/utils.sh
         escape_bash_string "one-word" && echo ""
         escape_bash_string "two words" && echo ""
