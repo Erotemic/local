@@ -8,6 +8,11 @@ Modifies Python code to roughly following quote scheme described in [1]_.
 
 References:
     .. [1] https://github.com/google/yapf/issues/399#issuecomment-914839071
+
+CommandLine:
+    # See it in action
+    FPATH=$(python -c "import six; print(six.__file__)")
+    python ~/local/tools/format_quotes.py $FPATH --diff=True
 """
 import redbaron
 import ubelt as ub
@@ -131,10 +136,5 @@ def format_quotes_in_file(fpath, diff=True, write=False, verbose=3):
             print(new_text)
 
 if __name__ == '__main__':
-    """
-    CommandLine:
-        FPATH=$(python -c "import six; print(six.__file__)")
-        python ~/misc/format_quotes.py $FPATH --diff=True
-    """
     import fire
     fire.Fire(format_quotes_in_file)
