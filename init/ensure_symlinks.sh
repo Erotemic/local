@@ -36,75 +36,17 @@ ensure_config_symlinks()
 
     # If that doesnt work use absolute home link
     RELHOME="$HOME"
-    
-    HOMELINKS=$RELHOME/local/homelinks
+    HOMELINKS_DPATH=$RELHOME/local/homelinks
 
-    # Symlink all homelinks dotfiles 
-    #================
-    BASEDIR="dotfiles"
-    # NOTE: these path names are files
-    PNAMES=$(/bin/ls -Ap $HOMELINKS/$BASEDIR | grep -v /)
-    echo "* SYMLINK BASEDIR=$BASEDIR"
-    #echo "* PNAMES=$PNAMES"
-    echo "* --- BEGIN ---"
-    echo "* cleanup"
-    symlinks -d $RELHOME
-    echo "* symlink"
-    for p in $PNAMES; do 
-        SOURCE=$HOMELINKS/$BASEDIR/$p
-        TARGET=$RELHOME/.$p
-        safe_symlink $SOURCE $TARGET;
-    done
-    echo "* Convert to relative symlinks"
-    symlinks -c $RELHOME/.$BASEDIR
-    echo "* --- END ---"
-    #================
-
-    # Symlink nautlius scripts
-    #================
-    BASEDIR="gnome2/nautilus-scripts"
-    # NOTE: these path names are files
-    PNAMES=$(/bin/ls -Ap $HOMELINKS/$BASEDIR | grep -v /)
-    echo "* SYMLINK BASEDIR=$BASEDIR"
-    #echo "* PNAMES=$PNAMES"
-    echo "* --- BEGIN ---"
-    echo "* mkdir"
-    mkdir -pv $RELHOME/.$BASEDIR
-    echo "* cleanup"
-    symlinks -d $RELHOME/.$BASEDIR
-    echo "* symlink"
-    for p in $PNAMES; do 
-        SOURCE=$HOMELINKS/$BASEDIR/$p
-        TARGET=$RELHOME/.$BASEDIR/$p
-        safe_symlink $SOURCE $TARGET;
-    done
-    echo "* Convert to relative symlinks"
-    symlinks -c $RELHOME/.$BASEDIR
-    echo "* --- END ---"
-    #================
+    symlink_root_hidden_files $HOMELINKS_DPATH $RELHOME
 
     # Symlink config subdirs (note these are directories)
-    #================
     BASEDIR="config"
-    # NOTE: these path names are directories
-    PNAMES=$(/bin/ls -A $HOMELINKS/$BASEDIR)
-    echo "* SYMLINK BASEDIR=$BASEDIR"
-    #echo "* PNAMES=$PNAMES"
-    echo "* --- BEGIN ---"
-    echo "* mkdir"
-    mkdir -pv $RELHOME/.$BASEDIR
-    echo "* cleanup"
-    symlinks -d $RELHOME/.$BASEDIR
-    echo "* symlink"
-    for p in $PNAMES; do 
-        SOURCE=$HOMELINKS/$BASEDIR/$p
-        TARGET=$RELHOME/.$BASEDIR/$p
-        safe_symlink $SOURCE $TARGET;
-    done
-    echo "* Convert to relative symlinks"
-    symlinks -c $RELHOME/.$BASEDIR
-    echo "* --- END ---"
-    #================
+    symlink_inside_hidden_homedir $BASEDIR $HOMELINKS_DPATH $RELHOME
+
+    # Symlink nautlius scripts
+    BASEDIR="gnome2/nautilus-scripts"
+    symlink_inside_hidden_homedir $BASEDIR $HOMELINKS_DPATH $RELHOME
 
     # Extras
     echo "* --- START EXTRAS ---*"
@@ -130,5 +72,82 @@ ensure_config_symlinks()
     echo "==============================="
     echo "FINISHED ensure_config_symlinks"
     echo "==============================="
+}
+
+
+symlink_inside_hidden_homedir(){
+    __doc__='
+    This will symlink FILES inside a homelinks folder (e.g.  homelinks/<name>)
+    into the corersponding hidden directory (e.g. ~/.<name>) in your home
+    folder.
+
+    This is used to link FILES between directories 
+
+        homelinks/config/* -> ~/.config/*
+        homelinks/foobar/* -> ~/.foobar/*
+
+    Args:
+        BASEDIR (str): the homelink folder to symlink files from
+    '
+
+    # Symlink config subdirs (note these are directories)
+    #================
+    BASEDIR=$1
+    HOMELINKS_DPATH=$2
+    RELHOME=$3
+    #"config"
+
+    # NOTE: these path names are directories
+    PNAMES=$(/bin/ls -A $HOMELINKS_DPATH/$BASEDIR)
+    echo "* SYMLINK BASEDIR=$BASEDIR"
+    #echo "* PNAMES=$PNAMES"
+    echo "* --- BEGIN ---"
+    echo "* mkdir"
+    mkdir -pv $RELHOME/.$BASEDIR
+    echo "* cleanup"
+    symlinks -d $RELHOME/.$BASEDIR
+    echo "* symlink"
+    for p in $PNAMES; do 
+        SOURCE=$HOMELINKS_DPATH/$BASEDIR/$p
+        TARGET=$RELHOME/.$BASEDIR/$p
+        unlink_or_backup $TARGET
+        ln -vs $SOURCE $TARGET;
+    done
+    echo "* Convert to relative symlinks"
+    symlinks -c $RELHOME/.$BASEDIR
+    echo "* --- END ---"
+    #================
+}
+
+
+symlink_root_hidden_files(){
+    __doc__="
+    Symlink files in homelinks/dotfiles/<name> directly to ~/.<name>
+    "
+    HOMELINKS_DPATH=$1
+    RELHOME=$2
+
+    # Symlink all homelinks dotfiles
+    #================
+    BASEDIR="dotfiles"
+    # NOTE: these path names are files
+    PNAMES=$(/bin/ls -Ap $HOMELINKS_DPATH/$BASEDIR | grep -v /)
+    echo "* SYMLINK BASEDIR=$BASEDIR"
+    echo "* PNAMES=$PNAMES"
+    echo "* --- BEGIN ---"
+    echo "* cleanup"
+    symlinks -d $RELHOME
+    echo "* symlink"
+    for p in $PNAMES; do
+        SOURCE=$HOMELINKS_DPATH/$BASEDIR/$p
+        TARGET=$RELHOME/.$p
+        unlink_or_backup $TARGET
+        ln -vs $SOURCE $TARGET;
+    done
+
+    echo "* Convert to relative symlinks"
+    symlinks -c $RELHOME/.$BASEDIR
+    echo "* --- END ---"
+    #================
 }
 
