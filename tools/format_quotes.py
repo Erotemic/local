@@ -5,7 +5,6 @@ Modifies Python code to roughly following quote scheme described in [1]_.
     * Double quotes (") are used for documentation
     * Don't touch any string that has an internal quote.
 
-
 References:
     .. [1] https://github.com/google/yapf/issues/399#issuecomment-914839071
 
