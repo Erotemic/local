@@ -1,6 +1,5 @@
 source $HOME/local/init/utils.sh
 
-
 basic_apt_install(){
 
     # High priority
