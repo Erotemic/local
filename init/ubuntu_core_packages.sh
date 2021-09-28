@@ -2386,10 +2386,19 @@ install_ipfs(){
     
 }
 
-install_gwe{
+install_gwe(){
     https://gitlab.com/leinardi/gwe
 
     flatpak --user remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
     flatpak --user install flathub com.leinardi.gwe
     flatpak update # needed to be sure to have the latest org.freedesktop.Platform.GL.nvidia
+}
+
+update_kernel_params(){
+    # https://askubuntu.com/questions/38780/how-do-i-set-nomodeset-after-ive-already-installed-ubuntu
+    # Edit the grub configuration file
+    sudo gvim /etc/default/grub
+
+    # Add the option (e.g. nomodeset) to GRUB_CMDLINE_LINUX_DEFAULT
+    sudo update-grub
 }
