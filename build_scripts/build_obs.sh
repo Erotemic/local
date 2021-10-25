@@ -18,6 +18,8 @@ Requirements:
           python3-dev qtbase5-dev \
           libqt5svg5-dev swig -y
 
+  sudo apt-get install \
+
 SeeAlso:
     https://www.kurokesu.com/main/2016/01/16/manual-usb-camera-settings-in-linux/
 """
@@ -35,13 +37,14 @@ mkdir -p build && cd build
 
 #PREFIX=$HOME/.local
 #PREFIX=/usr
-PREFIX="${HOME}/obs-studio-portable"
+PREFIX="${HOME}/.local/opt/obs"
 mkdir -p $PREFIX
 echo "PREFIX = $PREFIX"
 
 BUILD_BROWSER=0
 
 conda deactivate
+deactivate_venv
 
 #If building with browser source:
 if [ "$BUILD_BROWSER" == "ON" ]; then 
@@ -58,7 +61,7 @@ if [ "$BUILD_BROWSER" == "ON" ]; then
 else
     cd $HOME/code/obs-studio/build
     #Without browser source:
-    cmake -DUNIX_STRUCTURE=1 -D CMAKE_INSTALL_PREFIX=$PREFIX ..
+    cmake -DBUILD_BROWSER=Off -DUNIX_STRUCTURE=1 -DENABLE_PIPEWIRE=Off -D CMAKE_INSTALL_PREFIX=$PREFIX ..
 fi
 
 make -j4

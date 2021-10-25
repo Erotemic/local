@@ -84,6 +84,18 @@ echo "RAID_PARTS = $RAID_PARTS"
 sudo mdadm --examine $RAID_DISKS
 
 
+zfs-init-on-reinstall(){
+    __doc__="
+    https://unix.stackexchange.com/questions/483465/restore-zfs-pool-and-storage-data-after-a-system-re-install
+    "
+
+    POOL_NAME=data
+    sudo zpool $POOL_NAME 
+    zpool status
+
+}
+
+
 zfs-notes(){
     __doc__="
         # ZFS RAID
