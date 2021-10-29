@@ -905,8 +905,41 @@ curl_verify_hash(){
 
     # Download the file
     curl $CURL_OPTS "$URL" --output "$DST"
+
+    # Verify the hash
+    verify_hash $DST $EXPECTED_HASH $HASHER $VERBOSE
+    return $?
+}
+
+verify_hash(){
+    __doc__='
+    Verifies the hash of a file
+
+    Example:
+        FPATH="$(which ls)"
+        EXPECTED_HASH=4ef89baf437effd684a125da35674dc6147ef2e34b76d11ea0837b543b60352f
+        __EROTEMIC_ALWAYS_RELOAD__=1
+        source $HOME/local/init/utils.sh
+        verify_hash $FPATH $EXPECTED_HASH
+    '
+    _handle_help $@ || return 0
+
+    FPATH=${1:-${FPATH:-"Unspecified"}}
+    EXPECTED_HASH=${2:-${EXPECTED_HASH:-'*'}}
+    HASHER=${3:-sha256sum}
+    VERBOSE=${4:-${VERBOSE:-"3"}}
+
+    python -c "import sys; sys.exit(0 if ('$HASHER' in {'sha256sum', 'sha512sum'}) else 1)"
+
+    if [ $? -ne 0 ]; then
+        echo "HASHER = $HASHER is not in the known list"
+        return 1
+    fi
+
     # Get the hash
-    GOT_HASH=$($HASHER $DST | cut -d' ' -f1)
+    GOT_HASH=$($HASHER $FPATH | cut -d' ' -f1)
+    echo "FPATH = $FPATH"
+    echo "GOT_HASH = $GOT_HASH"
 
     # Verify the hash
     if [[ "$GOT_HASH" != $EXPECTED_HASH* ]]; then
@@ -929,6 +962,7 @@ curl_verify_hash(){
         fi
         return 0
     fi
+
 }
 
 
