@@ -98,7 +98,6 @@ flake8_errors = [
 
     'C408',  # Unncessary dict call
     'C409',  # Unncessary tuple call
-
     'N804',  # first argument of classmethod should be named cls
 ] 
 flake8_args_list = [

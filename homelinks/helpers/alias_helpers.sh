@@ -179,7 +179,7 @@ alias rrr='source ~/.bashrc'
 
 cls()
 {
-    __heredoc__="""
+    __doc__="""
     Clears the terminal screen
 
     References:
@@ -511,7 +511,7 @@ we-py3()
 #}
 #workon_conda3()
 #{
-#    __heredoc__ "
+#    __doc__ "
 #    deactivate_venv
 #    conda create -y -n cenv3 python=3
 #    we-conda3
@@ -541,7 +541,7 @@ we-pypy()
 
 pyedit()
 {
-    __heredoc__="""
+    __doc__="""
     Open a python module's source code in your favorite editor.
 
     Args:
@@ -567,7 +567,7 @@ untilfail()
  
 permit_erotemic_gitrepo()
 { 
-    __heredoc__="""
+    __doc__="""
     change git config from https to ssh
     """
     #permit_gitrepo -i
@@ -581,7 +581,7 @@ permit_erotemic_gitrepo()
 }
 
 normalize_line_endings(){
-    __heredoc__ '''
+    __doc__ '''
     find . -not -type d -exec file "{}" ";" | grep CRLF
     sudo apt install dos2unix
     '''
@@ -609,24 +609,31 @@ normalize_newline_eof()
 }
 
 pyversion(){
-    __heredoc__="
+    __doc__="
     Display the version of a Python module
+
+    Example:
+        pyversion six
     "
-    echo "python -c \"import $1; print('$1.__version__ = ' + str($1.__version__))\""
-    python -c "import $1; print('$1.__version__ = ' + str($1.__version__))"
+    PYVERSION_COMMAND="import $1; print('$1.__version__ = ' + str($1.__version__))"
+    #PYVERSION_COMMAND="import importlib.metadata; print('version($1) = ' + importlib.metadata.version('$1'))"
+    echo "python -c \"${PYVERSION_COMMAND}\""
+    python -c "$PYVERSION_COMMAND"
 }
+
 
 pyfile()
 {
-    __heredoc__="
+    __doc__="
     Display the location of a Python module
     "
+
     echo "python -c \"import $1; print($1.__file__)\""
     python -c "import $1; print($1.__file__.replace(\".pyc\", \".py\"))"
 }
 
 pywhich(){
-    __heredoc__="
+    __doc__="
     Display the location of a Python module
     "
     echo "python -c \"import $1; print('$1.__file__ = ' + str($1.__file__))\""
@@ -642,7 +649,7 @@ gitk(){
 }
 
 randpw(){ 
-    __heredoc__="""
+    __doc__="""
     Generate a random password
 
     https://www.howtogeek.com/howto/30184/10-ways-to-generate-a-random-password-from-the-command-line/
@@ -740,7 +747,7 @@ randint(){
 
 git-tarball-hash()
 {
-    __heredoc__='''
+    __doc__='''
     https://gist.github.com/simonw/a44af92b4b255981161eacc304417368
 
     '''
@@ -758,7 +765,7 @@ git-tarball-hash()
 
 
 orig_sedr(){
-    __heredoc__="""
+    __doc__="""
     Recursive sed
 
     Args:
@@ -798,7 +805,7 @@ orig_sedr(){
 
 
 search_remotes(){
-    __heredoc__="""
+    __doc__="""
     Attempt to massage a path native to a remote to a local path that works
     with the 'Erotemic mounted remote scheme': i.e. where you sshfs mount your
     remote machines onto ~/remote
@@ -851,7 +858,7 @@ search_remotes(){
 
 
 clean_empty_dirs(){
-    __heredoc__="
+    __doc__="
     References:
         https://unix.stackexchange.com/questions/24134/remove-empty-directory-trees-removing-as-many-directories-as-possible-but-no-fi
     "
@@ -860,7 +867,7 @@ clean_empty_dirs(){
 
 
 all_dir_sizes(){
-    __heredoc__="
+    __doc__="
 
     sudo du -sh * | sort -h
 

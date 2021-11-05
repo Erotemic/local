@@ -2387,7 +2387,14 @@ install_ipfs(){
 }
 
 install_gwe(){
+    __doc__='
+    green with envy
     https://gitlab.com/leinardi/gwe
+    '
+
+    # Make sure nvidia coolbits allow modifying clock settings
+    nvidia-xconfig --cool-bits=12
+    
 
     flatpak --user remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
     flatpak --user install flathub com.leinardi.gwe
@@ -2401,4 +2408,183 @@ update_kernel_params(){
 
     # Add the option (e.g. nomodeset) to GRUB_CMDLINE_LINUX_DEFAULT
     sudo update-grub
+}
+
+overclock_gpu_cli(){
+    # https://newbedev.com/multi-nvidia-gpu-overclocking-for-computations-cuda
+
+    # Make sure nvidia coolbits allow modifying clock settings
+    sudo nvidia-xconfig --cool-bits=12
+
+    #nvidia-xconfig --enable-all-gpus --cool-bits=12 -o foo && cat foo
+    sudo nvidia-xconfig --enable-all-gpus --cool-bits=12
+
+    #nvidia-xconfig --enable-all-gpus --cool-bits=12 --probe-all-gpus -o foo && cat foo
+    #nvidia-xconfig --multigpu=Mosaic --cool-bits=12 -o foo
+    nvidia-xconfig --query-gpu-info
+
+
+
+    cat /etc/X11/xorg.conf
+    sudo systemctl restart gdm
+
+    sudo systemctl restart display-manager
+    killall -3 gnome-shell
+
+    # https://github.com/plyint/nvidia-overclock.sh/blob/master/nvidia-overclock.sh
+    # https://askubuntu.com/questions/948721/nvidia-overclocking-undervolting-fanspeed-just-wont-work-on-ubuntu
+
+    sudo apt install libxml-compile-perl
+
+
+    # query
+    nvidia-settings -c :0 -q gpus
+
+    nvidia-smi -i 0 -pl 100
+    nvidia-smi -i 0 -q -x | xml2json
+
+    WATTS_65_i0=$(nvidia-smi -i 0 -q -d POWER | grep "Default Power Limit" | python -c "import sys; print(0.65 * float(sys.stdin.read().split(':')[-1].strip().split(' ')[0]))")
+    WATTS_65_i1=$(nvidia-smi -i 1 -q -d POWER | grep "Default Power Limit" | python -c "import sys; print(0.65 * float(sys.stdin.read().split(':')[-1].strip().split(' ')[0]))")
+    echo "WATTS_65_i0 = $WATTS_65_i0"
+    echo "WATTS_65_i1 = $WATTS_65_i1"
+
+    # Tighten the power limits
+    sudo sudo nvidia-smi --persistence-mode=1
+    sudo nvidia-smi -i 0 -pl $WATTS_65_i0
+    sudo nvidia-smi -i 1 -pl $WATTS_65_i1
+
+    sudo nvidia-smi -i 0 -pl 200
+    sudo nvidia-smi -i 1 -pl 224
+
+    # 1080ti target
+    # Core offset: +125
+    # Memory Clock = 5800 @ +800
+    # Power Limit 205W/85%
+
+    # https://2miners.com/blog/how-to-overclock-nvidia-and-amd-graphics-cards-on-different-algorithms/
+    # https://forums.developer.nvidia.com/t/390-x-unable-to-modify-gpumemorytransferrateoffset-and-gpugraphicsclockoffset-via-nvidia-settings/59241/2
+
+    # Query current OC settings
+    nvidia-settings -c :0 -q '[gpu:0]/GPUMemoryTransferRateOffset' | grep Attribute && \
+    nvidia-settings -c :0 -q '[gpu:1]/GPUMemoryTransferRateOffset' | grep Attribute && \
+    nvidia-settings -c :0 -q '[gpu:0]/GPUMemoryTransferRateOffsetAllPerformanceLevels' | grep Attribute && \
+    nvidia-settings -c :0 -q '[gpu:1]/GPUMemoryTransferRateOffsetAllPerformanceLevels' | grep Attribute && \
+    nvidia-settings -c :0 -q '[gpu:0]/GPUGraphicsClockOffset' | grep Attribute && \
+    nvidia-settings -c :0 -q '[gpu:1]/GPUGraphicsClockOffset' | grep Attribute && \
+    nvidia-settings -c :0 -q '[gpu:0]/GPUGraphicsClockOffsetAllPerformanceLevels' | grep Attribute && \
+    nvidia-settings -c :0 -q '[gpu:1]/GPUGraphicsClockOffsetAllPerformanceLevels' | grep Attribute
+
+    # Overclock memory  (these values seem to be increments of 0.5 Mhz)
+    nvidia-settings -c :0 -a '[gpu:0]/GPUMemoryTransferRateOffsetAllPerformanceLevels=800'
+    nvidia-settings -c :0 -a '[gpu:1]/GPUMemoryTransferRateOffsetAllPerformanceLevels=800'
+    # Overclock core-processor
+    nvidia-settings -c :0 -a '[gpu:0]/GPUGraphicsClockOffsetAllPerformanceLevels=80'
+    nvidia-settings -c :0 -a '[gpu:1]/GPUGraphicsClockOffsetAllPerformanceLevels=80'
+
+
+    nvidia-settings -c :0 -q '[gpu:1]/GPUMemoryTransferRateOffset'
+
+    #nvidia-settings -c :0 -a '[gpu:0]/GPUMemoryTransferRateOffset[2]=1000'
+    #nvidia-settings -c :0 -a '[gpu:0]/GPUGraphicsClockOffset[2]=100'
+    #nvidia-settings -c :0 -a '[gpu:1]/GPUMemoryTransferRateOffset[2]=1000'
+    #nvidia-settings -c :0 -a '[gpu:1]/GPUGraphicsClockOffset[2]=100'
+    
+
+    # https://briot-jerome.developpez.com/fichiers/blog/nvidia-smi/list.txt
+
+    power.management
+
+    power.max_limit
+    power.default_limit
+
+    nvidia-smi --query-gpu=index,name,pstate,power.limit,clocks.gr,clocks.max.gr,clocks.mem,clocks.max.mem --format=csv 
+    
+    
+
+    WATTS_i0=$(nvidia-smi -i 0 -q -d POWER | grep "Default Power Limit" | python -c "import sys; print(0.9 * float(sys.stdin.read().split(':')[-1].strip().split(' ')[0]))")
+    WATTS_i1=$(nvidia-smi -i 1 -q -d POWER | grep "Default Power Limit" | python -c "import sys; print(0.9 * float(sys.stdin.read().split(':')[-1].strip().split(' ')[0]))")
+    echo "WATTS_i0 = $WATTS_i0"
+    echo "WATTS_i1 = $WATTS_i1"
+    # Tighten the power limits
+    sudo sudo nvidia-smi --persistence-mode=1
+    sudo nvidia-smi -i 0 -pl $WATTS_i0
+    sudo nvidia-smi -i 1 -pl $WATTS_i1
+
+    nvidia-settings -c :0 -a '[gpu:0]/GPUMemoryTransferRateOffsetAllPerformanceLevels=0'
+    nvidia-settings -c :0 -a '[gpu:0]/GPUGraphicsClockOffsetAllPerformanceLevels=0'
+    nvidia-settings -c :0 -a '[gpu:1]/GPUMemoryTransferRateOffsetAllPerformanceLevels=0'
+    nvidia-settings -c :0 -a '[gpu:1]/GPUGraphicsClockOffsetAllPerformanceLevels=0'
+
+    nvidia-settings -c :0 -q '[gpu:0]/GPUMemoryTransferRateOffsetAllPerformanceLevels' 
+    nvidia-settings -c :0 -q '[gpu:1]/GPUMemoryTransferRateOffsetAllPerformanceLevels' 
+    nvidia-settings -c :0 -q '[gpu:0]/GPUGraphicsClockOffset' 
+    nvidia-settings -c :0 -q '[gpu:1]/GPUGraphicsClockOffset' 
+
+
+
+    # Disable OC
+    nvidia-settings -c :0 -a '[gpu:0]/GPUMemoryTransferRateOffsetAllPerformanceLevels=0'
+    nvidia-settings -c :0 -a '[gpu:0]/GPUGraphicsClockOffsetAllPerformanceLevels=0'
+    nvidia-settings -c :0 -a '[gpu:1]/GPUMemoryTransferRateOffsetAllPerformanceLevels=0'
+    nvidia-settings -c :0 -a '[gpu:1]/GPUGraphicsClockOffsetAllPerformanceLevels=0'
+    WATTS_i0=$(nvidia-smi -i 0 -q -d POWER | grep "Default Power Limit" | python -c "import sys; print(1.0 * float(sys.stdin.read().split(':')[-1].strip().split(' ')[0]))")
+    WATTS_i1=$(nvidia-smi -i 1 -q -d POWER | grep "Default Power Limit" | python -c "import sys; print(1.0 * float(sys.stdin.read().split(':')[-1].strip().split(' ')[0]))")
+    echo "WATTS_i0 = $WATTS_i0"
+    echo "WATTS_i1 = $WATTS_i1"
+    sudo nvidia-smi -i 0 -pl $WATTS_i0
+    sudo nvidia-smi -i 1 -pl $WATTS_i1
+
+    
+
+}
+
+
+install_aws_cli(){
+
+    mkdir -p $HOME/tmp
+    cd $HOME/tmp
+
+    codeblock "
+    -----BEGIN PGP PUBLIC KEY BLOCK-----
+
+    mQINBF2Cr7UBEADJZHcgusOJl7ENSyumXh85z0TRV0xJorM2B/JL0kHOyigQluUG
+    ZMLhENaG0bYatdrKP+3H91lvK050pXwnO/R7fB/FSTouki4ciIx5OuLlnJZIxSzx
+    PqGl0mkxImLNbGWoi6Lto0LYxqHN2iQtzlwTVmq9733zd3XfcXrZ3+LblHAgEt5G
+    TfNxEKJ8soPLyWmwDH6HWCnjZ/aIQRBTIQ05uVeEoYxSh6wOai7ss/KveoSNBbYz
+    gbdzoqI2Y8cgH2nbfgp3DSasaLZEdCSsIsK1u05CinE7k2qZ7KgKAUIcT/cR/grk
+    C6VwsnDU0OUCideXcQ8WeHutqvgZH1JgKDbznoIzeQHJD238GEu+eKhRHcz8/jeG
+    94zkcgJOz3KbZGYMiTh277Fvj9zzvZsbMBCedV1BTg3TqgvdX4bdkhf5cH+7NtWO
+    lrFj6UwAsGukBTAOxC0l/dnSmZhJ7Z1KmEWilro/gOrjtOxqRQutlIqG22TaqoPG
+    fYVN+en3Zwbt97kcgZDwqbuykNt64oZWc4XKCa3mprEGC3IbJTBFqglXmZ7l9ywG
+    EEUJYOlb2XrSuPWml39beWdKM8kzr1OjnlOm6+lpTRCBfo0wa9F8YZRhHPAkwKkX
+    XDeOGpWRj4ohOx0d2GWkyV5xyN14p2tQOCdOODmz80yUTgRpPVQUtOEhXQARAQAB
+    tCFBV1MgQ0xJIFRlYW0gPGF3cy1jbGlAYW1hem9uLmNvbT6JAlQEEwEIAD4WIQT7
+    Xbd/1cEYuAURraimMQrMRnJHXAUCXYKvtQIbAwUJB4TOAAULCQgHAgYVCgkICwIE
+    FgIDAQIeAQIXgAAKCRCmMQrMRnJHXJIXEAChLUIkg80uPUkGjE3jejvQSA1aWuAM
+    yzy6fdpdlRUz6M6nmsUhOExjVIvibEJpzK5mhuSZ4lb0vJ2ZUPgCv4zs2nBd7BGJ
+    MxKiWgBReGvTdqZ0SzyYH4PYCJSE732x/Fw9hfnh1dMTXNcrQXzwOmmFNNegG0Ox
+    au+VnpcR5Kz3smiTrIwZbRudo1ijhCYPQ7t5CMp9kjC6bObvy1hSIg2xNbMAN/Do
+    ikebAl36uA6Y/Uczjj3GxZW4ZWeFirMidKbtqvUz2y0UFszobjiBSqZZHCreC34B
+    hw9bFNpuWC/0SrXgohdsc6vK50pDGdV5kM2qo9tMQ/izsAwTh/d/GzZv8H4lV9eO
+    tEis+EpR497PaxKKh9tJf0N6Q1YLRHof5xePZtOIlS3gfvsH5hXA3HJ9yIxb8T0H
+    QYmVr3aIUes20i6meI3fuV36VFupwfrTKaL7VXnsrK2fq5cRvyJLNzXucg0WAjPF
+    RrAGLzY7nP1xeg1a0aeP+pdsqjqlPJom8OCWc1+6DWbg0jsC74WoesAqgBItODMB
+    rsal1y/q+bPzpsnWjzHV8+1/EtZmSc8ZUGSJOPkfC7hObnfkl18h+1QtKTjZme4d
+    H17gsBJr+opwJw/Zio2LMjQBOqlm3K1A4zFTh7wBC7He6KPQea1p2XAMgtvATtNe
+    YLZATHZKTJyiqA==
+    =vYOk
+    -----END PGP PUBLIC KEY BLOCK-----
+    " > aws.pub
+
+    gpg --import aws.pub
+
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscli-exe-linux-x86_64.zip"
+    curl https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip.sig -o awscli-exe-linux-x86_64.zip.sig 
+    gpg --verify awscli-exe-linux-x86_64.zip.sig awscli-exe-linux-x86_64.zip 
+    unzip awscli-exe-linux-x86_64.zip 
+
+    cd $HOME/tmp
+    ./aws/install --install-dir $HOME/.local/aws-cli --bin-dir $HOME/.local/bin --update
+
+    
 }
