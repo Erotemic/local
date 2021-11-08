@@ -325,6 +325,8 @@ if __name__ == '__main__':
     """
     CommandLine:
         python ~/local/tools/supported_python_versions_pip.py scipy
+        python ~/local/tools/supported_python_versions_pip.py kwimage
+        python ~/local/tools/supported_python_versions_pip.py kwcoco
     """
     import fire
     fire.Fire(minimum_cross_python_versions)
