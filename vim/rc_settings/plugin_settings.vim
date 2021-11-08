@@ -99,7 +99,29 @@ flake8_errors = [
     'C408',  # Unncessary dict call
     'C409',  # Unncessary tuple call
     'N804',  # first argument of classmethod should be named cls
+
+    'B950',  # line too long
 ] 
+
+more_flake8_errors = {
+    'B006': 'Do not use mutable data structures for argument defaults.  They are created during function definition time. All calls to the function reuse this one instance of that data structure, persisting changes between them.',
+
+    # 'B007': 'Loop control variable not used within the loop body. If this is intended, start the name with an underscore.',
+    # 'B009': 'Do not call getattr with a constant attribute value, it is not any safer than normal property access.',
+    # 'C401': 'Unnecessary generator - rewrite as a set comprehension.',
+    # 'C414': 'Unnecessary list call within sorted().',
+    # 'C416': 'Unnecessary list comprehension - rewrite using list().',
+    'EXE001': 'Shebang is present but the file is not executable.',
+    'EXE002': 'The file is executable but no shebang is present.',
+    'N807': 'function should not start and end with __',
+    'N812': 'lowercase imported as non lowercase',
+    'N814': 'camelcase imported as constant',
+    'N817': 'camelcase imported as acronym',
+    'N818': 'exception name be named with an Error suffix',
+}
+
+flake8_errors = flake8_errors + list(more_flake8_errors.keys())
+
 flake8_args_list = [
     '--max-line-length 79',
     '--ignore=' + ','.join(flake8_errors)
