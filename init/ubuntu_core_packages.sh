@@ -2284,6 +2284,8 @@ install_ipfs(){
     https://docs.ipfs.io/how-to/command-line-quick-start/#prerequisites
     https://docs.ipfs.io/install/command-line/
     https://dist.ipfs.io/#go-ipfs
+
+    https://developers.cloudflare.com/distributed-web/ipfs-gateway/setting-up-a-server
     "
     source ~/local/init/utils.sh
     mkdir -p $HOME/temp/setup-ipfs
@@ -2336,7 +2338,7 @@ install_ipfs(){
     # But if we were this would work: 
     curl "https://ipfs.io/ipfs/$msg_hash"
 
-    IDENTIFIER="Erotemic (Valid"
+    IDENTIFIER="Erotemic <erotemic@gmail.com>"
     KEYID=$(gpg --list-keys --keyid-format LONG "$IDENTIFIER" | head -n 2 | tail -n 1 | awk '{print $1}' | tail -c 9)
     codeblock "
     Hello Universe! Again, The last message was cool, but lame in comparison.
@@ -2353,6 +2355,8 @@ install_ipfs(){
     that the note regarding validity should be disregarded. I'm still me
     $USER@$HOSTNAME. Next time I'll do this gpg thing right with a master and
     subkeys.
+
+    Hey, update: I did it! 4AC8B478335ED6ED667715F3622BE571405441B4
 
     Anyways, isn't it cool how easy it is to make a unique message? 
     It's also really cool how easy it is to uses hashes as message ids. 
@@ -2382,7 +2386,11 @@ install_ipfs(){
 
     ipfs cat /ipns/k51qzi5uqu5dkqxbxeulacqmz5ekmopr3nsh9zmgve1dji0dccdy86uqyhq1m0
     ipfs cat /ipns/k51qzi5uqu5dhdij66ntfd6bsozesxh82pfkgys54n2qsmck96nwkr6mvlimk1
-    
+
+
+    # To get the IPFS node online we need to:
+    # (1) give the machine a static IP on your local (router) network
+    # (2) Forward port 4001 to your machine
     
 }
 
@@ -2440,21 +2448,21 @@ overclock_gpu_cli(){
     # query
     nvidia-settings -c :0 -q gpus
 
-    nvidia-smi -i 0 -pl 100
-    nvidia-smi -i 0 -q -x | xml2json
+    nvidia-smi --id=0 -pl 100
+    nvidia-smi --id=0 -q -x | xml2json
 
-    WATTS_65_i0=$(nvidia-smi -i 0 -q -d POWER | grep "Default Power Limit" | python -c "import sys; print(0.65 * float(sys.stdin.read().split(':')[-1].strip().split(' ')[0]))")
-    WATTS_65_i1=$(nvidia-smi -i 1 -q -d POWER | grep "Default Power Limit" | python -c "import sys; print(0.65 * float(sys.stdin.read().split(':')[-1].strip().split(' ')[0]))")
+    WATTS_65_i0=$(nvidia-smi --id=0 -q -d POWER | grep "Default Power Limit" | python -c "import sys; print(0.65 * float(sys.stdin.read().split(':')[-1].strip().split(' ')[0]))")
+    WATTS_65_i1=$(nvidia-smi --id=1 -q -d POWER | grep "Default Power Limit" | python -c "import sys; print(0.65 * float(sys.stdin.read().split(':')[-1].strip().split(' ')[0]))")
     echo "WATTS_65_i0 = $WATTS_65_i0"
     echo "WATTS_65_i1 = $WATTS_65_i1"
 
     # Tighten the power limits
     sudo sudo nvidia-smi --persistence-mode=1
-    sudo nvidia-smi -i 0 -pl $WATTS_65_i0
-    sudo nvidia-smi -i 1 -pl $WATTS_65_i1
+    sudo nvidia-smi --id=0 --power-limit=$WATTS_65_i0
+    sudo nvidia-smi --id=1 --power-limit=$WATTS_65_i1
 
-    sudo nvidia-smi -i 0 -pl 200
-    sudo nvidia-smi -i 1 -pl 224
+    sudo nvidia-smi --id=0 --power-limit=200
+    sudo nvidia-smi --id=1 --power-limit=224
 
     # 1080ti target
     # Core offset: +125
@@ -2501,14 +2509,14 @@ overclock_gpu_cli(){
     
     
 
-    WATTS_i0=$(nvidia-smi -i 0 -q -d POWER | grep "Default Power Limit" | python -c "import sys; print(0.9 * float(sys.stdin.read().split(':')[-1].strip().split(' ')[0]))")
-    WATTS_i1=$(nvidia-smi -i 1 -q -d POWER | grep "Default Power Limit" | python -c "import sys; print(0.9 * float(sys.stdin.read().split(':')[-1].strip().split(' ')[0]))")
+    WATTS_i0=$(nvidia-smi --id=0 -q -d POWER | grep "Default Power Limit" | python -c "import sys; print(0.9 * float(sys.stdin.read().split(':')[-1].strip().split(' ')[0]))")
+    WATTS_i1=$(nvidia-smi --id=1 -q -d POWER | grep "Default Power Limit" | python -c "import sys; print(0.9 * float(sys.stdin.read().split(':')[-1].strip().split(' ')[0]))")
     echo "WATTS_i0 = $WATTS_i0"
     echo "WATTS_i1 = $WATTS_i1"
     # Tighten the power limits
     sudo sudo nvidia-smi --persistence-mode=1
-    sudo nvidia-smi -i 0 -pl $WATTS_i0
-    sudo nvidia-smi -i 1 -pl $WATTS_i1
+    sudo nvidia-smi --id=0 --power-limit=$WATTS_i0
+    sudo nvidia-smi --id=1 --power-limit=$WATTS_i1
 
     nvidia-settings -c :0 -a '[gpu:0]/GPUMemoryTransferRateOffsetAllPerformanceLevels=0'
     nvidia-settings -c :0 -a '[gpu:0]/GPUGraphicsClockOffsetAllPerformanceLevels=0'
@@ -2527,14 +2535,28 @@ overclock_gpu_cli(){
     nvidia-settings -c :0 -a '[gpu:0]/GPUGraphicsClockOffsetAllPerformanceLevels=0'
     nvidia-settings -c :0 -a '[gpu:1]/GPUMemoryTransferRateOffsetAllPerformanceLevels=0'
     nvidia-settings -c :0 -a '[gpu:1]/GPUGraphicsClockOffsetAllPerformanceLevels=0'
-    WATTS_i0=$(nvidia-smi -i 0 -q -d POWER | grep "Default Power Limit" | python -c "import sys; print(1.0 * float(sys.stdin.read().split(':')[-1].strip().split(' ')[0]))")
-    WATTS_i1=$(nvidia-smi -i 1 -q -d POWER | grep "Default Power Limit" | python -c "import sys; print(1.0 * float(sys.stdin.read().split(':')[-1].strip().split(' ')[0]))")
+    WATTS_i0=$(nvidia-smi --id=0 -q -d POWER | grep "Default Power Limit" | python -c "import sys; print(1.0 * float(sys.stdin.read().split(':')[-1].strip().split(' ')[0]))")
+    WATTS_i1=$(nvidia-smi --id=1 -q -d POWER | grep "Default Power Limit" | python -c "import sys; print(1.0 * float(sys.stdin.read().split(':')[-1].strip().split(' ')[0]))")
     echo "WATTS_i0 = $WATTS_i0"
     echo "WATTS_i1 = $WATTS_i1"
-    sudo nvidia-smi -i 0 -pl $WATTS_i0
-    sudo nvidia-smi -i 1 -pl $WATTS_i1
+    sudo nvidia-smi --id=0 --power-limit=$WATTS_i0
+    sudo nvidia-smi --id=1 --power-limit=$WATTS_i1
+
+
+    # Query Temperature Limit
+    nvidia-smi -q|grep Target
+
+    # Set temperature limit
+    sudo nvidia-smi --id=0 --gpu-target-temp=65
+    sudo nvidia-smi --id=1 --gpu-target-temp=65
+
+    sudo nvidia-smi --id=0
+
+    sudo nvidia-smi --help
+    -gtt 65
 
     
+
 
 }
 
