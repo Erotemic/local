@@ -11,6 +11,11 @@ dim.sh
 if [ "$(which redshift)" == "" ]; then
     echo "ERROR: REQUIRES REDSHIFT"
     echo "apt install redshift"
+
+    # Try to use erotemic utils if we have it
+    source $HOME/local/init/utils.sh
+    apt_ensure redshift
+
     exit 1
 fi
 
