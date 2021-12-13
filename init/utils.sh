@@ -879,13 +879,13 @@ curl_verify_hash(){
     '
     _handle_help $@ || return 0
 
-    URL=${1:-${URL:-""}}
-    DEFAULT_DST=$(basename $URL)
-    DST=${2:-${DST:-$DEFAULT_DST}}
-    EXPECTED_HASH=${3:-${EXPECTED_HASH:-'*'}}
-    HASHER=${4:-sha256sum}
-    CURL_OPTS=${5:-"${CURL_OPTS}"}
-    VERBOSE=${6:-${VERBOSE:-"3"}}
+    local URL=${1:-${URL:-""}}
+    local DEFAULT_DST=$(basename $URL)
+    local DST=${2:-${DST:-$DEFAULT_DST}}
+    local EXPECTED_HASH=${3:-${EXPECTED_HASH:-'*'}}
+    local HASHER=${4:-sha256sum}
+    local CURL_OPTS=${5:-"${CURL_OPTS}"}
+    local VERBOSE=${6:-${VERBOSE:-"3"}}
 
     python -c "import sys; sys.exit(0 if ('$HASHER' in {'sha256sum', 'sha512sum'}) else 1)"
 
@@ -924,10 +924,10 @@ verify_hash(){
     '
     _handle_help $@ || return 0
 
-    FPATH=${1:-${FPATH:-"Unspecified"}}
-    EXPECTED_HASH=${2:-${EXPECTED_HASH:-'*'}}
-    HASHER=${3:-sha256sum}
-    VERBOSE=${4:-${VERBOSE:-"3"}}
+    local FPATH=${1:-${FPATH:-"Unspecified"}}
+    local EXPECTED_HASH=${2:-${EXPECTED_HASH:-'*'}}
+    local HASHER=${3:-sha256sum}
+    local VERBOSE=${4:-${VERBOSE:-"3"}}
 
     python -c "import sys; sys.exit(0 if ('$HASHER' in {'sha256sum', 'sha512sum'}) else 1)"
 
@@ -937,7 +937,7 @@ verify_hash(){
     fi
 
     # Get the hash
-    GOT_HASH=$($HASHER $FPATH | cut -d' ' -f1)
+    local GOT_HASH=$($HASHER $FPATH | cut -d' ' -f1)
     echo "FPATH = $FPATH"
     echo "GOT_HASH = $GOT_HASH"
 

@@ -2610,3 +2610,27 @@ install_aws_cli(){
 
     
 }
+
+
+reaper(){
+
+    sudo apt install libgtk-3-dev
+
+    source $HOME/local/init/utils.sh
+    mkdir -p $HOME/tmp/reaper
+    cd $HOME/tmp/reaper
+    EXPECTED_HASH=caf7ff6790b83a67f3d7666e266e60568c4d60d270fa4a1c5ae177365329e4f9 \
+    URL=https://dlcf.reaper.fm/6.x/reaper642_linux_x86_64.tar.xz \
+        curl_verify_hash 
+    7z x reaper642_linux_x86_64.tar.xz
+    7z x reaper642_linux_x86_64.tar
+
+    chmod +x reaper_linux_x86_64/REAPER/reaper
+    chmod +x reaper_linux_x86_64/install-reaper.sh
+
+    ./reaper_linux_x86_64/REAPER/reaper
+
+    ./reaper_linux_x86_64/install-reaper.sh --install $HOME/.local/opt/ --integrate-desktop
+    chmod +x $HOME/.local/opt/REAPER/reaper
+
+}
