@@ -88,12 +88,15 @@ class ReqPythonVersionSpec:
 
 
 def minimum_cross_python_versions(package_name):
+    import parse
+    import ubelt as ub
+    import pandas as pd
+    import math
     url = "https://pypi.org/pypi/%s/json" % (package_name,)
     resp = requests.get(url)
     assert resp.status_code == 200
 
     pypi_package_data = json.loads(resp.text)
-    import ubelt as ub
 
     available_releases = pypi_package_data['releases']
     only_consider_bdist = False
@@ -104,7 +107,6 @@ def minimum_cross_python_versions(package_name):
                     only_consider_bdist = True
                     break
 
-    import parse
     # Is there a grammer modification to make that can make one pattern that captures both cases?
     # wheen_name_parser = parse.Parser('{distribution}-{version}(-{build_tag})?-{python_tag}-{abi_tag}-{platform_tag}.whl')
     wheen_name_parser1 = parse.Parser('{distribution}-{version}-{build_tag}-{python_tag}-{abi_tag}-{platform_tag}.whl')
@@ -160,7 +162,6 @@ def minimum_cross_python_versions(package_name):
     #     '3.10.0',
     # ]
 
-    import ubelt as ub
     available_for_python = ub.ddict(set)
 
     # import ubelt as ub
@@ -180,13 +181,10 @@ def minimum_cross_python_versions(package_name):
     #         python_req = python_req[2:]
     #         earliest_for[python_req] = earliest
 
-    import ubelt as ub
-    import pandas as pd
     rows = []
     for version, items in available_releases.items():
         for item in items:
             if not item['yanked']:
-
                 if item['packagetype'] == 'bdist_wheel':
                     # For binary wheels
                     python_version = item.get('python_version', None)
@@ -195,22 +193,28 @@ def minimum_cross_python_versions(package_name):
                         cp_codes.update({'cp{}_{}'.format(*v.split('.')): v for v in [
                             '3.10']})
                         pyver = cp_codes.get(python_version)
+                        if pyver is None and python_version == 'py2.py3':
+                            pyver = '2.7'
                         if pyver is not None:
                             # TODO: need to get the arch the binary targets
                             # ensure minimum versions cover as many arches as
                             # possible
-                            rows.append({
-                                'version': version,
-                                'pyver': pyver,
-                                'has_sig': item['has_sig'],
-                                'packagetype': item['packagetype'],
-                                'platform_tag': item['platform_tag'],
-                                'abi_tag': item['abi_tag'],
-                            })
+                            if all(c not in version for c in ['rc', 'a', 'b']):
+                                rows.append({
+                                    'version': version,
+                                    'pyver': pyver,
+                                    'has_sig': item['has_sig'],
+                                    'packagetype': item['packagetype'],
+                                    'platform_tag': item['platform_tag'],
+                                    'abi_tag': item['abi_tag'],
+                                })
                 else:
                     # else:
                     # For "universal" wheels
                     python_req = item['requires_python']
+                    if python_req is None:
+                        if item['python_version'] == 'py2.py3':
+                            python_req = '2.7'
                     if python_req is not None:
                         reqspec = ReqPythonVersionSpec(python_req)
                         pyver = reqspec.highest_explicit().vstring
@@ -221,17 +225,21 @@ def minimum_cross_python_versions(package_name):
                                 'has_sig': item['has_sig'],
                                 'packagetype': item['packagetype'],
                             })
-    import math
     table = pd.DataFrame(rows)
     chosen_minimum_for = {}
     # For each version of python find the "best" minimum package
+    if len(table) == 0:
+        print('available_releases = {}'.format(ub.repr2(available_releases, nl=3)))
+        raise Exception('Did not find data to populate version table')
+
     for pyver, subdf in sorted(table.groupby('pyver'), key=lambda x: LooseVersion(x[0])):
         print('--- pyver = {!r} --- '.format(pyver))
         # print(subdf)
         version_to_support = dict(list(subdf.groupby('version')))
 
         cand_to_score = {}
-        for cand, support in ub.sorted_keys(version_to_support, key=LooseVersion).items():
+        version_to_support = ub.sorted_keys(version_to_support, key=LooseVersion)
+        for cand, support in version_to_support.items():
             score = 0
             # we like supporting most platforms
             platforms = support['platform_tag'].unique()
@@ -327,6 +335,7 @@ if __name__ == '__main__':
         python ~/local/tools/supported_python_versions_pip.py scipy
         python ~/local/tools/supported_python_versions_pip.py kwimage
         python ~/local/tools/supported_python_versions_pip.py kwcoco
+        python ~/local/tools/supported_python_versions_pip.py line_profiler
     """
     import fire
     fire.Fire(minimum_cross_python_versions)

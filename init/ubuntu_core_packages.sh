@@ -2634,3 +2634,30 @@ reaper(){
     chmod +x $HOME/.local/opt/REAPER/reaper
 
 }
+
+install_pipewire(){
+    # https://askubuntu.com/questions/1339765/replacing-pulseaudio-with-pipewire-in-ubuntu-20-04
+    sudo add-apt-repository ppa:pipewire-debian/pipewire-upstream
+    sudo apt update
+    sudo apt install pipewire -y
+    sudo apt install libspa-0.2-bluetooth
+    sudo apt install pipewire-audio-client-libraries
+    systemctl --user daemon-reload
+    systemctl --user --now disable pulseaudio.service pulseaudio.socket
+    systemctl --user mask pulseaudio
+
+    #systemctl --user --now enable pipewire-media-session.service
+    systemctl --user restart pipewire
+    pactl info
+    
+
+    sudo apt remove ofono
+    sudo apt remove ofono-phonesim
+    
+    # Rollback
+    #systemctl --user unmask pulseaudio
+    #systemctl --user --now disable pipewire{,-pulse}.{socket,service}    
+    #systemctl --user --now enable pulseaudio.service pulseaudio.socket
+
+    
+}
