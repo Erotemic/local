@@ -52,7 +52,8 @@ if [ "$HAVE_SUDO" == "True" ]; then
     apt_ensure jq expect
     apt_ensure htop tmux tree 
     apt_ensure sshfs 
-    apt_ensure astyle p7zip-full pgpgpg lm-sensors
+    apt_ensure p7zip-full pgpgpg lm-sensors
+    apt_ensure astyle codespell
     apt_ensure synaptic
     apt_ensure rsync valgrind symlinks
 else

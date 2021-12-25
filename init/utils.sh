@@ -253,6 +253,17 @@ codeblock()
 }
 
 
+_simple_codeblock()
+{
+    __doc__='
+    copy-pastable implementation
+    Prevents indentation errors in bash
+    '
+    PYEXE=python
+    echo "$1" | $PYEXE -c "import sys; from textwrap import dedent; print(dedent(sys.stdin.read()).strip('\n'))"
+}
+
+
 writeto()
 {
     __doc__="
@@ -464,7 +475,7 @@ unlink_or_backup()
 
 apt_ensure(){
     __doc__="
-    Checks to see if the pacakges are installed and installs them if needed.
+    Checks to see if the packages are installed and installs them if needed.
 
     The main reason to use this over normal apt install is that it avoids sudo
     if we already have all requested packages.
