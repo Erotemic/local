@@ -1716,7 +1716,11 @@ brio_webcam(){
     sudo apt-get install v4l-utils
     v4l2-ctl --list-devices
 
+    v4l2-ctl -d /dev/video1 --list-ctrls
+
     v4l2-ctl -d /dev/video0 --list-ctrls
+    v4l2-ctl -d /dev/video1 --list-ctrls
+
     v4l2-ctl -d /dev/video0 --set-ctrl=focus_auto=1
     v4l2-ctl -d /dev/video0 --set-ctrl=exposure_auto_priority=1
     v4l2-ctl -d /dev/video0 --set-ctrl=backlight_compensation=0

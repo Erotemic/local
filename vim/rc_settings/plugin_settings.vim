@@ -56,6 +56,29 @@ let g:syntastic_style_error_symbol = 'S>'
 let g:syntastic_style_warning_symbol = 's>'
 let g:syntastic_always_populate_loc_list = 1
 
+
+"-------------------------
+"PLUGIN: Synstastic Bash
+"# https://github.com/vim-syntastic/syntastic/blob/master/syntax_checkers/sh/shellcheck.vim
+"# https://github.com/vim-syntastic/syntastic/blob/master/syntax_checkers/sh/sh.vim
+Python2or3 << EOF
+import vim
+spellcheck_errors = {
+    'SC2016': 'single quotes prevent expansion',
+    #'SC2068': 'Quote array expansion to prevent re-splitting elements',
+    'SC2102': 'Ranges can only match single chars',
+    'SC21091': 'not following something not declared as input',
+    'SC2164': 'unsafe cd',
+    #'SC2206': 'Quote word to prevent splitting and globbing or split robustly',
+    # 'SC1091': 'not using declare'
+}
+spellcheck_arg_list = [
+    '-e',  ','.join(list(spellcheck_errors.keys()))
+]
+spellcheck_args = ' '.join(spellcheck_arg_list)
+vim.command('let g:syntastic_sh_spellcheck_args = "{}"'.format(spellcheck_args))
+EOF
+
 "-------------------------
 " PLUGIN: Syntastic Python
 " SyntasticInfo
@@ -164,7 +187,6 @@ let g:syntastic_cpp_compiler_options = ' -std=c++11 -stdlib=libc++'
 "let g:syntastic_cpp_compiler = 'clang++'
 "let g:syntastic_c_include_dirs = ['include', '../include']
 "let g:syntastic_c_compiler = 'clang'
-
 
 
 

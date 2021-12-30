@@ -1938,14 +1938,24 @@ home_printer(){
     
 
     https://askubuntu.com/questions/314314/laser-printer-scanner-brother-dcp-8110dn-ubuntu-what-is-its-uri
+    https://www.linuxquestions.org/questions/linux-newbie-8/how-to-install-brother-printer-4175598881/
     """
 
     cd Downloads
     cp $HOME/Downloads/linux-brprinter-installer-2.2.2-2.gz $HOME/tmp
     cd $HOME/tmp
     gunzip linux-brprinter-installer-2.2.2-2.gz
-    sudo bash linux-brprinter-installer-2.2.2-2 MFC-J880DW
-    sudo usermod -a -G scanner $USER
+    sudo bash linux-brprinter-installer-2.2.2-2 
+
+    # I then had to enter the model name
+    #MFC-J880DW
+
+    # I then had to enter the device URI
+    # Will you specify the Device URI? [Y/n] ->y
+    # y
+    #192.168.222.229
+
+    sudo usermod -a -G scanner "$USER"
     
 }
 
@@ -2645,12 +2655,11 @@ install_pipewire(){
     systemctl --user daemon-reload
     systemctl --user --now disable pulseaudio.service pulseaudio.socket
     systemctl --user mask pulseaudio
-
-    #systemctl --user --now enable pipewire-media-session.service
     systemctl --user restart pipewire
+    systemctl --user --now enable pipewire pipewire-pulse
     pactl info
     
-
+    #systemctl --user --now enable pipewire-media-session.service
     sudo apt remove ofono
     sudo apt remove ofono-phonesim
     
