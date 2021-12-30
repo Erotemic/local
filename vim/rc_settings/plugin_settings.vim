@@ -61,22 +61,30 @@ let g:syntastic_always_populate_loc_list = 1
 "PLUGIN: Synstastic Bash
 "# https://github.com/vim-syntastic/syntastic/blob/master/syntax_checkers/sh/shellcheck.vim
 "# https://github.com/vim-syntastic/syntastic/blob/master/syntax_checkers/sh/sh.vim
+
+" Just disable this
+"let g:syntastic_sh_checkers=[''] 
+
 Python2or3 << EOF
+# SHELL-check !!NOT!! SPELL-check
 import vim
-spellcheck_errors = {
+shellcheck_errors = {
     'SC2016': 'single quotes prevent expansion',
     #'SC2068': 'Quote array expansion to prevent re-splitting elements',
     'SC2102': 'Ranges can only match single chars',
     'SC21091': 'not following something not declared as input',
+    'SC1090': 'cant follow non-constant input',
     'SC2164': 'unsafe cd',
+    'SC2002': 'useless cat',
     #'SC2206': 'Quote word to prevent splitting and globbing or split robustly',
     # 'SC1091': 'not using declare'
 }
-spellcheck_arg_list = [
-    '-e',  ','.join(list(spellcheck_errors.keys()))
+shellcheck_arg_list = [
+    '-e',  ','.join(list(shellcheck_errors.keys()))
 ]
-spellcheck_args = ' '.join(spellcheck_arg_list)
-vim.command('let g:syntastic_sh_spellcheck_args = "{}"'.format(spellcheck_args))
+shellcheck_args = ' '.join(shellcheck_arg_list)
+print(shellcheck_args)
+vim.command('let g:syntastic_sh_shellcheck_args = "{}"'.format(shellcheck_args))
 EOF
 
 "-------------------------

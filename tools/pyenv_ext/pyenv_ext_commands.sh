@@ -182,13 +182,15 @@ install_pyenv(){
     apt_ensure \
         make build-essential libssl-dev zlib1g-dev \
         libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
-        libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl python3-openssl
+        libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev
+           
+    apt_ensure python-openssl python3-openssl
 
     # Download pyenv
     export PYENV_ROOT="$HOME/.pyenv"
     if [[ ! -d "$PYENV_ROOT" ]]; then
-        git clone https://github.com/pyenv/pyenv.git $PYENV_ROOT
-        (cd $PYENV_ROOT && src/configure && make -C src)
+        git clone https://github.com/pyenv/pyenv.git "$PYENV_ROOT"
+        (cd "$PYENV_ROOT" && src/configure && make -C src)
     fi
 
 }

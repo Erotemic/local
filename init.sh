@@ -32,8 +32,8 @@ CommandLine:
 #    fi
 #fi
 
-source $HOME/local/init/freshstart_ubuntu.sh
-source $HOME/local/init/utils.sh
+source "$HOME/local/init/freshstart_ubuntu.sh"
+source "$HOME/local/init/utils.sh"
 
 HAVE_SUDO=${HAVE_SUDO:=$(have_sudo)}
 IS_HEADLESS=${IS_HEADLESS:=$(is_headless)}
@@ -73,7 +73,7 @@ fi
 echo "ENSURE SYMLINKS"
 # TODO: terminator doesnt configure to automatically use the joncrall profile
 # in the terminator config. Why?
-source ~/local/init/ensure_symlinks.sh 
+source "$HOME/local/init/ensure_symlinks.sh "
 ensure_config_symlinks
 
 if [ "$IS_HEADLESS" == "False" ]; then
@@ -98,9 +98,6 @@ if [ ! -d ~/.ssh ]; then
     fi 
     echo "TODO: YOU MUST MANUALLY SET UP YOUR KEYS"
 fi
-
-PY_EXE="$(system_python)"
-
 
 if [ "$HAVE_SUDO" == "True" ]; then
     apt_ensure python3-pip
@@ -137,7 +134,7 @@ if [[ "$IS_HEADLESS" == "False" ]]; then
     apt_ensure gitk gparted okular remmina rsync gitk xsel graphviz feh
 
     if [[ "$(type -P google-chrome)" == "" ]]; then
-        source $HOME/local/init/freshstart_ubuntu.sh
+        source "$HOME/local/init/freshstart_ubuntu.sh"
         install_chrome
 
         sudo apt-get install chrome-gnome-shell # for gnome shell extension integration

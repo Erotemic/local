@@ -1721,6 +1721,7 @@ brio_webcam(){
     v4l2-ctl -d /dev/video0 --list-ctrls
     v4l2-ctl -d /dev/video1 --list-ctrls
 
+    watch -n 0.5 v4l2-ctl -d /dev/video1 --set-ctrl=focus_auto=1
     v4l2-ctl -d /dev/video0 --set-ctrl=focus_auto=1
     v4l2-ctl -d /dev/video0 --set-ctrl=exposure_auto_priority=1
     v4l2-ctl -d /dev/video0 --set-ctrl=backlight_compensation=0

@@ -279,6 +279,7 @@ if exists("g:loaded_vimtk")
     """"""""""""""
     "call vimtk#quickopen('H', '~/code/ibeis/ibeis/algo/hots/pipeline.py')
     "call vimtk#quickopen('h', '~/code/graphid/graphid/core/annot_inference.py')
+    call vimtk#quickopen('h', '~/code/shitspotter/shitspotter/gather.py')
     """"""""""""""
     "call vimtk#quickopen('i', '~/code/ibeis/ibeis/__init__.py')
     "call vimtk#quickopen('I', '~/code/ibeis/ibeis/other/dbinfo.py')
