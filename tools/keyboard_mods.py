@@ -1,4 +1,8 @@
 """
+Script to apply a custom keyboard mapping for a specific keyboard hardware id
+(i.e. the CLEAVE).
+
+
 References:
     https://unix.stackexchange.com/questions/65507/use-setxkbmap-to-swap-the-left-shift-and-left-control
     https://github.com/sezanzeb/key-mapper
@@ -72,7 +76,7 @@ import ubelt as ub
 from os.path import join
 
 
-def ensure_config_files():
+def ensure_xkb_remap_config_files():
     dpath = ub.ensuredir(ub.expandpath('$HOME/.xkb/'))
     kbd_dpath = ub.ensuredir((dpath, 'keymap'))
     sym_dpath = ub.ensuredir((dpath, 'symbols'))
@@ -187,15 +191,47 @@ def ensure_config_files():
     return profile_info
 
 
-def use_profile(profile_name):
+def linux_keyboard_info():
+    info = ub.cmd('hwinfo --keyboard', verbose=3)
+    items = []
+    for part in info['out'].split('\n\n'):
+        lines = part.strip().split('\n')
+        line1, line2, *rest = lines
+        item = {}
+        item['line1'] = line1.strip()
+        item['line2'] = line2.strip()
+        for line in rest:
+            key, value = line.strip().split(':', 1)
+            key = key.strip()
+            value = value.strip()
+            item[key] = value
+        if 'Device' in item:
+            usb, product_code, product_name = item['Device'].split(' ', 2)
+            if usb != 'usb':
+                print('warning: {}'.format(item))
+            item['product_code'] = product_code
+            item['product_name'] = product_name.strip('"')
+        if 'Vendor' in item:
+            usb, vendor_code, vendor_name = item['Vendor'].split(' ', 2)
+            if usb != 'usb':
+                print('warning: {}'.format(item))
+            item['vendor_code'] = vendor_code
+            item['vendor_name'] = vendor_name.strip('"')
+        items.append(item)
+    return items
+
+
+def use_xkb_profile(profile_name):
     if profile_name == 'auto':
-        info = ub.cmd('hwinfo --keyboard --short', verbose=3)
+        # info = ub.cmd('hwinfo --keyboard --short', verbose=3)
+        items = linux_keyboard_info()
         CLEAVE_NAME = 'TrulyErgonomic.com Truly Ergonomic CLEAVE Keyboard'
-        if CLEAVE_NAME in info['out']:
+        # if CLEAVE_NAME in info['out']:
+        if any(CLEAVE_NAME in item['Model'] for item in items):
             profile_name = 'tek_cleave'
         else:
             profile_name = 'default'
-    profile_info = ensure_config_files()
+    profile_info = ensure_xkb_remap_config_files()
     if profile_name not in profile_info:
         raise KeyError(ub.paragraph(
             '''
@@ -208,6 +244,105 @@ def use_profile(profile_name):
         xkbcomp -w0 -I$HOME/.xkb {kdb_fpath} $DISPLAY
         ''').format(**profile)
     ub.cmd(cmd_text, shell=True, verbose=3, check=True)
+
+
+def install_udev_rules():
+    """
+    This part requires sudo privledges. Running this will install a rule
+    that executes this script whenever a USB device is added or removed.
+    This should make using the CLEAVE more-or-less seemless.
+
+    References:
+        https://www.flatcar-linux.org/docs/latest/setup/systemd/udev-rules/
+        https://askubuntu.com/questions/508236/how-can-i-run-code-whenever-a-usb-device-is-unplugged-without-requiring-root
+        https://askubuntu.com/questions/625243/how-to-execute-c-program-whenever-a-usb-flash-drive-is-inserted
+        https://stackoverflow.com/questions/43736924/ubuntu-run-script-as-user-when-usb-inserted
+
+    lsusb
+
+    sudo udevadm info --name=/dev/input/event2 --attribute-walk
+    """
+    import os
+    import pathlib
+    rule_fname = 'rob-keyboard.rules'
+    real_rules_dpath = pathlib.Path('/etc/udev/rules.d')
+    real_rules_fpath = real_rules_dpath / rule_fname
+
+    script_fpath = os.path.abspath(pathlib.Path(__file__))
+    command = 'python {} auto'.format(script_fpath)
+
+    # service_text = ub.codeblock(
+    #     '''
+    #     [Unit]
+    #     Description=Fixes keyboard mappings
+
+    #     [Service]
+    #     WorkingDirectory=/path/to/where/you/want/media/files
+    #     Type=oneshot
+    #     ExecStart=/usr/bin/echo 'custom device script'
+    #     StandardOutput=journal
+
+    #     [Install]
+    #     WantedBy=custom-usb-event.service
+    #     ''').format(command)
+
+    # old_text = '''
+    # # ACTION=="add", ATTRS{idProduct}=="XXXX", ATTRS{idVendor}=="YYYY", RUN+="/location/of/my/command"
+    # # DRIVERS=="usb", RUN+="/bin/sh -c 'echo action=${ACTION} - id_vendor_id=$env{ID_VENDOR_ID} id_model_id=$env{ID_MODEL_ID} >> /home/joncrall/Desktop/usb-storage.log'"
+    # #DRIVERS=="usb", RUN+="/bin/sh -c 'which python 2>&1 >> /home/joncrall/Desktop/udev-log.log'"
+    # DRIVERS=="usb", TAG+="systemd", ENV{SYSTEMD_WANTS}="custom-usb-event.service"
+    #     # DRIVERS=="usb", RUN+="/bin/sh -c '%s 2>&1 >> /home/joncrall/Desktop/udev-log.log'"
+    # '''
+    # DRIVERS=="usb", RUN+="/bin/sh -c 'echo $(date) hello world 2>&1 >> /home/joncrall/Desktop/udev-log.log'"
+
+    # Not quite working
+
+    username = os.environ['USER']
+    # /bin/su {username} -c 'source $HOME/.bashrc && echo $(date) $USER - $VIRTUAL_ENV - $PATH >> /home/joncrall/Desktop/udev-log.log'
+    # This is a big hack to get my environment and to run as a local user.
+    # Probably should be using systemd instead
+    run_command = ub.paragraph(
+        '''
+        /bin/su {username} -c 'source $HOME/.bashrc && python $HOME/local/tools/keyboard_mods.py auto >> /home/joncrall/Desktop/udev-log.log'
+        ''').format(username=username)
+    print('sudo ' + run_command)
+
+    text = ub.codeblock(
+        '''
+        DRIVERS=="usb", RUN+="%s"
+        ''') % (run_command,)
+    print(text)
+    # Write to temp path and then have user do the sudo move
+    assert real_rules_dpath.exists()
+    has_permission = os.access(real_rules_dpath, os.W_OK | os.X_OK)
+    if not has_permission:
+        print('Cant write directly, need to workaround')
+        temp_root_dpath = pathlib.Path(ub.ensure_app_cache_dir('rob/temp_root'))
+        rule_fpath = temp_root_dpath / rule_fname
+        rule_fpath.write_text(text)
+        print('Need superuser permissions to run:')
+        super_user_commands = ub.codeblock(
+            '''
+            sudo cp {} {}
+            sudo udevadm control --reload-rules
+            ''').format(rule_fpath, real_rules_fpath).split('\n')
+        ub.cmd(super_user_commands[0], verbose=2, shell=True, check=True)
+        ub.cmd(super_user_commands[1], verbose=2, shell=True, check=True)
+        assert real_rules_fpath.read_text() == rule_fpath.read_text()
+        assert real_rules_fpath.read_text() == text
+    else:
+        real_rules_fpath.write(text)
+        raise NotImplementedError
+
+
+def remove_udev_rules():
+    import pathlib
+    rule_fname = 'rob-keyboard.rules'
+    real_rules_dpath = pathlib.Path('/etc/udev/rules.d')
+    real_rules_fpath = real_rules_dpath / rule_fname
+    if real_rules_fpath.exists():
+        ub.cmd('sudo rm {}'.format(real_rules_fpath), verbose=2, check=1, shell=True)
+    ub.cmd('sudo udevadm control --reload-rules', verbose=2, check=1, shell=True)
 
 
 def cli():
@@ -225,17 +360,27 @@ def cli():
     @cli_group.add_command
     @click.command('auto', context_settings=context_settings)
     def auto():
-        use_profile('auto')
+        use_xkb_profile('auto')
 
     @cli_group.add_command
     @click.command('tek_cleave', context_settings=context_settings)
     def tek_cleave():
-        use_profile('tek_cleave')
+        use_xkb_profile('tek_cleave')
 
     @cli_group.add_command
     @click.command('default', context_settings=context_settings)
     def default():
-        use_profile('default')
+        use_xkb_profile('default')
+
+    @cli_group.add_command
+    @click.command('install_udev_rules', context_settings=context_settings)
+    def install_udev_rules2():
+        install_udev_rules()
+
+    @cli_group.add_command
+    @click.command('remove_udev_rules', context_settings=context_settings)
+    def remove_udev_rules2():
+        remove_udev_rules()
 
     cli_group()
 
@@ -247,6 +392,7 @@ if __name__ == '__main__':
 
         python ~/local/tools/keyboard_mods.py tek_cleave
         python ~/local/tools/keyboard_mods.py default
-        python ~/local/tools/keyboard_mods.py
+        python ~/local/tools/keyboard_mods.py install_udev_rules
+        python ~/local/tools/keyboard_mods.py remove_udev_rules
     """
     cli()
