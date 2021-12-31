@@ -83,7 +83,6 @@ shellcheck_arg_list = [
     '-e',  ','.join(list(shellcheck_errors.keys()))
 ]
 shellcheck_args = ' '.join(shellcheck_arg_list)
-print(shellcheck_args)
 vim.command('let g:syntastic_sh_shellcheck_args = "{}"'.format(shellcheck_args))
 EOF
 
