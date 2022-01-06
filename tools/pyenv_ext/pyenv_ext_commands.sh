@@ -179,10 +179,12 @@ install_pyenv(){
     Example:
         source ~/local/tools/utils.sh
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        UPGRADE=1 install_pyenv
 
-    export PATH="$PYENV_ROOT/bin:$PATH"
-    eval "$($PYENV_ROOT/bin/pyenv init -)"
-    eval "$($PYENV_ROOT/bin/pyenv init -)"
+    Ignore:
+        export PATH="$PYENV_ROOT/bin:$PATH"
+        eval "$($PYENV_ROOT/bin/pyenv init -)"
+        eval "$($PYENV_ROOT/bin/pyenv init -)"
     '
     _handle_help $@ || return 0
 
