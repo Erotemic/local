@@ -173,6 +173,13 @@ refresh_workon_autocomplete
 
 install_pyenv(){
     __doc__='
+    Args:
+        UPGRADE (str): if truthy update to the latest
+
+    Example:
+        source ~/local/tools/utils.sh
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+
     export PATH="$PYENV_ROOT/bin:$PATH"
     eval "$($PYENV_ROOT/bin/pyenv init -)"
     eval "$($PYENV_ROOT/bin/pyenv init -)"
@@ -194,7 +201,9 @@ install_pyenv(){
         git clone https://github.com/pyenv/pyenv.git "$PYENV_ROOT"
         (cd "$PYENV_ROOT" && src/configure && make -C src)
     fi
-
+    if [[ ! -d "$UPGRADE" ]]; then
+        (cd "$PYENV_ROOT" && git pull && src/configure && make -C src)
+    fi
 }
 
 update_pyenv(){
@@ -259,7 +268,7 @@ pyenv_create_virtualenv(){
         pyenv_create_virtualenv 3.5.10 off
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        pyenv_create_virtualenv 3.9.9 all
+        pyenv_create_virtualenv 3.9.9 full
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
         pyenv_create_virtualenv 3.10.0 all
