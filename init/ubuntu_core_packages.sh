@@ -2670,3 +2670,8 @@ install_pipewire(){
 
     
 }
+
+rasberry_pi(){
+    # https://raspberrypi.stackexchange.com/questions/111722/rpi-4-running-ubuntu-server-20-04-cant-connect-to-wifi
+    sudo snap install rpi-imager
+}

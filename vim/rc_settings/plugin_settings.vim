@@ -72,7 +72,10 @@ shellcheck_errors = {
     'SC2016': 'single quotes prevent expansion',
     #'SC2068': 'Quote array expansion to prevent re-splitting elements',
     'SC2102': 'Ranges can only match single chars',
+
     'SC21091': 'not following something not declared as input',
+    'SC1091': 'not following something not declared as input',
+
     'SC1090': 'cant follow non-constant input',
     'SC2164': 'unsafe cd',
     'SC2002': 'useless cat',

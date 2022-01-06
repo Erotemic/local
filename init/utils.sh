@@ -277,6 +277,7 @@ writeto()
             variable=False
             '
     "
+    _handle_help $@ || return 0
     fpath=$1
     text=$2
     fixed_text=$(codeblock "$text")
@@ -298,11 +299,15 @@ sudo_writeto()
             variable=False
             '
     "
+    _handle_help $@ || return 0
 
     # NOTE: FAILS WITH QUOTES IN BODY
     fpath=$1
     text=$2
     fixed_text=$(codeblock "$text")
+    echo "fpath = $fpath"
+    echo "text = $text"
+    echo "fixed_text = $fixed_text"
     # IS THERE A BETTER WAY TO FORWARD AN ENV TO SUDO SO sudo writeto works
     sudo sh -c "echo \"$fixed_text\" > $fpath"
 #    # Maybe this?
@@ -313,6 +318,7 @@ sudo_writeto()
 
 sudo_appendto()
 {
+    _handle_help $@ || return 0
     # NOTE: FAILS WITH QUOTES IN BODY
     fpath=$1
     text=$2
@@ -354,6 +360,7 @@ append_if_missing()
         append_if_missing "/tmp/foo.txt" "my config option"
         cat /tmp/foo.txt
     '
+    _handle_help $@ || return 0
     fpath=$1
     text=$2
     fixed_text=$(codeblock "$text")
@@ -403,6 +410,7 @@ exists(){
             echo "FS_PATH=$FS_PATH does not exist"
         fi
     '
+    _handle_help $@ || return 0
     [ -e "$1" ]
     return $?
 }

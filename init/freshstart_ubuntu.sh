@@ -867,38 +867,56 @@ setup_conda_env(){
     # Miniconda3-latest-MacOSX-x86_64.sh
     # Miniconda3-latest-Windows-x86.exe
     # Miniconda3-latest-Windows-x86_64.exe
-    mkdir -p ~/tmp
-    cd ~/tmp
+    mkdir -p ~/tmp/setup-conda
+    cd ~/tmp/setup-conda
     #https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
     # See https://docs.conda.io/en/latest/miniconda_hashes.html for updating
     # to newer versions
 
     # To update to a newer version see:
     # https://docs.conda.io/en/latest/miniconda_hashes.html for updating
-    CONDA_INSTALL_SCRIPT=Miniconda3-py38_4.9.2-Linux-x86_64.sh
-    curl https://repo.anaconda.com/miniconda/$CONDA_INSTALL_SCRIPT > $CONDA_INSTALL_SCRIPT
+    # https://docs.conda.io/en/latest/miniconda.html#linux-installers
+    CONDA_VERSION=4.10.3
+    CONDA_PY_VERSION=py38
+    #ARCH="$(dpkg --print-architecture)"  # different convention
+    ARCH="$(arch)"
+    OS=Linux
+    CONDA_KEY="${CONDA_PY_VERSION}_${CONDA_VERSION}-${OS}-${ARCH}"
+    echo "CONDA_KEY = $CONDA_KEY"
+    CONDA_INSTALL_SCRIPT="Miniconda3-${CONDA_KEY}.sh"
+    CONDA_URL="https://repo.anaconda.com/miniconda/${CONDA_INSTALL_SCRIPT}"
+
+    declare -A CONDA_KNOWN_HASHES=(
+        ["py38_4.10.3-Linux-x86_64-sha256"]="935d72deb16e42739d69644977290395561b7a6db059b316958d97939e9bdf3d"
+        ["py38_4.10.3-Linux-aarch64-sha256"]="19584b4fb5c0656e0cf9de72aaa0b0a7991fbd6f1254d12e2119048c9a47e5cc"
+    )
+    CONDA_EXPECTED_SHA256="${CONDA_KNOWN_HASHES[${CONDA_KEY}-sha256]}"
+    echo "CONDA_EXPECTED_SHA256 = $CONDA_EXPECTED_SHA256"
+
+    curl "$CONDA_URL" > "$CONDA_INSTALL_SCRIPT"
 
     # For security, it is important to verify the hash
-    CONDA_EXPECTED_SHA256=1314b90489f154602fd794accfc90446111514a5a72fe1f71ab83e07de9504a7
     echo "${CONDA_EXPECTED_SHA256}  ${CONDA_INSTALL_SCRIPT}" > conda_expected_hash.sha256 
     if ! sha256sum --status -c conda_expected_hash.sha256; then
+        GOT_HASH=$(sha256sum "$CONDA_INSTALL_SCRIPT")
+        echo "GOT_HASH      = $GOT_HASH"
+        echo "EXPECTED_HASH = $CONDA_EXPECTED_SHA256"
         echo "Downloaded file does not match hash! DO NOT CONTINUE!"
     else
         echo "Hash verified, continue with install"
-        chmod +x $CONDA_INSTALL_SCRIPT 
+        chmod +x "$CONDA_INSTALL_SCRIPT "
         # Install miniconda to user local directory
         _CONDA_ROOT=$HOME/.local/conda
-        sh $CONDA_INSTALL_SCRIPT -b -p $_CONDA_ROOT
+        sh "$CONDA_INSTALL_SCRIPT" -b -p "$_CONDA_ROOT"
         # Activate the basic conda environment
-        source $_CONDA_ROOT/etc/profile.d/conda.sh
+        source "$_CONDA_ROOT/etc/profile.d/conda.sh"
         # Update the base 
         conda update --name base conda --yes 
 
         #conda update -y -n base conda 
         conda create -y -n conda38 python=3.8 --override-channels --channel conda-forge
-        conda activate conda38
+        #conda activate conda38
     fi
-
 
     #conda create -y -n conda39 python=3.9
     #conda create -y -n py37 python=3.7

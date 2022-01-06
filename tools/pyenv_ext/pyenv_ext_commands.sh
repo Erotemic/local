@@ -195,6 +195,17 @@ install_pyenv(){
 
 }
 
+update_pyenv(){
+    __doc__='
+    export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$($PYENV_ROOT/bin/pyenv init -)"
+    eval "$($PYENV_ROOT/bin/pyenv init -)"
+    '
+    # Download pyenv
+    export PYENV_ROOT="$HOME/.pyenv"
+    (cd "$PYENV_ROOT" && git pull && src/configure && make -C src)
+}
+
 
 _strip_double_whitespace(){
     echo "$@" | sed -zE 's/[ \n]+/ /g'
@@ -236,9 +247,6 @@ pyenv_create_virtualenv(){
         pyenv_create_virtualenv 3.7.10 off
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        pyenv_create_virtualenv 3.7.9 off
-
-        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
         pyenv_create_virtualenv 2.7.18
         
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
@@ -247,6 +255,9 @@ pyenv_create_virtualenv(){
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
         pyenv_create_virtualenv 3.5.10 off
+
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        pyenv_create_virtualenv 3.10.0 most
     "
     _handle_help $@ || return 0
 
