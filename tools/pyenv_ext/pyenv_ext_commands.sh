@@ -177,6 +177,8 @@ install_pyenv(){
     eval "$($PYENV_ROOT/bin/pyenv init -)"
     eval "$($PYENV_ROOT/bin/pyenv init -)"
     '
+    _handle_help $@ || return 0
+
     # Install requirements for building Python
     #sudo apt-get install -y \
     apt_ensure \
@@ -225,17 +227,17 @@ pyenv_create_virtualenv(){
         OPTIMIZE_PRESET (str, default=most): can be off, most, or full
 
     Example:
+        # See Available versions
+        pyenv install --list
+
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        pyenv_create_virtualenv 3.6.13
+        pyenv_create_virtualenv 3.9.9
 
         PYTHON_VERSION=3.8.5
         CHOSEN_PYTHON_VERSION=3.8.5
 
         PYTHON_VERSION=3.8.8
         CHOSEN_PYTHON_VERSION=3.8.8
-
-        # See Available versions
-        pyenv install --list
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
         pyenv_create_virtualenv 3.8.5 all
@@ -255,6 +257,9 @@ pyenv_create_virtualenv(){
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
         pyenv_create_virtualenv 3.5.10 off
+
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        pyenv_create_virtualenv 3.10.0 all
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
         pyenv_create_virtualenv 3.10.0 most
@@ -408,12 +413,12 @@ pyenv_create_virtualenv(){
     PROFILE_TASK="$PROFILE_TASK" \
     PYTHON_CFLAGS="$PYTHON_CFLAGS" \
     PYTHON_CONFIGURE_OPTS="$PYTHON_CONFIGURE_OPTS" \
-        pyenv install $CHOSEN_PYTHON_VERSION --verbose
+        pyenv install "$CHOSEN_PYTHON_VERSION" --verbose
 
     #pyenv shell $CHOSEN_PYTHON_VERSION
     #pyenv global $CHOSEN_PYTHON_VERSION
 
-    VERSION_PREFIX=$(pyenv prefix $CHOSEN_PYTHON_VERSION)
+    VERSION_PREFIX=$(pyenv prefix "$CHOSEN_PYTHON_VERSION")
     CHOSEN_PYEXE=$VERSION_PREFIX/bin/python
 
     $CHOSEN_PYEXE --version
@@ -424,37 +429,36 @@ pyenv_create_virtualenv(){
     if [[ $CHOSEN_PYTHON_VERSION == 2.7.* ]]; then
         echo "2.7"
         $CHOSEN_PYEXE -m pip install virtualenv
-        $CHOSEN_PYEXE -m virtualenv $VENV_PATH
+        $CHOSEN_PYEXE -m virtualenv "$VENV_PATH"
     else
         echo "3.x"
         # Create the virtual environment
-        $CHOSEN_PYEXE -m venv $VENV_PATH
+        $CHOSEN_PYEXE -m venv "$VENV_PATH"
     fi
 }
 
 
 new_pyenv_venv(){
-    __doc__="
+    __doc__='
     Create a new pyenv virtual environment 
 
     # Uninstall everything
-    pip uninstall $(echo $(pip freeze | sed -e 's/==.*//')) -y
+    pip uninstall $(echo $(pip freeze | sed -e '"'s/==.*//'"')) -y
 
     source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
     new_pyenv_venv new_env$(date --iso-8601=m)
     VENV_NAME=temp_env
-    "
+    '
+    _handle_help $@ || return 0
     VENV_NAME=$1
 
-    VERSION_PREFIX=$(pyenv prefix $CHOSEN_PYTHON_VERSION)
+    VERSION_PREFIX=$(pyenv prefix "$CHOSEN_PYTHON_VERSION")
     CHOSEN_PYEXE=$VERSION_PREFIX/bin/python
 
-    VENV_NAME=$VENV_NAME
-
     VENV_PATH=$VERSION_PREFIX/envs/$VENV_NAME
-    $CHOSEN_PYEXE -m venv $VENV_PATH
+    $CHOSEN_PYEXE -m venv "$VENV_PATH"
 
-    workon_py $VENV_NAME
+    workon_py "$VENV_NAME"
 }
 
 
