@@ -1,5 +1,33 @@
 source $HOME/local/init/utils.sh
 
+
+install_basic_config(){
+    source "$HOME/local/init/utils.sh"
+    HAVE_SUDO=${HAVE_SUDO:=$(have_sudo)}
+    if [ "$HAVE_SUDO" == "True" ]; then
+        apt_ensure symlinks
+    else
+        echo "We dont have sudo. Hopefully we wont need it"
+    fi
+    echo "ENSURE SYMLINKS"
+    # TODO: terminator doesnt configure to automatically use the joncrall profile
+    # in the terminator config. Why?
+    source "$HOME/local/init/ensure_symlinks.sh"
+    ensure_config_symlinks
+}
+
+install_git_config(){
+    _GITUSER="$(git config --global user.name)"
+    if [ "$_GITUSER" == "" ]; then
+      echo "ENSURE GIT CONFIG"
+      # TODO: need to determine the right user.email depending on the system being set up
+      set_global_git_config
+      mkdir -p ~/tmp
+      mkdir -p ~/code
+    fi
+}
+
+
 basic_apt_install(){
 
     # High priority

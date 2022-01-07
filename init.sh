@@ -43,6 +43,18 @@ SETUP_PYTHON=${SETUP_PYTHON:="False"}
 echo "IS_HEADLESS = $IS_HEADLESS"
 echo "HAVE_SUDO = $HAVE_SUDO"
 
+if [ "$HAVE_SUDO" == "True" ]; then
+    apt_ensure symlinks
+else
+    echo "We dont have sudo. Hopefully we wont need it"
+fi
+
+echo "ENSURE SYMLINKS"
+# TODO: terminator doesnt configure to automatically use the joncrall profile
+# in the terminator config. Why?
+source "$HOME/local/init/ensure_symlinks.sh "
+ensure_config_symlinks
+
 
 if [ "$HAVE_SUDO" == "True" ]; then
     apt_ensure git 
@@ -69,12 +81,6 @@ if [ "$_GITUSER" == "" ]; then
   mkdir -p ~/tmp
   mkdir -p ~/code
 fi
-
-echo "ENSURE SYMLINKS"
-# TODO: terminator doesnt configure to automatically use the joncrall profile
-# in the terminator config. Why?
-source "$HOME/local/init/ensure_symlinks.sh "
-ensure_config_symlinks
 
 if [ "$IS_HEADLESS" == "False" ]; then
     if [ "$(type -P terminator)" == "" ]; then
@@ -192,23 +198,25 @@ if [[ "$SETUP_PYTHON" == "True" ]]; then
         libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
         libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev 
 
-    if [[ ! -d "$HOME/.pyenv" ]]; then
-        #source $HOME/local/init/freshstart_ubuntu.sh
-        source $HOME/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        install_pyenv
+    #source $HOME/local/init/freshstart_ubuntu.sh
+    source $HOME/local/tools/pyenv_ext/pyenv_ext_commands.sh
+    install_pyenv
+    pyenv_create_virtualenv 3.9.9 full
+    pip install -e ~/local/rob
 
-        export PYENV_ROOT="$HOME/.pyenv"
-        if [ -d "$PYENV_ROOT" ]; then
-            export PATH="$PYENV_ROOT/bin:$PATH"
-            eval "$($PYENV_ROOT/bin/pyenv init -)"
-            eval "$($PYENV_ROOT/bin/pyenv init --path)"
-            #eval "$(pyenv init --path)"
-            #eval "$(pyenv init -)"
-            source $PYENV_ROOT/completions/pyenv.bash
-            export PYENV_PREFIX=$(pyenv prefix)
-            pyenv_create_virtualenv 3.8.6 most
-        fi
-    fi
+    python ~/local/init/util_git1.py 'clone_repos'
+    #export PYENV_ROOT="$HOME/.pyenv"
+    #if [ -d "$PYENV_ROOT" ]; then
+    #    export PATH="$PYENV_ROOT/bin:$PATH"
+    #    eval "$($PYENV_ROOT/bin/pyenv init -)"
+    #    eval "$($PYENV_ROOT/bin/pyenv init --path)"
+    #    #eval "$(pyenv init --path)"
+    #    #eval "$(pyenv init -)"
+    #    source $PYENV_ROOT/completions/pyenv.bash
+    #    export PYENV_PREFIX=$(pyenv prefix)
+    #    #pyenv_create_virtualenv 3.8.6 most
+    #    pyenv_create_virtualenv 3.9.9 full
+    #fi
 
     python ~/local/init/util_git1.py 'clone_repos'
     pip install -e ~/local/rob

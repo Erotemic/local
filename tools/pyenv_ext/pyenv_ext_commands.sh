@@ -239,10 +239,11 @@ pyenv_create_virtualenv(){
 
     Example:
         # See Available versions
+        pyenv install --list | grep 3.9
         pyenv install --list
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        pyenv_create_virtualenv 3.9.9
+        pyenv_create_virtualenv 3.9.9 full
 
         PYTHON_VERSION=3.8.5
         CHOSEN_PYTHON_VERSION=3.8.5
