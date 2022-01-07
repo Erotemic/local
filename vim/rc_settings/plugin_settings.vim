@@ -79,6 +79,10 @@ shellcheck_errors = {
     'SC1090': 'cant follow non-constant input',
     'SC2164': 'unsafe cd',
     'SC2002': 'useless cat',
+
+    'SC2181': 'Check exit code directly',
+
+    
     #'SC2206': 'Quote word to prevent splitting and globbing or split robustly',
     # 'SC1091': 'not using declare'
 }

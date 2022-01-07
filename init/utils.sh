@@ -1,11 +1,36 @@
-# simple function that does nothing so we can write simple heredocs
-# we cant use it here though, otherwise it would infinitely recurse!
-# Use it like this (sans leading comment symbols):
+#!/bin/bash
 __doc__='
-this is where your text goes. It can be multiline and indented, just dont
-include the single quote character.  Also note the surrounding triple
-quotes just happen to be syntactically correct and are not necessary,
-although I do recommend them.
+Erotemics Bash Utilities
+========================
+
+These are reasonably simple and standalone bash utilities that help automate 
+common bash tasks. 
+
+These utilties were written by a Python programer, and thus, while many of the
+functions are pure-bash, but some do rely on python, and many of them have the
+goal of making it easier to work with python in a bash shell.
+
+An overview and example usage of some of the selected utilities are as follows:
+
+
+* have_sudo - prints True if current user is a sudoer
+
+* codeblock <TEXT> - removes leading indentation from a multiline bash string 
+
+* pyblock [PYEXE] <TEXT> [ARGS...] - uses codeblock to remove leading indentation and executes the code in Python
+
+* writeto <fpath> <text> - Unindents text and writes it to a file
+
+* sudo_writeto <fpath> <text> - Unindents text and writes it to a file with sudo privledges
+
+* curl_verify_hash <URL> <DST> <EXPECTED_HASH> [HASHER] [CURL_OPTS] [VERBOSE] - downloads a file with curl and also checks its hash.
+
+
+Example:
+    source $HOME/local/init/utils.sh
+
+    # have_sudo - prints True if your user hs the ability to run commands with sudo
+    have_sudo
 
 TODO:
     - [ ] Refeactor into a standalone bash library
@@ -13,14 +38,12 @@ TODO:
     - [ ] Provide an easy and secure update mechanism
     - [ ] Write high-level documentation
 
-Usage:
-    source $HOME/local/init/utils.sh
 '
 
 # set to 0 to prevent this script from running more than once
 # set to 1 for editable "development" mode
 __EROTEMIC_ALWAYS_RELOAD__="${__EROTEMIC_ALWAYS_RELOAD__:=0}"
-__EROTEMIC_UTILS_VERSION__="0.1.2"
+__EROTEMIC_UTILS_VERSION__="0.2.0"
 
 if [ "$__EROTEMIC_ALWAYS_RELOAD__" = "0" ]; then
     if [ "$__SOURCED_EROTEMIC_UTILS__" = "$__EROTEMIC_UTILS_VERSION__" ]; then
@@ -37,7 +60,7 @@ _handle_help(){
     The commands must define a __doc__ variable then they must call
     this function as such:
 
-        _handle_help $@ || return 
+        _handle_help "$@" || return 
     '
     for var in "$@"
     do
@@ -69,6 +92,9 @@ have_sudo(){
     Tests if we have the ability to use sudo.
     Returns the string "True" if we do.
 
+    References:
+        https://stackoverflow.com/questions/18431285/check-if-a-user-is-in-a-group
+
     Example:
         HAVE_SUDO=$(have_sudo)
         if [ "$HAVE_SUDO" == "True" ]; then
@@ -77,15 +103,24 @@ have_sudo(){
             we dont have sudo
         fi
     '
-    _PYEXE=$(system_python)
-    $_PYEXE -c "$(codeblock "
-        import grp, pwd 
-        user = '$(whoami)'
-        groups = [g.gr_name for g in grp.getgrall() if user in g.gr_mem]
-        gid = pwd.getpwnam(user).pw_gid
-        groups.append(grp.getgrgid(gid).gr_name)
-        print('sudo' in groups)
-    ")"
+    # New pure-bash implementation
+    local USER_GROUPS
+    USER_GROUPS=$(id -Gn "$(whoami)")
+    if [[ " $USER_GROUPS " == *" sudo "* ]]; then
+        echo "True"
+    else
+        echo "False"
+    fi
+    # Old python-based implementation
+    #_PYEXE=$(system_python)
+    #$_PYEXE -c "$(codeblock "
+    #    import grp, pwd 
+    #    user = '$(whoami)'
+    #    groups = [g.gr_name for g in grp.getgrall() if user in g.gr_mem]
+    #    gid = pwd.getpwnam(user).pw_gid
+    #    groups.append(grp.getgrgid(gid).gr_name)
+    #    print('sudo' in groups)
+    #")"
 }
 
 
@@ -139,13 +174,6 @@ has_pymodule(){
         except ImportError:
             print(False)
     "
-    #$PYEXE -c "$(codeblock "
-    #    try:
-    #        import $PYMOD
-    #        print(True)
-    #    except ImportError:
-    #        print(False)
-    #")"
 }
 
 pyblock(){
@@ -156,7 +184,7 @@ pyblock(){
     necessary to escape some characters.
 
     Usage:
-       pyblock [PYEXE] TEXT [ARGS...]
+       pyblock [PYEXE] <TEXT> [ARGS...]
 
     Args:
        PYEXE : positional arg to specify the python executable.
@@ -179,17 +207,19 @@ pyblock(){
         ")
         echo "OUTPUT = $OUTPUT"
 
-        OUTPUT = /home/joncrall/venv3.6/bin/python
-
-        OUTPUT=$(pyblock pypy "
+        OUTPUT=$(pyblock python3 "
             import sys
             print(sys.executable)
         ")
         echo "OUTPUT = $OUTPUT"
 
-        OUTPUT = /usr/bin/pypy
+        OUTPUT=$(pyblock python3 "
+            import sys
+            print(sys.argv)
+        " "arg1" "arg2 and still arg2" arg3)
+        echo "OUTPUT = $OUTPUT" 
     '
-    _handle_help $@ || return 0
+    _handle_help "$@" || return 0
     if [[ $# -eq 0 ]]; then
         echo "MUST SUPPLY AN ARGUMENT: USAGE IS: pyblock [PYEXE] TEXT [ARGS...]"
     fi
@@ -212,8 +242,7 @@ pyblock(){
         # pop off this processed arguments, so the rest can be passed down
         shift
     fi
-
-    $PYEXE -c "$(codeblock "$TEXT")" $@
+    $PYEXE -c "$(codeblock "$TEXT")" "$@"
 }
 
 
@@ -222,13 +251,19 @@ codeblock()
     if [ "-h" == "$1" ] || [ "--help" == "$1" ]; then 
         # Use codeblock to show the usage of codeblock, so you can use
         # codeblock while you codeblock.
-        echo "$(codeblock '
+        codeblock '
             Unindents code before its executed so you can maintain a pretty
             indentation in your code file. Multiline strings simply begin  
             with 
                 "$(codeblock "
             and end with 
                 ")"
+
+            Usage:
+               codeblock <TEXT>
+
+            Args:
+               TEXT : text to remove leading indentation of
 
             Example:
                echo "$(codeblock "
@@ -243,10 +278,11 @@ codeblock()
                    for i in range(10):
                        print(math.factorial(i))
                    ")"
-        ')"
+        '
     else
         # Prevents python indentation errors in bash
         #python -c "from textwrap import dedent; print(dedent('$1').strip('\n'))"
+        local PYEXE
         PYEXE=$(system_python)
         echo "$1" | $PYEXE -c "import sys; from textwrap import dedent; print(dedent(sys.stdin.read()).strip('\n'))"
     fi
@@ -259,7 +295,8 @@ _simple_codeblock()
     copy-pastable implementation
     Prevents indentation errors in bash
     '
-    PYEXE=python
+    local PYEXE
+    PYEXE=$(system_python)
     echo "$1" | $PYEXE -c "import sys; from textwrap import dedent; print(dedent(sys.stdin.read()).strip('\n'))"
 }
 
@@ -267,8 +304,14 @@ _simple_codeblock()
 writeto()
 {
     __doc__="
+    Unindents text and writes it to a file
+
     Usage:
         writeto <fpath> <text>
+
+    Args:
+        fpath : path to write to
+        text : text to unindent and write
 
     Example:
         writeto some-file.txt '
@@ -277,7 +320,7 @@ writeto()
             variable=False
             '
     "
-    _handle_help $@ || return 0
+    _handle_help "$@" || return 0
     fpath=$1
     text=$2
     fixed_text=$(codeblock "$text")
@@ -288,26 +331,34 @@ writeto()
 sudo_writeto()
 {
     __doc__="
+    Unindents text and writes it to a file with sudo privledges
 
     Usage:
         sudo_writeto <fpath> <text>
+
+    Args:
+        fpath : path to write to
+        text : text to unindent and write
 
     Example:
         sudo_writeto /root-file '
             # Text in this command is automatically dedented via codeblock
             option=True
             variable=False
-            '
+        '
+        cat /root-file
     "
-    _handle_help $@ || return 0
+    _handle_help "$@" || return 0
 
     # NOTE: FAILS WITH QUOTES IN BODY
     fpath=$1
     text=$2
     fixed_text=$(codeblock "$text")
-    echo "fpath = $fpath"
-    echo "text = $text"
-    echo "fixed_text = $fixed_text"
+    echo "
+    fpath = '$fpath'
+    text = '$text'
+    fixed_text = '$fixed_text'
+    "
     # IS THERE A BETTER WAY TO FORWARD AN ENV TO SUDO SO sudo writeto works
     sudo sh -c "echo \"$fixed_text\" > $fpath"
 #    # Maybe this?
@@ -318,7 +369,25 @@ sudo_writeto()
 
 sudo_appendto()
 {
-    _handle_help $@ || return 0
+    __doc__="
+    Unindents text and appends it to a file with sudo privledges
+
+    Usage:
+        sudo_appendto <fpath> <text>
+
+    Args:
+        fpath : path to write to
+        text : text to unindent and write
+
+    Example:
+        sudo_appendto /root-file '
+            # Text in this command is automatically dedented via codeblock
+            option=True
+            variable=False
+        '
+        cat /root-file
+    "
+    _handle_help "$@" || return 0
     # NOTE: FAILS WITH QUOTES IN BODY
     fpath=$1
     text=$2
@@ -360,7 +429,7 @@ append_if_missing()
         append_if_missing "/tmp/foo.txt" "my config option"
         cat /tmp/foo.txt
     '
-    _handle_help $@ || return 0
+    _handle_help "$@" || return 0
     fpath=$1
     text=$2
     fixed_text=$(codeblock "$text")
@@ -410,7 +479,7 @@ exists(){
             echo "FS_PATH=$FS_PATH does not exist"
         fi
     '
-    _handle_help $@ || return 0
+    _handle_help "$@" || return 0
     [ -e "$1" ]
     return $?
 }
@@ -444,11 +513,11 @@ safe_symlink(){
         safe_symlink real_dir link_dir
         ls -al
     "
-    _handle_help $@ || return 0
+    _handle_help "$@" || return 0
     real_path=$1
     link_path=$2
     echo "Safe symlink $link_path -> $real_path"
-    unlink_or_backup ${link_path}
+    unlink_or_backup "${link_path}"
     ln -s "${real_path}" "${link_path}"
 }
 
@@ -468,17 +537,18 @@ unlink_or_backup()
     Args:
         TARGET (str): a path to a directory, link, or file
     '
-    _handle_help $@ || return 0
+    _handle_help "$@" || return 0
 
     TARGET=$1
-    if [ -L $TARGET ]; then
+    if [ -L "$TARGET" ]; then
         # remove any previouly existing link
-        unlink $TARGET
-    elif [ -f $TARGET ] || [ -d $TARGET ] ; then
+        unlink "$TARGET"
+    elif [ -f "$TARGET" ] || [ -d "$TARGET" ] ; then
         # backup any existing file or directory
-        mv $TARGET $TARGET."$(date --iso-8601=seconds)".old
+        mv "$TARGET" "$TARGET"."$(date --iso-8601=seconds)".old
     fi
 }
+
 
 
 apt_ensure(){
@@ -491,55 +561,72 @@ apt_ensure(){
     Args:
         *ARGS : one or more requested packages 
 
+    Environment:
+        UPDATE : if this is populated also runs and apt update
+
     Example:
         apt_ensure git curl htop 
-
-    Ignore:
-        REQUESTED_PKGS=(git curl htop) 
     "
-    _handle_help $@ || return 0
+    _handle_help "$@" || return 0
     # Note the $@ is not actually an array, but we can convert it to one
     # https://linuxize.com/post/bash-functions/#passing-arguments-to-bash-functions
     ARGS=("$@")
     MISS_PKGS=()
     HIT_PKGS=()
+    # Root on docker does not use sudo command, but users do
+    if [ "$(whoami)" == "root" ]; then 
+        _SUDO=""
+    else
+        _SUDO="sudo "
+    fi
+    # shellcheck disable=SC2068
     for PKG_NAME in ${ARGS[@]}
     do
         #apt_ensure_single $EXE_NAME
         RESULT=$(dpkg -l "$PKG_NAME" | grep "^ii *$PKG_NAME")
         if [ "$RESULT" == "" ]; then 
             echo "Do not have PKG_NAME='$PKG_NAME'"
+            # shellcheck disable=SC2268,SC2206
             MISS_PKGS=(${MISS_PKGS[@]} "$PKG_NAME")
         else
             echo "Already have PKG_NAME='$PKG_NAME'"
+            # shellcheck disable=SC2268,SC2206
             HIT_PKGS=(${HIT_PKGS[@]} "$PKG_NAME")
         fi
     done
-
     if [ "${#MISS_PKGS}" -gt 0 ]; then
-        sudo apt install -y "${MISS_PKGS[@]}"
+        if [ "${UPDATE}" != "" ]; then
+            $_SUDO apt update -y
+        fi
+        $_SUDO apt install -y "${MISS_PKGS[@]}"
     else
         echo "No missing packages"
     fi
 }
 
+
 compress_path(){
     __doc__="
     Replace explicit home dir with tilde
+
+    Args:
+        path : path to shrink
 
     References:
         https://stackoverflow.com/questions/10036255/is-there-a-good-way-to-replace-home-directory-with-tilde-in-bash
 
     Example:
+        ~/local/init/utils.sh
         compress_path $HOME/hello
         compress_path /hello
     "
-    local name=$1
-    if [[ "$name" =~ ^"$HOME"(/|$) ]]; then
-        name="~${name#$HOME}"
-        echo $name
+    _handle_help "$@" || return 0
+    local path=$1
+    if [[ "$path" =~ ^"$HOME"(/|$) ]]; then
+        path="~${path#"$HOME"}"
+        echo "$path"
     fi
-    echo $name
+    echo "$path"
 }
 
 
@@ -557,12 +644,12 @@ sedfile(){
     # Do replace into a temp file 
     # https://stackoverflow.com/questions/15965073/return-value-of-sed-for-no-match/15966279
     grep -q -m 1 "${SEARCH}" "${FILEPATH}"
-    RED_CODE="$?"
+    RET_CODE="$?"
     if [[ $RET_CODE -eq 0 ]]; then
         echo "replacing: $FILEPATH"
-        sed "s|${SEARCH}|${REPLACE}|gp" $FILEPATH > $FILEPATH.sedr.tmp
-        diff -u $FILEPATH.sedr.tmp $FILEPATH | colordiff
-        rm $FILEPATH.sedr.tmp
+        sed "s|${SEARCH}|${REPLACE}|gp" "$FILEPATH" > "$FILEPATH.sedr.tmp"
+        diff -u "${FILEPATH}.sedr.tmp" "$FILEPATH" | colordiff
+        rm "$FILEPATH.sedr.tmp"
     fi
 }
 # Needs to be global for find
@@ -587,7 +674,7 @@ sedr(){
         source $HOME/local/init/utils.sh && PATTERN='*.py' sedr util_io fds
         
     """
-    _handle_help $@ || return 0
+    _handle_help "$@" || return 0
 
     local SEARCH=${1:-${SEARCH:-""}}
     local REPLACE=${2:-${REPLACE:-""}}
@@ -647,7 +734,7 @@ exthist(){
         exthist $HOME/local/init -r
         exthist -r
     "
-    _handle_help $@ || return 0
+    _handle_help "$@" || return 0
 
     local RECURSIVE="0"
     DPATH_LIST=()
@@ -666,7 +753,7 @@ exthist(){
             shift # past argument
             ;;
             *)    # unknown option
-            echo $1
+            echo "$1"
             # all other positional args specify directories
             DPATH_LIST+=("$1") 
             shift # past argument
@@ -685,9 +772,6 @@ exthist(){
     #"
 
     local DPATH=""
-    local SUB_DPATH=""
-    #DPATH=""
-    #SUB_DPATH=""
     for DPATH in "${DPATH_LIST[@]}"; do
         if [ "$RECURSIVE" == "True" ]; then
             # TODO: could pass more arguments to find to restrict recursion
@@ -696,14 +780,14 @@ exthist(){
                 ALL_SUBDIRS=()
                 while IFS=  read -r -d $'\0'; do
                     ALL_SUBDIRS+=("$REPLY")
-                done < <(find $DPATH -xtype d -not -path '*/\.*' -print0)
+                done < <(find "$DPATH" -xtype d -not -path '*/\.*' -print0)
 
             else
                 #ALL_SUBDIRS="$(find $DPATH)"
                 ALL_SUBDIRS=()
                 while IFS=  read -r -d $'\0'; do
                     ALL_SUBDIRS+=("$REPLY")
-                done < <(find $DPATH -xtype d -print0 )
+                done < <(find "$DPATH" -xtype d -print0 )
             fi
 
             #echo "ALL_SUBDIRS = $(bash_array_repr "${ALL_SUBDIRS[@]}")"
@@ -721,7 +805,7 @@ exthist(){
             # reverse again (aka we got everything after the last . or /)
             # convert to lowercase
             # sort, unique, and count
-            find $DPATH -maxdepth 1 -xtype f | rev | cut -d. -f1 | cut -d/ -f1 | rev  | tr '[:upper:]' '[:lower:]' | sort | uniq --count | sort -rn
+            find "$DPATH" -maxdepth 1 -xtype f | rev | cut -d. -f1 | cut -d/ -f1 | rev  | tr '[:upper:]' '[:lower:]' | sort | uniq --count | sort -rn
         fi
     done 
 
@@ -736,9 +820,6 @@ escape_bash_string(){
     __doc__='
     Escapes the input string so the program that it is passed to sees exactly
     the given input string.
-
-    TODO:
-        - [ ] Add to erotemic.utils
 
     Args:
         The string to escape
@@ -784,7 +865,7 @@ bash_array_repr(){
         ARR=(1 "2 3" 4)
         bash_array_repr "${ARR[@]}"
     '
-    _handle_help $@ || return 0
+    _handle_help "$@" || return 0
 
     ARGS=("$@")
     if [ "${#ARGS}" -gt 0 ]; then
@@ -861,6 +942,9 @@ curl_verify_hash(){
     failure integer code if the hash of the downloaded file does not match an
     expected version.
 
+    Usage:
+        curl_verify_hash <URL> <DST> <EXPECTED_HASH> [HASHER] [CURL_OPTS] [VERBOSE]
+
     Args:
         URL : the url to download
         DST : the destination for the file
@@ -891,29 +975,35 @@ curl_verify_hash(){
 
         __EROTEMIC_ALWAYS_RELOAD__=1
         source $HOME/local/init/utils.sh 
-        URL="https://golang.org/dl/go1.17.linux-amd64.tar.gz"
-        BASENAME=$(basename $URL)
-        curl_verify_hash $URL $BASENAME "6bf89fc4f5ad763871cf7eac80a2d594492de7a818303283f1366a7f6a30372d" "sha256sum" " -L"
-        
+        GO_KEY=go1.17.5.linux-amd64
+        URL="https://go.dev/dl/${GO_KEY}.tar.gz"
+        declare -A GO_KNOWN_HASHES=(
+            ["go1.17.5.linux-amd64-sha256"]="bd78114b0d441b029c8fe0341f4910370925a4d270a6a590668840675b0c653e"
+            ["go1.17.5.linux-arm64-sha256"]="6f95ce3da40d9ce1355e48f31f4eb6508382415ca4d7413b1e7a3314e6430e7e"
+        )
+        EXPECTED_HASH="${GO_KNOWN_HASHES[${GO_KEY}-sha256]}"
+        BASENAME=$(basename "$URL")
+        curl_verify_hash "$URL" "$BASENAME" "$EXPECTED_HASH" sha256sum "-L"
     '
-    _handle_help $@ || return 0
+    _handle_help "$@" || return 0
 
     local URL=${1:-${URL:-""}}
-    local DEFAULT_DST=$(basename $URL)
+    local DEFAULT_DST
+    DEFAULT_DST=$(basename "$URL")
     local DST=${2:-${DST:-$DEFAULT_DST}}
     local EXPECTED_HASH=${3:-${EXPECTED_HASH:-'*'}}
     local HASHER=${4:-sha256sum}
     local CURL_OPTS=${5:-"${CURL_OPTS}"}
     local VERBOSE=${6:-${VERBOSE:-"3"}}
 
-    python -c "import sys; sys.exit(0 if ('$HASHER' in {'sha256sum', 'sha512sum'}) else 1)"
+    $(system_python) -c "import sys; sys.exit(0 if ('$HASHER' in {'sha256sum', 'sha512sum'}) else 1)"
 
     if [ $? -ne 0 ]; then
         echo "HASHER = $HASHER is not in the known list"
         return 1
     fi
 
-    if [ $VERBOSE -ge 3 ]; then
+    if [ "$VERBOSE" -ge 3 ]; then
         codeblock "
             curl_verify_hash
                 * URL='$URL'
@@ -923,10 +1013,11 @@ curl_verify_hash(){
     fi
 
     # Download the file
+    # shellcheck disable=SC2086
     curl $CURL_OPTS "$URL" --output "$DST"
 
     # Verify the hash
-    verify_hash $DST $EXPECTED_HASH $HASHER $VERBOSE
+    verify_hash "$DST" "$EXPECTED_HASH" "$HASHER" "$VERBOSE"
     return $?
 }
 
@@ -941,14 +1032,14 @@ verify_hash(){
         source $HOME/local/init/utils.sh
         verify_hash $FPATH $EXPECTED_HASH
     '
-    _handle_help $@ || return 0
+    _handle_help "$@" || return 0
 
     local FPATH=${1:-${FPATH:-"Unspecified"}}
     local EXPECTED_HASH=${2:-${EXPECTED_HASH:-'*'}}
     local HASHER=${3:-sha256sum}
     local VERBOSE=${4:-${VERBOSE:-"3"}}
 
-    python -c "import sys; sys.exit(0 if ('$HASHER' in {'sha256sum', 'sha512sum'}) else 1)"
+    $(system_python) -c "import sys; sys.exit(0 if ('$HASHER' in {'sha256sum', 'sha512sum'}) else 1)"
 
     if [ $? -ne 0 ]; then
         echo "HASHER = $HASHER is not in the known list"
@@ -956,7 +1047,8 @@ verify_hash(){
     fi
 
     # Get the hash
-    local GOT_HASH=$($HASHER $FPATH | cut -d' ' -f1)
+    local GOT_HASH
+    GOT_HASH=$($HASHER "$FPATH" | cut -d' ' -f1)
     echo "FPATH = $FPATH"
     echo "GOT_HASH = $GOT_HASH"
 
@@ -971,7 +1063,7 @@ verify_hash(){
         "
         return 1
     else
-        if [ $VERBOSE -ge 1 ]; then
+        if [ "$VERBOSE" -ge 1 ]; then
             codeblock "
                 Checking hash
                     * GOT_HASH      = '$GOT_HASH'
@@ -982,31 +1074,4 @@ verify_hash(){
         return 0
     fi
 
-}
-
-
-escape_bash_string(){
-    __doc__='
-    Escapes the input string so the program that it is passed to sees exactly
-    the given input string.
-
-    Args:
-        The string to escape
-
-    Returns:
-        The escaped string
-
-    Example:
-        __EROTEMIC_ALWAYS_RELOAD__=1
-        source $HOME/local/init/utils.sh
-        escape_bash_string "one-word" && echo ""
-        escape_bash_string "two words" && echo ""
-        escape_bash_string "\"a quoted phrase\"" && echo ""
-        escape_bash_string "\"a literal \" quoted phrase\"" && echo ""
-        escape_bash_string "oh \" no \" so \" my \" ba \" \"\" \\ hm" && echo ""
-        escape_bash_string "backslashes \\\\\\\\" && echo ""
-        escape_bash_string "three words" && echo ""
-        escape_bash_string "path\"o\"log ic" && echo ""
-    '
-    printf "%q" "$1"
 }
