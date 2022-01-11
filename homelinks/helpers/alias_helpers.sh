@@ -931,3 +931,13 @@ json_pp2(){
     echo "NL = $NL"
     python -c "import ubelt, sys, json; print(ubelt.highlight_code(ubelt.repr2(json.loads(sys.stdin.read()), nl=$NL, sort=False)))" $POSITIONAL
 }
+
+
+ssh-edit-config(){
+    if [[ "${EDITOR}" == "" ]]; then
+        printf "Editor not set\n"
+        return 1
+    else
+        $EDITOR "$HOME/.ssh/config"
+    fi
+}

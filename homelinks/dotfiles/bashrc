@@ -96,6 +96,8 @@ export PATH=$HOME/.local/bin:$PATH
 export LD_LIBRARY_PATH=$HOME/.local/lib:$LD_LIBRARY_PATH
 export PKG_CONFIG_PATH=$HOME/.local/lib/pkgconfig:$PKG_CONFIG_PATH
 
+export EDITOR=vim
+
 
 export PATH=$PATH:$HOME/scripts
 export PATH=$PATH:$HOME/local/git_tools/scripts
@@ -308,8 +310,8 @@ if [[ "$_AUTOSTART_VENV" == "1" ]]; then
     if [ "$DID_MY_BASHRC_INIT" == "" ]; then
         # For some reason VIRTUAL_ENV is initialized as "", so unset it
         unset VIRTUAL_ENV
-        #CHOSEN_PYTHON_VERSION=3.8.6
-        CHOSEN_PYTHON_VERSION=3.9.9
+        CHOSEN_PYTHON_VERSION=3.8.6
+        #CHOSEN_PYTHON_VERSION=3.9.9
         if [ -d "$PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION" ]; then
             pyenv shell $CHOSEN_PYTHON_VERSION
             source $PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION/bin/activate  

@@ -113,7 +113,7 @@ setup_pi_sd_card_on_host_system(){
     "
 }
 
-export PI_HOSTNAME="pazuzu"
+export PI_HOSTNAME="mojo"
 export PI_USERNAME="joncrall"
 
 # Change the name of the computer
