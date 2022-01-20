@@ -196,6 +196,10 @@ download_cuda_runfiles(){
 
     wget https://developer.download.nvidia.com/compute/cuda/11.2.1/local_installers/cuda_11.2.1_460.32.03_linux.run
 
+    wget https://developer.download.nvidia.com/compute/cuda/11.5.1/local_installers/cuda_11.5.1_495.29.05_linux.run
+    sudo sh cuda_11.5.1_495.29.05_linux.run
+    
+
     # Older versions have to be downloaded manually via https://developer.nvidia.com/cuda-toolkit-archive
 
     cd ~/tpl-archive/cuda
@@ -242,57 +246,67 @@ change_cuda_version()
 
     # version 8
     if [ "$cuda_version" == "8.0" ]; then
-        sh ~/tpl-archive/cuda/cuda-linux64-rel-8.0.61-21551265.run -prefix=$HOME/.local/cuda-8.0 -noprompt -manifest $HOME/.local/cuda/manifest_cuda.txt -nosymlink 
-        unlink $HOME/.local/cuda
-        ln -s $HOME/.local/cuda-8.0 $HOME/.local/cuda
+        sh ~/tpl-archive/cuda/cuda-linux64-rel-8.0.61-21551265.run -prefix=$HOME/.local/cuda-8.0 -noprompt -manifest "$HOME/.local/cuda/manifest_cuda.txt" -nosymlink 
+        unlink "$HOME/.local/cuda"
+        ln -s "$HOME/.local/cuda-8.0" "$HOME/.local/cuda"
     fi
 
     # version 9
     if [ "$cuda_version" == "9.1" ]; then
-        unlink $HOME/.local/cuda
-        sh ~/tpl-archive/cuda/cuda-linux.9.1.85-23083092.run -prefix=$HOME/.local/cuda-9.1 -noprompt -manifest $HOME/.local/cuda/manifest_cuda.txt -nosymlink 
-        ln -s $HOME/.local/cuda-9.1 $HOME/.local/cuda
+        unlink "$HOME/.local/cuda"
+        sh ~/tpl-archive/cuda/cuda-linux.9.1.85-23083092.run "-prefix=$HOME/.local/cuda-9.1" -noprompt -manifest "$HOME/.local/cuda/manifest_cuda.txt" -nosymlink 
+        ln -s "$HOME/.local/cuda-9.1" "$HOME/.local/cuda"
     fi
 
     if [ "$cuda_version" == "9.2" ]; then
-        unlink $HOME/.local/cuda
+        unlink "$HOME/.local/cuda"
         CUDA_PREFIX=$HOME/.local/cuda-9.2
-        sh ~/tpl-archive/cuda/cuda-9.2/cuda-linux.9.2.148-24330188.run -prefix=$CUDA_PREFIX -noprompt -manifest $HOME/.local/cuda/manifest_cuda.txt -nosymlink 
-        ln -s $CUDA_PREFIX $HOME/.local/cuda
+        sh ~/tpl-archive/cuda/cuda-9.2/cuda-linux.9.2.148-24330188.run "-prefix=$CUDA_PREFIX" -noprompt -manifest "$HOME/.local/cuda/manifest_cuda.txt" -nosymlink 
+        ln -s "$CUDA_PREFIX" "$HOME/.local/cuda"
     fi
     if [ "$cuda_version" == "10.1" ]; then
-        unlink $HOME/.local/cuda
-        CUDA_PREFIX=$HOME/.local/cuda-10.1
-        mkdir -p $CUDA_PREFIX
-        ln -s $CUDA_PREFIX $HOME/.local/cuda
+        unlink "$HOME/.local/cuda"
+        CUDA_PREFIX="$HOME/.local/cuda-10.1"
+        mkdir -p "$CUDA_PREFIX"
+        ln -s "$CUDA_PREFIX" "$HOME/.local/cuda"
         chmod +x ~/tpl-archive/cuda/cuda_10.1.243_418.87.00_linux.run
         # Not sure if I installed cublas correctly via this command
-        sh ~/tpl-archive/cuda/cuda_10.1.243_418.87.00_linux.run --silent --toolkit --no-opengl-libs --no-man-page --toolkitpath=$CUDA_PREFIX  --defaultroot=$CUDA_PREFIX --tmpdir=$PWD
+        sh ~/tpl-archive/cuda/cuda_10.1.243_418.87.00_linux.run --silent --toolkit --no-opengl-libs --no-man-page "--toolkitpath=$CUDA_PREFIX"  "--defaultroot=$CUDA_PREFIX" "--tmpdir=$PWD"
     fi
 
     if [ "$cuda_version" == "11.1" ]; then
-        unlink $HOME/.local/cuda
+        unlink "$HOME/.local/cuda"
         CUDA_PREFIX=$HOME/.local/cuda-11.1
-        mkdir -p $CUDA_PREFIX
-        ln -s $CUDA_PREFIX $HOME/.local/cuda
+        mkdir -p "$CUDA_PREFIX"
+        ln -s "$CUDA_PREFIX" "$HOME/.local/cuda"
         cd ~/tpl-archive/cuda
         chmod +x ~/tpl-archive/cuda/cuda_11.1.1_455.32.00_linux.run
         # Not sure if I installed cublas correctly via this command
-        sh ~/tpl-archive/cuda/cuda_11.1.1_455.32.00_linux.run --silent --toolkit --no-opengl-libs --no-man-page --toolkitpath=$CUDA_PREFIX  --defaultroot=$CUDA_PREFIX --tmpdir=$PWD 
+        sh ~/tpl-archive/cuda/cuda_11.1.1_455.32.00_linux.run --silent --toolkit --no-opengl-libs --no-man-page "--toolkitpath=$CUDA_PREFIX"  "--defaultroot=$CUDA_PREFIX" "--tmpdir=$PWD"
         # Had to hack in the version file, no txt or json
     fi
 
     if [ "$cuda_version" == "11.2" ]; then
-        unlink $HOME/.local/cuda
+        unlink "$HOME/.local/cuda"
         CUDA_PREFIX=$HOME/.local/cuda-11.2
-        mkdir -p $CUDA_PREFIX
-        ln -s $CUDA_PREFIX $HOME/.local/cuda
+        mkdir -p "$CUDA_PREFIX"
+        ln -s "$CUDA_PREFIX" "$HOME/.local/cuda"
         chmod +x ~/tpl-archive/cuda/cuda_11.2.1_460.32.03_linux.run
         # Not sure if I installed cublas correctly via this command
-        sh ~/tpl-archive/cuda/cuda_11.2.1_460.32.03_linux.run --silent --toolkit --no-opengl-libs --no-man-page --toolkitpath=$CUDA_PREFIX  --defaultroot=$CUDA_PREFIX --tmpdir=$PWD
+        sh ~/tpl-archive/cuda/cuda_11.2.1_460.32.03_linux.run --silent --toolkit --no-opengl-libs --no-man-page "--toolkitpath=$CUDA_PREFIX"  "--defaultroot=$CUDA_PREFIX" "--tmpdir=$PWD"
     fi
 
-    ls -al $HOME/.local/cuda
+    if [ "$cuda_version" == "11.5" ]; then
+        unlink "$HOME/.local/cuda"
+        CUDA_PREFIX=$HOME/.local/cuda-11.5
+        mkdir -p "$CUDA_PREFIX"
+        ln -s "$CUDA_PREFIX" "$HOME/.local/cuda"
+        chmod +x ~/tpl-archive/cuda/cuda_11.5.1_495.29.05_linux.run
+        # Not sure if I installed cublas correctly via this command
+        sh ~/tpl-archive/cuda/cuda_11.5.1_495.29.05_linux.run --silent --toolkit --no-opengl-libs --no-man-page "--toolkitpath=$CUDA_PREFIX"  "--defaultroot=$CUDA_PREFIX" "--tmpdir=$PWD"
+    fi
+
+    ls -al "$HOME/.local/cuda"
 
     # IS there any way to get these to work locally? No. These are nvidia drivers. They need to be system level
     #sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run --help

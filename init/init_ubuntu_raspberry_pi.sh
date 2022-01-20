@@ -293,10 +293,14 @@ install_ipfs(){
 install_boinc()
 {
     # Probably want to install a desktop
-    sudo apt install ubuntu-desktop
+    sudo apt install ubuntu-desktop -y  # TODO: make non-interactive, might require reboot
+
     sudo apt install boinc-client boinc-manager -y
 
     sudo apt-get install boinc-client
+
+    sudo usermod -a -G boinc "$USER"
+
     #sudo apt-get remove boinc-client
 
     # Add main computer as a host that is allowed to control this device
@@ -306,4 +310,23 @@ install_boinc()
     boinc
     # Start boinc, then look at /var/lib/boinc/gui_rpc_auth.cfg for the password
     sudo cat /var/lib/boinc/gui_rpc_auth.cfg
+
+    # Start the client as a service
+    sudo /etc/init.d/boinc-client start
+    sudo /etc/init.d/boinc-client stop
+
+    systemctl status boinc-client.service
+
+    # Attach boinc to WCD account
+    _on_host_="
+    load_secrets
+    echo "export BOINC_WCG_ACCOUNT_KEY=$BOINC_WCG_ACCOUNT_KEY"
+    export BOINC_WCG_ACCOUNT_KEY=...
+    "
+
+    sudo chmod 664 /etc/boinc-client/gui_rpc_auth.cfg
+    #boinc --no_gui_rpc --attach_project http://www.worldcommunitygrid.org "$BOINC_WCG_ACCOUNT_KEY"
+    #boinc --attach_project http://www.worldcommunitygrid.org "$BOINC_WCG_ACCOUNT_KEY"
+    boinc 
+    #/var/lib/boinc/gui_rpc_auth.cfg
 }
