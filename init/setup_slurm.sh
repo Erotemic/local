@@ -1,4 +1,5 @@
-__heredoc__="""
+#!/bin/bash
+__doc__='
 Script to help setup slurm. 
 
 This script is only meant to get slurm working for the use-case where a single
@@ -9,19 +10,64 @@ powerful and can provide resource managment across distributed systems. See
 This script was designed to be run interactively. In other words the user
 should not simply execute this script blindly. Instead, the user should look at
 each section, understand what it does, potentially modify it to their
-specifications, and execute it explicitly. Executing blindly **might** work,
-but it has not been tested, nor is it recommended.
+specifications, and execute it explicitly. 
+
+To use it as a non-interactive script you can try...
+    source ~/local/init/setup_slurm.sh && run_fresh_slurm_install
 
 Requirements:
     pip install psutil ubelt --user
 
 References:
     ..[1] https://slurm.schedmd.com/quickstart_admin.html
-"""
+
+    ..[2] https://blog.llandsmeer.com/tech/2020/03/02/slurm-single-instance.html
+'
 
 # ----------------------------------
 # A subset of Jon Crall's bash utilities 
 # source ~/local/init/utils.sh
+
+system_python(){
+    __doc__="
+    Return name of system python
+    "
+    if [ "$(type -P python)" != "" ]; then
+        echo "python"
+    elif [ "$(type -P python3)" != "" ]; then
+        echo "python3"
+    else
+        echo "python"
+    fi 
+}
+
+
+have_sudo(){
+    __doc__='
+    Tests if we have the ability to use sudo.
+    Returns the string "True" if we do.
+
+    References:
+        https://stackoverflow.com/questions/18431285/check-if-a-user-is-in-a-group
+
+    Example:
+        HAVE_SUDO=$(have_sudo)
+        if [ "$HAVE_SUDO" == "True" ]; then
+            sudo do stuff
+        else
+            we dont have sudo
+        fi
+    '
+    # New pure-bash implementation
+    local USER_GROUPS
+    USER_GROUPS=$(id -Gn "$(whoami)")
+    if [[ " $USER_GROUPS " == *" sudo "* ]]; then
+        echo "True"
+    else
+        echo "False"
+    fi
+}
+
 
 sudo_writeto()
 {
@@ -29,319 +75,450 @@ sudo_writeto()
     fixed_text=$2
     sudo sh -c "echo \"$fixed_text\" > $fpath"
 }
+
+apt_ensure(){
+    __doc__="
+    Checks to see if the packages are installed and installs them if needed.
+
+    The main reason to use this over normal apt install is that it avoids sudo
+    if we already have all requested packages.
+
+    Args:
+        *ARGS : one or more requested packages 
+
+    Environment:
+        UPDATE : if this is populated also runs and apt update
+
+    Example:
+        apt_ensure git curl htop 
+    "
+    # Note the $@ is not actually an array, but we can convert it to one
+    # https://linuxize.com/post/bash-functions/#passing-arguments-to-bash-functions
+    ARGS=("$@")
+    MISS_PKGS=()
+    HIT_PKGS=()
+    # Root on docker does not use sudo command, but users do
+    if [ "$(whoami)" == "root" ]; then 
+        _SUDO=""
+    else
+        _SUDO="sudo "
+    fi
+    # shellcheck disable=SC2068
+    for PKG_NAME in ${ARGS[@]}
+    do
+        #apt_ensure_single $EXE_NAME
+        RESULT=$(dpkg -l "$PKG_NAME" | grep "^ii *$PKG_NAME")
+        if [ "$RESULT" == "" ]; then 
+            echo "Do not have PKG_NAME='$PKG_NAME'"
+            # shellcheck disable=SC2268,SC2206
+            MISS_PKGS=(${MISS_PKGS[@]} "$PKG_NAME")
+        else
+            echo "Already have PKG_NAME='$PKG_NAME'"
+            # shellcheck disable=SC2268,SC2206
+            HIT_PKGS=(${HIT_PKGS[@]} "$PKG_NAME")
+        fi
+    done
+    if [ "${#MISS_PKGS}" -gt 0 ]; then
+        if [ "${UPDATE}" != "" ]; then
+            $_SUDO apt update -y
+        fi
+        $_SUDO apt install -y "${MISS_PKGS[@]}"
+    else
+        echo "No missing packages"
+    fi
+}
+
+
+codeblock()
+{
+    # Prevents python indentation errors in bash
+    #python -c "from textwrap import dedent; print(dedent('$1').strip('\n'))"
+    local PYEXE
+    PYEXE=$(system_python)
+    echo "$1" | $PYEXE -c "import sys; from textwrap import dedent; print(dedent(sys.stdin.read()).strip('\n'))"
+}
+
+pyblock(){
+    __doc__='
+    Executes python code and handles nice indentation.  Need to be slightly
+    careful about the type of quotes used.  Typically stick to doublequotes
+    around the code and singlequotes inside python code. Sometimes it will be
+    necessary to escape some characters.'
+
+    # Default values
+    PYEXE=$(system_python)
+    TEXT=""
+    if [ $# -gt 1 ] && [[ $(type -P "$1") != "" ]] ; then
+        # If the first arg executable, then assume it is a python executable
+        PYEXE=$1
+        # In this case the second arg must be text
+        TEXT=$2
+        # pop off these first two processed arguments, so the rest can be
+        # passed to the python program
+        shift
+        shift
+    else
+        # Usually the first argument is text
+        TEXT=$1
+        # pop off this processed arguments, so the rest can be passed down
+        shift
+    fi
+    $PYEXE -c "$(codeblock "$TEXT")" "$@"
+}
+
 # ----------------------------------
 
 
-###################################################
-# INTROSPECT AND DEFINE VARIABLES ABOUT YOUR SYSTEM
-###################################################
+ensure_slurm_binaries(){
+    ############################
+    # INSTALL THE SLURM BINARIES
+    ############################
+    # Ensure the slurm packages are installed
+    apt_ensure slurm slurm-client slurmctld slurmd slurmdbd slurm-wlm slurm-wlm-basic-plugins 
 
-# In this portion of the script we provide slurm information about this
-# system's file structure and hardware including RAM, CPUs, and GPUs.
-
-CONTROL_MACHINE=$HOSTNAME
-LOGDIR=/var/log/slurm-llnl
-
-# Hacky way of infering GPU info, may need to be tweaked
-# For example, a machine with 3 titanx gpus may look like:
-# NAME=gpu Type=CustomTagEgTitanX File=/dev/nvidia0
-# NAME=gpu Type=CustomTagEgTitanX File=/dev/nvidia1
-# NAME=gpu Type=CustomTagEgTitanX File=/dev/nvidia3
-GRES_CONFIG_TEXT=$(python -c """
-import ubelt as ub
-lines = ub.cmd('nvidia-smi -L')['out']
-
-cfglines = []
-for line in lines.split(chr(10)):
-    if line:
-        gputype = line.split(':')[1].split('(')[0].strip().replace(' ', '')
-        # hack: is there a better way to determine the file?
-        devfile = 'dev/nvidia{}'.format(len(cfglines))
-        cfglines.append('NAME=gpu Type={} File={}'.format(gputype, devfile))
-gres_config_text = chr(10).join(cfglines)
-print(gres_config_text)
-""")
-# TODO: Find a better way to introspect GPU information
-
-NUM_GPUS=$(echo "$GRES_CONFIG_TEXT" | wc -l)
-
-# Use 95% of your RAM
-# This variable should be in megabytes (e.g. 45988 ~= 45 GB)
-#cat /proc/meminfo | grep MemTotal
-MAX_MEMORY=$(python -c "import psutil; print(int(.95 * (psutil.virtual_memory().total - psutil.swap_memory().total) / 1e6))")
-
-# Get information about CPUS
-# Note: 
-#lscpu | grep -E '^Thread|^Core|^Socket|^CPU\('
-NUM_CPUS=$(cat /proc/cpuinfo | awk '/^processor/{print $3}' | wc -l)
-NUM_SOCKETS=$(lscpu | grep -E '^Thread' | awk '{split($0,a,":"); print a[2]}' | tr -d '[:space:]')
-NUM_CORES=$(lscpu | grep -E '^Core' | awk '{split($0,a,":"); print a[2]}' | tr -d '[:space:]')
-NUM_THREADS_PER_CORE=$(lscpu | grep -E '^Thread' | awk '{split($0,a,":"); print a[2]}' | tr -d '[:space:]')
-
-# Note:
-# slurmd -C will print the physical configuration of the system
+    # Optional: install the slurm GUI
+    #apt_ensure sview
+}
 
 
-###########################
-# REPORT THE INFERED VALUES 
-###########################
+setup_machine_hardware_variables(){
+    __doc__="
+    Define bash variables containing info about the machine hardware.
+    These will be used to write default configurations.
+    "
+    ###################################################
+    # INTROSPECT AND DEFINE VARIABLES ABOUT YOUR SYSTEM
+    ###################################################
 
-echo "CONTROL_MACHINE = $CONTROL_MACHINE"
-echo "LOGDIR = $LOGDIR"
-echo "MAX_MEMORY = $MAX_MEMORY"
+    # In this portion of the script we provide slurm information about this
+    # system's file structure and hardware including RAM, CPUs, and GPUs.
 
-# Note NUM_CPUS should be equal to NUM_SOCKETS * NUM_CORES * NUM_THREADS_PER_CORE 
-echo "NUM_CPUS = $NUM_CPUS"
-echo "NUM_SOCKETS = $NUM_SOCKETS"
-echo "NUM_CORES = $NUM_CORES"
-echo "NUM_THREADS_PER_CORE = $NUM_THREADS_PER_CORE"
+    CONTROL_MACHINE=$HOSTNAME
+    SLURM_LOG_DPATH=/var/log/slurm-llnl
+    SLURM_LLNL_DPATH=/etc/slurm-llnl
 
+    # Hacky way of infering GPU info, may need to be tweaked
+    # For example, a machine with 3 titanx gpus may look like:
+    # NAME=gpu Type=CustomTagEgTitanX File=/dev/nvidia0
+    # NAME=gpu Type=CustomTagEgTitanX File=/dev/nvidia1
+    # NAME=gpu Type=CustomTagEgTitanX File=/dev/nvidia3
+    SLURM_GRES_TEXT=$(pyblock "
+    import ubelt as ub
+    lines = ub.cmd('nvidia-smi -L')['out']
 
-echo "NUM_GPUS = $NUM_GPUS"
-echo "GRES_CONFIG_TEXT = "
-echo "$GRES_CONFIG_TEXT"
+    cfglines = []
+    for line in lines.split(chr(10)):
+        if line:
+            gputype = line.split(':')[1].split('(')[0].strip().replace(' ', '')
+            # hack: is there a better way to determine the file?
+            devfile = 'dev/nvidia{}'.format(len(cfglines))
+            cfglines.append('NAME=gpu Type={} File={}'.format(gputype, devfile))
+    gres_config_text = chr(10).join(cfglines)
+    print(gres_config_text)
+    ")
+    # TODO: Find a better way to introspect GPU information
 
+    NUM_GPUS=$(echo "$GRES_CONFIG_TEXT" | wc -l)
 
-############################
-# INSTALL THE SLURM BINARIES
-############################
+    # Use 95% of your RAM
+    # This variable should be in megabytes (e.g. 45988 ~= 45 GB)
+    #cat /proc/meminfo | grep MemTotal
+    MAX_MEMORY=$(python -c "import psutil; print(int(.95 * (psutil.virtual_memory().total - psutil.swap_memory().total) / 1e6))")
 
-# Ensure the slurm packages are installed
-sudo apt install slurm slurm-client slurmctld slurmd slurmdbd slurm-wlm slurm-wlm-basic-plugins  -y
+    # Get information about CPUS
+    # Note: 
+    #lscpu | grep -E '^Thread|^Core|^Socket|^CPU\('
+    NUM_CPUS=$(cat /proc/cpuinfo | awk '/^processor/{print $3}' | wc -l)
+    NUM_SOCKETS=$(lscpu | grep -E '^Thread' | awk '{split($0,a,":"); print a[2]}' | tr -d '[:space:]')
+    NUM_CORES=$(lscpu | grep -E '^Core' | awk '{split($0,a,":"); print a[2]}' | tr -d '[:space:]')
+    NUM_THREADS_PER_CORE=$(lscpu | grep -E '^Thread' | awk '{split($0,a,":"); print a[2]}' | tr -d '[:space:]')
 
-# Optional: install the slurm GUI
-sudo apt install sview -y
+    # Note:
+    # slurmd -C will print the physical configuration of the system
+    ###########################
+    # REPORT THE INFERED VALUES 
+    ###########################
 
+    codeblock "
+    CONTROL_MACHINE='$CONTROL_MACHINE'
+    SLURM_LOG_DPATH='$SLURM_LOG_DPATH'
+    SLURM_LLNL_DPATH='$SLURM_LLNL_DPATH'
+    MAX_MEMORY='$MAX_MEMORY'
 
-############################################
-# GENERATE REASONABLE DEFAULT CONFIGURATIONS
-############################################
+    # Note NUM_CPUS should be equal to NUM_SOCKETS * NUM_CORES * NUM_THREADS_PER_CORE 
+    NUM_CPUS='$NUM_CPUS'
+    NUM_SOCKETS='$NUM_SOCKETS'
+    NUM_CORES='$NUM_CORES'
+    NUM_THREADS_PER_CORE='$NUM_THREADS_PER_CORE'
 
-# Create the logdir
-sudo mkdir -p $LOGDIR
+    NUM_GPUS='$NUM_GPUS'
+    "
+    printf "SLURM_GRES_TEXT =\n%s\n" "$SLURM_GRES_TEXT"
+}
 
-# Dump configuration files
-sudo_writeto /etc/slurm-llnl/gres.conf "$GRES_CONFIG_TEXT"
+generate_slurm_config(){
+    ############################################
+    # GENERATE REASONABLE DEFAULT CONFIGURATIONS
+    ############################################
+    echo "Checking for default slurm config" 
 
-sudo_writeto /etc/slurm-llnl/slurm.conf """
-# slurm.conf file generated by configurator.html.
-# Put this file on all nodes of your cluster.
-# See the slurm.conf man page for more information.
-#
-ControlMachine=$CONTROL_MACHINE
-ControlAddr=localhost
-#BackupController=
-#BackupAddr=
-#
-AuthType=auth/munge
-CacheGroups=0
-#CheckpointType=checkpoint/none
-CryptoType=crypto/munge
-#DisableRootJobs=NO
-#EnforcePartLimits=NO
-#Epilog=
-#EpilogSlurmctld=
-#FirstJobId=1
-#MaxJobId=999999
-GresTypes=gpu
-#GroupUpdateForce=0
-#GroupUpdateTime=600
-#JobCheckpointDir=/var/lib/slurm-llnl/checkpoint
-#JobCredentialPrivateKey=
-#JobCredentialPublicCertificate=
-#JobFileAppend=0
-#JobRequeue=1
-#JobSubmitPlugins=1
-#KillOnBadExit=0
-#LaunchType=launch/slurm
-#Licenses=foo*4,bar
-#MailProg=/usr/bin/mail
-#MaxJobCount=5000
-#MaxStepCount=40000
-#MaxTasksPerNode=128
-MpiDefault=none
-#MpiParams=ports=#-#
-#PluginDir=
-#PlugStackConfig=
-#PrivateData=jobs
-ProctrackType=proctrack/pgid
-#Prolog=
-#PrologFlags=
-#PrologSlurmctld=
-#PropagatePrioProcess=0
-#PropagateResourceLimits=
-#PropagateResourceLimitsExcept=
-#RebootProgram=
-ReturnToService=1
-#SallocDefaultCommand=
-SlurmctldPidFile=/var/run/slurm-llnl/slurmctld.pid
-SlurmctldPort=6817
-SlurmdPidFile=/var/run/slurm-llnl/slurmd.pid
-SlurmdPort=6818
-SlurmdSpoolDir=/var/lib/slurm-llnl/slurmd
-SlurmUser=slurm
-#SlurmdUser=root
-#SrunEpilog=
-#SrunProlog=
-StateSaveLocation=/var/lib/slurm-llnl/slurmctld
-SwitchType=switch/none
-#TaskEpilog=
-TaskPlugin=task/none
-#TaskPluginParam=
-#TaskProlog=
-#TopologyPlugin=topology/tree
-#TmpFS=/tmp
-#TrackWCKey=no
-#TreeWidth=
-#UnkillableStepProgram=
-#UsePAM=0
-#
-#
-# TIMERS
-#BatchStartTimeout=10
-#CompleteWait=0
-#EpilogMsgTime=2000
-#GetEnvTimeout=2
-#HealthCheckInterval=0
-#HealthCheckProgram=
-InactiveLimit=0
-KillWait=30
-#MessageTimeout=10
-#ResvOverRun=0
-#MinJobAge=300
-MinJobAge=7776000 # Keep job info for 90 days
-#OverTimeLimit=0
-SlurmctldTimeout=120
-SlurmdTimeout=300
-#UnkillableStepTimeout=60
-#VSizeFactor=0
-Waittime=0
-#
-#
-# SCHEDULING
-#DefMemPerCPU=0
-FastSchedule=1
-#MaxMemPerCPU=0
-#SchedulerRootFilter=1
-#SchedulerTimeSlice=30
-SchedulerType=sched/backfill
-SchedulerPort=7321
-SelectType=select/cons_res
-SelectTypeParameters=CR_Core
-#
-#
-# JOB PRIORITY
-#PriorityFlags=
-#PriorityType=priority/basic
-#PriorityDecayHalfLife=
-#PriorityCalcPeriod=
-#PriorityFavorSmall=
-#PriorityMaxAge=
-#PriorityUsageResetPeriod=
-#PriorityWeightAge=
-#PriorityWeightFairshare=
-#PriorityWeightJobSize=
-#PriorityWeightPartition=
-#PriorityWeightQOS=
-#
-#
-# LOGGING AND ACCOUNTING
-#AccountingStorageEnforce=0
-#AccountingStorageHost=
-AccountingStorageLoc=$LOGDIR/accounting.log
-#AccountingStoragePass=
-#AccountingStoragePort=
-AccountingStorageType=accounting_storage/filetxt
-#AccountingStorageUser=
-AccountingStoreJobComment=YES
-ClusterName=cluster
-#DebugFlags=
-#JobCompHost=
-JobCompLoc=$LOGDIR/completion.log
-#JobCompPass=
-#JobCompPort=
-JobCompType=jobcomp/filetxt
-#JobCompUser=
-#JobContainerPlugin=job_container/none
-JobAcctGatherFrequency=30
-JobAcctGatherType=jobacct_gather/linux
-SlurmctldDebug=3
-SlurmctldLogFile=/var/log/slurm-llnl/slurmctld.log
-SlurmdDebug=3
-SlurmdLogFile=/var/log/slurm-llnl/slurmd.log
-#SlurmSchedLogFile=
-#SlurmSchedLogLevel=
-#
-#
-# POWER SAVE SUPPORT FOR IDLE NODES (optional)
-#SuspendProgram=
-#ResumeProgram=
-#SuspendTimeout=
-#ResumeTimeout=
-#ResumeRate=
-#SuspendExcNodes=
-#SuspendExcParts=
-#SuspendRate=
-#SuspendTime=
-#
-#
-# COMPUTE NODES
-NodeName=$CONTROL_MACHINE Gres=gpu:$NUM_GPUS NodeAddr=localhost CPUs=$NUM_CPUS RealMemory=$MAX_MEMORY Sockets=$NUM_SOCKETS CoresPerSocket=$NUM_CORES ThreadsPerCore=$NUM_THREADS_PER_CORE State=UNKNOWN TmpDisk=223895
+    setup_machine_hardware_variables
+    
+    SLURM_CONFIG_TEXT=$(codeblock "
+        # slurm.conf file generated by configurator.html.
+        # Put this file on all nodes of your cluster.
+        # See the slurm.conf man page for more information.
+        #
+        ControlMachine=$CONTROL_MACHINE
+        ControlAddr=localhost
+        #BackupController=
+        #BackupAddr=
+        #
+        AuthType=auth/munge
+        CacheGroups=0
+        #CheckpointType=checkpoint/none
+        CryptoType=crypto/munge
+        #DisableRootJobs=NO
+        #EnforcePartLimits=NO
+        #Epilog=
+        #EpilogSlurmctld=
+        #FirstJobId=1
+        #MaxJobId=999999
+        GresTypes=gpu
+        #GroupUpdateForce=0
+        #GroupUpdateTime=600
+        #JobCheckpointDir=/var/lib/slurm-llnl/checkpoint
+        #JobCredentialPrivateKey=
+        #JobCredentialPublicCertificate=
+        #JobFileAppend=0
+        #JobRequeue=1
+        #JobSubmitPlugins=1
+        #KillOnBadExit=0
+        #LaunchType=launch/slurm
+        #Licenses=foo*4,bar
+        #MailProg=/usr/bin/mail
+        #MaxJobCount=5000
+        #MaxStepCount=40000
+        #MaxTasksPerNode=128
+        MpiDefault=none
+        #MpiParams=ports=#-#
+        #PluginDir=
+        #PlugStackConfig=
+        #PrivateData=jobs
+        ProctrackType=proctrack/pgid
+        #Prolog=
+        #PrologFlags=
+        #PrologSlurmctld=
+        #PropagatePrioProcess=0
+        #PropagateResourceLimits=
+        #PropagateResourceLimitsExcept=
+        #RebootProgram=
+        ReturnToService=1
+        #SallocDefaultCommand=
+        SlurmctldPidFile=/var/run/slurm-llnl/slurmctld.pid
+        SlurmctldPort=6817
+        SlurmdPidFile=/var/run/slurm-llnl/slurmd.pid
+        SlurmdPort=6818
+        SlurmdSpoolDir=/var/lib/slurm-llnl/slurmd
+        SlurmUser=slurm
+        #SlurmdUser=root
+        #SrunEpilog=
+        #SrunProlog=
+        StateSaveLocation=/var/lib/slurm-llnl/slurmctld
+        SwitchType=switch/none
+        #TaskEpilog=
+        TaskPlugin=task/none
+        #TaskPluginParam=
+        #TaskProlog=
+        #TopologyPlugin=topology/tree
+        #TmpFS=/tmp
+        #TrackWCKey=no
+        #TreeWidth=
+        #UnkillableStepProgram=
+        #UsePAM=0
+        #
+        #
+        # TIMERS
+        #BatchStartTimeout=10
+        #CompleteWait=0
+        #EpilogMsgTime=2000
+        #GetEnvTimeout=2
+        #HealthCheckInterval=0
+        #HealthCheckProgram=
+        InactiveLimit=0
+        KillWait=30
+        #MessageTimeout=10
+        #ResvOverRun=0
+        #MinJobAge=300
+        MinJobAge=7776000 # Keep job info for 90 days
+        #OverTimeLimit=0
+        SlurmctldTimeout=120
+        SlurmdTimeout=300
+        #UnkillableStepTimeout=60
+        #VSizeFactor=0
+        Waittime=0
+        #
+        #
+        # SCHEDULING
+        #DefMemPerCPU=0
+        FastSchedule=1
+        #MaxMemPerCPU=0
+        #SchedulerRootFilter=1
+        #SchedulerTimeSlice=30
+        SchedulerType=sched/backfill
+        SchedulerPort=7321
+        SelectType=select/cons_res
+        SelectTypeParameters=CR_Core
+        #
+        #
+        # JOB PRIORITY
+        #PriorityFlags=
+        #PriorityType=priority/basic
+        #PriorityDecayHalfLife=
+        #PriorityCalcPeriod=
+        #PriorityFavorSmall=
+        #PriorityMaxAge=
+        #PriorityUsageResetPeriod=
+        #PriorityWeightAge=
+        #PriorityWeightFairshare=
+        #PriorityWeightJobSize=
+        #PriorityWeightPartition=
+        #PriorityWeightQOS=
+        #
+        #
+        # LOGGING AND ACCOUNTING
+        #AccountingStorageEnforce=0
+        #AccountingStorageHost=
+        AccountingStorageLoc=$SLURM_LOG_DPATH/accounting.log
+        #AccountingStoragePass=
+        #AccountingStoragePort=
+        AccountingStorageType=accounting_storage/filetxt
+        #AccountingStorageUser=
+        AccountingStoreJobComment=YES
+        ClusterName=cluster
+        #DebugFlags=
+        #JobCompHost=
+        JobCompLoc=$SLURM_LOG_DPATH/completion.log
+        #JobCompPass=
+        #JobCompPort=
+        JobCompType=jobcomp/filetxt
+        #JobCompUser=
+        #JobContainerPlugin=job_container/none
+        JobAcctGatherFrequency=30
+        JobAcctGatherType=jobacct_gather/linux
+        SlurmctldDebug=3
+        SlurmctldLogFile=/var/log/slurm-llnl/slurmctld.log
+        SlurmdDebug=3
+        SlurmdLogFile=/var/log/slurm-llnl/slurmd.log
+        #SlurmSchedLogFile=
+        #SlurmSchedLogLevel=
+        #
+        #
+        # POWER SAVE SUPPORT FOR IDLE NODES (optional)
+        #SuspendProgram=
+        #ResumeProgram=
+        #SuspendTimeout=
+        #ResumeTimeout=
+        #ResumeRate=
+        #SuspendExcNodes=
+        #SuspendExcParts=
+        #SuspendRate=
+        #SuspendTime=
+        #
+        #
+        # COMPUTE NODES
+        NodeName=$CONTROL_MACHINE Gres=gpu:$NUM_GPUS NodeAddr=localhost CPUs=$NUM_CPUS RealMemory=$MAX_MEMORY Sockets=$NUM_SOCKETS CoresPerSocket=$NUM_CORES ThreadsPerCore=$NUM_THREADS_PER_CORE State=UNKNOWN TmpDisk=223895
 
-# Hack in common groups
-PartitionName=community Nodes=$CONTROL_MACHINE Default=YES MaxTime=INFINITE State=UP Priority=0
-PartitionName=priority Nodes=$CONTROL_MACHINE Default=NO MaxTime=INFINITE State=UP Priority=10 
-# AllowGroups=vigilant,slurm_priority
-PartitionName=vigilant Nodes=$CONTROL_MACHINE Default=NO MaxTime=INFINITE State=UP Priority=100 
-# AllowGroups=vigilant
+        # Create named partitions with different priorities
+        PartitionName=bot Nodes=$CONTROL_MACHINE Default=YES MaxTime=INFINITE State=UP Priority=0
+        PartitionName=mid Nodes=$CONTROL_MACHINE Default=NO MaxTime=INFINITE State=UP Priority=10 
+        PartitionName=top Nodes=$CONTROL_MACHINE Default=NO MaxTime=INFINITE State=UP Priority=100 
 
-# JOB PREEMPTION
-PreemptType=preempt/partition_prio
-PreemptMode=REQUEUE
-"""
+        # JOB PREEMPTION
+        PreemptType=preempt/partition_prio
+        PreemptMode=REQUEUE
+        ")
 
+    # Create the logdir
+    echo "ensure SLURM_LOG_DPATH = $SLURM_LOG_DPATH"
+    sudo mkdir -p $SLURM_LOG_DPATH
+    echo "ensure SLURM_LLNL_DPATH = $SLURM_LLNL_DPATH"
+    sudo mkdir -p $SLURM_LLNL_DPATH
 
-#===============================
-# Ensure permissions are correct
-#===============================
+    SLURM_GRES_FPATH=$SLURM_LLNL_DPATH/gres.conf
+    SLURM_CONFIG_FPATH=$SLURM_LLNL_DPATH/slurm.conf
+    # Dump configuration files if they dont exist
+    if [ ! -f "$SLURM_GRES_FPATH" ] || [ "$SLURM_RESET_CONFIG_FLAG" ] ; then
+        sudo_writeto $SLURM_GRES_FPATH "$SLURM_GRES_TEXT"
+        echo "write to SLURM_GRES_FPATH = $SLURM_GRES_FPATH"
+    else
+        echo "already exists SLURM_GRES_FPATH = $SLURM_GRES_FPATH"
+    fi
+    if [ ! -f "$SLURM_CONFIG_FPATH" ] || [ "$SLURM_RESET_CONFIG_FLAG" ] ; then
+        sudo_writeto $SLURM_CONFIG_FPATH "$SLURM_CONFIG_TEXT"
+        echo "write to SLURM_CONFIG_FPATH = $SLURM_CONFIG_FPATH"
+    else
+        echo "already exists SLURM_CONFIG_FPATH = $SLURM_CONFIG_FPATH"
+    fi
 
-sudo chmod 644 /etc/slurm-llnl/slurm.conf
-sudo chmod 644 /etc/slurm-llnl/gres.conf
-#sudo chmod 744 /etc/slurm-llnl/
-#sudo chmod -R 644 /etc/slurm-llnl/*
-sudo chmod a+rX /etc/slurm-llnl
-#chmod -R a+rX /etc/slurm-llnl
+    SLURM_CGROUP_FPATH=$SLURM_LLNL_DPATH/cgroup.conf
+    SLURM_CGROUP_TEXT=$(codeblock "
+    CgroupAutomount=yes
+    CgroupReleaseAgentDir=/etc/slurm/cgroup
+    ConstrainCores=yes
+    ConstrainDevices=yes
+    ConstrainRAMSpace=yes
+    ")
+    if [ ! -f "$SLURM_CGROUP_FPATH" ] || [ "$SLURM_RESET_CONFIG_FLAG" ] ; then
+        sudo_writeto $SLURM_CGROUP_FPATH "$SLURM_CGROUP_TEXT"
+        echo "write to SLURM_CGROUP_FPATH = $SLURM_CGROUP_FPATH"
+    else
+        echo "already exists SLURM_CGROUP_FPATH = $SLURM_CGROUP_FPATH"
+    fi
 
+    #===============================
+    # Ensure permissions are correct
+    #===============================
+    sudo chmod 644 $SLURM_CONFIG_FPATH
+    sudo chmod 644 $SLURM_GRES_FPATH
+    #sudo chmod 744 /etc/slurm-llnl/
+    #sudo chmod -R 644 /etc/slurm-llnl/*
+    sudo chmod a+rX $SLURM_LLNL_DPATH
+    #chmod -R a+rX /etc/slurm-llnl
+}
 
+activate_slurm(){
+    #===============
+    # Activate slurm
+    #===============
 
-#===============
-# Activate slurm
-#===============
+    # NOTE: I'm not sure if this step works correctly.
+    # A system reboot may be required.
+    sudo systemctl enable slurmctld slurmdbd slurmd
 
-# NOTE: I'm not sure if this step works correctly.
-# A system reboot may be required.
-sudo systemctl enable slurmctld
-sudo systemctl enable slurmdbd
-sudo systemctl enable slurmd
+    sudo systemctl start slurmctld 
+    sudo systemctl start slurmdbd 
+    sudo systemctl start slurmd 
 
-sudo systemctl start slurmctld
-sudo systemctl start slurmdbd
-sudo systemctl start slurmd
+    sudo systemctl restart slurmctld 
+    sudo systemctl restart slurmdbd 
+    sudo systemctl restart slurmd 
 
-#sudo systemctl stop slurmctld
-#sudo systemctl stop slurmdbd
-#sudo systemctl stop slurmd
+    sudo systemctl status slurmctld slurmdbd slurmd
 
+    #sudo systemctl stop slurmctld
+    #sudo systemctl stop slurmdbd
+    #sudo systemctl stop slurmd
 
-##################################
-# Check to see if slurm is enabled
-##################################
-
-systemctl list-unit-files | grep slurm
+    ##################################
+    # Check to see if slurm is enabled
+    ##################################
+    systemctl list-unit-files | grep slurm
+}
 
 
 troubleshoot_slurm(){
-    __heredoc__="""
+    __doc__="""
     Following [2]_ to troubleshoot issue with error: '
     
     srun: Required node not available (down, drained or reserved'.
@@ -353,6 +530,10 @@ troubleshoot_slurm(){
     cat /etc/slurm-llnl/gres.conf
     pygmentize -l pacmanconf /etc/slurm-llnl/slurm.conf
 
+    # Is the daemon running?
+    pgrep slurmctld
+    #ps -el | grep slurmctld
+
     # Are primary and backup controllers responding?
     scontrol ping
 
@@ -360,9 +541,6 @@ troubleshoot_slurm(){
     ls /var/log/slurm-llnl/
     sudo cat /var/log/slurm-llnl/slurmd.log
     sudo cat /var/log/slurm-llnl/slurmctld.log
-
-    # Is the daemon running?
-    ps -el | grep slurmctld
 
     # State of each partitions
     sinfo
@@ -374,7 +552,7 @@ troubleshoot_slurm(){
 
     # Undrain all nodes, first cancel all jobs
     # https://stackoverflow.com/questions/29535118/how-to-undrain-slurm-nodes-in-drain-state
-    scancel --user=$USER
+    scancel --user="$USER"
     scancel --state=PENDING
     scancel --state=RUNNING
     scancel --state=SUSPENDED
@@ -384,17 +562,17 @@ troubleshoot_slurm(){
 
 
 slurm_usage_and_options(){
-    __heredoc__="""
+    __doc__="""
     This shows a few things you can do with slurm
     """
 
     # Queue a job in the background
-    mkdir -p $HOME/.cache/slurm/logs
+    mkdir -p "$HOME/.cache/slurm/logs"
     sbatch --job-name="test_job1" --output="$HOME/.cache/slurm/logs/job-%j-%x.out" --wrap="python -c 'import sys; sys.exit(1)'"
     sbatch --job-name="test_job2" --output="$HOME/.cache/slurm/logs/job-%j-%x.out" --wrap="echo 'hello'"
 
     #ls $HOME/.cache/slurm/logs
-    cat $HOME/.cache/slurm/logs/test_echo.log
+    cat "$HOME/.cache/slurm/logs/test_echo.log"
 
     # Queue a job (and block until completed)
     srun -c 2 -p priority --gres=gpu:1 echo "hello"
@@ -411,7 +589,7 @@ slurm_usage_and_options(){
     scancel 6
 
     # Cancel all jobs from a user 
-    scancel --user=$USER
+    scancel --user="$USER"
 
     # You can setup complicated pipelines
     # https://hpc.nih.gov/docs/job_dependencies.html
@@ -429,4 +607,19 @@ slurm_usage_and_options(){
 
     # SHOW ALL JOBS that ran within MinJobAge
     scontrol show jobs
+}
+
+
+run_fresh_slurm_install(){
+    __doc__="
+    To use this script as a main function run
+
+    sudo echo authenticate as sudo
+    source ~/local/init/setup_slurm.sh
+    source ~/local/init/setup_slurm.sh && SLURM_RESET_CONFIG_FLAG=True run_fresh_slurm_install
+    "
+    sudo echo "authenticate as sudo"
+    ensure_slurm_binaries
+    generate_slurm_config
+    activate_slurm
 }
