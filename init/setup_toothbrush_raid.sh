@@ -130,6 +130,15 @@ zfs-notes(){
 
 }
 
+zfs-setup-info(){
+    set -x
+    lsblk --scsi --output NAME,KNAME,TYPE,SIZE,STATE | grep disk
+    zpool list
+    zpool status
+    zpool iostat -v
+    set +x
+}
+
 
 # --- <FORMAT EACH DRIVE> ---
 # Ensure each drive has formatted partions

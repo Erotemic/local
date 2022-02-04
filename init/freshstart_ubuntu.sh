@@ -1,4 +1,5 @@
-source $HOME/local/init/utils.sh
+#!/bin/bash
+source "$HOME/local/init/utils.sh"
 
 
 install_basic_config(){
@@ -60,14 +61,14 @@ simple_setup_manual()
     ensure_config_symlinks
     simple_setup_auto
 
-    if [ ! -d $HOME/internal ]; then
+    if [ ! -d "$HOME/internal" ]; then
         # Requires correct SSH keys
-        git clone git@kwgitlab.kitware.com:jon.crall/internal.git $HOME/internal
+        git clone git@kwgitlab.kitware.com:jon.crall/internal.git "$HOME/internal"
     fi
 }
 
 local_remote_presetup(){
-    "
+    __doc__="
     Run this script on the local computer to setup the remote with data that
     must be pushed to it (i.e. we cannot pull these files)
     "
@@ -81,7 +82,7 @@ local_remote_presetup(){
 set_global_git_config(){
 
     #git config --global user.email crallj@rpi.edu
-    git config --global user.name $USER
+    git config --global user.name "$USER"
     #git config --global user.email erotemic@gmail.com
     git config --global user.email jon.crall@kitware.com
     git config --global push.default current
@@ -760,7 +761,7 @@ setup_pyenv(){
     fi
     ')
     echo "#### ADD THE ABOVE TO YOUR BASH RC ####"
-    echo $BASHRC_CONTENTS
+    echo "$BASHRC_CONTENTS"
     #### END BASHRC PART ####
 }
 
@@ -773,7 +774,7 @@ build_vim_for_pyenv(){
         git pull
     fi
 
-    source $HOME/local/init/utils.sh
+    source "$HOME/local/init/utils.sh"
     apt_ensure build-essential libtinfo-dev libncurses-dev gnome-devel libgtk-3-dev libxt-dev
 
     #./configure --help

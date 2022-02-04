@@ -114,7 +114,7 @@ alias pt='cd $CODE_DIR/plottool_ibeis'
 alias uu='cd $CODE_DIR/supersetup'
 #alias fk='cd $CODE_DIR/ibeis-flukematch-module/'
 alias mk='cd $CODE_DIR/mkinit'
-alias hes='cd $CODE_DIR/hesaff'
+alias hes='cd $CODE_DIR/pyhesaff'
 alias work='cd ~/work'
 
 alias vid='cd ~/data/dvc-repos/viame_dvc'
