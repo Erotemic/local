@@ -1599,6 +1599,24 @@ EOL'
     mv training ~/data/UrbanMapper3D/
 }
 
+docker-cleanup-old-stuff(){
+
+    # https://stackoverflow.com/questions/32723111/how-to-remove-old-and-unused-docker-images
+
+    # Remove dangling stopped containers, volumne without containers, images
+    # without containers
+    docker system prune -f
+
+    # Remove all stopped containers
+    docker container prune
+
+    # Remove images older than X hours (can also use iso timestamps)
+    #$(date --date='-300 day'  '+%Y-%m-%dT%H:%M:%S')
+    docker image prune --all --filter until=6400h
+
+
+}
+
 
 make_private_permissions()
 {
