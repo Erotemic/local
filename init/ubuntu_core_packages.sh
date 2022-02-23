@@ -746,6 +746,16 @@ install_screen_capture()
     sudo add-apt-repository ppa:obsproject/obs-studio -y
     sudo apt update && sudo apt install obs-studio -y
 
+    sudo apt-get install -y v4l2loopback-dkms
+
+
+    #https://forum.zorin.com/t/obs-studio-27-0-1-starts-and-stops-after-few-seconds/7887
+    sudo usermod -a -G video "$USER"
+
+
+    # is secure boot enabled? (we may want it disabled for obs)
+    mokutil --sb-state
+
     sudo apt install kdenlive
     
 }
@@ -2674,4 +2684,12 @@ install_pipewire(){
 rasberry_pi(){
     # https://raspberrypi.stackexchange.com/questions/111722/rpi-4-running-ubuntu-server-20-04-cant-connect-to-wifi
     sudo snap install rpi-imager
+}
+
+rotate_aws_keys_setup(){
+    [[ -f $HOME/code/aws-rotate-iam-keys ]] || git clone https://github.com/rhyeal/aws-rotate-iam-keys.git $HOME/code/aws-rotate-iam-keys
+    cp $HOME/code/aws-rotate-iam-keys/src/bin/aws-rotate-iam-keys $HOME/.local/bin
+
+    cat $HOME/.aws/config
+    cat $HOME/.aws/credentials
 }

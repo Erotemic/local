@@ -155,21 +155,21 @@ create-raid-parition(){
     _LABEL=$3
 
     echo "Create the GPT for $_DISK"
-    sudo parted $_DISK mktable gpt                           # Create the GPT 
+    sudo parted "$_DISK" mktable gpt                           # Create the GPT 
     sleep 1
 
     echo "Create a primary partition for $_DISK"
-    sudo parted $_DISK mkpart primary ext4 0% 100%           # Create the partition
+    sudo parted "$_DISK" mkpart primary ext4 0% 100%           # Create the partition
     sleep 1
 
     echo "Set the RAID flag for $_DISK on the primary partition"
-    sudo parted $_DISK set 1 raid on                         # Set the RAID flag
+    sudo parted "$_DISK" set 1 raid on                         # Set the RAID flag
 
     # wait a few seconds before formatting the drive
     # NOTE: we may not need to preformat the drive (because we fill format the raid device)
     sleep 3
     echo "Format the $_PART partition using the ext4 filesystem"
-    sudo mkfs.ext4 -L "$_LABEL" $_PART   # Format the partition 
+    sudo mkfs.ext4 -L "$_LABEL" "$_PART"   # Format the partition 
 }
 
 create-raid-parition $DISK1 $PART1 "Raid-Disk-1"
@@ -204,21 +204,21 @@ sudo mkfs.ext4 -L "Raid" /dev/md0
 
 # Create a raid group and add self to it
 sudo groupadd raid
-sudo usermod -aG raid $USER
+sudo usermod -aG raid "$USER"
 
 # Create mount point with group permissions
 echo "USER = $USER"
 MOUNT_POINT=/media/$USER/raid
-sudo mkdir -p $MOUNT_POINT
-sudo chown -R $USER:$USER $MOUNT_POINT
-sudo chmod -R 777 $MOUNT_POINT
-sudo mount /dev/md0 $MOUNT_POINT
+sudo mkdir -p "$MOUNT_POINT"
+sudo chown -R "$USER":"$USER" "$MOUNT_POINT"
+sudo chmod -R 777 "$MOUNT_POINT"
+sudo mount /dev/md0 "$MOUNT_POINT"
 #sudo umount $MOUNT_POINT
-ls -l $MOUNT_POINT
-ls -l $MOUNT_POINT/..
+ls -l "$MOUNT_POINT"
+ls -l "$MOUNT_POINT"/..
 
 # make symlink that I like
-sudo ln -s $MOUNT_POINT /raid
+sudo ln -s "$MOUNT_POINT" /raid
 
 # Test that reads/writes work
 touch /raid/raid_files.txt
@@ -278,3 +278,55 @@ __dev_fixes_notes(){
     sudo mdadm -Q /dev/md0
 }
 
+
+
+f2fs_notes(){
+    __doc__="
+    Notes about how to install the F2FS file system on the NVME SSD drives
+    "
+    sudo apt-get install f2fs-tools -y
+
+    # Output info about file systems
+    lsblk -fs 
+
+    # Determine which disk devices should be formatted
+    lsblk | grep disk
+
+    FLASH_DEVICE_1=/dev/nvme1n1
+    MOUNT_NAME="flash1"
+    MOUNT_POINT=/media/$USER/$MOUNT_NAME
+
+    # Format device filesystem
+    FS_FORMAT="f2fs"
+    sudo mkfs -t "$FS_FORMAT" "$FLASH_DEVICE_1"
+
+    # Create mount point with group permissions
+    sudo mkdir -p "$MOUNT_POINT" 
+    sudo chown "$USER":"$USER" "$MOUNT_POINT" 
+    sudo chmod 777 "$MOUNT_POINT"
+    sudo mount "$FLASH_DEVICE_1" "$MOUNT_POINT"
+    #sudo umount $MOUNT_POINT
+
+    FSTAB_LINE="${FLASH_DEVICE_1}  ${MOUNT_POINT}              $FS_FORMAT    defaults        0 0  # from erotemic local"
+    grep "$FSTAB_LINE" /etc/fstab || sudo sh -c "echo '$FSTAB_LINE' >> /etc/fstab"
+
+
+
+
+    ######
+    FLASH_DEVICE_2=/dev/nvme1n1
+    MOUNT_NAME="flash2"
+
+    # Format device filesystem
+    sudo mkfs -t f2fs "$FLASH_DEVICE_2"
+
+    # Create mount point with group permissions
+    MOUNT_POINT=/media/$USER/$MOUNT_NAME
+    sudo mkdir -p "$MOUNT_POINT"
+    sudo chown -R "$USER":"$USER" "$MOUNT_POINT"
+    sudo chmod -R 777 "$MOUNT_POINT"
+    sudo mount "$FLASH_DEVICE_2" "$MOUNT_POINT"
+    #sudo umount $MOUNT_POINT
+
+    ln -s "/media/$USER/flash1" "$HOME/flash1" 
+}

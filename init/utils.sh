@@ -1075,3 +1075,24 @@ verify_hash(){
     fi
 
 }
+
+_harden_one_symlink(){
+    __doc__="
+    Replaces a symlink with a real file
+    "
+    LINK_FPATH=$1
+    [ -L "${LINK_FPATH}" ] && [ -e "${LINK_FPATH}" ] && cp -L "${LINK_FPATH}" "${LINK_FPATH}".tmp && mv "${LINK_FPATH}".tmp "${LINK_FPATH}"
+
+}
+
+harden_symlink(){
+    __doc__="
+    Replaces symlinks with a real file
+
+    harden_symlink *.pt
+    "
+    for var in "$@"
+    do
+        _harden_one_symlink "$var"
+    done
+}

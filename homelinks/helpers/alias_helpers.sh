@@ -1,3 +1,4 @@
+#!/bin/bash
 # Alias definitions.
 # You may want to put all your additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.
@@ -940,4 +941,41 @@ ssh-edit-config(){
     else
         $EDITOR "$HOME/.ssh/config"
     fi
+}
+
+git-diff-branch(){
+    __doc__="
+    source ~/local/homelinks/helpers/alias_helpers.sh
+    git-diff-branch detector.py master
+    FPATH=predict.py
+    BRANCH_NAME=landcover-fix
+    "
+    FPATH=$1
+    BRANCH_NAME=$2
+
+    GIT_ROOT=$(git rev-parse --show-toplevel)
+    TMP_FPATH=$(mktemp /tmp/git-branch-diff.XXXXXX)
+    REL_PATH=$(realpath --relative-to="$GIT_ROOT" "$FPATH")
+    echo "BRANCH_NAME = $BRANCH_NAME"
+    echo "GIT_ROOT = $GIT_ROOT"
+    echo "TMP_FPATH = $TMP_FPATH"
+    echo "REL_PATH = $REL_PATH"
+    git show "${BRANCH_NAME}:${REL_PATH}" > "$TMP_FPATH" && colordiff -U 3 "$TMP_FPATH" "${FPATH}"
+}
+
+
+git-branch-cat(){
+    __doc__="
+    source ~/local/homelinks/helpers/alias_helpers.sh
+    git-branch-cat detector.py dev/flow28
+    git-branch-cat predict.py dev/flow28
+    FPATH=predict.py
+    BRANCH_NAME=landcover-fix
+    "
+    FPATH=$1
+    BRANCH_NAME=$2
+
+    GIT_ROOT=$(git rev-parse --show-toplevel)
+    REL_PATH=$(realpath --relative-to="$GIT_ROOT" "$FPATH")
+    git show "${BRANCH_NAME}:${REL_PATH}" 
 }

@@ -206,7 +206,6 @@ fi
 
 # Add the pyenv command to our environment if it exists
 
-# Source in alias helpers
 #source $HOME/local/tools/pyenv_ext/pyenv_ext_commands.sh
 export PYENV_ROOT="$HOME/.pyenv"
 if [ -d "$PYENV_ROOT" ]; then
