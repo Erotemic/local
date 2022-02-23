@@ -52,7 +52,7 @@ fi
 echo "ENSURE SYMLINKS"
 # TODO: terminator doesnt configure to automatically use the joncrall profile
 # in the terminator config. Why?
-source "$HOME/local/init/ensure_symlinks.sh "
+source "$HOME/local/init/ensure_symlinks.sh"
 ensure_config_symlinks
 
 
@@ -193,6 +193,18 @@ fi
 
 if [[ "$SETUP_PYTHON" == "True" ]]; then
 
+    # If we need to use conda, do this instead
+    # TODO: Dont use conda anymore, use pyenv or something else instead
+    # Hmm, maybe use conda when we need something quick and without ANY root
+    # privledges?
+    #if [ ! -d ~/.local/conda ]; then
+    #    echo "SETUP CONDA ENV"
+    #    source $HOME/local/init/freshstart_ubuntu.sh
+    #    setup_conda_env
+    #    pip install six ubelt xdoctest xinspect xdev
+    #    pip install pyperclip psutil pep8 autopep8 flake8 pylint pytest
+    #fi
+
     # Dependencies for building Python
     apt_ensure make build-essential libssl-dev zlib1g-dev \
         libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
@@ -220,17 +232,6 @@ if [[ "$SETUP_PYTHON" == "True" ]]; then
 
     python ~/local/init/util_git1.py 'clone_repos'
     pip install -e ~/local/rob
-    
-    # TODO: Dont use conda anymore, use pyenv or something else instead
-    # Hmm, maybe use conda when we need something quick and without ANY root
-    # privledges?
-    #if [ ! -d ~/.local/conda ]; then
-    #    echo "SETUP CONDA ENV"
-    #    setup_conda_env
-    #    source $HOME/local/init/freshstart_ubuntu.sh
-    #    pip install six ubelt xdoctest xinspect xdev
-    #    pip install pyperclip psutil pep8 autopep8 flake8 pylint pytest
-    #fi
 
 fi
 

@@ -314,6 +314,8 @@ if [[ "$_AUTOSTART_VENV" == "1" ]]; then
         if [ -d "$PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION" ]; then
             pyenv shell $CHOSEN_PYTHON_VERSION
             source $PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION/bin/activate  
+        elif [ -d "$HOME/.local/conda/envs/conda38" ]; then
+            conda activate conda38
         elif [ -d "$HOME/.local/conda/envs/py38" ]; then
             conda activate py38
         elif [ -d "$HOME/.local/conda/envs/py37" ]; then
