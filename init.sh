@@ -52,7 +52,7 @@ fi
 echo "ENSURE SYMLINKS"
 # TODO: terminator doesnt configure to automatically use the joncrall profile
 # in the terminator config. Why?
-source "$HOME/local/init/ensure_symlinks.sh "
+source "$HOME/local/init/ensure_symlinks.sh"
 ensure_config_symlinks
 
 
