@@ -12,19 +12,46 @@ Main user-facing functions:
         Creates a new python environment for a new python version
 
 
-Currently depends on other scripts inside the github.com/Erotemic/local repo and 
-contains side effects 
+Currently depends on other scripts inside the github.com/Erotemic/local repo,
+namely
+
+    ~/local/init/utils.sh
 
 SeeAlso:
     ~/local/homelinks/helpers/alias_helpers.sh
+
+
+Example Usage:
+    # Assuming the local repo is installed, source required files
+    source ~/local/tools/utils.sh
+    source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+
+    # Install or upgrade pyenv
+    UPGRADE=1 install_pyenv
+
+    # Use pyenv to list all available versions that could be installed
+    pyenv install --list
+
+    # Install a python version and make a default virtual enviornment for it
+    # Setting the second argument to 'full' ensures all compile-time
+    # optimizations are enabled. Different versions will have different
+    # compile-time requirements, but the script handles these for modern
+    # versions of CPython
+    source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+    pyenv_create_virtualenv 3.9.9 full
 "
 
 pathvar_remove()
 {
-local _VAR=$1
-local _VAL=$2
-local _PYEXE=$(system_python)
-$_PYEXE -c "
+    __doc__="
+    Removes a variable from a path-style variable
+    TODO: could be moved to general utils
+    "
+    local _VAR=$1
+    local _VAL=$2
+    # shellcheck disable=SC2155
+    local _PYEXE=$(system_python)
+    $_PYEXE -c "
 if __name__ == '__main__':
     import os
     from os.path import expanduser, abspath
@@ -39,41 +66,44 @@ if __name__ == '__main__':
 
 remove_ld_library_path_entry()
 {
-# http://stackoverflow.com/questions/370047/what-is-the-most-elegant-way-to-remove-a-path-from-the-path-variable-in-bash
-export LD_LIBRARY_PATH=$(pathvar_remove LD_LIBRARY_PATH "$1")
+    # http://stackoverflow.com/questions/370047/what-is-the-most-elegant-way-to-remove-a-path-from-the-path-variable-in-bash
+    # shellcheck disable=SC2155
+    export LD_LIBRARY_PATH=$(pathvar_remove LD_LIBRARY_PATH "$1")
 }
 
 
 remove_ld_library_path_entry()
 {
-# http://stackoverflow.com/questions/370047/what-is-the-most-elegant-way-to-remove-a-path-from-the-path-variable-in-bash
-export LD_LIBRARY_PATH=$(pathvar_remove LD_LIBRARY_PATH "$1")
+    # http://stackoverflow.com/questions/370047/what-is-the-most-elegant-way-to-remove-a-path-from-the-path-variable-in-bash
+    # shellcheck disable=SC2155
+    export LD_LIBRARY_PATH=$(pathvar_remove LD_LIBRARY_PATH "$1")
 }
 
 remove_path_entry()
 {
-# http://stackoverflow.com/questions/370047/what-is-the-most-elegant-way-to-remove-a-path-from-the-path-variable-in-bash
-export PATH=$(pathvar_remove PATH "$1")
+    # http://stackoverflow.com/questions/370047/what-is-the-most-elegant-way-to-remove-a-path-from-the-path-variable-in-bash
+    # shellcheck disable=SC2155
+    export PATH=$(pathvar_remove PATH "$1")
 }
 
 remove_cpath_entry()
 {
-export CPATH=$(pathvar_remove CPATH "$1")
+    # shellcheck disable=SC2155
+    export CPATH=$(pathvar_remove CPATH "$1")
 }
 
 
 debug_paths(){
+    # Print contents of path variables for debugging
     _PYEXE=$(system_python)
     $_PYEXE -c "import os; path = os.environ['LD_LIBRARY_PATH'].split(os.pathsep); print('\n'.join(path))"
     $_PYEXE -c "import os; path = os.environ['PATH'].split(os.pathsep); print('\n'.join(path))"
-
     $_PYEXE -c "import os; path = os.environ['LD_LIBRARY_PATH'].split(os.pathsep); print(os.pathsep.join(path))"
 }
 
 
 deactivate_venv()
 {
-
     # https://stackoverflow.com/questions/85880/determine-if-a-function-exists-in-bash
     if [ -n "$(type -t conda)" ] && [ "$(type -t conda)" = function ]; then
         conda deactivate
@@ -158,29 +188,29 @@ workon_py()
 }
 
 we(){
+    # Alias for workon_py
     workon_py "$@"
 }
 
 
 refresh_workon_autocomplete(){
+    local KNOWN_CONDA_ENVS
+    local KNOWN_VIRTUAL_ENVS
+    local KNOWN_PYENV_ENVS
+    local KNOWN_ENVS
     if [ -d "$_CONDA_ROOT" ]; then
-        local KNOWN_CONDA_ENVS="$(/bin/ls -1 "$_CONDA_ROOT/envs" | sort)"
+        KNOWN_CONDA_ENVS="$(/bin/ls -1 "$_CONDA_ROOT/envs" | sort)"
     else
-        local KNOWN_CONDA_ENVS=""
+        KNOWN_CONDA_ENVS=""
     fi 
-    local KNOWN_VIRTUAL_ENVS="$(/bin/ls -1 "$HOME" | grep venv | sort)"
+    # shellcheck disable=SC2155
+    KNOWN_VIRTUAL_ENVS="$(/bin/ls -1 "$HOME" | grep venv | sort)"
     
     if [[ "$(which pyenv)" ]]; then
-        local KNOWN_PYENV_ENVS=$(find "$(pyenv root)"/versions/*/envs/* -maxdepth 0 -type d -printf "%f\n")
+        KNOWN_PYENV_ENVS=$(find "$(pyenv root)"/versions/*/envs/* -maxdepth 0 -type d -printf "%f\n")
     fi
-    #readarray -d '' KNOWN_PYENV_ENVS < <(find $(pyenv root)/versions/*/envs/* -maxdepth 0 -type d -printf "%f\n")
-
-    #echo "KNOWN_VIRTUAL_ENVS = $KNOWN_VIRTUAL_ENVS"
-    #echo "KNOWN_CONDA_ENVS = $KNOWN_CONDA_ENVS"
-    #echo "KNOWN_PYENV_ENVS = $KNOWN_PYENV_ENVS"
-
     # Remove newlines
-    local KNOWN_ENVS=$(echo "$KNOWN_CONDA_ENVS $KNOWN_VIRTUAL_ENVS $KNOWN_PYENV_ENVS" | tr '\n' ' ')
+    KNOWN_ENVS=$(echo "$KNOWN_CONDA_ENVS $KNOWN_VIRTUAL_ENVS $KNOWN_PYENV_ENVS" | tr '\n' ' ')
     complete -W "$KNOWN_ENVS" "workon_py"
     complete -W "$KNOWN_ENVS" "we"
 }
@@ -214,7 +244,7 @@ install_pyenv(){
         libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
         libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev
            
-    apt_ensure python-openssl python3-openssl
+    #apt_ensure python-openssl python3-openssl  # Is this needed?
 
     # Download pyenv
     export PYENV_ROOT="$HOME/.pyenv"
@@ -304,6 +334,7 @@ pyenv_create_virtualenv(){
     local OPTIMIZE_PRESET=${2:-"most"}
 
     local CHOSEN_PYTHON_VERSION=$PYTHON_VERSION
+    # shellcheck disable=SC2155
     local BEST_MATCH=$(_pyenv_best_version_match "$PYTHON_VERSION")
     echo "BEST_MATCH = $BEST_MATCH"
     if [[ $BEST_MATCH == "None" ]]; then
@@ -335,11 +366,7 @@ pyenv_create_virtualenv(){
     #    #ln -s /usr/lib/x86_64-linux-gnu/libssl.so.1.0.2 $HOME/tmp/sslhack/libssl1.0-dev/lib/x86_64-linux-gnu
     #    #CFLAGS="-I${HACK_INCLUDE1} -I${HACK_INCLUDE2}" LDFLAGS="-L${HACK_LIB1}" pyenv install 3.4.10
         
-        
-        
     #fi
-
-
 
     #PYTHON_CFLAGS="
     #    -march=x86-64
@@ -497,6 +524,9 @@ new_pyenv_venv(){
 
 
 build_vim_for_pyenv(){
+    __doc__="
+    Helper to install vim/gvim compiled against a specific python virtual environment
+    "
 
     if [[ ! -d "$HOME/code/vim" ]]; then 
         git clone https://github.com/vim/vim.git ~/code/vim
