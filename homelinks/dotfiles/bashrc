@@ -27,6 +27,10 @@
 # is going on. Perhaps it is because I'm in a gnome session and something in
 # gnome deals with environs on startup. Running (env) at the top of this script
 # can show what environns are set before we get in here.
+#
+# NOTE: I solved the above problem. On startup and ssh-login, there are files
+# that will execute the user bashrc, polluting the variable namespace. 
+# not sure exactly where I write this down though.
 
 
 #echo "PATH = $PATH"
@@ -377,13 +381,12 @@ DID_MY_BASHRC_INIT="TRUE"
 alias ls='ls --color --human-readable'
 
 # added by travis gem
-[ -f /home/joncrall/.travis/travis.sh ] && source /home/joncrall/.travis/travis.sh
+#[ -f /home/joncrall/.travis/travis.sh ] && source /home/joncrall/.travis/travis.sh
 
 
 # Prevent dollar sign from being escaped on tab complete
 # https://askubuntu.com/questions/1245016/how-to-disable-automatic-backslash-insert-when-using-environment-variable-names
 shopt -s direxpand
-
 
 
 # Disable the terminal bell
