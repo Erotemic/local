@@ -1,7 +1,20 @@
+#!/bin/bash
 __doc__="
+This script is meant to help with the installation, creation, and management of
+pyenv virtual enviornments.
+
+Main user-facing functions:
+
+    install_pyenv - 
+        Helps install pyenv itself
+
+    pyenv_create_virtualenv - 
+        Creates a new python environment for a new python version
+
 SeeAlso:
     ~/local/homelinks/helpers/alias_helpers.sh
 "
+
 pathvar_remove()
 {
 local _VAR=$1

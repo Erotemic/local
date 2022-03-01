@@ -14,8 +14,8 @@ source ~/local/build_scripts/install_zotero.sh
 #/tmp/zotero_installer.sh
 
 
-mkdir -p ~/tmp
-cd ~/tmp
+mkdir -p ~/tmp/setup-zotero
+cd ~/tmp/setup-zotero
 
 #https://www.zotero.org/download/client/dl?channel=release&platform=linux-x86_64&version=5.0.96.2
 #req = requests.get('https://www.zotero.org/download/client/dl?channel=release&platform=linux-x86_64&version=5.0.84')
