@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ######################
 # Debugging code
 # DEBUG WHERE SOMETHING CAME FROM
@@ -122,6 +122,7 @@ fi
 # Fix GPG signing for git commits
 # https://stackoverflow.com/a/42265848
 # https://www.gnupg.org/(it)/documentation/manuals/gnupg/Common-Problems.html
+# shellcheck disable=SC2155
 export GPG_TTY=$(tty)
 
 
@@ -200,7 +201,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:
 if [ -f "$HOME/.local/conda/etc/profile.d/conda.sh" ]; then
     # Add the conda command to the environment if conda is installed 
     # (note this does not modify the path or add conda python)
-    source $HOME/.local/conda/etc/profile.d/conda.sh  
+    source "$HOME/.local/conda/etc/profile.d/conda.sh"
     complete -W "deactivate activate env clean config create help info install list package remove uninstall search update upgrade -h --help -V --version" "conda"
 fi
 
@@ -210,12 +211,13 @@ fi
 export PYENV_ROOT="$HOME/.pyenv"
 if [ -d "$PYENV_ROOT" ]; then
     export PATH="$PYENV_ROOT/bin:$PATH"
-    eval "$($PYENV_ROOT/bin/pyenv init -)"
-    eval "$($PYENV_ROOT/bin/pyenv init --path)"
+    eval "$("$PYENV_ROOT"/bin/pyenv init -)"
+    eval "$("$PYENV_ROOT"/bin/pyenv init --path)"
     #eval "$(pyenv init --path)"
     #eval "$(pyenv init -)"
-    source $PYENV_ROOT/completions/pyenv.bash
-    export PYENV_PREFIX=$(pyenv prefix)
+    source "$PYENV_ROOT/completions/pyenv.bash"
+    export PYENV_PREFIX
+    PYENV_PREFIX=$(pyenv prefix)
 fi
 
 
@@ -225,13 +227,13 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     #source $HOME/local/homelinks/helpers/bashrc_mac.sh
 else
     #export NCPUS=$(grep -c ^processor /proc/cpuinfo)
-    source $HOME/local/homelinks/helpers/bashrc_ubuntu.sh
+    source "$HOME/local/homelinks/helpers/bashrc_ubuntu.sh"
 fi
 
 
-source $HOME/local/init/utils.sh
-source $HOME/local/homelinks/helpers/git_helpers.sh
-source $HOME/local/homelinks/helpers/alias_helpers.sh
+source "$HOME/local/init/utils.sh"
+source "$HOME/local/homelinks/helpers/git_helpers.sh"
+source "$HOME/local/homelinks/helpers/alias_helpers.sh"
 
 
 
@@ -257,19 +259,17 @@ else
 fi
 
 # Other program environment variables
-if [[ "$HOSTNAME" == "hyrule"  ]]; then 
-    export TEXLIVE_BIN=$(echo /usr/local/texlive/*/bin/x86_64-linux)
-elif [[ "$HOSTNAME" == "Ooo"  ]]; then 
-    export TEXLIVE_BIN=$(echo /usr/local/texlive/*/bin/x86_64-linux)
-fi
+#if [[ "$HOSTNAME" == "hyrule"  ]]; then 
+#    export TEXLIVE_BIN=$(echo /usr/local/texlive/*/bin/x86_64-linux)
+#elif [[ "$HOSTNAME" == "Ooo"  ]]; then 
+#    export TEXLIVE_BIN=$(echo /usr/local/texlive/*/bin/x86_64-linux)
+#fi
+#if [ -d "$TEXLIVE_BIN" ]; then
+#    export PATH=$TEXLIVE_BIN:$PATH
+#fi
 
-
-if [ -d "$TEXLIVE_BIN" ]; then
-    export PATH=$TEXLIVE_BIN:$PATH
-fi
 
 #export UTOOL_DPATH=$HOME/latex/crall-candidacy-2015/
-
 # TODO: can this be done on the fly?
 # I think it can with argcomplete
 #complete -W "gp focus kill project_dpaths sync_clipboard_to grepnr printproc_2 send add_path write_env print_path grepc grepr grep research_clipboard fix_path foo fixpath2 write_rob_pathcache sed reg_disable_automatic_reboot_122614 find write_regfile pykill symlink update_path printproc_ write_path search update_env make_dpath invgrep send_command research ps send_clipboard_to make_complete pref_env print_env create_shortcut info hskill process_research_line write_research find_in_path get_regstr preprocess_research sedr update setup_global sp print_clipboard upenv fix_youtube_names_ccl dump_clipboard" "rob"
@@ -313,7 +313,7 @@ if [[ "$_AUTOSTART_VENV" == "1" ]]; then
         CHOSEN_PYTHON_VERSION=3.9.9
         if [ -d "$PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION" ]; then
             pyenv shell $CHOSEN_PYTHON_VERSION
-            source $PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION/bin/activate  
+            source "$PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION/bin/activate" 
         elif [ -d "$HOME/.local/conda/envs/conda38" ]; then
             conda activate conda38
         elif [ -d "$HOME/.local/conda/envs/py38" ]; then
@@ -327,11 +327,11 @@ if [[ "$_AUTOSTART_VENV" == "1" ]]; then
     elif [ "$VIRTUAL_ENV" != "" ]; then
         # On reload use the same venv you were in
         #echo "WORKON VIRTUAL_ENV = $VIRTUAL_ENV"
-        workon_py $VIRTUAL_ENV
+        workon_py "$VIRTUAL_ENV"
     elif [ "$CONDA_PREFIX" != "" ]; then
         # On reload use the same venv you were in
         #echo "WORKON CONDA_PREFIX = $CONDA_PREFIX"
-        workon_py $CONDA_PREFIX
+        workon_py "$CONDA_PREFIX"
     fi
 
 fi
@@ -352,20 +352,20 @@ if [ -f "$HOME/.bashrc-erotemic.sh" ]; then
     # For machine-specific bashrc things that will not be published on github
     # Hueristic to check if the file is decrypted. (better way to to do this)
     #NUM_SPACES=$(head -n 4 $HOME/.bashrc-erotemic.sh | grep " "  | wc | sed "s/  */ /g" | cut -d' ' -f3)
-    NUM_SPACES=$(head -n 4 $HOME/.bashrc-erotemic.sh | grep " "  | wc -c)
+    NUM_SPACES=$(head -n 4 "$HOME/.bashrc-erotemic.sh" | grep " "  | wc -c)
     #echo "NUM_SPACES = $NUM_SPACES"
     if [ "$NUM_SPACES" -gt "1" ]; then
-        source $HOME/.bashrc-erotemic.sh
+        source "$HOME/.bashrc-erotemic.sh"
     fi
 fi
 if [ -f "$HOME/.bashrc-internal.sh" ]; then 
-    source $HOME/.bashrc-internal.sh
+    source "$HOME/.bashrc-internal.sh"
 fi
 if [ -f "$HOME/.bashrc-local" ]; then 
-    source $HOME/.bashrc-local
+    source "$HOME/.bashrc-local"
 fi
 if [ -f "$HOME/.bashrc-local.sh" ]; then 
-    source $HOME/.bashrc-local.sh
+    source "$HOME/.bashrc-local.sh"
 fi
 
 DID_MY_BASHRC_INIT="TRUE"
