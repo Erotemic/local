@@ -11,6 +11,10 @@ Main user-facing functions:
     pyenv_create_virtualenv - 
         Creates a new python environment for a new python version
 
+
+Currently depends on other scripts inside the github.com/Erotemic/local repo and 
+contains side effects 
+
 SeeAlso:
     ~/local/homelinks/helpers/alias_helpers.sh
 "
@@ -30,32 +34,31 @@ if __name__ == '__main__':
     print(os.pathsep.join(newpathvar))
 "
 }
-complete -W "PATH LD_LIBRARY_PATH CPATH CMAKE_PREFIX_PATH" "pathvar_remove"
 
 
 
 remove_ld_library_path_entry()
 {
 # http://stackoverflow.com/questions/370047/what-is-the-most-elegant-way-to-remove-a-path-from-the-path-variable-in-bash
-export LD_LIBRARY_PATH=$(pathvar_remove LD_LIBRARY_PATH $1)
+export LD_LIBRARY_PATH=$(pathvar_remove LD_LIBRARY_PATH "$1")
 }
 
 
 remove_ld_library_path_entry()
 {
 # http://stackoverflow.com/questions/370047/what-is-the-most-elegant-way-to-remove-a-path-from-the-path-variable-in-bash
-export LD_LIBRARY_PATH=$(pathvar_remove LD_LIBRARY_PATH $1)
+export LD_LIBRARY_PATH=$(pathvar_remove LD_LIBRARY_PATH "$1")
 }
 
 remove_path_entry()
 {
 # http://stackoverflow.com/questions/370047/what-is-the-most-elegant-way-to-remove-a-path-from-the-path-variable-in-bash
-export PATH=$(pathvar_remove PATH $1)
+export PATH=$(pathvar_remove PATH "$1")
 }
 
 remove_cpath_entry()
 {
-export CPATH=$(pathvar_remove CPATH $1)
+export CPATH=$(pathvar_remove CPATH "$1")
 }
 
 
@@ -88,10 +91,10 @@ deactivate_venv()
             # deactivate bash function exists
             deactivate
             # reset LD_LIBRARY_PATH 
-            remove_ld_library_path_entry $OLD_VENV/local/lib
-            remove_ld_library_path_entry $OLD_VENV/lib
-            remove_path_entry $OLD_VENV/bin
-            remove_cpath_entry $OLD_VENV/include
+            remove_ld_library_path_entry "$OLD_VENV/local/lib"
+            remove_ld_library_path_entry "$OLD_VENV/lib"
+            remove_path_entry "$OLD_VENV/bin"
+            remove_cpath_entry "$OLD_VENV/include"
         fi
     fi
     # Hack for personal symlinks.  I'm not sure why these are populated
@@ -109,16 +112,16 @@ workon_py()
     local NEW_VENV=$1
     echo "workon_py: NEW_VENV = $NEW_VENV"
 
-    if [ ! -f $NEW_VENV/bin/activate ]; then
+    if [ ! -f "$NEW_VENV/bin/activate" ]; then
         # Check if it is the name of a conda or virtual env
         # First try conda, then virtualenv
         local TEMP_PATH=$_CONDA_ROOT/envs/$NEW_VENV
         #echo "TEMP_PATH = $TEMP_PATH"
-        if [ -d $TEMP_PATH ]; then
+        if [ -d "$TEMP_PATH" ]; then
             NEW_VENV=$TEMP_PATH
         else
             local TEMP_PATH=$HOME/$NEW_VENV
-            if [ -d $TEMP_PATH ]; then
+            if [ -d "$TEMP_PATH" ]; then
                 local NEW_VENV=$TEMP_PATH
             fi
         fi
@@ -129,19 +132,19 @@ workon_py()
     # Try to find the environment the user requested
     #VENV_NAME_CAND1=pyenv$NEW_VENV
     #PYENV_ACTIVATE_CAND1=$(pyenv root)/versions/$NEW_VENV/envs/$VENV_NAME_CAND1/bin/activate
-    PYENV_ACTIVATE_CAND1=$(echo $(pyenv root)/versions/*/envs/$NEW_VENV/bin/activate)
+    PYENV_ACTIVATE_CAND1=$(echo "$(pyenv root)"/versions/*/envs/"$NEW_VENV"/bin/activate)
 
     if [ -f "$PYENV_ACTIVATE_CAND1" ]; then
         deactivate_venv
-        source $PYENV_ACTIVATE_CAND1
-    elif [ -d $NEW_VENV/conda-meta ]; then
+        source "$PYENV_ACTIVATE_CAND1"
+    elif [ -d "$NEW_VENV/conda-meta" ]; then
         #echo "NEW CONDA VENV"
         deactivate_venv
         # Use a conda environment
-        conda activate $NEW_VENV
+        conda activate "$NEW_VENV"
         export LD_LIBRARY_PATH=$NEW_VENV/lib:$LD_LIBRARY_PATH
         export CPATH=$NEW_VENV/include:$CPATH
-    elif [ -d $NEW_VENV ]; then
+    elif [ -d "$NEW_VENV" ]; then
         #echo "NEW VENV"
         # Ensure the old env is deactivated
         deactivate_venv
@@ -149,26 +152,26 @@ workon_py()
         # Activate the new venv
         export LD_LIBRARY_PATH=$NEW_VENV/local/lib:$LD_LIBRARY_PATH
         export LD_LIBRARY_PATH=$NEW_VENV/lib:$LD_LIBRARY_PATH
-        source $NEW_VENV/bin/activate
+        source "$NEW_VENV/bin/activate"
     fi
     # echo "new venv doesn't exist"
 }
 
 we(){
-    workon_py $@
+    workon_py "$@"
 }
 
 
 refresh_workon_autocomplete(){
     if [ -d "$_CONDA_ROOT" ]; then
-        local KNOWN_CONDA_ENVS="$(/bin/ls -1 $_CONDA_ROOT/envs | sort)"
+        local KNOWN_CONDA_ENVS="$(/bin/ls -1 "$_CONDA_ROOT/envs" | sort)"
     else
         local KNOWN_CONDA_ENVS=""
     fi 
-    local KNOWN_VIRTUAL_ENVS="$(/bin/ls -1 $HOME | grep venv | sort)"
+    local KNOWN_VIRTUAL_ENVS="$(/bin/ls -1 "$HOME" | grep venv | sort)"
     
     if [[ "$(which pyenv)" ]]; then
-        local KNOWN_PYENV_ENVS=$(find $(pyenv root)/versions/*/envs/* -maxdepth 0 -type d -printf "%f\n")
+        local KNOWN_PYENV_ENVS=$(find "$(pyenv root)"/versions/*/envs/* -maxdepth 0 -type d -printf "%f\n")
     fi
     #readarray -d '' KNOWN_PYENV_ENVS < <(find $(pyenv root)/versions/*/envs/* -maxdepth 0 -type d -printf "%f\n")
 
@@ -181,8 +184,11 @@ refresh_workon_autocomplete(){
     complete -W "$KNOWN_ENVS" "workon_py"
     complete -W "$KNOWN_ENVS" "we"
 }
-refresh_workon_autocomplete
 
+execute_pyenv_ext_complete_script(){
+    complete -W "PATH LD_LIBRARY_PATH CPATH CMAKE_PREFIX_PATH" "pathvar_remove"
+    refresh_workon_autocomplete
+}
 
 install_pyenv(){
     __doc__='
@@ -199,7 +205,7 @@ install_pyenv(){
         eval "$($PYENV_ROOT/bin/pyenv init -)"
         eval "$($PYENV_ROOT/bin/pyenv init -)"
     '
-    _handle_help $@ || return 0
+    _handle_help "$@" || return 0
 
     # Install requirements for building Python
     #sudo apt-get install -y \
@@ -292,13 +298,13 @@ pyenv_create_virtualenv(){
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
         pyenv_create_virtualenv 3.10.0 most
     "
-    _handle_help $@ || return 0
+    _handle_help "$@" || return 0
 
     local PYTHON_VERSION=$1
     local OPTIMIZE_PRESET=${2:-"most"}
 
     local CHOSEN_PYTHON_VERSION=$PYTHON_VERSION
-    local BEST_MATCH=$(_pyenv_best_version_match $PYTHON_VERSION)
+    local BEST_MATCH=$(_pyenv_best_version_match "$PYTHON_VERSION")
     echo "BEST_MATCH = $BEST_MATCH"
     if [[ $BEST_MATCH == "None" ]]; then
         echo "failed to find match"
@@ -477,7 +483,7 @@ new_pyenv_venv(){
     new_pyenv_venv new_env$(date --iso-8601=m)
     VENV_NAME=temp_env
     '
-    _handle_help $@ || return 0
+    _handle_help "$@" || return 0
     VENV_NAME=$1
 
     VERSION_PREFIX=$(pyenv prefix "$CHOSEN_PYTHON_VERSION")
@@ -495,16 +501,16 @@ build_vim_for_pyenv(){
     if [[ ! -d "$HOME/code/vim" ]]; then 
         git clone https://github.com/vim/vim.git ~/code/vim
     else 
-        cd $HOME/code/vim
+        cd "$HOME/code/vim"
         git pull
     fi
 
-    source $HOME/local/init/utils.sh
+    source "$HOME/local/init/utils.sh"
     apt_ensure build-essential libtinfo-dev libncurses-dev gnome-devel libgtk-3-dev libxt-dev
 
     #./configure --help
     #./configure --help | grep python
-    cd $HOME/code/vim
+    cd "$HOME/code/vim"
 
     # https://github.com/vim/vim/issues/6457
     #git checkout v8.1.2424
@@ -521,14 +527,14 @@ build_vim_for_pyenv(){
         # the virtualenv
         PREFIX=$(pyenv prefix)
         EXEC_PREFIX=$VIRTUAL_ENV
-        CONFIG_DIR=$($(pyenv prefix)/bin/python-config --configdir)
+        CONFIG_DIR=$("$(pyenv prefix)"/bin/python-config --configdir)
         #CONFIG_DIR=$($VIRTUAL_ENV/bin/python-config --configdir)
         PYTHON_CMD=$(which python)
     else
         # Seems like this doesnt always work
         PREFIX=$(pyenv prefix)
         EXEC_PREFIX="$PREFIX"
-        CONFIG_DIR=$($(pyenv prefix)/bin/python-config --configdir)
+        CONFIG_DIR=$("$(pyenv prefix)"/bin/python-config --configdir)
         PYTHON_CMD=$(pyenv which python)
     fi
 
@@ -546,12 +552,12 @@ build_vim_for_pyenv(){
     export LDFLAGS="-rdynamic"
     make distclean
     ./configure \
-        --prefix=$PREFIX \
-        --exec-prefix=$EXEC_PREFIX \
+        "--prefix=$PREFIX" \
+        "--exec-prefix=$EXEC_PREFIX" \
         --enable-pythoninterp=no \
         --enable-python3interp=yes \
-        --with-python3-command=$PYTHON_CMD \
-        --with-python3-config-dir=$CONFIG_DIR \
+        "--with-python3-command=$PYTHON_CMD" \
+        "--with-python3-config-dir=$CONFIG_DIR" \
         --enable-gui=gtk3
     cat src/auto/config.mk 
 
@@ -559,13 +565,13 @@ build_vim_for_pyenv(){
     # configs where it might not)
     cat src/auto/config.mk | grep 'PYTHON3\|prefix'
 
-    make -j$(nproc)
+    make -j"$(nproc)"
     #./src/vim -u NONE --cmd "source test.vim"
     make install
 
     if [[ -d "$HOME/code/vimtk" ]]; then
-        unlink_or_backup $HOME/.vim/bundle/vimtk
-        ln -s $HOME/code/vimtk $HOME/.vim/bundle/vimtk
+        unlink_or_backup "$HOME/.vim/bundle/vimtk"
+        ln -s "$HOME/code/vimtk" "$HOME/.vim/bundle/vimtk"
     fi
 
     pip install ubelt pyperclip shellcheck-py

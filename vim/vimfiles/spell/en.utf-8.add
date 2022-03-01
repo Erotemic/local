@@ -20,9 +20,7 @@ CMake
 CNNs
 CPLEX
 CRF
-CRF
 CRFs
-CVPR
 CVPR
 Cao
 Cardona
@@ -42,9 +40,9 @@ DeepFace
 Dense3D
 Dense3d
 DenseNet
-Depsite
 Discretize
 Discriminatively
+Dockerfile
 Docstrings
 Dodis
 Donoser
@@ -74,6 +72,7 @@ GZC
 Gabor
 Gau
 Gaussians
+Github
 Glasner
 Gool
 GrabCut
@@ -90,13 +89,10 @@ Hua
 IBEIS
 ICCV
 IJCV
-IJCV
 ILP
-IPython
 IPython
 ImageNet
 JPEG
-Jablon's
 Jablon's
 Jablons
 Jegou
@@ -105,6 +101,7 @@ KD
 KDE
 Keypoint
 Kitware
+Kitware's
 Kohli
 Koller
 Kullback
@@ -132,6 +129,7 @@ MCC
 MDI
 MDNet
 MNIST
+MODIS
 MRF
 MSER
 Mahalanobis
@@ -147,7 +145,6 @@ Munkres
 NBNN
 NN
 Nelder
-NetVLAD
 NetVLAD
 NumPy
 Occluders
@@ -205,6 +202,8 @@ Riemannian
 Riemenschneider
 Roatán
 Rosenblatt
+S1
+S2
 SHA
 SIFT's
 SMK
@@ -216,6 +215,7 @@ Schmid
 SciPy
 Scikit
 Seber
+Sentinel2
 Shi
 Simonoff
 Sivic
@@ -225,6 +225,8 @@ StripeCodes
 Subwindow
 Sweetwaters
 Szeliski
+T1
+T2
 TCLOR
 Theano
 Tian
@@ -236,7 +238,6 @@ Tsang
 Turcot
 Tuytelaars
 URIs
-URIs
 UUID
 UUIDs
 Ubuntu
@@ -247,6 +248,7 @@ WACV
 WAMI
 Weideman
 Wildbook
+WorldView
 Xia
 YOLO
 YOLOv2
@@ -259,6 +261,7 @@ achieved
 ada
 algo
 alpha
+ansible
 argmax
 args
 argsort
@@ -284,6 +287,8 @@ convolutional
 convolutionally
 curation
 d
+d1
+d2
 daid
 daids
 dendrogram
@@ -296,7 +301,6 @@ discretized
 discriminatively
 distractor
 distractors
-docstring
 docstring
 docstrings
 doctest
@@ -329,6 +333,7 @@ groundfalse
 groundtrue
 groundtruth
 groundtruthed
+hallucinator
 harkens
 hashable
 haversine
@@ -365,12 +370,11 @@ kwargs
 kwarray
 kwimage
 kwplot
+l1
+l2
 labelings
 leatherback
-leatherback
 lionfish
-lionfish
-logit
 logit
 lon
 mAP
@@ -387,6 +391,8 @@ multicut
 multiline
 multiton
 multitons
+n1
+n2
 ndarray
 ndsampler
 netharn
@@ -396,7 +402,6 @@ occluders
 off
 offline
 ok
-on
 on
 online
 outlier
@@ -421,6 +426,7 @@ programmatically
 pytorch
 r
 rasterize
+rasterized
 recomputation
 renormalize
 reprojection
@@ -437,6 +443,7 @@ rsync
 s
 scriptconfig
 segfaults
+serializable
 skinks
 softmax
 sprokit
@@ -451,6 +458,8 @@ subfigures
 subgraph
 subgraphs
 subpixel
+subtree
+subtrees
 subwindow
 superpixel
 superpixels
@@ -463,11 +472,13 @@ timeit
 timestamp
 toc
 todo
+traceback
 trilinear
 uint8
 un
 unaddressed
 undiscoverable
+unicode
 unmerged
 unnormalized
 unorderable
@@ -490,29 +501,3 @@ y
 β
 ⨯
 Ⲅ
-rasterized
-traceback
-unicode
-hallucinator
-serializable
-ansible
-Dockerfile
-subtree
-subtrees
-n2
-n1
-d2
-d1
-l1
-l2
-S2
-T2
-T1
-S1
-Github
-Github
-Kitware's
-WorldView
-MODIS
-Sentinel2
-stich
