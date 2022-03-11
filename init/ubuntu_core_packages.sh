@@ -796,121 +796,6 @@ encryprtion()
 }
 
 
-install_xrdp_remote_desktop()
-{
-    # Installs an Remote Desktop RDP server
-
-    # --- SERVER ---
-    # Install xrdp server
-    sudo apt install xrdp -y
-
-    # Install an alternative desktop (apparently gnome-fallback has issues)
-    sudo apt install mate-core mate-desktop-environment mate-notification-daemon
-
-    # In Ubuntu 16.04 you have to modify /etc/xrdp/startwm.sh
-    # References:
-    #     https://askubuntu.com/questions/680413/14-04-3-xrdp-gnome-session-session-ubuntu-2d-not-work
-
-
-    cat ~/.xsession 
-    echo gnome-session --session=gnome-fallback > ~/.xsession
-    
-
-
-    # --- CLIENT ---
-    # Update REMINA on the client to the latest and greatest
-    #sudo apt-add-repository ppa:remmina-ppa-team/remmina-next -y
-    #sudo apt update -y
-    #sudo apt install remmina remmina-plugin-rdp libfreerdp-plugins-standard -y
-    sudo apt install remmina remmina-plugin-rdp libfreerdp-plugins-standard -y
-
-    # Add self to fuse group
-    # https://superuser.com/questions/466304/how-do-i-make-sshfs-work-in-debian-i-get-dev-fuse-permission-denied
-    sudo groupadd fuse
-    sudo usermod -aG fuse $USER
-    sudo chmod g+rw /dev/fuse
-    sudo chgrp fuse /dev/fuse
-
-    # ----OLD---
-    # http://c-nergy.be/blog/?p=9962
-    # https://docs.microsoft.com/en-us/azure/virtual-machines/linux/classic/remote-desktop
-    # http://scarygliders.net/2011/11/17/x11rdp-ubuntu-11-10-gnome-3-xrdp-customization-new-hotness/
-    # http://askubuntu.com/questions/445485/ubuntu-14-server-and-xrdp
-    # http://askubuntu.com/questions/499088/ubuntu-14-x-with-xfce4-session-desktop-terminates-abruptly/499180#499180
-    # http://askubuntu.com/questions/449785/ubuntu-14-04-xrdp-grey 
-    sudo /etc/init.d/xrdp start
-    sudo /etc/init.d/xrdp stop
-
-    # try to fix 14.10 issues
-    #sudo apt-add-repository ppa:ubuntu-mate-dev/ppa
-    #sudo apt-add-repository ppa:ubuntu-mate-dev/trusty-mate
-    #sudo add-apt-repository --remove ppa:ubuntu-mate-dev/ppa
-    #sudo add-apt-repository --remove ppa:ubuntu-mate-dev/trusty-mate
-    #sudo apt update 
-    #sudo apt upgrade
-    #sudo apt install ubuntu-mate-core ubuntu-mate-desktop
-    #echo mate-session >~/.xsession
-    #sudo service xrdp restart
-
-    # http://askubuntu.com/questions/247501/i-get-failed-to-load-session-ubuntu-2d-when-using-xrdp
-
-    sudo apt install gnome-session-fallback
-    cat ~/.xsession 
-    echo gnome-session --session=gnome-fallback > ~/.xsession
-
-    # http://c-nergy.be/blog/?p=5305
-    sudo apt update
-    sudo apt install xfce4
- 
-    # this works but has tab key issue
-    echo xfce4-session >~/.xsession
-    sudo service xrdp restart
-
-    # help escape sed command
-    << __PYSCRIPT__
-    import shlex
-    str_ = r'<property name="&lt;Super&gt;Tab" type="string" value="switch_window_key"/>'
-
-    import re
-    print(re.escape(str_))
-    print(str_.replace('switch_window_key', 'empty').replace('/', r'\/'))
-
-    print(shlex.quote(str_))
-__PYSCRIPT__
-
-    #sed 's/\<property\ name\=\"\&lt\;Super\&gt\;Tab\"\ type\=\"string\"\ value\=\"switch\_window\_key\"\/\>/<property name="&lt;Super&gt;Tab" type="string" value="empty"\/>/' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
-    #sed -i 's/\<property\ name\=\"\&lt\;Super\&gt\;Tab\"\ type\=\"string\"\ value\=\"switch\_window\_key\"\/\>/<property name="&lt;Super&gt;Tab" type="string" value="empty"\/>/' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
-
-    sed -i 's/switch_window_key/empty/' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
-
-    sed 's/switch_window_key/empty/' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml | grep Super\&gt\;Tab
-    
-
-
-
-    gvim ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
-
-    # tab key solution is here 
-    #http://askubuntu.com/questions/352121/bash-auto-completion-with-xubuntu-and-xrdp-from-windows
-    #vim ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
-    # had a similar issue running XFCE4 over VNC and the workaround for me was
-    # to edit the
-    # ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
-    # file to unset the following mapping
-    #    <       <property name="&lt;Super&gt;Tab" type="string" value="switch_window_key"/>
-    #    ---
-    #    >    
-
-
-    # Copy paste?
-    #http://askubuntu.com/questions/498873/how-to-install-xrdp-on-ubuntu-14-04-trusty
-    
-    
-    
-     
-    #echo >> ~/.xsession
-}
-
 install_vnc_client()
 {
     sudo apt install x11vnc -y
@@ -2710,4 +2595,139 @@ rotate_aws_keys_setup(){
 
     cat $HOME/.aws/config
     cat $HOME/.aws/credentials
+}
+
+install_xrdp_remote_desktop()
+{
+    # Installs an Remote Desktop RDP server
+
+    # --- SERVER ---
+    # Install xrdp server
+    sudo apt install xrdp -y
+
+    # Install an alternative desktop (apparently gnome-fallback has issues)
+    sudo apt install mate-core mate-desktop-environment mate-notification-daemon
+
+    # In Ubuntu 16.04 you have to modify /etc/xrdp/startwm.sh
+    # References:
+    #     https://askubuntu.com/questions/680413/14-04-3-xrdp-gnome-session-session-ubuntu-2d-not-work
+
+    cat ~/.xsession 
+    echo gnome-session --session=gnome-fallback > ~/.xsession
+    
+    # --- CLIENT ---
+    # Update REMINA on the client to the latest and greatest
+    #sudo apt-add-repository ppa:remmina-ppa-team/remmina-next -y
+    #sudo apt update -y
+    #sudo apt install remmina remmina-plugin-rdp libfreerdp-plugins-standard -y
+    sudo apt install remmina remmina-plugin-rdp libfreerdp-plugins-standard -y
+
+    # Add self to fuse group
+    # https://superuser.com/questions/466304/how-do-i-make-sshfs-work-in-debian-i-get-dev-fuse-permission-denied
+    sudo groupadd fuse
+    sudo usermod -aG fuse $USER
+    sudo chmod g+rw /dev/fuse
+    sudo chgrp fuse /dev/fuse
+
+    # ----OLD---
+    # http://c-nergy.be/blog/?p=9962
+    # https://docs.microsoft.com/en-us/azure/virtual-machines/linux/classic/remote-desktop
+    # http://scarygliders.net/2011/11/17/x11rdp-ubuntu-11-10-gnome-3-xrdp-customization-new-hotness/
+    # http://askubuntu.com/questions/445485/ubuntu-14-server-and-xrdp
+    # http://askubuntu.com/questions/499088/ubuntu-14-x-with-xfce4-session-desktop-terminates-abruptly/499180#499180
+    # http://askubuntu.com/questions/449785/ubuntu-14-04-xrdp-grey 
+    sudo /etc/init.d/xrdp start
+    sudo /etc/init.d/xrdp stop
+
+    # try to fix 14.10 issues
+    #sudo apt-add-repository ppa:ubuntu-mate-dev/ppa
+    #sudo apt-add-repository ppa:ubuntu-mate-dev/trusty-mate
+    #sudo add-apt-repository --remove ppa:ubuntu-mate-dev/ppa
+    #sudo add-apt-repository --remove ppa:ubuntu-mate-dev/trusty-mate
+    #sudo apt update 
+    #sudo apt upgrade
+    #sudo apt install ubuntu-mate-core ubuntu-mate-desktop
+    #echo mate-session >~/.xsession
+    #sudo service xrdp restart
+
+    # http://askubuntu.com/questions/247501/i-get-failed-to-load-session-ubuntu-2d-when-using-xrdp
+
+    sudo apt install gnome-session-fallback
+    cat ~/.xsession 
+    echo gnome-session --session=gnome-fallback > ~/.xsession
+
+    # http://c-nergy.be/blog/?p=5305
+    sudo apt update
+    sudo apt install xfce4
+ 
+    # this works but has tab key issue
+    echo xfce4-session >~/.xsession
+    sudo service xrdp restart
+
+    # help escape sed command
+    << __PYSCRIPT__
+    import shlex
+    str_ = r'<property name="&lt;Super&gt;Tab" type="string" value="switch_window_key"/>'
+
+    import re
+    print(re.escape(str_))
+    print(str_.replace('switch_window_key', 'empty').replace('/', r'\/'))
+
+    print(shlex.quote(str_))
+__PYSCRIPT__
+
+    #sed 's/\<property\ name\=\"\&lt\;Super\&gt\;Tab\"\ type\=\"string\"\ value\=\"switch\_window\_key\"\/\>/<property name="&lt;Super&gt;Tab" type="string" value="empty"\/>/' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
+    #sed -i 's/\<property\ name\=\"\&lt\;Super\&gt\;Tab\"\ type\=\"string\"\ value\=\"switch\_window\_key\"\/\>/<property name="&lt;Super&gt;Tab" type="string" value="empty"\/>/' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
+
+    sed -i 's/switch_window_key/empty/' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
+
+    sed 's/switch_window_key/empty/' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml | grep Super\&gt\;Tab
+    
+
+
+
+    gvim ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
+
+    # tab key solution is here 
+    #http://askubuntu.com/questions/352121/bash-auto-completion-with-xubuntu-and-xrdp-from-windows
+    #vim ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
+    # had a similar issue running XFCE4 over VNC and the workaround for me was
+    # to edit the
+    # ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
+    # file to unset the following mapping
+    #    <       <property name="&lt;Super&gt;Tab" type="string" value="switch_window_key"/>
+    #    ---
+    #    >    
+
+
+    # Copy paste?
+    #http://askubuntu.com/questions/498873/how-to-install-xrdp-on-ubuntu-14-04-trusty
+    
+    #echo >> ~/.xsession
+}
+
+install_xrdp_v2(){
+    #### On Client ####
+    #https://askubuntu.com/questions/1090177/use-remmina-1-2-0-with-ssh-tunneling
+    # https://www.tecmint.com/remmina-remote-desktop-sharing-and-ssh-client/
+    sudo apt install -y \
+        remmina \
+        remmina-plugin-nx remmina-plugin-exec remmina-plugin-kwallet \
+        remmina-plugin-xdmcp remmina-plugin-spice \
+        remmina-plugin-rdp remmina-plugin-secret remmina-plugin-vnc \
+        remmina-plugin-www
+    
+    # Ensure version is > v1.4.20 to have ssh tunnel
+    # https://remmina.org/remmina-rdp-ssh-tunnel/
+    # https://gitlab.com/Remmina/Remmina/-/merge_requests/2293
+    # https://gitlab.com/Remmina/Remmina/-/issues/2372
+    remmina --version
+
+    #### On Server ####
+    #https://tecadmin.net/how-to-install-xrdp-on-ubuntu-20-04/
+    sudo apt install xrdp
+    sudo systemctl status xrdp
+
+    sudo adduser xrdp ssl-cert
+    sudo systemctl restart xrdp
 }

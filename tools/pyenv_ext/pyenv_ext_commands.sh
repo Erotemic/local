@@ -526,6 +526,8 @@ new_pyenv_venv(){
 build_vim_for_pyenv(){
     __doc__="
     Helper to install vim/gvim compiled against a specific python virtual environment
+    source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+    build_vim_for_pyenv
     "
 
     if [[ ! -d "$HOME/code/vim" ]]; then 
@@ -604,7 +606,7 @@ build_vim_for_pyenv(){
         ln -s "$HOME/code/vimtk" "$HOME/.vim/bundle/vimtk"
     fi
 
-    pip install ubelt pyperclip shellcheck-py
+    pip install ubelt pyperclip shellcheck-py six
 }
 
 
