@@ -195,6 +195,8 @@ setup_machine_hardware_variables(){
 
     CONTROL_MACHINE=$HOSTNAME
     SLURM_LOG_DPATH=/var/log/slurm-llnl
+    SLURM_RUN_DPATH=/var/run/slurm-llnl
+    SLURM_LIB_DPATH=/var/lib/slurm-llnl
     SLURM_LLNL_DPATH=/etc/slurm-llnl
 
     # Hacky way of infering GPU info, may need to be tweaked
@@ -242,6 +244,9 @@ setup_machine_hardware_variables(){
     codeblock "
     CONTROL_MACHINE='$CONTROL_MACHINE'
     SLURM_LOG_DPATH='$SLURM_LOG_DPATH'
+    SLURM_RUN_DPATH='$SLURM_RUN_DPATH'
+    SLURM_LIB_DPATH='$SLURM_LIB_DPATH'
+
     SLURM_LLNL_DPATH='$SLURM_LLNL_DPATH'
     MAX_MEMORY='$MAX_MEMORY'
 
@@ -287,7 +292,7 @@ generate_slurm_config(){
         GresTypes=gpu
         #GroupUpdateForce=0
         #GroupUpdateTime=600
-        #JobCheckpointDir=/var/lib/slurm-llnl/checkpoint
+        #JobCheckpointDir=$SLURM_LIB_DPATH/checkpoint
         #JobCredentialPrivateKey=
         #JobCredentialPublicCertificate=
         #JobFileAppend=0
@@ -315,16 +320,16 @@ generate_slurm_config(){
         #RebootProgram=
         ReturnToService=1
         #SallocDefaultCommand=
-        SlurmctldPidFile=/var/run/slurm-llnl/slurmctld.pid
+        SlurmctldPidFile=$SLURM_RUN_DPATH/slurmctld.pid
         SlurmctldPort=6817
-        SlurmdPidFile=/var/run/slurm-llnl/slurmd.pid
+        SlurmdPidFile=$SLURM_RUN_DPATH/slurmd.pid
         SlurmdPort=6818
-        SlurmdSpoolDir=/var/lib/slurm-llnl/slurmd
+        SlurmdSpoolDir=$SLURM_LIB_DPATH/slurmd
         SlurmUser=slurm
         #SlurmdUser=root
         #SrunEpilog=
         #SrunProlog=
-        StateSaveLocation=/var/lib/slurm-llnl/slurmctld
+        StateSaveLocation=$SLURM_LIB_DPATH/slurmctld
         SwitchType=switch/none
         #TaskEpilog=
         TaskPlugin=task/none
@@ -407,9 +412,9 @@ generate_slurm_config(){
         JobAcctGatherFrequency=30
         JobAcctGatherType=jobacct_gather/linux
         SlurmctldDebug=3
-        SlurmctldLogFile=/var/log/slurm-llnl/slurmctld.log
+        SlurmctldLogFile=$SLURM_LOG_DPATH/slurmctld.log
         SlurmdDebug=3
-        SlurmdLogFile=/var/log/slurm-llnl/slurmd.log
+        SlurmdLogFile=$SLURM_LOG_DPATH/slurmd.log
         #SlurmSchedLogFile=
         #SlurmSchedLogLevel=
         #
@@ -440,11 +445,20 @@ generate_slurm_config(){
         ")
 
     # Create the logdir
+    echo "ensure SLURM_RUN_DPATH = $SLURM_RUN_DPATH"
+    echo "ensure SLURM_LIB_DPATH = $SLURM_LIB_DPATH"
     echo "ensure SLURM_LOG_DPATH = $SLURM_LOG_DPATH"
-    sudo mkdir -p $SLURM_LOG_DPATH
     echo "ensure SLURM_LLNL_DPATH = $SLURM_LLNL_DPATH"
+    sudo mkdir -p $SLURM_LOG_DPATH
+    sudo mkdir -p $SLURM_RUN_DPATH
+    sudo mkdir -p $SLURM_LIB_DPATH
+    sudo mkdir -p $SLURM_LLNL_DPATH
     sudo mkdir -p $SLURM_LLNL_DPATH
 
+    sudo chown -R slurm:slurm $SLURM_LOG_DPATH
+    sudo chown -R slurm:slurm $SLURM_LIB_DPATH
+    sudo chown -R slurm:slurm $SLURM_RUN_DPATH
+    
     SLURM_GRES_FPATH=$SLURM_LLNL_DPATH/gres.conf
     SLURM_CONFIG_FPATH=$SLURM_LLNL_DPATH/slurm.conf
     # Dump configuration files if they dont exist
@@ -487,6 +501,10 @@ generate_slurm_config(){
     #chmod -R a+rX /etc/slurm-llnl
 }
 
+_debug(){
+    sudo vim /etc/slurm-llnl/slurm.conf
+}
+
 activate_slurm(){
     #===============
     # Activate slurm
@@ -506,7 +524,7 @@ activate_slurm(){
     sudo systemctl restart slurmctld slurmdbd slurmd 
 
     echo "[setup_slurm] activate_slurm - check status"
-    sudo systemctl status slurmctld slurmdbd slurmd -l --no-pager
+    systemctl status slurmctld slurmdbd slurmd -l --no-pager
 
     #sudo systemctl stop slurmctld slurmdbd slurmd
 
