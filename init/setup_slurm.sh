@@ -494,25 +494,26 @@ activate_slurm(){
 
     # NOTE: I'm not sure if this step works correctly.
     # A system reboot may be required.
+    echo "[setup_slurm] activate_slurm"
+
+    echo "[setup_slurm] activate_slurm - enable service"
     sudo systemctl enable slurmctld slurmdbd slurmd
 
-    sudo systemctl start slurmctld 
-    sudo systemctl start slurmdbd 
-    sudo systemctl start slurmd 
+    echo "[setup_slurm] activate_slurm - start service"
+    sudo systemctl start slurmctld slurmdbd slurmd 
 
-    sudo systemctl restart slurmctld 
-    sudo systemctl restart slurmdbd 
-    sudo systemctl restart slurmd 
+    echo "[setup_slurm] activate_slurm - restart service"
+    sudo systemctl restart slurmctld slurmdbd slurmd 
 
-    sudo systemctl status slurmctld slurmdbd slurmd
+    echo "[setup_slurm] activate_slurm - check status"
+    sudo systemctl status slurmctld slurmdbd slurmd -l --no-pager
 
-    #sudo systemctl stop slurmctld
-    #sudo systemctl stop slurmdbd
-    #sudo systemctl stop slurmd
+    #sudo systemctl stop slurmctld slurmdbd slurmd
 
     ##################################
     # Check to see if slurm is enabled
     ##################################
+    echo "[setup_slurm] activate_slurm - check if enabled"
     systemctl list-unit-files | grep slurm
 }
 
