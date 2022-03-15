@@ -208,17 +208,17 @@ sudo usermod -aG raid "$USER"
 
 # Create mount point with group permissions
 echo "USER = $USER"
-MOUNT_POINT=/media/$USER/raid
-sudo mkdir -p "$MOUNT_POINT"
-sudo chown -R "$USER":"$USER" "$MOUNT_POINT"
-sudo chmod -R 777 "$MOUNT_POINT"
-sudo mount /dev/md0 "$MOUNT_POINT"
-#sudo umount $MOUNT_POINT
-ls -l "$MOUNT_POINT"
-ls -l "$MOUNT_POINT"/..
+MOUNT_DPATH=/media/$USER/raid
+sudo mkdir -p "$MOUNT_DPATH"
+sudo chown -R "$USER":"$USER" "$MOUNT_DPATH"
+sudo chmod -R 777 "$MOUNT_DPATH"
+sudo mount /dev/md0 "$MOUNT_DPATH"
+#sudo umount $MOUNT_DPATH
+ls -l "$MOUNT_DPATH"
+ls -l "$MOUNT_DPATH"/..
 
 # make symlink that I like
-sudo ln -s "$MOUNT_POINT" /raid
+sudo ln -s "$MOUNT_DPATH" /raid
 
 # Test that reads/writes work
 touch /raid/raid_files.txt
@@ -239,11 +239,11 @@ sudo update-initramfs -u
 MD0_UUID=$(sudo mdadm --detail /dev/md0 | grep UUID | awk '{print $3}' | sed 's/:/-/g')
 echo "MD0_UUID = '$MD0_UUID'"
 
-MOUNT_POINT=/media/$USER/raid
-echo "MOUNT_POINT = $MOUNT_POINT"
+MOUNT_DPATH=/media/$USER/raid
+echo "MOUNT_DPATH = $MOUNT_DPATH"
 sudo sh -c "echo '# appended to fstab raid setup scripts' >> /etc/fstab"
-#sudo sh -c "echo 'UUID=$MD0_UUID  $MOUNT_POINT              ext4    defaults        0 0' >> /etc/fstab"
-sudo sh -c "echo '/dev/md0  $MOUNT_POINT              ext4    defaults        0 0' >> /etc/fstab"
+#sudo sh -c "echo 'UUID=$MD0_UUID  $MOUNT_DPATH              ext4    defaults        0 0' >> /etc/fstab"
+sudo sh -c "echo '/dev/md0  $MOUNT_DPATH              ext4    defaults        0 0' >> /etc/fstab"
 
 __directory_setup(){
     mkdir -p /raid/home
@@ -292,41 +292,41 @@ f2fs_notes(){
     # Determine which disk devices should be formatted
     lsblk | grep disk
 
-    FLASH_DEVICE_1=/dev/nvme1n1
+    DEVICE_DPATH=/dev/nvme1n1
     MOUNT_NAME="flash1"
-    MOUNT_POINT=/media/$USER/$MOUNT_NAME
+    MOUNT_DPATH=/media/$USER/$MOUNT_NAME
+    FS_FORMAT="f2fs"
 
     # Format device filesystem
-    FS_FORMAT="f2fs"
-    sudo mkfs -t "$FS_FORMAT" "$FLASH_DEVICE_1"
+    sudo mkfs -t "$FS_FORMAT" "$DEVICE_DPATH"
 
     # Create mount point with group permissions
-    sudo mkdir -p "$MOUNT_POINT" 
-    sudo chown "$USER":"$USER" "$MOUNT_POINT" 
-    sudo chmod 777 "$MOUNT_POINT"
-    sudo mount "$FLASH_DEVICE_1" "$MOUNT_POINT"
-    #sudo umount $MOUNT_POINT
+    sudo mkdir -p "$MOUNT_DPATH" 
+    sudo chown "$USER":"$USER" "$MOUNT_DPATH" 
+    sudo chmod 777 "$MOUNT_DPATH"
+    sudo mount "$DEVICE_DPATH" "$MOUNT_DPATH"
+    #sudo umount $MOUNT_DPATH
 
-    FSTAB_LINE="${FLASH_DEVICE_1}  ${MOUNT_POINT}              $FS_FORMAT    defaults        0 0  # from erotemic local"
+    FSTAB_LINE="${DEVICE_DPATH}  ${MOUNT_DPATH}              $FS_FORMAT    defaults        0 0  # from erotemic local"
     grep "$FSTAB_LINE" /etc/fstab || sudo sh -c "echo '$FSTAB_LINE' >> /etc/fstab"
 
 
 
 
     ######
-    FLASH_DEVICE_2=/dev/nvme1n1
+    DEVICE_DPATH=/dev/nvme1n1
     MOUNT_NAME="flash2"
 
     # Format device filesystem
-    sudo mkfs -t f2fs "$FLASH_DEVICE_2"
+    sudo mkfs -t f2fs "$DEVICE_DPATH"
 
     # Create mount point with group permissions
-    MOUNT_POINT=/media/$USER/$MOUNT_NAME
-    sudo mkdir -p "$MOUNT_POINT"
-    sudo chown -R "$USER":"$USER" "$MOUNT_POINT"
-    sudo chmod -R 777 "$MOUNT_POINT"
-    sudo mount "$FLASH_DEVICE_2" "$MOUNT_POINT"
-    #sudo umount $MOUNT_POINT
+    MOUNT_DPATH=/media/$USER/$MOUNT_NAME
+    sudo mkdir -p "$MOUNT_DPATH"
+    sudo chown -R "$USER":"$USER" "$MOUNT_DPATH"
+    sudo chmod -R 777 "$MOUNT_DPATH"
+    sudo mount "$DEVICE_DPATH" "$MOUNT_DPATH"
+    #sudo umount $MOUNT_DPATH
 
     ln -s "/media/$USER/flash1" "$HOME/flash1" 
 }

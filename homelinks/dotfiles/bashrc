@@ -392,3 +392,17 @@ shopt -s direxpand
 # Disable the terminal bell
 # https://linuxconfig.org/turn-off-beep-bell-on-linux-terminal
 set bell-style none
+
+
+# Generate via
+# pip completion --bash
+# pip bash completion start
+_pip_completion()
+{
+    # shellcheck disable=SC2207
+    COMPREPLY=( $( COMP_WORDS="${COMP_WORDS[*]}" \
+                   COMP_CWORD=$COMP_CWORD \
+                   PIP_AUTO_COMPLETE=1 $1 2>/dev/null ) )
+}
+complete -o default -F _pip_completion pip
+# pip bash completion end

@@ -980,3 +980,15 @@ git-branch-cat(){
     REL_PATH=$(realpath --relative-to="$GIT_ROOT" "$FPATH")
     git show "${BRANCH_NAME}:${REL_PATH}" 
 }
+
+
+ipfs-service(){
+    ARG=$1
+    if [[ "$ARG" == "status" ]]; then
+        _SUDO=""
+    else
+        _SUDO="sudo"
+    fi
+    $_SUDO systemctl "${ARG}" ipfs.service
+    $_SUDO systemctl "${ARG}" ipfs-cluster.service
+}
