@@ -248,11 +248,12 @@ setup_machine_hardware_variables(){
 
     CONTROL_MACHINE=$HOSTNAME
 
+    #lsb_release -a | grep "21.10"
     lsb_release -a | grep "20.04"
-    lsb_release -a | grep "21.10"
     if [[ "$?" == "0" ]]; then
         IS_2004=True
     fi
+    echo "IS_2004 = $IS_2004"
 
     if [[ "$IS_2004" == "True" ]]; then
         SLURM_LOG_DPATH=/var/log/slurm-llnl
@@ -317,8 +318,8 @@ setup_machine_hardware_variables(){
     SLURM_LOG_DPATH='$SLURM_LOG_DPATH'
     SLURM_RUN_DPATH='$SLURM_RUN_DPATH'
     SLURM_LIB_DPATH='$SLURM_LIB_DPATH'
-
     SLURM_ETC_DPATH='$SLURM_ETC_DPATH'
+
     MAX_MEMORY='$MAX_MEMORY'
 
     # Note NUM_CPUS should be equal to NUM_SOCKETS * NUM_CORES * NUM_THREADS_PER_CORE 
@@ -377,8 +378,9 @@ generate_slurm_config(){
             SchedulerPort=7321
             SelectType=select/cons_res
             SelectTypeParameters=CR_Core
-            AccountingStorageType=accounting_storage/filetxt
-            AccountingStoreJobComment=YES
+            #AccountingStorageType=accounting_storage/filetxt
+            AccountingStorageType=accounting_storage/none
+            #AccountingStoreJobComment=YES
             ClusterName=cluster
             JobCompLoc=$SLURM_LOG_DPATH/completion.log
             JobCompType=jobcomp/filetxt
@@ -407,11 +409,11 @@ generate_slurm_config(){
         sudo mkdir -p $SLURM_RUN_DPATH
         sudo mkdir -p $SLURM_LIB_DPATH
         sudo mkdir -p $SLURM_ETC_DPATH
-        sudo mkdir -p $SLURM_ETC_DPATH
+        #sudo mkdir -p $SLURMDBD_CONFIG_FPATH
         sudo chown -R slurm:slurm "$SLURM_LOG_DPATH"
         sudo chown -R slurm:slurm "$SLURM_LIB_DPATH"
         sudo chown -R slurm:slurm "$SLURM_RUN_DPATH"
-        sudo chown -R slurm:slurm "$SLURMDBD_CONFIG_FPATH"
+        #sudo chown -R slurm:slurm "$SLURMDBD_CONFIG_FPATH"
         sudo chmod -R g+rw "$SLURM_LOG_DPATH"
 
         sudo chmod 600 "$SLURMDBD_CONFIG_FPATH"
