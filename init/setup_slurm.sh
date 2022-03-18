@@ -262,7 +262,8 @@ setup_machine_hardware_variables(){
         SLURM_ETC_DPATH=/etc/slurm-llnl
     else
         SLURM_LOG_DPATH=/var/log/slurm
-        SLURM_RUN_DPATH=/var/run/slurm
+        #SLURM_RUN_DPATH=/var/run/slurm
+        SLURM_RUN_DPATH=/run
         SLURM_LIB_DPATH=/var/lib/slurm
         SLURM_ETC_DPATH=/etc/slurm
     fi
@@ -672,12 +673,17 @@ reenable_systemd_files(){
     systemctl daemon-reload
 
     # 
-    sudo systemctl stop slurmctld slurmdbd slurmd
-    sudo systemctl disable slurmctld slurmdbd slurmd
-    systemctl status slurmctld slurmdbd slurmd -l --no-pager
-    sudo systemctl reenable slurmctld slurmdbd slurmd
-    sudo systemctl restart  slurmd slurmdbd slurmctld
-    systemctl status slurmctld slurmdbd slurmd -l --no-pager
+    sudo systemctl stop slurmctld slurmd
+    sudo systemctl disable slurmctld slurmd
+    systemctl status slurmctld slurmd -l --no-pager
+
+    sudo systemctl reenable slurmctld slurmd
+
+    sudo systemctl restart  slurmd slurmctld
+    systemctl status slurmctld slurmd -l --no-pager
+
+    cat /lib/systemd/system/slurmctld.service
+    cat /lib/systemd/system/slurmd.service
 
 }
 
