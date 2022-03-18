@@ -16,6 +16,8 @@ To use it as a non-interactive script you can try...
     source ~/local/init/setup_slurm.sh && run_fresh_slurm_install
 
 Requirements:
+    Python 3.6+ available as the "python" command.
+
     pip install psutil ubelt --user
 
 References:
@@ -169,36 +171,6 @@ pyblock(){
 }
 
 # ----------------------------------
-
-purge_everything(){
-    __doc__="
-    Helper to get back into a clean state (This script broke between slurm versions)
-    "
-    sudo apt-get purge slurm slurm-client slurmctld slurmd slurmdbd slurm-wlm slurm-wlm-basic-plugins 
-
-    tree /var/*/slurm*
-    tree /etc/slurm*
-
-    sudo rm -rf /var/run/slurm 
-    sudo rm -rf /var/log/slurm 
-    sudo rm -rf /var/lib/slurm 
-
-    sudo rm -rf /var/run/slurm-llnl/
-    sudo rm -rf /var/log/slurm-llnl/
-    sudo rm -rf /var/lib/slurm-llnl/
-
-    ls -al /lib/systemd/system/*slurm*.service
-    sudo rm -rf /lib/systemd/system/slurmd.service
-    sudo rm -rf /lib/systemd/system/slurmdbd.service
-    sudo rm -rf /lib/systemd/system/slurmctld.service
-
-    ls -al /lib/systemd/system/slurm*.service
-    #[ -d /etc/slurm ] && echo "should not exist"
-    #[ -d /var/run/slurm ] && echo "should not exist"
-    #[ -d /var/lib/slurm ] && echo "should not exist"
-    #systemctl daemon-reload
-}
-
 
 ensure_slurm_binaries(){
     ############################
@@ -658,36 +630,25 @@ slurm_extra_config(){
     sudo_writeto /lib/systemd/system/slurmdbd.service "$SLURMDBD_SERVICE_TEXT"
 }
 
-_debug(){
-    sudo vim /etc/slurm-llnl/slurm.conf
-
-    
-sudo /usr/sbin/slurmctld -D -vvv
-sudo /usr/sbin/slurmdbd -D -vvv
-sudo /usr/sbin/slurmd -D -vvv
-
-}
-
-reenable_systemd_files(){
-
-    systemctl daemon-reload
-
-    # 
-    sudo systemctl stop slurmctld slurmd
-    sudo systemctl disable slurmctld slurmd
-    systemctl status slurmctld slurmd -l --no-pager
-
-    sudo systemctl reenable slurmctld slurmd
-
-    sudo systemctl restart  slurmd slurmctld
-    systemctl status slurmctld slurmd -l --no-pager
-
-    cat /lib/systemd/system/slurmctld.service
-    cat /lib/systemd/system/slurmd.service
-
-}
-
 activate_slurm(){
+    __doc__="
+    Attempt to activate slurm via the systemd service files.
+
+    On Ubuntu these are located in:
+        /lib/systemd/system/slurmctld.service
+        /lib/systemd/system/slurmdbd.service
+        /lib/systemd/system/slurmd.service
+
+    Note:
+        The slurmctrld is the control daemon that would go on the machine
+        that controls the entire cluser (which for us is just one machine)
+
+        The slurmd is the slurm node daemon that manages the jobs on a single
+        machine.
+
+        The slurmdbd (accounting database daemon) is not needed if accounting
+        is disabled.
+    "
     #===============
     # Activate slurm
     #===============
@@ -698,12 +659,12 @@ activate_slurm(){
 
     echo "[setup_slurm] activate_slurm - enable service"
     sudo systemctl enable slurmctld
-    sudo systemctl enable slurmdbd
+    #sudo systemctl enable slurmdbd
     sudo systemctl enable slurmd
 
     echo "[setup_slurm] activate_slurm - start service"
     sudo systemctl start slurmctld
-    sudo systemctl start slurmdbd
+    #sudo systemctl start slurmdbd
     sudo systemctl start slurmd
 
     #echo "[setup_slurm] activate_slurm - restart service"
@@ -763,10 +724,73 @@ troubleshoot_slurm(){
     sudo scontrol update nodename=namek state=idle
 }
 
+_debug(){
+    __doc__=" 
+    Additional debugging commands. Used to develop and debug the setup script.
+    Not used in production.
+    "
+    sudo vim /etc/slurm-llnl/slurm.conf
+
+    # Manually start slurm host control and slurm node daemons
+    sudo /usr/sbin/slurmctld -D -vvv
+    #sudo /usr/sbin/slurmdbd -D -vvv
+    sudo /usr/sbin/slurmd -D -vvv
+
+    systemctl daemon-reload
+
+    # 
+    sudo systemctl stop slurmctld slurmd
+    sudo systemctl disable slurmctld slurmd
+    systemctl status slurmctld slurmd -l --no-pager
+
+    sudo systemctl reenable slurmctld slurmd
+
+    sudo systemctl restart  slurmd slurmctld
+    systemctl status slurmctld slurmd -l --no-pager
+
+    cat /lib/systemd/system/slurmctld.service
+    cat /lib/systemd/system/slurmd.service
+}
+
+
+__purge_slurm_and_config__(){
+    __doc__="
+    Helper to get back into a clean state (This script broke between slurm versions)
+
+    Not used in the main script. Helper used in development.
+    "
+    sudo apt-get purge slurm slurm-client slurmctld slurmd slurmdbd slurm-wlm slurm-wlm-basic-plugins 
+
+    tree /var/*/slurm*
+    tree /etc/slurm*
+
+    sudo rm -rf /var/run/slurm 
+    sudo rm -rf /var/log/slurm 
+    sudo rm -rf /var/lib/slurm 
+
+    sudo rm -rf /var/run/slurm-llnl/
+    sudo rm -rf /var/log/slurm-llnl/
+    sudo rm -rf /var/lib/slurm-llnl/
+
+    ls -al /lib/systemd/system/*slurm*.service
+    sudo rm -rf /lib/systemd/system/slurmd.service
+    sudo rm -rf /lib/systemd/system/slurmdbd.service
+    sudo rm -rf /lib/systemd/system/slurmctld.service
+
+    ls -al /lib/systemd/system/slurm*.service
+    #[ -d /etc/slurm ] && echo "should not exist"
+    #[ -d /var/run/slurm ] && echo "should not exist"
+    #[ -d /var/lib/slurm ] && echo "should not exist"
+    #systemctl daemon-reload
+}
+
 
 slurm_usage_and_options(){
     __doc__="""
-    This shows a few things you can do with slurm
+    This shows a few things you can do with slurm.
+
+    This is not part of the setup script.
+    This is a set of commands you can use to demo / test that slurm is working.
     """
 
     # Queue a job in the background
@@ -800,6 +824,10 @@ slurm_usage_and_options(){
     # Look at finished jobs
     # https://ubccr.freshdesk.com/support/solutions/articles/5000686909-how-to-retrieve-job-history-and-accounting
 
+    # Note:
+    # Slurm has to be configured with accounting for sacct to work.
+    # This will not work if the slurmdbd is not running.
+
     # Jobs within since 3:30pm
     sudo sacct --starttime 15:35:00 
 
@@ -815,11 +843,23 @@ slurm_usage_and_options(){
 
 run_fresh_slurm_install(){
     __doc__="
-    To use this script as a main function run
+    Perform a fresh install of slurm.
 
-    sudo echo authenticate as sudo
-    source ~/local/init/setup_slurm.sh
-    source ~/local/init/setup_slurm.sh && SLURM_RESET_CONFIG_FLAG=True run_fresh_slurm_install
+    This is the main function of this script.
+
+    Note: sudo is required.
+
+    Usage:
+        # First, authenticate as sudo (makes running the script smoother) 
+        sudo echo authenticate as sudo
+
+        # Option 1:
+        # Perform a fresh install. Does not overwrite existing config files.
+        source ~/local/init/setup_slurm.sh
+
+        # Option 2:
+        # Perform a fresh install. Clobber and rewrite all config files.
+        source ~/local/init/setup_slurm.sh && SLURM_RESET_CONFIG_FLAG=True run_fresh_slurm_install
     "
     sudo echo "authenticate as sudo"
     ensure_slurm_binaries
