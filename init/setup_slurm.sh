@@ -229,9 +229,10 @@ setup_machine_hardware_variables(){
 
     if [[ "$IS_2004" == "True" ]]; then
         SLURM_LOG_DPATH=/var/log/slurm-llnl
-        SLURM_RUN_DPATH=/var/run/slurm-llnl
+        #SLURM_RUN_DPATH=/var/run/slurm-llnl
         SLURM_LIB_DPATH=/var/lib/slurm-llnl
         SLURM_ETC_DPATH=/etc/slurm-llnl
+        SLURM_RUN_DPATH=/run
     else
         SLURM_LOG_DPATH=/var/log/slurm
         #SLURM_RUN_DPATH=/var/run/slurm
@@ -322,6 +323,10 @@ generate_slurm_config(){
     # This config is for newer versions of slurm
     # NEW
     if [[ "$IS_2004" == "True" ]]; then
+
+        # TODO: Check where the installed slurm service files think the PIDs
+        # should be and put the PID files there.
+
         SLURM_CONFIG_TEXT=$(codeblock "
             ControlMachine=$CONTROL_MACHINE
             ControlAddr=localhost
@@ -739,6 +744,11 @@ _debug(){
     systemctl daemon-reload
 
     # 
+    sudo systemctl stop slurmd
+    sudo systemctl disable slurmd
+    sudo systemctl enable slurmd
+    sudo systemctl start slurmd
+
     sudo systemctl stop slurmctld slurmd
     sudo systemctl disable slurmctld slurmd
     systemctl status slurmctld slurmd -l --no-pager

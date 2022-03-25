@@ -2731,3 +2731,14 @@ install_xrdp_v2(){
     sudo adduser xrdp ssl-cert
     sudo systemctl restart xrdp
 }
+
+install_qgis(){
+    wget -qO - https://qgis.org/downloads/qgis-2021.gpg.key | sudo gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/qgis-archive.gpg --import
+    sudo chmod a+r /etc/apt/trusted.gpg.d/qgis-archive.gpg
+
+    sudo add-apt-repository "deb https://qgis.org/ubuntu $(lsb_release -c -s) main" -y
+    sudo apt update -y
+
+    sudo apt install qgis qgis-plugin-grass -y
+    
+}
