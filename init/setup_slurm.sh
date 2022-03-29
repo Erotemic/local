@@ -743,6 +743,8 @@ _debug(){
 
     systemctl daemon-reload
 
+    sudo systemctl restart slurmctld slurmd
+
     # 
     sudo systemctl stop slurmd
     sudo systemctl disable slurmd

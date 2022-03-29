@@ -87,8 +87,8 @@ if [ "$IS_JONCRALL" ]; then
     export LD_LIBRARY_PATH=""
     export CPATH=""
     export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
-    export CODE_DIR=$HOME/code
 fi
+export CODE_DIR=$HOME/code
 
 ############
 # USER LEVEL (takes top priority)
