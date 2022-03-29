@@ -120,6 +120,13 @@ alias work='cd ~/work'
 
 alias vid='cd ~/data/dvc-repos/viame_dvc'
 
+alias wa='cd $HOME/code/watch'
+alias wad='cd $HOME/data/dvc-repos/smart_watch_dvc'
+alias wadh='cd $HOME/data/dvc-repos/smart_watch_dvc-hdd'
+alias wadf='cd $HOME/flash1/smart_watch_dvc'
+alias wau='cd $HOME/code/watch/watch/utils'
+alias wad3='cd $HOME/data/dvc-repos/smart_watch_dvc/Aligned-Drop3-TA1-2022-03-10'
+
 
 alias vdd='vd ~/work'
 alias ebrc='gvim ~/.bashrc'
