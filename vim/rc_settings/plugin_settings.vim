@@ -82,9 +82,8 @@ shellcheck_errors = {
 
     'SC2181': 'Check exit code directly',
 
-    
     #'SC2206': 'Quote word to prevent splitting and globbing or split robustly',
-    # 'SC1091': 'not using declare'
+    #'SC1091': 'not using declare'
 }
 shellcheck_arg_list = [
     '-e',  ','.join(list(shellcheck_errors.keys()))

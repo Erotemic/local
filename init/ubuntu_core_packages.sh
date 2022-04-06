@@ -2742,3 +2742,27 @@ install_qgis(){
     sudo apt install qgis qgis-plugin-grass -y
     
 }
+
+install_vscode(){
+    # https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64
+    # 
+    #ipfs get QmNRyckC3z8LhR7Bbg9vPMagtUXaVxAc9r8yFbKcwCcm3w -o code_1.66.0-1648620611_amd64.deb
+    apt_ensure wget gpg
+    wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+    sudo install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
+    sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
+    rm -f packages.microsoft.gpg
+
+    sudo apt install apt-transport-https
+    sudo apt update
+    sudo apt install code # or code-insiders
+
+    sudo apt install clang-formatter
+    sudo apt-get install cppcheck
+    sudo apt-get install clang
+
+    sudo /bin/python3 -m pip install flawfinder
+
+    sudo pip install flawfinder
+
+}

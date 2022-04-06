@@ -140,6 +140,56 @@ zfs-setup-info(){
 }
 
 
+handle_faulted_drive(){
+    __doc__="
+    https://serverfault.com/questions/1022292/could-zpool-status-be-showing-two-different-drives-with-same-device-name
+    https://serverfault.com/questions/897108/zpool-reporting-same-drive-as-active-and-spare
+
+    ls /dev/disk/by-id/
+    "
+    # I have a case where sda faulted
+    FAULTED_DEVNAME=sda
+    POOL_NAME=data
+    # Disable faulted drive
+    sudo zpool offline "$POOL_NAME" "$FAULTED_DEVNAME"
+
+    # Make sure you have the import by id references
+
+    # When the drive is replaced
+    FAULTED_DEVNAME=sdd
+    POOL_NAME=data
+    sudo zpool replace "$POOL_NAME" "$FAULTED_DEVNAME"
+
+    OLD_DISK_ID=sda
+    NEW_DISK_ID=wwn-0x5000c5009399acab
+    POOL_NAME=data
+    sudo zpool replace "$POOL_NAME" "$OLD_DISK_ID" "$NEW_DISK_ID"
+}
+
+
+zfs_fix_replace_sdx_names_with_id_names(){
+    sudo umount /data
+    #zfs unmount $POOL_NAME
+
+    # This removes the pool from the ZFS system!
+    # But the disks themselves will remember that they were part of a pool.
+    POOL_NAME=data
+    sudo zpool export $POOL_NAME
+
+    # It's not there anymore
+    zpool status
+
+    # This searches the actual disks for zpools they are part of and imports them
+    sudo zpool import -d /dev/disk/by-id -aN
+
+    OLD_DISK_ID=sda
+    NEW_DISK_ID=wwn-0x5000c5009399acab
+    POOL_NAME=data
+    sudo zpool replace "$POOL_NAME" "$OLD_DISK_ID" "$NEW_DISK_ID"
+    
+}
+
+
 # --- <FORMAT EACH DRIVE> ---
 # Ensure each drive has formatted partions
 # Previously, I did this through gparted
