@@ -124,8 +124,8 @@ zfs-notes(){
     rsync -avrpR ooo:/data/./Media /data/store/
     "
 
-    mkdir -p /data/$USER
-    ln -s /data/$USER $HOME/data 
+    mkdir -p "/data/$USER"
+    ln -s "/data/$USER" "$HOME/data"
 
 
 }
@@ -186,6 +186,9 @@ zfs_fix_replace_sdx_names_with_id_names(){
     NEW_DISK_ID=wwn-0x5000c5009399acab
     POOL_NAME=data
     sudo zpool replace "$POOL_NAME" "$OLD_DISK_ID" "$NEW_DISK_ID"
+
+    # Remount the pool
+    sudo zpool mount "$POOL_NAME"
     
 }
 

@@ -2,8 +2,12 @@
 
 # Force systemctl to startup slurm
 
-sudo systemctl enable slurmctld
-sudo systemctl enable slurmd
+sudo systemctl stop slurmctld slurmd
+sudo systemctl reenable slurmctld slurmd
+sudo systemctl restart slurmctld slurmd
 
-sudo systemctl start slurmctld
-sudo systemctl start slurmd
+#sudo systemctl start slurmctld
+#sudo systemctl start slurmd
+
+#sudo systemctl start slurmctld
+#sudo systemctl start slurmd
