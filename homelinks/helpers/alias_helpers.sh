@@ -569,12 +569,6 @@ pyedit()
 }
 
 
-untilfail()
-{
-    while $@; do :; done
-}
-
- 
 permit_erotemic_gitrepo()
 { 
     __doc__="""
@@ -599,7 +593,7 @@ normalize_line_endings(){
     for fpath in "$@"
     do
     #echo "fpath = $fpath"
-    tr -d '\r' < $fpath > _tempfile.out && mv _tempfile.out $fpath
+    tr -d '\r' < "$fpath" > _tempfile.out && mv _tempfile.out "$fpath"
     done
 }
 
@@ -609,11 +603,11 @@ normalize_newline_eof()
     do
         if [ -z "$(tail -c 1 "$fpath")" ]
         then
-            NOOP=
+            true
         else
             echo "No newline at end of fpath = $fpath"
             echo "Fixing"
-            echo "" >> $fpath
+            echo "" >> "$fpath"
         fi
     done
 }
@@ -655,7 +649,7 @@ pywhich(){
 gitk(){
     # always spawn gitk in the background 
     GITK_EXE="$(which gitk)"
-    $GITK_EXE $@&
+    $GITK_EXE "$@"&
 }
 
 randpw(){ 
@@ -765,7 +759,7 @@ git-tarball-hash()
     #CURRENT_COMMIT=$(git log -n 1 | head -n 1 | sed -e 's/^commit //')
     CURRENT_COMMIT=0418a4cf84b83a22a4d2aca704543f93677260d6
     echo "CURRENT_COMMIT = $CURRENT_COMMIT"
-    git archive --format=tar.gz -o /tmp/temp-repo.tar.gz $(git rev-parse HEAD)
+    git archive --format=tar.gz -o /tmp/temp-repo.tar.gz "$(git rev-parse HEAD)"
     sha256sum /tmp/temp-repo.tar.gz 
 
     md5sum /tmp/temp-repo.tar.gz 
@@ -892,13 +886,13 @@ all_dir_sizes(){
     find . -maxdepth 1 -type d -iregex ".*/..*" -exec du -sh {} + | sort -h
     sudo find . -maxdepth 1 -iregex ".*/..*" -exec du -sh {} + | sort -h
 
-    du -sh * | sort -h
+    du -sh -- * | sort -h
 }
 
 
 clean_python2(){
 
-    find . -regex ".*\(__pycache__\|\.py[co]\)" -delete || find . -iname *.pyc -delete || find . -iname *.pyo -delete
+    find . -regex ".*\(__pycache__\|\.py[co]\)" -delete || find . -iname "*.pyc" -delete || find . -iname "*.pyo" -delete
     find . -type d -empty -delete
 
     pyblock " 
@@ -999,4 +993,56 @@ ipfs-service(){
     fi
     $_SUDO systemctl "${ARG}" ipfs.service
     $_SUDO systemctl "${ARG}" ipfs-cluster.service
+}
+
+
+forever(){
+    __doc__="
+    Loop a command forever and ever and ever and ever
+    "
+    while true; do "$@"; done
+}
+
+untilfail()
+{
+    __doc__='
+    Loop until a command fails
+
+    Example:
+        flaky_funcion(){
+            echo "try..." && ( [ $(($RANDOM % 2)) -eq 0 ] && echo "got there" ) || (echo "not this time" && false) 
+        }
+        untilfail flaky_funcion
+
+    References:
+    https://stackoverflow.com/questions/12967232/repeatedly-run-a-shell-command-until-it-fails
+    '
+    echo "$@"
+    while "$@"; do :; done
+}
+
+
+untilpass()
+{
+    __doc__='''
+    Loop until a command fails
+
+    Usage:
+        Prefix any non-piped command with "untilpass" and it will reexecute
+        until the return code is 0.
+
+    Example:
+        # Define a function that fails most of the time
+        flaky_funcion(){
+            echo "try..." && ( [ $(($RANDOM % 10)) -eq 0 ] && echo "got there" ) || (echo "not this time" && false) 
+        }
+        
+        # Run that function until it passes
+        untilpass flaky_funcion
+    '''
+    "$@"
+    while [ $? -ne 0 ];
+    do 
+        "$@"
+    done
 }
