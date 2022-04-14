@@ -49,11 +49,11 @@ simple_setup_manual()
 {
     sudo apt install git -y
     # If local does not exist
-    if [ ! -d $HOME/local ]; then
-        git clone https://github.com/Erotemic/local.git $HOME/local
+    if [ ! -d "$HOME"/local ]; then
+        git clone https://github.com/Erotemic/local.git "$HOME/local"
     fi
-    if [ ! -d $HOME/misc ]; then
-        git clone https://github.com/Erotemic/misc.git $HOME/misc
+    if [ ! -d "$HOME"/misc ]; then
+        git clone https://github.com/Erotemic/misc.git "$HOME/misc"
     fi
     source ~/local/init/freshstart_ubuntu.sh 
 

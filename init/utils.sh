@@ -25,6 +25,8 @@ An overview and example usage of some of the selected utilities are as follows:
 
 * curl_verify_hash <URL> <DST> <EXPECTED_HASH> [HASHER] [CURL_OPTS] [VERBOSE] - downloads a file with curl and also checks its hash.
 
+* join_by <SEP> [ARGS...] - joins all the arguments into a string separated by the separator
+
 
 Example:
     source $HOME/local/init/utils.sh
@@ -1095,4 +1097,31 @@ harden_symlink(){
     do
         _harden_one_symlink "$var"
     done
+}
+
+
+join_by(){
+    __doc__='
+    A function that works similar to a Python join
+
+    Args:
+        SEP: the separator
+        *ARR: elements of the strings to join
+
+    Usage:
+        source $HOME/local/init/utils.sh 
+        ARR=("foo" "bar" "baz")
+        RESULT=$(join_by / "${ARR[@]}")
+        echo "RESULT = $RESULT"
+
+        RESULT = foo/bar/baz
+
+    References:
+        https://stackoverflow.com/questions/1527049/how-can-i-join-elements-of-an-array-in-bash
+    '
+    _handle_help "$@" || return 0
+    local d=${1-} f=${2-}
+    if shift 2; then
+        printf %s "$f" "${@/#/$d}"
+    fi
 }

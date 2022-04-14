@@ -61,6 +61,11 @@ lsblk --scsi --output NAME,KNAME,LABEL,MOUNTPOINT,UUID,PARTTYPE,PARTUUID,MODEL,T
 lsblk --output-all
 lsblk --scsi
 
+# https://unix.stackexchange.com/questions/387855/make-lsblk-list-devices-by-id
+ls /dev/disk/by-id/ -al
+lsblk --scsi |awk 'NR==1{print $0" DEVICE-ID(S)"}NR>1{dev=$1;gsub("[^[:alnum:]]","",dev);printf $0"\t\t";system("find /dev/disk/by-id -lname \"*"dev"\" -printf \" %p\"");print "";}'
+
+
 
 # Use the above information to determine which devices correspond to the drives
 # Define disks (represents unique hard drives connected to the motherboard) 
@@ -128,6 +133,52 @@ zfs-notes(){
     ln -s "/data/$USER" "$HOME/data"
 
 
+    # Lets add an L2ARC cache so we can have fast reads
+    # shellcheck disable=SC2010
+    ls /dev/disk/by-id/ -al | grep nvme2n1
+
+    #/dev/nvme1n1               1.9T  1.6T  239G  88% /media/joncrall/flash1
+    
+
+    #nvme1n1             259:3    0   1.8T  0 disk /media/joncrall/flash1
+    #nvme2n1             259:4    0   1.8T  0 disk 
+    #lrwxrwxrwx 1 root root  13 Apr  6 11:46 nvme-Samsung_SSD_970_EVO_Plus_2TB_S59CNM0RB05028D -> ../../nvme1n1
+    #lrwxrwxrwx 1 root root  13 Apr  6 11:46 nvme-Samsung_SSD_970_EVO_Plus_2TB_S59CNM0RB05113H -> ../../nvme2n1
+
+    ls -al /dev/disk/by-uuid/67adab3b-5ea6-45c7-9bd7-cbfe5ea57abc
+    ls /dev/disk/by-id/nvme-Samsung_SSD_970_EVO_Plus_2TB_S59CNM0RB05113H
+
+    ls -al /dev/disk/by-id
+    ls -al /dev/disk/by-uuid/
+    
+    POOL_NAME=data
+    CACHE_DISK=/dev/disk/by-id/nvme-Samsung_SSD_970_EVO_Plus_2TB_S59CNM0RB05113H
+    ls -al $CACHE_DISK
+    sudo zpool add $POOL_NAME cache $CACHE_DISK
+
+
+}
+
+zfs-configure-memory(){
+    # https://linuxhint.com/configure-zfs-cache-high-speed-io/
+
+    python -c "import pint; print(pint.UnitRegistry().parse_expression('32GiB').to('bytes'))"
+    python -c "import pint; print(pint.UnitRegistry().parse_expression('48GiB').to('bytes'))"
+
+
+    source "$HOME"/local/init/utils.sh
+    cat /etc/modprobe.d/zfs.conf
+    sudo_appendto /etc/modprobe.d/zfs.conf "
+    options zfs zfs_arc_max=51539607552
+    "
+}
+
+zfs-clear-errors(){
+
+    # If you get ZFS checksum errors, but SMART says the HDD is ok, you might
+    # have just had a hickup. You can clear the errors.  If they come back
+    # fairly quickly then you probably do have a bad drive.
+    sudo zpool clear data
 }
 
 zfs-setup-info(){
@@ -382,4 +433,26 @@ f2fs_notes(){
     #sudo umount $MOUNT_DPATH
 
     ln -s "/media/$USER/flash1" "$HOME/flash1" 
+}
+
+zfs_l2arc_calculation(){
+
+    RECORDSIZE=$(zfs get recordsize data -o value | tail -n 1)
+    echo "RECORDSIZE = $RECORDSIZE"
+
+    __doc__="
+    import pint
+    u = pint.UnitRegistry()
+    expr = u.parse_expression
+
+    RAM_per_block = expr('400 bytes')
+
+    blocksize = expr('128 KiB')
+    l2arc_size = expr('2 TiB')
+
+    l2arc_blocks = (l2arc_size / blocksize).to_base_units()
+
+    RAM_for_l2arc = (l2arc_blocks * RAM_per_block).to('GiB')
+    print(f'{RAM_for_l2arc=}')
+    "
 }
