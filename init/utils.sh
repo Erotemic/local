@@ -25,7 +25,7 @@ An overview and example usage of some of the selected utilities are as follows:
 
 * curl_verify_hash <URL> <DST> <EXPECTED_HASH> [HASHER] [CURL_OPTS] [VERBOSE] - downloads a file with curl and also checks its hash.
 
-* join_by <SEP> [ARGS...] - joins all the arguments into a string separated by the separator
+* joinby <SEP> [ARGS...] - joins all the arguments into a string separated by the separator
 
 
 Example:
@@ -44,6 +44,7 @@ TODO:
 
 # set to 0 to prevent this script from running more than once
 # set to 1 for editable "development" mode
+__EROTEMIC_ALWAYS_RELOAD__=1
 __EROTEMIC_ALWAYS_RELOAD__="${__EROTEMIC_ALWAYS_RELOAD__:=0}"
 __EROTEMIC_UTILS_VERSION__="0.2.0"
 
@@ -1100,7 +1101,7 @@ harden_symlink(){
 }
 
 
-join_by(){
+joinby(){
     __doc__='
     A function that works similar to a Python join
 
@@ -1111,7 +1112,7 @@ join_by(){
     Usage:
         source $HOME/local/init/utils.sh 
         ARR=("foo" "bar" "baz")
-        RESULT=$(join_by / "${ARR[@]}")
+        RESULT=$(joinby / "${ARR[@]}")
         echo "RESULT = $RESULT"
 
         RESULT = foo/bar/baz
@@ -1124,4 +1125,24 @@ join_by(){
     if shift 2; then
         printf %s "$f" "${@/#/$d}"
     fi
+}
+
+
+tmux_spawn(){
+    __doc__='''
+    Run a command in a new tmux session as a background process
+
+    Example:
+        source ~/local/init/utils.sh
+        tmux_spawn echo "hi"
+
+    References:
+        https://serverfault.com/questions/103359/how-to-create-a-uuid-in-bash
+    '''
+    UUID=$(cat /proc/sys/kernel/random/uuid)
+    SESSION_ID=$UUID
+    COMMAND=$(joinby " " "$@")
+    tmux new-session -d -s "$SESSION_ID" "bash"
+    tmux send -t "$SESSION_ID" "$COMMAND" Enter
+    echo "SESSION_ID = $SESSION_ID"
 }

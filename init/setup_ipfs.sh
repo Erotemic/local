@@ -611,3 +611,79 @@ main(){
     # Step 4 (optional): Pin my shit
     pin_my_shit
 }
+
+setup_lotus_filecoin(){
+    sudo apt install mesa-opencl-icd ocl-icd-opencl-dev gcc git bzr jq pkg-config curl clang build-essential hwloc libhwloc-dev wget -y && sudo apt upgrade -y
+
+    git clone https://github.com/filecoin-project/lotus.git "$HOME"/code/lotus
+    cd ~/code/lotus/
+    git checkout v1.15.1
+
+    # Building for the mainnet
+    make clean all #mainnet
+
+    # Current version has no PREFIX support, we have to install into /usr/local
+    # https://github.com/filecoin-project/lotus/discussions/8499
+    sudo make install
+
+    source ~/local/init/utils.sh
+    tmux_spawn "FULLNODE_API_INFO=wss://api.chain.love lotus daemon --lite"
+
+    # Generate a new wallet
+    FILECOIN_WALLET_ADDRESS=$(lotus wallet new)
+    echo "FILECOIN_WALLET_ADDRESS = $FILECOIN_WALLET_ADDRESS"
+    # This public address for me is f1pd7drg3lw5rnfay3hyfojb4dc2tqjytzbmwv2ty
+    lotus wallet list
+
+    # Do whatever you need to do to load a super secret place to store your
+    # private keys. This is money. Do more than transcrypt protection.
+    load_secrets
+    mount_super_secrets
+    echo "$SUPER_SECRET_DPATH"
+    mkdir -p "$SUPER_SECRET_DPATH/coins/filecoin"
+    lotus wallet export "$FILECOIN_WALLET_ADDRESS" > "$SUPER_SECRET_DPATH/coins/filecoin/filecoin_$FILECOIN_WALLET_ADDRESS.key"
+    dismount_super_secrets
+
+    # Need to get a "DataCap" by connecting an establish github account
+    # to 
+    # For me, the verified message I got for my first data cap is here
+    # https://filfox.info/en/message/bafy2bzacea4xbidxeycalqw73ef4mj4ekqrpyeisw5avfcpo4grmdpgh7ecim
+
+    # We are going to start a deal to 
+
+    # Find a few storage providers on https://plus.fil.org/miners and import their client ids
+
+    # We have an IPFS directory we can use 
+    Qmd4PzLWTZiawH1W3VzoAbkyh9hCopjqSVAddYF8PrYBfE
+    bafybeieomldhqd2iehx6bgtnkwznw2q3ozzjlu5pkkmjjmintp2fer4koq
+
+    ipfs cid base32 Qmd4PzLWTZiawH1W3VzoAbkyh9hCopjqSVAddYF8PrYBfE
+    ipfs cid base32 bafybeieomldhqd2iehx6bgtnkwznw2q3ozzjlu5pkkmjjmintp2fer4koq
+
+    ipfs cid format -v 1 -b base32 Qmd4PzLWTZiawH1W3VzoAbkyh9hCopjqSVAddYF8PrYBfE
+
+    # to use existing IPFS data we need to specify a lotus config:
+    # https://lotus.filecoin.io/tutorials/lotus/import-data-from-ipfs/
+    sed -ie 's|#*UseIpfs.*|UseIpfs=true|g' ~/.lotus/config.toml
+    lotus client deal
+
+    lotus client list-deals --show-failed
+    lotus client list-deals 
+
+    lotus client list-transfers
+
+    # Specify the CID: Qmd4PzLWTZiawH1W3VzoAbkyh9hCopjqSVAddYF8PrYBfE
+    # Specify duration in days: 180
+    # Specify miner ids f01652333 f015927 f01278 f071624
+
+    # Results:
+    #Deal (f01652333) CID: bafyreiczjybwrnnq2it3jyayhyxq6j52m7xxnwa76nkzghbb46axx3xnry
+    #Deal (f015927) CID: bafyreiekudp5avm23hzxozdzabzq6augoxf2dnz3mjie46kng7qjzi3uky
+    #Deal (f01278) CID: bafyreiegvbeyoh5ad3mvei5c33ch5bhsqqudd7v6hn2kauxehrjca7762q
+    #Deal (f071624) CID: bafyreig2sx3knejoef6xbrsztuyvihog5przpvol6qfxt5fesmxpdf6er4
+
+    # or we can specify an environ
+    #LOTUS_CLIENT_USEIPFS=true lotus client deal Qmd4PzLWTZiawH1W3VzoAbkyh9hCopjqSVAddYF8PrYBfE 180 f01652333
+    #cd /home/joncrall/data/dvc-repos/shitspotter_dvc/assets/
+    #lotus client import poop-2022-04-16-T135257
+}
