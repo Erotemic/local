@@ -1146,3 +1146,28 @@ tmux_spawn(){
     tmux send -t "$SESSION_ID" "$COMMAND" Enter
     echo "SESSION_ID = $SESSION_ID"
 }
+
+
+is_probably_decrypted(){
+    __doc__='
+    Check if the file exists and is probably decrypted
+
+    Example:
+        FPATH=$HOME/local/init/utils.sh
+        is_probably_decrypted $FPATH
+        is_probably_decrypted does-not-exist
+    '
+    FPATH=$1
+	if [[ ! -e $FPATH ]]; then
+		echo "False"
+    else
+        # check if the first line contains "Salted" in base64 
+        # (indicative of openssl encryption)
+        firstbytes=$(head -c8 "$FPATH" | LC_ALL=C tr -d '\0')
+        if [[ $firstbytes == "U2FsdGVk" ]]; then
+            echo "False"
+        else
+            echo "True"
+        fi
+    fi
+}
