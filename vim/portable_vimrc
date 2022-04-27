@@ -45,6 +45,8 @@
 
 " Snippets Directory
 " ~/local/vim/vimfiles/UltiSnips/python.snippets
+" ~/code/vimtk/autoload/vimtk_snippets.vim
+" ~/code/vimtk/autoload/vimtk.vim
 
 " REQUIRED BY VUNDLE
 "set nocompatible

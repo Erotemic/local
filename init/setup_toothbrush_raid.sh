@@ -89,161 +89,6 @@ echo "RAID_PARTS = $RAID_PARTS"
 sudo mdadm --examine $RAID_DISKS
 
 
-zfs-init-on-reinstall(){
-    __doc__="
-    https://unix.stackexchange.com/questions/483465/restore-zfs-pool-and-storage-data-after-a-system-re-install
-    "
-
-    POOL_NAME=data
-    sudo zpool $POOL_NAME 
-    zpool status
-
-}
-
-
-zfs-notes(){
-    __doc__="
-        # ZFS RAID
-        https://linuxconfig.org/configuring-zfs-on-ubuntu-20-04
-        https://www.cyberciti.biz/faq/how-to-create-raid-10-striped-mirror-vdev-zpool-on-ubuntu-linux/
-        https://ubuntu.com/tutorials/setup-zfs-storage-pool?_ga=2.210175133.962459875.1618424233-746558168.1612391761#3-creating-a-zfs-pool
-
-        https://askubuntu.com/questions/404172/zpools-dont-automatically-mount-after-boot
-        https://askubuntu.com/questions/1294944/zfs-pool-not-auto-mounting-after-upgrade-to-20-04
-    "
-
-    # Create a RAID 10 (striped + mirrored) zfs pool
-    POOL_NAME=data
-    #sudo zpool create $POOL_NAME mirror $DISK1 $DISK2 mirror $DISK3 $DISK4
-    #sudo zpool destroy data
-    sudo zpool create $POOL_NAME mirror $DISK1 $DISK2
-    sudo zpool add $POOL_NAME mirror $DISK3 $DISK4
-
-    zpool status
-    zpool list
-
-    # Wow, zfs is simple to use.
-
-    _sync_="
-    rsync -avrpR ooo:/data/./Documents /data/store/
-    rsync -avrpR ooo:/data/./Media /data/store/
-    "
-
-    mkdir -p "/data/$USER"
-    ln -s "/data/$USER" "$HOME/data"
-
-
-    # Lets add an L2ARC cache so we can have fast reads
-    # shellcheck disable=SC2010
-    ls /dev/disk/by-id/ -al | grep nvme2n1
-
-    #/dev/nvme1n1               1.9T  1.6T  239G  88% /media/joncrall/flash1
-    
-
-    #nvme1n1             259:3    0   1.8T  0 disk /media/joncrall/flash1
-    #nvme2n1             259:4    0   1.8T  0 disk 
-    #lrwxrwxrwx 1 root root  13 Apr  6 11:46 nvme-Samsung_SSD_970_EVO_Plus_2TB_S59CNM0RB05028D -> ../../nvme1n1
-    #lrwxrwxrwx 1 root root  13 Apr  6 11:46 nvme-Samsung_SSD_970_EVO_Plus_2TB_S59CNM0RB05113H -> ../../nvme2n1
-
-    ls -al /dev/disk/by-uuid/67adab3b-5ea6-45c7-9bd7-cbfe5ea57abc
-    ls /dev/disk/by-id/nvme-Samsung_SSD_970_EVO_Plus_2TB_S59CNM0RB05113H
-
-    ls -al /dev/disk/by-id
-    ls -al /dev/disk/by-uuid/
-    
-    POOL_NAME=data
-    CACHE_DISK=/dev/disk/by-id/nvme-Samsung_SSD_970_EVO_Plus_2TB_S59CNM0RB05113H
-    ls -al $CACHE_DISK
-    sudo zpool add $POOL_NAME cache $CACHE_DISK
-
-
-}
-
-zfs-configure-memory(){
-    # https://linuxhint.com/configure-zfs-cache-high-speed-io/
-
-    python -c "import pint; print(pint.UnitRegistry().parse_expression('32GiB').to('bytes'))"
-    python -c "import pint; print(pint.UnitRegistry().parse_expression('48GiB').to('bytes'))"
-
-
-    source "$HOME"/local/init/utils.sh
-    cat /etc/modprobe.d/zfs.conf
-    sudo_appendto /etc/modprobe.d/zfs.conf "
-    options zfs zfs_arc_max=51539607552
-    "
-}
-
-zfs-clear-errors(){
-
-    # If you get ZFS checksum errors, but SMART says the HDD is ok, you might
-    # have just had a hickup. You can clear the errors.  If they come back
-    # fairly quickly then you probably do have a bad drive.
-    sudo zpool clear data
-}
-
-zfs-setup-info(){
-    set -x
-    lsblk --scsi --output NAME,KNAME,TYPE,SIZE,STATE | grep disk
-    zpool list
-    zpool status
-    zpool iostat -v
-    set +x
-}
-
-
-handle_faulted_drive(){
-    __doc__="
-    https://serverfault.com/questions/1022292/could-zpool-status-be-showing-two-different-drives-with-same-device-name
-    https://serverfault.com/questions/897108/zpool-reporting-same-drive-as-active-and-spare
-
-    ls /dev/disk/by-id/
-    "
-    # I have a case where sda faulted
-    FAULTED_DEVNAME=sda
-    POOL_NAME=data
-    # Disable faulted drive
-    sudo zpool offline "$POOL_NAME" "$FAULTED_DEVNAME"
-
-    # Make sure you have the import by id references
-
-    # When the drive is replaced
-    FAULTED_DEVNAME=sdd
-    POOL_NAME=data
-    sudo zpool replace "$POOL_NAME" "$FAULTED_DEVNAME"
-
-    OLD_DISK_ID=sda
-    NEW_DISK_ID=wwn-0x5000c5009399acab
-    POOL_NAME=data
-    sudo zpool replace "$POOL_NAME" "$OLD_DISK_ID" "$NEW_DISK_ID"
-}
-
-
-zfs_fix_replace_sdx_names_with_id_names(){
-    sudo umount /data
-    #zfs unmount $POOL_NAME
-
-    # This removes the pool from the ZFS system!
-    # But the disks themselves will remember that they were part of a pool.
-    POOL_NAME=data
-    sudo zpool export $POOL_NAME
-
-    # It's not there anymore
-    zpool status
-
-    # This searches the actual disks for zpools they are part of and imports them
-    sudo zpool import -d /dev/disk/by-id -aN
-
-    OLD_DISK_ID=sda
-    NEW_DISK_ID=wwn-0x5000c5009399acab
-    POOL_NAME=data
-    sudo zpool replace "$POOL_NAME" "$OLD_DISK_ID" "$NEW_DISK_ID"
-
-    # Remount the pool
-    sudo zpool mount "$POOL_NAME"
-    
-}
-
-
 # --- <FORMAT EACH DRIVE> ---
 # Ensure each drive has formatted partions
 # Previously, I did this through gparted
@@ -434,6 +279,179 @@ f2fs_notes(){
 
     ln -s "/media/$USER/flash1" "$HOME/flash1" 
 }
+
+
+################################
+#
+#  ####### #######  #####  
+#       #  #       #     # 
+#      #   #       #       
+#     #    #####    #####  
+#    #     #             # 
+#   #      #       #     # 
+#  ####### #        #####  
+#
+################################
+
+
+
+zfs-init-on-reinstall(){
+    __doc__="
+    https://unix.stackexchange.com/questions/483465/restore-zfs-pool-and-storage-data-after-a-system-re-install
+    "
+
+    POOL_NAME=data
+    sudo zpool $POOL_NAME 
+    zpool status
+
+}
+
+
+zfs-notes(){
+    __doc__="
+        # ZFS RAID
+        https://linuxconfig.org/configuring-zfs-on-ubuntu-20-04
+        https://www.cyberciti.biz/faq/how-to-create-raid-10-striped-mirror-vdev-zpool-on-ubuntu-linux/
+        https://ubuntu.com/tutorials/setup-zfs-storage-pool?_ga=2.210175133.962459875.1618424233-746558168.1612391761#3-creating-a-zfs-pool
+
+        https://askubuntu.com/questions/404172/zpools-dont-automatically-mount-after-boot
+        https://askubuntu.com/questions/1294944/zfs-pool-not-auto-mounting-after-upgrade-to-20-04
+    "
+
+    # Create a RAID 10 (striped + mirrored) zfs pool
+    POOL_NAME=data
+    #sudo zpool create $POOL_NAME mirror $DISK1 $DISK2 mirror $DISK3 $DISK4
+    #sudo zpool destroy data
+    sudo zpool create $POOL_NAME mirror $DISK1 $DISK2
+    sudo zpool add $POOL_NAME mirror $DISK3 $DISK4
+
+    zpool status
+    zpool list
+
+    # Wow, zfs is simple to use.
+
+    _sync_="
+    rsync -avrpR ooo:/data/./Documents /data/store/
+    rsync -avrpR ooo:/data/./Media /data/store/
+    "
+
+    mkdir -p "/data/$USER"
+    ln -s "/data/$USER" "$HOME/data"
+
+
+    # Lets add an L2ARC cache so we can have fast reads
+    # shellcheck disable=SC2010
+    ls /dev/disk/by-id/ -al | grep nvme2n1
+
+    #/dev/nvme1n1               1.9T  1.6T  239G  88% /media/joncrall/flash1
+    
+
+    #nvme1n1             259:3    0   1.8T  0 disk /media/joncrall/flash1
+    #nvme2n1             259:4    0   1.8T  0 disk 
+    #lrwxrwxrwx 1 root root  13 Apr  6 11:46 nvme-Samsung_SSD_970_EVO_Plus_2TB_S59CNM0RB05028D -> ../../nvme1n1
+    #lrwxrwxrwx 1 root root  13 Apr  6 11:46 nvme-Samsung_SSD_970_EVO_Plus_2TB_S59CNM0RB05113H -> ../../nvme2n1
+
+    ls -al /dev/disk/by-uuid/67adab3b-5ea6-45c7-9bd7-cbfe5ea57abc
+    ls /dev/disk/by-id/nvme-Samsung_SSD_970_EVO_Plus_2TB_S59CNM0RB05113H
+
+    ls -al /dev/disk/by-id
+    ls -al /dev/disk/by-uuid/
+    
+    POOL_NAME=data
+    CACHE_DISK=/dev/disk/by-id/nvme-Samsung_SSD_970_EVO_Plus_2TB_S59CNM0RB05113H
+    ls -al $CACHE_DISK
+    sudo zpool add $POOL_NAME cache $CACHE_DISK
+
+
+}
+
+zfs-configure-memory(){
+    # https://linuxhint.com/configure-zfs-cache-high-speed-io/
+
+    python -c "import pint; print(pint.UnitRegistry().parse_expression('32GiB').to('bytes'))"
+    python -c "import pint; print(pint.UnitRegistry().parse_expression('48GiB').to('bytes'))"
+
+    python -c "import pint, sys; print(pint.UnitRegistry().parse_expression(sys.argv[1]).to(sys.argv[2]).m)" "48GiB" "bytes"
+    python -c "import pint, sys; print(pint.UnitRegistry().parse_expression(sys.argv[1]).to(sys.argv[2]).m)" "80GiB" "bytes"
+
+    source "$HOME"/local/init/utils.sh
+    cat /etc/modprobe.d/zfs.conf
+    sudo_appendto /etc/modprobe.d/zfs.conf "
+    options zfs zfs_arc_max=85899345920
+    "
+}
+
+zfs-clear-errors(){
+
+    # If you get ZFS checksum errors, but SMART says the HDD is ok, you might
+    # have just had a hickup. You can clear the errors.  If they come back
+    # fairly quickly then you probably do have a bad drive.
+    sudo zpool clear data
+}
+
+zfs-setup-info(){
+    set -x
+    lsblk --scsi --output NAME,KNAME,TYPE,SIZE,STATE | grep disk
+    zpool list
+    zpool status
+    zpool iostat -v
+    set +x
+}
+
+
+handle_faulted_drive(){
+    __doc__="
+    https://serverfault.com/questions/1022292/could-zpool-status-be-showing-two-different-drives-with-same-device-name
+    https://serverfault.com/questions/897108/zpool-reporting-same-drive-as-active-and-spare
+
+    ls /dev/disk/by-id/
+    "
+    # I have a case where sda faulted
+    FAULTED_DEVNAME=sda
+    POOL_NAME=data
+    # Disable faulted drive
+    sudo zpool offline "$POOL_NAME" "$FAULTED_DEVNAME"
+
+    # Make sure you have the import by id references
+
+    # When the drive is replaced
+    FAULTED_DEVNAME=sdd
+    POOL_NAME=data
+    sudo zpool replace "$POOL_NAME" "$FAULTED_DEVNAME"
+
+    OLD_DISK_ID=sda
+    NEW_DISK_ID=wwn-0x5000c5009399acab
+    POOL_NAME=data
+    sudo zpool replace "$POOL_NAME" "$OLD_DISK_ID" "$NEW_DISK_ID"
+}
+
+
+zfs_fix_replace_sdx_names_with_id_names(){
+    sudo umount /data
+    #zfs unmount $POOL_NAME
+
+    # This removes the pool from the ZFS system!
+    # But the disks themselves will remember that they were part of a pool.
+    POOL_NAME=data
+    sudo zpool export $POOL_NAME
+
+    # It's not there anymore
+    zpool status
+
+    # This searches the actual disks for zpools they are part of and imports them
+    sudo zpool import -d /dev/disk/by-id -aN
+
+    OLD_DISK_ID=sda
+    NEW_DISK_ID=wwn-0x5000c5009399acab
+    POOL_NAME=data
+    sudo zpool replace "$POOL_NAME" "$OLD_DISK_ID" "$NEW_DISK_ID"
+
+    # Remount the pool
+    sudo zpool mount "$POOL_NAME"
+    
+}
+
+
 
 zfs_l2arc_calculation(){
 

@@ -1,0 +1,25 @@
+#!/bin/env python
+"""
+Standalone variant:
+
+python -c "import pint; print(pint.UnitRegistry().parse_expression('$1').to('$2'))"
+
+
+"""
+
+
+def main():
+    import pint
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('input_expr')
+    parser.add_argument('output_unit')
+    args = parser.parse_args()
+    ureg = pint.UnitRegistry()
+    input = ureg.parse_expression(args.input_expr)
+    output = input.to(args.output_unit)
+    print(output.m)
+
+
+if __name__ == '__main__':
+    main() 

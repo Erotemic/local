@@ -142,7 +142,6 @@ if [[ "$IS_HEADLESS" == "False" ]]; then
     if [[ "$(type -P google-chrome)" == "" ]]; then
         source "$HOME/local/init/freshstart_ubuntu.sh"
         install_chrome
-
         sudo apt-get install chrome-gnome-shell # for gnome shell extension integration
     fi
     if [ ! -e /snap/bin/spotify ]; then

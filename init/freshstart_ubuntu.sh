@@ -1313,6 +1313,11 @@ install_chrome()
     sudo apt install -y google-chrome-stable 
 }
 
+reinstall_chrome(){
+    sudo apt-get purge google-chrome-stable -y
+    rm ~/.config/google-chrome/ -rf
+}
+
 install_fonts()
 {
     # Download fonts
