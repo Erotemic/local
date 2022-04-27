@@ -1,9 +1,7 @@
 local
 =====
 
-Badges / shields for my projects:
-
-|xdoctest| |ubelt| |mkinit| |vimtk| |xdev| |progiter| |timerit| |git-sync| |line_profiler| |ibeis| |graphid| |hotspotter| |crall-thesis-2017| |pypogo| |shitspotter|
+Jon Crall's dotfiles repo (before he knew dotfiles was a standard name), might change in the future.
 
 
 Initialize
@@ -33,6 +31,14 @@ Initialize
 
 
 .. .. See ~/local/misc/badges.py for autogen
+
+
+About Me
+========
+
+Badges / shields for my projects:
+
+|xdoctest| |ubelt| |mkinit| |vimtk| |xdev| |progiter| |timerit| |git-sync| |line_profiler| |ibeis| |graphid| |hotspotter| |crall-thesis-2017| |pypogo| |shitspotter|
 
 
 .. |xdoctest| image:: https://img.shields.io/github/stars/Erotemic/xdoctest?style=social&label=stars:xdoctest
@@ -71,4 +77,15 @@ Initialize
     :target: https://github.com/Erotemic/shitspotter
 
 
+* https://gitlab.kitware.com.com/python/liberator
+* https://gitlab.kitware.com.com/utils/scriptconfig
+* https://gitlab.kitware.com.com/computer-vision/torch_liberator
+
+* https://gitlab.kitware.com.com/computer-vision/kwcoco
+* https://gitlab.kitware.com.com/computer-vision/kwarray
+* https://gitlab.kitware.com.com/computer-vision/kwimage
+* https://gitlab.kitware.com.com/computer-vision/kwplot
+
+* https://gitlab.kitware.com.com/computer-vision/netharn
+* https://gitlab.kitware.com.com/computer-vision/ndsampler
 
