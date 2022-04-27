@@ -13,20 +13,19 @@ Initialize
     cd ~
     git clone https://github.com/Erotemic/local.git
 
-    bash ~/local/init.sh
+    # If credentials are setup
+    # bash ~/local/init.sh
 
-    or
-
-    # Customize settings (if unset they will choose sensible defaults)
-    export HAVE_SUDO=False
+    # Customize settings (if unset they will try to choose sensible defaults)
+    # export HAVE_SUDO=False
     export IS_HEADLESS=True
     export WITH_SSH_KEYS=False
     source ~/local/init.sh
 
-    export HAVE_SUDO=True
-    export IS_HEADLESS=False
-    export WITH_SSH_KEYS=False
-    source ~/local/init.sh
+    # export HAVE_SUDO=True
+    # export IS_HEADLESS=False
+    # export WITH_SSH_KEYS=False
+    # source ~/local/init.sh
 
 
 
