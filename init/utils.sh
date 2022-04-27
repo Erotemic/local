@@ -512,8 +512,14 @@ safe_symlink(){
         cd ~/tmp/test_safe_symlink
         touch real_file
         mkdir -p real_dir
+        touch conflict_file
+        mkdir -p conflict_dir
         safe_symlink real_file link_file
         safe_symlink real_dir link_dir
+        safe_symlink real_file link_file
+        safe_symlink real_dir link_dir
+        safe_symlink real_file conflict_file
+        safe_symlink real_dir conflict_dir
         ls -al
     "
     _handle_help "$@" || return 0
@@ -522,6 +528,43 @@ safe_symlink(){
     echo "Safe symlink $link_path -> $real_path"
     unlink_or_backup "${link_path}"
     ln -s "${real_path}" "${link_path}"
+}
+
+
+safe_copy(){
+    __doc__="
+    Copy a file to target destination and backup anything that it would clobber
+
+    Args:
+        src: file to copy
+        dst: destination path
+
+    Example:
+        __EROTEMIC_ALWAYS_RELOAD__=1
+        source ~/local/init/utils.sh
+
+        mkdir -p ~/tmp/safe_copy
+        rm -rf ~/tmp/safe_copy
+        mkdir -p ~/tmp/safe_copy
+        cd ~/tmp/safe_copy
+        touch orig_file
+        mkdir -p orig_dir
+        touch conflict_file
+        mkdir -p conflict_dir
+        safe_copy orig_file copy_file
+        safe_copy orig_dir copy_dir
+        safe_copy orig_file copy_file
+        safe_copy orig_dir copy_dir
+        safe_copy orig_file conflict_file
+        safe_copy orig_dir conflict_dir
+        ls -al
+    "
+    _handle_help "$@" || return 0
+    src_path=$1
+    dst_path=$2
+    echo "Safe copy $dst_path <- $src_path"
+    unlink_or_backup "${dst_path}"
+    cp -r "${src_path}" "${dst_path}"
 }
 
 
