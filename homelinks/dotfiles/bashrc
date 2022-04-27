@@ -352,23 +352,20 @@ fi
 #    print_all_pathvars
 #fi
 
-if [ -f "$HOME/.bashrc-erotemic.sh" ]; then 
+if is_probably_decrypted "$HOME/.bashrc-erotemic.sh" > /dev/null ; then 
     # For machine-specific bashrc things that will not be published on github
-    # Hueristic to check if the file is decrypted. (better way to to do this)
-    #NUM_SPACES=$(head -n 4 $HOME/.bashrc-erotemic.sh | grep " "  | wc | sed "s/  */ /g" | cut -d' ' -f3)
-    NUM_SPACES=$(head -n 4 "$HOME/.bashrc-erotemic.sh" | grep " "  | wc -c)
-    #echo "NUM_SPACES = $NUM_SPACES"
-    if [ "$NUM_SPACES" -gt "1" ]; then
-        source "$HOME/.bashrc-erotemic.sh"
-    fi
+    source "$HOME/.bashrc-erotemic.sh"
 fi
-if [ -f "$HOME/.bashrc-internal.sh" ]; then 
+
+if is_probably_decrypted "$HOME/.bashrc-internal.sh" > /dev/null ; then 
     source "$HOME/.bashrc-internal.sh"
 fi
-if [ -f "$HOME/.bashrc-local" ]; then 
+
+if is_probably_decrypted "$HOME/.bashrc-local" > /dev/null ; then 
     source "$HOME/.bashrc-local"
 fi
-if [ -f "$HOME/.bashrc-local.sh" ]; then 
+
+if is_probably_decrypted "$HOME/.bashrc-local.sh" > /dev/null ; then 
     source "$HOME/.bashrc-local.sh"
 fi
 

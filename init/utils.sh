@@ -1155,19 +1155,24 @@ is_probably_decrypted(){
     Example:
         FPATH=$HOME/local/init/utils.sh
         is_probably_decrypted $FPATH
+        echo $?
         is_probably_decrypted does-not-exist
+        echo $?
     '
     FPATH=$1
 	if [[ ! -e $FPATH ]]; then
 		echo "False"
+        return 2
     else
         # check if the first line contains "Salted" in base64 
         # (indicative of openssl encryption)
         firstbytes=$(head -c8 "$FPATH" | LC_ALL=C tr -d '\0')
         if [[ $firstbytes == "U2FsdGVk" ]]; then
             echo "False"
+            return 1
         else
             echo "True"
+            return 0
         fi
     fi
 }
