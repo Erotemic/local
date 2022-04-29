@@ -159,18 +159,18 @@ fi
 
 if [[ "$IS_HEADLESS" == "False" ]]; then
     #install_transcrypt
-    git clone https://github.com/Erotemic/transcrypt.git $HOME/code/transcrypt
+    git clone https://github.com/Erotemic/transcrypt.git "$HOME"/code/transcrypt
 
-    source $HOME/local/init/utils.sh
-    mkdir -p $HOME/.local/bin
-    safe_symlink $HOME/code/transcrypt/transcrypt $HOME/.local/bin/transcrypt
+    source "$HOME"/local/init/utils.sh
+    mkdir -p "$HOME"/.local/bin
+    safe_symlink "$HOME"/code/transcrypt/transcrypt "$HOME"/.local/bin/transcrypt
 
     echo "YOU WILL NEED TO INPUT PASSWORDS"
     # NOTE: if you have valid gitlab ssh keys, you can change to a git@ url
-    git clone https://gitlab.com/Erotemic/erotemic.git $HOME/code/erotemic
+    git clone https://gitlab.com/Erotemic/erotemic.git "$HOME"/code/erotemic
     # Input username
     # Input password
-    cd $HOME/code/erotemic
+    cd "$HOME"/code/erotemic
 
     # The user must supply a password here
     transcrypt -c aes-256-cbc 
@@ -178,13 +178,13 @@ if [[ "$IS_HEADLESS" == "False" ]]; then
     # Input password
 
     # Run:
-    sh $HOME/code/erotemic/init.sh
+    sh "$HOME"/code/erotemic/init.sh
 
 fi
 
 
 if [[ "$WITH_SSH_KEYS" == "True" ]]; then
-    source $HOME/local/init/freshstart_ubuntu.sh
+    source "$HOME"/local/init/freshstart_ubuntu.sh
     setup_single_use_ssh_keys
 fi
 
@@ -198,7 +198,7 @@ if [[ "$SETUP_PYTHON" == "True" ]]; then
     # privledges?
     #if [ ! -d ~/.local/conda ]; then
     #    echo "SETUP CONDA ENV"
-    #    source $HOME/local/init/freshstart_ubuntu.sh
+    #    source "$HOME"/local/init/freshstart_ubuntu.sh
     #    setup_conda_env
     #    pip install six ubelt xdoctest xinspect xdev
     #    pip install pyperclip psutil pep8 autopep8 flake8 pylint pytest
@@ -209,8 +209,8 @@ if [[ "$SETUP_PYTHON" == "True" ]]; then
         libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
         libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev 
 
-    #source $HOME/local/init/freshstart_ubuntu.sh
-    source $HOME/local/tools/pyenv_ext/pyenv_ext_commands.sh
+    #source "$HOME"/local/init/freshstart_ubuntu.sh
+    source "$HOME"/local/tools/pyenv_ext/pyenv_ext_commands.sh
     install_pyenv
     pyenv_create_virtualenv 3.9.9 full
     pip install -e ~/local/rob
@@ -277,13 +277,13 @@ ensure_dev_versions_of_my_libs(){
     do
         dpath=$HOME/code/$name
         if [[ -d $dpath ]]; then
-            base_fpath=$(python -c "import $name; print($name.__file__)")
+            #base_fpath=$(python -c "import $name; print($name.__file__)")
             result=$?
             if [[ "$result" == "1" ]]; then
                 echo "ensuring dpath = $dpath"
-                pip uninstall $name -y
-                pip uninstall $name -y
-                pip install -e $dpath
+                pip uninstall "$name" -y
+                pip uninstall "$name" -y
+                pip install -e "$dpath"
             else
                 echo "already have dpath = $dpath"
             fi
