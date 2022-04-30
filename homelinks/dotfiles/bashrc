@@ -306,7 +306,7 @@ fi
 
 
 # HACK FOR ME
-_CONDA_ROOT="$HOME/.local/conda/"
+_CONDA_ROOT="$HOME/.local/conda/""$PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION"
 
 _AUTOSTART_VENV=1
 if [[ "$_AUTOSTART_VENV" == "1" ]]; then
@@ -315,6 +315,7 @@ if [[ "$_AUTOSTART_VENV" == "1" ]]; then
         unset VIRTUAL_ENV
         #CHOSEN_PYTHON_VERSION=3.8.6
         CHOSEN_PYTHON_VERSION=3.9.9
+        echo $CHOSEN_PYTHON_VERSION
         if [ -d "$PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION" ]; then
             pyenv shell $CHOSEN_PYTHON_VERSION
             source "$PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION/bin/activate" 

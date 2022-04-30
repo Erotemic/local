@@ -20,6 +20,7 @@ CommandLine:
     export WITH_SSH_KEYS=False
     source ~/local/init.sh
 
+    export SETUP_PYTHON=True
     export HAVE_SUDO=True
     export IS_HEADLESS=False
     export WITH_SSH_KEYS=False
@@ -182,7 +183,7 @@ if [[ "$IS_HEADLESS" == "False" ]]; then
     # Setup private personal environment if possible
     PRIVATE_INIT="$HOME"/code/erotemic/init.sh
     if is_probably_decrypted "$PRIVATE_INIT"; then
-        sh $PRIVATE_INIT
+        bash $PRIVATE_INIT
     fi
 fi
 
@@ -297,4 +298,19 @@ ensure_dev_versions_of_my_libs(){
     done
 
 }
+
+
+customize_ubuntu_dock(){
+    gsettings get org.gnome.shell favorite-apps
+    gsettings set org.gnome.shell favorite-apps "['org.gnome.Nautilus.desktop', 'gvim.desktop', 'google-chrome.desktop', 'terminator.desktop']"
+    gsettings set org.gnome.desktop.interface clock-format '12h'
+}
+
+if [[ "$IS_HEADLESS" == "True" ]]; then
+    customize_ubuntu_dock
+fi
+
+
+DID_MY_BASHRC_INIT=""
+source $HOME/.bashrc
 
