@@ -2132,3 +2132,9 @@ benchmark()
     nvidia-docker run -ti nvcr.io/nvidia/tensorflow:18.07-py3 /bin/bash
     
 }
+
+
+fix_ipython_highlights(){
+    offending_fpath=$(python -c "import IPython, pathlib; print(str(pathlib.Path(IPython.__file__).parent / 'core/ultratb.py'))")
+    sed -i 's/bg:ansiyellow/bg:ansibrightblack/g' "$offending_fpath"
+}
