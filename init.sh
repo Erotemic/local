@@ -20,6 +20,7 @@ CommandLine:
     export WITH_SSH_KEYS=False
     source ~/local/init.sh
 
+    export SETUP_PYTHON=True
     export HAVE_SUDO=True
     export IS_HEADLESS=False
     export WITH_SSH_KEYS=False
@@ -132,13 +133,15 @@ if [[ "$IS_HEADLESS" == "False" ]]; then
     apt_ensure sshfs wmctrl xdotool xclip git astyle
     apt_ensure git curl htop tmux tree 
     apt_ensure gcc gcc g++ gfortran build-essential
-    apt_ensure 7z p7zip-full
+    apt_ensure p7zip-full  
     apt_ensure gpg pgpgpg
     apt_ensure net-tools nmap
-    apt_ensure sensors lm-sensors
+    apt_ensure lm-sensors
     apt_ensure psensor
     apt_ensure gitk gparted okular remmina rsync gitk xsel graphviz feh
-
+    # packages not in 20.04, but mayb other ones?
+    # 7z sensors
+    
     if [[ "$(type -P google-chrome)" == "" ]]; then
         source "$HOME/local/init/freshstart_ubuntu.sh"
         install_chrome
@@ -177,9 +180,11 @@ if [[ "$IS_HEADLESS" == "False" ]]; then
     # Reply no to using a random password
     # Input password
 
-    # Run:
-    sh "$HOME"/code/erotemic/init.sh
-
+    # Setup private personal environment if possible
+    PRIVATE_INIT="$HOME"/code/erotemic/init.sh
+    if is_probably_decrypted "$PRIVATE_INIT"; then
+        bash $PRIVATE_INIT
+    fi
 fi
 
 
@@ -293,4 +298,19 @@ ensure_dev_versions_of_my_libs(){
     done
 
 }
+
+
+customize_ubuntu_dock(){
+    gsettings get org.gnome.shell favorite-apps
+    gsettings set org.gnome.shell favorite-apps "['org.gnome.Nautilus.desktop', 'gvim.desktop', 'google-chrome.desktop', 'terminator.desktop']"
+    gsettings set org.gnome.desktop.interface clock-format '12h'
+}
+
+if [[ "$IS_HEADLESS" == "True" ]]; then
+    customize_ubuntu_dock
+fi
+
+
+DID_MY_BASHRC_INIT=""
+source $HOME/.bashrc
 

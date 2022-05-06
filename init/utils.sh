@@ -40,13 +40,16 @@ TODO:
     - [ ] Provide an easy and secure update mechanism
     - [ ] Write high-level documentation
 
+
+Install Instructions:
+
 '
 
 # set to 0 to prevent this script from running more than once
 # set to 1 for editable "development" mode
 __EROTEMIC_ALWAYS_RELOAD__=1
 __EROTEMIC_ALWAYS_RELOAD__="${__EROTEMIC_ALWAYS_RELOAD__:=0}"
-__EROTEMIC_UTILS_VERSION__="0.2.0"
+__EROTEMIC_UTILS_VERSION__="0.3.0"
 
 if [ "$__EROTEMIC_ALWAYS_RELOAD__" = "0" ]; then
     if [ "$__SOURCED_EROTEMIC_UTILS__" = "$__EROTEMIC_UTILS_VERSION__" ]; then

@@ -183,7 +183,12 @@ ep()
 # Reload profile
 # FIXME if I work on a mac
 #alias rrr='source ~/.profile'
-alias rrr='source ~/.bashrc'
+alias rrr='reset_my_env && source ~/.bashrc'
+
+
+reset_my_env(){
+    DID_MY_BASHRC_INIT=""
+} 
 
 
 cls()
