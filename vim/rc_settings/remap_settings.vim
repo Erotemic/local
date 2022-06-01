@@ -47,12 +47,20 @@ noremap <leader>j :Tagbar<CR>
 
 
 " Text formatting
-vnoremap <leader>fp :call PyFormatParagraph()<CR>
-vnoremap <leader>fe :call PyFormatParagraph()<CR>
-vnoremap ge :call PyFormatParagraph()<CR>
-noremap <leader>ge :call PySelectAndFormatParagraph()<CR>
-noremap <c-g> :call PySelectAndFormatParagraph('max_width=110')<CR>
-noremap <c-f> :call PySelectAndFormatParagraph('max_width=80,myprefix=False,sentence_break=False')<CR>
+"vnoremap <leader>fp :call PyFormatParagraph()<CR>
+"vnoremap <leader>fe :call PyFormatParagraph()<CR>
+"vnoremap ge :call PyFormatParagraph()<CR>
+"noremap <leader>ge :call PySelectAndFormatParagraph()<CR>
+"noremap <c-g> :call PySelectAndFormatParagraph('max_width=110')<CR>
+"noremap <c-f> :call PySelectAndFormatParagraph('max_width=80,myprefix=False,sentence_break=False')<CR>
+
+vnoremap ge :call vimtk#py_select_and_format_paragraph()<CR>
+vnoremap fe :call vimtk#py_select_and_format_paragraph()<CR>
+vnoremap fp :call vimtk#py_select_and_format_paragraph()<CR>
+noremap <leader>ge :call vimtk#py_select_and_format_paragraph()<CR>
+noremap <c-g> :call vimtk#py_select_and_format_paragraph('{"max_width": 110}')<CR>
+noremap <c-f> :call vimtk#py_select_and_format_paragraph('{"max_width": 80, "myprefix": False, "sentence_break": False}')<CR>
+
 noremap <c-M-G> :call PySelectAndFormatParagraphNoBreak()<CR>
 
 " Quick reference jumping

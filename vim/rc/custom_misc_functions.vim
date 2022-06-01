@@ -392,6 +392,8 @@ endfunc
 
 func! PySelectAndFormatParagraph(...) 
 Python2or3 << EOF
+# DEPRECATED IN FAVOR OF vimtk#py_select_and_format_paragraph
+
 import vim
 import pyvim_funcs
 import utool as ut
@@ -447,6 +449,7 @@ endfunc
 
 func! MakePrintVar() 
 Python2or3 << EOF
+# DEPRECATED in favor of vimtk#insert_print_var_at_cursor
 import vim
 import pyvim_funcs
 import ubelt as ub

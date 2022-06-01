@@ -72,6 +72,7 @@ if !filereadable($VIMFILES_DPATH . "/autoload/plug.vim")
 endif
 
 
+
 if has("win32") || has("win16")
     :set runtimepath+=$HOME_DPATH\local\vim\portable_vimrc 
     " TODO: the fix didnt work
@@ -98,6 +99,7 @@ else
     echo "Error: Requires Vim compiled with +python or +python3"
     finish
 endif
+
 
 set runtimepath+=~/local/vim/vimfiles/
 

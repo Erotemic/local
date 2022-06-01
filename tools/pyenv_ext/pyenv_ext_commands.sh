@@ -327,6 +327,9 @@ pyenv_create_virtualenv(){
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
         pyenv_create_virtualenv 3.10.0 most
+
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        pyenv_create_virtualenv 3.11-dev most
     "
     _handle_help "$@" || return 0
 
