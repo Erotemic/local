@@ -133,7 +133,6 @@ Plug 'scrooloose/nerdtree'
 Plug 'majutsushi/tagbar'
 
 Plug 'tpope/vim-markdown'
-
 Plug 'vim-scripts/taglist.vim'
 
 Plug 'google/vim-searchindex'

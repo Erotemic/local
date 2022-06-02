@@ -54,12 +54,12 @@ noremap <leader>j :Tagbar<CR>
 "noremap <c-g> :call PySelectAndFormatParagraph('max_width=110')<CR>
 "noremap <c-f> :call PySelectAndFormatParagraph('max_width=80,myprefix=False,sentence_break=False')<CR>
 
-vnoremap ge :call vimtk#py_select_and_format_paragraph()<CR>
-vnoremap fe :call vimtk#py_select_and_format_paragraph()<CR>
-vnoremap fp :call vimtk#py_select_and_format_paragraph()<CR>
-noremap <leader>ge :call vimtk#py_select_and_format_paragraph()<CR>
-noremap <c-g> :call vimtk#py_select_and_format_paragraph('{"max_width": 110}')<CR>
-noremap <c-f> :call vimtk#py_select_and_format_paragraph('{"max_width": 80, "myprefix": False, "sentence_break": False}')<CR>
+vnoremap ge :call vimtk#select_and_format_paragraph()<CR>
+vnoremap fe :call vimtk#select_and_format_paragraph()<CR>
+vnoremap fp :call vimtk#select_and_format_paragraph()<CR>
+noremap <leader>ge :call vimtk#select_and_format_paragraph()<CR>
+noremap <c-g> :call vimtk#select_and_format_paragraph('{"max_width": 110}')<CR>
+noremap <c-f> :call vimtk#select_and_format_paragraph('{"max_width": 80, "myprefix": False, "sentence_break": False}')<CR>
 
 noremap <c-M-G> :call PySelectAndFormatParagraphNoBreak()<CR>
 

@@ -39,13 +39,29 @@ let g:LatexBox_build_dir="auxdir"
 let g:LatexBox_quickfix=2
 "let g:LatexBox_build_dir="auxdir"
 
-function! SyncTexForward()
-  " https://www.reddit.com/r/vimplugins/comments/32t0xc/forward_search_with_latexbox/
-  let s:syncfile = LatexBox_GetOutputFile()
-  let execstr = "silent !okular --unique ".s:syncfile."\\#src:".line(".").expand("%\:p").' &'
+function! MySyncTexForward()
+    # okular --unique /media/joncrall/flash1/smart_watch_dvc/papers/smart_phase1_final_report/watch-ph1-final.pdf\#src:1000/media/joncrall/flash1/smart_watch_dvc/papers/smart_phase1_final_report/TA-2/task-1.5.1-bas.tex
+  " Note: this command is overloaded and not run
+  " https://www.reddit.com/r/viplugins/comments/32t0xc/forward_search_with_latexbox/
+  let g:syncfile = LatexBox_GetOutputFile()
+  let execstr = "silent !okular --unique ".g:syncfile."\\#src:".line(".").expand("%\:p").' &'
+Python2or3 << EOF
+import vim
+execstr = vim.eval('execstr')
+syncfile = vim.eval('g:syncfile')
+print(f'syncfile={syncfile}')
+print(f'execstr={execstr}')
+EOF
   exec execstr
+"Python2or3 << EOF
+"import vim
+"execstr = vim.eval('execstr')
+"print(f'execstr={execstr}')
+"vim.command(execstr)
+"EOF
 endfunction
-nnoremap <localleader>ls :call SyncTexForward()<CR>
+" Note: this command is overloaded and not run
+"nnoremap <localleader>ls :call MySyncTexForward()<CR>
 
 
 let g:tex_flavor='latex'
