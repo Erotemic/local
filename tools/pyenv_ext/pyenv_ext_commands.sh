@@ -242,8 +242,8 @@ install_pyenv(){
     apt_ensure \
         make build-essential libssl-dev zlib1g-dev \
         libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
-        libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev
-           
+        libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev libgdbm-dev libc6-dev
+
     #apt_ensure python-openssl python3-openssl  # Is this needed?
 
     # Download pyenv
@@ -297,8 +297,8 @@ pyenv_create_virtualenv(){
         PYTHON_VERSION=3.8.5
         CHOSEN_PYTHON_VERSION=3.8.5
 
-        PYTHON_VERSION=3.8.8
-        CHOSEN_PYTHON_VERSION=3.8.8
+        PYTHON_VERSION=3.9.9
+        CHOSEN_PYTHON_VERSION=3.9.9
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
         pyenv_create_virtualenv 3.8.5 all
@@ -326,7 +326,7 @@ pyenv_create_virtualenv(){
         pyenv_create_virtualenv 3.10.0 all
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        pyenv_create_virtualenv 3.10.0 most
+        pyenv_create_virtualenv 3.10.4 most
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
         pyenv_create_virtualenv 3.11-dev most
@@ -459,7 +459,11 @@ pyenv_create_virtualenv(){
         # -march option: https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html
         # -pipe option: https://gcc.gnu.org/onlinedocs/gcc-4.1.2/gcc/Overall-Options.html
         # TODO: maybe use --mtune=intel?
-        PYTHON_CFLAGS="-march=native -O2 -pipe" 
+        if lscpu | grep Intel ; then
+            PYTHON_CFLAGS="-march=native -O3 -pipe" 
+        else
+            PYTHON_CFLAGS="-march=native -mtune=intel -O3 -pipe" 
+        fi
         MAKE_OPTS=""
     elif [[ "$OPTIMIZE_PRESET" == "off" ]]; then
         PROFILE_TASK=""
@@ -499,6 +503,32 @@ pyenv_create_virtualenv(){
         # Create the virtual environment
         $CHOSEN_PYEXE -m venv "$VENV_PATH"
     fi
+}
+
+rebuild_python(){
+    __doc__='
+    Rebuild python with with the same config (useful if ubuntu breaks your libs on you)
+    '
+    #python3 -m sysconfig 
+    #python3 -m sysconfig  | grep -i '\-j'
+    CONFIG_ARGS=$(python -c "import sysconfig; print(sysconfig.get_config_var('CONFIG_ARGS'))")
+    PYTHON_CFLAGS=$(python -c "import sysconfig; print(sysconfig.get_config_var('CONFIGURE_CFLAGS'))")
+    PROFILE_TASK=$(python -c "import sysconfig; print(sysconfig.get_config_var('PROFILE_TASK'))")
+    echo "PROFILE_TASK = $PROFILE_TASK"
+    echo "PYTHON_CFLAGS = $PYTHON_CFLAGS"
+    echo "CONFIG_ARGS = $CONFIG_ARGS"
+
+    # Fix me for non-cpython
+    CHOSEN_PYTHON_VERSION=$(python -c "import sys; print('.'.join(list(map(str, sys.version_info[0:3]))))")
+    echo "CHOSEN_PYTHON_VERSION = $CHOSEN_PYTHON_VERSION"
+
+    MAKE_OPTS="$MAKE_OPTS" \
+    PROFILE_TASK="$PROFILE_TASK" \
+    PYTHON_CFLAGS="$PYTHON_CFLAGS" \
+    PYTHON_CONFIGURE_OPTS="$PYTHON_CONFIGURE_OPTS" \
+        pyenv install "$CHOSEN_PYTHON_VERSION" --verbose
+
+
 }
 
 

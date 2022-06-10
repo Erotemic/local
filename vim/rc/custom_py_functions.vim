@@ -114,9 +114,9 @@ func! FormatJson()
 Python2or3 << EOF
 # FIXME: Unfinished
 import vim
-import pyvim_funcs; pyvim_funcs.reload(pyvim_funcs)
+import vimtk
 
-pyvim_funcs.ensure_normalmode()
+vimtk.Mode.ensure_normal()
 
 try:
     print('formating json')
@@ -125,8 +125,7 @@ try:
     text = '\n'.join(vim.current.buffer[:])
     data = json.loads(text)
     text = json.dumps(data, indent=4)
-    # pyvim_funcs.insert_codeblock_under_cursor(text)
-    pyvim_funcs.overwrite_text(text)
+    vimtk.TextInsertor.overwrite(text)
 except Exception as ex:
     print('ex = {!r}'.format(ex))
     print('error formating json')

@@ -392,7 +392,7 @@ endfunc
 
 func! PySelectAndFormatParagraph(...) 
 Python2or3 << EOF
-# DEPRECATED IN FAVOR OF vimtk#select_and_format_paragraph
+# DEPRECATED IN FAVOR OF vimtk#format_paragraph
 
 import vim
 import pyvim_funcs

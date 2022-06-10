@@ -2733,14 +2733,22 @@ install_xrdp_v2(){
 }
 
 install_qgis(){
-    wget -qO - https://qgis.org/downloads/qgis-2021.gpg.key | sudo gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/qgis-archive.gpg --import
-    sudo chmod a+r /etc/apt/trusted.gpg.d/qgis-archive.gpg
 
-    sudo add-apt-repository "deb https://qgis.org/ubuntu $(lsb_release -c -s) main" -y
-    sudo apt update -y
+    if apt-cache search qgis | grep qgis ; then
+        # On 22.04 it comes builtin
+        sudo apt-get update
+        sudo apt-get -y install qgis
+    else
+        #UBUNTU_VERISON=$(lsb_release -r | cut -f2)
+        # Pre 22.04
+        wget -qO - https://qgis.org/downloads/qgis-2021.gpg.key | sudo gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/qgis-archive.gpg --import
+        sudo chmod a+r /etc/apt/trusted.gpg.d/qgis-archive.gpg
 
-    sudo apt install qgis qgis-plugin-grass -y
-    
+        sudo add-apt-repository "deb https://qgis.org/ubuntu $(lsb_release -c -s) main" -y
+        sudo apt update -y
+
+        sudo apt install qgis qgis-plugin-grass -y
+    fi
 }
 
 install_vscode(){

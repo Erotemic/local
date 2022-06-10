@@ -277,6 +277,7 @@ def minimum_cross_python_versions(package_name):
             cand for cand, score in cand_to_score.items()
             if score == max_score
         ], key=LooseVersion)
+        print('cand_to_score = {}'.format(ub.repr2(cand_to_score, nl=1)))
         print('best_cand = {!r}'.format(best_cand))
         chosen_minimum_for[pyver] = best_cand
     print('chosen_minimum_for = {}'.format(ub.repr2(chosen_minimum_for, nl=1)))
@@ -332,6 +333,7 @@ def demo():
 if __name__ == '__main__':
     """
     CommandLine:
+        python ~/local/tools/supported_python_versions_pip.py numpy
         python ~/local/tools/supported_python_versions_pip.py scipy
         python ~/local/tools/supported_python_versions_pip.py kwimage
         python ~/local/tools/supported_python_versions_pip.py kwcoco
