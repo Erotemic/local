@@ -335,18 +335,24 @@ install_go(){
 
 
 install_ipfs(){
+    __doc__="
+    source ~/local/init/setup_ipfs.sh
+    "
     # IPFS itself
     mkdir -p "$HOME/temp/setup-ipfs"
     cd "$HOME/temp/setup-ipfs"
 
     ARCH="$(dpkg --print-architecture)"
     echo "ARCH = $ARCH"
-    IPFS_VERSION="v0.12.0-rc1"
+    IPFS_VERSION="v0.13.0"
     IPFS_KEY=go-ipfs_${IPFS_VERSION}_linux-${ARCH}
     URL="https://dist.ipfs.io/go-ipfs/${IPFS_VERSION}/${IPFS_KEY}.tar.gz"
     declare -A IPFS_KNOWN_HASHES=(
         ["go-ipfs_v0.12.0-rc1_linux-arm64-sha512"]="730c9d7c31f5e10f91ac44e6aa3aff7c3e57ec3b2b571e398342a62d92a0179031c49fc041cd063403147377207e372d005992fee826cd4c4bba9b23df5c4e0c"
         ["go-ipfs_v0.12.0-rc1_linux-amd64-sha512"]="b0f913f88c515eee75f6dbf8b41aedd876d12ef5af22762e04c3d823964207d1bf314cbc4e39a12cf47faad9ca8bbbbc87f3935940795e891b72c4ff940f0d46"
+
+        ["go-ipfs_v0.13.0_linux-arm64-sha512"]="90c695eedd7e797b9200c91698ef1a6577057fa1774b8afaa4dcf8e6c9580baa323acef25cc25b70e0591954e049f5cd7ddc0ad12274f882fe3e431bb6360c0b"
+        ["go-ipfs_v0.13.0_linux-amd64-sha512"]="12eb0f5c8a12a89b8158368dce2a487cc331f1fdae34baadb598fe5e4280bd8ecb34cf339c5d49fce41458395521cce268ded48c4ac5035944ff8a9bf9f181fd"
     )
     EXPECTED_HASH="${IPFS_KNOWN_HASHES[${IPFS_KEY}-sha512]}"
     BASENAME=$(basename "$URL")
