@@ -119,7 +119,8 @@ call plug#begin($VIMFILES_DPATH . '/bundle')
 Plug 'sjl/badwolf'
 Plug 'osyo-manga/vim-over'
 "Plug 'file:///home/joncrall/.vim/bundle/vimtk'
-Plug 'Erotemic/vimtk'
+Plug 'Erotemic/vimtk', {'branch': 'main' }
+"Plug 'Erotemic/vimtk'
 Plug 'posva/vim-vue'
 
 Plug 'vim-scripts/AnsiEsc.vim'
@@ -141,6 +142,7 @@ Plug 'davidhalter/jedi-vim'
 Plug 'LaTeX-Box-Team/LaTeX-Box'
 
 Plug 'https://github.com/airblade/vim-gitgutter'
+Plug 'cespare/vim-toml', {'branch': 'main' }
 
 "Plug 'jmcantrell/vim-virtualenv'
 "Plug 'cjrh/vim-conda'
