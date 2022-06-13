@@ -25,6 +25,7 @@ https://github.com/Erotemic/ibeis.git
 
 https://github.com/Erotemic/ubelt.git
 https://github.com/Erotemic/xdoctest.git
+https://github.com/Erotemic/xcookie.git
 
 https://github.com/Erotemic/xdev.git
 https://github.com/Erotemic/xinspect.git
