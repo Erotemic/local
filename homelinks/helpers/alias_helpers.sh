@@ -105,6 +105,7 @@ alias pysite='cd $(python -c "import distutils.sysconfig; print(distutils.syscon
 
 alias ub='cd $CODE_DIR/ubelt'
 alias xo='cd $CODE_DIR/xdoctest'
+alias xc='cd $CODE_DIR/xcookie'
 alias xd='cd $CODE_DIR/xdev'
 alias ut='cd $CODE_DIR/utool'
 alias fl='cd $CODE_DIR/pyflann_ibeis/'
