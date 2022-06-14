@@ -336,7 +336,10 @@ install_go(){
 
 install_ipfs(){
     __doc__="
+    Install or upgrade IPFS
+
     source ~/local/init/setup_ipfs.sh
+    install_ipfs
     "
     # IPFS itself
     mkdir -p "$HOME/temp/setup-ipfs"
