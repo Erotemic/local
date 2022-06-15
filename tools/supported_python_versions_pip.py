@@ -87,7 +87,7 @@ class ReqPythonVersionSpec:
         return flag
 
 
-def minimum_cross_python_versions(package_name):
+def minimum_cross_python_versions(package_name, request_min=None):
     import parse
     import ubelt as ub
     import pandas as pd
@@ -95,6 +95,9 @@ def minimum_cross_python_versions(package_name):
     url = "https://pypi.org/pypi/%s/json" % (package_name,)
     resp = requests.get(url)
     assert resp.status_code == 200
+
+    if request_min is not None:
+        request_min = LooseVersion(request_min)
 
     pypi_package_data = json.loads(resp.text)
 
@@ -226,7 +229,7 @@ def minimum_cross_python_versions(package_name):
                                 'packagetype': item['packagetype'],
                             })
     table = pd.DataFrame(rows)
-    chosen_minimum_for = {}
+    chosen_minmax_for = {}
     # For each version of python find the "best" minimum package
     if len(table) == 0:
         print('available_releases = {}'.format(ub.repr2(available_releases, nl=3)))
@@ -238,7 +241,15 @@ def minimum_cross_python_versions(package_name):
         version_to_support = dict(list(subdf.groupby('version')))
 
         cand_to_score = {}
-        version_to_support = ub.sorted_keys(version_to_support, key=LooseVersion)
+
+        try:
+            version_to_support = ub.sorted_keys(version_to_support, key=LooseVersion)
+        except Exception:
+            maybe_bad_keys = list(version_to_support.keys())
+            print('version_to_support = {!r}'.format(maybe_bad_keys))
+            maybe_ok_keys = [k for k in maybe_bad_keys if '.dev0' not in k]
+            version_to_support = ub.dict_subset(version_to_support, maybe_ok_keys)
+
         for cand, support in version_to_support.items():
             score = 0
             # we like supporting most platforms
@@ -271,16 +282,34 @@ def minimum_cross_python_versions(package_name):
 
         cand_to_score = ub.sorted_vals(cand_to_score)
         cand_to_score = ub.sorted_keys(cand_to_score, key=LooseVersion)
+
+        # Filter to only the versions we requested, but if
+        # none exist, return something
+        if request_min is not None:
+            valid_cand = [cand for cand in cand_to_score if cand >= request_min]
+        else:
+            valid_cand = [cand for cand in cand_to_score]
+        if len(valid_cand) == 0:
+            valid_cand = list(cand_to_score)
+        cand_to_score = {c: cand_to_score[c] for c in valid_cand}
+
         # This is a proxy metric, but a pretty good one in 2021
         max_score = max(cand_to_score.values())
+        min_cand = min(cand_to_score.keys())
+
         best_cand = min([
             cand for cand, score in cand_to_score.items()
             if score == max_score
         ], key=LooseVersion)
+        max_cand = max([
+            cand for cand, score in cand_to_score.items()
+        ], key=LooseVersion)
         print('cand_to_score = {}'.format(ub.repr2(cand_to_score, nl=1)))
         print('best_cand = {!r}'.format(best_cand))
-        chosen_minimum_for[pyver] = best_cand
-    print('chosen_minimum_for = {}'.format(ub.repr2(chosen_minimum_for, nl=1)))
+        print('max_cand = {!r}'.format(max_cand))
+        chosen_minmax_for[pyver] = (min_cand, best_cand, max_cand)
+
+    print('chosen_minmax_for = {}'.format(ub.repr2(chosen_minmax_for, nl=1)))
 
     # TODO logic:
     # FOR EACH PYTHON VERSION
@@ -290,6 +319,7 @@ def minimum_cross_python_versions(package_name):
 
     print(sorted(available_for_python.keys()))
 
+    chosen_minimum_for = {k: t[1] for k, t in chosen_minmax_for.items()}
     python_versions = sorted(chosen_minimum_for, key=LooseVersion)
     lines = []
     for cur_pyver, next_pyver in ub.iter_window(python_versions, 2):
