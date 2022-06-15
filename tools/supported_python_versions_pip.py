@@ -99,20 +99,31 @@ def summarize_package_availability(package_name):
             * What python version, arch, and os targets are available.
 
     Ignore:
+        test_packages = [
+            'numpy', 'scipy', 'kwarray', 'pandas', 'ubelt', 'jq', 'kwimage',
+        ]
+        for package_name in test_packages:
+            summarize_package_availability(package_name)
+
+        package_name = 'sqlalchemy'
         package_name = 'scipy'
         package_name = 'kwarray'
+        package_name = 'pandas'
         package_name = 'ubelt'
-
+        package_name = 'jq'
     """
     # import parse
     # import pandas as pd
     # import math
     import ubelt as ub
     url = "https://pypi.org/pypi/{}/json".format(package_name)
-    resp = requests.get(url)
-    assert resp.status_code == 200
-
-    pypi_package_data = json.loads(resp.text)
+    if 0:
+        resp = requests.get(url)
+        assert resp.status_code == 200
+        pypi_package_data = json.loads(resp.text)
+    else:
+        fpath = ub.Path(ub.grabdata(url, fname=ub.hash_data(url)), expires=24 * 60 * 60)
+        pypi_package_data = json.loads(fpath.read_text())
 
     all_releases = pypi_package_data['releases']
     available_releases = {
@@ -121,25 +132,132 @@ def summarize_package_availability(package_name):
     }
 
     version_to_availability = ub.ddict(list)
+    flat_table = []
     for version, items in available_releases.items():
         avail_for = version_to_availability[version]
         for item in items:
             packagetype = item['packagetype']
             if packagetype == 'sdist':
                 avail_for.append(item['requires_python'])
+            elif packagetype == 'bdist_egg':
+                # not handled, sqlalchemy has an example.
+                pass
+            elif packagetype == 'bdist_wininst':
+                # not handled, pandas has an example.
+                pass
             elif packagetype == 'bdist_wheel':
+                wheel_info = parse_wheel_name(item['filename'])
+                if wheel_info:
+                    common = ub.dict_isect(item, wheel_info)
+                    common1 = ub.dict_subset(item, common)
+                    common2 = ub.dict_subset(wheel_info, common)
+                    assert common1 == common2
+                    item.update(wheel_info)
+                    # assert 'abi_tag' in wheel_info
                 avail_for.append(item['python_version'])
             else:
                 raise KeyError(packagetype)
-        version_to_availability[version] = set(avail_for)
-    print('version_to_availability = {}'.format(ub.repr2(version_to_availability, nl=1)))
+            item['pkg_version'] = version
+
+            platform_tag = item.get('platform_tag', None)
+            if platform_tag is not None:
+                item['os'] = platform_tag.split('_')[0]
+                if item['os'] == 'win32':
+                    item['os'] = 'win'
+                if item['os'].startswith('manylinux'):
+                    item['os'] = 'linux'
+            flat_table.append(item)
+
+    if 1:
+        import pandas as pd
+        df = pd.DataFrame(flat_table)
+        df = df.drop([
+            'digests', 'downloads', 'comment_text', 'has_sig', 'filename', 'size',
+            'url', 'upload_time', 'upload_time_iso_8601', 'distribution',
+            'md5_digest', 'yanked', 'yanked_reason'], axis=1)
+
+        from distutils.version import LooseVersion
+        # def vec_ver(vs):
+        #     return [LooseVersion(v) for v in vs]
+
+        def vectorize(func):
+            def wrp(arr):
+                out = []
+                for x in arr:
+                    try:
+                        y = func(x)
+                    except Exception:
+                        y = None
+                    out.append(y)
+                return out
+                # return [func(x) for x in arr]
+            return wrp
+
+        def cp_sorter(v):
+            import re
+            v = str(v.split('_')[0])
+            num = re.sub('[a-z]', '', v)
+            a = num[0:1]
+            b = num[1:]
+            try:
+                a = int(a)
+            except Exception:
+                a = -1
+            try:
+                b = int(b)
+            except Exception:
+                b = -1
+            return (a, b)
+        vec_sorter = vectorize(cp_sorter)
+
+        df = df[df['packagetype'] != 'sdist']
+        df = df[df['abi_tag'] != 'none']
+        # print(df.to_string())
+
+        counts = df.value_counts(['pkg_version', 'abi_tag', 'os']).to_frame('count').reset_index()
+        # piv = counts.to_frame('count').reset_index().pivot(['pkg_version', 'abi_tag'], 'os', 'count')
+        counts = counts.sort_values('abi_tag')
+        # counts.sort_values('abi_tag', key=vec_sorter)
+        # counts = counts.sort_values('abi_tag')
+        piv = counts.pivot(['pkg_version'], ['abi_tag', 'os'], 'count')
+
+        vec_ver = vectorize(LooseVersion)
+        # vec_sorter(['cp310', 'cp27'])
+        vec_sorter(df.abi_tag)
+        piv = piv.sort_values('abi_tag', axis=1, key=vec_sorter)
+        piv = piv.sort_values('pkg_version', key=vec_ver)
+        print('')
+        print('package_name = {}'.format(ub.repr2(package_name, nl=1)))
+        print(piv.to_string())
+
+        # for pkg_version, sub in df.groupby('pkg_version'):
+        #     print('pkg_version = {}'.format(ub.repr2(pkg_version, nl=1)))
+        #     # print(sub)
+        #     counts = sub.value_counts(['abi_tag', 'os'])
+        #     piv = counts.to_frame('count').reset_index().pivot('abi_tag', 'os', 'count')
+        #     print(piv)
+        #     # sub.value_counts(['platform_tag'])
+        #     # print(sub['abi_tag'].unique())
+
+    version_to_availability[version] = set(avail_for)
+
+
+def parse_wheel_name(fname):
+    import parse
+    # Is there a grammer modification to make that can make one pattern that captures both cases?
+    # wheen_name_parser = parse.Parser('{distribution}-{version}(-{build_tag})?-{python_tag}-{abi_tag}-{platform_tag}.whl')
+    wheel_name_parser1 = parse.Parser('{distribution}-{version}-{build_tag}-{python_tag}-{abi_tag}-{platform_tag}.whl')
+    wheel_name_parser2 = parse.Parser('{distribution}-{version}-{python_tag}-{abi_tag}-{platform_tag}.whl')
+    result = wheel_name_parser1.parse(fname) or wheel_name_parser2.parse(fname)
+    if result is not None:
+        return result.named
+    return None
 
 
 def minimum_cross_python_versions(package_name, request_min=None):
     """
     package_name = 'scipy'
     """
-    import parse
     import ubelt as ub
     import pandas as pd
     import math
@@ -160,11 +278,6 @@ def minimum_cross_python_versions(package_name, request_min=None):
                 if item['packagetype'] == 'bdist_wheel':
                     only_consider_bdist = True
                     break
-
-    # Is there a grammer modification to make that can make one pattern that captures both cases?
-    # wheen_name_parser = parse.Parser('{distribution}-{version}(-{build_tag})?-{python_tag}-{abi_tag}-{platform_tag}.whl')
-    wheel_name_parser1 = parse.Parser('{distribution}-{version}-{build_tag}-{python_tag}-{abi_tag}-{platform_tag}.whl')
-    wheel_name_parser2 = parse.Parser('{distribution}-{version}-{python_tag}-{abi_tag}-{platform_tag}.whl')
 
     simplified_available = {}
     for version, items in available_releases.items():
@@ -187,14 +300,13 @@ def minimum_cross_python_versions(package_name, request_min=None):
             if not item['yanked']:
                 if only_consider_bdist and item['packagetype'] != 'bdist_wheel':
                     continue
-                from dateutil.parser import parse
-                dt = parse(item['upload_time_iso_8601'])
+                dt = ub.timeparse(item['upload_time_iso_8601'])
                 filename = item['filename']
-                result = wheel_name_parser1.parse(filename) or wheel_name_parser2.parse(filename)
-                if result is not None:
+                wheel_info = parse_wheel_name(filename)
+                if wheel_info is not None:
                     # result.named['python_tag']
                     for k in ['platform_tag', 'abi_tag']:
-                        item[k] = info2[k] = result.named[k]
+                        item[k] = info2[k] = wheel_info[k]
 
                 info2['upload_time'] = dt.isoformat()
                 simple.append(info2)
@@ -369,6 +481,8 @@ def minimum_cross_python_versions(package_name, request_min=None):
         print('best_cand = {!r}'.format(best_cand))
         print('max_cand = {!r}'.format(max_cand))
         chosen_minmax_for[pyver] = (min_cand, best_cand, max_cand)
+
+    summarize_package_availability(package_name)
 
     print('chosen_minmax_for = {}'.format(ub.repr2(chosen_minmax_for, nl=1)))
 
