@@ -87,12 +87,63 @@ class ReqPythonVersionSpec:
         return flag
 
 
+def summarize_package_availability(package_name):
+    """
+    TODO:
+        for each released version of the package we want to know
+
+        * For source distros:
+            * Does it need to be compiled?
+            * What are is the min (or max?) python version
+        * For binaries:
+            * What python version, arch, and os targets are available.
+
+    Ignore:
+        package_name = 'scipy'
+        package_name = 'kwarray'
+        package_name = 'ubelt'
+
+    """
+    # import parse
+    # import pandas as pd
+    # import math
+    import ubelt as ub
+    url = "https://pypi.org/pypi/{}/json".format(package_name)
+    resp = requests.get(url)
+    assert resp.status_code == 200
+
+    pypi_package_data = json.loads(resp.text)
+
+    all_releases = pypi_package_data['releases']
+    available_releases = {
+        version: [item for item in items if not item['yanked']]
+        for version, items in all_releases.items()
+    }
+
+    version_to_availability = ub.ddict(list)
+    for version, items in available_releases.items():
+        avail_for = version_to_availability[version]
+        for item in items:
+            packagetype = item['packagetype']
+            if packagetype == 'sdist':
+                avail_for.append(item['requires_python'])
+            elif packagetype == 'bdist_wheel':
+                avail_for.append(item['python_version'])
+            else:
+                raise KeyError(packagetype)
+        version_to_availability[version] = set(avail_for)
+    print('version_to_availability = {}'.format(ub.repr2(version_to_availability, nl=1)))
+
+
 def minimum_cross_python_versions(package_name, request_min=None):
+    """
+    package_name = 'scipy'
+    """
     import parse
     import ubelt as ub
     import pandas as pd
     import math
-    url = "https://pypi.org/pypi/%s/json" % (package_name,)
+    url = "https://pypi.org/pypi/{}/json".format(package_name)
     resp = requests.get(url)
     assert resp.status_code == 200
 
@@ -112,14 +163,14 @@ def minimum_cross_python_versions(package_name, request_min=None):
 
     # Is there a grammer modification to make that can make one pattern that captures both cases?
     # wheen_name_parser = parse.Parser('{distribution}-{version}(-{build_tag})?-{python_tag}-{abi_tag}-{platform_tag}.whl')
-    wheen_name_parser1 = parse.Parser('{distribution}-{version}-{build_tag}-{python_tag}-{abi_tag}-{platform_tag}.whl')
-    wheen_name_parser2 = parse.Parser('{distribution}-{version}-{python_tag}-{abi_tag}-{platform_tag}.whl')
+    wheel_name_parser1 = parse.Parser('{distribution}-{version}-{build_tag}-{python_tag}-{abi_tag}-{platform_tag}.whl')
+    wheel_name_parser2 = parse.Parser('{distribution}-{version}-{python_tag}-{abi_tag}-{platform_tag}.whl')
 
     simplified_available = {}
-    for version, infos in available_releases.items():
+    for version, items in available_releases.items():
         simple = []
-        for info in infos:
-            info2 = ub.dict_diff(info, {
+        for item in items:
+            info2 = ub.dict_diff(item, {
                 'digests',
                 'upload_time_iso_8601',
                 'upload_time',
@@ -133,17 +184,17 @@ def minimum_cross_python_versions(package_name, request_min=None):
                 'yanked',
                 'yanked_reason',
             })
-            if not info['yanked']:
-                if only_consider_bdist and info['packagetype'] != 'bdist_wheel':
+            if not item['yanked']:
+                if only_consider_bdist and item['packagetype'] != 'bdist_wheel':
                     continue
                 from dateutil.parser import parse
-                dt = parse(info['upload_time_iso_8601'])
-                filename = info['filename']
-                result = wheen_name_parser1.parse(filename) or wheen_name_parser2.parse(filename)
+                dt = parse(item['upload_time_iso_8601'])
+                filename = item['filename']
+                result = wheel_name_parser1.parse(filename) or wheel_name_parser2.parse(filename)
                 if result is not None:
                     # result.named['python_tag']
                     for k in ['platform_tag', 'abi_tag']:
-                        info[k] = info2[k] = result.named[k]
+                        item[k] = info2[k] = result.named[k]
 
                 info2['upload_time'] = dt.isoformat()
                 simple.append(info2)
@@ -227,9 +278,12 @@ def minimum_cross_python_versions(package_name, request_min=None):
                                 'pyver': pyver,
                                 'has_sig': item['has_sig'],
                                 'packagetype': item['packagetype'],
+                                'platform_tag': 'any',
                             })
     table = pd.DataFrame(rows)
     chosen_minmax_for = {}
+    chosen_minimum_for = {}
+
     # For each version of python find the "best" minimum package
     if len(table) == 0:
         print('available_releases = {}'.format(ub.repr2(available_releases, nl=3)))
@@ -253,32 +307,39 @@ def minimum_cross_python_versions(package_name, request_min=None):
         for cand, support in version_to_support.items():
             score = 0
             # we like supporting most platforms
+            # try:
             platforms = support['platform_tag'].unique()
-            platforms = platforms[~pd.isnull(platforms)]
-            # This is a slick bit of python
-            groups = ub.group_items(platforms, key=lambda x: (
-                ((not isinstance(x, str) and 'nan') or
-                 ('win' in x and 'win32') or
-                 ('linux' in x and 'linux') or
-                 ('osx' in x and 'osx') or
-                 'other')
-            ))
-            assert not groups.pop('nan', None)
-            # We care about some OS more than others
-            score += 113 * ('linux' in groups)
-            score += 71 * ('win' in groups)
-            score += 53 * ('osx' in groups)
-            score += 2 * ('other' in groups)
-            if 'other' in groups:
-                print('warning: unhandled other groups = {!r}'.format(groups))
+            # except KeyError as ex:
+            #     print('support = {}'.format(ub.repr2(support, nl=1)))
+            #     print(f'skip ex={ex}')
+            #     pass
+            if 1:
+                platforms = platforms[~pd.isnull(platforms)]
+                # This is a slick bit of python
+                groups = ub.group_items(platforms, key=lambda x: (
+                    ((not isinstance(x, str) and 'nan') or
+                     ('win' in x and 'win32') or
+                     ('linux' in x and 'linux') or
+                     ('osx' in x and 'osx') or
+                     'other')
+                ))
+                assert not groups.pop('nan', None)
+                # We care about some OS more than others
+                score += 213 * ('any' in groups)
+                score += 113 * ('linux' in groups)
+                score += 71 * ('win' in groups)
+                score += 53 * ('osx' in groups)
+                score += 2 * ('other' in groups)
+                if 'other' in groups:
+                    print('warning: unhandled other groups = {!r}'.format(groups))
 
-            # Diversity score
-            score += sum(ub.map_vals(lambda x: math.log(len(x)), groups).values())
+                # Diversity score
+                score += sum(ub.map_vals(lambda x: math.log(len(x)), groups).values())
 
-            score += len(platforms)
-            # we like signatures
-            score += support['has_sig'].mean() * 6.28318
-            cand_to_score[cand] = score
+                score += len(platforms)
+                # we like signatures
+                score += support['has_sig'].mean() * 6.28318
+                cand_to_score[cand] = score
 
         cand_to_score = ub.sorted_vals(cand_to_score)
         cand_to_score = ub.sorted_keys(cand_to_score, key=LooseVersion)
@@ -324,13 +385,21 @@ def minimum_cross_python_versions(package_name, request_min=None):
     lines = []
     for cur_pyver, next_pyver in ub.iter_window(python_versions, 2):
         pkg_ver = chosen_minimum_for[cur_pyver]
-        line = f"{package_name}>={pkg_ver:<8}  ; python_version < '{next_pyver}' and python_version >= '{cur_pyver}'    # Python {cur_pyver}"
-        lines.append(line)
+        if not pkg_ver.startswith('stdlib'):
+            line = f"{package_name}>={pkg_ver:<8}  ; python_version < '{next_pyver}' and python_version >= '{cur_pyver}'    # Python {cur_pyver}"
+            lines.append(line)
+        else:
+            line = f"# {package_name}>={pkg_ver:<8} is in the stdlib for python_version < '{next_pyver}' and python_version >= '{cur_pyver}'    # Python {cur_pyver}"
+            lines.append(line)
     # last
     cur_pyver = python_versions[-1]
     pkg_ver = chosen_minimum_for[cur_pyver]
-    line =     f"{package_name}>={pkg_ver:<8}  ;                            python_version >= '{cur_pyver}'    # Python {cur_pyver}+"
-    lines.append(line)
+    if not pkg_ver.startswith('stdlib'):
+        line =     f"{package_name}>={pkg_ver:<8}  ;                            python_version >= '{cur_pyver}'    # Python {cur_pyver}+"
+        lines.append(line)
+    else:
+        line = f"# {package_name}>={pkg_ver:<8} is in the stdlib for python_version < '{next_pyver}' and python_version >= '{cur_pyver}'    # Python {cur_pyver}"
+        lines.append(line)
     text = '\n'.join(lines[::-1])
     print(text)
 

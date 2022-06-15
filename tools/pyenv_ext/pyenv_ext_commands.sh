@@ -311,6 +311,9 @@ pyenv_create_virtualenv(){
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
         pyenv_create_virtualenv 2.7.18
+
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        pyenv_create_virtualenv 2.7.17 off
         
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
         PYTHON_VERSION=3.4.10

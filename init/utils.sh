@@ -528,7 +528,7 @@ safe_symlink(){
     _handle_help "$@" || return 0
     real_path=$1
     link_path=$2
-    echo "Safe symlink $link_path -> $real_path"
+    echo "Safe symlink $real_path <- $link_path"
     unlink_or_backup "${link_path}"
     ln -s "${real_path}" "${link_path}"
 }
@@ -565,7 +565,7 @@ safe_copy(){
     _handle_help "$@" || return 0
     src_path=$1
     dst_path=$2
-    echo "Safe copy $dst_path <- $src_path"
+    echo "Safe copy $src_path to $dst_path"
     unlink_or_backup "${dst_path}"
     cp -r "${src_path}" "${dst_path}"
 }

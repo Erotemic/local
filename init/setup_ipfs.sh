@@ -336,7 +336,10 @@ install_go(){
 
 install_ipfs(){
     __doc__="
+    Install or upgrade IPFS
+
     source ~/local/init/setup_ipfs.sh
+    install_ipfs
     "
     # IPFS itself
     mkdir -p "$HOME/temp/setup-ipfs"
@@ -359,8 +362,58 @@ install_ipfs(){
     curl_verify_hash "$URL" "$BASENAME" "$EXPECTED_HASH" sha512sum
 
     echo "BASENAME = $BASENAME"
+    rm -rf go-ipfs/ipfs
     tar -xvzf "$BASENAME"
+
+    # TODO: stop and start the IPFS service before upgrade
+    #sudo systemctl stop ipfs-cluster
     cp go-ipfs/ipfs "$INSTALL_PREFIX/bin"
+    #sudo systemctl start ipfs-cluster
+}
+
+
+_scrape_ipfs_version_info(){
+    # Use to generate the declared known hash table
+    pip install beautifulsoup4
+    __doc__='
+    import requests
+    base_url = "https://dist.ipfs.io/go-ipfs"
+    resp = requests.get(base_url + "/versions")
+    versions = [v for v_ in resp.text.split("\n") if (v:= v_.strip())]
+    from distutils.version import LooseVersion
+    min = LooseVersion("v0.11.0")
+    export_versions = []
+    for ver in versions:
+        if LooseVersion(ver) > min:
+            export_versions.append(ver)
+
+    print(export_versions)
+    table = []
+    for ver in export_versions:
+        dist_url = base_url + f"/{ver}/dist.json"
+        dist_resp_fpath = ub.grabdata(dist_url, fname=ub.hash_data(dist_url) + ".json", expires=1000)
+        dist_data = json.loads(ub.Path(dist_resp_fpath).read_text())
+        data = dist_resp.json()
+
+        dist_data["releaseLink"]
+        for plat_name, items in dist_data["platforms"].items():
+            for arch_name, arch_info in items["archs"].items():
+                arch_info["cid"]
+                full_url = base_url + "/" + arch_info["link"]
+                hash = arch_info["sha512"]
+                arch_info["full_url"] = full_url
+                arch_info["plat_name"] = plat_name
+                arch_info["arch"] = arch
+                table.append(arch_info)
+
+    for arch_info in table:
+        name = arch_info["link"]
+        sha = arch_info["sha512"]
+        if arch_info["plat_name"] in {"linux"}:
+            if arch_info["arch"] in {"amd64", "arm64", "arm"}:
+                line = f""" ["{name}"]="{sha}" """.strip()
+                print(line)
+    '
 }
 
 
