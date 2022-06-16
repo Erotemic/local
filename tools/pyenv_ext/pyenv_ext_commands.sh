@@ -323,6 +323,9 @@ pyenv_create_virtualenv(){
         pyenv_create_virtualenv 3.5.10 off
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        pyenv_create_virtualenv 3.6.15 off
+
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
         pyenv_create_virtualenv 3.9.9 full
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
@@ -442,7 +445,11 @@ pyenv_create_virtualenv(){
             --with-computed-gotos
             --with-lto")
 
-        PYTHON_CFLAGS="-march=native -O2 -pipe" 
+        if lscpu | grep Intel ; then
+            PYTHON_CFLAGS="-march=native -mtune=intel -O3 -pipe" 
+        else
+            PYTHON_CFLAGS="-march=native -O3 -pipe" 
+        fi
     elif [[ "$OPTIMIZE_PRESET" == "most" ]]; then
         # FIXME: most and full are the same, what is the real breakdown?
         PROFILE_TASK=$(_strip_double_whitespace "-m test.regrtest 
@@ -463,9 +470,9 @@ pyenv_create_virtualenv(){
         # -pipe option: https://gcc.gnu.org/onlinedocs/gcc-4.1.2/gcc/Overall-Options.html
         # TODO: maybe use --mtune=intel?
         if lscpu | grep Intel ; then
-            PYTHON_CFLAGS="-march=native -O3 -pipe" 
-        else
             PYTHON_CFLAGS="-march=native -mtune=intel -O3 -pipe" 
+        else
+            PYTHON_CFLAGS="-march=native -O3 -pipe" 
         fi
         MAKE_OPTS=""
     elif [[ "$OPTIMIZE_PRESET" == "off" ]]; then
