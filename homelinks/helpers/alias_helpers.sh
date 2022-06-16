@@ -83,6 +83,7 @@ alias sc='cd $HOME/code/scriptconfig'
 alias kwa='cd $HOME/code/kwarray'
 alias kwn='cd $HOME/code/kwannot'
 alias kwi='cd $HOME/code/kwimage'
+alias kwe='cd $HOME/code/kwimage_ext'
 alias kwp='cd $HOME/code/kwplot'
 
 alias cv='cd $CODE_DIR/opencv'
