@@ -445,6 +445,10 @@ def minimum_cross_python_versions(package_name, request_min=None):
             if min_pyver == 'source':
                 min_pyver = None
 
+            # Skip pypy for now
+            if min_pyver is not None and min_pyver.startswith('pp'):
+                continue
+
             if min_pyver is None:
                 # TODO: can use better heuristics here
                 min_pyver = last_min_pyver
@@ -558,6 +562,7 @@ def minimum_cross_python_versions(package_name, request_min=None):
             line = f"# {package_name}>={pkg_ver:<8} is in the stdlib for python_version < '{next_pyver}' and python_version >= '{cur_pyver}'    # Python {cur_pyver}"
             lines.append(line)
     # last
+    # https://peps.python.org/pep-0508/
     cur_pyver = python_versions[-1]
     pkg_ver = chosen_minimum_for[cur_pyver]
     if not pkg_ver.startswith('stdlib'):
