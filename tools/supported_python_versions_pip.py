@@ -257,6 +257,7 @@ def grab_pypi_items(package_name):
                 platinfo = parse_platform_tag(platform_tag)
                 item['os'] = platinfo['os']
                 item['arch'] = platinfo['arch']
+
             flat_table.append(item)
     table = pd.DataFrame(flat_table)
     return table
@@ -274,6 +275,9 @@ def summarize_package_availability(package_name):
             * What python version, arch, and os targets are available.
 
     Ignore:
+        import sys, ubelt
+        sys.path.append(ubelt.expandpath('~/local/tools'))
+        from supported_python_versions_pip import *  # NOQA
         test_packages = [
             'numpy', 'scipy', 'kwarray', 'pandas', 'ubelt', 'jq', 'kwimage',
         ]
@@ -286,14 +290,28 @@ def summarize_package_availability(package_name):
         package_name = 'pandas'
         package_name = 'ubelt'
         package_name = 'jq'
+        package_name = 'torch'
+        summarize_package_availability(package_name)
     """
+    import numpy as np
+    import pandas as pd
     flat_table = grab_pypi_items(package_name)
 
+    new = []
+    for item in flat_table.to_dict('records'):
+        # Hack for mac
+        if item.get('python_version', None) is not None:
+            if item.get('abi_tag', None) is None:
+                item['abi_tag'] = item['python_version']
+        new.append(item)
+    flat_table = pd.DataFrame(new)
+
     if 1:
-        import pandas as pd
         df = pd.DataFrame(flat_table)
         df = df.drop([
-            'digests', 'downloads', 'comment_text', 'has_sig', 'filename', 'size',
+            'digests', 'downloads', 'comment_text', 'has_sig',
+            # 'filename',
+            'size',
             'url', 'upload_time', 'upload_time_iso_8601', 'distribution',
             'md5_digest', 'yanked', 'yanked_reason'], axis=1)
 
@@ -330,9 +348,12 @@ def summarize_package_availability(package_name):
             return (a, b)
         vec_sorter = vectorize(cp_sorter)
 
-        flags = (df['packagetype'] != 'sdist') & df['abi_tag'] != 'none'
-        import numpy as np
-        if np.any(flags):
+        flags = (df['packagetype'] != 'sdist')
+        if not np.all(flags):
+            df = df[flags]
+
+        flags = (df['abi_tag'] != 'none')
+        if not np.all(flags):
             df = df[flags]
 
         if 1:
@@ -412,10 +433,10 @@ def minimum_cross_python_versions(package_name, request_min=None):
                 min_pyver = reqspec.highest_explicit()
                 # min_pyver = min_pyver.vstring
                 min_pyver = min_pyver.base_version
+                last_min_pyver = min_pyver
 
-            if min_pyver is None:
-                if row['python_version'] is not None:
-                    min_pyver = cp_codes.get(row['python_version'], row['python_version'])
+            if row['python_version'] is not None:
+                min_pyver = cp_codes.get(row['python_version'], row['python_version'])
             if min_pyver == 'py2.py3':
                 min_pyver = '2.7'
             if min_pyver == 'py3':
@@ -428,7 +449,6 @@ def minimum_cross_python_versions(package_name, request_min=None):
                 # TODO: can use better heuristics here
                 min_pyver = last_min_pyver
 
-            last_min_pyver = min_pyver
             row['min_pyver'] = min_pyver
             new_rows.append(row)
 
@@ -577,6 +597,9 @@ def demo():
         'ubelt',
         'line_profiler',
         'torch',
+        'sqlalchemy',
+        'kwarray',
+        'jq',
     ]
 
     for package_name in package_names:
@@ -590,6 +613,7 @@ if __name__ == '__main__':
         python ~/local/tools/supported_python_versions_pip.py scipy
         python ~/local/tools/supported_python_versions_pip.py kwimage
         python ~/local/tools/supported_python_versions_pip.py kwcoco
+        python ~/local/tools/supported_python_versions_pip.py torch
         python ~/local/tools/supported_python_versions_pip.py line_profiler
     """
     import fire
