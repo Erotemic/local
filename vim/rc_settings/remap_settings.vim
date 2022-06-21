@@ -125,6 +125,20 @@ noremap <leader>n A  # NOQA<Esc>
 " Change dictionary body to ordered dictionary
 noremap <leader>ro :s/^\( *\)\([^ ]\)/\1(\2/ <bar> '<,'>s/,$/),/ <bar> '<,'>s/:/,/<CR>
 
+
+func! ConvertSelectionToLiteralDict()
+Python2or3 << EOF
+# Change to a dictionary literal
+import vimtk
+print(f'vimtk.__file__={vimtk.__file__}')
+print(dir(vimtk.Python))
+vimtk.reload()
+vimtk.Python._convert_selection_to_literal_dict()
+EOF
+endfunc
+noremap <leader>rd :call ConvertSelectionToLiteralDict()<Esc>
+
+
 " Doctest editing
 "vnoremap gd :call PyFormatDoctest()<CR>
 "vnoremap gu :call PyUnFormatDoctest()<CR>
