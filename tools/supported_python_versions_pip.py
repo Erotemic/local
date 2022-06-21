@@ -576,6 +576,7 @@ def demo():
         'kwimage',
         'ubelt',
         'line_profiler',
+        'torch',
     ]
 
     for package_name in package_names:
