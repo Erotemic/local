@@ -355,7 +355,7 @@ install_ipfs(){
         ["go-ipfs_v0.12.0-rc1_linux-amd64-sha512"]="b0f913f88c515eee75f6dbf8b41aedd876d12ef5af22762e04c3d823964207d1bf314cbc4e39a12cf47faad9ca8bbbbc87f3935940795e891b72c4ff940f0d46"
 
         ["go-ipfs_v0.13.0_linux-arm64-sha512"]="90c695eedd7e797b9200c91698ef1a6577057fa1774b8afaa4dcf8e6c9580baa323acef25cc25b70e0591954e049f5cd7ddc0ad12274f882fe3e431bb6360c0b"
-        ["go-ipfs_v0.13.0_linux-amd64-sha512"]="12eb0f5c8a12a89b8158368dce2a487cc331f1fdae34baadb598fe5e4280bd8ecb34cf339c5d49fce41458395521cce268ded48c4ac5035944ff8a9bf9f181fd"
+        ["go-ipfs_v0.13.0_linux-amd64-sha512"]="40c3f69af9e7a72fa9836ba87cd471c82194bd64cf4a9cedfd730ab457b7f2a4ede861a2cfcb936e232e690fd26ef398d88e3ca55e1ec57795bf0bb8aae62a78"
     )
     EXPECTED_HASH="${IPFS_KNOWN_HASHES[${IPFS_KEY}-sha512]}"
     BASENAME=$(basename "$URL")
@@ -435,15 +435,16 @@ initialize_ipfs(){
     #    sudo sysctl -w net.core.rmem_max=2500000
     #fi
 
+    # To run a node you have to start the ipfs daemon (we can do it in tmux)
+    # You will also need to ensure port 4001 is open
+    # TODO: test if daemon already running
+    tmux new-session -d -s "ipfs_daemon" "ipfs daemon"
+
     # Maybe server is not the best profile?
     # https://docs.ipfs.io/how-to/command-line-quick-start/#prerequisites
     #ipfs init --profile server
     #ipfs init --profile badgerds
     ipfs init --profile lowpower
-
-    # To run a node you have to start the ipfs daemon (we can do it in tmux)
-    # You will also need to ensure port 4001 is open
-    tmux new-session -d -s "ipfs_daemon" "ipfs daemon"
 
     # Swarm wont work until the daemon is running, so retry until it works
     max_retry=60
@@ -462,6 +463,9 @@ initialize_ipfs(){
 
     # Quick test that we can look at the IPFS README
 	ipfs cat /ipfs/QmQPeNsJPyVWPFDVHb77w8G42Fvo15z4bG2X8D2GhfbSXc/readme
+
+    # Stop the IPFS daemon
+    tmux kill-session -t "ipfs_deamon"
 }
 
 
@@ -571,7 +575,6 @@ install_ipfs_cluster_service(){
 
     Usage:
         source ~/local/init/setup_ipfs.sh
-        install_ipfs_service
     "
     # https://gist.github.com/pstehlik/9efffa800bd1ddec26f48d37ce67a59f
     # https://www.maxlaumeister.com/u/run-ipfs-on-boot-ubuntu-debian/
@@ -654,23 +657,6 @@ pin_my_shit(){
 }
 
 
-main(){
-    # Step 0: Ensure we have prereqs
-    install_prereqs
-
-    # Step 1: Ensure we have a go executable
-    install_go 
-
-    # Step 2: Install IPFS itself
-    install_ipfs 
-
-    # Step 3: Initialize IPFS
-    initialize_ipfs
-
-    # Step 4 (optional): Pin my shit
-    pin_my_shit
-}
-
 setup_lotus_filecoin(){
     sudo apt install mesa-opencl-icd ocl-icd-opencl-dev gcc git bzr jq pkg-config curl clang build-essential hwloc libhwloc-dev wget -y && sudo apt upgrade -y
 
@@ -745,4 +731,27 @@ setup_lotus_filecoin(){
     #LOTUS_CLIENT_USEIPFS=true lotus client deal Qmd4PzLWTZiawH1W3VzoAbkyh9hCopjqSVAddYF8PrYBfE 180 f01652333
     #cd /home/joncrall/data/dvc-repos/shitspotter_dvc/assets/
     #lotus client import poop-2022-04-16-T135257
+}
+
+main(){
+    # Step 0: Ensure we have prereqs
+    install_prereqs
+
+    # Step 1: Ensure we have a go executable
+    install_go 
+
+    # Step 2: Install IPFS itself
+    install_ipfs 
+
+    # Step 3: Initialize IPFS
+    initialize_ipfs
+
+    # Step 3.1 init ipfs as a service
+    install_ipfs_service
+
+    # Step 3.5 test pinning
+    ipfs pin add QmWhKBAQ765YH2LKMQapWp7mULkQxExrjQKeRAWNu5mfBK --progress
+
+    # Step 4 (optional): Pin my shit
+    #pin_my_shit
 }
