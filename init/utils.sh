@@ -1222,3 +1222,47 @@ is_probably_decrypted(){
         fi
     fi
 }
+
+ls_array(){
+    __doc__='
+    Read the results of a glob pattern into an array
+
+    Args:
+        arr_name
+        glob_pattern
+
+    Example:
+        arr_name="myarray"
+        glob_pattern="*"
+        pass
+        bash_array_repr "${array[@]}"
+        mkdir -p $HOME/tmp/tests/test_ls_arr
+        cd $HOME/tmp/tests/test_ls_arr
+        touch "$HOME/tmp/tests/test_ls_arr/path ological files"
+        touch "$HOME/tmp/tests/test_ls_arr/are so fun"
+        touch "$HOME/tmp/tests/test_ls_arr/foo"
+        touch "$HOME/tmp/tests/test_ls_arr/bar"
+        touch "$HOME/tmp/tests/test_ls_arr/baz"
+        touch "$HOME/tmp/tests/test_ls_arr/biz"
+        touch "$HOME/tmp/tests/test_ls_arr/fake_newline\n in fils? YES!"
+        python -c "import ubelt; ubelt.Path(\"$HOME/tmp/tests/test_ls_arr/Real newline \n in fname\").expand().touch()"
+        python -c "import ubelt; ubelt.Path(\"$HOME/tmp/tests/test_ls_arr/Realnewline\ninfname\").expand().touch()"
+
+        arr_name="myarray"
+        glob_pattern="*"
+        ls_array "$arr_name" "$glob_pattern"
+        bash_array_repr "${array[@]}"
+
+    References:
+        .. [1] https://stackoverflow.com/a/18887210/887074
+    '
+    local arr_name="$1"
+    local glob_pattern="$2"
+    shopt -s nullglob
+    # shellcheck disable=SC2206
+    array=($glob_pattern)
+    shopt -u nullglob # Turn off nullglob to make sure it doesn't interfere with anything later
+    # Copy the array into the dynamically named variable
+    readarray -t "$arr_name" < <(printf '%s\n' "${array[@]}")
+}
+

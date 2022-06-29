@@ -1536,7 +1536,21 @@ list-all-ppas(){
     #https://askubuntu.com/questions/148932/how-can-i-get-a-list-of-all-repositories-and-ppas-from-the-command-line-into-an
 
     # shellcheck disable=SC2044
-    for APT in $(find /etc/apt/ -name \*.list); do
+    source ~/local/init/utils.sh
+    #ls_array "FOUND" "/etc/apt/*/*.list"
+    #bash_array_repr "${FOUND[@]}"
+    #for APT in $(find /etc/apt/ -name \*.list); do
+
+    # shellcheck disable=SC2207
+    FOUND=($(find /etc/apt/ -name \*.list))
+    #bash_array_repr "${FOUND[@]}"
+
+    for APT in "${FOUND[@]}"; do
+        echo "APT = $APT"
+        cat "$APT" | grep "^deb"
+    done
+
+    for APT in "${FOUND[@]}"; do
         # shellcheck disable=SC2162
         grep -o "^deb http://ppa.launchpad.net/[a-z0-9\-]\+/[a-z0-9\-]\+" "$APT" | while read ENTRY ; do
             echo "ENTRY = $ENTRY"
