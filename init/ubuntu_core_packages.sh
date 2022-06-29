@@ -1,4 +1,6 @@
-source $HOME/local/init/utils.sh
+#!/bin/bash
+
+source "$HOME"/local/init/utils.sh
 
 common_paths()
 {
@@ -43,14 +45,14 @@ custom_tmux()
     git clone https://github.com/tmux/tmux.git
     cd tmux
     sh autogen.sh
-    ./configure --prefix=$HOME
+    ./configure --prefix="$HOME"
     make -j9
     make install
 
     # Install plugin manager
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
-    ln -vs $HOME/local/homelinks/tmux.conf $HOME/.tmux.conf
+    ln -vs "$HOME"/local/homelinks/tmux.conf "$HOME"/.tmux.conf
 }
 
 
@@ -166,7 +168,7 @@ truely_ergonomic_keyboard_setup()
     mv usr/lib/x86_64-linux-gnu/* .
     mv lib/x86_64-linux-gnu/* .
 
-    sudo LD_LIBRARY_PATH=$(realpath .):$LD_LIBRARY_PATH ./tek
+    LD_LIBRARY_PATH=$(realpath .):"$LD_LIBRARY_PATH" ./tek
 
     # new link for the 229
     # https://trulyergonomic.com/store/layout-designer--configurator--reprogrammable--truly-ergonomic-mechanical-keyboard.html#KTo7PD0+P0BBQkNERUw5394rNR4fICEi4yMkJSYnLS4xOBQaCBUXTBwYDBITLzDhBBYHCQorCw0ODzPl4B0bBhkFKhEQNjc05OfiSktOTSwoLFBSUU/mRQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAX2BhAAAAAAAAAAAAAAAAXF1eVlcAAAAAAAAAAABZWltVAAAAAAAAAAAAYgBjVAAAAAAAAAAAWCsAAAAAAACTAQAMAiMBAAwBigEADAIhAQAMAZQBAAwBkgEADAGDAQAMALYBAAwAzQEADAC1AQAMAOIBAAwA6gEADADpAQAMALhJAEYAAAAAAEitR64AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACk6Ozw9Pj9AQUJDREVMOd/eKzUeHyAhImQjJCUmJy4qLzAUGggVF0wcGAwSEzQx4wQWBwkKLQsNDg8z5+EdGwYZBSoREDY3OOXg4kpLTk0sKCxQUlFP5uQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAF9gYQAAAAAAAAAAAAAAAFxdXlZXAAAAAAAAAAAAWVpbVQAAAAAAAAAAAGIAY1QAAAAAAAAAAFgrAAAAAAAAkwEADAIjAQAMAYoBAAwCIQEADAGUAQAMAZIBAAwBgwEADAC2AQAMAM0BAAwAtQEADADiAQAMAOoBAAwA6QEADAC4SQBGAAAAAABIrUeuAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
@@ -594,14 +596,13 @@ install_virtualbox()
     python -c 'import ubelt; print(ubelt.grabdata("http://download.virtualbox.org/virtualbox/4.1.12/VBoxGuestAdditions_4.1.12.iso"))'
     python -c 'import ubelt; print(ubelt.grabdata("http://mirror.solarvps.com/centos/7.0.1406/isos/x86_64/CentOS-7.0-1406-x86_64-DVD.iso"))'
     python -c 'import ubelt; print(ubelt.grabdata("http://download.virtualbox.org/virtualbox/4.1.12/VBoxGuestAdditions_4.1.12.iso"))'
-    http://mirror.centos.org/centos/7/isos/x86_64/
-    
+    #http://mirror.centos.org/centos/7/isos/x86_64/
 }
 
 
 lprof_dl()
 {
-    cd $CODE_DIR
+    cd "$CODE_DIR"
     git clone https://github.com/rkern/line_profiler.git
     sudo pip uninstall line-profiler
 }
@@ -634,7 +635,7 @@ install_clang()
     CLANG_VERSION_PRIORITY=$(python -c "print(int(100 * $CLANG_VERSION))")
     echo "CLANG_VERSION=$CLANG_VERSION"
     echo "CLANG_VERSION_PRIORITY=$CLANG_VERSION_PRIORITY"
-    sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-$CLANG_VERSION $CLANG_VERSION_PRIORITY \
+    sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-$CLANG_VERSION "$CLANG_VERSION_PRIORITY" \
         --slave /usr/bin/clang++ clang++ /usr/bin/clang++-$CLANG_VERSION \
         --slave /usr/bin/clang-check clang-check /usr/bin/clang-check-$CLANG_VERSION \
         --slave /usr/bin/clang-query clang-query /usr/bin/clang-query-$CLANG_VERSION \
@@ -665,7 +666,7 @@ ut.cmd('ls')
 ut.cmd('nxserver --install', sudo=True)
 ut.cmd('/usr/NX/nxserver --install', sudo=True)
 __PYSCRIPT__
-python /dev/fd/42 $@
+#python /dev/fd/42 $@
 
 #ut.cmd('cp -r --verbose NX /usr/NX', sudo=True)
 
@@ -887,16 +888,16 @@ utool_settings()
 make_venv_physical()
 {
     # Hack to make venv physical
-    cd $PYTHON_VENV
-    cd $PYTHON_VENV/include
+    cd "$PYTHON_VENV"
+    cd "$PYTHON_VENV"/include
     dpath=$PYTHON_VENV/include/python2.7
     # Copy all things in the symlink dir into a physical one
     # TODO: keep track of source location
     if [[ -L "$dpath" && -d "$dpath" ]]; then\
         echo "$dpath is a symlink directory"; \
-        mv $dpath "$dpath"_temp
-        mkdir $dpath 
-        cp -R "$dpath"_temp/* $dpath
+        mv "$dpath" "$dpath"_temp
+        mkdir "$dpath" 
+        cp -R "$dpath"_temp/* "$dpath"
         rm "$dpath"_temp
     elif [[ -d "$dpath" ]]; then echo \
         "$dpath is a physical directory dpath"; \
@@ -935,6 +936,7 @@ trackball(){
     #xinput --list | grep -i -m 1 'trackball' | grep -o 'id=[0-9]\+' | grep -o '[0-9]\+'
     #xinput --help 2>&1 >/dev/null | grep set-.*-prop
 
+    dev=/dev/someid
     xinput list-props "$dev"
 
     device="Logitech USB Trackball"
@@ -971,7 +973,7 @@ winestuff(){
 edit_startup_commands()
 {
     gvim /etc/rc.local
-    gvim $HOME/.config/autostart
+    gvim "$HOME"/.config/autostart
     gvim /home/joncrall/.config/autostart/update-monitor-position.desktop
     gvim /home/joncrall/tmp/update-monitor-position
     gvim /usr/local/sbin/update-monitor-position
@@ -1005,10 +1007,10 @@ fix_monitor_positions()
     sudo wget -O /usr/share/applications/update-monitor-position.desktop https://raw.githubusercontent.com/NicolasBernaerts/ubuntu-scripts/master/ubuntugnome/update-monitor-position.desktop
     sudo chmod +x /usr/share/applications/update-monitor-position.desktop
 
-    mkdir -p $HOME/.config/autostart
-    wget -O $HOME/.config/autostart/update-monitor-position.desktop https://raw.githubusercontent.com/NicolasBernaerts/ubuntu-scripts/master/ubuntugnome/update-monitor-position.desktop
-    sed -i -e 's/^Exec=.*$/Exec=update-monitor-position 5/' $HOME/.config/autostart/update-monitor-position.desktop
-    chmod +x $HOME/.config/autostart/update-monitor-position.desktop
+    mkdir -p "$HOME"/.config/autostart
+    wget -O "$HOME"/.config/autostart/update-monitor-position.desktop https://raw.githubusercontent.com/NicolasBernaerts/ubuntu-scripts/master/ubuntugnome/update-monitor-position.desktop
+    sed -i -e 's/^Exec=.*$/Exec=update-monitor-position 5/' "$HOME"/.config/autostart/update-monitor-position.desktop
+    chmod +x "$HOME"/.config/autostart/update-monitor-position.desktop
         
 
     mkdir ~/.config/autostart
@@ -1027,7 +1029,7 @@ NoDisplay=false
 fix_dbus_issues()
 {
     # http://askubuntu.com/questions/135573/gconf-error-no-d-bus-daemon-running-how-to-reinstall-or-fix
-    sudo chown -R $USER:$USER ~/.dbus
+    sudo chown -R "$USER":"$USER" ~/.dbus
     # http://askubuntu.com/questions/432604/couldnt-connect-to-accessibility-bus
     # add to sysvars NO_AT_BRIDGE=1
     # or use -Y with -X
@@ -1041,7 +1043,7 @@ fix_audio_hyrule(){
     # The reason was due to a bad sound card on the MOBO (likely)
 
     # Reinstall all audio things
-    sudo aptitude --purge reinstall linux-sound-base alsa-base alsa-utils linux-image-`uname -r` linux-ubuntu-modules-`uname -r` libasound2
+    sudo aptitude --purge reinstall linux-sound-base alsa-base alsa-utils "linux-image-$(uname -r)" "linux-ubuntu-modules-$(uname -r)" libasound2
 
     aplay -l && arecord -l
     lspci -vvv
@@ -1082,12 +1084,12 @@ fix_audio_hyrule(){
     # http://askubuntu.com/questions/629634/after-reinstall-alsa-and-pulse-audio-system-setting-missing
     sudo apt remove --purge alsa-base pulseaudio
     sudo apt install alsa-base* pulseaudio* pulseaudio-module-bluetooth* pulseaudio-module-x11* 
-    unity-control-center* unity-control-center-signon* webaccounts-extension-common* xul-ext-webaccounts*
-    indicator-sound* libcanberra-pulse* osspd* osspd-pulseaudio*
+    #unity-control-center* unity-control-center-signon* webaccounts-extension-common* xul-ext-webaccounts*
+    #indicator-sound* libcanberra-pulse* osspd* osspd-pulseaudio*
     # http://techgage.com/news/disabling_nvidias_hdmi_audio_under_linux/
     kerneldirs=$(echo /usr/src/linux-headers-*)
-    echo $kerneldirs
-    cd ${kerneldirs[-1]}
+    echo "$kerneldirs"
+    cd "${kerneldirs[-1]}"
     sudo make menuconfig
     D S 
 }
@@ -1119,7 +1121,7 @@ setup_ssh_server() {
     #sh -c "echo \"$COMP_BUBBLE\" > tmp.txt" && cat tmp.txt && rm tmp.txt
     sudo sh -c "echo \"$COMP_BUBBLE\" >> /etc/issue.net"
     # Cheeck to see if its running
-    ps -A | grep sshd
+    #ps -A | grep sshd
 
     # small change to default sshd_config
     # Allow authorized keys
@@ -1144,7 +1146,7 @@ razer_mouse(){
 
     sudo ppa-purge ppa:terrz/razerutils
 
-    ls /etc/apt/sources.list.d | grep terrz
+    #ls /etc/apt/sources.list.d | grep terrz
     sudo rm /etc/apt/sources.list.d/terrz-ubuntu-razerutils-xenial.list
     sudo rm /etc/apt/sources.list.d/terrz-ubuntu-razerutils-xenial.list.save
 
@@ -1260,16 +1262,16 @@ remap_capslock_as_shift
     mkdir -p ~/.xkb/symbols
     setxkbmap -print > ~/.xkb/keymap/mykbd
     
-    echo "
+    echo '
     partial modifier_keys
     xkb_symbols "swap_l_shift_ctrl" {
         replace key <LCTL>  { [ Shift_L ] };
         replace key <LFSH> { [ Control_L ] };
     };
-    "
+    '
 
 
-    xkbcomp -I$HOME/.xkb ~/.xkb/keymap/mykbd $DISPLAY 
+    xkbcomp -I"$HOME"/.xkb ~/.xkb/keymap/mykbd "$DISPLAY" 
 
 
     #https://askubuntu.com/questions/371394/how-to-remap-caps-lock-key-to-shift-left-key
@@ -1340,7 +1342,7 @@ podman(){
 #    sudo snap enable docker
 #}
 
-docker(){
+docker_func(){
     # https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/#set-up-the-repository
     # https://github.com/NVIDIA/nvidia-docker
 
@@ -1355,20 +1357,19 @@ docker(){
 
     # Add self to docker group
     sudo groupadd docker
-    sudo usermod -aG docker $USER
+    sudo usermod -aG docker "$USER"
     # NEED TO LOGOUT / LOGIN to revaluate groups
-    su - $USER  # or we can do this
+    su - "$USER"  # or we can do this
 
     # TEST:
     docker run hello-world
     sudo docker run hello-world
 
-
     # New Nvidia Docker Install Guide
     # https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker
-    distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
+    distribution=$(. /etc/os-release;echo "$ID""$VERSION_ID") \
        && curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add - \
-       && curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+       && curl -s -L https://nvidia.github.io/nvidia-docker/"$distribution"/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
     sudo apt-get update
     sudo apt-get install -y nvidia-docker2
     sudo systemctl restart docker
@@ -1461,12 +1462,15 @@ EOL'
     rsync -avRP final_model jon.crall@remote_machine:docker/
 
     # stop all containers
+    # shellcheck disable=SC2046
     docker stop $(docker ps -a -q)
     
     # remove all (non-running) containers (adding a -f does runing containser)
+    # shellcheck disable=SC2046
     docker rm $(docker ps -a -q)
 
     # remove all images
+    # shellcheck disable=SC2046
     docker rmi $(docker images -a -q)
 
     nvidia-docker run -v ~/data:/data -t joncrall/urban3d df -h /dev/shm
@@ -1477,7 +1481,7 @@ EOL'
     nvidia-docker run --shm-size=12g -v ~/data:/data -t joncrall/urban3d cat test.sh
 
     nvidia-docker run --shm-size=12g -v ~/data:/data -t joncrall/urban3d python3 -m clab.live.final train --train_data_path=/data/UrbanMapper3D/training --debug --num_workers=0
-    --nopin
+    #--nopin
 
     nvidia-docker run --ipc=host -v ~/data:/data -t joncrall/urban3d python3 -m clab.live.final train --train_data_path=/data/UrbanMapper3D/training --debug --num_workers=2 --gpu=2
 
@@ -1531,13 +1535,15 @@ list-all-ppas(){
     # listppa Script to get all the PPA installed on a system ready to share for reininstall
     #https://askubuntu.com/questions/148932/how-can-i-get-a-list-of-all-repositories-and-ppas-from-the-command-line-into-an
 
-    for APT in `find /etc/apt/ -name \*.list`; do
-        grep -o "^deb http://ppa.launchpad.net/[a-z0-9\-]\+/[a-z0-9\-]\+" $APT | while read ENTRY ; do
+    # shellcheck disable=SC2044
+    for APT in $(find /etc/apt/ -name \*.list); do
+        # shellcheck disable=SC2162
+        grep -o "^deb http://ppa.launchpad.net/[a-z0-9\-]\+/[a-z0-9\-]\+" "$APT" | while read ENTRY ; do
             echo "ENTRY = $ENTRY"
-            USER=`echo $ENTRY | cut -d/ -f4`
-            PPA=`echo $ENTRY | cut -d/ -f5`
-            echo ppa:$USER
-            echo ppa:$USER/$PPA
+            _USER=$(echo "$ENTRY" | cut -d/ -f4)
+            PPA=$(echo "$ENTRY" | cut -d/ -f5)
+            echo ppa:"$_USER"
+            echo ppa:"$_USER"/"$PPA"
         done
     done
 
@@ -1565,16 +1571,16 @@ NAME=$1
 
 co
 
-mkdir -p ~/code/$NAME
-cd ~/code/$NAME
+mkdir -p ~/code/"$NAME"
+cd ~/code/"$NAME"
 
 mkdir doc
 mkdir plugin
 mkdir autoload
 
-touch doc/$NAME.txt
-touch plugin/$NAME.vim
-touch autoload/$NAME.vim
+touch doc/"$NAME".txt
+touch plugin/"$NAME".vim
+touch autoload/"$NAME".vim
 
 touch README
 touch LICENSE
@@ -1608,7 +1614,7 @@ install_ipp(){
   ./install.sh --help
   ./install.sh --user-mode
 
-  mkdir -p $HOME/.local/intel
+  mkdir -p "$HOME"/.local/intel
 
 echo "ACCEPT_EULA=accept
 INSTALL_MODE=NONRPM
@@ -1643,141 +1649,6 @@ SIGNING_ENABLED=no
   # ALSO ADD $HOME/intel/ipp/include to CPATH
 }
 
-move_hdd(){
-    # https://www.linux.com/learn/clone-your-ubuntu-installation-new-hard-disk
-    # https://help.ubuntu.com/community/MovingLinuxPartition
-    # https://suntong.github.io/blogs/2015/12/26/creating-gpt-partitions-easily-on-the-command-line/
-    # https://www.rodsbooks.com/gdisk/sgdisk-walkthrough.html 
-    # https://askubuntu.com/questions/741723/moving-entire-linux-installation-to-another-drive
-
-
-    # Scan the hard disks and list their partitions
-    sudo fdisk -l
-
-
-    sudo apt install gddrescue -y
-
-    echo "OLD_DISK = $OLD_DISK"
-    echo "NEW_DISK = $NEW_DISK"
-
-    sudo ddrescue -v $OLD_DISK $NEW_DISK
-
-
-    # I opened gparted
-    # I created a new GDP partition table (that erased all data on the drive)
-
-
-    # Dump the partition table of the old disk
-    cd ~/tmp
-    sudo sfdisk -l $OLD_DISK > old_disk_partinfo.txt
-
-    cat old_disk_partinfo.txt
-
-    NEW_DISK=/dev/sdf
-    echo "OLD_DISK = $OLD_DISK"
-    sudo sfdisk $NEW_DISK
-
-
-    echo "NEW_DISK = $NEW_DISK"
-
-    # DEFINE which disk we are going to clober
-    OLD_DISK=/dev/sdd
-    NEW_DISK=/dev/sdf
-
-    # Create a new GDP partition table.
-    # Use -Z to zap (erase) all the data on the drive
-    sudo sgdisk -Z $NEW_DISK
-
-    # Create new paritions with -n, -t, and -c
-    # ------------------------
-    #     -n, --new=partnum:start:end                 create new partition
-    #     -t, --typecode=partnum:{hexcode|GUID}       change partition type code
-    #     -c, --change-name=partnum:name              change partition's name
-    #
-    # Notes: 
-    #     Boot disks for EFI-based systems require an EFI System Partition (sgdisk
-    #     internal code 0xEF00) formatted as FAT-32. The recommended size of this
-    #     partition is between 100 and 300 MiB. Boot-related files are stored here.
-    #     (Note that GNU Parted identifies such partitions as having the "boot
-    #     flag" set.)
-
-    # Enumerate some common typecodes
-    BOOT_EFI_FAT32=ef00
-    LINUX_SWAP=8200
-    LINUX_FILESYSTEM=8300
-    # we wont use these, but for reference
-    BOOT_BIOS=ef02
-    MS_RESERVE=0c01
-    WINDOWS_FILESYSTEM=0700
-
-    # Create the boot partition with 512 MB at the start of the disk
-    sudo sgdisk -n 0:0:+512M -t 0:$BOOT_EFI_FAT32   -c 0:"boot"   $NEW_DISK
-    # Use all but the last 8GB of space for the main filesystem
-    sudo sgdisk -n 0:0:-8G   -t 0:$LINUX_FILESYSTEM -c 0:"system" $NEW_DISK
-    # USe the last 8GB of space for disk swap
-    sudo sgdisk -n 0:0:0     -t 0:$LINUX_SWAP       -c 0:"swap"   $NEW_DISK
-
-    # print what we did
-    sudo sgdisk -p $NEW_DISK
-
-    # I did do a mkfs.ext4 -F -L "" ${NEW_DISK}2 using gparted to fix a warning
-    sudo mkfs.ext4 -F -L "" ${NEW_DISK}2
-
-    # inform the OS of partition table changes
-    sudo partprobe $NEW_DISK
-
-    # Mount the new disk to copy data onto it
-    sudo mkdir -p /mnt/new_disk1
-    sudo mkdir -p /mnt/new_disk2
-    sudo mount ${NEW_DISK}1 /mnt/new_disk1
-    sudo mount ${NEW_DISK}2 /mnt/new_disk2
-
-    # Copy the system on the old hard drive onto the new one
-    sudo rsync -aAXvP /* /mnt/new_disk2 --exclude={/dev/*,/proc/*,/sys/*,/tmp/*,/var/tmp/*,/run/*,/mnt/*,/media/*,/lost+found}
-
-    # Install grub on the new disk
-    echo "installing grub on NEW_DISK = $NEW_DISK"
-    sudo grub-install $NEW_DISK
-
-    # We need to modify fstab on the new disk, because the UUIDs have changed
-
-    # For each old partition, we need to modify its mount UUID in fstab
-
-    find_uuid_column(){
-        # Helper script to find a UUID column
-        python -c "$(codeblock "
-        import sys
-        for part in sys.stdin.read().split(' '):
-            if part.startswith('UUID'):
-                print(part[6:-1])
-        ")" $@
-    }
-
-    echo "OLD_DISK = $OLD_DISK"
-    echo "NEW_DISK = $NEW_DISK"
-
-    OLD_UUID1=$(blkid | grep "${OLD_DISK}1" | find_uuid_column)
-    OLD_UUID2=$(blkid | grep "${OLD_DISK}2" | find_uuid_column)
-    OLD_UUID3=$(blkid | grep "${OLD_DISK}3" | find_uuid_column)
-
-    NEW_UUID1=$(blkid | grep "${NEW_DISK}1" | find_uuid_column)
-    NEW_UUID2=$(blkid | grep "${NEW_DISK}2" | find_uuid_column)
-    NEW_UUID3=$(blkid | grep "${NEW_DISK}3" | find_uuid_column)
-
-    # Replace the old UUIDs with the new ones in the new fstab file
-    sudo sed -i "s/$OLD_UUID1/$NEW_UUID1/" /mnt/new_disk2/etc/fstab
-    sudo sed -i "s/$OLD_UUID2/$NEW_UUID2/" /mnt/new_disk2/etc/fstab
-    sudo sed -i "s/$OLD_UUID3/$NEW_UUID3/" /mnt/new_disk2/etc/fstab
-
-    cat /mnt/new_disk2/etc/fstab | grep "$OLD_UUID1" 
-    cat /mnt/new_disk2/etc/fstab | grep "$OLD_UUID2" 
-    cat /mnt/new_disk2/etc/fstab | grep "$OLD_UUID3" 
-
-    cat /mnt/new_disk2/etc/fstab | grep "$NEW_UUID1" 
-    cat /mnt/new_disk2/etc/fstab | grep "$NEW_UUID2" 
-    cat /mnt/new_disk2/etc/fstab | grep "$NEW_UUID3" 
-}
-
 
 fix_resolvconf(){
     # https://askubuntu.com/questions/54888/resolvconf-u-gives-the-error-resolvconf-error-etc-resolv-conf-must-be-a-sym
@@ -1810,7 +1681,7 @@ check_hdd_health(){
 
 ttygif(){
     sudo apt-get install imagemagick ttyrec gcc x11-apps make git -y
-    cd $HOME/code
+    cd "$HOME"/code
     git clone https://github.com/icholy/ttygif.git
     cd ttygif
     PREFIX=$HOME/.local make 
@@ -1853,8 +1724,8 @@ home_printer(){
     """
 
     cd Downloads
-    cp $HOME/Downloads/linux-brprinter-installer-2.2.2-2.gz $HOME/tmp
-    cd $HOME/tmp
+    cp "$HOME"/Downloads/linux-brprinter-installer-2.2.2-2.gz "$HOME"/tmp
+    cd "$HOME"/tmp
     gunzip linux-brprinter-installer-2.2.2-2.gz
     sudo bash linux-brprinter-installer-2.2.2-2 
 
@@ -1876,8 +1747,8 @@ install_fun_packages(){
 
     # Cool Retro Term
     # https://github.com/Swordfish90/cool-retro-term
-    mkdir -p $HOME/tmp
-    cd $HOME/tmp
+    mkdir -p "$HOME"/tmp
+    cd "$HOME"/tmp
     wget https://github.com/Swordfish90/cool-retro-term/releases/download/1.1.1/Cool-Retro-Term-1.1.1-x86_64.AppImage
     chmod a+x Cool-Retro-Term-1.1.1-x86_64.AppImage
     ./Cool-Retro-Term-1.1.1-x86_64.AppImage
@@ -1899,6 +1770,7 @@ fix_spotify_at_4k(){
     apt_ensure colordiff
 
     # Break multiline output into an array
+    # shellcheck disable=SC2207
     CANDIDATES=($(locate $FNAME))
     for IDX in "${!CANDIDATES[@]}"
     do
@@ -1909,9 +1781,9 @@ fix_spotify_at_4k(){
 
         # This pattern will either add the scale factor or change an existing scale factor
         SED_PATTERN='s|spotify *\(--force-device-scale-factor=[^ ]*\)* *%U|spotify --force-device-scale-factor=1.0 %U|'
-        sed "${SED_PATTERN}" $FPATH | colordiff $FPATH -
+        sed "${SED_PATTERN}" "$FPATH" | colordiff "$FPATH" -
         if [ "$DRY_RUN" == "0" ]; then
-            sudo sed -i "${SED_PATTERN}" $FPATH
+            sudo sed -i "${SED_PATTERN}" "$FPATH"
         fi
     done
 
@@ -1934,26 +1806,27 @@ fix_bluetooth_headphones(){
     sudo apt install libsbc-dev -y
     sudo apt-get install bluez libbluetooth-dev -y
 
-    MODDIR=`pkg-config --variable=modlibexecdir libpulse`
+    MODDIR=$(pkg-config --variable=modlibexecdir libpulse)
     echo "MODDIR = $MODDIR"
 
-    find $MODDIR -regex ".*\(bluez5\|bluetooth\).*\.so.*" -exec sha1sum {} \;
+    find "$MODDIR" -regex ".*\(bluez5\|bluetooth\).*\.so.*" -exec sha1sum {} \;
 
-    for FPATH in $(find $MODDIR -regex ".*\(bluez5\|bluetooth\).*\.so"); do
-        SHA=$(sha1sum $FPATH | cut -d " " -f 1 | cut -c1-16)
+    # shellcheck disable=SC2044
+    for FPATH in $(find "$MODDIR" -regex ".*\(bluez5\|bluetooth\).*\.so"); do
+        SHA=$(sha1sum "$FPATH" | cut -d " " -f 1 | cut -c1-16)
         NEW_FPATH=$FPATH.${SHA}.bak
-        sudo cp $FPATH $NEW_FPATH
+        sudo cp "$FPATH" "$NEW_FPATH"
     done
 
     # pull sources
-    cd $HOME/code
+    cd "$HOME"/code
     git clone https://github.com/EHfive/pulseaudio-modules-bt.git
     cd pulseaudio-modules-bt
     git submodule update --init
 
     TARGET_VERSION=v$(pkg-config libpulse --modversion|sed 's/[^0-9.]*\([0-9.]*\).*/\1/')
     echo "TARGET_VERSION = $TARGET_VERSION"
-    git -C pa/ checkout  $TARGET_VERSION
+    git -C pa/ checkout  "$TARGET_VERSION"
 
     # install
     mkdir build && cd build
@@ -1996,13 +1869,13 @@ install_keepass(){
 
 github_gh_api(){
     # Ensure that go1.15+ is installed
-    mkdir $HOME/code/github
-    git clone https://github.com/cli/cli.git $HOME/code/github/cli
-    cd $HOME/code/github/cli
+    mkdir "$HOME"/code/github
+    git clone https://github.com/cli/cli.git "$HOME"/code/github/cli
+    cd "$HOME"/code/github/cli
     make
 
-    $HOME/code/github/cli/bin/gh version
-    $HOME/code/github/cli/bin/gh help
+    "$HOME"/code/github/cli/bin/gh version
+    "$HOME"/code/github/cli/bin/gh help
     
 }
 
@@ -2027,8 +1900,8 @@ android_studio(){
     # https://developer.android.com/studio/install#linux
     sudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386 -y
 
-    mkdir -p $HOME/.local/opt
-    tar -C $HOME/.local/opt -vxzf /home/joncrall/Downloads/android-studio-ide-193.6626763-linux.tar.gz
+    mkdir -p "$HOME"/.local/opt
+    tar -C "$HOME"/.local/opt -vxzf /home/joncrall/Downloads/android-studio-ide-193.6626763-linux.tar.gz
 
     # Need to enable kvm virtualization in bios
     # https://android.stackexchange.com/questions/117669/avd-doesnt-work-after-installing-android-studio
@@ -2038,11 +1911,11 @@ android_studio(){
 
     sudo modprobe kvm_intel
 
-    $HOME/.local/opt/android-studio/bin/studio.sh
+    "$HOME"/.local/opt/android-studio/bin/studio.sh
 
 
     # Download platform tools
-    cd $HOME/tmp
+    cd "$HOME"/tmp
     wget https://dl.google.com/android/repository/platform-tools-latest-linux.zip
     7z x platform-tools-latest-linux.zip
     cd platform-tools
@@ -2086,9 +1959,9 @@ docker_modern_2021_04_22(){
      
     # Add self to docker group
     sudo groupadd docker
-    sudo usermod -aG docker $USER
+    sudo usermod -aG docker "$USER"
     # NEED TO LOGOUT / LOGIN to revaluate groups
-    su - $USER  # or we can do this
+    su - "$USER"  # or we can do this
 
      # Test
      docker run hello-world
@@ -2104,10 +1977,10 @@ docker_modern_2021_04_22(){
 
 
     # Install the NVIDIA Runtime:
-    DISTRIBUTION=$(. /etc/os-release;echo $ID$VERSION_ID) 
+    DISTRIBUTION=$(. /etc/os-release;echo "$ID""$VERSION_ID") 
     echo "DISTRIBUTION = $DISTRIBUTION"
     curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add - 
-    curl -s -L https://nvidia.github.io/nvidia-docker/$DISTRIBUTION/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+    curl -s -L https://nvidia.github.io/nvidia-docker/"$DISTRIBUTION"/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
 
     sudo apt-get update -y
     sudo apt-get install -y nvidia-docker2
@@ -2135,9 +2008,10 @@ world_community_grid(){
     #4. Allow group access to client access file:
     sudo chmod g+r /var/lib/boinc-client/gui_rpc_auth.cfg
     #5. Add your Linux user to the BOINC group to allow the BOINC Manager to communicate with the BOINC client
-    sudo usermod -a -G boinc $USER
+    sudo usermod -a -G boinc "$USER"
     #6. Allow your terminal to pick up the privileges of the new group:
-    exec su $USER
+    # shellcheck disable=SC2093
+    exec su "$USER"
     #7. In the same terminal window, start the BOINC Manager:
     sudo boincmgr -d /var/lib/boinc-client
     
@@ -2151,7 +2025,7 @@ voice_terminal(){
     sudo apt install portaudio19-dev swig libatlas-base-dev -y
     git clone https://github.com/synesthesiam/voice2json
     cd voice2json
-    ./configure --prefix=$HOME/.local
+    ./configure --prefix="$HOME"/.local
     make -j9
     make install
 
@@ -2189,13 +2063,13 @@ install_go(){
 
     URL="https://golang.org/dl/go1.17.linux-amd64.tar.gz"
     BASENAME=$(basename $URL)
-    curl_verify_hash $URL $BASENAME "6bf89fc4f5ad763871cf7eac80a2d594492de7a818303283f1366a7f6a30372d" sha256sum "-L"
+    curl_verify_hash $URL "$BASENAME" "6bf89fc4f5ad763871cf7eac80a2d594492de7a818303283f1366a7f6a30372d" sha256sum "-L"
 
-    mkdir $HOME/.local
-    tar -C $HOME/.local -xzf $BASENAME
+    mkdir "$HOME"/.local
+    tar -C "$HOME"/.local -xzf "$BASENAME"
     # Add $HOME/.local/go to your path or make symlinks
-    ln -s $HOME/.local/go/bin/go $HOME/.local/bin/go 
-    ln -s $HOME/.local/go/bin/gofmt $HOME/.local/bin/gofmt
+    ln -s "$HOME"/.local/go/bin/go "$HOME"/.local/bin/go 
+    ln -s "$HOME"/.local/go/bin/gofmt "$HOME"/.local/bin/gofmt
 }
 
 
@@ -2209,20 +2083,20 @@ install_ipfs(){
     https://developers.cloudflare.com/distributed-web/ipfs-gateway/setting-up-a-server
     "
     source ~/local/init/utils.sh
-    mkdir -p $HOME/temp/setup-ipfs
-    cd $HOME/temp/setup-ipfs
+    mkdir -p "$HOME"/temp/setup-ipfs
+    cd "$HOME"/temp/setup-ipfs
     URL="https://dist.ipfs.io/go-ipfs/v0.9.0/go-ipfs_v0.9.0_linux-amd64.tar.gz"
     BASENAME=$(basename $URL)
-    CURL_OPTS=""
-    curl_verify_hash $URL $BASENAME "e737fd6ccbd1917d302fcdc9e8d29" sha256sum
+    #CURL_OPTS=""
+    curl_verify_hash $URL "$BASENAME" "e737fd6ccbd1917d302fcdc9e8d29" sha256sum
     
-    tar -xvzf $BASENAME
-    cp go-ipfs/ipfs $HOME/.local/bin
+    tar -xvzf "$BASENAME"
+    cp go-ipfs/ipfs "$HOME"/.local/bin
 
     # That should install IPFS now, lets set it up
 
-    mkdir -p $HOME/data/ipfs
-    cd $HOME/data/ipfs
+    mkdir -p "$HOME"/data/ipfs
+    cd "$HOME"/data/ipfs
 
     # Maybe server is not the best profile?
     # https://docs.ipfs.io/how-to/command-line-quick-start/#prerequisites
@@ -2247,7 +2121,7 @@ install_ipfs(){
 
     ipfs cat /ipfs/QmSgvgwxZGaBLqkGyWemEDqikCqU52XxsYLKtdy3vGZ8uq > spaceship-launch.jpg
 
-    MY_MSG="Hello Universe! My name is $(whoami) and I'm excited to start using IPFS!"
+    #MY_MSG="Hello Universe! My name is $(whoami) and I'm excited to start using IPFS!"
 
     msg_hash=$(echo "Hello Universe! My name is $(whoami) and I'm excited to start using IPFS!" | ipfs add -q)
 
@@ -2284,7 +2158,7 @@ install_ipfs(){
 
     I certainly hope we can make it through these troubled times.
     " > _tosign.txt
-    gpg --local-user $KEYID --clearsign --yes -o _signed.txt _tosign.txt
+    gpg --local-user "$KEYID" --clearsign --yes -o _signed.txt _tosign.txt
     cat _signed.txt
     gpg --verify _signed.txt
 
@@ -2379,8 +2253,8 @@ overclock_gpu_cli(){
 
     # Tighten the power limits
     sudo sudo nvidia-smi --persistence-mode=1
-    sudo nvidia-smi --id=0 --power-limit=$WATTS_65_i0
-    sudo nvidia-smi --id=1 --power-limit=$WATTS_65_i1
+    sudo nvidia-smi --id=0 --power-limit="$WATTS_65_i0"
+    sudo nvidia-smi --id=1 --power-limit="$WATTS_65_i1"
 
     sudo nvidia-smi --id=0 --power-limit=200
     sudo nvidia-smi --id=1 --power-limit=224
@@ -2436,8 +2310,8 @@ overclock_gpu_cli(){
     echo "WATTS_i1 = $WATTS_i1"
     # Tighten the power limits
     sudo sudo nvidia-smi --persistence-mode=1
-    sudo nvidia-smi --id=0 --power-limit=$WATTS_i0
-    sudo nvidia-smi --id=1 --power-limit=$WATTS_i1
+    sudo nvidia-smi --id=0 --power-limit="$WATTS_i0"
+    sudo nvidia-smi --id=1 --power-limit="$WATTS_i1"
 
     nvidia-settings -c :0 -a '[gpu:0]/GPUMemoryTransferRateOffsetAllPerformanceLevels=0'
     nvidia-settings -c :0 -a '[gpu:0]/GPUGraphicsClockOffsetAllPerformanceLevels=0'
@@ -2460,8 +2334,8 @@ overclock_gpu_cli(){
     WATTS_i1=$(nvidia-smi --id=1 -q -d POWER | grep "Default Power Limit" | python -c "import sys; print(1.0 * float(sys.stdin.read().split(':')[-1].strip().split(' ')[0]))")
     echo "WATTS_i0 = $WATTS_i0"
     echo "WATTS_i1 = $WATTS_i1"
-    sudo nvidia-smi --id=0 --power-limit=$WATTS_i0
-    sudo nvidia-smi --id=1 --power-limit=$WATTS_i1
+    sudo nvidia-smi --id=0 --power-limit="$WATTS_i0"
+    sudo nvidia-smi --id=1 --power-limit="$WATTS_i1"
 
 
     # Query Temperature Limit
@@ -2474,7 +2348,7 @@ overclock_gpu_cli(){
     sudo nvidia-smi --id=0
 
     sudo nvidia-smi --help
-    -gtt 65
+    #-gtt 65
 
     
 
@@ -2484,8 +2358,8 @@ overclock_gpu_cli(){
 
 install_aws_cli(){
 
-    mkdir -p $HOME/tmp
-    cd $HOME/tmp
+    mkdir -p "$HOME"/tmp
+    cd "$HOME"/tmp
 
     codeblock "
     -----BEGIN PGP PUBLIC KEY BLOCK-----
@@ -2526,8 +2400,8 @@ install_aws_cli(){
     gpg --verify awscli-exe-linux-x86_64.zip.sig awscli-exe-linux-x86_64.zip 
     unzip awscli-exe-linux-x86_64.zip 
 
-    cd $HOME/tmp
-    ./aws/install --install-dir $HOME/.local/aws-cli --bin-dir $HOME/.local/bin --update
+    cd "$HOME"/tmp
+    ./aws/install --install-dir "$HOME"/.local/aws-cli --bin-dir "$HOME"/.local/bin --update
 
     
 }
@@ -2537,9 +2411,9 @@ reaper(){
 
     sudo apt install libgtk-3-dev
 
-    source $HOME/local/init/utils.sh
-    mkdir -p $HOME/tmp/reaper
-    cd $HOME/tmp/reaper
+    source "$HOME"/local/init/utils.sh
+    mkdir -p "$HOME"/tmp/reaper
+    cd "$HOME"/tmp/reaper
     EXPECTED_HASH=caf7ff6790b83a67f3d7666e266e60568c4d60d270fa4a1c5ae177365329e4f9 \
     URL=https://dlcf.reaper.fm/6.x/reaper642_linux_x86_64.tar.xz \
         curl_verify_hash 
@@ -2551,8 +2425,8 @@ reaper(){
 
     ./reaper_linux_x86_64/REAPER/reaper
 
-    ./reaper_linux_x86_64/install-reaper.sh --install $HOME/.local/opt/ --integrate-desktop
-    chmod +x $HOME/.local/opt/REAPER/reaper
+    ./reaper_linux_x86_64/install-reaper.sh --install "$HOME"/.local/opt/ --integrate-desktop
+    chmod +x "$HOME"/.local/opt/REAPER/reaper
 
 }
 
@@ -2588,11 +2462,11 @@ rasberry_pi(){
 }
 
 rotate_aws_keys_setup(){
-    [[ -f $HOME/code/aws-rotate-iam-keys ]] || git clone https://github.com/rhyeal/aws-rotate-iam-keys.git $HOME/code/aws-rotate-iam-keys
-    cp $HOME/code/aws-rotate-iam-keys/src/bin/aws-rotate-iam-keys $HOME/.local/bin
+    [[ -f $HOME/code/aws-rotate-iam-keys ]] || git clone https://github.com/rhyeal/aws-rotate-iam-keys.git "$HOME"/code/aws-rotate-iam-keys
+    cp "$HOME"/code/aws-rotate-iam-keys/src/bin/aws-rotate-iam-keys "$HOME"/.local/bin
 
-    cat $HOME/.aws/config
-    cat $HOME/.aws/credentials
+    cat "$HOME"/.aws/config
+    cat "$HOME"/.aws/credentials
 }
 
 install_xrdp_remote_desktop()
@@ -2623,7 +2497,7 @@ install_xrdp_remote_desktop()
     # Add self to fuse group
     # https://superuser.com/questions/466304/how-do-i-make-sshfs-work-in-debian-i-get-dev-fuse-permission-denied
     sudo groupadd fuse
-    sudo usermod -aG fuse $USER
+    sudo usermod -aG fuse "$USER"
     sudo chmod g+rw /dev/fuse
     sudo chgrp fuse /dev/fuse
 

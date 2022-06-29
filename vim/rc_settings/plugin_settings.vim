@@ -121,6 +121,8 @@ shellcheck_errors = {
 
     'SC2181': 'Check exit code directly',
 
+    'SC2155': 'Declare and assign separately to avoid masking return values'
+
     #'SC2206': 'Quote word to prevent splitting and globbing or split robustly',
     #'SC1091': 'not using declare'
 }
