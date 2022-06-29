@@ -14,27 +14,25 @@ common_paths()
 #}
 
 install_languagetool(){
+    # https://www.languagetool.org/
+    cd ~/tmp
+    wget https://www.languagetool.org/download/LanguageTool-3.7.zip
+    7z x LanguageTool-3.7.zip
 
-# https://www.languagetool.org/
+    mkdir -p ~/opt
+    mv LanguageTool-3.7 ~/opt/
 
-cd ~/tmp
-wget https://www.languagetool.org/download/LanguageTool-3.7.zip
-7z x LanguageTool-3.7.zip
-
-mkdir -p ~/opt
-mv LanguageTool-3.7 ~/opt/
-
-cd ~/opt/LanguageTool-3.7/
-cd ~/bin
-echo '
-#!/bin/sh
-java -jar ~/opt/LanguageTool-3.7/languagetool-commandline.jar $@
-' > langtool
-chmod +x langtool
+    cd ~/opt/LanguageTool-3.7/
+    cd ~/bin
+    echo '
+    #!/bin/sh
+    java -jar ~/opt/LanguageTool-3.7/languagetool-commandline.jar $@
+    ' > langtool
+    chmod +x langtool
 
 
-langtool --help
-langtool --disable WHITESPACE_RULE,EN_QUOTES,EN_UNPAIRED_BRACKETS chapter1-intro.tex
+    langtool --help
+    langtool --disable WHITESPACE_RULE,EN_QUOTES,EN_UNPAIRED_BRACKETS chapter1-intro.tex
 }
 
 
@@ -2162,7 +2160,7 @@ voice_terminal(){
 }
 
 install_slack(){
-    ""
+    __doc__=""
     # Need to manually grab the .deb
     #  https://slack.com/downloads/instructions/ubuntu
 }
@@ -2665,16 +2663,16 @@ install_xrdp_remote_desktop()
     sudo service xrdp restart
 
     # help escape sed command
-    << __PYSCRIPT__
-    import shlex
-    str_ = r'<property name="&lt;Super&gt;Tab" type="string" value="switch_window_key"/>'
+    #    << __PYSCRIPT__
+    #    import shlex
+    #    str_ = r'<property name="&lt;Super&gt;Tab" type="string" value="switch_window_key"/>'
 
-    import re
-    print(re.escape(str_))
-    print(str_.replace('switch_window_key', 'empty').replace('/', r'\/'))
+    #    import re
+    #    print(re.escape(str_))
+    #    print(str_.replace('switch_window_key', 'empty').replace('/', r'\/'))
 
-    print(shlex.quote(str_))
-__PYSCRIPT__
+    #    print(shlex.quote(str_))
+    #__PYSCRIPT__
 
     #sed 's/\<property\ name\=\"\&lt\;Super\&gt\;Tab\"\ type\=\"string\"\ value\=\"switch\_window\_key\"\/\>/<property name="&lt;Super&gt;Tab" type="string" value="empty"\/>/' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
     #sed -i 's/\<property\ name\=\"\&lt\;Super\&gt\;Tab\"\ type\=\"string\"\ value\=\"switch\_window\_key\"\/\>/<property name="&lt;Super&gt;Tab" type="string" value="empty"\/>/' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml

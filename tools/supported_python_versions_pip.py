@@ -182,6 +182,8 @@ def parse_platform_tag(platform_tag):
     assert len(arch_parts) == 1, str(platform_tag)
     assert len(os_coarse_parts) == 1, str(platform_tag)
     arch = arch_parts[0]
+    if arch == 'amd64':
+        arch = 'x86_64'
     os = os_coarse_parts[0]
     plat_info = {
         'os': os,
@@ -356,7 +358,7 @@ def summarize_package_availability(package_name):
         if not np.all(flags):
             df = df[flags]
 
-        if 1:
+        if 0:
             counts = df.value_counts(['pkg_version', 'abi_tag', 'os']).to_frame('count').reset_index()
             # piv = counts.to_frame('count').reset_index().pivot(['pkg_version', 'abi_tag'], 'os', 'count')
             counts = counts.sort_values('abi_tag')
@@ -365,8 +367,9 @@ def summarize_package_availability(package_name):
             piv = counts.pivot(['pkg_version'], ['abi_tag', 'os'], 'count')
         else:
             abi_blocklist = {
+                'cp36m',
                 'cp26m', 'cp26mu', 'cp27m', 'cp27mu', 'cp32m', 'cp33m', 'cp34m', 'cp35m',
-                'pypy36_pp73', 'pypy37_pp73', 'pypy38_pp73',
+                'pypy36_pp73', 'pypy37_pp73', 'pypy38_pp73', 'pypy_73', 'pypy_41'
             }
             flags = df['abi_tag'].apply(lambda x: x in abi_blocklist)
             df = df[~flags]
@@ -469,9 +472,7 @@ def minimum_cross_python_versions(package_name, request_min=None):
         # print('--- min_pyver = {!r} --- '.format(min_pyver))
         version_to_support = dict(list(subdf.groupby('version')))
 
-        # TODO: remove this score nonsense
         cand_to_score = {}
-
         try:
             version_to_support = ub.sorted_keys(version_to_support, key=parse_version)
         except Exception:
@@ -480,37 +481,16 @@ def minimum_cross_python_versions(package_name, request_min=None):
             maybe_ok_keys = [k for k in maybe_bad_keys if '.dev0' not in k]
             version_to_support = ub.dict_subset(version_to_support, maybe_ok_keys)
 
+        required_combos = [
+            ('linux', 'x86_64'),
+            ('macosx', 'x86_64'),
+            ('win', 'x86_64'),
+        ]
         for cand, support in version_to_support.items():
-            score = 0
-            platforms = support['platform_tag'].unique()
-            if 1:
-                platforms = platforms[~pd.isnull(platforms)]
-                # This is a slick bit of python
-                groups = ub.group_items(platforms, key=lambda x: (
-                    ((not isinstance(x, str) and 'nan') or
-                     ('win' in x and 'win32') or
-                     ('linux' in x and 'linux') or
-                     ('osx' in x and 'osx') or
-                     ('any' in x and 'any') or
-                     'other')
-                ))
-                assert not groups.pop('nan', None)
-                # We care about some OS more than others
-                score += 213 * ('any' in groups)
-                score += 113 * ('linux' in groups)
-                score += 71 * ('win' in groups)
-                score += 53 * ('osx' in groups)
-                score += 2 * ('other' in groups)
-                if 'other' in groups:
-                    print('warning: unhandled other groups = {!r}'.format(groups))
-
-                # Diversity score
-                score += sum(ub.map_vals(lambda x: math.log(len(x)), groups).values())
-
-                score += len(platforms)
-                # we like signatures
-                score += support['has_sig'].mean() * 6.28318
-                cand_to_score[cand] = score
+            has_combos = support.value_counts(['os', 'arch']).index.tolist()
+            total_have = sum(k in has_combos for k in required_combos)
+            score = (total_have / len(required_combos)) * 100
+            cand_to_score[cand] = score
 
         cand_to_score = ub.sorted_vals(cand_to_score)
         cand_to_score = ub.sorted_keys(cand_to_score, key=parse_version)
@@ -518,7 +498,7 @@ def minimum_cross_python_versions(package_name, request_min=None):
         # Filter to only the versions we requested, but if
         # none exist, return something
         if request_min is not None:
-            valid_cand = [cand for cand in cand_to_score if cand >= request_min]
+            valid_cand = [cand for cand in cand_to_score if parse_version(cand) >= request_min]
         else:
             valid_cand = [cand for cand in cand_to_score]
         if len(valid_cand) == 0:

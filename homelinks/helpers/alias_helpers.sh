@@ -28,6 +28,7 @@ alias cgrep='grep -I -ER \
     --exclude-dir "build_*" \
     --exclude-dir "node_modules" \
     --exclude-dir "static" \
+    --exclude-dir ".mypy_cache" \
     --exclude-dir .git \
     --exclude-dir .pytest_cache \
     --exclude-dir htmlcov \

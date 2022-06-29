@@ -569,6 +569,7 @@ new_pyenv_venv(){
 build_vim_for_pyenv(){
     __doc__="
     Helper to install vim/gvim compiled against a specific python virtual environment
+
     source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
     build_vim_for_pyenv
     "
@@ -577,7 +578,7 @@ build_vim_for_pyenv(){
         git clone https://github.com/vim/vim.git ~/code/vim
     else 
         cd "$HOME/code/vim"
-        git pull
+        git fetch
     fi
 
     source "$HOME/local/init/utils.sh"
@@ -589,7 +590,8 @@ build_vim_for_pyenv(){
 
     # https://github.com/vim/vim/issues/6457
     #git checkout v8.1.2424
-    git checkout v8.2.4030
+    #git checkout v8.2.4030
+    git checkout v9.0.0000
 
     # Build in virtualenv?
     # deactivate
@@ -647,9 +649,10 @@ build_vim_for_pyenv(){
     if [[ -d "$HOME/code/vimtk" ]]; then
         unlink_or_backup "$HOME/.vim/bundle/vimtk"
         ln -s "$HOME/code/vimtk" "$HOME/.vim/bundle/vimtk"
+        pip install -r "$HOME/.vim/bundle/vimtk/requirements/runtime.txt"
+    else
+        pip install ubelt pyperclip shellcheck-py six xinspect psutil pyflakes
     fi
-
-    pip install ubelt pyperclip shellcheck-py six
 }
 
 

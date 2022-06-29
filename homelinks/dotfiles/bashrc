@@ -209,9 +209,8 @@ if [ -f "$HOME/.local/conda/etc/profile.d/conda.sh" ]; then
     complete -W "deactivate activate env clean config create help info install list package remove uninstall search update upgrade -h --help -V --version" "conda"
 fi
 
-# Add the pyenv command to our environment if it exists
-
 #source $HOME/local/tools/pyenv_ext/pyenv_ext_commands.sh
+# Add the pyenv command to our environment if it exists
 export PYENV_ROOT="$HOME/.pyenv"
 if [ -d "$PYENV_ROOT" ]; then
     export PATH="$PYENV_ROOT/bin:$PATH"

@@ -1,4 +1,5 @@
-source $HOME/local/init/utils.sh
+#!/bin/bash
+source "$HOME"/local/init/utils.sh
 
 ensure_config_symlinks()
 {
@@ -19,7 +20,9 @@ ensure_config_symlinks()
         fi
         if [ "$(which symlinks)" == "" ]; then
             # bypass symlinks
-            alias symlinks=echo "bypass symlinks not installed"
+            symlinks(){
+                echo "bypass symlinks not installed"
+            }
         fi
     fi
 
@@ -31,22 +34,25 @@ ensure_config_symlinks()
 
 
     # Try to link relative to home
-    cd $HOME
+    #cd "$HOME"
     #RELHOME="~"
 
     # If that doesnt work use absolute home link
     RELHOME="$HOME"
     HOMELINKS_DPATH=$RELHOME/local/homelinks
 
-    symlink_root_hidden_files $HOMELINKS_DPATH $RELHOME
+    echo "* cleanup"
+    symlinks -d "$RELHOME"
+
+    symlink_root_hidden_files "$HOMELINKS_DPATH" "$RELHOME"
 
     # Symlink config subdirs (note these are directories)
     BASEDIR="config"
-    symlink_inside_hidden_homedir $BASEDIR $HOMELINKS_DPATH $RELHOME
+    symlink_inside_hidden_homedir $BASEDIR "$HOMELINKS_DPATH" "$RELHOME"
 
     # Symlink nautlius scripts
     BASEDIR="gnome2/nautilus-scripts"
-    symlink_inside_hidden_homedir $BASEDIR $HOMELINKS_DPATH $RELHOME
+    symlink_inside_hidden_homedir $BASEDIR "$HOMELINKS_DPATH" "$RELHOME"
 
     # Extras
     echo "* --- START EXTRAS ---*"
@@ -98,23 +104,26 @@ symlink_inside_hidden_homedir(){
     #"config"
 
     # NOTE: these path names are directories
-    PNAMES=$(/bin/ls -A $HOMELINKS_DPATH/$BASEDIR)
+    PNAMES=$(/bin/ls -A "$HOMELINKS_DPATH"/"$BASEDIR")
     echo "* SYMLINK BASEDIR=$BASEDIR"
     #echo "* PNAMES=$PNAMES"
     echo "* --- BEGIN ---"
     echo "* mkdir"
-    mkdir -pv $RELHOME/.$BASEDIR
-    echo "* cleanup"
-    symlinks -d $RELHOME/.$BASEDIR
+    mkdir -pv "$RELHOME"/."$BASEDIR"
+    #echo "* cleanup"
+    #symlinks -d "$RELHOME"/."$BASEDIR"
     echo "* symlink"
     for p in $PNAMES; do 
         SOURCE=$HOMELINKS_DPATH/$BASEDIR/$p
         TARGET=$RELHOME/.$BASEDIR/$p
-        unlink_or_backup $TARGET
-        ln -vs $SOURCE $TARGET;
+        unlink_or_backup "$TARGET"
+        ln -vs "$SOURCE" "$TARGET";
     done
     echo "* Convert to relative symlinks"
-    symlinks -c $RELHOME/.$BASEDIR
+    for p in $PNAMES; do 
+        TARGET=$RELHOME/.$BASEDIR/$p
+        symlinks -c "$TARGET"
+    done
     echo "* --- END ---"
     #================
 }
@@ -131,22 +140,22 @@ symlink_root_hidden_files(){
     #================
     BASEDIR="dotfiles"
     # NOTE: these path names are files
-    PNAMES=$(/bin/ls -Ap $HOMELINKS_DPATH/$BASEDIR | grep -v /)
+    PNAMES=$(/bin/ls -Ap "$HOMELINKS_DPATH"/$BASEDIR | grep -v /)
     echo "* SYMLINK BASEDIR=$BASEDIR"
     echo "* PNAMES=$PNAMES"
     echo "* --- BEGIN ---"
-    echo "* cleanup"
-    symlinks -d $RELHOME
+    #echo "* cleanup"
+    #symlinks -d "$RELHOME"
     echo "* symlink"
     for p in $PNAMES; do
         SOURCE=$HOMELINKS_DPATH/$BASEDIR/$p
         TARGET=$RELHOME/.$p
-        unlink_or_backup $TARGET
-        ln -vs $SOURCE $TARGET;
+        unlink_or_backup "$TARGET"
+        ln -vs "$SOURCE" "$TARGET";
     done
 
     echo "* Convert to relative symlinks"
-    symlinks -c $RELHOME/.$BASEDIR
+    symlinks -c "$RELHOME"/.$BASEDIR
     echo "* --- END ---"
     #================
 }

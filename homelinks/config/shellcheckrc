@@ -1,0 +1,14 @@
+# https://www.mankier.com/1/shellcheck
+
+disable=SC2016  #  single quotes prevent expansion,
+disable=#SC2068  #  Quote array expansion to prevent re-splitting elements,
+disable=SC2102  #  Ranges can only match single chars,
+
+disable=SC21091  #  not following something not declared as input,
+disable=SC1091  #  not following something not declared as input,
+
+disable=SC1090  #  cant follow non-constant input,
+disable=SC2164  #  unsafe cd,
+disable=SC2002  #  useless cat,
+
+disable=SC2181  #  Check exit code directly,

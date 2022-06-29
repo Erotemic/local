@@ -1,4 +1,42 @@
 "-------------------------
+" PLUGIN: Vimtk
+
+
+Python2or3 << EOF
+import vimtk
+import ubelt as ub
+vimtk.CONFIG['vimtk_auto_importable_modules'].update({
+    'it': 'import itertools as it',
+    'nh': 'import netharn as nh',
+    'np': 'import numpy as np',
+    'pd': 'import pandas as pd',
+    'ub': 'import ubelt as ub',
+    'nx': 'import networkx as nx',
+    'Image': 'from PIL import Image',
+    'mpl': 'import matplotlib as mpl',
+    'nn': 'from torch import nn',
+    'torch_data': 'import torch.utils.data as torch_data',
+    'F': 'import torch.nn.functional as F',
+    'math': 'import math',
+    ####
+    'ndsampler': 'import ndsampler',
+    'kwarray': 'import kwarray',
+    'kwimage': 'import kwimage',
+    'kwcoco': 'import kwcoco',
+    'xdev': 'import xdev',
+    'scfg': 'import scriptconfig as scfg',
+    'profile': ub.codeblock(
+        '''
+        try:
+            from xdev import profile
+        except ImportError:
+            from ubelt import identity as profile
+        ''')
+})
+EOF
+
+
+"-------------------------
 " PLUGIN: NERDTree 
 
 func! NERD_TREE_WITH_BAT()
@@ -68,6 +106,7 @@ let g:syntastic_always_populate_loc_list = 1
 Python2or3 << EOF
 # SHELL-check !!NOT!! SPELL-check
 import vim
+# See Also: ~/.config/shellcheckrc
 shellcheck_errors = {
     'SC2016': 'single quotes prevent expansion',
     #'SC2068': 'Quote array expansion to prevent re-splitting elements',
