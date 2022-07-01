@@ -1255,13 +1255,52 @@ ls_array(){
 
     References:
         .. [1] https://stackoverflow.com/a/18887210/887074
+        .. [2] https://stackoverflow.com/questions/14564746/in-bash-how-to-get-the-current-status-of-set-x
     '
     local arr_name="$1"
     local glob_pattern="$2"
-    shopt -s nullglob
+
+    local toggle_nullglob=""
+    local toggle_noglob=""
+    # Can check the "$-" variable to see what current settings are i.e. set -x, set -e
+    # Can check "set -o" to get currentenabled options
+    # Can check "shopt" to get current enabled options
+
+    if shopt nullglob; then
+        # Check if null glob is enabled, if it is, this will be true
+        toggle_nullglob=0
+    else
+        toggle_nullglob=1
+    fi
+    # Check for -f to see if noglob is enabled
+    if [[ -n "${-//[^f]/}" ]]; then
+        toggle_noglob=1
+    else
+        toggle_noglob=0
+    fi
+
+    if [[ "$toggle_nullglob" == "1" ]]; then
+        # Enable nullglob if it was off
+        shopt -s nullglob
+    fi
+    if [[ "$toggle_noglob" == "1" ]]; then
+        # Enable nullglob if it was off
+        shopt -s nullglob
+    fi
+
+    # The f corresponds to if noglob was set
+
     # shellcheck disable=SC2206
     array=($glob_pattern)
-    shopt -u nullglob # Turn off nullglob to make sure it doesn't interfere with anything later
+
+    if [[ "$toggle_noglob" == "1" ]]; then
+        # need to reenable noglob
+        set -o noglob  # enable noglob
+    fi
+    if [[ "$toggle_nullglob" == "1" ]]; then
+        # Disable nullglob if it was off to make sure it doesn't interfere with anything later
+        shopt -u nullglob 
+    fi
     # Copy the array into the dynamically named variable
     readarray -t "$arr_name" < <(printf '%s\n' "${array[@]}")
 }
