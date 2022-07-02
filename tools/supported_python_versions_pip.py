@@ -12,7 +12,6 @@ Requirements:
     parse
 """
 import json
-import math
 import parse
 import ubelt as ub
 import pandas as pd
