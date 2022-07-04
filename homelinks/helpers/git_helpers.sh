@@ -121,3 +121,8 @@ git-pullreq-url(){
     echo "$REPO_URL/pull/"
 }
 alias gitpr=git-pullreq-url
+
+
+#git-update-branch(){
+#}
+alias gup='python ~/local/git_tools/git_update_branch.py'
