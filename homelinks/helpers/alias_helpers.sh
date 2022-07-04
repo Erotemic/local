@@ -923,6 +923,7 @@ json_pp2(){
     __doc__="
     Use ubelt to pretty-print a json string
     "
+    _handle_help "$@" || return 0
     NL="-1"
 
     POSITIONAL=()
@@ -957,11 +958,17 @@ ssh-edit-config(){
 
 git-diff-branch(){
     __doc__="
+
+    Args:
+        FPATH
+        BRANCH_NAME
+
     source ~/local/homelinks/helpers/alias_helpers.sh
     git-diff-branch detector.py master
     FPATH=predict.py
     BRANCH_NAME=landcover-fix
     "
+    _handle_help "$@" || return 0
     FPATH=$1
     BRANCH_NAME=$2
 
@@ -984,6 +991,7 @@ git-branch-cat(){
     FPATH=predict.py
     BRANCH_NAME=landcover-fix
     "
+    _handle_help "$@" || return 0
     FPATH=$1
     BRANCH_NAME=$2
 
