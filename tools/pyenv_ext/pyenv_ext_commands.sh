@@ -107,7 +107,7 @@ pyenv_create_virtualenv(){
         CHOSEN_PYTHON_VERSION=3.9.9
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        pyenv_create_virtualenv 3.8.5 all
+        pyenv_create_virtualenv 3.8.5 full
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
         pyenv_create_virtualenv 3.8.6 most
@@ -135,10 +135,10 @@ pyenv_create_virtualenv(){
         pyenv_create_virtualenv 3.9.9 full
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        pyenv_create_virtualenv 3.10.0 all
+        pyenv_create_virtualenv 3.10.0 full
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        pyenv_create_virtualenv 3.10.5 all
+        pyenv_create_virtualenv 3.10.5 full
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
         pyenv_create_virtualenv 3.11-dev most

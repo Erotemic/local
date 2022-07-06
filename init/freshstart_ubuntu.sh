@@ -111,19 +111,19 @@ setup_single_use_ssh_keys(){
     EMAIL=erotemic@gmail.com
     EMAIL=jon.crall@kitware.com
     FPATH="$HOME/.ssh/id_${HOSTNAME}_${USER}_ed25519"
-    ssh-keygen -t ed25519 -b 256 -C "${EMAIL}" -f $FPATH -N ""
+    ssh-keygen -t ed25519 -b 256 -C "${EMAIL}" -f "$FPATH" -N ""
 
     chmod 700 ~/.ssh
     chmod 400 ~/.ssh/id_*
     chmod 644 ~/.ssh/id_*.pub
 
     eval "$(ssh-agent -s)"
-    ssh-add ~/.ssh/id_${HOSTNAME}_${USER}_ed25519
+    ssh-add ~/.ssh/id_"${HOSTNAME}"_"${USER}"_ed25519
     
     echo "TODO: Register public key with appropriate services"
     echo " https://github.com/profile/keys "
     echo " https://gitlab.com/profile/keys "
-    cat ~/.ssh/id_${HOSTNAME}_${USER}_ed25519.pub
+    cat ~/.ssh/id_"${HOSTNAME}"_"${USER}"_ed25519.pub
 
     # Note: RSA with longer keys will be post-quantum resistant for longer
     # The NSA recommends a minimum 3072 key length, probably should go longer than that
@@ -157,7 +157,7 @@ setup_remote_ssh_keys(){
     do
         echo "UPDATING remote = $remote"
         # move .ssh config to other computers
-        rsync ~/.ssh/./config $remote:.ssh/./
+        rsync ~/.ssh/./config "$remote":.ssh/./
     done
 
     ###
@@ -165,12 +165,12 @@ setup_remote_ssh_keys(){
     # Copy from a remote to local computer
     REMOTE_USER=jon.crall
     REMOTE_HOST=hocus-pocus
-    rsync $REMOTE_USER@$REMOTE_HOST:.ssh/./id_* $HOME/.ssh/
-    rsync $REMOTE_USER@$REMOTE_HOST:.ssh/./config $HOME/.ssh/
+    rsync $REMOTE_USER@$REMOTE_HOST:.ssh/./id_* "$HOME"/.ssh/
+    rsync $REMOTE_USER@$REMOTE_HOST:.ssh/./config "$HOME"/.ssh/
 
     REMOTE_ALIAS=
-    rsync -avprPRL $HOME/.ssh/./id_*  $REMOTE_ALIAS:.ssh/
-    rsync -avprPRL $HOME/.ssh/./config $REMOTE_ALIAS:.ssh/
+    rsync -avprPRL "$HOME"/.ssh/./id_*  "$REMOTE_ALIAS":.ssh/
+    rsync -avprPRL "$HOME"/.ssh/./config "$REMOTE_ALIAS":.ssh/
 }
 
 
@@ -594,7 +594,7 @@ setup_venv3(){
 
         # Test if we have distutils; if not, install it. 
         python3 -c "from distutils import sysconfig as distutils_sysconfig"
-        if [ "$(echo $?)" != "0" ]; then
+        if [ "$?" != "0" ]; then
             sudo apt install python3-distutils -y
         fi
 
@@ -608,13 +608,13 @@ setup_venv3(){
     PYEXE=$(python3 -c "import sys; print(sys.executable)")
     PYVERSUFF=$(python3 -c "import sysconfig; print(sysconfig.get_config_var('VERSION'))")
     PYTHON3_VERSION_VENV="$HOME/venv$PYVERSUFF"
-    mkdir -p $PYTHON3_VERSION_VENV
-    python3 -m virtualenv -p $PYEXE $PYTHON3_VERSION_VENV 
-    python3 -m virtualenv --relocatable $PYTHON3_VERSION_VENV 
+    mkdir -p "$PYTHON3_VERSION_VENV"
+    python3 -m virtualenv -p "$PYEXE" "$PYTHON3_VERSION_VENV" 
+    python3 -m virtualenv --relocatable "$PYTHON3_VERSION_VENV" 
 
     PYTHON3_VENV="$HOME/venv3"
     # symlink to the real env
-    ln -s $PYTHON3_VERSION_VENV $PYTHON3_VENV
+    ln -s "$PYTHON3_VERSION_VENV" "$PYTHON3_VENV"
 
     #python3 -m virtualenv -p /usr/bin/python3 $PYTHON3_VENV
     # source $PYTHON3_VENV/bin/activate
@@ -630,18 +630,18 @@ dev_fix_venv_mismatched_version(){
     "
     # Check if the virtualenv and system python are on the same patch version
     # IF THEY HAVE DIFFERENT MAJOR/MINOR VERSONS DO NOTHING HERE!
-    $VIRTUAL_ENV/bin/python --version
+    "$VIRTUAL_ENV"/bin/python --version
     /usr/bin/python3 --version
 
     # overwrite the virtualenv python with a fresh copy of the system python
-    cp $VIRTUAL_ENV/bin/python $VIRTUAL_ENV/bin/python.bakup
-    sha1sum  $VIRTUAL_ENV/bin/python.bakup
-    sha1sum  $VIRTUAL_ENV/bin/python
+    cp "$VIRTUAL_ENV"/bin/python "$VIRTUAL_ENV"/bin/python.bakup
+    sha1sum  "$VIRTUAL_ENV"/bin/python.bakup
+    sha1sum  "$VIRTUAL_ENV"/bin/python
     sha1sum  /usr/bin/python3
 
-    lsof  $VIRTUAL_ENV/bin/python
+    lsof  "$VIRTUAL_ENV"/bin/python
 
-    cp /usr/bin/python3 $VIRTUAL_ENV/bin/python
+    cp /usr/bin/python3 "$VIRTUAL_ENV"/bin/python
 }
 
 
@@ -665,186 +665,13 @@ setup_poetry_env(){
 
     PYENV_PREFIX=$(pyenv prefix)
     VENV_PREFIX=$PYENV_PREFIX/envs
-    mkdir -p $VENV_PREFIX
+    mkdir -p "$VENV_PREFIX"
 
-    python -m venv $VENV_PREFIX/py38
-    source $VENV_PREFIX/py38/bin/activate
+    python -m venv "$VENV_PREFIX"/py38
+    source "$VENV_PREFIX"/py38/bin/activate
     
 }
 
-setup_pyenv(){
-    # See Also: 
-    # ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-
-    # Install requirements for building Python
-    sudo apt-get install -y \
-        make build-essential libssl-dev zlib1g-dev \
-        libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
-        libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl
-
-    # Download pyenv
-    export PYENV_ROOT="$HOME/.pyenv"
-    if [[ ! -d "$PYENV_ROOT" ]]; then
-        git clone https://github.com/pyenv/pyenv.git $PYENV_ROOT
-        (cd $PYENV_ROOT && src/configure && make -C src)
-    fi
-
-    # We will need to add something similar in your bashrc
-    if [ -d "$PYENV_ROOT" ]; then
-        export PATH="$PYENV_ROOT/bin:$PATH"
-        eval "$($PYENV_ROOT/bin/pyenv init -)"
-        source $PYENV_ROOT/completions/pyenv.bash
-    fi
-
-    # About Optimizations
-    # https://github.com/docker-library/python/issues/160#issuecomment-509426916
-    # https://gist.github.com/nszceta/ec6efc9b5e54df70deeec7bceead0a1d
-    # https://clearlinux.org/news-blogs/boosting-python-profile-guided-platform-specific-optimizations
-    #CHOSEN_PYTHON_VERSION=2.7.18
-    CHOSEN_PYTHON_VERSION=3.8.5
-
-    PROFILE_TASK="-m test.regrtest 
-        --pgo test_array test_base64 test_binascii test_binhex test_binop
-        test_c_locale_coercion test_csv test_json test_hashlib test_unicode
-        test_codecs test_traceback test_decimal test_math test_compile
-        test_threading test_time test_fstring test_re test_float test_class
-        test_cmath test_complex test_iter test_struct test_slice test_set
-        test_dict test_long test_bytes test_memoryview test_io test_pickle"
-
-    PYTHON_CONFIGURE_OPTS="
-        --enable-shared 
-        --enable-optimizations 
-        --with-computed-gotos
-        --with-lto"
-
-    #PYTHON_CFLAGS="-march=native -O2 -pipe" 
-    PYTHON_CFLAGS="-march=native -O3 -pipe" 
-
-    #PROFILE_TASK=$PROFILE_TASK \
-    PYTHON_CFLAGS="$PYTHON_CFLAGS" \
-    PYTHON_CONFIGURE_OPTS="$PYTHON_CONFIGURE_OPTS" \
-    pyenv install $CHOSEN_PYTHON_VERSION --verbose
-
-    # Set your global pyenv version, so your prefix maps correctly.
-    pyenv shell $CHOSEN_PYTHON_VERSION
-    pyenv global $CHOSEN_PYTHON_VERSION
-
-    if [[ $CHOSEN_PYTHON_VERSION == 2.7.* ]]; then
-        echo "2.7"
-        pip install virtualenv
-        PYENV_PREFIX=$(pyenv prefix)
-        python -m virtualenv $PYENV_PREFIX/envs/pyenv$CHOSEN_PYTHON_VERSION
-    else
-        echo "3.x"
-        # Create the virtual environment
-        PYENV_PREFIX=$(pyenv prefix)
-        python -m venv $PYENV_PREFIX/envs/pyenv$CHOSEN_PYTHON_VERSION
-    fi
-
-    # Add this to your bashrc so you start in a virtual environment
-
-    #### START BASHRC PART ###
-    echo "#### ADD THIS TO YOUR BASH RC ####"
-    BASHRC_CONTENTS=$(codeblock '
-    CHOSEN_PYTHON_VERSION=3.8.5
-    # Add the pyenv command to our environment if it exists
-    export PYENV_ROOT="$HOME/.pyenv"
-    if [ -d "$PYENV_ROOT" ]; then
-        export PATH="$PYENV_ROOT/bin:$PATH"
-        eval "$($PYENV_ROOT/bin/pyenv init -)"
-        source $PYENV_ROOT/completions/pyenv.bash
-        export PYENV_PREFIX=$(pyenv prefix)
-    fi
-    
-    if [ -d "$PYENV_PREFIX/envs/pyenv$CHOSEN_PYTHON_VERSION" ]; then
-        source $PYENV_PREFIX/envs/pyenv$CHOSEN_PYTHON_VERSION/bin/activate
-    fi
-    ')
-    echo "#### ADD THE ABOVE TO YOUR BASH RC ####"
-    echo "$BASHRC_CONTENTS"
-    #### END BASHRC PART ####
-}
-
-
-build_vim_for_pyenv(){
-    if [[ ! -d "$HOME/code/vim" ]]; then 
-        git clone https://github.com/vim/vim.git ~/code/vim
-    else 
-        cd $HOME/code/vim
-        git pull
-    fi
-
-    source "$HOME/local/init/utils.sh"
-    apt_ensure build-essential libtinfo-dev libncurses-dev gnome-devel libgtk-3-dev libxt-dev
-
-    #./configure --help
-    #./configure --help | grep python
-    cd $HOME/code/vim
-
-    # https://github.com/vim/vim/issues/6457
-    #git checkout v8.1.2424
-    git checkout v8.2.3113
-
-    # Build in virtualenv?
-    # deactivate
-    deactivate_venv
-
-    BUILD_IN_VIRTUALENV=0
-    if [[ "$BUILD_IN_VIRTUALENV" == "1" ]]; then
-        #PREFIX=$VIRTUAL_ENV
-        # I Think the config has to point to the actual python install and not
-        # the virtualenv
-        PREFIX=$(pyenv prefix)
-        EXEC_PREFIX=$VIRTUAL_ENV
-        CONFIG_DIR=$($(pyenv prefix)/bin/python-config --configdir)
-        #CONFIG_DIR=$($VIRTUAL_ENV/bin/python-config --configdir)
-        PYTHON_CMD=$(which python)
-    else
-        # Seems like this doesnt always work
-        PREFIX=$(pyenv prefix)
-        EXEC_PREFIX="$PREFIX"
-        CONFIG_DIR=$($(pyenv prefix)/bin/python-config --configdir)
-        PYTHON_CMD=$(pyenv which python)
-    fi
-
-    #PREFIX=${VIRTUAL_ENV:=$HOME/.local}
-    #CONFIG_DIR=$(python-config --configdir)
-
-    #https://github.com/ycm-core/YouCompleteMe/issues/3760
-    #PREFIX=$(pyenv prefix)
-    #CONFIG_DIR=$($(pyenv prefix)/bin/python-config --configdir)
-    echo "PREFIX = $PREFIX"
-    echo "EXEC_PREFIX = $EXEC_PREFIX"
-    echo "CONFIG_DIR = $CONFIG_DIR"
-
-    # THIS WORKS! 
-    export LDFLAGS="-rdynamic"
-    make distclean
-    ./configure \
-        --prefix=$PREFIX \
-        --exec-prefix=$EXEC_PREFIX \
-        --enable-pythoninterp=no \
-        --enable-python3interp=yes \
-        --with-python3-command=$PYTHON_CMD \
-        --with-python3-config-dir=$CONFIG_DIR \
-        --enable-gui=gtk3
-    cat src/auto/config.mk 
-
-    # Ensure the version of python matches (there are cases due to system
-    # configs where it might not)
-    cat src/auto/config.mk | grep 'PYTHON3\|prefix'
-
-    make -j$(nproc)
-    #./src/vim -u NONE --cmd "source test.vim"
-    make install
-
-    if [[ -d "$HOME/code/vimtk" ]]; then
-        unlink_or_backup $HOME/.vim/bundle/vimtk
-        ln -s $HOME/code/vimtk $HOME/.vim/bundle/vimtk
-    fi
-
-    pip install ubelt pyperclip
-}
 
 pyenv_packages(){
     pip install pip -U
@@ -879,7 +706,7 @@ pyenv_packages(){
     GDAL_VERSION=$(gdal-config --version)
     echo "GDAL_PREFIX = $GDAL_PREFIX"
     echo "GDAL_VERSION = $GDAL_VERSION"
-    CFLAGS=$CFLAGS pip install GDAL==$GDAL_VERSION
+    CFLAGS=$CFLAGS pip install GDAL=="$GDAL_VERSION"
     #CFLAGS=$CFLAGS CPLUS_INCLUDE_PATH=$GDAL_PREFIX/include/gdal C_INCLUDE_PATH=$GDAL_PREFIX/gdal pip install GDAL==$GDAL_VERSION
     python -c "import osgeo"
     python -c "from osgeo import gdal; print(gdal.Open)"
@@ -1053,13 +880,13 @@ setup_venv2(){
     PYEXE=$(python2 -c "import sys; print(sys.executable)")
     PYVERSUFF=$(python2 -c "import sysconfig; print(sysconfig.get_config_var('VERSION'))")
     PYTHON2_VERSION_VENV="$HOME/venv$PYVERSUFF"
-    mkdir -p $PYTHON2_VERSION_VENV
-    python2 -m virtualenv -p $PYEXE $PYTHON2_VERSION_VENV 
-    python2 -m virtualenv --relocatable $PYTHON2_VERSION_VENV 
+    mkdir -p "$PYTHON2_VERSION_VENV"
+    python2 -m virtualenv -p "$PYEXE" "$PYTHON2_VERSION_VENV" 
+    python2 -m virtualenv --relocatable "$PYTHON2_VERSION_VENV" 
 
     PYTHON2_VENV="$HOME/venv2"
     # symlink to the real env
-    ln -s $PYTHON2_VERSION_VENV $PYTHON2_VENV
+    ln -s "$PYTHON2_VERSION_VENV" "$PYTHON2_VENV"
 }
 
 
@@ -1273,9 +1100,9 @@ setup_venv37(){
     echo "setup venv37"
     # Make sure you install 3.7 to ~/.local from source
     PYTHON3_VENV="$HOME/venv3_7"
-    mkdir -p $PYTHON3_VENV
-    ~/.local/bin/python3 -m venv $PYTHON3_VENV
-    ln -s $PYTHON3_VENV ~/venv3 
+    mkdir -p "$PYTHON3_VENV"
+    ~/.local/bin/python3 -m venv "$PYTHON3_VENV"
+    ln -s "$PYTHON3_VENV" ~/venv3 
 
 }
 
@@ -1283,7 +1110,7 @@ setup_venvpypy(){
     echo "setup venvpypy"
 
     PYPY_VENV="$HOME/venvpypy"
-    mkdir -p $PYPY_VENV
+    mkdir -p "$PYPY_VENV"
 
     #sudo apt install pypy pypy-pip
 
@@ -1291,7 +1118,7 @@ setup_venvpypy(){
     #pip -m install virtualenv --user
     #pip install virtualenv
     pypy -m ensurepip
-    virtualenv -p /usr/bin/pypy $PYPY_VENV 
+    virtualenv -p /usr/bin/pypy "$PYPY_VENV" 
 
     pypy -m ensurepip
     sudo apt install pypy-pip
@@ -1337,24 +1164,24 @@ install_fonts()
     FONT_DIR=$HOME/.fonts
     TTF_FONT_DIR=$FONT_DIR/truetype
     OTF_FONT_DIR=$FONT_DIR/truetype
-    mkdir -p $TTF_FONT_DIR
-    mkdir -p $OTF_FONT_DIR
+    mkdir -p "$TTF_FONT_DIR"
+    mkdir -p "$OTF_FONT_DIR"
 
-    cp $HOME/code/erotemic/safe/assets/DyslexicBundle.zip $HOME/tmp
-    mkdir -p $HOME/tmp/DyslexicBundle
-    rm -rf $HOME/tmp/DyslexicBundle
-    mkdir -p $HOME/tmp/DyslexicBundle
-    unzip $HOME/code/erotemic/safe/assets/DyslexicBundle.zip -d $HOME/tmp/DyslexicBundle
-    ls $HOME/tmp/DyslexicBundle
-    $_SUDO cp -v $HOME/tmp/DyslexicBundle/*.ttf $TTF_FONT_DIR/
-    $_SUDO cp -v $HOME/tmp/DyslexicBundle/*.otf $OTF_FONT_DIR/
+    cp "$HOME"/code/erotemic/safe/assets/DyslexicBundle.zip "$HOME"/tmp
+    mkdir -p "$HOME"/tmp/DyslexicBundle
+    rm -rf "$HOME"/tmp/DyslexicBundle
+    mkdir -p "$HOME"/tmp/DyslexicBundle
+    unzip "$HOME"/code/erotemic/safe/assets/DyslexicBundle.zip -d "$HOME"/tmp/DyslexicBundle
+    ls "$HOME"/tmp/DyslexicBundle
+    $_SUDO cp -v "$HOME"/tmp/DyslexicBundle/*.ttf "$TTF_FONT_DIR"/
+    $_SUDO cp -v "$HOME"/tmp/DyslexicBundle/*.otf "$OTF_FONT_DIR"/
 
     ls ~/Dropbox/Fonts/
     cd ~/Dropbox/Fonts/
-    $_SUDO cp -v ~/Dropbox/Fonts/*.ttf $TTF_FONT_DIR/
-    $_SUDO cp -v ~/Dropbox/Fonts/*.otf $OTF_FONT_DIR/
-    $_SUDO cp -v ~/tmp/open-dyslexic-master/otf/*.otf $OTF_FONT_DIR/
-    $_SUDO cp -v ~/tmp/cm-unicode-0.7.0/*.ttf $TTF_FONT_DIR/
+    $_SUDO cp -v ~/Dropbox/Fonts/*.ttf "$TTF_FONT_DIR"/
+    $_SUDO cp -v ~/Dropbox/Fonts/*.otf "$OTF_FONT_DIR"/
+    $_SUDO cp -v ~/tmp/open-dyslexic-master/otf/*.otf "$OTF_FONT_DIR"/
+    $_SUDO cp -v ~/tmp/cm-unicode-0.7.0/*.ttf "$TTF_FONT_DIR"/
 
     $_SUDO fc-cache -f -v
 
@@ -1365,9 +1192,9 @@ install_fonts()
 
 install_dropbox_fonts2(){
     # DEPENDS: Linked Dropbox
-    mkdir -p $HOME/.fonts/truetype
-    cp -v ~/Dropbox/Fonts/*.ttf $HOME/.fonts/truetype
-    cp -v ~/Dropbox/Fonts/*.otf $HOME/.fonts/truetype
+    mkdir -p "$HOME"/.fonts/truetype
+    cp -v ~/Dropbox/Fonts/*.ttf "$HOME"/.fonts/truetype
+    cp -v ~/Dropbox/Fonts/*.otf "$HOME"/.fonts/truetype
     fc-cache -f -v
 }
 
@@ -1379,7 +1206,7 @@ virtualbox_ubuntu_init()
     # Press Ctrl+D to automatically install virtualbox addons do this
     sudo apt install virtualbox-guest-additions-iso
     sudo apt install dkms build-essential linux-headers-generic
-    sudo apt install build-essential linux-headers-$(uname -r)
+    sudo apt install build-essential "linux-headers-$(uname -r)"
     sudo apt install virtualbox-ose-guest-x11
     # setup virtualbox for ssh
     VBoxManage modifyvm virtual-ubuntu --natpf1 "ssh,tcp,,3022,,22"
@@ -1390,7 +1217,7 @@ nopassword_on_sudo()
     # DEPRICATE: we dont do this anymore
     # CAREFUL. THIS IS HUGE SECURITY RISK
     # References: http://askubuntu.com/questions/147241/execute-sudo-without-password
-    sudo cat /etc/sudoers > ~/tmp/sudoers.next  
+    cat /etc/sudoers > ~/tmp/sudoers.next  
     echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >> ~/tmp/sudoers.next  
     # Copy over the new sudoers file
     visudo -c -f ~/tmp/sudoers.next
@@ -1414,6 +1241,7 @@ nautilus_hide_unwanted_sidebar_items()
 
     echo "Removing unwanted nautilus sidebar items"
 
+    # shellcheck disable=SC2050
     if [ "1" == "0" ]; then
         # Sidebar items are governed by files in $HOME and /etc
         ls ~/.config/user-dirs*
@@ -1455,7 +1283,7 @@ nautilus_hide_unwanted_sidebar_items()
     sudo sed -i 's/VIDEOS/#VIDEOS/'           /etc/xdg/user-dirs.defaults 
     ###
     sudo sed -i "s/enabled=true/enabled=false/" /etc/xdg/user-dirs.conf
-    sudo echo "enabled=false" >> /etc/xdg/user-dirs.conf
+    sudo_appendto /etc/xdg/user-dirs.conf  "enabled=false"
     sudo sed -i "s/enabled=true/enabled=false/" /etc/xdg/user-dirs.conf
 
     # Trigger an update
@@ -1502,8 +1330,8 @@ setup_ibeis()
 
     cd 
     IBEIS_WORK_DIR="$(python -c 'import ibeis; print(ibeis.get_workdir())')"
-    echo $IBEIS_WORK_DIR
-    ln -s $IBEIS_WORK_DIR  work
+    echo "$IBEIS_WORK_DIR"
+    ln -s "$IBEIS_WORK_DIR"  work
 }
 
 
@@ -1617,8 +1445,6 @@ setup_development_environment(){
     python -c "import pydot"
 
     pip install bs4
-    ./
-    
 
     if [ "$(which cmake)" == "" ]; then
         python ~/local/build_scripts/init_cmake_latest.py
@@ -1633,7 +1459,7 @@ local_apt(){
     apt download $PKG_NAME
     PKG_DEB=$(echo $PKG_NAME*.deb)
     # Cant get this to work
-    dpkg -i $PKG_DEB --force-not-root --root=$HOME 
+    dpkg -i "$PKG_DEB" --force-not-root --root="$HOME" 
     #--------
 }
 
@@ -1642,7 +1468,7 @@ customize_sudoers()
 { 
     # References: http://askubuntu.com/questions/147241/execute-sudo-without-password
     # Make timeout for sudoers a bit longer
-    sudo cat /etc/sudoers > ~/tmp/sudoers.next  
+    cat /etc/sudoers > ~/tmp/sudoers.next  
     sed -i 's/^Defaults.*env_reset/Defaults    env_reset, timestamp_timeout=480/' ~/tmp/sudoers.next 
     # Copy over the new sudoers file
     sudo visudo -c -f ~/tmp/sudoers.next
@@ -1724,7 +1550,7 @@ big_apt_install(){
     sudo apt install remmina remmina-plugin-rdp libfreerdp-plugins-standard -y
     # Add self to fuse group
     sudo groupadd fuse
-    sudo usermod -aG fuse $USER
+    sudo usermod -aG fuse "$USER"
     sudo chmod g+rw /dev/fuse
     sudo chgrp fuse /dev/fuse
 
@@ -1809,7 +1635,7 @@ resetup_ooo_after_os_reinstall()
     cat /proc/mdstat
     sudo update-initramfs -u
     
-    sudo mdadm --examine $RAID_PARTS
+    sudo mdadm --examine "$RAID_PARTS"
     sudo mdadm --detail /dev/md0
     
 
@@ -1841,11 +1667,12 @@ specific_18_04_freshinstall(){
 }
 
 gnome_extensions(){
+    __doc__='
     https://extensions.gnome.org/extension/352/middle-click-to-close-in-overview/
     https://extensions.gnome.org/extension/15/alternatetab/
-
     https://extensions.gnome.org/extension/120/system-monitor/
     https://extensions.gnome.org/extension/9/systemmonitor/
+    '
 }
 
 install_travis_cmdline_tool(){
@@ -1884,12 +1711,12 @@ install_transcrypt(){
     git clone https://github.com/Erotemic/transcrypt.git ~/code/transcrypt
     cd ~/code/transcrypt
 
-    source $HOME/local/init/utils.sh
-    safe_symlink $HOME/code/transcrypt/transcrypt $HOME/.local/bin/transcrypt
+    source "$HOME"/local/init/utils.sh
+    safe_symlink "$HOME"/code/transcrypt/transcrypt "$HOME"/.local/bin/transcrypt
 
     #git clone https://github.com/Erotemic/roaming.git
     git clone https://gitlab.com/Erotemic/erotemic.git
-    cd $HOME/code/erotemic
+    cd "$HOME"/code/erotemic
 
     # new roaming 
     #mkdir -p $HOME/code/roaming
@@ -2081,16 +1908,16 @@ benchmark()
         PYEXE=python
         echo "$1" | $PYEXE -c "import sys; from textwrap import dedent; print(dedent(sys.stdin.read()).strip('\n'))"
     }
-    echo "$(codeblock '
+    codeblock '
     FIRST=$1
     shift
     nvidia-docker $FIRST --runtime=nvidia $@
-    ')" > ./hack_bin/nvidia-docker
+    ' > ./hack_bin/nvidia-docker
     chmod +x ./hack_bin/nvidia-docker
     PATH="$PWD/hack_bin:$PATH"
 
     rm -rf ./pytorch ./logs
-    python $DLBS_ROOT/python/dlbs/experimenter.py run \
+    python "$DLBS_ROOT"/python/dlbs/experimenter.py run \
         --log-level="debug" \
         -Pexp.framework='"pytorch"' \
         -Vexp.gpus='"1"' \
@@ -2109,27 +1936,24 @@ benchmark()
 
     params="exp.status,exp.framework_title,exp.effective_batch,results.time,results.throughput,exp.model_title,exp.docker_image"
 
-    python $logparser ./pytorch/logs/*.log --output_file './results.json' 
+    #python "$logparser" ./pytorch/logs/*.log --output_file './results.json' 
+    #python "$reporter" --summary_file '${HOME}/dlbs/results.json'\             # Parse summary file and build
+    #                 --type 'weak-scaling'\                                  #     weak scaling report
+    #                 --target_variable 'results.time'                        #     using batch time as performance metric
 
-    python $reporter --summary_file '${HOME}/dlbs/results.json'\             # Parse summary file and build
-                     --type 'weak-scaling'\                                  #     weak scaling report
-                     --target_variable 'results.time'                        #     using batch time as performance metric
+    python "$DLBS_ROOT"/python/dlbs/bench_data.py parse ./pytorch/*.log  --output results.json
 
+    python "$DLBS_ROOT"/python/dlbs/bench_data.py summary  results.json 
 
-    python $DLBS_ROOT/python/dlbs/bench_data.py parse ./pytorch/*.log  --output results.json
-
-    python $DLBS_ROOT/python/dlbs/bench_data.py summary  results.json 
-
-    python $DLBS_ROOT/python/dlbs/bench_data.py report  results.json --report strong
-    python $DLBS_ROOT/python/dlbs/bench_data.py report  results.json --report regular
-    python $DLBS_ROOT/python/dlbs/bench_data.py report  results.json --report '{"inputs": ["exp.status","exp.framework_title","exp.effective_batch","results.time","results.throughput","exp.model_title","exp.docker_image"], "output": "exp.num_gpus", "report_efficiency": true}'
+    python "$DLBS_ROOT"/python/dlbs/bench_data.py report  results.json --report strong
+    python "$DLBS_ROOT"/python/dlbs/bench_data.py report  results.json --report regular
+    python "$DLBS_ROOT"/python/dlbs/bench_data.py report  results.json --report '{"inputs": ["exp.status","exp.framework_title","exp.effective_batch","results.time","results.throughput","exp.model_title","exp.docker_image"], "output": "exp.num_gpus", "report_efficiency": true}'
     echo "params = $params"
 
 
-    python $DLBS_ROOT/python/dlbs/bench_data.py summary results.json --report weak
-    python $DLBS_ROOT/python/dlbs/bench_data.py summary results.json --report string
-    --output_params ${params}                           
-    
+    python "$DLBS_ROOT"/python/dlbs/bench_data.py summary results.json --report weak
+    python "$DLBS_ROOT"/python/dlbs/bench_data.py summary results.json --report string
+    #--output_params ${params}                           
     
     docker run -ti nvcr.io/nvidia/tensorflow:18.07-py3 /bin/bash
     nvidia-docker run -ti nvcr.io/nvidia/tensorflow:18.07-py3 /bin/bash
