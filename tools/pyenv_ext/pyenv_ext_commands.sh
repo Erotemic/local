@@ -41,6 +41,286 @@ Example Usage:
     pyenv_create_virtualenv 3.9.9 full
 "
 
+install_pyenv(){
+    __doc__='
+    Perform installation of the pyenv library
+
+    Args:
+        UPGRADE (str): if truthy update to the latest
+
+    Example:
+        source ~/local/tools/utils.sh
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        UPGRADE=1 install_pyenv
+
+    Ignore:
+        export PATH="$PYENV_ROOT/bin:$PATH"
+        eval "$($PYENV_ROOT/bin/pyenv init -)"
+        eval "$($PYENV_ROOT/bin/pyenv init -)"
+    '
+    _handle_help "$@" || return 0
+
+    # Install requirements for building Python
+    #sudo apt-get install -y \
+    apt_ensure \
+        make build-essential libssl-dev zlib1g-dev \
+        libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
+        libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev libgdbm-dev libc6-dev
+
+    #apt_ensure python-openssl python3-openssl  # Is this needed?
+
+    # Download pyenv
+    export PYENV_ROOT="$HOME/.pyenv"
+    if [[ ! -d "$PYENV_ROOT" ]]; then
+        git clone https://github.com/pyenv/pyenv.git "$PYENV_ROOT"
+        (cd "$PYENV_ROOT" && src/configure && make -C src)
+    fi
+    if [[ "$UPGRADE" == "1" ]]; then
+        (cd "$PYENV_ROOT" && git pull && src/configure && make -C src)
+    fi
+}
+
+
+pyenv_create_virtualenv(){
+    __doc__="
+    The conda variant is: 
+        conda create -y -n <venv-name> python=<target-pyversion>
+
+    This command will seek to do something similar
+
+    Args:
+        PYTHON_VERSION (str) 
+        OPTIMIZE_PRESET (str, default=most): can be off, most, or full
+
+    Example:
+        # See Available versions
+        pyenv install --list | grep 3.9
+        pyenv install --list
+
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        pyenv_create_virtualenv 3.9.9 full
+
+        PYTHON_VERSION=3.8.5
+        CHOSEN_PYTHON_VERSION=3.8.5
+
+        PYTHON_VERSION=3.9.9
+        CHOSEN_PYTHON_VERSION=3.9.9
+
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        pyenv_create_virtualenv 3.8.5 all
+
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        pyenv_create_virtualenv 3.8.6 most
+
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        pyenv_create_virtualenv 3.7.10 off
+
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        pyenv_create_virtualenv 2.7.18
+
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        pyenv_create_virtualenv 2.7.17 off
+        
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        PYTHON_VERSION=3.4.10
+        pyenv_create_virtualenv 3.4.10 off
+
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        pyenv_create_virtualenv 3.5.10 off
+
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        pyenv_create_virtualenv 3.6.15 off
+
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        pyenv_create_virtualenv 3.9.9 full
+
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        pyenv_create_virtualenv 3.10.0 all
+
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        pyenv_create_virtualenv 3.10.5 all
+
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        pyenv_create_virtualenv 3.11-dev most
+    "
+    _handle_help "$@" || return 0
+
+    local PYTHON_VERSION=$1
+    local OPTIMIZE_PRESET=${2:-"most"}
+
+    local CHOSEN_PYTHON_VERSION=$PYTHON_VERSION
+    # shellcheck disable=SC2155
+    local BEST_MATCH=$(_pyenv_best_version_match "$PYTHON_VERSION")
+    echo "BEST_MATCH = $BEST_MATCH"
+    if [[ $BEST_MATCH == "None" ]]; then
+        echo "failed to find match"
+        return 1
+    fi
+    CHOSEN_PYTHON_VERSION=$BEST_MATCH
+
+    #if [[ "$PYTHON_VERSION" =~ ^3.4..* ]]; then
+    #    # https://github.com/pyenv/pyenv/issues/945
+    #    # Need to ensure libssl1.0
+
+    #    # Doesnt work
+    #    #mkdir -p $HOME/tmp/sslhack/libssl1.0-dev
+    #    #cd $HOME/tmp/sslhack/libssl1.0-dev
+    #    #wget https://debian.sipwise.com/debian-security/pool/main/o/openssl1.0/libssl1.0-dev_1.0.2l-2+deb9u3_amd64.deb
+    #    ##apt-get download libssl1.0-dev
+    #    #ar x libssl1.0-dev_1.0.2l-2+deb9u3_amd64.deb data.tar.xz
+    #    #tar -xf data.tar.xz --strip-components=2
+    #    #rm data.tar.xz
+
+    #    #HACK_INCLUDE1=$HOME/tmp/sslhack/libssl1.0-dev/include
+    #    #HACK_INCLUDE2=$HOME/tmp/sslhack/libssl1.0-dev/include/x86_64-linux-gnu
+    #    #HACK_LIB1=$HOME/tmp/sslhack/libssl1.0-dev/lib/x86_64-linux-gnu
+    #    #echo "HACK_INCLUDE1 = $HACK_INCLUDE1"
+    #    #echo "HACK_INCLUDE2 = $HACK_INCLUDE2"
+
+    #    #ln -s /usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2 $HOME/tmp/sslhack/libssl1.0-dev/lib/x86_64-linux-gnu
+    #    #ln -s /usr/lib/x86_64-linux-gnu/libssl.so.1.0.2 $HOME/tmp/sslhack/libssl1.0-dev/lib/x86_64-linux-gnu
+    #    #CFLAGS="-I${HACK_INCLUDE1} -I${HACK_INCLUDE2}" LDFLAGS="-L${HACK_LIB1}" pyenv install 3.4.10
+        
+    #fi
+
+    #PYTHON_CFLAGS="
+    #    -march=x86-64
+    #    -march=rocketlake
+    #    -march=native
+    #    -O2
+    #    -O3
+    #"
+
+    # About Optimizations
+    # https://github.com/docker-library/python/issues/160#issuecomment-509426916
+    # https://gist.github.com/nszceta/ec6efc9b5e54df70deeec7bceead0a1d
+    # https://clearlinux.org/news-blogs/boosting-python-profile-guided-platform-specific-optimizations
+
+    # List all presets
+    # python3 -m test.regrtest --pgo
+    if [[ "$OPTIMIZE_PRESET" == "full" ]] || [[ "$OPTIMIZE_PRESET" == "all" ]]; then
+        PROFILE_TASK=$(_strip_double_whitespace "-m test.regrtest --pgo
+            test_array
+            test_base64 
+            test_binascii 
+            test_binop 
+            test_bisect 
+            test_bytes 
+            test_bz2 
+            test_cmath 
+            test_codecs 
+            test_collections 
+            test_complex 
+            test_dataclasses 
+            test_datetime 
+            test_decimal 
+            test_difflib 
+            test_embed 
+            test_float 
+            test_fstring 
+            test_functools 
+            test_generators 
+            test_hashlib 
+            test_heapq 
+            test_int 
+            test_itertools 
+            test_json 
+            test_long 
+            test_lzma 
+            test_math 
+            test_memoryview 
+            test_operator 
+            test_ordered_dict 
+            test_pickle 
+            test_pprint 
+            test_re 
+            test_set 
+            test_sqlite 
+            test_statistics 
+            test_struct 
+            test_tabnanny 
+            test_time 
+            test_unicode 
+            test_xml_etree 
+            test_xml_etree_c 
+        ")
+
+        PYTHON_CONFIGURE_OPTS=$(_strip_double_whitespace "
+            --enable-shared 
+            --enable-optimizations 
+            --with-computed-gotos
+            --with-lto")
+
+        if lscpu | grep Intel ; then
+            PYTHON_CFLAGS="-march=native -mtune=intel -O3 -pipe" 
+        else
+            PYTHON_CFLAGS="-march=native -O3 -pipe" 
+        fi
+    elif [[ "$OPTIMIZE_PRESET" == "most" ]]; then
+        # FIXME: most and full are the same, what is the real breakdown?
+        PROFILE_TASK=$(_strip_double_whitespace "-m test.regrtest 
+            --pgo test_array test_base64 test_binascii test_binhex test_binop
+            test_c_locale_coercion test_csv test_json test_hashlib test_unicode
+            test_codecs test_traceback test_decimal test_math test_compile
+            test_threading test_time test_fstring test_re test_float test_class
+            test_cmath test_complex test_iter test_struct test_slice test_set
+            test_dict test_long test_bytes test_memoryview test_io test_pickle")
+
+        PYTHON_CONFIGURE_OPTS=$(_strip_double_whitespace "
+            --enable-shared 
+            --enable-optimizations 
+            --with-computed-gotos
+            --with-lto")
+
+        # -march option: https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html
+        # -pipe option: https://gcc.gnu.org/onlinedocs/gcc-4.1.2/gcc/Overall-Options.html
+        # TODO: maybe use --mtune=intel?
+        if lscpu | grep Intel ; then
+            PYTHON_CFLAGS="-march=native -mtune=intel -O3 -pipe" 
+        else
+            PYTHON_CFLAGS="-march=native -O3 -pipe" 
+        fi
+        MAKE_OPTS=""
+    elif [[ "$OPTIMIZE_PRESET" == "off" ]]; then
+        PROFILE_TASK=""
+        PYTHON_CONFIGURE_OPTS="--enable-shared"
+        PYTHON_CFLAGS="-march=native -O2 -pipe" 
+    else
+        echo "UNKNOWN OPT PRESET"
+        return 1
+    fi
+
+    MAKE_OPTS=""
+    MAKE_OPTS="-j$(nproc)"
+
+    MAKE_OPTS="$MAKE_OPTS" \
+    PROFILE_TASK="$PROFILE_TASK" \
+    PYTHON_CFLAGS="$PYTHON_CFLAGS" \
+    PYTHON_CONFIGURE_OPTS="$PYTHON_CONFIGURE_OPTS" \
+        pyenv install "$CHOSEN_PYTHON_VERSION" --verbose
+
+    #pyenv shell $CHOSEN_PYTHON_VERSION
+    #pyenv global $CHOSEN_PYTHON_VERSION
+
+    VERSION_PREFIX=$(pyenv prefix "$CHOSEN_PYTHON_VERSION")
+    CHOSEN_PYEXE=$VERSION_PREFIX/bin/python
+
+    $CHOSEN_PYEXE --version
+
+    VENV_NAME=pyenv$CHOSEN_PYTHON_VERSION
+    VENV_PATH=$VERSION_PREFIX/envs/$VENV_NAME
+
+    if [[ $CHOSEN_PYTHON_VERSION == 2.7.* ]]; then
+        echo "2.7"
+        $CHOSEN_PYEXE -m pip install virtualenv
+        $CHOSEN_PYEXE -m virtualenv "$VENV_PATH"
+    else
+        echo "3.x"
+        # Create the virtual environment
+        $CHOSEN_PYEXE -m venv "$VENV_PATH"
+    fi
+}
+
 pathvar_remove()
 {
     __doc__="
@@ -220,301 +500,6 @@ execute_pyenv_ext_complete_script(){
     refresh_workon_autocomplete
 }
 
-install_pyenv(){
-    __doc__='
-    Args:
-        UPGRADE (str): if truthy update to the latest
-
-    Example:
-        source ~/local/tools/utils.sh
-        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        UPGRADE=1 install_pyenv
-
-    Ignore:
-        export PATH="$PYENV_ROOT/bin:$PATH"
-        eval "$($PYENV_ROOT/bin/pyenv init -)"
-        eval "$($PYENV_ROOT/bin/pyenv init -)"
-    '
-    _handle_help "$@" || return 0
-
-    # Install requirements for building Python
-    #sudo apt-get install -y \
-    apt_ensure \
-        make build-essential libssl-dev zlib1g-dev \
-        libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
-        libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev libgdbm-dev libc6-dev
-
-    #apt_ensure python-openssl python3-openssl  # Is this needed?
-
-    # Download pyenv
-    export PYENV_ROOT="$HOME/.pyenv"
-    if [[ ! -d "$PYENV_ROOT" ]]; then
-        git clone https://github.com/pyenv/pyenv.git "$PYENV_ROOT"
-        (cd "$PYENV_ROOT" && src/configure && make -C src)
-    fi
-    if [[ ! -d "$UPGRADE" ]]; then
-        (cd "$PYENV_ROOT" && git pull && src/configure && make -C src)
-    fi
-}
-
-update_pyenv(){
-    __doc__='
-    export PATH="$PYENV_ROOT/bin:$PATH"
-    eval "$($PYENV_ROOT/bin/pyenv init -)"
-    eval "$($PYENV_ROOT/bin/pyenv init -)"
-    '
-    # Download pyenv
-    export PYENV_ROOT="$HOME/.pyenv"
-    (cd "$PYENV_ROOT" && git pull && src/configure && make -C src)
-}
-
-
-_strip_double_whitespace(){
-    echo "$@" | sed -zE 's/[ \n]+/ /g'
-}
-
-
-
-pyenv_create_virtualenv(){
-    __doc__="
-    The conda variant is: 
-        conda create -y -n <venv-name> python=<target-pyversion>
-
-    This command will seek to do something similar
-
-    Args:
-        PYTHON_VERSION (str) 
-        OPTIMIZE_PRESET (str, default=most): can be off, most, or full
-
-    Example:
-        # See Available versions
-        pyenv install --list | grep 3.9
-        pyenv install --list
-
-        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        pyenv_create_virtualenv 3.9.9 full
-
-        PYTHON_VERSION=3.8.5
-        CHOSEN_PYTHON_VERSION=3.8.5
-
-        PYTHON_VERSION=3.9.9
-        CHOSEN_PYTHON_VERSION=3.9.9
-
-        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        pyenv_create_virtualenv 3.8.5 all
-
-        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        pyenv_create_virtualenv 3.8.6 most
-
-        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        pyenv_create_virtualenv 3.7.10 off
-
-        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        pyenv_create_virtualenv 2.7.18
-
-        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        pyenv_create_virtualenv 2.7.17 off
-        
-        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        PYTHON_VERSION=3.4.10
-        pyenv_create_virtualenv 3.4.10 off
-
-        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        pyenv_create_virtualenv 3.5.10 off
-
-        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        pyenv_create_virtualenv 3.6.15 off
-
-        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        pyenv_create_virtualenv 3.9.9 full
-
-        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        pyenv_create_virtualenv 3.10.0 all
-
-        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        pyenv_create_virtualenv 3.10.4 most
-
-        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        pyenv_create_virtualenv 3.11-dev most
-    "
-    _handle_help "$@" || return 0
-
-    local PYTHON_VERSION=$1
-    local OPTIMIZE_PRESET=${2:-"most"}
-
-    local CHOSEN_PYTHON_VERSION=$PYTHON_VERSION
-    # shellcheck disable=SC2155
-    local BEST_MATCH=$(_pyenv_best_version_match "$PYTHON_VERSION")
-    echo "BEST_MATCH = $BEST_MATCH"
-    if [[ $BEST_MATCH == "None" ]]; then
-        echo "failed to find match"
-        return 1
-    fi
-    CHOSEN_PYTHON_VERSION=$BEST_MATCH
-
-    #if [[ "$PYTHON_VERSION" =~ ^3.4..* ]]; then
-    #    # https://github.com/pyenv/pyenv/issues/945
-    #    # Need to ensure libssl1.0
-
-    #    # Doesnt work
-    #    #mkdir -p $HOME/tmp/sslhack/libssl1.0-dev
-    #    #cd $HOME/tmp/sslhack/libssl1.0-dev
-    #    #wget https://debian.sipwise.com/debian-security/pool/main/o/openssl1.0/libssl1.0-dev_1.0.2l-2+deb9u3_amd64.deb
-    #    ##apt-get download libssl1.0-dev
-    #    #ar x libssl1.0-dev_1.0.2l-2+deb9u3_amd64.deb data.tar.xz
-    #    #tar -xf data.tar.xz --strip-components=2
-    #    #rm data.tar.xz
-
-    #    #HACK_INCLUDE1=$HOME/tmp/sslhack/libssl1.0-dev/include
-    #    #HACK_INCLUDE2=$HOME/tmp/sslhack/libssl1.0-dev/include/x86_64-linux-gnu
-    #    #HACK_LIB1=$HOME/tmp/sslhack/libssl1.0-dev/lib/x86_64-linux-gnu
-    #    #echo "HACK_INCLUDE1 = $HACK_INCLUDE1"
-    #    #echo "HACK_INCLUDE2 = $HACK_INCLUDE2"
-
-    #    #ln -s /usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2 $HOME/tmp/sslhack/libssl1.0-dev/lib/x86_64-linux-gnu
-    #    #ln -s /usr/lib/x86_64-linux-gnu/libssl.so.1.0.2 $HOME/tmp/sslhack/libssl1.0-dev/lib/x86_64-linux-gnu
-    #    #CFLAGS="-I${HACK_INCLUDE1} -I${HACK_INCLUDE2}" LDFLAGS="-L${HACK_LIB1}" pyenv install 3.4.10
-        
-    #fi
-
-    #PYTHON_CFLAGS="
-    #    -march=x86-64
-    #    -march=rocketlake
-    #    -march=native
-    #    -O2
-    #    -O3
-    #"
-
-    # About Optimizations
-    # https://github.com/docker-library/python/issues/160#issuecomment-509426916
-    # https://gist.github.com/nszceta/ec6efc9b5e54df70deeec7bceead0a1d
-    # https://clearlinux.org/news-blogs/boosting-python-profile-guided-platform-specific-optimizations
-
-    # List all presets
-    # python3 -m test.regrtest --pgo
-    if [[ "$OPTIMIZE_PRESET" == "full" ]]; then
-        PROFILE_TASK=$(_strip_double_whitespace "-m test.regrtest --pgo
-            test_array
-            test_base64 
-            test_binascii 
-            test_binop 
-            test_bisect 
-            test_bytes 
-            test_bz2 
-            test_cmath 
-            test_codecs 
-            test_collections 
-            test_complex 
-            test_dataclasses 
-            test_datetime 
-            test_decimal 
-            test_difflib 
-            test_embed 
-            test_float 
-            test_fstring 
-            test_functools 
-            test_generators 
-            test_hashlib 
-            test_heapq 
-            test_int 
-            test_itertools 
-            test_json 
-            test_long 
-            test_lzma 
-            test_math 
-            test_memoryview 
-            test_operator 
-            test_ordered_dict 
-            test_pickle 
-            test_pprint 
-            test_re 
-            test_set 
-            test_sqlite 
-            test_statistics 
-            test_struct 
-            test_tabnanny 
-            test_time 
-            test_unicode 
-            test_xml_etree 
-            test_xml_etree_c 
-        ")
-
-        PYTHON_CONFIGURE_OPTS=$(_strip_double_whitespace "
-            --enable-shared 
-            --enable-optimizations 
-            --with-computed-gotos
-            --with-lto")
-
-        if lscpu | grep Intel ; then
-            PYTHON_CFLAGS="-march=native -mtune=intel -O3 -pipe" 
-        else
-            PYTHON_CFLAGS="-march=native -O3 -pipe" 
-        fi
-    elif [[ "$OPTIMIZE_PRESET" == "most" ]]; then
-        # FIXME: most and full are the same, what is the real breakdown?
-        PROFILE_TASK=$(_strip_double_whitespace "-m test.regrtest 
-            --pgo test_array test_base64 test_binascii test_binhex test_binop
-            test_c_locale_coercion test_csv test_json test_hashlib test_unicode
-            test_codecs test_traceback test_decimal test_math test_compile
-            test_threading test_time test_fstring test_re test_float test_class
-            test_cmath test_complex test_iter test_struct test_slice test_set
-            test_dict test_long test_bytes test_memoryview test_io test_pickle")
-
-        PYTHON_CONFIGURE_OPTS=$(_strip_double_whitespace "
-            --enable-shared 
-            --enable-optimizations 
-            --with-computed-gotos
-            --with-lto")
-
-        # -march option: https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html
-        # -pipe option: https://gcc.gnu.org/onlinedocs/gcc-4.1.2/gcc/Overall-Options.html
-        # TODO: maybe use --mtune=intel?
-        if lscpu | grep Intel ; then
-            PYTHON_CFLAGS="-march=native -mtune=intel -O3 -pipe" 
-        else
-            PYTHON_CFLAGS="-march=native -O3 -pipe" 
-        fi
-        MAKE_OPTS=""
-    elif [[ "$OPTIMIZE_PRESET" == "off" ]]; then
-        PROFILE_TASK=""
-        PYTHON_CONFIGURE_OPTS="--enable-shared"
-        PYTHON_CFLAGS="-march=native -O2 -pipe" 
-    else
-        echo "UNKNOWN OPT PRESET"
-        return 1
-    fi
-
-    MAKE_OPTS=""
-    MAKE_OPTS="-j$(nproc)"
-
-    MAKE_OPTS="$MAKE_OPTS" \
-    PROFILE_TASK="$PROFILE_TASK" \
-    PYTHON_CFLAGS="$PYTHON_CFLAGS" \
-    PYTHON_CONFIGURE_OPTS="$PYTHON_CONFIGURE_OPTS" \
-        pyenv install "$CHOSEN_PYTHON_VERSION" --verbose
-
-    #pyenv shell $CHOSEN_PYTHON_VERSION
-    #pyenv global $CHOSEN_PYTHON_VERSION
-
-    VERSION_PREFIX=$(pyenv prefix "$CHOSEN_PYTHON_VERSION")
-    CHOSEN_PYEXE=$VERSION_PREFIX/bin/python
-
-    $CHOSEN_PYEXE --version
-
-    VENV_NAME=pyenv$CHOSEN_PYTHON_VERSION
-    VENV_PATH=$VERSION_PREFIX/envs/$VENV_NAME
-
-    if [[ $CHOSEN_PYTHON_VERSION == 2.7.* ]]; then
-        echo "2.7"
-        $CHOSEN_PYEXE -m pip install virtualenv
-        $CHOSEN_PYEXE -m virtualenv "$VENV_PATH"
-    else
-        echo "3.x"
-        # Create the virtual environment
-        $CHOSEN_PYEXE -m venv "$VENV_PATH"
-    fi
-}
-
 rebuild_python(){
     __doc__='
     Rebuild python with with the same config (useful if ubuntu breaks your libs on you)
@@ -563,6 +548,22 @@ new_pyenv_venv(){
     $CHOSEN_PYEXE -m venv "$VENV_PATH"
 
     workon_py "$VENV_NAME"
+}
+
+update_pyenv(){
+    __doc__='
+    export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$($PYENV_ROOT/bin/pyenv init -)"
+    eval "$($PYENV_ROOT/bin/pyenv init -)"
+    '
+    # Download pyenv
+    export PYENV_ROOT="$HOME/.pyenv"
+    (cd "$PYENV_ROOT" && git pull && src/configure && make -C src)
+}
+
+
+_strip_double_whitespace(){
+    echo "$@" | sed -zE 's/[ \n]+/ /g'
 }
 
 
