@@ -15,15 +15,8 @@ import json
 import parse
 import ubelt as ub
 import pandas as pd
-
-
-def parse_version(v):
-    if 0:
-        from distutils.version import LooseVersion
-        return LooseVersion(v)
-    else:
-        from packaging.version import parse
-        return parse(v)
+# import packaging
+from packaging.version import parse as Version
 
 
 class ReqPythonVersionSpec:
@@ -37,10 +30,17 @@ class ReqPythonVersionSpec:
         >>> reqspec.highest_explicit()
         >>> reqspec.matches('2.6')
         >>> reqspec.matches('2.7')
+
+    Example:
+        >>> self = ReqPythonVersionSpec('~=3.2')
+        >>> self.highest_explicit()
     """
     def __init__(self, pattern):
+        from packaging.specifiers import SpecifierSet
         self.pattern = pattern
         self.parts = pattern.split(',')
+        self.specifier = SpecifierSet(pattern)
+
         self.constraints = []
         for part in self.parts:
             try:
@@ -59,9 +59,9 @@ class ReqPythonVersionSpec:
                 verpat_parts = partpat.split('.')
                 idx = verpat_parts.index('*')
                 partpat.split('.')
-                partver = parse_version('.'.join(verpat_parts[0:idx]))
+                partver = Version('.'.join(verpat_parts[0:idx]))
             else:
-                partver = parse_version(partpat)
+                partver = Version(partpat)
             self.constraints.append({
                 'opstr': opstr,
                 'idx': idx,
@@ -69,13 +69,16 @@ class ReqPythonVersionSpec:
             })
 
     def highest_explicit(self):
-        return max(c['partver'] for c in self.constraints if c['opstr'] == '>=')
+
+        return max(c['partver'] for c in self.constraints if c['opstr'] in {'>=', '~='})
 
     def matches(self, other):
+        return other in self.specifier
+
         flag = True
         for constraint in self.constraints:
             idx = constraint['idx']
-            pyver_ = parse_version('.'.join(other.split('.')[0:idx]))
+            pyver_ = Version('.'.join(other.split('.')[0:idx]))
             partver = constraint['partver']
             opstr = constraint['opstr']
             try:
@@ -90,6 +93,8 @@ class ReqPythonVersionSpec:
                 elif opstr == '!=':
                     flag &= pyver_ != partver
                 elif opstr == '==':
+                    flag &= pyver_ == partver
+                elif opstr == '!=':
                     flag &= pyver_ == partver
                 else:
                     raise KeyError(opstr)
@@ -317,7 +322,7 @@ def summarize_package_availability(package_name):
             'md5_digest', 'yanked', 'yanked_reason'], axis=1)
 
         # def vec_ver(vs):
-        #     return [parse_version(v) for v in vs]
+        #     return [Version(v) for v in vs]
 
         def vectorize(func):
             def wrp(arr):
@@ -350,11 +355,11 @@ def summarize_package_availability(package_name):
         vec_sorter = vectorize(cp_sorter)
 
         flags = (df['packagetype'] != 'sdist')
-        if not np.all(flags):
+        if not np.any(flags):
             df = df[flags]
 
         flags = (df['abi_tag'] != 'none')
-        if not np.all(flags):
+        if np.any(flags):
             df = df[flags]
 
         if 0:
@@ -366,22 +371,36 @@ def summarize_package_availability(package_name):
             piv = counts.pivot(['pkg_version'], ['abi_tag', 'os'], 'count')
         else:
             abi_blocklist = {
-                'cp36m',
+                # 'cp36m',
                 'cp26m', 'cp26mu', 'cp27m', 'cp27mu', 'cp32m', 'cp33m', 'cp34m', 'cp35m',
                 'pypy36_pp73', 'pypy37_pp73', 'pypy38_pp73', 'pypy_73', 'pypy_41'
             }
             flags = df['abi_tag'].apply(lambda x: x in abi_blocklist)
-            df = df[~flags]
+            if np.any(~flags):
+                df = df[~flags]
             counts = df.value_counts(['pkg_version', 'abi_tag', 'os', 'arch']).to_frame('count').reset_index()
-            counts = counts.sort_values('abi_tag')
-            piv = counts.pivot(['pkg_version'], ['abi_tag', 'os', 'arch'], 'count')
+            if len(counts):
+                counts = counts.sort_values('abi_tag')
+                piv = counts.pivot(['pkg_version'], ['abi_tag', 'os', 'arch'], 'count')
+            else:
+                counts = df.value_counts(['pkg_version', 'requires_python'], dropna=False).to_frame('count').reset_index()
+                piv = counts.pivot(['pkg_version'], ['requires_python'], 'count')
 
-        vec_ver = vectorize(parse_version)
+        vec_ver = vectorize(Version)
         # vec_sorter(['cp310', 'cp27'])
         vec_sorter(df.abi_tag)
-        piv = piv.sort_values('os', axis=1)
-        piv = piv.sort_values('abi_tag', axis=1, key=vec_sorter)
-        piv = piv.sort_values('pkg_version', key=vec_ver)
+        try:
+            piv = piv.sort_values('os', axis=1)
+        except Exception:
+            pass
+        try:
+            piv = piv.sort_values('abi_tag', axis=1, key=vec_sorter)
+        except Exception:
+            pass
+        try:
+            piv = piv.sort_values('pkg_version', key=vec_ver)
+        except Exception:
+            pass
         print('')
         print('package_name = {}'.format(ub.repr2(package_name, nl=1)))
         print(piv.to_string())
@@ -392,7 +411,7 @@ def minimum_cross_python_versions(package_name, request_min=None):
     package_name = 'scipy'
     """
     if request_min is not None:
-        request_min = parse_version(request_min)
+        request_min = Version(request_min)
 
     table = grab_pypi_items(package_name)
     table = table[~table['yanked']]
@@ -421,12 +440,14 @@ def minimum_cross_python_versions(package_name, request_min=None):
     cp_codes = {'cp{}{}'.format(*v.split('.')): v for v in python_vstrings}
     cp_codes.update({'cp{}_{}'.format(*v.split('.')): v for v in ['3.10', '3.11']})
 
+    summarize_package_availability(package_name)
+
     # Go through packages in reverse order.  If at some point, the python
     # requirements disappear, assume the maintainer did not set them and use
     # the last seen from the more recent packages.
     last_min_pyver = None
     new_rows = []
-    for pkg_version, subdf in sorted(table.groupby('pkg_version'), key=lambda x: parse_version(x[0]))[::-1]:
+    for pkg_version, subdf in sorted(table.groupby('pkg_version'), key=lambda x: Version(x[0]))[::-1]:
         for row in subdf.to_dict('records'):
             min_pyver = None
             if row['requires_python']:
@@ -458,8 +479,6 @@ def minimum_cross_python_versions(package_name, request_min=None):
             row['min_pyver'] = min_pyver
             new_rows.append(row)
 
-    summarize_package_availability(package_name)
-
     new_table = pd.DataFrame(new_rows)
     print(new_table)
     print(new_table['min_pyver'].unique())
@@ -467,13 +486,13 @@ def minimum_cross_python_versions(package_name, request_min=None):
     chosen_minmax_for = {}
     chosen_minimum_for = {}
 
-    for min_pyver, subdf in sorted(new_table.groupby('min_pyver'), key=lambda x: parse_version(x[0])):
+    for min_pyver, subdf in sorted(new_table.groupby('min_pyver'), key=lambda x: Version(x[0])):
         # print('--- min_pyver = {!r} --- '.format(min_pyver))
         version_to_support = dict(list(subdf.groupby('version')))
 
         cand_to_score = {}
         try:
-            version_to_support = ub.sorted_keys(version_to_support, key=parse_version)
+            version_to_support = ub.sorted_keys(version_to_support, key=Version)
         except Exception:
             maybe_bad_keys = list(version_to_support.keys())
             print('version_to_support = {!r}'.format(maybe_bad_keys))
@@ -492,12 +511,12 @@ def minimum_cross_python_versions(package_name, request_min=None):
             cand_to_score[cand] = score
 
         cand_to_score = ub.sorted_vals(cand_to_score)
-        cand_to_score = ub.sorted_keys(cand_to_score, key=parse_version)
+        cand_to_score = ub.sorted_keys(cand_to_score, key=Version)
 
         # Filter to only the versions we requested, but if
         # none exist, return something
         if request_min is not None:
-            valid_cand = [cand for cand in cand_to_score if parse_version(cand) >= request_min]
+            valid_cand = [cand for cand in cand_to_score if Version(cand) >= request_min]
         else:
             valid_cand = [cand for cand in cand_to_score]
         if len(valid_cand) == 0:
@@ -516,10 +535,10 @@ def minimum_cross_python_versions(package_name, request_min=None):
             best_cand = min([
                 cand for cand, score in cand_to_score.items()
                 if score == max_score
-            ], key=parse_version)
+            ], key=Version)
             max_cand = max([
                 cand for cand, score in cand_to_score.items()
-            ], key=parse_version)
+            ], key=Version)
             # print('best_cand = {!r}'.format(best_cand))
             # print('max_cand = {!r}'.format(max_cand))
             chosen_minmax_for[min_pyver] = (min_cand, best_cand, max_cand)
@@ -530,7 +549,7 @@ def minimum_cross_python_versions(package_name, request_min=None):
     print('chosen_minmax_for = {}'.format(ub.repr2(chosen_minmax_for, nl=1)))
 
     chosen_minimum_for = {k: t[1] for k, t in chosen_minmax_for.items()}
-    python_versions = sorted(chosen_minimum_for, key=parse_version)
+    python_versions = sorted(chosen_minimum_for, key=Version)
     lines = []
     for cur_pyver, next_pyver in ub.iter_window(python_versions, 2):
         pkg_ver = chosen_minimum_for[cur_pyver]
@@ -583,6 +602,7 @@ def demo():
         'torch',
         'sqlalchemy',
         'kwarray',
+        'uritools',
         'jq',
     ]
 
@@ -599,6 +619,7 @@ if __name__ == '__main__':
         python ~/local/tools/supported_python_versions_pip.py kwcoco
         python ~/local/tools/supported_python_versions_pip.py torch
         python ~/local/tools/supported_python_versions_pip.py line_profiler
+        python ~/local/tools/supported_python_versions_pip.py uritools
     """
     import fire
     fire.Fire(minimum_cross_python_versions)

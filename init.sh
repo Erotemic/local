@@ -217,6 +217,10 @@ if [[ "$SETUP_PYTHON" == "True" ]]; then
     #source "$HOME"/local/init/freshstart_ubuntu.sh
     source "$HOME"/local/tools/pyenv_ext/pyenv_ext_commands.sh
     install_pyenv
+    export PYENV_ROOT="$HOME/.pyenv"
+    export PATH="$PYENV_ROOT/bin:$PATH"
+    # shellcheck disable=SC2086
+    eval "$($PYENV_ROOT/bin/pyenv init -)"
     pyenv_create_virtualenv 3.9.9 full
     pip install -e ~/local/rob
 
