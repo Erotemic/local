@@ -112,7 +112,7 @@ Contributions to External Repos
 * https://github.com/facebookarchive/caffe2/commits?author=Erotemic
 * https://github.com/fmfn/BayesianOptimization/commits?author=Erotemic
 * https://github.com/harlowja/fasteners/commits?author=Erotemic
-* https://github.com/iterative/dvc.org?author=Erotemic
+* https://github.com/iterative/dvc.org/commits?author=Erotemic
 * https://github.com/iterative/dvc/commits?author=Erotemic
 * https://github.com/lark-parser/lark/commits?author=Erotemic
 * https://github.com/lucidrains/performer-pytorch/commits?author=Erotemic
