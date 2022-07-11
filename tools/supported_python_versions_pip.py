@@ -269,6 +269,37 @@ def grab_pypi_items(package_name):
     return table
 
 
+def vectorize(func):
+    def wrp(arr):
+        out = []
+        for x in arr:
+            try:
+                y = func(x)
+            except Exception:
+                y = None
+            out.append(y)
+        return out
+        # return [func(x) for x in arr]
+    return wrp
+
+
+def cp_sorter(v):
+    import re
+    v = str(v.split('_')[0])
+    num = re.sub('[a-z]', '', v)
+    a = num[0:1]
+    b = num[1:]
+    try:
+        a = int(a)
+    except Exception:
+        a = -1
+    try:
+        b = int(b)
+    except Exception:
+        b = -1
+    return (a, b)
+
+
 def summarize_package_availability(package_name):
     """
     TODO:
@@ -324,34 +355,6 @@ def summarize_package_availability(package_name):
         # def vec_ver(vs):
         #     return [Version(v) for v in vs]
 
-        def vectorize(func):
-            def wrp(arr):
-                out = []
-                for x in arr:
-                    try:
-                        y = func(x)
-                    except Exception:
-                        y = None
-                    out.append(y)
-                return out
-                # return [func(x) for x in arr]
-            return wrp
-
-        def cp_sorter(v):
-            import re
-            v = str(v.split('_')[0])
-            num = re.sub('[a-z]', '', v)
-            a = num[0:1]
-            b = num[1:]
-            try:
-                a = int(a)
-            except Exception:
-                a = -1
-            try:
-                b = int(b)
-            except Exception:
-                b = -1
-            return (a, b)
         vec_sorter = vectorize(cp_sorter)
 
         flags = (df['packagetype'] != 'sdist')
@@ -440,8 +443,6 @@ def minimum_cross_python_versions(package_name, request_min=None):
     cp_codes = {'cp{}{}'.format(*v.split('.')): v for v in python_vstrings}
     cp_codes.update({'cp{}_{}'.format(*v.split('.')): v for v in ['3.10', '3.11']})
 
-    summarize_package_availability(package_name)
-
     # Go through packages in reverse order.  If at some point, the python
     # requirements disappear, assume the maintainer did not set them and use
     # the last seen from the more recent packages.
@@ -450,6 +451,9 @@ def minimum_cross_python_versions(package_name, request_min=None):
     for pkg_version, subdf in sorted(table.groupby('pkg_version'), key=lambda x: Version(x[0]))[::-1]:
         for row in subdf.to_dict('records'):
             min_pyver = None
+            if row['python_version'] is not None:
+                min_pyver = cp_codes.get(row['python_version'], row['python_version'])
+
             if row['requires_python']:
                 requires_python = row['requires_python']
                 reqspec = ReqPythonVersionSpec(requires_python)
@@ -458,8 +462,6 @@ def minimum_cross_python_versions(package_name, request_min=None):
                 min_pyver = min_pyver.base_version
                 last_min_pyver = min_pyver
 
-            if row['python_version'] is not None:
-                min_pyver = cp_codes.get(row['python_version'], row['python_version'])
             if min_pyver == 'py2.py3':
                 min_pyver = '2.7'
             if min_pyver == 'py3':
@@ -480,8 +482,11 @@ def minimum_cross_python_versions(package_name, request_min=None):
             new_rows.append(row)
 
     new_table = pd.DataFrame(new_rows)
-    print(new_table)
+    new_table = new_table.sort_values('pkg_version', key=vectorize(Version))
+    print(new_table.to_string())
     print(new_table['min_pyver'].unique())
+
+    summarize_package_availability(package_name)
 
     chosen_minmax_for = {}
     chosen_minimum_for = {}
