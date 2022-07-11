@@ -31,6 +31,56 @@ Initialize
 
 .. .. See ~/local/misc/badges.py for autogen
 
+Contributions 
+
+* https://github.com/HadrienG/taxadb/commits?author=Erotemic
+* https://github.com/Kitware/SMQTK/commits?author=Erotemic
+* https://github.com/Kitware/fletch/commits?author=Erotemic
+* https://github.com/Kitware/kwiver/commits?author=Erotemic
+* https://github.com/KitwareMedical/AnatomicRecon-POCUS-AI/commits?author=Erotemic
+* https://github.com/Lasagne/Lasagne/commits?author=Erotemic
+* https://github.com/LuminosoInsight/ordered-set/commits?author=Erotemic
+* https://github.com/OSGeo/gdal/commits?author=Erotemic
+* https://github.com/OpenDebates/openskill.py/commits?author=Erotemic
+* https://github.com/Project-MONAI/MONAI/commits?author=Erotemic
+* https://github.com/ResonantGeoData/ResonantGeoData/commits?author=Erotemic
+* https://github.com/TeamHG-Memex/tensorboard_logger/commits?author=Erotemic
+* https://github.com/Theano/Theano/commits?author=Erotemic
+* https://github.com/VIAME/VIAME/commits?author=Erotemic
+* https://github.com/alan-turing-institute/distinctipy/commits?author=Erotemic
+* https://github.com/aleju/imgaug/commits?author=Erotemic
+* https://github.com/apache/airflow/commits?author=Erotemic
+* https://github.com/djentleman/imgrender/commits?author=Erotemic
+* https://github.com/elasticdog/transcrypt/commits?author=Erotemic
+* https://github.com/facebookarchive/caffe2/commits?author=Erotemic
+* https://github.com/fmfn/BayesianOptimization/commits?author=Erotemic
+* https://github.com/harlowja/fasteners/commits?author=Erotemic
+* https://github.com/iterative/dvc.org?author=Erotemic
+* https://github.com/iterative/dvc/commits?author=Erotemic
+* https://github.com/lark-parser/lark/commits?author=Erotemic
+* https://github.com/lucidrains/performer-pytorch/commits?author=Erotemic
+* https://github.com/mahmoud/boltons/commits?author=Erotemic
+* https://github.com/msbanik/drawtree/commits?author=Erotemic
+* https://github.com/networkx/networkx/commits?author=Erotemic
+* https://github.com/open-mmlab/mmdetection/commits?author=Erotemic
+* https://github.com/opencv/opencv/commits?author=Erotemic
+* https://github.com/opengm/opengm/commits?author=Erotemic
+* https://github.com/pandas-dev/pandas/commits?author=Erotemic
+* https://github.com/pgmpy/pgmpy/commits?author=Erotemic
+* https://github.com/pypa/cibuildwheel/commits?author=Erotemic
+* https://github.com/pytorch/pytorch/commits?author=Erotemic
+* https://github.com/pytorch/vision/commits?author=Erotemic
+* https://github.com/qutip/qutip/commits?author=Erotemic
+* https://github.com/rspeer/ordered-set/commits?author=Erotemic
+* https://github.com/scikit-build/scikit-build/commits?author=Erotemic
+* https://github.com/scikit-image/scikit-image/commits?author=Erotemic
+* https://github.com/scikit-learn/scikit-learn/commits?author=Erotemic
+* https://github.com/sciunto-org/python-bibtexparser/commits?author=Erotemic
+* https://github.com/sylhare/nprime/commits?author=Erotemic
+* https://github.com/ultrajson/ultrajson/commits?author=Erotemic
+* https://github.com/vascobnunes/fetchLandsatSentinelFromGoogleCloud/commits?author=Erotemic
+* https://github.com/wimglenn/johnnydep/commits?author=Erotemic
+* https://github.com/yaml/pyyaml/commits?author=Erotemic
 
 About Me
 ========

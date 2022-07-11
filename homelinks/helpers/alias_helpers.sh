@@ -7,6 +7,7 @@
 # Unix aliases
 #source $HOME/local/init/utils.sh
 
+alias chrome='google-chrome'
 alias pytree='tree -P "*.py" --dirsfirst'
 #alias ls='ls --color --human-readable --group-directories-first --hide="*.pyc" --hide="*.pyo"'
 alias ls='ls --color --human-readable --group-directories-first'
