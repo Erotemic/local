@@ -38,7 +38,7 @@ Example Usage:
     # compile-time requirements, but the script handles these for modern
     # versions of CPython
     source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-    pyenv_create_virtualenv 3.9.9 full
+    pyenv_create_virtualenv 3.10.5 full
 "
 
 install_pyenv(){
