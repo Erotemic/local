@@ -1,5 +1,5 @@
 #!/bin/bash
-__heredoc__="""
+__doc__="""
 
 Idenpotent script for initializing an ubuntu system
 
@@ -183,7 +183,7 @@ if [[ "$IS_HEADLESS" == "False" ]]; then
     # Setup private personal environment if possible
     PRIVATE_INIT="$HOME"/code/erotemic/init.sh
     if is_probably_decrypted "$PRIVATE_INIT"; then
-        bash $PRIVATE_INIT
+        bash "$PRIVATE_INIT"
     fi
 fi
 
@@ -217,6 +217,10 @@ if [[ "$SETUP_PYTHON" == "True" ]]; then
     #source "$HOME"/local/init/freshstart_ubuntu.sh
     source "$HOME"/local/tools/pyenv_ext/pyenv_ext_commands.sh
     install_pyenv
+    export PYENV_ROOT="$HOME/.pyenv"
+    export PATH="$PYENV_ROOT/bin:$PATH"
+    # shellcheck disable=SC2086
+    eval "$($PYENV_ROOT/bin/pyenv init -)"
     pyenv_create_virtualenv 3.9.9 full
     pip install -e ~/local/rob
 
@@ -306,11 +310,10 @@ customize_ubuntu_dock(){
     gsettings set org.gnome.desktop.interface clock-format '12h'
 }
 
-if [[ "$IS_HEADLESS" == "True" ]]; then
+if [[ "$IS_HEADLESS" != "True" ]]; then
     customize_ubuntu_dock
 fi
 
 
-DID_MY_BASHRC_INIT=""
-source $HOME/.bashrc
-
+export DID_MY_BASHRC_INIT=""
+source "$HOME/.bashrc"

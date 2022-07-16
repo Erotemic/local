@@ -7,12 +7,13 @@
 # Unix aliases
 #source $HOME/local/init/utils.sh
 
+alias chrome='google-chrome'
 alias pytree='tree -P "*.py" --dirsfirst'
 #alias ls='ls --color --human-readable --group-directories-first --hide="*.pyc" --hide="*.pyo"'
 alias ls='ls --color --human-readable --group-directories-first'
 #--hide="*.pyc" --hide="*.pyo"'
 alias pygrep='grep -r --include "*.py"'
-alias clean_python='find . -regex ".*\(__pycache__\|\.py[co]\)" -delete || find . -iname *.pyc -delete || find . -iname *.pyo -delete'
+alias clean_python='find . -regex ".*\(__pycache__\|\.py[co]\)" -delete || find . -iname "*.pyc" -delete || find . -iname "*.pyo" -delete'
 
 # watch with a higher frequency
 alias watch='watch -n .5'
@@ -1017,6 +1018,7 @@ forever(){
     __doc__="
     Loop a command forever and ever and ever and ever
     "
+    _handle_help "$@" || return 0
     while true; do "$@"; done
 }
 
@@ -1034,6 +1036,7 @@ untilfail()
     References:
     https://stackoverflow.com/questions/12967232/repeatedly-run-a-shell-command-until-it-fails
     '
+    _handle_help "$@" || return 0
     echo "$@"
     while "$@"; do :; done
 }
@@ -1057,9 +1060,25 @@ untilpass()
         # Run that function until it passes
         untilpass flaky_funcion
     '''
+    _handle_help "$@" || return 0
     "$@"
     while [ $? -ne 0 ];
     do 
         "$@"
     done
+}
+
+autolint_bash(){
+    __doc__="
+    Use shellcheck to lint a bash file
+
+    autolint_bash ~/local/init/freshstart_ubuntu.sh
+    "
+    _handle_help "$@" || return 0
+    FPATH=$1
+    shellcheck -f diff "$FPATH"
+    _PYEXE=$(system_python)
+    if $_PYEXE -c "import sys, rich.prompt; sys.exit(0 if rich.prompt.Confirm.ask('Apply this?') else 1)" ; then
+        shellcheck -f diff "$FPATH" | git apply
+    fi
 }
