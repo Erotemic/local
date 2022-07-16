@@ -48,9 +48,11 @@ def main():
     # Need to fetch from remote
     if latest is None:
         info = final_cand[-1]
+        print('info = {}'.format(ub.repr2(info, nl=1)))
+        print('Latest seems to be on a remote')
         info['branch_name']
         repo.git.checkout(info['branch_name'])
-        raise NotImplementedError
+        # raise NotImplementedError
     else:
         # dev_branches = [b for b in repo.branches if b.name.startswith('dev/')]
         # branch_versions = sorted(dev_branches, key=lambda x: Version(x.name.split('/')[-1]))
