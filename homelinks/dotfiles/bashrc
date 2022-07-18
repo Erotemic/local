@@ -355,5 +355,12 @@ _pip_completion()
                    PIP_AUTO_COMPLETE=1 $1 2>/dev/null ) )
 }
 complete -o default -F _pip_completion pip
+
+
 # pip bash completion end
-. "$HOME/.cargo/env"
+
+
+# Rust
+if [ -d "$HOME/.cargo/env" ]; then
+    source "$HOME/.cargo/env"
+fi
