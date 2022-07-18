@@ -2660,3 +2660,21 @@ install_vscode(){
     sudo pip install flawfinder
 
 }
+
+
+livesplit_obs(){
+
+    wget https://github.com/CryZe/obs-livesplit-one/releases/download/v0.2.0/obs-livesplit-one-v0.2.0-x86_64-unknown-linux-gnu.tar.gz
+    mkdir -p "$HOME"/.config/obs-studio/plugins
+    tar -zxvf obs-livesplit-one-*-x86_64-unknown-linux-gnu.tar.gz -C "$HOME"/.config/obs-studio/plugins/
+    
+
+    # Mario livesplit
+    # https://one.livesplit.org/#/splits-io/u9
+
+
+    curl https://sh.rustup.rs -sSf | sh
+    https://github.com/CryZe/livesplit-one-desktop
+    
+
+}
