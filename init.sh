@@ -275,26 +275,34 @@ ensure_dev_versions_of_my_libs(){
 
     mylibs=(
     ubelt 
-    xdoctest 
     mkinit
     xdoctest
-    git_sync
     vimtk
-    xdev)
+    timerit
+    progiter
+    scriptconfig
+    git_sync
+    cmd_queue
+    shitspotter
+    liberator
+    xinspect
+    xdev
+    pypogo
+    torch_liberator)
 
     for name in "${mylibs[@]}" 
     do
+        echo "name = $name"
         dpath=$HOME/code/$name
         if [[ -d $dpath ]]; then
             #base_fpath=$(python -c "import $name; print($name.__file__)")
-            result=$?
-            if [[ "$result" == "1" ]]; then
+            if python -c "import sys, $name; sys.exit(1 if 'site-packages' in $name.__file__ else 0)"; then
+                echo "already have dpath = $dpath"
+            else
                 echo "ensuring dpath = $dpath"
                 pip uninstall "$name" -y
                 pip uninstall "$name" -y
                 pip install -e "$dpath"
-            else
-                echo "already have dpath = $dpath"
             fi
         else
             echo "does not exist dpath = $dpath"

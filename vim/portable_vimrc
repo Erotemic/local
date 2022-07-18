@@ -184,6 +184,14 @@ call plug#end()            " required
 ":VirtualEnvActivate
 " VirtualEnvActivate venv3
 
+" Note: to use vimtk I think we need to have ubelt installed
+" or get some sort of install-hook pip install command to happen
+" We can hack around this by explicitly sourcing the vimtk plugin
+if filereadable($HOME_DPATH . "/.vim/bundle/vimtk/plugin/vimtk.vim")
+    source $VIMFILES_DPATH/bundle/vimtk/plugin/vimtk.vim
+    source $HOME/.vim/bundle/vimtk/plugin/vimtk.vim
+endif
+
 
 " PLUGIN: External non-plugin source files
 source ~/local/vim/rc/align.vim
@@ -215,14 +223,6 @@ let g:vim_markdown_folding_style_pythonic = 1
 
 " FIXME: my local folder or init scripts seem to force a vimtk symlink to
 " exist that prevents checking it out for non-vimtk dev machines.
-
-" Note: to use vimtk I think we need to have ubelt installed
-" or get some sort of install-hook pip install command to happen
-" We can hack around this by explicitly sourcing the vimtk plugin
-if filereadable($HOME_DPATH . "/.vim/bundle/vimtk/plugin/vimtk.vim")
-    source $VIMFILES_DPATH/bundle/vimtk/plugin/vimtk.vim
-    source $HOME/.vim/bundle/vimtk/plugin/vimtk.vim
-endif
 
 if exists("g:loaded_vimtk") 
     call VimTK_default_remap()
