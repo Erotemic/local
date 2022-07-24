@@ -1,8 +1,8 @@
+#!/usr/bin/env python
 """
 A git tool for handling the dev/<version> branch patterns
 
-Consolodate with:
-~/local/git_tools/git_update_branch.py
+See the GitDevbranchConfig for functionality
 """
 import git
 import ubelt as ub
@@ -13,6 +13,9 @@ from packaging.version import parse as Version
 
 @scfg.dataconf
 class GitDevbranchConfig:
+    """
+    A git tool for handling the dev/<version> branch patterns
+    """
     command = scfg.Value(None, choices=['update', 'clean'], help='the command', position=1)
     repo_dpath = scfg.Value('.', help='location of the repo')
 
