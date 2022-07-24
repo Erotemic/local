@@ -1965,3 +1965,47 @@ fix_ipython_highlights(){
     offending_fpath=$(python -c "import IPython, pathlib; print(str(pathlib.Path(IPython.__file__).parent / 'core/ultratb.py'))")
     sed -i 's/bg:ansiyellow/bg:ansibrightblack/g' "$offending_fpath"
 }
+
+fix_legacy_trust_store(){
+    __doc__="
+        Recommended: Instead of placing keys into the /etc/apt/trusted.gpg.d
+        directory, you can place them anywhere on your filesystem by using the
+        Signed-By option in your sources.list and pointing to the filename of the
+        key.
+
+       /etc/apt/trusted.gpg
+           Keyring of local trusted keys, new keys will be added here. Configuration Item: Dir::Etc::Trusted.
+
+       /etc/apt/trusted.gpg.d/
+           File fragments for the trusted keys, additional keyrings can be stored here (by other packages or the administrator). Configuration Item Dir::Etc::TrustedParts.
+
+       /etc/apt/keyrings/
+           Place to store additional keyrings to be used with Signed-By.
+    "
+    # https://askubuntu.com/questions/1398344/apt-key-deprecation-warning-when-updating-system/1398346#1398346
+    sudo apt-key list 2>&1 | \
+        grep -E '\/(trusted.gpg.d)' -A 3 | \
+        grep -v '^\-\-' | \
+        grep -v '^pub ' | \
+        /bin/sed 's@.*/trusted.gpg.d/\(.*\)@\1@g' | \
+        /bin/awk 'NR%2{printf "%s ",$0;next;}1' | \
+        /bin/awk '{print "sudo apt-key export "$10$11" | sudo gpg --dearmour -o /usr/share/keyrings/"$1}' | \
+        xargs -I'{}' bash -c "eval '{}'"
+
+    # For slack
+    sudo apt-key list 2>&1 | grep slack -B 2 -A 1
+
+    # Unsure how to automate finding where the corresponding sources and key should be
+    SLACK_KEY_ID=038651BD
+    SLACK_KEYRING_FPATH=/usr/share/keyrings/slack.gpg
+    SLACK_SOURCES_FPATH=/etc/apt/sources.list.d/slack.list
+    # Export the key from the deprecated apt-key registry into a file in the share keyrings folder
+    sudo apt-key export "$SLACK_KEY_ID" | sudo gpg --dearmour -o "$SLACK_KEYRING_FPATH"
+    # Then update the sources list such that it points to the file 
+    cat $SLACK_SOURCES_FPATH
+    sudo sed -i "s|deb https|deb [signed-by=$SLACK_KEYRING_FPATH] https|" $SLACK_SOURCES_FPATH
+    cat $SLACK_SOURCES_FPATH
+    # Remove the key
+    sudo apt-key del "$SLACK_KEY_ID"
+
+}

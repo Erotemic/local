@@ -2678,3 +2678,10 @@ livesplit_obs(){
     
 
 }
+
+install-git-quick-stats(){
+    cd $HOME/code
+    git clone https://github.com/arzzen/git-quick-stats.git && cd git-quick-stats
+    PREFIX=$HOME/.local make install
+
+}
