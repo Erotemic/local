@@ -106,3 +106,11 @@ def main():
     repo = git.Repo(config['repo_dpath'])
     command = COMMANDS[config['command']]
     command(repo)
+
+
+if __name__ == '__main__':
+    """
+    CommandLine:
+        python ~/local/git_tools/git_devbranch.py
+    """
+    main()
