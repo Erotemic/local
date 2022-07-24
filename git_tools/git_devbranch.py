@@ -102,7 +102,7 @@ def clean_dev_branches(repo):
     versioned_dev_branches = dev_branches(repo)
     local_dev_branches = [b for b in versioned_dev_branches if b['remote'] is None]
     versioned_branch_names = list(ub.unique([b['branch_name'] for b in local_dev_branches]))
-    keep_last = 5
+    keep_last = 3
     remove_branches = versioned_branch_names[0:-keep_last]
     print('remove_branches = {}'.format(ub.repr2(remove_branches, nl=1)))
     if not remove_branches:
