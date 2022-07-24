@@ -109,7 +109,7 @@ def clean_dev_branches(repo):
         print('Local devbranches are already clean')
     else:
         from rich import prompt
-        if prompt.Confirm('Remove dev branches?'):
+        if prompt.Confirm.ask('Remove dev branches?'):
             repo.git.branch(*remove_branches, '-D')
 
 
