@@ -104,7 +104,13 @@ def clean_dev_branches(repo):
     versioned_branch_names = list(ub.unique([b['branch_name'] for b in local_dev_branches]))
     keep_last = 5
     remove_branches = versioned_branch_names[0:-keep_last]
-    repo.git.branch(*remove_branches, '-D')
+    print('remove_branches = {}'.format(ub.repr2(remove_branches, nl=1)))
+    if not remove_branches:
+        print('Local devbranches are already clean')
+    else:
+        from rich import prompt
+        if prompt.Confirm('Remove dev branches?'):
+            repo.git.branch(*remove_branches, '-D')
 
 
 def main():
