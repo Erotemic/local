@@ -100,7 +100,8 @@ def update_dev_branch(repo):
 @_register_command('clean')
 def clean_dev_branches(repo):
     versioned_dev_branches = dev_branches(repo)
-    versioned_branch_names = list(ub.unique([b['branch_name'] for b in versioned_dev_branches]))
+    local_dev_branches = [b for b in versioned_dev_branches if b['remote'] is None]
+    versioned_branch_names = list(ub.unique([b['branch_name'] for b in local_dev_branches]))
     keep_last = 5
     remove_branches = versioned_branch_names[0:-keep_last]
     repo.git.branch(*remove_branches, '-D')
@@ -109,6 +110,8 @@ def clean_dev_branches(repo):
 def main():
     config = GitDevbranchConfig.cli()
     repo = git.Repo(config['repo_dpath'])
+    if config['command'] is None:
+        raise ValueError('A command must be given')
     command = COMMANDS[config['command']]
     command(repo)
 
