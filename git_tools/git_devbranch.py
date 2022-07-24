@@ -1,7 +1,33 @@
-def main():
-    import git
-    repo = git.Repo('.')
+"""
+A git tool for handling the dev/<version> branch patterns
 
+Consolodate with:
+~/local/git_tools/git_update_branch.py
+"""
+import git
+import ubelt as ub
+import scriptconfig as scfg
+from packaging.version import LegacyVersion
+from packaging.version import parse as Version
+
+
+@scfg.dataconf
+class GitDevbranchConfig:
+    command = scfg.Value(None, choices=['update', 'clean'], help='the command', position=1)
+    repo_dpath = scfg.Value('.', help='location of the repo')
+
+
+COMMANDS = {}
+
+
+def _register_command(name):
+    def _wrap(func):
+        COMMANDS[name] = func
+        return func
+    return _wrap
+
+
+def dev_branches(repo):
     branch_infos = []
     for line in repo.git.branch('-r').split('\n'):
         line = line.strip().split('->')[-1].strip()
@@ -14,8 +40,6 @@ def main():
                 }
                 branch_infos.append(info)
 
-    # repo.git.fetch()
-
     for branch in repo.branches:
         info = {
             'remote': None,
@@ -25,21 +49,24 @@ def main():
         }
         branch_infos.append(info)
 
-    recent_branches = sorted([b for b in branch_infos if 'datetime' in b], key=lambda x: x['datetime'])
-    import ubelt as ub
-    print('recent_branches = {}'.format(ub.repr2(recent_branches, nl=1)))
-    # [::-1]
-
-    from packaging.version import parse as Version
     dev_infos = []
     for info in branch_infos:
         if info['branch_name'].startswith('dev/'):
             vstr = info['branch_name'].split('/')[-1]
             info['version'] = Version(vstr)
-            dev_infos.append(info)
+            if not isinstance(info['version'], LegacyVersion):
+                dev_infos.append(info)
 
-    version = max(dev_infos, key=lambda x: x['version'])['version']
-    final_cand = [d for d in dev_infos if d['version'] == version]
+    versioned_dev_branches = sorted(dev_infos, key=lambda x: x['version'])
+    return versioned_dev_branches
+
+
+@_register_command('update')
+def update_dev_branch(repo):
+    versioned_dev_branches = dev_branches(repo)
+
+    version = max(versioned_dev_branches, key=lambda x: x['version'])['version']
+    final_cand = [d for d in versioned_dev_branches if d['version'] == version]
 
     latest = None
     for c in final_cand:
@@ -65,9 +92,17 @@ def main():
             repo.git.checkout(latest.name)
 
 
-if __name__ == '__main__':
-    """
-    CommandLine:
-        python ~/local/git_tools/git_update_branch.py
-    """
-    main()
+@_register_command('clean')
+def clean_dev_branches(repo):
+    versioned_dev_branches = dev_branches(repo)
+    versioned_branch_names = list(ub.unique([b['branch_name'] for b in versioned_dev_branches]))
+    keep_last = 5
+    remove_branches = versioned_branch_names[0:-keep_last]
+    repo.git.branch(*remove_branches, '-D')
+
+
+def main():
+    config = GitDevbranchConfig.cli()
+    repo = git.Repo(config['repo_dpath'])
+    command = COMMANDS[config['command']]
+    command(repo)

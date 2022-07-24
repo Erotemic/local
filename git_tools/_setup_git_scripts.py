@@ -2,12 +2,9 @@
 """
 Looks at the `git_*.{sh,ph}` scripts and makes corresponding `git-*` scripts
 """
-from os.path import basename
-from os.path import dirname
-from os.path import join
-from os.path import splitext
-import glob
 import ubelt as ub
+import os
+import stat
 
 
 SCRIPT_HEADER = ub.codeblock(
@@ -30,24 +27,45 @@ SCRIPT_FOOTER_FMT = '$DIR/../{fname} "$@"'
 
 
 def setup_git_scripts():
-    dpath = dirname(__file__)
+    try:
+        this_fpath = ub.Path(__file__)
+    except NameError:
+        # Hard code the name of this file for IPython usage
+        # Update if necessary. Generally unused in real environments
+        this_fpath = ub.Path('~/local/git_tools/_setup_git_scripts.py').expand()
 
-    git_sh_scripts = list(glob.glob(join(dpath, 'git_*.sh')))
-    git_py_scripts = list(glob.glob(join(dpath, 'git_*.py')))
-    github_py_scripts = list(glob.glob(join(dpath, 'github_*.py')))
+    src_dpath = this_fpath.parent
+    dst_dpath = src_dpath / 'scripts'
+
+    known_scripts = set(dst_dpath.ls())
+
+    git_sh_scripts = list(src_dpath.glob('git_*.sh'))
+    git_py_scripts = list(src_dpath.glob('git_*.py'))
+    github_py_scripts = list(src_dpath.glob('github_*.py'))
     git_scripts = git_py_scripts + git_sh_scripts + github_py_scripts
 
+    wrote_scripts = set()
     for fpath in git_scripts:
-        fname = basename(fpath)
+        fname = fpath.name
         script_text = (SCRIPT_HEADER + '\n\n' +
                        SCRIPT_FOOTER_FMT.format(fname=fname) + '\n')
 
-        new_fname = splitext(fname)[0].replace('_', '-')
-        new_fpath = join(dpath, 'scripts', new_fname)
-        print('writing script {!r}'.format(new_fname))
-        ub.writeto(new_fpath, script_text)
-        ub.cmd('chmod +x ' + new_fpath)
-        ub.cmd('chmod +x ' + fpath)
+        new_fname = fpath.stem.replace('_', '-')
+        new_fpath = dst_dpath / new_fname
+        if new_fpath in known_scripts:
+            print('update existing script {!r}'.format(new_fname))
+        else:
+            print('writing new script {!r}'.format(new_fname))
+        wrote_scripts.add(new_fpath)
+        new_fpath.write_text(script_text)
+
+        # chmod +x the files
+        os.chmod(new_fpath, new_fpath.stat().st_mode | stat.S_IEXEC)
+        os.chmod(fpath, fpath.stat().st_mode | stat.S_IEXEC)
+
+    unknown_scripts = known_scripts - wrote_scripts
+    if unknown_scripts:
+        print(f'unknown_scripts={unknown_scripts}')
 
 
 if __name__ == '__main__':
