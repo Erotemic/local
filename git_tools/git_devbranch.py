@@ -67,6 +67,8 @@ def dev_branches(repo):
 @_register_command('update')
 def update_dev_branch(repo):
     versioned_dev_branches = dev_branches(repo)
+    if len(versioned_dev_branches) == 0:
+        raise Exception('There are no versioned branches')
 
     version = max(versioned_dev_branches, key=lambda x: x['version'])['version']
     final_cand = [d for d in versioned_dev_branches if d['version'] == version]
