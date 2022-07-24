@@ -67,6 +67,8 @@ def setup_git_scripts():
     if unknown_scripts:
         print(f'unknown_scripts={unknown_scripts}')
 
+    # Stage the new scripts?
+
 
 if __name__ == '__main__':
     r"""

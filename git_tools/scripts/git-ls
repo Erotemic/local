@@ -1,0 +1,46 @@
+#!/bin/bash
+__doc__="
+Referencs:
+    https://stackoverflow.com/questions/17359370/git-show-last-commit-date-and-message-for-each-file-in-directory-like-github
+"
+#FILES="$(git ls-tree --name-only HEAD .)"
+#MAXLEN=0
+#IFS="$(printf "\n\b")"
+#for f in $FILES; do
+#    if [ ${#f} -gt $MAXLEN ]; then
+#        MAXLEN=${#f}
+#    fi
+#done
+
+#IFS=$'\n' sorted=($(sort <<<"${array[*]}"))
+#unset IFS
+#readarray -t sorted_arr < <(printf '%s\n' "${arr2[@]}" | sort)
+
+python -c "
+import git
+import pathlib
+import ubelt as ub
+
+fnames = ub.cmd('git ls-tree --name-only HEAD .')['out'].split('\n')
+fnames = [f for f in fnames if f and pathlib.Path(f).exists()]
+
+maxlen = max(map(len, fnames))
+
+fmt = '%C(green)%ci%Creset %x09 %C(cyan)%h%Creset %s %C(yellow)(%cn)%Creset'
+dq = chr(34)
+fname_to_info = {}
+for fname in fnames:
+    text = ub.cmd(['git', 'log', '-1', f'--pretty=format:{dq}{fmt}{dq}', fname])['out']
+    fname_to_info[fname] = text
+
+fname_to_info = ub.sorted_vals(fname_to_info)
+for fname, info in fname_to_info.items():
+    print(f'{fname:<{maxlen}} {info}')
+"
+
+#for f in $FILES; do
+#    if [ -f "$f" ]; then
+#        str="$(git log -1 --pretty=format:"%C(green)%ci%Creset %x09 %C(cyan)%h%Creset %s %C(yellow)(%cn)%Creset" "$f")"
+#        printf "%-${MAXLEN}s -- %s\n" "$f" "$str"
+#    fi
+#done
