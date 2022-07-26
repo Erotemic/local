@@ -77,6 +77,8 @@ def update_dev_branch(repo):
     for c in final_cand:
         if c.get('branch', None) is not None:
             latest = c['branch']
+
+    print('Remember to pull and fetch before running this command')
     # Need to fetch from remote
     if latest is None:
         info = final_cand[-1]
