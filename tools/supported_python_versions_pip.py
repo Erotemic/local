@@ -625,6 +625,7 @@ if __name__ == '__main__':
         python ~/local/tools/supported_python_versions_pip.py torch
         python ~/local/tools/supported_python_versions_pip.py line_profiler
         python ~/local/tools/supported_python_versions_pip.py uritools
+        python ~/local/tools/supported_python_versions_pip.py textual
     """
     import fire
     fire.Fire(minimum_cross_python_versions)
