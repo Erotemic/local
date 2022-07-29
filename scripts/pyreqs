@@ -1,0 +1,2 @@
+#!/bin/bash
+python ~/local/tools/supported_python_versions_pip.py "$@"

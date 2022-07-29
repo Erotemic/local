@@ -1,0 +1,60 @@
+#!/bin/bash
+
+_bytestr(){
+    QUANTITY=$1
+    UNIT=$2
+    #python -c "import xdev; print(xdev.byte_str($QUANTITY))"
+    python -c "
+import pint
+ureg = pint.UnitRegistry()
+num = float('${QUANTITY}')
+unit = '${UNIT}'
+if not unit:
+    unit = 'auto'
+else:
+    unit = str(unit)
+abs_num = abs(num)
+if unit == 'auto':
+    if abs_num < 2.0 ** 10:
+        unit = 'KB'
+    elif abs_num < 2.0 ** 20:
+        unit = 'KB'
+    elif abs_num < 2.0 ** 30:
+        unit = 'MB'
+    elif abs_num < 2.0 ** 40:
+        unit = 'GB'
+    elif abs_num < 2.0 ** 50:
+        unit = 'TB'
+    elif abs_num < 2.0 ** 60:
+        unit = 'PB'
+    elif abs_num < 2.0 ** 70:
+        unit = 'EB'
+    elif abs_num < 2.0 ** 80:
+        unit = 'ZB'
+    else:
+        unit = 'YB'
+if unit.lower().startswith('b'):
+    num_unit = num
+elif unit.lower().startswith('k'):
+    num_unit =  num / (2.0 ** 10)
+elif unit.lower().startswith('m'):
+    num_unit =  num / (2.0 ** 20)
+elif unit.lower().startswith('g'):
+    num_unit = num / (2.0 ** 30)
+elif unit.lower().startswith('t'):
+    num_unit = num / (2.0 ** 40)
+elif unit.lower().startswith('p'):
+    num_unit = num / (2.0 ** 50)
+elif unit.lower().startswith('e'):
+    num_unit = num / (2.0 ** 60)
+elif unit.lower().startswith('z'):
+    num_unit = num / (2.0 ** 70)
+elif unit.lower().startswith('y'):
+    num_unit = num / (2.0 ** 80)
+else:
+    raise ValueError('unknown num={!r} unit={!r}'.format(num, unit))
+print(str(num_unit) + ' ' + unit)
+"
+}
+
+_bytestr "$@"
