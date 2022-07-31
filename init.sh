@@ -283,12 +283,14 @@ ensure_dev_versions_of_my_libs(){
     scriptconfig
     git_sync
     cmd_queue
-    shitspotter
     liberator
     xinspect
     xdev
-    pypogo
-    torch_liberator)
+    )
+
+    #shitspotter
+    #pypogo
+    #torch_liberator
 
     for name in "${mylibs[@]}" 
     do
@@ -308,6 +310,8 @@ ensure_dev_versions_of_my_libs(){
             echo "does not exist dpath = $dpath"
         fi
     done
+
+    pip install shellcheck-py
 
 }
 
