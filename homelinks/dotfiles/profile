@@ -54,5 +54,5 @@ fi
 
 #export PATH="$HOME/.poetry/bin:$PATH"
 if [ -f "$HOME/.cargo/env" ]; then
-    source "$HOME/.cargo/env"
-fi
+    fi
+. "$HOME/.cargo/env"

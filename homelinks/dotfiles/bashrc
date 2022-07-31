@@ -371,3 +371,4 @@ complete -o default -F _pip_completion pip
 if [ -f "$HOME/.cargo/env" ]; then
     source "$HOME/.cargo/env"
 fi
+. "$HOME/.cargo/env"

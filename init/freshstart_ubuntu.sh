@@ -2009,3 +2009,7 @@ fix_legacy_trust_store(){
     sudo apt-key del "$SLACK_KEY_ID"
 
 }
+
+install_rust(){
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+}
