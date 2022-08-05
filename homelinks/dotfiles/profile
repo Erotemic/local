@@ -52,7 +52,7 @@ if [ -d "$HOME/.local/bin" ] ; then
 fi
 
 
-#export PATH="$HOME/.poetry/bin:$PATH"
-if [ -f "$HOME/.cargo/env" ]; then
-    fi
-. "$HOME/.cargo/env"
+##export PATH="$HOME/.poetry/bin:$PATH"
+#if [ -f "$HOME/.cargo/env" ]; then
+#. "$HOME/.cargo/env"
+#    fi
