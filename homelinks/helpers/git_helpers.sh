@@ -110,6 +110,7 @@ git-pullreq-url(){
     DEPLOY_REMOTE=origin
     #CURRENT_REMOTE=$(git remote --show-current)
     CURRENT_BRANCH=$(git branch --show-current)
+    HOST_NAME=$(git remote get-url "$DEPLOY_REMOTE" | cut -d ":" -f 1 | cut -d "@" -f 2)
     GROUP_NAME=$(git remote get-url "$DEPLOY_REMOTE" | cut -d ":" -f 2 | cut -d "/" -f 1)
     REPO_NAME=$(git remote get-url "$DEPLOY_REMOTE" | cut -d ":" -f 2 | cut -d "/" -f 2 | cut -d "." -f 1)
     HOST=https://$(git remote get-url "$DEPLOY_REMOTE" | cut -d "/" -f 1 | cut -d "@" -f 2 | cut -d ":" -f 1)
@@ -117,8 +118,17 @@ git-pullreq-url(){
     echo "CURRENT_BRANCH = $CURRENT_BRANCH"
     echo "GROUP_NAME = $GROUP_NAME"
     echo "HOST = $HOST"
-    REPO_URL="https://github.com/${GROUP_NAME}/$REPO_NAME"
-    echo "$REPO_URL/pull/"
+    REPO_URL="https://$HOST_NAME/${GROUP_NAME}/$REPO_NAME"
+
+    if [[ "$HOST_NAME" == "github"* ]]; then
+        #echo "github"
+        echo "$REPO_URL/pull/"
+    elif [[ "$HOST_NAME" == "gitlab"* ]]; then
+        #echo "gitlab"
+        echo "$REPO_URL/-/merge_requests/"
+    else
+        echo "unknown host"
+    fi
 }
 alias gitpr=git-pullreq-url
 

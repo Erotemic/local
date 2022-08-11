@@ -136,7 +136,20 @@ vimtk.reload()
 vimtk.Python._convert_selection_to_literal_dict()
 EOF
 endfunc
-noremap <leader>rd :call ConvertSelectionToLiteralDict()<Esc>
+noremap <leaderrd :call ConvertSelectionToLiteralDict()<Esc>
+
+
+
+func! ConvertSelectionToLiteralDict()
+Python2or3 << EOF
+# Change to a dictionary literal
+import vimtk
+print(f'vimtk.__file__={vimtk.__file__}')
+print(dir(vimtk.Python))
+vimtk.reload()
+vimtk.Python._convert_selection_to_literal_dict()
+EOF
+endfunc
 
 
 " Doctest editing
@@ -200,7 +213,20 @@ noremap <leader>> :s/^\( *[^ ].*\)\([^ ]\)>>>/\1\2/g<CR>
 
 
 " Search in non-doctests
-noremap <leader>/ :/\(^.*>>> .*\)\@<!
+"noremap <leader>/ :/\(^.*>>> .*\)\@<!
+
+" Search in non-doctests and non-comments (DOES NOT WORK BECAUSE not or, cannot
+" have a not and I dont think)
+
+let __doc__ =<< trim END
+    from xdev.regex_builder import RegexBuilder 
+    b = RegexBuilder.coerce('vim')
+    not_doctest = b.lookbehind('^.*>>> .*', positive=False)
+    not_comment = b.lookbehind('^.*#.*', positive=False)
+    print(not_doctest + not_comment)
+END
+
+noremap <leader>/ :/\(^.*>>> .*\)\@<!\(^.*#.*\)\@<!
 ":noremap <leader>/ :/\(^.*>>>\)\@!
 
 " Function Keys

@@ -2676,12 +2676,18 @@ livesplit_obs(){
     curl https://sh.rustup.rs -sSf | sh
     https://github.com/CryZe/livesplit-one-desktop
     
-
 }
 
 install-git-quick-stats(){
-    cd $HOME/code
+    cd "$HOME"/code
     git clone https://github.com/arzzen/git-quick-stats.git && cd git-quick-stats
     PREFIX=$HOME/.local make install
 
+}
+
+obs_virtual_camera(){
+    # https://obsproject.com/forum/threads/trying-to-set-up-virtual-webcam-its-not-working.127552/
+    # https://blog.jbrains.ca/permalink/using-obs-studio-as-a-virtual-cam-on-linux
+    # https://obsproject.com/forum/threads/ubuntu-20-04-virtual-camera-will-not-start.139033/
+    sudo modprobe v4l2loopback
 }

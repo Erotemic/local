@@ -57,6 +57,7 @@ export EDITOR=vim
 
 
 export PATH=$PATH:$HOME/scripts
+export PATH=$PATH:$HOME/bin
 export PATH=$PATH:$HOME/local/git_tools/scripts
 #export PATH=$PATH:$HOME/misc/git
 
