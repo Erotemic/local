@@ -129,6 +129,7 @@ alias wa='cd $HOME/code/watch'
 
 
 alias wad='cd $(smartwatch_dvc --tags="phase2_data")'
+alias wae='cd $(smartwatch_dvc --tags="phase2_expt")'
 alias wadh='cd $(smartwatch_dvc --tags="phase2_data" --hardware="hdd")'
 alias wads='cd $(smartwatch_dvc --tags="phase2_data" --hardware="ssd")'
 

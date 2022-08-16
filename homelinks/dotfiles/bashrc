@@ -20,6 +20,7 @@ See Also:
 
 ######################
 # Start of real bashrc
+#echo "Running bashrc"
 
 # Test if I am logging into my own account.
 if [ "$USER" = "jon.crall" ] || [ "$USER" = "joncrall" ] ; then
