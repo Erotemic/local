@@ -1693,7 +1693,7 @@ check_hdd_health(){
 }
 
 
-ttygif(){
+ttygif_record_terminal(){
     sudo apt-get install imagemagick ttyrec gcc x11-apps make git -y
     cd "$HOME"/code
     git clone https://github.com/icholy/ttygif.git
@@ -1715,6 +1715,8 @@ ttygif(){
     export WINDOWID=$(xdotool getwindowfocus)
     ttygif progiter_record3 -f
 
+    ttyrec mydemo
+    ttygif mydemo -f
     """
 }
 
