@@ -168,9 +168,6 @@ let g:vimtk_default_mappings=1
 "noremap  <leader>w :call CopyGVimToTerminalDev('word', 1)<CR>
 "noremap  <leader>m :call CopyGVimToTerminalDev('word', 1)<CR>
 
-"noremap <leader>C :call CopyCurrentFpath()<Esc>
-
-"noremap  <leader>M :call IPythonImportAll()<CR>
 noremap  <leader>x :call IPyFixEmbedGlobals()<CR>
 
 

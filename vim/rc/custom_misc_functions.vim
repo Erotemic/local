@@ -172,25 +172,6 @@ endfu
 command! MYINFOCMD call MYINFO() <C-R>
 
 
-func! CopyCurrentFpath()
-Python2or3 << EOF
-import vim
-import pyvim_funcs
-import ubelt as ub
-fpath = pyvim_funcs.get_current_fpath()
-if not ub.WIN32:
-    homedir = ub.truepath('~')
-    if fpath.startswith(homedir):
-        fpath = '~' + fpath[len(homedir):]
-
-
-print('fpath = {!r}'.format(fpath))
-pyvim_funcs.copy_text_to_clipboard(fpath)
-EOF
-endfunc
-
-
-
 func! PyCiteLookup() 
 Python2or3 << EOF
 """
