@@ -40,6 +40,9 @@ Example Usage:
     source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
     pyenv_create_virtualenv 3.10.5 full
     pyenv_create_virtualenv pypy3.7-7.3.9 most
+
+    source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+    build_vim_for_pyenv
 "
 
 install_pyenv(){
