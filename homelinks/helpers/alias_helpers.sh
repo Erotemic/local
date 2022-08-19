@@ -1086,3 +1086,19 @@ autolint_bash(){
         shellcheck -f diff "$FPATH" | git apply
     fi
 }
+
+readshelf(){
+    FPATH=$1
+    pyblock "
+    import shelve
+    import ubelt as ub
+    fpath = '$FPATH'
+    shelf = shelve.open(fpath)
+    with shelf:
+        fullshell = dict(shelf)
+        for key, value in shelf.items():
+            print('---')
+            print('key={}'.format(key))
+            print('value={}'.format(ub.repr2(value)))
+    "
+}
