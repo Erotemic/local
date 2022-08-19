@@ -19,4 +19,13 @@ sudo make install
 footswitch -1 -k a -2 -k b -3 -k c
 
 sudo footswitch -r
-sudo footswitch -1 -k f5 -2 -k f7  -3 -m win
+
+
+### M64Py Config
+sudo footswitch -1 -k f5 -3 -k f7  -2 -m win
+sudo footswitch -r
+
+
+
+## Vim configuration
+sudo footswitch -1 -m esc -3 -k i  -2 -m win
