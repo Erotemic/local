@@ -2693,3 +2693,13 @@ obs_virtual_camera(){
     # https://obsproject.com/forum/threads/ubuntu-20-04-virtual-camera-will-not-start.139033/
     sudo modprobe v4l2loopback
 }
+
+global_ulimit(){
+    # References:
+    # https://linuxhint.com/permanently_set_ulimit_value/
+    # https://serverfault.com/questions/610130/how-to-set-ulimit-value-permanently
+    cat /etc/security/limits.conf
+
+    sudo_appendto /etc/security/limits.conf '* soft    nofile             4096'
+
+}
