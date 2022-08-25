@@ -10,10 +10,6 @@ Problem References:
     https://ubuntuforums.org/showthread.php?t=2327837
     https://askubuntu.com/questions/160946/mdadm-config-file
     https://www.technibble.com/forums/threads/linux-softraid-5-array-mdadm-creation-problem-anyone-know-what-to-do.36159/
-
-Benchmarks:
-    .. [FSBench2018] https://www.phoronix.com/review/freebsd-12-zfs
-    .. [FSBench2015] https://www.diva-portal.org/smash/get/diva2:822493/FULLTEXT01.pdf
 "
 
 
