@@ -1,14 +1,20 @@
+#!/bin/bash
+__doc__="
+References:
+    https://www.icc-usa.com/raid-calculator
+    https://www.tecmint.com/create-raid-10-in-linux/
+    https://superuser.com/questions/610538/convert-raid-1-to-raid-10-in-mdadm
+    https://serverfault.com/questions/43677/best-way-to-grow-linux-software-raid-1-to-raid-10/43712#43712
 
-# References
-# https://www.icc-usa.com/raid-calculator
-# https://www.tecmint.com/create-raid-10-in-linux/
-# https://superuser.com/questions/610538/convert-raid-1-to-raid-10-in-mdadm
-# https://serverfault.com/questions/43677/best-way-to-grow-linux-software-raid-1-to-raid-10/43712#43712
+Problem References:
+    https://ubuntuforums.org/showthread.php?t=2327837
+    https://askubuntu.com/questions/160946/mdadm-config-file
+    https://www.technibble.com/forums/threads/linux-softraid-5-array-mdadm-creation-problem-anyone-know-what-to-do.36159/
 
-# Problem References
-# https://ubuntuforums.org/showthread.php?t=2327837
-# https://askubuntu.com/questions/160946/mdadm-config-file
-# https://www.technibble.com/forums/threads/linux-softraid-5-array-mdadm-creation-problem-anyone-know-what-to-do.36159/
+Benchmarks:
+    .. [FSBench2018] https://www.phoronix.com/review/freebsd-12-zfs
+    .. [FSBench2015] https://www.diva-portal.org/smash/get/diva2:822493/FULLTEXT01.pdf
+"
 
 
 resetup_raid_after_os_reinstall()
