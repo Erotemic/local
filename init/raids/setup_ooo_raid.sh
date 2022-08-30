@@ -152,7 +152,7 @@ sudo update-initramfs -u
 sudo mdadm --detail /dev/md127 | grep UUID
 #
 # UUID : b991b178:dd820492:3502ef74:5d527f6a
-sudo mdadm --detail /dev/md127
+sudo mdadm --detail /dev/md0
 
 
 # Change 127 to 0
