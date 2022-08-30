@@ -382,12 +382,20 @@ zfs-configure-memory(){
 }
 
 zfs-clear-errors(){
-
+    zpool status
     # If you get ZFS checksum errors, but SMART says the HDD is ok, you might
     # have just had a hickup. You can clear the errors.  If they come back
     # fairly quickly then you probably do have a bad drive.
     sudo zpool clear data
 }
+
+zfs-scrub(){
+
+    zpool status
+    zpool scrub data
+
+}
+
 
 zfs-setup-info(){
     set -x

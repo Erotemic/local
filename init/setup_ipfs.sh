@@ -26,7 +26,7 @@ export INSTALL_PREFIX=$HOME/.local
 export PATH=$INSTALL_PREFIX/bin:$PATH
 export IPFS_PATH=$HOME/.ipfs
 export IPFS_CLUSTER_PATH=$HOME/.ipfs-cluster
-#export IPFS_PATH=/data/ipfs
+export IPFS_PATH=/data/ipfs
 #export IPFS_CLUSTER_PATH=/data/ipfs-cluster
 
 
@@ -345,30 +345,40 @@ install_ipfs(){
     mkdir -p "$HOME/temp/setup-ipfs"
     cd "$HOME/temp/setup-ipfs"
 
+    export INSTALL_PREFIX=$HOME/.local
+
     ARCH="$(dpkg --print-architecture)"
     echo "ARCH = $ARCH"
-    IPFS_VERSION="v0.13.0"
-    IPFS_KEY=go-ipfs_${IPFS_VERSION}_linux-${ARCH}
-    URL="https://dist.ipfs.io/go-ipfs/${IPFS_VERSION}/${IPFS_KEY}.tar.gz"
+    IPFS_VERSION="v0.14.0"
+    IPFS_KEY=kubo_${IPFS_VERSION}_linux-${ARCH}
+    URL="https://dist.ipfs.io/kubo/${IPFS_VERSION}/${IPFS_KEY}.tar.gz"
+    #IPFS_KEY=go-ipfs_${IPFS_VERSION}_linux-${ARCH}
+    #URL="https://dist.ipfs.io/go-ipfs/${IPFS_VERSION}/${IPFS_KEY}.tar.gz"
+    #declare -A IPFS_KNOWN_HASHES=(
+    #    ["go-ipfs_v0.12.0-rc1_linux-arm64-sha512"]="730c9d7c31f5e10f91ac44e6aa3aff7c3e57ec3b2b571e398342a62d92a0179031c49fc041cd063403147377207e372d005992fee826cd4c4bba9b23df5c4e0c"
+    #    ["go-ipfs_v0.12.0-rc1_linux-amd64-sha512"]="b0f913f88c515eee75f6dbf8b41aedd876d12ef5af22762e04c3d823964207d1bf314cbc4e39a12cf47faad9ca8bbbbc87f3935940795e891b72c4ff940f0d46"
+    #    ["go-ipfs_v0.13.0_linux-arm64-sha512"]="90c695eedd7e797b9200c91698ef1a6577057fa1774b8afaa4dcf8e6c9580baa323acef25cc25b70e0591954e049f5cd7ddc0ad12274f882fe3e431bb6360c0b"
+    #    ["go-ipfs_v0.13.0_linux-amd64-sha512"]="40c3f69af9e7a72fa9836ba87cd471c82194bd64cf4a9cedfd730ab457b7f2a4ede861a2cfcb936e232e690fd26ef398d88e3ca55e1ec57795bf0bb8aae62a78"
+    #)
     declare -A IPFS_KNOWN_HASHES=(
-        ["go-ipfs_v0.12.0-rc1_linux-arm64-sha512"]="730c9d7c31f5e10f91ac44e6aa3aff7c3e57ec3b2b571e398342a62d92a0179031c49fc041cd063403147377207e372d005992fee826cd4c4bba9b23df5c4e0c"
-        ["go-ipfs_v0.12.0-rc1_linux-amd64-sha512"]="b0f913f88c515eee75f6dbf8b41aedd876d12ef5af22762e04c3d823964207d1bf314cbc4e39a12cf47faad9ca8bbbbc87f3935940795e891b72c4ff940f0d46"
-
-        ["go-ipfs_v0.13.0_linux-arm64-sha512"]="90c695eedd7e797b9200c91698ef1a6577057fa1774b8afaa4dcf8e6c9580baa323acef25cc25b70e0591954e049f5cd7ddc0ad12274f882fe3e431bb6360c0b"
-        ["go-ipfs_v0.13.0_linux-amd64-sha512"]="40c3f69af9e7a72fa9836ba87cd471c82194bd64cf4a9cedfd730ab457b7f2a4ede861a2cfcb936e232e690fd26ef398d88e3ca55e1ec57795bf0bb8aae62a78"
+        ["kubo_v0.14.0_linux-amd64-sha512"]="d841cc5c727c41ba40a815bc1a63e2bc2b9e1ce591e5cd9815707bfcd4400f2d3700dbc18dfaa8460748279a89d2cc6086b1dedc2ab37d4d7dc4ab8f1c50e723"
+        ["kubo_v0.14.0_linux-arm64-sha512"]="aba56721621e4f4b42350bfe43fa50e2166e8841e65da948b24eb243d962effa4a6b8b8a55dac35fc34961b65d739d3ac0550654819e59804a66d211f95f822c"
     )
     EXPECTED_HASH="${IPFS_KNOWN_HASHES[${IPFS_KEY}-sha512]}"
     BASENAME=$(basename "$URL")
     curl_verify_hash "$URL" "$BASENAME" "$EXPECTED_HASH" sha512sum
 
     echo "BASENAME = $BASENAME"
-    rm -rf go-ipfs/ipfs
+    #rm -rf-ipfs/ipfs
     tar -xvzf "$BASENAME"
 
     # TODO: stop and start the IPFS service before upgrade
+    sudo systemctl stop ipfs
     #sudo systemctl stop ipfs-cluster
-    cp go-ipfs/ipfs "$INSTALL_PREFIX/bin"
+    cp kubo/ipfs "$INSTALL_PREFIX/bin"
     #sudo systemctl start ipfs-cluster
+    ipfs --version
+    sudo systemctl start ipfs
 }
 
 
@@ -731,6 +741,25 @@ setup_lotus_filecoin(){
     #LOTUS_CLIENT_USEIPFS=true lotus client deal Qmd4PzLWTZiawH1W3VzoAbkyh9hCopjqSVAddYF8PrYBfE 180 f01652333
     #cd /home/joncrall/data/dvc-repos/shitspotter_dvc/assets/
     #lotus client import poop-2022-04-16-T135257
+}
+
+
+configure_ipfs_location(){
+    # Move the IPFS folder to a data drive and symlink to the homedrive
+    IPFS_PATH=$HOME/.ipfs
+    # For example...
+    IPFS_STORAGE_DPATH=/data/ipfs
+
+    sudo systemctl stop ipfs
+
+    rsync -avprP "$HOME"/.ipfs "$IPFS_STORAGE_DPATH"
+
+    # Symlink the default location to the storage loc
+    mv "$IPFS_PATH" "$IPFS_PATH"-old
+    ln -s "$IPFS_STORAGE_DPATH" "$IPFS_PATH"
+
+    sudo systemctl start ipfs
+    sudo systemctl status ipfs
 }
 
 main(){
