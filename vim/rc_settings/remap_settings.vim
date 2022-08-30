@@ -298,8 +298,8 @@ noremap <space> za
 
 
 " goto next syntastic error
-noremap <leader>e :SyntasticCheck<CR> :Errors<CR>
-
+"noremap <leader>e :SyntasticCheck<CR> :Errors<CR>
+noremap <leader>e :ALEPopulateLocList<CR>
 
 " RESIZE VSPLIT
 noremap <leader>+ :30winc ><CR>

@@ -126,7 +126,9 @@ Plug 'posva/vim-vue'
 Plug 'vim-scripts/AnsiEsc.vim'
 Plug 'chrisbra/unicode.vim'
 Plug 'tell-k/vim-autopep8'
-Plug 'vim-syntastic/syntastic'
+"Plug 'vim-syntastic/syntastic'
+Plug 'dense-analysis/ale'
+
 
 Plug 'mhinz/vim-startify'
 Plug 'scrooloose/nerdcommenter'

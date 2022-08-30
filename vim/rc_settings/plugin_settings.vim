@@ -85,7 +85,14 @@ call NERD_TREE_WITH_BAT()
 
 
 "-------------------------
-"PLUGIN: Synstastic General
+"PLUGIN: ALE (replaces syntastic)
+
+let g:ale_linters = {'cython': ['flake8'], 'python': ['flake8'], 'sh': ['shellcheck']}
+let g:ale_fixers = {'python': ['autoflake'], 'sh': ['shellcheck']}
+
+
+"-------------------------
+"PLUGIN: Synstastic (DEPRECATED) 
 let g:syntastic_aggregate_errors = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_warning_symbol = 'W>'
@@ -94,9 +101,14 @@ let g:syntastic_style_error_symbol = 'S>'
 let g:syntastic_style_warning_symbol = 's>'
 let g:syntastic_always_populate_loc_list = 1
 
+let g:syntastic_python_checkers=['flake8'] 
+let g:syntastic_cython_checkers=['flake8']
+
 
 "-------------------------
-"PLUGIN: Synstastic Bash
+"PLUGIN: ALE / Syntastic Linter Configuration
+"
+" Synstastic Bash
 "# https://github.com/vim-syntastic/syntastic/blob/master/syntax_checkers/sh/shellcheck.vim
 "# https://github.com/vim-syntastic/syntastic/blob/master/syntax_checkers/sh/sh.vim
 
@@ -130,16 +142,7 @@ shellcheck_arg_list = [
     '-e',  ','.join(list(shellcheck_errors.keys()))
 ]
 shellcheck_args = ' '.join(shellcheck_arg_list)
-vim.command('let g:syntastic_sh_shellcheck_args = "{}"'.format(shellcheck_args))
-EOF
 
-"-------------------------
-" PLUGIN: Syntastic Python
-" SyntasticInfo
-let g:syntastic_python_checkers=['flake8'] " ignores lines containing # NOQA
-
-Python2or3 << EOF
-import vim
 flake8_errors = [
     'E123',  # closing braket indentation
     'E126',  # continuation line hanging-indent
@@ -204,10 +207,8 @@ flake8_args_list = [
     '--ignore=' + ','.join(flake8_errors)
 ]
 flake8_args = ' '.join(flake8_args_list)
-vim.command('let g:syntastic_python_flake8_args = "%s"' % flake8_args)
 
 # Needed to hack syntastic cython checker
-vim.command('let g:syntastic_cython_checkers = ["flake8"]')
 cython_flake8_errors = flake8_errors + [
     'E901', 
     'E225',
@@ -222,7 +223,14 @@ cython_flake8_args_list = [
     '--ignore=' + ','.join(cython_flake8_errors)
 ]
 cython_flake8_args = ' '.join(cython_flake8_args_list)
+
+vim.command('let g:syntastic_sh_shellcheck_args = "{}"'.format(shellcheck_args))
+vim.command('let g:syntastic_python_flake8_args = "%s"' % flake8_args)
 vim.command('let g:syntastic_cython_flake8_args = "%s"' % cython_flake8_args)
+
+vim.command('let g:ale_sh_shellcheck_args = "{}"'.format(shellcheck_args))
+vim.command('let g:ale_python_flake8_options = "%s"' % flake8_args)
+vim.command('let g:ale_cython_flake8_options = "%s"' % cython_flake8_args)
 EOF
 
 "-------------------------
