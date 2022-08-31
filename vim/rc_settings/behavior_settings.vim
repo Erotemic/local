@@ -227,3 +227,16 @@ set clipboard-=autoselect
 set t_BE=
 
 set conceallevel=0
+
+
+" Add bash to the list of recongnized rst languages
+let g:rst_syntax_code_list = {
+    \ 'vim': ['vim'],
+    \ 'java': ['java'],
+    \ 'cpp': ['cpp', 'c++'],
+    \ 'lisp': ['lisp'],
+    \ 'php': ['php'],
+    \ 'python': ['python'],
+    \ 'perl': ['perl'],
+    \ 'sh': ['sh', 'bash'],
+    \ }

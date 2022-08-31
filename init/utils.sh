@@ -1305,3 +1305,33 @@ ls_array(){
     readarray -t "$arr_name" < <(printf '%s\n' "${array[@]}")
 }
 
+
+string_contains() {
+    __doc__='
+    Check the string in argument 1 contains the string in argument 2. 
+
+    Args:
+        string : the string to search
+        *args : test if the string contains any of these
+
+    Returns:
+        0 if any of the args are contained in the string, otherwise 1
+
+    Example:
+        string_contains "abcd" "ab"
+        echo $?
+        string_contains "abcd" "baz"
+        echo $?
+        string_contains "abcd" "baz"  "biz" "a"
+        echo $?
+    '
+    _handle_help "$@" || return 0
+	string=$1
+    shift
+    args=("$@")
+    for arg in "${args[@]}"
+    do
+        (echo "$string" | grep -qF "$arg") && return 0
+    done
+    return 1
+}

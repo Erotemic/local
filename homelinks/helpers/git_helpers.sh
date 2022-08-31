@@ -103,27 +103,95 @@ alias ggss=gg-short-status
 #        gcwip ; ssh lev "cd $(pwd) && git pull" ; ssh hyrule "cd $(pwd) && git pull"
 #    fi
 #}
-#alias grs='git_remote_sync'
+#alias grs='git_remote_synco
+
+
+# shellcheck disable=SC2120
+git-hosturl(){
+    __doc__="
+    Get the host url associated with the remote
+
+    Args:
+        remote : specify the remote of interest, defaults to origin
+    "
+    local _DEPLOY_REMOTE=${1:-${DEPLOY_REMOTE:-"origin"}}
+    # shellcheck disable=SC2155
+    local _REMOTE_URL=$(git remote get-url "$_DEPLOY_REMOTE")
+
+    if string_contains "$_REMOTE_URL" "https://" ; then
+        echo "$_REMOTE_URL" "$_DEPLOY_REMOTE" | cut -d "/" -f 1,2,3
+    else
+        # shellcheck disable=SC2155
+        local _suffix=$(echo "$_REMOTE_URL" "$_DEPLOY_REMOTE" | cut -d "/" -f 1 | cut -d "@" -f 2 | cut -d ":" -f 1)
+        echo "https://${_suffix}"
+    fi
+}
+
+
+# shellcheck disable=SC2120
+git-gropuname(){
+    __doc__="
+    Get the username or groupname associated with the remote
+
+    Args:
+        remote : specify the remote of interest, defaults to origin
+    "
+    local _DEPLOY_REMOTE=${1:-${DEPLOY_REMOTE:-"origin"}}
+    # shellcheck disable=SC2155
+    local _REMOTE_URL=$(git remote get-url "$_DEPLOY_REMOTE")
+
+    if string_contains "$_REMOTE_URL" "https://" ; then
+        echo "$_REMOTE_URL" "$_DEPLOY_REMOTE" | cut -d "/" -f 4 | cut -d "/" -f 1
+    else
+        echo "$_REMOTE_URL" "$_DEPLOY_REMOTE" | cut -d ":" -f 2 | cut -d "/" -f 1
+    fi
+}
+
+
+# shellcheck disable=SC2120
+git-reponame(){
+    __doc__="
+    Get the repo name associated with a remote
+
+    Args:
+        remote : specify the remote of interest, defaults to origin
+    "
+    local _DEPLOY_REMOTE=${1:-${DEPLOY_REMOTE:-"origin"}}
+    # shellcheck disable=SC2155
+    _REMOTE_URL=$(git remote get-url "$_DEPLOY_REMOTE")
+
+    if string_contains "$_REMOTE_URL" "https://" ; then
+        echo "$_REMOTE_URL" "$_DEPLOY_REMOTE" | cut -d "/" -f 5 | cut -d "." -f 1
+    else
+        echo "$_REMOTE_URL" "$_DEPLOY_REMOTE" | cut -d ":" -f 2 | cut -d "/" -f 2 | cut -d "." -f 1
+    fi
+}
 
 
 git-pullreq-url(){
-    DEPLOY_REMOTE=origin
-    #CURRENT_REMOTE=$(git remote --show-current)
-    CURRENT_BRANCH=$(git branch --show-current)
-    HOST_NAME=$(git remote get-url "$DEPLOY_REMOTE" | cut -d ":" -f 1 | cut -d "@" -f 2)
-    GROUP_NAME=$(git remote get-url "$DEPLOY_REMOTE" | cut -d ":" -f 2 | cut -d "/" -f 1)
-    REPO_NAME=$(git remote get-url "$DEPLOY_REMOTE" | cut -d ":" -f 2 | cut -d "/" -f 2 | cut -d "." -f 1)
-    HOST=https://$(git remote get-url "$DEPLOY_REMOTE" | cut -d "/" -f 1 | cut -d "@" -f 2 | cut -d ":" -f 1)
-    echo "REPO_NAME = $REPO_NAME"
-    echo "CURRENT_BRANCH = $CURRENT_BRANCH"
-    echo "GROUP_NAME = $GROUP_NAME"
-    echo "HOST = $HOST"
-    REPO_URL="https://$HOST_NAME/${GROUP_NAME}/$REPO_NAME"
+    __doc__="
+    Get url close to what the PR for this branch might be.
 
-    if [[ "$HOST_NAME" == "github"* ]]; then
+
+    git-hosturl
+    git-gropuname
+    git-reponame
+    "
+    DEPLOY_REMOTE=origin
+    CURRENT_BRANCH=$(git branch --show-current)
+    HOST_URL=$(git-hosturl)
+    GROUP_NAME=$(git-gropuname)
+    REPO_NAME=$(git-reponame)
+    echo "REPO_NAME = $REPO_NAME"
+    echo "GROUP_NAME = $GROUP_NAME"
+    echo "HOST_URL = $HOST_URL"
+    echo "CURRENT_BRANCH = $CURRENT_BRANCH"
+    REPO_URL="${HOST_URL}/${GROUP_NAME}/$REPO_NAME"
+
+    if [[ "$HOST_URL" == *"github"* ]]; then
         #echo "github"
         echo "$REPO_URL/pull/"
-    elif [[ "$HOST_NAME" == "gitlab"* ]]; then
+    elif [[ "$HOST_URL" == *"gitlab"* ]]; then
         #echo "gitlab"
         echo "$REPO_URL/-/merge_requests/"
     else

@@ -439,6 +439,5 @@ let g:SuperTabDefaultCompletionType = "context"
 let g:autopep8_aggressive=1
 
 
-
 " References:
 "     SCRIPTING VIM IN PYTHON - http://orestis.gr/blog/2008/08/10/scripting-vim-with-python/
