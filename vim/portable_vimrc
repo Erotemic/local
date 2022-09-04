@@ -129,6 +129,8 @@ Plug 'tell-k/vim-autopep8'
 "Plug 'vim-syntastic/syntastic'
 Plug 'dense-analysis/ale'
 
+"Plug 'Rykka/riv.vim'
+
 
 Plug 'mhinz/vim-startify'
 Plug 'scrooloose/nerdcommenter'

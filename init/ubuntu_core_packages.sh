@@ -1327,174 +1327,61 @@ podman(){
     sudo apt-get install podman -y
 }
 
-#install_docker_snap(){
-#    sudo snap connect docker:home
-#    #If you are using an alternative snap-compatible Linux distribution
-#    #("classic" in snap lingo), and would like to run docker as a normal user:
 
-#    # Add self to docker group
-#    sudo groupadd docker
-#    sudo usermod -aG docker $USER
-#    # NEED TO LOGOUT / LOGIN to revaluate groups
-#    su - $USER  # or we can do this
+docker_modern_2021_04_22(){
+    # https://docs.docker.com/engine/install/ubuntu/
+    # https://docs.docker.com/engine/install/linux-postinstall/
+    # https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker
 
-#    sudo snap disable docker
-#    sudo snap enable docker
-#}
+     sudo apt install apt-transport-https ca-certificates curl gnupg lsb-release -y
 
-docker_func(){
-    # https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/#set-up-the-repository
-    # https://github.com/NVIDIA/nvidia-docker
+     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 
-     sudo apt update
-     sudo apt install apt-transport-https ca-certificates curl software-properties-common -y
-     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-     sudo apt-key fingerprint 0EBFCD88
-     sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+     echo \
+      "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+      $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+     sudo apt update -y
+     sudo apt install docker-ce docker-ce-cli containerd.io -y
      
-     sudo apt update
-     sudo apt install -y docker-ce
-
     # Add self to docker group
     sudo groupadd docker
     sudo usermod -aG docker "$USER"
     # NEED TO LOGOUT / LOGIN to revaluate groups
     su - "$USER"  # or we can do this
 
-    # TEST:
-    docker run hello-world
-    sudo docker run hello-world
-
-    # New Nvidia Docker Install Guide
-    # https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker
-    distribution=$(. /etc/os-release;echo "$ID""$VERSION_ID") \
-       && curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add - \
-       && curl -s -L https://nvidia.github.io/nvidia-docker/"$distribution"/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
-    sudo apt-get update
-    sudo apt-get install -y nvidia-docker2
-    sudo systemctl restart docker
-
-    # TEST
-    sudo docker run --rm --gpus all nvidia/cuda:11.0-base nvidia-smi
-    
+     # Test
+     docker run hello-world
 
 
-
-
-    ############################
-    ############################
-    ############################
-    # OLD DO NOT USE
-    # NVIDIA-Docker
-    curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | \
-      sudo apt-key add -
-    curl -s -L https://nvidia.github.io/nvidia-docker/ubuntu16.04/amd64/nvidia-docker.list | \
-      sudo tee /etc/apt/sources.list.d/nvidia-docker.list
-    sudo apt update
-
-    # Install nvidia-docker2 and reload the Docker daemon configuration
-    sudo apt install -y nvidia-docker2
-    sudo pkill -SIGHUP dockerd
-
-    # https://github.com/moby/moby/issues/3127
-    # ENSURE ALL DOCKER PROCS ARE CLOSED
-    docker ps -q | xargs docker kill
-
-
-    service docker stop
-    #mv /var/lib/docker $dest
-
-    # MOVE DOCKER TO EXTERNAL
-    #Ubuntu/Debian: edit your /etc/default/docker file with the -g option: 
-    # sudo vim /etc/default/docker
-    #sudo mkdir -p /data/docker
-    #sudo sed -ie 's/#DOCKER_OPTS.*/DOCKER_OPTS="-dns 8.8.8.8 -dns 8.8.4.4 -g \/data\/docker"/g' /etc/default/docker
+    # Change docker to use storage on an external drive
+    # Ubuntu/Debian: edit your /etc/default/docker file with the -g option: 
+    cat /etc/default/docker
     sudo sed -ie 's|^#* *DOCKER_OPTS.*|DOCKER_OPTS="-g /data/docker"|g' /etc/default/docker
     sudo sed -ie 's|^#* *export DOCKER_TMPDIR.*|export DOCKER_TMPDIR=/data/docker-tmp|g' /etc/default/docker
     cat /etc/default/docker
-    #sudo sed -ie 's/#export DOCKER_TMPDIR.*/export DOCKER_TMPDIR="/data/docker/tmp"/g' /etc/default/docker
 
-    cat /lib/systemd/system/docker.service
+    # https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html
+    distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
+          && curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
+          && curl -s -L https://nvidia.github.io/libnvidia-container/"$distribution"/libnvidia-container.list | \
+                sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+                sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
 
-    # We need to point the systemctl docker serivce to this file
+    # Install the NVIDIA Runtime:
+    #DISTRIBUTION=$(. /etc/os-release;echo "$ID""$VERSION_ID") 
+    #echo "DISTRIBUTION = $DISTRIBUTION"
+    #curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add - 
+    #curl -s -L https://nvidia.github.io/nvidia-docker/"$DISTRIBUTION"/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
 
-    # the proper way to edit systemd service file is to create a file in
-    # /etc/systemd/system/docker.service.d/<something>.conf and only override
-    # the directives you need. The file in /lib/systemd/system/docker.service
-    # is "reserved" for the package vendor.
-    sudo mkdir -p /etc/systemd/system/docker.service.d
-    sudo sh -c 'cat >> /etc/systemd/system/docker.service.d/override.conf << EOL
-[Service]
-EnvironmentFile=-/etc/default/docker
-ExecStart=
-ExecStart=/usr/bin/dockerd -H fd:// \$DOCKER_OPTS
-EOL'
-    cat /etc/systemd/system/docker.service.d/override.conf
-    sudo systemctl daemon-reload
+    sudo apt-get update -y
+    sudo apt-get install -y nvidia-docker2
+    sudo systemctl restart docker
 
-    # SEE https://github.com/moby/moby/issues/9889#issuecomment-120927382
+    sudo docker run --rm --gpus all nvidia/cuda:11.0-base nvidia-smi
 
-    # https://success.docker.com/article/Using_systemd_to_control_the_Docker_daemon
-    service docker start
-    sudo systemctl status docker
-    sudo journalctl -u docker
-    journalctl -xe
-
-    #ln -s $dest /var/lib/docker
-    #mv /var/lib/docker /data/docker
-    #ln -s /data/docker /var/lib/docker
-    
-
-    # TEST
-    docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi
-
-    rsync ~/docker/Dockerfile jon.crall@remote_machine.kitware.com:docker/Dockerfile
-    
-    # urban 
-    nvidia-docker build -f ~/docker/Dockerfile -t joncrall/urban3d .
-    #nvidia-docker run -t joncrall/urban3d nvidia-smi
-
-    # interactive 
-    nvidia-docker run -it joncrall/urban3d bash
-
-    nvidia-docker run -v ~/data:/data -it joncrall/urban3d
-
-    rsync -avRP final_model jon.crall@remote_machine:docker/
-
-    # stop all containers
-    # shellcheck disable=SC2046
-    docker stop $(docker ps -a -q)
-    
-    # remove all (non-running) containers (adding a -f does runing containser)
-    # shellcheck disable=SC2046
-    docker rm $(docker ps -a -q)
-
-    # remove all images
-    # shellcheck disable=SC2046
-    docker rmi $(docker images -a -q)
-
-    nvidia-docker run -v ~/data:/data -t joncrall/urban3d df -h /dev/shm
-    nvidia-docker run --shm-size=12g -v ~/data:/data -t joncrall/urban3d df -h /dev/shm
-    nvidia-docker run --shm-size=12g -v ~/data:/data -it joncrall/urban3d
-
-    
-    nvidia-docker run --shm-size=12g -v ~/data:/data -t joncrall/urban3d cat test.sh
-
-    nvidia-docker run --shm-size=12g -v ~/data:/data -t joncrall/urban3d python3 -m clab.live.final train --train_data_path=/data/UrbanMapper3D/training --debug --num_workers=0
-    #--nopin
-
-    nvidia-docker run --ipc=host -v ~/data:/data -t joncrall/urban3d python3 -m clab.live.final train --train_data_path=/data/UrbanMapper3D/training --debug --num_workers=2 --gpu=2
-
-
-    cd ~/tmp
-    wget http://www.topcoder.com/contest/problem/UrbanMapper3D/training.zip
-    wget http://www.topcoder.com/contest/problem/UrbanMapper3D/testing.zip
-    unzip testing.zip
-    unzip training.zip
-    mkdir -p ~/data/UrbanMapper3D
-    mv testing ~/data/UrbanMapper3D/
-    mv training ~/data/UrbanMapper3D/
 }
+
 
 docker-cleanup-old-stuff(){
 
@@ -1956,56 +1843,6 @@ disable_gpu_lights(){
     nvidia-settings --assign GPULogoBrightness=100
 }
 
-
-docker_modern_2021_04_22(){
-    # https://docs.docker.com/engine/install/ubuntu/
-    # https://docs.docker.com/engine/install/linux-postinstall/
-    # https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker
-
-     sudo apt install apt-transport-https ca-certificates curl gnupg lsb-release -y
-
-     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-
-     echo \
-      "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-      $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-     sudo apt update -y
-     sudo apt install docker-ce docker-ce-cli containerd.io -y
-     
-    # Add self to docker group
-    sudo groupadd docker
-    sudo usermod -aG docker "$USER"
-    # NEED TO LOGOUT / LOGIN to revaluate groups
-    su - "$USER"  # or we can do this
-
-     # Test
-     docker run hello-world
-
-
-    # Change docker to use storage on an external drive
-    # Ubuntu/Debian: edit your /etc/default/docker file with the -g option: 
-    cat /etc/default/docker
-    sudo sed -ie 's|^#* *DOCKER_OPTS.*|DOCKER_OPTS="-g /data/docker"|g' /etc/default/docker
-    sudo sed -ie 's|^#* *export DOCKER_TMPDIR.*|export DOCKER_TMPDIR=/data/docker-tmp|g' /etc/default/docker
-    cat /etc/default/docker
-
-
-
-    # Install the NVIDIA Runtime:
-    DISTRIBUTION=$(. /etc/os-release;echo "$ID""$VERSION_ID") 
-    echo "DISTRIBUTION = $DISTRIBUTION"
-    curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add - 
-    curl -s -L https://nvidia.github.io/nvidia-docker/"$DISTRIBUTION"/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
-
-    sudo apt-get update -y
-    sudo apt-get install -y nvidia-docker2
-    sudo systemctl restart docker
-
-    sudo docker run --rm --gpus all nvidia/cuda:11.0-base nvidia-smi
-    
-
-}
 
 world_community_grid(){
     ___doc__="
