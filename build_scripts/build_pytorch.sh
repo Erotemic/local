@@ -64,12 +64,12 @@ if [[ $DEFAULT_GCC_VERSION == "10.3.0" ]]; then
     ### GCC workaround
     # https://github.com/NVlabs/instant-ngp/issues/119
     sudo apt install gcc-10 g++-10
+    ln -s /usr/bin/gcc-10 "$CUDA_ROOT"/bin/gcc
+    ln -s /usr/bin/g++-10 "$CUDA_ROOT"/bin/g++
     export CC=/usr/bin/gcc-10
     export CXX=/usr/bin/g++-10
     export CUDA_ROOT="$CUDA_HOME"
-    ln -s /usr/bin/gcc-10 $CUDA_ROOT/bin/gcc
-    ln -s /usr/bin/g++-10 $CUDA_ROOT/bin/g++
-    python setup.py develop
+    MAX_JOBS=10 python setup.py develop
 else
     MAX_JOBS=10 python setup.py install
 fi

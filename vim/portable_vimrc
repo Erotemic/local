@@ -131,6 +131,12 @@ Plug 'dense-analysis/ale'
 
 "Plug 'Rykka/riv.vim'
 
+" Do after:
+" pip install https://github.com/Rykka/instant-rst.py/archive/master.zip
+" apt_ensure libevent-dev
+" pip install greenlet gevent
+Plug 'gu-fan/InstantRst'
+
 
 Plug 'mhinz/vim-startify'
 Plug 'scrooloose/nerdcommenter'
