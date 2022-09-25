@@ -163,7 +163,7 @@ git-reponame(){
     if string_contains "$_REMOTE_URL" "https://" ; then
         echo "$_REMOTE_URL" "$_DEPLOY_REMOTE" | cut -d "/" -f 5 | cut -d "." -f 1
     else
-        echo "$_REMOTE_URL" "$_DEPLOY_REMOTE" | cut -d ":" -f 2 | cut -d "/" -f 2 | cut -d "." -f 1
+        echo "$_REMOTE_URL" "$_DEPLOY_REMOTE" | cut -d ":" -f 2 | cut -d "/" -f 2 | cut -d "." -f 1 | cut -d " " -f 1
     fi
 }
 
@@ -190,7 +190,7 @@ git-pullreq-url(){
 
     if [[ "$HOST_URL" == *"github"* ]]; then
         #echo "github"
-        echo "$REPO_URL/pull/"
+        echo "$REPO_URL/pulls/"
     elif [[ "$HOST_URL" == *"gitlab"* ]]; then
         #echo "gitlab"
         echo "$REPO_URL/-/merge_requests/"

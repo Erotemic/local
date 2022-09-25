@@ -145,7 +145,7 @@ pyenv_create_virtualenv(){
         pyenv_create_virtualenv 3.10.5 full
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        pyenv_create_virtualenv 3.11.0b4 most
+        pyenv_create_virtualenv 3.11.0rc2 none
     "
     _handle_help "$@" || return 0
 
@@ -285,7 +285,7 @@ pyenv_create_virtualenv(){
             PYTHON_CFLAGS="-march=native -O3 -pipe" 
         fi
         MAKE_OPTS=""
-    elif [[ "$OPTIMIZE_PRESET" == "off" ]]; then
+    elif [[ "$OPTIMIZE_PRESET" == "off" || "$OPTIMIZE_PRESET" == "none" ]] ; then
         PROFILE_TASK=""
         PYTHON_CONFIGURE_OPTS="--enable-shared"
         PYTHON_CFLAGS="-march=native -O2 -pipe" 
