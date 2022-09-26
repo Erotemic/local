@@ -37,7 +37,6 @@ alias cgrep='grep -I -ER \
     --exclude-dir "*.egg-info" \
     --exclude "searchindex.js" \
     --exclude "*.dot*" \
-    --exclude "*.rst*" \
     --exclude "profile_output.*" \
     --exclude "*.pipe*" \
     --exclude "*.zip*" \
@@ -48,6 +47,7 @@ alias cgrep='grep -I -ER \
     --exclude "*.coverage*" \
     --exclude "tags"'
 
+    #--exclude "*.rst*" \
     #--exclude "*.js" \
     #--exclude "*.html*" \
     #--exclude "*.css*" \
