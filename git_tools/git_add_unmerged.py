@@ -19,6 +19,7 @@ def main():
 
     # info = _cmd("git ls-files -u  | awk '{print $4}' | sort | uniq")
     # info = _cmd("git ls-files --modified -u  | awk '{print $4}' | sort | uniq")
+
     info = _cmd('git diff --name-only --diff-filter=U')
     fpaths = [line for line in info['out'].split('\n') if line]
     print('fpaths = {!r}'.format(fpaths))
@@ -35,7 +36,7 @@ def main():
     ]
 
     for fpath in fpaths:
-        text = ub.readfrom(fpath)
+        text = ub.Path(fpath).read_text()
         pat = '|'.join(unresolved_patterns)
         match = re.search(pat, text, flags=re.MULTILINE)
         if match is not None:
