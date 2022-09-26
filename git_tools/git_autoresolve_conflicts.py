@@ -16,7 +16,7 @@ def autoresolve(which='option1', force=False):
     unmerged_fpaths = git_list_unmerged_files(repo)
     for fpath in unmerged_fpaths:
         resolve_path(fpath, which, force=force)
-    if not force:
+    if force:
         repo.git.add(*unmerged_fpaths)
 
 
@@ -56,11 +56,12 @@ def resolve_path(fpath, which, force):
     resolved = ''.join(parts)
 
     if force:
-        print(f'\nResolution for: fpath={fpath}')
+        print(f'Resolving: {fpath}')
+        fpath.write_text(resolved)
+    else:
+        print(f'\nResolution for: {fpath}')
         import xdev as xd
         print(xd.difftext(text, resolved, colored=1, context_lines=10))
-    else:
-        fpath.write_text(text)
 
 
 def main():
