@@ -26,7 +26,7 @@ evemu-describe "$N64_DEV"
 evemu-describe $XB360_DEV
 
 evtest --grab "$N64_DEV"
-evtest --grab "$XB360_DEV"
+evtest --grab $XB360_DEV
 
 /usr/include/libusb-1.0/libusb.h
 /home/joncrall/.pyenv/versions/3.10.5/envs/pyenv3.10.5/lib/python3.10/site-packages/libusb/__init__.py
