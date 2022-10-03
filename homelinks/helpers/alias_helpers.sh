@@ -87,6 +87,7 @@ alias kwn='cd $HOME/code/kwannot'
 alias kwi='cd $HOME/code/kwimage'
 alias kwe='cd $HOME/code/kwimage_ext'
 alias kwp='cd $HOME/code/kwplot'
+alias di='cd $HOME/code/delayed_image'
 
 alias cv='cd $CODE_DIR/opencv'
 #alias fl='cd $CODE_DIR/fletch/'
