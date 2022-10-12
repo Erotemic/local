@@ -559,7 +559,7 @@ def minimum_cross_python_versions(package_name, request_min=None):
     for cur_pyver, next_pyver in ub.iter_window(python_versions, 2):
         pkg_ver = chosen_minimum_for[cur_pyver]
         if not pkg_ver.startswith('stdlib'):
-            line = f"{package_name}>={pkg_ver:<8}  ; python_version < '{next_pyver}' and python_version >= '{cur_pyver}'    # Python {cur_pyver}"
+            line = f"{package_name}>={pkg_ver:<8}  ; python_version < {next_pyver!r:<6} and python_version >= {cur_pyver!r:<6}    # Python {cur_pyver}"
             lines.append(line)
         else:
             line = f"# {package_name}>={pkg_ver:<8} is in the stdlib for python_version < '{next_pyver}' and python_version >= '{cur_pyver}'    # Python {cur_pyver}"
@@ -569,7 +569,7 @@ def minimum_cross_python_versions(package_name, request_min=None):
     cur_pyver = python_versions[-1]
     pkg_ver = chosen_minimum_for[cur_pyver]
     if not pkg_ver.startswith('stdlib'):
-        line =     f"{package_name}>={pkg_ver:<8}  ;                            python_version >= '{cur_pyver}'    # Python {cur_pyver}+"
+        line =     f"{package_name}>={pkg_ver:<8}  ;                             python_version >= {cur_pyver!r:<6}    # Python {cur_pyver}+"
         lines.append(line)
     else:
         line = f"# {package_name}>={pkg_ver:<8} is in the stdlib for python_version < '{next_pyver}' and python_version >= '{cur_pyver}'    # Python {cur_pyver}"

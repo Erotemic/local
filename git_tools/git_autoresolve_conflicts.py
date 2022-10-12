@@ -37,7 +37,14 @@ def resolve_path(fpath, which, force):
         , flags=re.MULTILINE | re.DOTALL)
 
     fpath = pathlib.Path(fpath)
-    text = fpath.read_text()
+    try:
+        text = fpath.read_text()
+    except UnicodeDecodeError:
+        # unhandled
+        raise
+        # data = fpath.read_bytes()
+        # text = data
+        # unresolved_pat = re.compile(unresolved_pat.pattern.encode(), flags=(unresolved_pat.flags - re.UNICODE))
 
     parts = []
 

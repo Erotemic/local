@@ -622,27 +622,26 @@ apt_ensure(){
     ARGS=("$@")
     MISS_PKGS=()
     HIT_PKGS=()
-    # Root on docker does not use sudo command, but users do
-    if [ "$(whoami)" == "root" ]; then 
-        _SUDO=""
-    else
+    _SUDO=""
+    if [ "$(whoami)" != "root" ]; then 
+        # Only use the sudo command if we need it (i.e. we are not root)
         _SUDO="sudo "
     fi
     # shellcheck disable=SC2068
     for PKG_NAME in ${ARGS[@]}
     do
-        #apt_ensure_single $EXE_NAME
-        RESULT=$(dpkg -l "$PKG_NAME" | grep "^ii *$PKG_NAME")
-        if [ "$RESULT" == "" ]; then 
-            echo "Do not have PKG_NAME='$PKG_NAME'"
-            # shellcheck disable=SC2268,SC2206
-            MISS_PKGS=(${MISS_PKGS[@]} "$PKG_NAME")
-        else
+        # Check if the package is already installed or not
+        if dpkg -l "$PKG_NAME" | grep "^ii *$PKG_NAME" > /dev/null; then 
             echo "Already have PKG_NAME='$PKG_NAME'"
             # shellcheck disable=SC2268,SC2206
             HIT_PKGS=(${HIT_PKGS[@]} "$PKG_NAME")
+        else
+            echo "Do not have PKG_NAME='$PKG_NAME'"
+            # shellcheck disable=SC2268,SC2206
+            MISS_PKGS=(${MISS_PKGS[@]} "$PKG_NAME")
         fi
     done
+    # Install the packages if any are missing
     if [ "${#MISS_PKGS}" -gt 0 ]; then
         if [ "${UPDATE}" != "" ]; then
             $_SUDO apt update -y
@@ -652,6 +651,7 @@ apt_ensure(){
         echo "No missing packages"
     fi
 }
+
 
 
 compress_path(){

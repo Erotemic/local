@@ -39,8 +39,8 @@ noremap <leader>qdw ciw"<C-r>""<Esc>
 noremap <leader>qc ciw`<C-r>"`<Esc>
 
 
-# Stage Hunk Mapping: Note this comes by default with the plugin
-# noremap <leader>hs :GitGutterStageHunk<CR>
+" Stage Hunk Mapping: Note this comes by default with the plugin
+" noremap <leader>hs :GitGutterStageHunk<CR>
 
 " File navigation
 noremap <C-T> :NERDTree<CR>
