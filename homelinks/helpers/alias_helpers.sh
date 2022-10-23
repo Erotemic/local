@@ -107,6 +107,7 @@ alias dl='cd ~/Downloads/'
 
 alias pysite='cd $(python -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_lib())")'
 
+alias us='cd $CODE_DIR/ustd'
 alias ub='cd $CODE_DIR/ubelt'
 alias xo='cd $CODE_DIR/xdoctest'
 alias xc='cd $CODE_DIR/xcookie'
