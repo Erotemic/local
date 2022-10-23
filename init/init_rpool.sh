@@ -22,6 +22,26 @@ install_rocketpool_cli(){
 
     chmod +x "$HOME"/.local/bin/rocketpool
     rocketpool --version
+
+
+    ## Via docker:
+    # run and choose options
+    rocketpool service install
+
+
+    ## Check status:
+    rocketpool service status
+    rocketpool service version
+
+
+    ## Check status in docker
+    docker ps
+    rocketpool service logs eth1
+    rocketpool service logs eth2
+    rocketpool service logs validator
+    rocketpool service logs api
+    rocketpool service logs node
+    rocketpool service logs watchtower
 }
 
 
