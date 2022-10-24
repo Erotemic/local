@@ -4,7 +4,68 @@
 # https://docs.rocketpool.net/guides/node/native.html#setting-up-the-binaries
 
 
+
+nuc_notes(){
+    __doc__='
+    # https://www.intel.com/content/www/us/en/support/articles/000031273/intel-nuc.html
+    # https://www.intel.com/content/www/us/en/support/articles/000031273.html
+    # https://www.intel.com/content/www/us/en/support/articles/000060119/intel-nuc.html
+
+    K - slim
+    F - 
+
+    BXNUC10I5 F N HN 1
+
+
+    NUC 10 i5 - barebones - NUC10i5FNK - 255.00 + 22.90 - https://www.ebay.com/itm/374307531147
+    299.99 + 29.99 = BOX NUC 8 i5 BEH1 - https://www.ebay.com/itm/314198708699?
+
+    Auction
+    -------
+
+
+
+    Retail
+    ------
+    NUC  7 i5 - barebones - NUC7i5BNK       - Amazon 246.50
+
+    NUC  8 i5 - barebones - NUC8i5BEH       - Amazon 348.58
+                Beelink   - NUC8i5          - Amazon 327.00
+
+    NUC 10 i3 - barebones - NUC10i3FNHN     - Amazon 318.99
+
+    NUC 10 i5 -           - BXNUC10i5FNH1   - NewEgg 509.00
+    NUC 11 i5 - barebones - BNUC11TNHi50Z01 - NewEgg 439.99
+
+    '
+}
+
+
 install_rocketpool_cli(){
+    __doc__="
+    Downloads and installs rocketpool via the docker interface.
+
+    Follows the tutorial in:
+        * https://docs.rocketpool.net/guides/node/docker.html#downloading-the-rocket-pool-cli
+        * https://docs.rocketpool.net/guides/node/config-docker.html#configuring-via-the-wizard
+
+    Rocketpool via docker is a collection of 6 services:
+
+        * rocketpool_api - The Smartnode API that the CLI interacts with
+        * rocketpool_node - Checks and claims RPL rewards after a reward checkpoint and is responsible for actually staking new validators when you create a minipool.
+        * rocketpool_watchtower - This is used by Oracle Nodes to perform oracle-related duties. For regular node operators, this will simply stay idle.
+
+        * rocketpool_eth1 - The Execution client.
+            - Possible Client Backends: Geth, Erigon, Besu, Nethermind, ...
+
+        * rocketpool_eth2 - The Consensus beacon node client.
+            - Possible Client Backends: Nimbus, Prysm, Lighthous, Teku
+
+        * rocketpool_validator - The Validator client, which is responsible for your validator duties (such as attesting to blocks or proposing new blocks).
+
+    Information about backend eth1 and eth2 clients:
+        * https://docs.rocketpool.net/guides/node/eth-clients.html#consensus-clients
+    "
     ARCH=$(uname -m)
     echo "ARCH = $ARCH"
     declare -A ARCH_LUT=(
@@ -33,8 +94,8 @@ install_rocketpool_cli(){
     rocketpool service status
     rocketpool service version
 
-
     ## Check status in docker
+    
     docker ps
     rocketpool service logs eth1
     rocketpool service logs eth2
@@ -42,6 +103,83 @@ install_rocketpool_cli(){
     rocketpool service logs api
     rocketpool service logs node
     rocketpool service logs watchtower
+
+    # Run the Configuration Wizard (opens settings manager if already configured)
+    rocketpool service config
+
+    # To change execution clients:
+    # https://docs.rocketpool.net/guides/node/change-clients.html#change-your-selected-execution-client
+    # Note: this will take down your entire node while you resync
+
+    # Verify everything looks ok
+    rocketpool service logs eth1
+
+    # To change concensus clients
+    # https://docs.rocketpool.net/guides/node/change-clients.html#changing-consensus-clients
+    rocketpool service config 
+    # Manual Interaction, simply change it
+    # And verify it looks ok
+    rocketpool service logs eth2
+
+
+    # Sycing blockchain state: 
+    # https://docs.rocketpool.net/guides/node/starting-rp.html#waiting-for-your-eth-clients-to-sync
+    # Note: This can take DAYS to finish!
+    rocketpool node sync
+
+
+    ### LOADING A WALLET FOR THE TEST NETWORK ###
+    # https://docs.rocketpool.net/guides/node/starting-rp.html#setting-up-a-wallet
+
+    # Load test_wallets.txt secret data
+
+    # This will create a new wallet just for this machine, which is a good
+    # idea, but make sure you save them.
+    rocketpool wallet init
+
+    # Print the node wallet public keys
+    rocketpool wallet status
+
+    # Save the new wallet address securely
+
+    
+
+    # Service Commands:
+    # https://docs.rocketpool.net/guides/node/cli-intro.html#service-commands
+    rocketpool service status
+    rocketpool service stats
+
+    # Note Commands:
+    # https://docs.rocketpool.net/guides/node/cli-intro.html#node-commands
+    rocketpool node status
+
+
+    # Minipool commands:
+    # https://docs.rocketpool.net/guides/node/cli-intro.html#minipool-commands
+
+    ### Check minipool validator public keys
+    rocketpool minipool status
+
+
+
+    ######
+    # This doesn't seem to be 100% necessary, but can help to configure your
+    # router to forward ports 30303 and 9001 to the validator node ip address.
+    # https://medium.com/rocket-pool/rocket-pool-node-quickstart-guide-d40bc3d0de6d#:~:text=Forwarding%20Peer%20Discovery%20Ports,more%20nodes%20on%20the%20network.
+
+
+
+    #########
+    ### AFTER YOUR WALLET HAS FUNDS (16 + 1.6 ETH)
+
+
+    # https://docs.rocketpool.net/guides/node/prepare-node.html#registering-your-node-with-the-network
+    rocketpool node register
+
+
+    # Monitoring performance:
+    # https://docs.rocketpool.net/guides/node/performance.html#monitoring-your-node-s-performance
+
 }
 
 
@@ -119,6 +257,11 @@ firewall(){
     "
     sudo systemctl restart sshd
     
+}
+
+
+check_network(){
+    sudo apt install vnstat
 }
 
 unattended_upgrades(){
