@@ -56,8 +56,37 @@ echo "ENSURE SYMLINKS"
 source "$HOME/local/init/ensure_symlinks.sh"
 ensure_config_symlinks
 
+if [ "$HAVE_SUDO" == "True" ]; then
+    # minimal server
+    # https://ubuntu.com/server/docs/service-openssh
+    apt_ensure openssh-server openssh-client 
+    apt_ensure net-tools
+    cat /etc/ssh/sshd_config
+    sudo systemctl restart sshd.service
+
+    __notes__='
+    To setup ssh, get the service working with basic password auth, so you can
+    login with password auth as a one-time thing to send over your ssh public
+    key:
+
+        REMOTE_USER=$USER
+        REMOTE_HOST=<IP-OR-DNS-NAME>
+        SSH_PRIVATE_KEY=$HOME/.ssh/<private-key-fname>
+        ssh-copy-id -i "${SSH_PRIVATE_KEY}" -o PreferredAuthentications=password -o PubkeyAuthentication=no "$REMOTE_USER@$REMOTE_HOST"
+
+    Now a regular login should work:
+
+        ssh -i "${SSH_PRIVATE_KEY}" "$REMOTE_USER@$REMOTE_HOST"
+
+    Now, on the remote machine disable password login:
+
+        cat /etc/ssh/sshd_config
+        sudo systemctl restart sshd.service
+    '
+fi
 
 if [ "$HAVE_SUDO" == "True" ]; then
+    apt_ensure openssh_server 
     apt_ensure git 
     apt_ensure gcc g++ build-essential 
     apt_ensure gfortran 

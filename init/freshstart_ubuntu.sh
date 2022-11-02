@@ -2013,3 +2013,65 @@ fix_legacy_trust_store(){
 install_rust(){
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 }
+
+
+connect_to_wifi_headless(){
+    # https://askubuntu.com/questions/294257/connect-to-wifi-network-through-ubuntu-terminal
+    # https://www.linuxbabe.com/ubuntu/connect-to-wi-fi-from-terminal-on-ubuntu-18-04-19-04-with-wpa-supplicant
+    load_secrets
+
+    # https://help.ubuntu.com/community/WifiDocs/Scan_for_Wireless_Network
+    # List network devices (find the wifi one)
+    # (note it will not show up in ifconfig if it is disabled, so this is safer)
+    ls /sys/class/net
+
+    # This will list all devices that have wireless capability
+    echo /sys/class/net/*/wireless/
+
+    # This will list the actual names
+    # TODO: write in bash
+    python -c "import pathlib; [print(p.name) for p in pathlib.Path('/sys/class/net/').glob('*') if (p / 'wireless').exists()]"
+
+    WIFI_DEVICE=$(python3 -c "import pathlib; [print(p.name) for p in pathlib.Path('/sys/class/net/').glob('*') if (p / 'wireless').exists()][0]")
+    echo "WIFI_DEVICE = $WIFI_DEVICE"
+
+    # Enable the device (may not work, see link)
+    # https://bbs.archlinux.org/viewtopic.php?id=173808
+    sudo ip link set dev "$WIFI_DEVICE" up
+    sudo ifconfig "$WIFI_DEVICE" up
+
+    # Bring down / up / set to managed mode (Not sure if that is right)
+    sudo ifconfig "$WIFI_DEVICE" down
+    sudo iwconfig "$WIFI_DEVICE" mode Managed
+    sudo ifconfig "$WIFI_DEVICE" up
+
+    # List WIFI networks:
+    sudo iwlist "$WIFI_DEVICE"  scan
+
+    # Just get the available names
+    sudo iwlist "$WIFI_DEVICE" scan | grep "ESSID"
+
+    #sudo systemctl status wpa_supplicant.service
+
+    echo "
+    WIFI_DEVICE='$WIFI_DEVICE'
+    HOME_WIFI_NAME='$HOME_WIFI_NAME'
+    HOME_WIFI_PASS='$HOME_WIFI_PASS'
+    "
+    # Did not work in 22.04
+    #sudo iwconfig "$WIFI_DEVICE" essid "$HOME_WIFI_NAME" key "s:$HOME_WIFI_PASS"
+
+    # This does seem to work on the PI, not on main machine
+    # https://linuxconfig.org/ubuntu-22-04-connect-to-wifi-from-command-line
+    #cat /etc/netplan/50-cloud-init.yaml
+    # Edit it
+    #sudo netplan apply
+
+    nmcli connection up id "$WIFI_DEVICE"
+    
+    # https://www.linuxfordevices.com/tutorials/ubuntu/connect-wifi-terminal-command-line
+    nmcli dev wifi connect "$HOME_WIFI_NAME" password "$HOME_WIFI_PASS"
+
+
+
+}

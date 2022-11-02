@@ -16,16 +16,10 @@ nuc_notes(){
 
     BXNUC10I5 F N HN 1
 
-
     NUC 10 i5 - barebones - NUC10i5FNK - 255.00 + 22.90 - https://www.ebay.com/itm/374307531147
     299.99 + 29.99 = BOX NUC 8 i5 BEH1 - https://www.ebay.com/itm/314198708699?
 
-    Auction
-    -------
-
-
-
-    Retail
+    Retail (2022-10-23)
     ------
     NUC  7 i5 - barebones - NUC7i5BNK       - Amazon 246.50
 
@@ -67,7 +61,6 @@ install_rocketpool_cli(){
         * https://docs.rocketpool.net/guides/node/eth-clients.html#consensus-clients
     "
     ARCH=$(uname -m)
-    echo "ARCH = $ARCH"
     declare -A ARCH_LUT=(
         ["x86"]="amd64"
         ["x86_64"]="amd64"
@@ -78,6 +71,7 @@ install_rocketpool_cli(){
 
     PREFIX=$HOME/.local
 
+    mkdir -p "$PREFIX/bin"
     wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/rocketpool-cli-linux-"${ARCH}" -O \
         "$PREFIX/bin/rocketpool"
 
@@ -241,6 +235,7 @@ firewall(){
     maxretry = 10
     "
     sudo systemctl restart fail2ban
+    sudo systemctl status fail2ban
 
 
     #cat /etc/ssh/sshd_config | sed 'Password

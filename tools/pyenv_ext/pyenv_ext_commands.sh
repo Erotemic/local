@@ -39,6 +39,7 @@ Example Usage:
     # versions of CPython
     source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
     pyenv_create_virtualenv 3.8.13 full
+    pyenv_create_virtualenv 3.11.0 full
     pyenv_create_virtualenv pypy3.7-7.3.9 most
 
     source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
@@ -596,7 +597,13 @@ build_vim_for_pyenv(){
     # https://github.com/vim/vim/issues/6457
     #git checkout v8.1.2424
     #git checkout v8.2.4030
-    git checkout v9.0.0000
+    git checkout v9.0.0824
+
+    # Build for the global pyenv python outside of venv
+    CHOSEN_PYTHON_VERSION=$(python -V | cut -d' ' -f2)
+    echo "CHOSEN_PYTHON_VERSION = $CHOSEN_PYTHON_VERSION"
+    pyenv shell "$CHOSEN_PYTHON_VERSION"
+    pyenv global "$CHOSEN_PYTHON_VERSION"
 
     # Build in virtualenv?
     # deactivate
@@ -626,9 +633,11 @@ build_vim_for_pyenv(){
     #https://github.com/ycm-core/YouCompleteMe/issues/3760
     #PREFIX=$(pyenv prefix)
     #CONFIG_DIR=$($(pyenv prefix)/bin/python-config --configdir)
-    echo "PREFIX = $PREFIX"
-    echo "EXEC_PREFIX = $EXEC_PREFIX"
-    echo "CONFIG_DIR = $CONFIG_DIR"
+    echo "
+        PREFIX='$PREFIX'
+        EXEC_PREFIX='$EXEC_PREFIX'
+        CONFIG_DIR='$CONFIG_DIR'
+    "
 
     # THIS WORKS! 
     export LDFLAGS="-rdynamic"

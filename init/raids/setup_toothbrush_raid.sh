@@ -482,3 +482,30 @@ zfs_l2arc_calculation(){
     print(f'{RAM_for_l2arc=}')
     "
 }
+
+zfs_tuning(){
+    # https://github.com/openzfs/zfs/discussions/13342
+    arc_summary -d | more
+
+    cat /sys/module/zfs/parameters/l2arc_write_max
+
+
+    # Fill ARC
+    pyblock "
+    import ubelt as ub
+    root = ub.Path('.')
+
+    prog = ub.ProgIter()
+    prog.start()
+    for r, ds, fs in root.walk():
+        for f in fs:
+            p = r / f
+            with open(p, rb') as file:
+                prog.step()
+                _ = file.read()
+
+    "
+
+
+
+}
