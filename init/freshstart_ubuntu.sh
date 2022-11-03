@@ -2072,6 +2072,4 @@ connect_to_wifi_headless(){
     # https://www.linuxfordevices.com/tutorials/ubuntu/connect-wifi-terminal-command-line
     nmcli dev wifi connect "$HOME_WIFI_NAME" password "$HOME_WIFI_PASS"
 
-
-
 }

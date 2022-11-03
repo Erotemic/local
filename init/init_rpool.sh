@@ -1,5 +1,5 @@
 #!/bin/bash
-#https://docs.rocketpool.net/guides/node/docker.html#process-overview
+# https://docs.rocketpool.net/guides/node/docker.html#process-overview
 # https://docs.rocketpool.net/guides/node/docker.html#downloading-the-rocket-pool-cli
 # https://docs.rocketpool.net/guides/node/native.html#setting-up-the-binaries
 
@@ -136,7 +136,6 @@ install_rocketpool_cli(){
 
     # Save the new wallet address securely
 
-    
 
     # Service Commands:
     # https://docs.rocketpool.net/guides/node/cli-intro.html#service-commands
@@ -159,21 +158,42 @@ install_rocketpool_cli(){
     ######
     # This doesn't seem to be 100% necessary, but can help to configure your
     # router to forward ports 30303 and 9001 to the validator node ip address.
+    # (This actually is important)
     # https://medium.com/rocket-pool/rocket-pool-node-quickstart-guide-d40bc3d0de6d#:~:text=Forwarding%20Peer%20Discovery%20Ports,more%20nodes%20on%20the%20network.
+
+    # To put funds in your node wallet, transfer 16 ETH however you want.
 
 
 
     #########
     ### AFTER YOUR WALLET HAS FUNDS (16 + 1.6 ETH)
 
-
     # https://docs.rocketpool.net/guides/node/prepare-node.html#registering-your-node-with-the-network
+    # This just uses a small smartcontract to add your node to the blockchain,
+    # you don't need the total funds on your node to register it.
     rocketpool node register
 
+    #########
+    ### STAKING
 
-    # Monitoring performance:
-    # https://docs.rocketpool.net/guides/node/performance.html#monitoring-your-node-s-performance
+    # Set the withdrawal address (cold wallet)
+    rocketpool node set-withdrawal-address 0xa219b5ba2007e15dc057dc3a151c3f168a1ca019 --force
 
+    # Set voting delegate address (hot wallet)
+    rocketpool node set-voting-delegate 0xa219b5ba2007e15dc057dc3a151c3f168a1ca019
+
+    # To start staking
+
+    # Stake at least 1.6 ETH of RPL
+    rocketpool node stake-rpl
+
+    # Stake at least 1.6 ETH of RPL
+    rocketpool node deposit
+
+    ## Setup an alias
+    codeblock "
+    alias rp=rocketpool
+    " > "$HOME/.bashrc-local"
 }
 
 
@@ -255,6 +275,47 @@ firewall(){
 }
 
 
+configure_metric_monitoring_server(){
+
+    # https://docs.rocketpool.net/guides/node/grafana.html#enabling-the-metrics-server
+    SUBNET_CIDR_IP=$(docker inspect rocketpool_monitor-net | grep -Po "(?<=\"Subnet\": \")[0-9./]+")
+    echo "SUBNET_CIDR_IP = $SUBNET_CIDR_IP"
+    # Allow docker subnet
+    sudo ufw allow from "$SUBNET_CIDR_IP" to any port 9103 comment "Allow prometheus access to node-exporter"
+
+    LOCAL_IP=$(ifconfig eno1 | grep -Po "(?<=inet )[0-9./]+")
+    LOCAL_IP_PREFIX=$(echo "${LOCAL_IP}" | cut -d "." -f1-3)
+    echo "LOCAL_IP = $LOCAL_IP"
+    echo "LOCAL_IP_PREFIX = $LOCAL_IP_PREFIX"
+
+    # Allow machines in the local network
+    sudo ufw allow from "${LOCAL_IP_PREFIX}.0/24" proto tcp to any port 3100 comment 'Allow grafana from local network'
+
+    echo "Now naviate on your machine to: $LOCAL_IP:3100"
+
+    # Reset the admin password for grafana (if you forgot your original password)
+    docker exec -it rocketpool_grafana grafana-cli admin reset-admin-password admin
+
+    # Follow instructions on the browser for:
+    # https://docs.rocketpool.net/guides/node/grafana.html#importing-the-rocket-pool-dashboard
+    
+}
+
+throttle_cpu(){
+    # If things are getting too hot, limit the CPU usage
+    sudo apt install cpulimit
+
+    #NETHERMIND_PID=$(ps -axl | grep "nethermind\/Nethermind.Runner" | awk '{print $3}')
+    NETHERMIND_PID=$(pgrep ".*Nethermind")
+    echo "NETHERMIND_PID = $NETHERMIND_PID"
+
+    # cpulimit -l takes a number between 1 and 100*num_cores.
+    # This command gets that number as a fraction of all CPUs
+    CPU_LIMIT=$(python3 -c "import multiprocessing as mp; print(int(0.5 * mp.cpu_count() * 100))")
+    sudo cpulimit -p "$NETHERMIND_PID" -l "$CPU_LIMIT"
+}
+
+
 check_network(){
     sudo apt install vnstat
 }
@@ -279,7 +340,8 @@ unattended_upgrades(){
     '
     sudo systemctl restart unattended-upgrades
     sudo systemctl status unattended-upgrades
-    
+
+    rocketpool service install-update-tracker
 
 }
 
