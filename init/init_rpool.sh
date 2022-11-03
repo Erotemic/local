@@ -276,6 +276,13 @@ firewall(){
 
 
 configure_metric_monitoring_server(){
+    __doc__="
+    Rocket pool eth to reth
+    https://coinmarketcap.com/currencies/rocket-pool-eth/reth/eth/
+
+    # Ratio to the peg
+    https://dune.com/drworm/rocketpool
+    "
 
     # https://docs.rocketpool.net/guides/node/grafana.html#enabling-the-metrics-server
     SUBNET_CIDR_IP=$(docker inspect rocketpool_monitor-net | grep -Po "(?<=\"Subnet\": \")[0-9./]+")
@@ -299,6 +306,14 @@ configure_metric_monitoring_server(){
     # Follow instructions on the browser for:
     # https://docs.rocketpool.net/guides/node/grafana.html#importing-the-rocket-pool-dashboard
     
+}
+
+
+cancel_transaction(){
+    WALLET_ADDRESS=0x402d4Df6E2e147cCF1edEd8B0F697cFa3c55E6F1
+    https://goerli.etherscan.io/address/0x402d4Df6E2e147cCF1edEd8B0F697cFa3c55E6F1
+
+    0x85bc12e229200035baca224d07d957a05beb6464902040e717e6f9215c7b02fc
 }
 
 throttle_cpu(){
