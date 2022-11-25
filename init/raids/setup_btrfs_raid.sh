@@ -19,11 +19,12 @@ References:
 sudo apt update
 sudo apt install btrfs-progs -y
 
-mkfs.btrfs -d single /dev/sdb /dev/sdc /dev/sdd /dev/sde
+#mkfs.btrfs -d single /dev/sdb /dev/sdc /dev/sdd /dev/sde
 
 # List disks
 lsblk -e7
 lsblk --scsi --output NAME,KNAME,LABEL,MOUNTPOINT,UUID,PARTTYPE,PARTUUID,MODEL,TYPE,SIZE,STATE | grep disk
+lsblk --output NAME,FSTYPE,KNAME,LABEL,MOUNTPOINT,UUID,PARTTYPE,PARTUUID,MODEL,TYPE,SIZE,STATE | grep disk
 
 # Find the ones we want to use
 # On OOO start out with 

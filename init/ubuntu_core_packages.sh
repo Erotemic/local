@@ -2537,6 +2537,9 @@ global_ulimit(){
     # https://serverfault.com/questions/610130/how-to-set-ulimit-value-permanently
     cat /etc/security/limits.conf
 
+    
+
     sudo_appendto /etc/security/limits.conf '* soft    nofile             4096'
+    sudo_appendto /etc/security/limits.conf '* soft    nofile             8192'
 
 }

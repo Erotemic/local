@@ -9,6 +9,11 @@ See Also:
     $HOME/local/homelinks/helpers/alias_helpers.sh
 '
 
+BENCH_BASHRC=""
+if [ "$BENCH_BASHRC" ] ; then
+    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Start"
+fi
+
 ######################
 # NOTE: I solved the above problem. On startup and ssh-login, there are files
 # that will execute the user bashrc, polluting the variable namespace. 
@@ -68,9 +73,9 @@ fi
 
 
 if [ -d "$HOME/.local/opt" ]; then
-    if [ -d "$HOME/.local/opt/android-studio" ]; then
-        export PATH=$PATH:$HOME/.local/opt/android-studio/bin
-    fi
+    #if [ -d "$HOME/.local/opt/android-studio" ]; then
+    #    export PATH=$PATH:$HOME/.local/opt/android-studio/bin
+    #fi
     if [ -d "$HOME/.local/opt/obs" ]; then
         export PATH=$PATH:$HOME/.local/opt/obs/bin
     export LD_LIBRARY_PATH=$HOME/.local/opt/obs/lib:$LD_LIBRARY_PATH
@@ -78,11 +83,20 @@ if [ -d "$HOME/.local/opt" ]; then
 fi
 
 
+if [ "$BENCH_BASHRC" ] ; then
+    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Pre tty"
+fi
+
 # Fix GPG signing for git commits
 # https://stackoverflow.com/a/42265848
 # https://www.gnupg.org/(it)/documentation/manuals/gnupg/Common-Problems.html
 # shellcheck disable=SC2155
 export GPG_TTY=$(tty)
+
+
+if [ "$BENCH_BASHRC" ] ; then
+    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Post tty"
+fi
 
 
 # ----------- CUDA / CUDNN ---------
@@ -138,17 +152,21 @@ fi
 
 
 # Add user intel-libs to the library paths if it exists
-if [ -d "$HOME/.local/intel/ipp/lib/intel64" ]; then
-    # Prepend to get around weird system ld_library_paths
-    export CPATH=$HOME/.local/intel/ipp/include:$CPATH
-    export LD_LIBRARY_PATH=$HOME/.local/intel/ipp/lib/intel64:$LD_LIBRARY_PATH
-    export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$HOME/.local/intel/ipp
-fi
+#if [ -d "$HOME/.local/intel/ipp/lib/intel64" ]; then
+#    # Prepend to get around weird system ld_library_paths
+#    export CPATH=$HOME/.local/intel/ipp/include:$CPATH
+#    export LD_LIBRARY_PATH=$HOME/.local/intel/ipp/lib/intel64:$LD_LIBRARY_PATH
+#    export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$HOME/.local/intel/ipp
+#fi
 
 
 ##############
 # System Level (priorty after user)
 ##############
+
+if [ "$BENCH_BASHRC" ] ; then
+    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - SysLevel"
+fi
 
 
 export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig:$PKG_CONFIG_PATH
@@ -156,12 +174,24 @@ export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:
 
 
-# Add the conda command to our environment if it exists
-if [ -f "$HOME/.local/conda/etc/profile.d/conda.sh" ]; then
-    # Add the conda command to the environment if conda is installed 
-    # (note this does not modify the path or add conda python)
-    source "$HOME/.local/conda/etc/profile.d/conda.sh"
-    complete -W "deactivate activate env clean config create help info install list package remove uninstall search update upgrade -h --help -V --version" "conda"
+if [ "$BENCH_BASHRC" ] ; then
+    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - PreConda"
+fi
+
+## Add the conda command to our environment if it exists
+#if [ -f "$HOME/.local/conda/etc/profile.d/conda.sh" ]; then
+#    # Add the conda command to the environment if conda is installed 
+#    # (note this does not modify the path or add conda python)
+#    source "$HOME/.local/conda/etc/profile.d/conda.sh"
+#    complete -W "deactivate activate env clean config create help info install list package remove uninstall search update upgrade -h --help -V --version" "conda"
+#fi
+
+if [ "$BENCH_BASHRC" ] ; then
+    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - PostConda"
+fi
+
+if [ "$BENCH_BASHRC" ] ; then
+    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - PrePyenv"
 fi
 
 #source $HOME/local/tools/pyenv_ext/pyenv_ext_commands.sh
@@ -177,6 +207,9 @@ if [ -d "$PYENV_ROOT" ]; then
     export PYENV_PREFIX
     PYENV_PREFIX=$(pyenv prefix)
 fi
+if [ "$BENCH_BASHRC" ] ; then
+    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - PostPyenv"
+fi
 
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -188,33 +221,49 @@ else
     source "$HOME/local/homelinks/helpers/bashrc_ubuntu.sh"
 fi
 
+if [ "$BENCH_BASHRC" ] ; then
+    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Source Utils"
+fi
 
 source "$HOME/local/init/utils.sh"
+
+if [ "$BENCH_BASHRC" ] ; then
+    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Source GitHelpers"
+fi
+
 source "$HOME/local/homelinks/helpers/git_helpers.sh"
+
+if [ "$BENCH_BASHRC" ] ; then
+    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Source AliasHelpers"
+fi
+
 source "$HOME/local/homelinks/helpers/alias_helpers.sh"
 
 
+if [ "$BENCH_BASHRC" ] ; then
+    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - AfterSource"
+fi
 
 # set history to not ignore leading whitespace
 export HISTCONTROL=
 
 
 # If IBM CPLEX is installed
-CPLEX_PREFIX=/opt/ibm/ILOG/CPLEX_Studio_Community1263
-if [ -d "$CPLEX_PREFIX" ]; then
-    export PATH=$PATH:$CPLEX_PREFIX/cplex/bin/x86-64_linux/
-    export PATH=$PATH:$CPLEX_PREFIX/opl/oplide/
-    export PATH=$PATH:$CPLEX_PREFIX/cplex/include/
-    export PATH=$PATH:$CPLEX_PREFIX/opl/include/
-    export PATH=$PATH:$CPLEX_PREFIX/opl/
+#CPLEX_PREFIX=/opt/ibm/ILOG/CPLEX_Studio_Community1263
+#if [ -d "$CPLEX_PREFIX" ]; then
+#    export PATH=$PATH:$CPLEX_PREFIX/cplex/bin/x86-64_linux/
+#    export PATH=$PATH:$CPLEX_PREFIX/opl/oplide/
+#    export PATH=$PATH:$CPLEX_PREFIX/cplex/include/
+#    export PATH=$PATH:$CPLEX_PREFIX/opl/include/
+#    export PATH=$PATH:$CPLEX_PREFIX/opl/
 
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/cplex/lib/x86-64_linux/static_pic
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/cplex/bin/x86-64_linux/
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/opl/bin/x86-64_linux
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/opl/lib/x86-64_linux/static_pic
-else
-    CPLEX_PREFIX=""
-fi
+#    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/cplex/lib/x86-64_linux/static_pic
+#    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/cplex/bin/x86-64_linux/
+#    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/opl/bin/x86-64_linux
+#    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CPLEX_PREFIX/opl/lib/x86-64_linux/static_pic
+#else
+#    CPLEX_PREFIX=""
+#fi
 
 # Other program environment variables
 #if [[ "$HOSTNAME" == "hyrule"  ]]; then 
@@ -259,6 +308,11 @@ fi
 #}
 
 
+if [ "$BENCH_BASHRC" ] ; then
+    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Python Env "
+fi
+
+
 # HACK FOR ME
 _CONDA_ROOT="$HOME/.local/conda/""$PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION"
 
@@ -267,7 +321,8 @@ if [[ "$_AUTOSTART_VENV" == "1" ]]; then
     if [ "$DID_MY_BASHRC_INIT" == "" ]; then
         # For some reason VIRTUAL_ENV is initialized as "", so unset it
         unset VIRTUAL_ENV
-        PYTHON_VERSION_PRIORITY=( "3.10.5" "3.9.9" )
+        #PYTHON_VERSION_PRIORITY=( "3.10.5" "3.9.9" )
+        PYTHON_VERSION_PRIORITY=( "3.10.5" )
         _found_env=0
         for CHOSEN_PYTHON_VERSION in "${PYTHON_VERSION_PRIORITY[@]}"; do
             if [ -d "$PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION" ]; then
@@ -313,6 +368,12 @@ fi
 #if [ "$DEBUG_BASHRC" == "True" ]; then
 #    print_all_pathvars
 #fi
+
+
+if [ "$BENCH_BASHRC" ] ; then
+    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Load local"
+fi
+
 
 if is_probably_decrypted "$HOME/.bashrc-erotemic.sh" > /dev/null ; then 
     # For machine-specific bashrc things that will not be published on github

@@ -17,8 +17,6 @@ def main():
     config = CleanEmptyDirConfig.cli()
     dpath = ub.Path(config['dpath'])
 
-    dpath = ub.Path('.').absolute()
-
     # First count the number of files in each directory
     path_to_num = ub.ddict(lambda: 0)
 

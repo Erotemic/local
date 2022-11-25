@@ -3,6 +3,14 @@
 # https://docs.rocketpool.net/guides/node/docker.html#downloading-the-rocket-pool-cli
 # https://docs.rocketpool.net/guides/node/native.html#setting-up-the-binaries
 
+# rETH to ETH
+# https://coinmarketcap.com/currencies/rocket-pool-eth/reth/eth/
+# rETH ratio to peg
+# https://dune.com/drworm/rocketpool
+
+# RPL to ETH
+# https://www.coingecko.com/en/coins/rocket-pool/eth
+
 
 
 nuc_notes(){
@@ -70,10 +78,16 @@ install_rocketpool_cli(){
     echo "ARCH = $ARCH"
 
     PREFIX=$HOME/.local
-
     mkdir -p "$PREFIX/bin"
-    wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/rocketpool-cli-linux-"${ARCH}" -O \
-        "$PREFIX/bin/rocketpool"
+    wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/rocketpool-cli-linux-"${ARCH}" -O ./rocketpool 
+    wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/rocketpool-cli-linux-"${ARCH}".sig -O ./rocketpool.sig
+    wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/smartnode-signing-key-v3.asc -O ./smartnode-signing-key-v3.asc
+
+    # Sign key belongs to:
+    # https://github.com/jclapis
+    gpg --import ./smartnode-signing-key-v3.asc
+    gpg --verify rocketpool.sig rocketpool
+    mv ./rocketpool "$PREFIX/bin/rocketpool"
 
     chmod +x "$HOME"/.local/bin/rocketpool
     rocketpool --version
@@ -197,6 +211,59 @@ install_rocketpool_cli(){
 }
 
 
+update_smartstack(){
+    # https://docs.rocketpool.net/guides/node/updates.html#updating-the-smartnode-stack
+    rocketpool service stop
+
+    ### Download and instll the new latest CLI version
+    DOWNLOAD_DIR="$HOME/tmp"
+    INSTALL_PREFIX="$HOME/.local"
+
+    # Download the new CLI version
+    mkdir -p "$DOWNLOAD_DIR"
+    # Determine your machine CPU architecture (usually amd64 for normal machines)
+    ARCH=$(uname -m)
+    declare -A ARCH_LUT=(
+        ["x86"]="amd64"
+        ["x86_64"]="amd64"
+        ["aarch64"]="arm64"
+    )
+    ARCH="${ARCH_LUT[${ARCH}]}"
+
+    # Download the latest binary.
+    wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/rocketpool-cli-linux-"${ARCH}" -O "$DOWNLOAD_DIR/rocketpool"
+
+    # Optional, download the latest signature and signing key to verify the binary before installing.
+    wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/rocketpool-cli-linux-"${ARCH}".sig -O "$DOWNLOAD_DIR/rocketpool.sig"
+    wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/smartnode-signing-key-v3.asc -O "$DOWNLOAD_DIR/smartnode-signing-key-v3.asc"
+    # Sign key belongs to:
+    # https://github.com/jclapis
+    gpg --import "$DOWNLOAD_DIR/smartnode-signing-key-v3.asc"
+    gpg --verify "$DOWNLOAD_DIR/rocketpool.sig" "$DOWNLOAD_DIR/rocketpool"
+
+    # If everything looks good install the new binary by copying it into your
+    # binary directory (this will overwrite the previous binary)
+    mkdir -p "$INSTALL_PREFIX/bin"
+    cp "$DOWNLOAD_DIR/rocketpool" "$INSTALL_PREFIX/bin/rocketpool"
+
+    # Add executable persmission
+    chmod +x "$INSTALL_PREFIX/bin/rocketpool"
+    rocketpool --version
+
+
+    #### Run the install upgrade
+    rocketpool service install -d
+
+    # Check configuration (amek sure nothing is new)
+    rocketpool service config
+
+
+    # Restart the service
+    rocketpool service start
+    
+}
+
+
 firewall(){
 
     # Check ports currently in use:  sudo lsof -i -P -n | grep LISTEN
@@ -211,6 +278,7 @@ firewall(){
     sudo ufw allow 4001/tcp comment 'Public IPFS libp2p swarm port'
     sudo ufw allow from 127.0.0.1 to 127.0.0.1 port 5001 proto tcp comment 'Private IPFS API'
     sudo ufw allow from 127.0.0.1 to 127.0.0.1 port 8080 proto tcp comment 'Protected IPFS Gateway + read only API subset'
+
 
 
     ## Allow out rules are only needed if we are denying out trafic, which 
@@ -309,6 +377,57 @@ configure_metric_monitoring_server(){
 }
 
 
+
+verify_checkpoint_sync(){
+
+    # List of public checkpoints
+    # https://eth-clients.github.io/checkpoint-sync-endpoints/
+
+    # https://docs.prylabs.network/docs/prysm-usage/checkpoint-sync
+    # https://nimbus.guide/trusted-node-sync.html#verify-you-synced-the-correct-chain
+
+    sudo ufw allow from 127.0.0.1 to 127.0.0.1 port 5052 proto tcp comment 'Local Nimbus REST API'
+
+    curl -X GET http://testing.mainnet.beacon-api.nimbus.team/eth/v1/beacon/blocks/head/root
+
+    #sudo ufw allow from "${LOCAL_IP_PREFIX}.0/24" proto tcp to any port 3500 comment 'Allow checkpoint HEAD network'
+    #curl -s http://YOUR_NODE_IP:YOUR_NODE_PORT/eth/v1/beacon/headers/finalized
+    curl http://localhost:3500/eth/v1/beacon/headers/finalized  | jq .'data.header.message'
+
+    curl http://localhost:5052/eth/v1/beacon/headers/finalized
+    curl http://localhost:5052/eth/v1/node/syncing
+
+    # Does seem to need export HTTP port enabled 
+    curl http://localhost:5052/eth/v1/beacon/blocks/head/root
+    curl http://pewter:5052/eth/v1/beacon/blocks/head/root
+
+
+
+    curl https://sync-mainnet.beaconcha.in/eth/v1/beacon/blocks/head/root
+    curl https://sync-mainnet.beaconcha.in/eth/v1/beacon/headers/finalized
+
+    curl -s http://localhost:5052/eth/v1/beacon/headers/finalized | jq .'data.header.message'
+    curl -s https://sync-mainnet.beaconcha.in:5052/eth/v1/beacon/headers/finalized | jq .'data.header.message'
+    
+}
+
+
+cleanup_firewall(){
+
+    # Find the rules that dont apply
+    sudo ufw status numbered
+
+    # NOTE: delete only handles one index at a time, need to relist numbers
+    # after we delete one at a time
+    sudo ufw status numbered | grep boinc | python3 -c "import sys; print(chr(10).join([line.split(' ')[0][1:-1] for line in sys.stdin.read().split(chr(10))]))"
+
+    sudo ufw status numbered | grep cupdsd | python3 -c "import sys; print(chr(10).join([line.split(' ')[0][1:-1] for line in sys.stdin.read().split(chr(10))]))"
+
+    # And delete them
+    sudo ufw delete 17
+
+}
+
 cancel_transaction(){
     WALLET_ADDRESS=0x402d4Df6E2e147cCF1edEd8B0F697cFa3c55E6F1
     https://goerli.etherscan.io/address/0x402d4Df6E2e147cCF1edEd8B0F697cFa3c55E6F1
@@ -383,4 +502,78 @@ install_ntp(){
     sudo service ntp restart
     sudo systemctl status ntp
     sudo ntpq -p
+}
+
+# Dont need to do this, docker will restart IFF it was running
+#install_rocketpool_startup_service(){
+#    source ~/local/init/init_rpool.sh
+#    SERVICE_NAME=rocketpool_startup
+#    SERVICE_EXE="$HOME/.local/bin/rocketpool"
+#    SERVICE_ARGS="service start"
+#    SERVICE_ENV=""
+#    SERVICE_DESC="Rocketpool startup"
+#    install_service rocketpool_startup "$HOME/.local/bin/rocketpool" "service start" "" "Rocketpool startup"
+#}
+
+
+#install_service(){
+#    __doc__='
+#    Installing a service managed by systemctl
+
+#    IPFS_EXE=$(which ipfs)
+
+#    wip_install_service ipfs $IPFS_EXE "daemon" "IPFS_PATH=$IPFS_PATH" "IPFS daemon"
+#    wip_install_service rocketpool_startup $HOME/.local/bin/rocketpool "service start" "" "Rocketpool startup"
+
+#    '
+#    # https://gist.github.com/pstehlik/9efffa800bd1ddec26f48d37ce67a59f
+#    # https://www.maxlaumeister.com/u/run-ipfs-on-boot-ubuntu-debian/
+#    # https://linuxconfig.org/how-to-create-systemd-service-unit-in-linux#:~:text=There%20are%20basically%20two%20places,%2Fetc%2Fsystemd%2Fsystem%20.
+#    SERVICE_NAME=$1
+#    SERVICE_EXE=$2
+#    SERVICE_ARGS=$2
+#    SERVICE_ENV=$4
+#    SERVICE_DESC=$5
+
+#    echo "
+#    SERVICE_NAME = $SERVICE_NAME
+#    SERVICE_EXE = $SERVICE_EXE
+#    SERVICE_ARGS = $SERVICE_ARGS
+#    SERVICE_ENV = $SERVICE_ENV
+#    SERVICE_DESC = $SERVICE_DESC
+#    "
+
+#    SERVICE_DPATH=/etc/systemd/system
+#    SERVICE_FPATH=$SERVICE_DPATH/${SERVICE_NAME}.service
+
+#    echo "SERVICE_EXE = $SERVICE_EXE"
+#    echo "SERVICE_FPATH = $SERVICE_FPATH"
+
+#    sudo_writeto "$SERVICE_FPATH" "
+#        [Unit]
+#        Description=${SERVICE_DESC}
+#        After=network.target
+#        [Service]
+#        Environment=\"${SERVICE_ENV}\"
+#        User=$USER
+#        ExecStart=${SERVICE_EXE} ${SERVICE_ARGS}
+#        [Install]
+#        WantedBy=multiuser.target
+#        "
+#    #sudo systemctl daemon-reload
+#    sudo systemctl start "$SERVICE_NAME"
+#    sudo systemctl status "$SERVICE_NAME"
+#}
+
+
+migrate_to_mainnet(){
+    # https://docs.rocketpool.net/guides/testnet/mainnet.html#smartnode-operation-on-mainnet
+    rocketpool minipool exit
+
+
+    # I had an issue where I started my eth2 sync from scratch, and
+    # reconfiguring to use checkpoint-sync didn't seem to work. it continued to
+    # sync from scratch.  To force a resync with a checkpoint-url, set it via
+    # `rocketpool service configure` and run:
+    rocketpool s resync-eth2
 }

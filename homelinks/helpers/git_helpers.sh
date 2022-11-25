@@ -204,3 +204,56 @@ alias gitpr=git-pullreq-url
 #git-update-branch(){
 #}
 alias gup='python ~/local/git_tools/git_devbranch.py update'
+
+
+git-diff-branch(){
+    __doc__="
+
+    Args:
+        FPATH
+        OLD_BRANCH
+        NEW_BRANCH
+
+    source ~/local/homelinks/helpers/git_helpers.sh
+    git-diff-branch README.rst HEAD main 
+    FPATH=predict.py
+    OLD_BRANCH=landcover-fix
+    "
+    _handle_help "$@" || return 0
+    FPATH=$1
+    OLD_BRANCH=$2
+    NEW_BRANCH=${3:-HEAD}
+
+    GIT_ROOT=$(git rev-parse --show-toplevel)
+    TMP_OLD_FPATH=$(mktemp /tmp/git-branch-diff.XXXXXX)
+    TMP_NEW_FPATH=$(mktemp /tmp/git-branch-diff.XXXXXX)
+    REL_PATH=$(realpath --relative-to="$GIT_ROOT" "$FPATH")
+    echo "OLD_BRANCH = $OLD_BRANCH"
+    echo "NEW_BRANCH = $NEW_BRANCH"
+    echo "GIT_ROOT = $GIT_ROOT"
+    echo "TMP_OLD_FPATH = $TMP_OLD_FPATH"
+    echo "REL_PATH = $REL_PATH"
+    git show "${OLD_BRANCH}:${REL_PATH}" > "$TMP_OLD_FPATH" && \
+    git show "${NEW_BRANCH}:${REL_PATH}" > "$TMP_NEW_FPATH" && \
+        colordiff -U 3 "$TMP_OLD_FPATH" "${TMP_NEW_FPATH}"
+}
+
+
+git-branch-cat(){
+    __doc__="
+    source ~/local/homelinks/helpers/alias_helpers.sh
+    git-branch-cat detector.py dev/flow28
+    git-branch-cat predict.py dev/flow28
+    FPATH=predict.py
+    BRANCH_NAME=landcover-fix
+    "
+    _handle_help "$@" || return 0
+    FPATH=$1
+    BRANCH_NAME=$2
+
+    GIT_ROOT=$(git rev-parse --show-toplevel)
+    REL_PATH=$(realpath --relative-to="$GIT_ROOT" "$FPATH")
+    git show "${BRANCH_NAME}:${REL_PATH}" 
+}
+
+
