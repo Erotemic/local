@@ -2543,3 +2543,13 @@ global_ulimit(){
     sudo_appendto /etc/security/limits.conf '* soft    nofile             8192'
 
 }
+
+open_rgb(){
+    # https://gitlab.com/CalcProgrammer1/OpenRGB#intel
+
+    sudo modprobe i2c-dev
+    sudo modprobe i2c-i801
+
+    ./OpenRGB_0.8_x86_64_fb88964.AppImage
+
+}

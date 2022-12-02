@@ -257,3 +257,13 @@ git-branch-cat(){
 }
 
 
+git-clean-repo(){
+    __doc__="
+    Get rid of everything except referenced data.
+    "
+    git stash clear
+
+    git reflog expire --expire-unreachable=now --all
+    git gc --prune=now
+    
+}
