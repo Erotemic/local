@@ -57,6 +57,12 @@
 " # Automatically install vim-plug into your autoload directory
 " " See: https://github.com/junegunn/vim-plug
 """""""""""""""
+
+if v:version < 900
+    finish
+endif
+
+
 if has("win32") || has("win16")
     let $HOME_DPATH = $USERPROFILE
     let $VIMFILES_DPATH = $HOME_DPATH . "/vimfiles"
