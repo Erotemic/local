@@ -58,9 +58,7 @@
 " " See: https://github.com/junegunn/vim-plug
 """""""""""""""
 
-if v:version < 900
-    finish
-endif
+finish
 
 
 if has("win32") || has("win16")
