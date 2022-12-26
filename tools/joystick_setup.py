@@ -66,7 +66,6 @@ def add_udev_permission_rule_n64():
     temp_fpath.write_text(rule)
     ub.cmd(f'sudo cp {temp_fpath} {dest_fpath}', verbose=3, shell=1)
     ub.cmd('sudo udevadm control --reload-rules', verbose=3, shell=1)
-    test_libusb_perms()
 
 
 def test_libusb_perms():
@@ -110,3 +109,16 @@ def test_libusb_perms():
             usb.get_string_descriptor_ascii(dev_handle_ptr, i, buff_byt, size)
             desc = ''.join([chr(c) for c in buff_byt if c != 0])
             print(f'desc={desc}')
+
+
+def main():
+    add_udev_permission_rule_n64()
+    test_libusb_perms()
+
+
+if __name__ == '__main__':
+    """
+    CommandLine:
+        python ~/local/tools/joystick_setup.py
+    """
+    main()
