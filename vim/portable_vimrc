@@ -100,17 +100,21 @@ else
     finish
 endif
 
-
 set runtimepath+=~/local/vim/vimfiles/
 
-source $VIMRUNTIME/mswin.vim
+if !empty(glob($VIMRUNTIME . "/mswin.vim"))
+    source $VIMRUNTIME/mswin.vim
+endif
+
 behave mswin
 
 "source ~/local/vim/rc/venv_presource.vim
 set encoding=utf8
+
+if v:version > 803
+
 let g:markdown_fenced_languages = ['html', 'python', 'bash=sh']
 let g:vimtk_default_mappings = 1
-
 
 "===========PLUGINS==========="
 
@@ -123,7 +127,7 @@ Plug 'Erotemic/vimtk', {'branch': 'main', 'do': 'pip install -e .'}
 "Plug 'Erotemic/vimtk'
 "Plug 'posva/vim-vue'
 
-"Plug 'vim-scripts/AnsiEsc.vim'
+Plug 'vim-scripts/AnsiEsc.vim'
 "Plug 'chrisbra/unicode.vim'
 Plug 'tell-k/vim-autopep8'
 "Plug 'vim-syntastic/syntastic'
@@ -333,8 +337,9 @@ if exists("g:loaded_vimtk")
     "call vimtk#quickopen('s', '~/code/ibeis/ibeis/scripts/script_vsone.py')
     "call vimtk#quickopen('s', '~/code/ibeis/ibeis/scripts/iccv.py')
     "call vimtk#quickopen('s', '~/code/ibeis/ibeis/scripts/thesis.py')
-    call vimtk#quickopen('S', '~/code/ibeis/setup.py')
-    call vimtk#quickopen('s', '~/code/ibeis/ibeis/scripts/postdoc.py')
+    "call vimtk#quickopen('S', '~/code/ibeis/setup.py')
+    call vimtk#quickopen('S', '~/code/scriptconfig/scriptconfig/config.py')
+    "call vimtk#quickopen('s', '~/code/ibeis/ibeis/scripts/postdoc.py')
     "call vimtk#quickopen('t', '~/code/ibeis/ibeis/templates/generate_notebook.py')
     "call vimtk#quickopen('T', '~/code/ibeis/ibeis/tag_funcs.py')
     call vimtk#quickopen('U', '~/code/utool/utool/__init__.py')
@@ -474,5 +479,8 @@ if has("clipboard")
 
     exec 'inoremap <script> <C-S-V> <C-G>u' . paste#paste_cmd['i']
     exec 'vnoremap <script> <C-S-V> ' . paste#paste_cmd['v']
+
+endif
+
 
 endif

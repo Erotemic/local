@@ -2073,3 +2073,61 @@ connect_to_wifi_headless(){
     nmcli dev wifi connect "$HOME_WIFI_NAME" password "$HOME_WIFI_PASS"
 
 }
+
+
+allow_power_read(){
+    # https://github.com/mlco2/codecarbon/issues/244
+    sudo apt install sysfsutils
+
+
+    # Add a group called "power".
+    GROUP_NAME=power
+
+    if ! grep -q "$GROUP_NAME" /etc/group ; then
+        echo "Adding Group: $GROUP_NAME"
+        sudo groupadd "$GROUP_NAME"
+    else
+        echo "Group already exists: $GROUP_NAME"
+    fi
+
+    if ! groups | grep -q power ; then
+
+        if ! cat /etc/group | grep "$USER" | grep -q "$GROUP_NAME"; then
+            echo "User $USER is is not in the group $GROUP_NAME. Adding them"
+            # Add your user to this group
+            sudo usermod -aG "$GROUP_NAME" "$USER"
+        fi
+
+        if cat /etc/group | grep "$USER" | grep -q "$GROUP_NAME"; then
+            echo "The user $USER is in the group $GROUP_NAME, but the shell has not refreshed".
+            # TODO: can we make ourselves this group with a new login?
+            echo "
+            Run:
+            
+            sudo su '$USER'
+
+            and try again
+            "
+        fi
+    else
+        echo "User $USER is already in group $GROUP_NAME"
+    fi
+
+    POWER_DPATH=/sys/class/powercap/intel-rapl
+    POWER_FPATH="$POWER_DPATH/intel-rapl:0/energy_uj"
+    echo "
+    POWER_DPATH='$POWER_DPATH'
+    POWER_FPATH='$POWER_FPATH'
+    "
+    ls -al "$POWER_FPATH"
+    sudo chmod -R g+r "$POWER_DPATH"
+    sudo chown -R root:power "$POWER_DPATH"
+    tree "$POWER_DPATH"
+    ls -al "$POWER_FPATH"
+
+    sudo chown root:power /sys/class/powercap/intel-rapl/intel-rapl:0/energy_uj
+
+    groups
+    ls -al /sys/class/powercap/intel-rapl/intel-rapl:0/energy_uj
+    cat /sys/class/powercap/intel-rapl/intel-rapl:0/energy_uj
+}

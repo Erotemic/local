@@ -2306,6 +2306,11 @@ install_pipewire(){
     #systemctl --user --now disable pipewire{,-pulse}.{socket,service}    
     #systemctl --user --now enable pulseaudio.service pulseaudio.socket
 
+
+    ### Install the wireplumber session manager
+    sudo apt install wireplumber
+
+    wpctl status
     
 }
 
@@ -2537,6 +2542,19 @@ global_ulimit(){
     # https://serverfault.com/questions/610130/how-to-set-ulimit-value-permanently
     cat /etc/security/limits.conf
 
+    
+
     sudo_appendto /etc/security/limits.conf '* soft    nofile             4096'
+    sudo_appendto /etc/security/limits.conf '* soft    nofile             8192'
+
+}
+
+open_rgb(){
+    # https://gitlab.com/CalcProgrammer1/OpenRGB#intel
+
+    sudo modprobe i2c-dev
+    sudo modprobe i2c-i801
+
+    ./OpenRGB_0.8_x86_64_fb88964.AppImage
 
 }

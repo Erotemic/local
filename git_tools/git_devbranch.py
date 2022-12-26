@@ -11,12 +11,17 @@ from packaging.version import LegacyVersion
 from packaging.version import parse as Version
 
 
-@scfg.dataconf
-class GitDevbranchConfig:
+class GitDevbranchConfig(scfg.DataConfig):
     """
     A git tool for handling the dev/<version> branch patterns
     """
-    command = scfg.Value(None, choices=['update', 'clean'], help='the command', position=1)
+    command = scfg.Value(None, choices=['update', 'clean'], help=ub.paragraph(
+        '''
+        The command.
+        "update" will switch to the latest dev branch
+        "clean" will remove old dev branches.
+        '''), position=1)
+
     repo_dpath = scfg.Value('.', help='location of the repo')
 
 
@@ -119,6 +124,7 @@ def main():
     config = GitDevbranchConfig.cli()
     repo = git.Repo(config['repo_dpath'])
     if config['command'] is None:
+        config.argparse().print_usage()
         raise ValueError('A command must be given')
     command = COMMANDS[config['command']]
     command(repo)

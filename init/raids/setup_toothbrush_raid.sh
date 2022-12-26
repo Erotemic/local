@@ -281,6 +281,44 @@ f2fs_notes(){
 }
 
 
+btrfs_notes(){
+    __doc__="
+    Notes about how to install the BTRFS file system on the NVME SSD drives
+    "
+    sudo apt install btrfs-progs -y
+
+    # Output info about file systems
+    lsblk -fs 
+
+    # Determine which disk devices should be formatted
+    lsblk | grep disk
+
+    DEVICE_DPATH=/dev/nvme1n1
+    MOUNT_NAME="flash1"
+    MOUNT_DPATH=/media/$USER/$MOUNT_NAME
+    FS_FORMAT="btrfs"
+
+    # If mounted unmount
+    sudo umount "$DEVICE_DPATH"
+
+    # Format device filesystem (the -d is for btrfs to denote a single drive)
+    sudo mkfs -t "$FS_FORMAT" -f -d single "$DEVICE_DPATH"
+
+    sudo mount "$DEVICE_DPATH" "$MOUNT_DPATH"
+
+    # Create mount point with group permissions
+    sudo mkdir -p "$MOUNT_DPATH" 
+    sudo chown "$USER":"$USER" "$MOUNT_DPATH" 
+    sudo chmod 777 "$MOUNT_DPATH"
+    #sudo umount $MOUNT_DPATH
+
+    FSTAB_LINE="${DEVICE_DPATH}  ${MOUNT_DPATH}              $FS_FORMAT    defaults        0 0  # from erotemic local"
+    grep "$FSTAB_LINE" /etc/fstab || sudo sh -c "echo '$FSTAB_LINE' >> /etc/fstab"
+
+    ln -s "/media/$USER/flash1" "$HOME/flash1" 
+}
+
+
 ################################
 #
 #  ####### #######  #####  

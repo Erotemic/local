@@ -92,7 +92,7 @@ alias di='cd $HOME/code/delayed_image'
 alias cv='cd $CODE_DIR/opencv'
 #alias fl='cd $CODE_DIR/fletch/'
 alias kw='cd $CODE_DIR/kwiver/'
-alias vi='cd $CODE_DIR/VIAME/'
+#alias vi='cd $CODE_DIR/VIAME/'
 alias nx='cd $CODE_DIR/networkx'
 alias gr='cd $CODE_DIR/graphid'
 #alias hs='cd $CODE_DIR/ibeis/ibeis/algo/hots'
@@ -105,7 +105,12 @@ alias dl='cd ~/Downloads/'
 #alias rf='cd $CODE_DIR/pyrf/'
 #alias mtg='cd $CODE_DIR/mtgmonte/'
 
-alias pysite='cd $(python -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_lib())")'
+
+print_pysite(){
+    python -c "import sysconfig; print(sysconfig.get_paths()['platlib'])"
+}
+
+alias pysite='cd $(print_pysite)'
 
 alias us='cd $CODE_DIR/ustd'
 alias ub='cd $CODE_DIR/ubelt'
@@ -962,51 +967,6 @@ ssh-edit-config(){
         $EDITOR "$HOME/.ssh/config"
     fi
 }
-
-git-diff-branch(){
-    __doc__="
-
-    Args:
-        FPATH
-        BRANCH_NAME
-
-    source ~/local/homelinks/helpers/alias_helpers.sh
-    git-diff-branch detector.py master
-    FPATH=predict.py
-    BRANCH_NAME=landcover-fix
-    "
-    _handle_help "$@" || return 0
-    FPATH=$1
-    BRANCH_NAME=$2
-
-    GIT_ROOT=$(git rev-parse --show-toplevel)
-    TMP_FPATH=$(mktemp /tmp/git-branch-diff.XXXXXX)
-    REL_PATH=$(realpath --relative-to="$GIT_ROOT" "$FPATH")
-    echo "BRANCH_NAME = $BRANCH_NAME"
-    echo "GIT_ROOT = $GIT_ROOT"
-    echo "TMP_FPATH = $TMP_FPATH"
-    echo "REL_PATH = $REL_PATH"
-    git show "${BRANCH_NAME}:${REL_PATH}" > "$TMP_FPATH" && colordiff -U 3 "$TMP_FPATH" "${FPATH}"
-}
-
-
-git-branch-cat(){
-    __doc__="
-    source ~/local/homelinks/helpers/alias_helpers.sh
-    git-branch-cat detector.py dev/flow28
-    git-branch-cat predict.py dev/flow28
-    FPATH=predict.py
-    BRANCH_NAME=landcover-fix
-    "
-    _handle_help "$@" || return 0
-    FPATH=$1
-    BRANCH_NAME=$2
-
-    GIT_ROOT=$(git rev-parse --show-toplevel)
-    REL_PATH=$(realpath --relative-to="$GIT_ROOT" "$FPATH")
-    git show "${BRANCH_NAME}:${REL_PATH}" 
-}
-
 
 ipfs-service(){
     ARG=$1

@@ -6,7 +6,7 @@
 " highlight format string repl locations inside codeblock strings
 syn match pythonFmtString "{[A-Za-z][A-Za-z_]*}" contained 
 
-" Override pythonString and PythonRawString to differentiate between tripple
+" Override pythonString and PythonRawString to differentiate between triple
 " and single quoted strings 
 syn region  pythonSingleStringMulti
       \ start=+[uU]\=\z('''\)+ end="\z1" keepend
@@ -25,7 +25,19 @@ syn region  pythonRawDoubleStringMulti
 
 
 function! MyTextEnableCodeSnip(filetype,start,end,parent) abort
-  " http://vim.wikia.com/wiki/Different_syntax_highlighting_within_regions_of_a_file
+  let __doc__=<< DOC
+
+  Args:
+      filetype : what language the internal text should be highlighted as
+      start : the pattern that starts the filetype syntax highlighting
+      end : the pattern that ends the filetype syntax highlighting
+      parent : the syntax tags that this rule applies inside of
+
+  References:
+      http://vim.wikia.com/wiki/Different_syntax_highlighting_within_regions_of_a_file
+
+DOC
+  " 
   let ft=toupper(a:filetype)
   let group='textGroup'.ft
   if exists('b:current_syntax')
@@ -45,13 +57,10 @@ function! MyTextEnableCodeSnip(filetype,start,end,parent) abort
     unlet b:current_syntax
   endif
   execute 'syn region textSnip'.ft.
-  \' matchgroup=SpecialNested'.a:filetype.
-  \' start='.a:start.' end='.a:end.  
-  \' containedin='.a:parent.
-  \' contains=@'.group
-
-  " dont forget to properly quote start and end inside the string defs
-  "\' start="'.a:start.'" end="'.a:end.'"'.
+      \' matchgroup=SpecialNested'.a:filetype.
+      \' keepend start="'.a:start.'" end="'.a:end.'"'.  
+      \' containedin='.a:parent.
+      \' contains=@'.group
 endfunction
 
 let single_multi='pythonSingleStringMulti,pythonRawSingleStringMulti'
@@ -69,14 +78,64 @@ let double_multi='pythonDoubleStringMulti,pythonRawDoubleStringMulti'
 "         positive ahead:  @=
 "         negative ahead:  @!
 
+Python2or3 << EOF
 
+if 0:
+    import xdev
+    import re
+    import ubelt as ub
+
+    b = xdev.RegexBuilder.coerce('vim')
+
+    syntax_infos = [
+        {'filetype': 'sh', 'header': '#!/bin/bash'},
+        {'filetype': 'sh', 'header': '#!/bin/sh'},
+        {'filetype': 'python', 'header': '#!/usr/bin/env python'},
+    ]
+
+    end_pattern_infos = [
+        {'end_pattern': "'''", 'parent': 'single_multi'},
+        {'end_pattern': '"""', 'parent': 'double_multi'},
+    ]
+
+    template = "call MyTextEnableCodeSnip('{filetype}', '{start_pattern}', {end_pattern!r}, {parent})"
+    for info in syntax_infos:
+        info['start_pattern'] = r'\s*' + b.lookahead(re.escape(info['header']).replace('/', r'\/'))
+        for end_info in end_pattern_infos:
+            fmtkw = ub.udict(info) | end_info
+            line = template.format(**fmtkw)
+            print(line)
+
+            #region_template = ub.codeblock(f'''
+            #    syn region {region_name}
+            #    matchgroup={matchgroup_name}
+            #    keepend
+            #    start="{start_pattern}"
+            #    end="{end_pattern}"
+            #    containedin="{parent_name}"
+            #    contains="{group_name}"
+            #    ''').replace('\n', ' ')
+            #print(region_template)
+EOF
+
+"~/local/vim/vimfiles/after/syntax/python.vim
 " ------------
 " TODO: figure out how to correctly highlight docstrings with a shebang.
-"  See ~/misc/python_tests/test_highlight.py for a testing file
+"  See ~/misc/tests/python/test_highlight.py for a testing file
 
 "                    filetype |      start              |  end   |   parent
+call MyTextEnableCodeSnip('sh', '\#!\/bin\/bash', "'''", single_multi)
+"call MyTextEnableCodeSnip('sh', '\s*\(\#!\/bin\/bash\)\@=', '"""', double_multi)
+"call MyTextEnableCodeSnip('sh', '\s*\(\#!\/bin\/sh\)\@=', "'''", single_multi)
+"call MyTextEnableCodeSnip('sh', '\s*\(\#!\/bin\/sh\)\@=', '"""', double_multi)
+"call MyTextEnableCodeSnip('python', '\s*\(\#!\/usr\/bin\/env\ python\)\@=', "'''", single_multi)
+"call MyTextEnableCodeSnip('python', '\s*\(\#!\/usr\/bin\/env\ python\)\@=', '"""', double_multi)
+
+
+" OLD MANUAL CALLS
 "call MyTextEnableCodeSnip('sh', '\s*\(#!/bin/sh\)\@=',   "'''", single_multi) 
-"call MyTextEnableCodeSnip('sh', '\s*\(#!/bin/bash\)\@=', "'''", single_multi)
+"call MyTextEnableCodeSnip('sh', '\s*\(\#!/bin/bash\)\@=', "'''", single_multi)
+"call MyTextEnableCodeSnip('sh', 'bash', "'''", single_multi)
 "call MyTextEnableCodeSnip('sh', '\s*\(#!/bin/sh\)\@=',   '"""', double_multi) 
 "call MyTextEnableCodeSnip('sh', '\s*\(#!/bin/bash\)\@=', '"""', double_multi)
 

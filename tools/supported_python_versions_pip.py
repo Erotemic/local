@@ -604,15 +604,15 @@ def minimum_cross_python_versions(package_name, request_min=None):
             maybe_ok_keys = [k for k in maybe_bad_keys if '.dev0' not in k]
             version_to_support = ub.dict_subset(version_to_support, maybe_ok_keys)
 
-        required_combos = [
-            ('linux', 'x86_64'),
-            ('macosx', 'x86_64'),
-            ('win', 'x86_64'),
-        ]
+        combo_values = {
+            ('linux', 'x86_64'): 101,
+            ('macosx', 'x86_64'): 5,
+            ('win', 'x86_64'): 11,
+        }
         for cand, support in version_to_support.items():
             has_combos = support.value_counts(['os', 'arch']).index.tolist()
-            total_have = sum(k in has_combos for k in required_combos)
-            score = (total_have / len(required_combos)) * 100
+            total_have = sum(combo_values.get(k, 0) for k in has_combos)
+            score = total_have
             cand_to_score[cand] = score
 
         cand_to_score = ub.sorted_vals(cand_to_score)
