@@ -2306,6 +2306,11 @@ install_pipewire(){
     #systemctl --user --now disable pipewire{,-pulse}.{socket,service}    
     #systemctl --user --now enable pulseaudio.service pulseaudio.socket
 
+
+    ### Install the wireplumber session manager
+    sudo apt install wireplumber
+
+    wpctl status
     
 }
 

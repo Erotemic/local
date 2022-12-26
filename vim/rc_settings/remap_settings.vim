@@ -128,6 +128,8 @@ noremap <leader>pl :call MakePrintLine()<CR>
 noremap <leader>n A  # NOQA<Esc>
 " Change dictionary body to ordered dictionary
 noremap <leader>ro :s/^\( *\)\([^ ]\)/\1(\2/ <bar> '<,'>s/,$/),/ <bar> '<,'>s/:/,/<CR>
+" Change a dictionary body to a variable assignment
+noremap <leader>ra :s/^\( *\)'\([^']*\)'\([^ ]\)/\1\2\3/ <bar> '<,'>s/,$// <bar> '<,'>s/:/ =/<CR>
 
 
 func! ConvertSelectionToLiteralDict()
