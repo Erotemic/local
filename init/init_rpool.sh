@@ -92,11 +92,14 @@ install_rocketpool_cli(){
     chmod +x "$HOME"/.local/bin/rocketpool
     rocketpool --version
 
-
+    #### FIRST TIME INSTALL
     ## Via docker:
     # run and choose options
     rocketpool service install
 
+    #### TO UPGRADE FROM EXISTING INSTALL
+    # https://docs.rocketpool.net/guides/node/updates.html#updating-the-smartnode-stack
+    rocketpool service install -d
 
     ## Check status:
     rocketpool service status

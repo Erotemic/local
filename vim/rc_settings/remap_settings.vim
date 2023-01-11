@@ -51,12 +51,6 @@ noremap <leader>j :Tagbar<CR>
 
 
 " Text formatting
-"vnoremap <leader>fp :call PyFormatParagraph()<CR>
-"vnoremap <leader>fe :call PyFormatParagraph()<CR>
-"vnoremap ge :call PyFormatParagraph()<CR>
-"noremap <leader>ge :call PySelectAndFormatParagraph()<CR>
-"noremap <c-g> :call PySelectAndFormatParagraph('max_width=110')<CR>
-"noremap <c-f> :call PySelectAndFormatParagraph('max_width=80,myprefix=False,sentence_break=False')<CR>
 
 vnoremap ge :call vimtk#format_paragraph()<CR>
 vnoremap fe :call vimtk#format_paragraph()<CR>
@@ -65,15 +59,8 @@ noremap <leader>ge :call vimtk#format_paragraph()<CR>
 noremap <c-g> :call vimtk#format_paragraph('{"max_width": 110}')<CR>
 noremap <c-f> :call vimtk#format_paragraph('{"max_width": 80, "myprefix": False, "sentence_break": False}')<CR>
 
-noremap <c-M-G> :call PySelectAndFormatParagraphNoBreak()<CR>
-
 " Quick reference jumping
 noremap <leader>el :call PyCiteLookup()<CR>
-
-"noremap <leader>es :call SmartSearchWordAtCursor()<CR>
-noremap <leader>eg :call GrepWordAtCursor('normal')<CR>
-noremap <leader>ep :call GrepWordAtCursor('project')<CR>
-"noremap <leader>egg :call GrepWordAtCursor('normal')<CR>
 
 " Python Debugging Snippets
 "noremap  <c-b>   :call PyMakeEmbed()<CR><Esc>
@@ -120,8 +107,6 @@ inoremap <c-1> :call InsertDocstr()<CR>
 "noremap <c-2> :call AutoPep8Block()<CR>
 
 " Misc python snippets
-"noremap <leader>pv :call MakePrintVar()<CR>
-"noremap <leader>pv :call vimtk_snippets#insert_print_var_at_cursor()<CR>
 
 noremap <leader>pl :call MakePrintLine()<CR>
 " insert a NOQA
@@ -164,30 +149,42 @@ endfunc
 
 
 " -------- Interactive Editing
-" copy whatever is in clipboard to terminal
-noremap  <leader>z :call CopyGVimToTerminalDev('clipboard', 1)<CR>
 " DO line in ipython and RETURN to vim
 
-let g:vimtk_default_mappings=1
-"noremap  <leader>a :call CopyGVimToTerminalDev(mode(), 1)<CR>
-"vnoremap <leader>a :call CopyGVimToTerminalDev(visualmode(), 1)<CR>
-"noremap  <leader>w :call CopyGVimToTerminalDev('word', 1)<CR>
-"noremap  <leader>m :call CopyGVimToTerminalDev('word', 1)<CR>
+"let g:vimtk_default_mappings=1
+noremap <leader>H :call vimtk#helloworld()<Esc>
+
+noremap  <leader>a :call vimtk#execute_text_in_terminal(mode())<CR>
+vnoremap <leader>a :call vimtk#execute_text_in_terminal(visualmode())<CR>
+noremap  <leader>m :call vimtk#execute_text_in_terminal('word')<CR>
+
+noremap <leader>C :call vimtk#copy_current_fpath()<Esc>
+noremap <leader>f :call vimtk#copy_current_module()<Esc>
+
+noremap <leader>M :call vimtk#ipython_import_all()<CR>
+
+command! AutoImport call vimtk#insert_auto_import()
+
+noremap <leader>pv :call vimtk#insert_print_var_at_cursor("repr")<CR>
+noremap <leader>ps :call vimtk#insert_print_var_at_cursor("urepr")<CR>
+
+noremap  <c-M-B> :call vimtk#insert_timerit(mode())<CR><Esc>
+vnoremap <c-M-B> :call vimtk#insert_timerit(visualmode())<CR><Esc>
+
+noremap <leader>es :call vimtk#smart_search_word_at_cursor()<CR>
+noremap <leader>go :call vimtk#open_path_at_cursor("e")<CR>
+noremap <leader>gf :call vimtk#open_path_at_cursor("e")<CR>
+noremap <leader>gi :call vimtk#open_path_at_cursor("split")<CR>
+noremap <leader>gv :call vimtk#open_path_at_cursor("vsplit")<CR>
+noremap <leader>gv :call vimtk#open_path_at_cursor("vsplit")<CR>
+noremap <leader>gt :call vimtk#open_path_at_cursor("tabe")<CR>
+noremap gi :call vimtk#open_path_at_cursor("split")<CR>
+
+" Doctest editing
+vnoremap gd :call vimtk#py_format_doctest()<CR>
+vnoremap gu :call vimtk#py_unformat_doctest()<CR>
 
 noremap  <leader>x :call IPyFixEmbedGlobals()<CR>
-
-
-"+========= Not so used 
-noremap  <leader>pd :call CopyGVimToTerminalDev(mode(), 1)<CR>
-vnoremap <leader>pd :call CopyGVimToTerminalDev(visualmode(), 1)<CR>
-noremap  <leader>pg vip :call CopyGVimToTerminalDev('v', 1)<CR>
-" Paste to ipython and STAY in ipython
-noremap  <leader>ps :call CopyGVimToTerminalDev(mode(), 0)<CR>
-vnoremap <leader>ps :call CopyGVimToTerminalDev(visualmode(), 0)<CR>
-" Re-paste selection
-noremap  <leader>pr :call CopyGVimToTerminalDev('v', 1)<CR>
-" paste single word / var
-noremap  <leader>pw :call CopyGVimToTerminalDev('word', 1)<CR>
 
 " Focus on terminal
 noremap  <leader>ft :call FocusTerm()<CR>
@@ -276,19 +273,6 @@ map <c-l> <c-w>l
 noremap <leader>, <C-w>w
 map <c-h> <c-w>h
 
-" Open file under cursor
-
-" In current v/split or new tab
-"noremap <leader>go :call OpenPathAtCursor("e")<CR>
-"noremap <leader>gf :call OpenPathAtCursor("e")<CR>
-"noremap <leader>gi :call OpenPathAtCursor("split")<CR>
-"noremap <leader>gv :call OpenPathAtCursor("vsplit")<CR>
-"noremap <leader>gv :call OpenPathAtCursor("vsplit")<CR>
-"noremap <leader>gt :call OpenPathAtCursor("tabe")<CR>
-"noremap gi :call OpenPathAtCursor("split")<CR>
-
-"noremap <leader>gi :wincmd f<CR> 
-"noremap gi :wincmd f<CR> 
 
 nnoremap <leader>p :call Tex_RunViewLaTeX()<CR>
 nmap <C-P> :call Tex_RunViewLaTeX() <CR>
@@ -339,125 +323,3 @@ inoremap <C-U> <C-G>u<C-U>
 
 " Remap execute macro from @ to \
 nmap <leader>2 @
-
-" Define Macros
-"let @q=',qw'
-"let @2=',qw'
-
-"let @1='40j'
-"let @2='40k'
-
-" write a self. in normal mode
-"let@s='iself.'
-"let@e=':Align ='
-
-
-"""""""""""
-" OLD STUFF
-" VVVVVVVVVVVV
-
-" This is one special character which means escape
-" I got this by typing Ctrl+Q<ESC> 
-" 
-" 
-
-
-"nmap <leader>u :call ToggleNumberLineInvert()<CR>
-
-
-" TODO: http://stackoverflow.com/questions/3638542/any-way-to-delete-in-vim-without-overwriting-your-last-yank
-"noremap d "_d
-":noremap <leader><F1> :normal i =%r' % (,)<ESC>hh
-" Copy
-":noremap <F3> "+y
-":inoremap <F3> <ESC>"+ya
-" Paste
-" Map in both normal and interactive mode
-" paseting form clibpard is "+p or "*p
-":noremap <F2> "+p
-":inoremap <F2> <ESC>"+pa
-
-":noremap <leader><F2> "+y
-":inoremap <leader><F2> <ESC>"+ya
-
-" OLD
-"noremap <leader>. i>>> 
-"
-":noremap y "+y
-"CMDUNMAP y y
-
-" Remap ESCAPE key to?  ":imap ` <Esc>
-"noremap <Del> <Esc>
-"noremap <Home> <Esc>
-":imap <Del> <Esc>
-":call PythonInvert()
-":call TeckInvert()
-"CMDUNSWAP : ;
-
-
-"useful funcs for leaderkeys
-"noremap <F9> <s-v>
-"noremap <F10> <s-v>
-
-"noremap <leader>ge vip:call PyFormatParagraph()<CR>
-":noremap <c-g> vip:call PyFormatParagraph()<CR>
-":noremap <c-M-B> oimport utool<CR>with utool.embed_on_exception_context:<CR><Esc>
-":noremap <c-b> oimport utool<CR>utool.embed()<CR><Esc>
-"inoremap <c-M-B> import utool<CR>with utool.embed_on_exception_context:<CR>
-"inoremap <c-b> import utool<CR>utool.embed()<CR>
-"noremap <leader>/ /\c
-"inoremap <leader>d :call InsertDocstr()<CR>
-"L__________ Not so used 
-"noremap  1 :call CopyGVimToTerminalDev(mode(), 1)<CR>
-"noremap  2 :call CopyGVimToTerminalDev(mode() 1)<CR>
-"-range PassRange <line1>,<line2>call PrintGivenRange()
-
-" alt-u
-"inoremap <M-u> ut.
-"inoremap <M-i> import
-"inoremap <M-y> from import
-
-" Tabs:
-" change next/prev tab
-"noremap <leader><Tab> gt
-"noremap <leader>` gT
-"" <alt+num>: change to the num\th tab
-"noremap <M-1> 1gt
-"noremap <M-2> 2gt
-"noremap <M-3> 3gt
-"noremap <M-4> 4gt
-"noremap <M-5> 5gt
-"noremap <M-6> 6gt
-"noremap <M-7> 7gt
-"noremap <M-8> 8gt
-"noremap <M-9> 9gt
-"noremap <M-0> 10gt
-"" <leader+num>: change to the num\th tab
-"noremap <leader>1 1gt
-"noremap <leader>2 2gt
-"noremap <leader>3 3gt
-"noremap <leader>4 4gt
-"noremap <leader>5 5gt
-"noremap <leader>6 6gt
-"noremap <leader>7 7gt
-"noremap <leader>8 8gt
-"noremap <leader>9 9gt
-
-
-
-" K goes to the help for the object under the cursor.
-" This is anoying. Kill the behavior
-" Or learn how to use it?
-" :noremap K k
-
-" Find lone double quotes
-":noremap <leader>"/ :/\([^"]\)"\([^"]\)<CR>
-"noremap <leader>"/ :/\([^"]\)\@<="\([^"]\)\@=<CR>
-"noremap <leader>s' :%s/\([^"]\)"\([^"]\)/\1'\2/gc<CR>
-"
-" === F1 ===
-" Search
-"remap F1 to search for word under cursor
-"call FKeyFuncMap('<F1>', '*')
-" custom command for opening setupfiles
-"noremap  <leader><F1> :call OpenSetups()<CR>

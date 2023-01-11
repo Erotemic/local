@@ -1890,6 +1890,11 @@ install_slack(){
     __doc__=""
     # Need to manually grab the .deb
     #  https://slack.com/downloads/instructions/ubuntu
+
+    # Fix the 22.04 gpg issue
+    # https://itsfoss.com/key-is-stored-in-legacy-trusted-gpg/
+
+    sudo apt-key export 038651BD | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/slack-packagecloud.gpg
 }
 
 
@@ -2311,6 +2316,18 @@ install_pipewire(){
     sudo apt install wireplumber
 
     wpctl status
+
+    # https://gitlab.freedesktop.org/rncbc/qpwgraph
+
+    sudo apt install libpipewire-0.3-0
+    sudo apt install libpipewire-0.3-dev
+    if [ -d "$HOME"/code/qpwgraph ]; then
+        git clone https://gitlab.freedesktop.org/rncbc/qpwgraph.git "$HOME"/code/qpwgraph
+    fi 
+    cd "$HOME"/code/qpwgraph
+    cmake -DCMAKE_INSTALL_PREFIX="$HOME"/.local -B build
+    cmake --build build
+    cmake --install build
     
 }
 

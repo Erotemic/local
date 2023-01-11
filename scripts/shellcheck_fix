@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+source "$HOME"/local/init/utils.sh
+__doc__='
+Interactively apply shellcheck fixes found with shellcheck diff.
+
+Args:
+    FPATH : path to the file to patch
+
+Example:
+    FPATH=$HOME/local/scripts/shellcheck_fix
+    shellcheck -f diff $FPATH | git apply
+    shellcheck_fix $FPATH
+    shellcheck_fix --help
+'
+_handle_help "$@" || exit 0
+FPATH=$1
+shellcheck -f diff "$FPATH"
+
+if rich_confirm "Apply this patch?" ; then
+    shellcheck -f diff "$FPATH" | git apply --unsafe-paths -p0
+fi

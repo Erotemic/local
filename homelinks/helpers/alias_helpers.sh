@@ -1037,16 +1037,10 @@ untilpass()
 autolint_bash(){
     __doc__="
     Use shellcheck to lint a bash file
-
+    Deprecated, use ~/local/scripts/shellcheck_fix instead
     autolint_bash ~/local/init/freshstart_ubuntu.sh
     "
-    _handle_help "$@" || return 0
-    FPATH=$1
-    shellcheck -f diff "$FPATH"
-    _PYEXE=$(system_python)
-    if $_PYEXE -c "import sys, rich.prompt; sys.exit(0 if rich.prompt.Confirm.ask('Apply this?') else 1)" ; then
-        shellcheck -f diff "$FPATH" | git apply
-    fi
+    shellcheck_fix "$@"
 }
 
 readshelf(){

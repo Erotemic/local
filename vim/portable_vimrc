@@ -127,7 +127,7 @@ Plug 'Erotemic/vimtk', {'branch': 'main', 'do': 'pip install -e .'}
 "Plug 'Erotemic/vimtk'
 "Plug 'posva/vim-vue'
 
-Plug 'vim-scripts/AnsiEsc.vim'
+"Plug 'vim-scripts/AnsiEsc.vim'
 "Plug 'chrisbra/unicode.vim'
 Plug 'tell-k/vim-autopep8'
 "Plug 'vim-syntastic/syntastic'

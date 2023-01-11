@@ -41,8 +41,11 @@ TODO:
     - [ ] Write high-level documentation
 
 
-Install Instructions:
+Standalone Install Instructions:
+    todo
 
+    # Not the best way, but a way.
+    curl https://raw.githubusercontent.com/Erotemic/local/main/init/utils.sh > erotemic_utils.sh
 '
 
 # set to 0 to prevent this script from running more than once
@@ -67,6 +70,10 @@ _handle_help(){
     this function as such:
 
         _handle_help "$@" || return 
+
+        or if using in a top-level script
+
+        _handle_help "$@" || exit 0
     '
     for var in "$@"
     do
@@ -721,7 +728,9 @@ sedr(){
         source $HOME/local/init/utils.sh && PATTERN='*.py' sedr not-a-thing daft
         source $HOME/local/init/utils.sh && PATTERN='*.py' sedr def daft
         source $HOME/local/init/utils.sh && PATTERN='*.py' sedr util_io fds
-        
+
+    SeeAlso:
+       xdev sed
     """
     _handle_help "$@" || return 0
 
@@ -1334,4 +1343,25 @@ string_contains() {
         (echo "$string" | grep -qF "$arg") && return 0
     done
     return 1
+}
+
+rich_confirm() {
+    __doc__='
+    Use the rich library to get a nice looking prompt
+
+    Args:
+        MESSAGE: the confirm message
+
+    Returns:
+        0 on yes and 1 on no
+
+    Example:
+        source ~/local/init/utils.sh
+        rich_confirm "do a thing?"
+        echo "$?"
+    '
+    MESSAGE=$1
+    _PYEXE=$(system_python)
+    $_PYEXE -c "import sys, rich.prompt; sys.exit(0 if rich.prompt.Confirm.ask('$MESSAGE') else 1)"
+    return $?
 }
