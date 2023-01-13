@@ -94,6 +94,7 @@ noremap <leader>ec :call vimtk_snippets#insert_docstr_commandline()<CR>
 "noremap <leader>eH :call PyInsertHeader('script')<CR>
 "noremap <leader>ek :call PyMakeXDevKwargs()<CR>
 noremap <leader>em :call vimtk_snippets#insert_python_main()<CR>
+noremap <leader>es :call vimtk_snippets#insert_python_scriptconfig_template()<CR>
 noremap <leader>eh :call vimtk_snippets#insert_python_header()<CR>
 noremap <leader>eH :call vimtk_snippets#insert_python_header('script')<CR>
 noremap <leader>ek :call vimtk_snippets#insert_xdev_global_kwargs()<CR>
@@ -171,7 +172,7 @@ noremap <leader>ps :call vimtk#insert_print_var_at_cursor("urepr")<CR>
 noremap  <c-M-B> :call vimtk#insert_timerit(mode())<CR><Esc>
 vnoremap <c-M-B> :call vimtk#insert_timerit(visualmode())<CR><Esc>
 
-noremap <leader>es :call vimtk#smart_search_word_at_cursor()<CR>
+noremap <leader>gs :call vimtk#smart_search_word_at_cursor()<CR>
 noremap <leader>go :call vimtk#open_path_at_cursor("e")<CR>
 noremap <leader>gf :call vimtk#open_path_at_cursor("e")<CR>
 noremap <leader>gi :call vimtk#open_path_at_cursor("split")<CR>
@@ -192,6 +193,33 @@ noremap  <leader>ft :call FocusTerm()<CR>
 
 " Hotkey:
 " Refreshing the vim RC / syntax
+
+
+
+"func! VimtkReload()
+""let __doc__ =<< trim __DOC__
+""FIXME: broken, is there any way to do this?
+
+""A workaround is to define this function in your vimrc
+
+""Reloads vimtk after changes are made or it is updated
+""__DOC__
+
+"" Unset the guard flags
+"let g:loaded_vimtk_autoload = 0
+"let g:loaded_vimtk = 0
+
+"" TODO: may have to reload the python module
+
+"" NOTE: this does not work!
+"" Resource this file.
+"" https://vi.stackexchange.com/questions/26479/refreshing-vim-file-from-within-a-function
+":source $MYVIMRC
+":exec "source " . g:vimtk_autoload_fpath
+
+"endfunc
+
+
 noremap <leader>r :source ~/local/vim/portable_vimrc<CR>
 noremap <leader>R :source ~/local/vim/portable_vimrc<CR>
 
