@@ -232,7 +232,8 @@ noremap <leader>R :source ~/local/vim/portable_vimrc<CR>
 "source ~/local/vim/vimfiles/bundle/vimtk/autoload/vimtk.vim
 
 
-noremap <leader>rs :syntax sync minlines=500.<CR>
+"noremap <leader>rs :syntax sync minlines=2000<CR>
+noremap <leader>rs :syntax sync fromstart<CR>
 
 " for python doctests
 inoremap ,,, >>> 

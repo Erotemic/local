@@ -349,12 +349,12 @@ def summarize_package_availability(package_name):
 
     if 1:
         df = pd.DataFrame(flat_table)
-        df = df.drop([
+        df = df.drop(df.columns.intersection([
             'digests', 'downloads', 'comment_text', 'has_sig',
             # 'filename',
             'size',
             'url', 'upload_time', 'upload_time_iso_8601', 'distribution',
-            'md5_digest', 'yanked', 'yanked_reason'], axis=1)
+            'md5_digest', 'yanked', 'yanked_reason']), axis=1)
 
         # def vec_ver(vs):
         #     return [Version(v) for v in vs]
@@ -385,7 +385,11 @@ def summarize_package_availability(package_name):
             flags = df['abi_tag'].apply(lambda x: x in abi_blocklist)
             if np.any(~flags):
                 df = df[~flags]
-            counts = df.value_counts(['pkg_version', 'abi_tag', 'os', 'arch']).to_frame('count').reset_index()
+
+            try:
+                counts = df.value_counts(['pkg_version', 'abi_tag', 'os', 'arch']).to_frame('count').reset_index()
+            except KeyError:
+                counts = []
             if len(counts):
                 counts = counts.sort_values('abi_tag')
                 piv = counts.pivot(['pkg_version'], ['abi_tag', 'os', 'arch'], 'count')
@@ -530,7 +534,7 @@ def minimum_cross_python_versions(package_name, request_min=None):
             if max_pyver == 'py3':
                 max_pyver = '3.6'
 
-            if row['abi_tag'] is not None:
+            if row.get('abi_tag', None) is not None:
                 abi_tag = str(row['abi_tag'])
                 if abi_tag.startswith('cp'):
                     # Specific ABI, be restrictive
