@@ -3,6 +3,8 @@ This script gathers information about available packages on pypi and helps
 build requirement specifiers suitable for use in a requirements.txt file such
 that a unique requirement line is generated for each supported Python version.
 
+Porting to ~/code/xdev/xdev/cli/available_package_versions.py
+
 References:
     https://github.com/wimglenn/johnnydep
 
