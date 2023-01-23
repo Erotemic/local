@@ -3,11 +3,17 @@ References:
     https://unix.stackexchange.com/questions/197729/udev-keyboard-remapping-with-hwdb-for-secondary-keyboards
     https://www.foell.org/justin/remapping-keyboard-keys-in-ubuntu-with-udev-evdev/
 
+Usage:
+    python ~/local/tools/joystick_setup.py
+
+
 https://manpages.ubuntu.com/manpages/trusty/man1/evtest.1.html
 https://www.kernel.org/doc/Documentation/input/event-codes.txt
 
 
 sudo apt install evtest evemu-tools
+
+lsusb
 
 
 ls -al /dev/input
@@ -35,7 +41,12 @@ evtest --grab $XB360_DEV
 
 #### Try to get raw usb permission with udev
 https://stackoverflow.com/questions/22713834/libusb-cannot-open-usb-device-permission-isse-netbeans-ubuntu
+
+
+### Test udev rules
+https://unix.stackexchange.com/questions/182309/list-all-udev-rules-e-g-for-a-device
 """
+import ubelt as ub
 
 
 def add_udev_permission_rule_n64():
@@ -52,7 +63,7 @@ def add_udev_permission_rule_n64():
     dest_dpath = ub.Path('/etc/udev/rules.d')
 
     dest_fpath = dest_dpath / '80-wup028.rules'
-    owner = ub.Path.home().name
+    # owner = ub.Path.home().name
     id_vendor = '20d6'
     id_product = 'a710'
     rule = ub.codeblock(
@@ -88,19 +99,24 @@ def test_libusb_perms():
     device_list = device_list_type()
     list_size = usb.get_device_list(ctx, ct.byref(device_list))
 
+    rows = []
     for i in range(list_size):
         desc = usb.device_descriptor()
         desc_ptr = ct.POINTER(usb.device_descriptor)(desc)
         dev_ptr = device_list[i]
 
         usb.get_device_descriptor(dev_ptr, desc_ptr)
-        print(f'{desc.idVendor:04x}:{desc.idProduct:04x}')
+        desc_attrs = {k: getattr(desc, k) for k in dir(desc) if not k.startswith('_')}
+        row = {**desc_attrs}
+        print(f'idVendor:idProduct = {desc.idVendor:04x}:{desc.idProduct:04x}')
 
         dev_handle_ptr = ct.POINTER(usb.device_handle)()
         status = libusb.open(dev_ptr, dev_handle_ptr)
-        print(f'status={status}')
+        row['status'] = status
+        # -3 is LIBUSB_ERROR_ACCESS
+        print(f'  * status={status}')
         if status == 0:
-            print("YAS!!!!")
+            print("  * YAS!!!!")
             break
             # buff = ct.POINTER(ct.c_ubyte * 1024)()
             size = 1024
@@ -109,16 +125,32 @@ def test_libusb_perms():
             usb.get_string_descriptor_ascii(dev_handle_ptr, i, buff_byt, size)
             desc = ''.join([chr(c) for c in buff_byt if c != 0])
             print(f'desc={desc}')
+        elif desc.idVendor == 0x20d6 and desc.idProduct == 0xa710:
+            print("  * NOOO!!!!")
+        rows.append(row)
+
+    if 0:
+        import rich
+        import pandas as pd
+        rich.print(pd.DataFrame(rows).to_string())
 
 
 def main():
-    add_udev_permission_rule_n64()
+    just_test = ub.argflag('--test')
+    if not just_test:
+        add_udev_permission_rule_n64()
     test_libusb_perms()
 
 
 if __name__ == '__main__':
     """
     CommandLine:
-        python ~/local/tools/joystick_setup.py
+        cat /etc/udev/rules.d/80-wup028.rules
+        ls -altr /etc/udev/rules.d/80-wup028.rules
+        sudo udevadm control --reload-rules
+
+        udevadm test $(udevadm info -q path -n /dev/input/by-id/usb-20d6_WUP-028-event-joystick)
+
+        python ~/local/tools/joystick_setup.py --test
     """
     main()
