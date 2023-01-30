@@ -379,7 +379,8 @@ if exists("g:loaded_vimtk")
     call vimtk#quickopen('m', '~/misc/bump_versions.sh')
     "call vimtk#quickopen('m', '~/code/mmdetection/mmdet')
 
-    call vimtk#quickopen('q', '~/local/vim/vimfiles/bundle/vimtk/vimtk/core.py')
+    call vimtk#quickopen('Q', '~/local/vim/vimfiles/bundle/vimtk/vimtk/core.py')
+    call vimtk#quickopen('q', '~/code/cmd_queue/cmd_queue/__init__.py')
 
     "call vimtk#quickopen('a', '~/sseg/pysseg')
     "call vimtk#quickopen('a', '~/code/clab/clab/live/')

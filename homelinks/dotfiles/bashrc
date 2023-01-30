@@ -435,3 +435,8 @@ if [ -f "$HOME/.cargo/env" ]; then
     source "$HOME/.cargo/env"
 fi
 #. "$HOME/.cargo/env"
+
+
+# Enable global python argcomplete
+# activate-global-python-argcomplete --dest ~/.bash_completion.d
+source ~/.bash_completion.d/python-argcomplete

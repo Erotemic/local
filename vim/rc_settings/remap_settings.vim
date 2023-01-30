@@ -128,7 +128,7 @@ vimtk.reload()
 vimtk.Python._convert_selection_to_literal_dict()
 EOF
 endfunc
-noremap <leaderrd :call ConvertSelectionToLiteralDict()<Esc>
+noremap <leader>rd :call ConvertSelectionToLiteralDict()<Esc>
 
 
 
