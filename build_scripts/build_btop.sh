@@ -7,6 +7,8 @@ Get ubuntu version:
 '
 
 __install_gcc11_on_2004__(){
+    # btop requires C++20 features, which need gcc10 or higher.
+    #
     # https://lindevs.com/install-gcc-on-ubuntu/
     sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
     sudo apt install -y gcc-11 g++-11

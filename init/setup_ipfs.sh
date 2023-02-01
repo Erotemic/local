@@ -306,31 +306,96 @@ install_prereqs(){
 }
 
 install_go(){
+    __doc__="
+    References:
+        # CHeck for new versions here
+        https://go.dev/dl
+
+    Ignore:
+        # Logic to scrape the download table and help populate our known hashes
+        import bs4
+        from packaging.version import parse as Version
+        import pandas as pd
+        from bs4 import BeautifulSoup
+        import requests
+        url = 'https://go.dev/dl'
+        got = requests.request('get', url)
+        print(got.text)
+        soup = BeautifulSoup(got.text, 'html.parser')
+        for item in soup.find_all(name='table'):
+            if 'downloadtable' in item.attrs.get('class', []):
+                go_version = Version(item.parent.parent.attrs['id'].replace('go', ''))
+                if go_version < Version('1.17'):
+                    continue
+                print('=====')
+                print(go_version)
+                print('=====')
+                table = pd.read_html(str(item))[0]
+                subtable = table
+                subtable = subtable[subtable['Kind'] == 'Archive']
+                subtable = subtable[subtable['OS'] == 'Linux']
+                for _, row in subtable.iterrows():
+                    dq, sq = chr(34), chr(39)
+                    go_key = row['File name'].replace('.tar.gz', '')
+                    hashid = row['SHA256 Checksum']
+                    print(f'[{dq}{go_key}-sha256{dq}]={dq}{hashid}{dq}')
+    "
     ARCH="$(dpkg --print-architecture)"
     echo "ARCH = $ARCH"
-    GO_VERSION="1.17.5"
-    GO_KEY=go${GO_VERSION}.linux-${ARCH}
+    GO_VERSION="1.19.5"
+    OS_KEY=linux
+    GO_KEY=go${GO_VERSION}.${OS_KEY}-${ARCH}
     URL="https://go.dev/dl/${GO_KEY}.tar.gz"
 
-    mkdir -p "$HOME/temp/setup-go"
-    cd "$HOME/temp/setup-go"
+    STAGING_DPATH="$HOME/temp/setup-go/go-${GO_VERSION}"
+    mkdir -p "$STAGING_DPATH"
 
     declare -A GO_KNOWN_HASHES=(
+        ["go1.19.5.linux-386-sha256"]="f68331aa7458a3598060595f5601d5731fd452bb2c62ff23095ddad68854e510"
+        ["go1.19.5.linux-amd64-sha256"]="36519702ae2fd573c9869461990ae550c8c0d955cd28d2827a6b159fda81ff95"
+        ["go1.19.5.linux-arm64-sha256"]="fc0aa29c933cec8d76f5435d859aaf42249aa08c74eb2d154689ae44c08d23b3"
+        ["go1.19.5.linux-armv6l-sha256"]="ec14f04bdaf4a62bdcf8b55b9b6434cc27c2df7d214d0bb7076a7597283b026a"
+        ["go1.19.5.linux-ppc64le-sha256"]="e4032e7c52ebc48bad5c58ba8de0759b6091d9b1e59581a8a521c8c9d88dbe93"
+        ["go1.19.5.linux-s390x-sha256"]="764871cbca841a99a24e239b63c68a4aaff4104658e3165e9ca450cac1fcbea3"
+
+        ["go1.18.10.linux-386-sha256"]="9249551992c9518ec8ce6690d32206f12ed9122e360407f7e7ab9a6adc627a9b"
+        ["go1.18.10.linux-amd64-sha256"]="5e05400e4c79ef5394424c0eff5b9141cb782da25f64f79d54c98af0a37f8d49"
+        ["go1.18.10.linux-arm64-sha256"]="160497c583d4c7cbc1661230e68b758d01f741cf4bece67e48edc4fdd40ed92d"
+        ["go1.18.10.linux-armv6l-sha256"]="e9f2f2361364c04a8f0d12228e4c5c2b870f4d1639ca92031c4013a95aa205be"
+        ["go1.18.10.linux-ppc64le-sha256"]="761014290febf0e10dfeba44ec551792dad32270a11debee8ed4f30c5f3c760d"
+        ["go1.18.10.linux-s390x-sha256"]="9755ab0460a04b535e513fac84db2e1ae6a197d66d3a097e14aed3b3114df85d"
+    
+        ["go1.17.5.linux-386-sha256"]="4f4914303bc18f24fd137a97e595735308f5ce81323c7224c12466fd763fc59f"
         ["go1.17.5.linux-amd64-sha256"]="bd78114b0d441b029c8fe0341f4910370925a4d270a6a590668840675b0c653e"
         ["go1.17.5.linux-arm64-sha256"]="6f95ce3da40d9ce1355e48f31f4eb6508382415ca4d7413b1e7a3314e6430e7e"
+        ["go1.17.5.linux-armv6l-sha256"]="aa1fb6c53b4fe72f159333362a10aca37ae938bde8adc9c6eaf2a8e87d1e47de"
+        ["go1.17.5.linux-ppc64le-sha256"]="3d4be616e568f0a02cb7f7769bcaafda4b0969ed0f9bb4277619930b96847e70"
+        ["go1.17.5.linux-s390x-sha256"]="8087d4fe991e82804e6485c26568c2e0ee0bfde00ceb9015dc86cb6bf84ef40b"
     )
     EXPECTED_HASH="${GO_KNOWN_HASHES[${GO_KEY}-sha256]}"
     BASENAME=$(basename "$URL")
-    curl_verify_hash "$URL" "$BASENAME" "$EXPECTED_HASH" sha256sum "-L"
+    curl_verify_hash "$URL" "$STAGING_DPATH/$BASENAME" "$EXPECTED_HASH" sha256sum "-L"
 
-    #INSTALL_PREFIX=$HOME/.local
+    echo "Downloaded go archive to staging directory"
+    ls -al "$STAGING_DPATH"
 
-    mkdir -p "$INSTALL_PREFIX"
-    tar -C "$INSTALL_PREFIX" -xzf "$BASENAME"
+    if [[ "$INSTALL_PREFIX" == "" ]]; then
+        INSTALL_PREFIX=$HOME/.local
+        echo "defaulting INSTALL_PREFIX = $INSTALL_PREFIX"
+    fi
     mkdir -p "$INSTALL_PREFIX/bin"
+    mkdir -p "$INSTALL_PREFIX/go"
+
+    echo "Unpacking archive"
+    tar -C "$STAGING_DPATH" -xzf "$STAGING_DPATH/$BASENAME"
+    echo "Moving unpacked archive into a versioned install prefix"
+    rm -rf "$INSTALL_PREFIX/go/go-${GO_VERSION}"
+    mv -v "$STAGING_DPATH/go" "$INSTALL_PREFIX/go/go-${GO_VERSION}"
+
     # Add $INSTALL_PREFIX/go/bin to your path or make symlinks
-    ln -s "$INSTALL_PREFIX/go/bin/go" "$INSTALL_PREFIX/bin/go"
-    ln -s "$INSTALL_PREFIX/go/bin/gofmt" "$INSTALL_PREFIX/bin/gofmt"
+    echo "Symlinking binaries into the main install bin"
+    ln -sfv "$INSTALL_PREFIX/go/go-${GO_VERSION}/bin/go" "$INSTALL_PREFIX/bin/go"
+    ln -sfv "$INSTALL_PREFIX/go/go-${GO_VERSION}/bin/gofmt" "$INSTALL_PREFIX/bin/gofmt"
 }
 
 

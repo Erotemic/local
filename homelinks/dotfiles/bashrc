@@ -440,4 +440,6 @@ fi
 
 # Enable global python argcomplete
 # activate-global-python-argcomplete --dest ~/.bash_completion.d
-source ~/.bash_completion.d/python-argcomplete
+if [ -f "$HOME/.bash_completion.d/python-argcomplete" ]; then
+    source ~/.bash_completion.d/python-argcomplete
+fi
