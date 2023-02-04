@@ -660,13 +660,15 @@ build_vim_for_pyenv(){
     #./src/vim -u NONE --cmd "source test.vim"
     make install
 
-    if [[ -d "$HOME/code/vimtk" ]]; then
-        unlink_or_backup "$HOME/.vim/bundle/vimtk"
-        ln -s "$HOME/code/vimtk" "$HOME/.vim/bundle/vimtk"
-        pip install -r "$HOME/.vim/bundle/vimtk/requirements/runtime.txt"
-    else
-        pip install ubelt pyperclip shellcheck-py six xinspect psutil pyflakes
-    fi
+    # BROKEN
+    pip install ubelt pyperclip shellcheck-py six xinspect psutil pyflakes
+    #if [[ -d "$HOME/code/vimtk" ]]; then
+    #    unlink_or_backup "$HOME/.vim/bundle/vimtk"
+    #    ln -s "$HOME/code/vimtk" "$HOME/.vim/bundle/vimtk"
+    #    pip install -r "$HOME/.vim/bundle/vimtk/requirements/runtime.txt"
+    #else
+    #    pip install ubelt pyperclip shellcheck-py six xinspect psutil pyflakes
+    #fi
 }
 
 

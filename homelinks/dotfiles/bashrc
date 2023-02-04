@@ -322,8 +322,8 @@ if [[ "$_AUTOSTART_VENV" == "1" ]]; then
     if [ "$DID_MY_BASHRC_INIT" == "" ]; then
         # For some reason VIRTUAL_ENV is initialized as "", so unset it
         unset VIRTUAL_ENV
-        #PYTHON_VERSION_PRIORITY=( "3.10.5" "3.9.9" )
-        PYTHON_VERSION_PRIORITY=( "3.10.5" )
+        PYTHON_VERSION_PRIORITY=( "3.10.5" "3.9.9" )
+        #PYTHON_VERSION_PRIORITY=( "3.10.5" )
         _found_env=0
         for CHOSEN_PYTHON_VERSION in "${PYTHON_VERSION_PRIORITY[@]}"; do
             if [ -d "$PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION" ]; then
