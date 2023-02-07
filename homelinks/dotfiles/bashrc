@@ -438,7 +438,13 @@ fi
 #. "$HOME/.cargo/env"
 
 
+__note__="
 # Enable global python argcomplete
+
+pip install argcomplete
+activate-global-python-argcomplete --dest ~/.bash_completion.d
+source ~/.bash_completion.d/python-argcomplete
+"
 # activate-global-python-argcomplete --dest ~/.bash_completion.d
 if [ -f "$HOME/.bash_completion.d/python-argcomplete" ]; then
     source ~/.bash_completion.d/python-argcomplete

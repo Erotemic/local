@@ -2575,3 +2575,11 @@ open_rgb(){
     ./OpenRGB_0.8_x86_64_fb88964.AppImage
 
 }
+
+install_yq(){
+    INSTALL_PREFIX=$HOME/.local
+    wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O "$INSTALL_PREFIX/bin/yq"
+    chmod +x "$INSTALL_PREFIX/bin/yq"
+    
+
+}

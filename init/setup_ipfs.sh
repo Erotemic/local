@@ -26,7 +26,7 @@ export INSTALL_PREFIX=$HOME/.local
 export PATH=$INSTALL_PREFIX/bin:$PATH
 export IPFS_PATH=$HOME/.ipfs
 export IPFS_CLUSTER_PATH=$HOME/.ipfs-cluster
-export IPFS_PATH=/data/ipfs
+#export IPFS_PATH=/data/ipfs
 #export IPFS_CLUSTER_PATH=/data/ipfs-cluster
 
 
@@ -302,7 +302,8 @@ install_prereqs(){
             apt_ensure python3
         fi
     fi
-    UPDATE=1 apt_ensure curl tmux
+    #UPDATE=1 apt_ensure curl tmux
+    UPDATE=1 apt_ensure curl
 }
 
 install_go(){
@@ -438,12 +439,12 @@ install_ipfs(){
     tar -xvzf "$BASENAME"
 
     # TODO: stop and start the IPFS service before upgrade
-    sudo systemctl stop ipfs
+    #sudo systemctl stop ipfs
     #sudo systemctl stop ipfs-cluster
     cp kubo/ipfs "$INSTALL_PREFIX/bin"
     #sudo systemctl start ipfs-cluster
     ipfs --version
-    sudo systemctl start ipfs
+    #sudo systemctl start ipfs
 }
 
 
@@ -848,4 +849,15 @@ main(){
 
     # Step 4 (optional): Pin my shit
     #pin_my_shit
+}
+
+
+install_client_only(){
+
+    # Step 1: Ensure we have a go executable
+    install_go 
+
+    install_ipfs 
+
+    ipfs init
 }

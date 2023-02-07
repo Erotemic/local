@@ -1265,6 +1265,9 @@ ls_array(){
     References:
         .. [1] https://stackoverflow.com/a/18887210/887074
         .. [2] https://stackoverflow.com/questions/14564746/in-bash-how-to-get-the-current-status-of-set-x
+
+    TODO:
+        get the echo of shopt off
     '
     local arr_name="$1"
     local glob_pattern="$2"
