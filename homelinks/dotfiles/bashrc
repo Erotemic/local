@@ -442,6 +442,7 @@ __note__="
 # Enable global python argcomplete
 
 pip install argcomplete
+mkdir -p ~/.bash_completion.d
 activate-global-python-argcomplete --dest ~/.bash_completion.d
 source ~/.bash_completion.d/python-argcomplete
 "

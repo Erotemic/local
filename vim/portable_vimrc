@@ -389,6 +389,35 @@ if exists("g:loaded_vimtk")
     call vimtk#quickopen('n', '~/code/netharn/netharn/fit_harn.py')
     call vimtk#quickopen('N', '~/code/netharn/examples/yolo_voc.py')
     call vimtk#quickopen('B', '~/code/bioharn/bioharn/detect_fit.py')
+
+    call vimtk#quickopen('t', '~/code/ndsampler/ndsampler/category_tree.py')
+    call vimtk#quickopen('r', '~/code/watch/dev/reports/experiments_2022-12-xx.sh')
+    call vimtk#quickopen('r', '~/code/watch/dev/reports/experiments_2023-02-xx.sh')
+
+    call vimtk#quickopen('c', '~/code/kwcoco/kwcoco/coco_dataset.py')
+    call vimtk#quickopen('s', '~/code/ndsampler/ndsampler/coco_sampler.py')
+
+    call vimtk#quickopen('ka', '~/code/kwarray/kwarray/__init__.py')
+    call vimtk#quickopen('ki', '~/code/kwimage/kwimage/__init__.py')
+    call vimtk#quickopen('kn', '~/code/kwannot/kwannot/__init__.py')
+    call vimtk#quickopen('kp', '~/code/kwplot/kwplot/__init__.py')
+
+    call vimtk#quickopen('a', '~/code/watch/watch/__init__.py')
+    call vimtk#quickopen('f', '~/code/watch/watch/tasks/fusion/fit.py')
+    call vimtk#quickopen('o', '~/code/watch/watch/mlops/schedule_evaluation.py')
+    call vimtk#quickopen('wo', '~/code/watch/watch/mlops/aggregate.py')
+    "call vimtk#quickopen('e', '~/code/watch/watch/tasks/fusion/experiments/crall/expt_drop1_2021-11-17.sh')
+    "call vimtk#quickopen('e', '~/code/watch/watch/tasks/fusion/experiments/crall/expt_drop2_2022-02-15.sh')
+    "call vimtk#quickopen('e', '~/code/watch/watch/tasks/fusion/experiments/crall/expt_drop3_2022-03-21.sh')
+    call vimtk#quickopen('e', '~/code/watch/watch/tasks/fusion/experiments/crall/expt_drop4_bas_2022-08-12.sh')
+    call vimtk#quickopen('E', '~/code/watch/watch/tasks/fusion/experiments/crall/expt_drop4_sc_2022-08-19.sh')
+    call vimtk#quickopen('wm', '~/code/watch/watch/tasks/fusion/methods/channelwise_transformer.py')
+    call vimtk#quickopen('wd', '~/code/watch/watch/tasks/fusion/datamodules/kwcoco_dataset.py')
+    call vimtk#quickopen('wu', '~/code/watch/watch/utils/__init__.py')
+    call vimtk#quickopen('d', '~/code/watch/watch/tasks/fusion/datamodules/kwcoco_dataset.py')
+    call vimtk#quickopen('W', '~/code/watch/aws/README.rst')
+
+    call vimtk#quickopen('z', '~/data/dvc-repos/smart_data_dvc/')
 else
     "echo "vimtk not loaded"
 endif
