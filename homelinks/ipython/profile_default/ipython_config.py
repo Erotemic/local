@@ -1,4 +1,4 @@
-import six
+import textwrap
 c = get_config()  # NOQA
 c.InteractiveShellApp.exec_lines = []
 # if six.PY2:
@@ -27,8 +27,24 @@ c.InteractiveShellApp.exec_lines = []
 c.InteractiveShellApp.exec_lines.append('%load_ext autoreload')
 c.InteractiveShellApp.exec_lines.append('%autoreload 2')
 #c.InteractiveShellApp.exec_lines.append('%pylab qt4')
-c.InteractiveShellApp.exec_lines.append('import numpy as np')
-c.InteractiveShellApp.exec_lines.append('import ubelt as ub')
+c.InteractiveShellApp.exec_lines.append(textwrap.dedent(
+    '''
+    try:
+        import numpy as np
+    except ImportError:
+        ...
+    try:
+        import ubelt as ub
+    except ImportError:
+        ...
+    try:
+        import xdev
+        import xdev as xd
+    except ImportError:
+        ...
+    ''').strip())
+
+
 # c.InteractiveShellApp.exec_lines.append('import xdev')
 # c.InteractiveShellApp.exec_lines.append('import pandas as pd')
 # c.InteractiveShellApp.exec_lines.append('pd.options.display.max_columns = 40')
@@ -37,17 +53,9 @@ c.InteractiveShellApp.exec_lines.append('import ubelt as ub')
 # c.InteractiveShellApp.exec_lines.append('pd.options.display.float_format = lambda x: \'%.4f\' % (x,)')
 # c.InteractiveShellApp.exec_lines.append('import networkx as nx')
 c.InteractiveShellApp.exec_lines.append('from os.path import *')
+c.InteractiveShellApp.exec_lines.append('import pathlib')
+c.InteractiveShellApp.exec_lines.append('from pathlib import Path')
 
-if not six.PY2:
-    c.InteractiveShellApp.exec_lines.append('import pathlib')
-    c.InteractiveShellApp.exec_lines.append('from pathlib import Path')
-
-c.InteractiveShellApp.exec_lines.append('import xdev as xd')
-
-# c.InteractiveShellApp.exec_lines.append('from six.moves import cPickle as pickle')
-
-
-#c.InteractiveShellApp.exec_lines.append('if \'verbose\' not in vars():\\n    verbose = True')
 try:
     import ubelt as ub
     c.InteractiveShellApp.exec_lines.append(ub.codeblock(

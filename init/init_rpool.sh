@@ -580,3 +580,18 @@ migrate_to_mainnet(){
     # `rocketpool service configure` and run:
     rocketpool s resync-eth2
 }
+
+
+
+voting_on_proposals(){
+    __doc__="
+    Link your delegate wallet to https://vote.rocketpool.net
+    "
+}
+
+
+checking_attestation_schedule(){
+    _=""
+    # https://ethereum.github.io/beacon-APIs/#/
+    # https://gist.github.com/pietjepuk2/eb021db978ad20bfd94dce485be63150
+}
