@@ -1,5 +1,9 @@
+"""
+python ~/local/misc/badges.py
+"""
 import ubelt as ub
 from textwrap import dedent
+from tabulate import tabulate
 
 
 # # Autogen
@@ -16,7 +20,6 @@ from textwrap import dedent
 # line_profiler
 
 
-# ibeis
 # graphid
 # hotspotter
 # crall-thesis-2017
@@ -70,31 +73,6 @@ shitspotter
 
 """.split('\n')
 
-print(' '.join([f'|{repo_suffix}|' for repo_suffix in github_repos if repo_suffix.strip()]))
-for repo_suffix in github_repos:
-    repo_suffix = repo_suffix.strip()
-    if not repo_suffix.strip():
-        print('')
-    else:
-        if '/' in repo_suffix:
-            user_name, repo_name = repo_suffix.split('/')
-        else:
-            user_name = 'Erotemic'
-            repo_name = repo_suffix
-
-        sheild_url = f'https://img.shields.io/github/stars/{user_name}/{repo_name}?style=social&label=stars:{repo_name}'
-        link_url = f'https://github.com/{user_name}/{repo_name}'
-
-        md_link = f'[![GitHub stars]({sheild_url})]({link_url})'
-        print(md_link)
-
-        rst_dclr = ub.codeblock(
-            f'''
-            .. |{repo_suffix}| image:: {sheild_url}
-            :target:
-            ''')
-        # print(rst_dclr)
-
 
 gitlab_repos = """
 python/liberator
@@ -109,36 +87,149 @@ computer-vision/kwplot
 computer-vision/netharn
 computer-vision/ndsampler
 
+computer-vision/delayed_image
+computer-vision/cmd_queue
+
+watch/watch
 """.split('\n')
-# print(' '.join([f'|{repo_suffix}|' for repo_suffix in gitlab_repos if repo_suffix.strip()]))
 
-# print('
-for repo_suffix in gitlab_repos:
 
-    repo_suffix = repo_suffix.strip()
-    if not repo_suffix.strip():
-        print('')
-    else:
-        if '/' in repo_suffix:
-            user_name, repo_name = repo_suffix.split('/')
+def github_links():
+    ...
+
+
+def pypkg_links(repo_name, link_url):
+    download_sheild_url = f'https://img.shields.io/pypi/dm/{repo_name}.svg'
+    pypistats_url = f'https://pypistats.org/packages/{repo_name}'
+    pypi_url = f'https://pypi.python.org/pypi/{repo_name}'
+    md_downloads = f'[![Downloads]({download_sheild_url})]({pypistats_url})'
+    docs_url = f'https://{repo_name}.readthedocs.io/en/latest/'
+    rtd_sheild_url = f'https://readthedocs.org/projects/{repo_name}/badge/?version=latest'
+    md_docs = f'[![Docs]({rtd_sheild_url})]({docs_url})'
+    return locals()
+
+
+def main():
+
+    nopypi_list = [
+        'hotspotter', 'crall-thesis-2017', 'shitspotter',
+        'watch/watch',
+    ]
+
+    refs = [[f'|gh_sheild_{repo_suffix}|'] for repo_suffix in github_repos if repo_suffix.strip()]
+    headers = ['Github']
+
+    tablestr = tabulate(refs, tablefmt='rst', headers=headers)
+    print(tablestr)
+    # print(' '.join(refs))
+
+    repo_rows = []
+    for repo_suffix in github_repos:
+        repo_suffix = repo_suffix.strip()
+        if not repo_suffix.strip():
+            print('')
         else:
-            user_name = 'Erotemic'
-            repo_name = repo_suffix
+            if '/' in repo_suffix:
+                user_name, repo_name = repo_suffix.split('/')
+            else:
+                user_name = 'Erotemic'
+                repo_name = repo_suffix
 
-        sheild_url = f'https://img.shields.io/gitlab/stars/{user_name}/{repo_name}?style=social&label=stars:{repo_name}'
-        link_url = f'https://gitlab.kitware.com.com/{user_name}/{repo_name}'
+            sheild_url = f'https://img.shields.io/github/stars/{user_name}/{repo_name}?style=social&label=stars:{repo_name}'
+            link_url = f'https://github.com/{user_name}/{repo_name}'
 
-        print(f'* {link_url}')
+            md_githubstars = f'[![GitHub stars]({sheild_url})]({link_url})'
+            # print(md_link)
 
-        # md_link = f'[![GitLab stars]({sheild_url})]({link_url})'
-        # print(md_link)
+            if repo_suffix in nopypi_list:
+                pypkg_attrs = {}
+            else:
+                pypkg_attrs = pypkg_links(repo_name, link_url)
 
-        rst_dclr = ub.codeblock(
-            f'''
-            .. |{repo_suffix}| image:: {sheild_url}
-            :target:
-            ''')
-        # print(rst_dclr)
+            rst_dclr = ub.codeblock(
+                f'''
+                .. |gh_sheild_{repo_suffix}| image:: {sheild_url}
+                :target:
+                ''')
+
+            if 'line' in repo_name and 'profiler' in repo_name:
+                pypkg_attrs.pop('md_docs')
+
+            md_name = f'[{repo_name}]({link_url})'
+            repo_rows.append({
+                'repo': repo_suffix,
+                'repo_name': repo_name,
+                'user_name': user_name,
+                'md_name': md_name,
+
+                'md_githubstars': md_githubstars,
+                **pypkg_attrs,
+
+                'rst_dclr': rst_dclr,
+                'link_url': link_url,
+                'sheild_url': sheild_url,
+            })
+            # print(rst_dclr)
+
+    # print('
+    for repo_suffix in gitlab_repos:
+        repo_suffix = repo_suffix.strip()
+        if not repo_suffix.strip():
+            print('')
+        else:
+            if '/' in repo_suffix:
+                user_name, repo_name = repo_suffix.split('/')
+            else:
+                user_name = 'Erotemic'
+                repo_name = repo_suffix
+
+            sheild_url = f'https://img.shields.io/gitlab/stars/{user_name}/{repo_name}?style=social&label=stars:{repo_name}'
+            link_url = f'https://gitlab.kitware.com/{user_name}/{repo_name}'
+
+            # print(f'* {link_url}')
+            # md_link = f'[![GitLab stars]({sheild_url})]({link_url})'
+            # print(md_link)
+            rst_dclr = ub.codeblock(
+                f'''
+                .. |{repo_suffix}| image:: {sheild_url}
+                :target:
+                ''')
+            # print(rst_dclr)
+            if repo_suffix in nopypi_list:
+                pypkg_attrs = {}
+            else:
+                pypkg_attrs = pypkg_links(repo_name, link_url)
+
+            md_name = f'[{repo_name}]({link_url})'
+            repo_rows.append({
+                'repo': repo_suffix,
+                'repo_name': repo_name,
+                'user_name': user_name,
+                'md_name': md_name,
+
+                **pypkg_attrs,
+
+                'rst_dclr': rst_dclr,
+                'link_url': link_url,
+                'sheild_url': sheild_url,
+            })
+
+    # print(' '.join([f'|{repo_suffix}|' for repo_suffix in gitlab_repos if repo_suffix.strip()]))
+    import pandas as pd
+    df = pd.DataFrame(repo_rows)
+    # print(df[['repo', 'github_stars', 'downloads']])
+
+    mapping = {
+        'md_name': 'Name',
+        'md_githubstars': 'Github Stars',
+        'md_downloads': 'Pypi Downloads',
+        'md_docs': 'Docs',
+    }
+    subset = df[list(mapping.keys())].set_index('md_name')
+    subset = subset.rename(mapping, axis=1)
+    tablestr = tabulate(subset.values.tolist(), tablefmt='markdown', headers=subset.columns)
+    # print(tablestr)
+    print(subset.to_markdown())
 
 
 # .. ..  Notes
@@ -249,3 +340,9 @@ https://img.shields.io/github/followers/Erotemic.svg?style=social&label=Follower
 
 [![GitHub stars](https://img.shields.io/github/stars/Naereen/StrapDown.js.svg?style=social&label=Star&maxAge=2592000)](https://GitHub.com/Naereen/StrapDown.js/stargazers/)
 """
+if __name__ == '__main__':
+    """
+    CommandLine:
+        python ~/local/misc/badges.py
+    """
+    main()
