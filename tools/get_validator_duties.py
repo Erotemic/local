@@ -19,7 +19,7 @@ SECONDS_PER_SLOT = 12
 ETH2_API_URL = "http://localhost:5052/eth/v1/"
 
 
-def main(validators_indices, eth2_api_url=ETH2_API_URL):
+def main(validators_indices='auto', eth2_api_url=ETH2_API_URL):
     r"""
     """
     def api_get(endpoint):
@@ -27,6 +27,9 @@ def main(validators_indices, eth2_api_url=ETH2_API_URL):
 
     def api_post(endpoint, data):
         return requests.post(f"{eth2_api_url}{endpoint}", json=data)
+
+    if validators_indices == 'auto':
+        validators_indices = list(find_validator_index())
 
     resp = api_get("beacon/headers/head")
     head_slot = int(resp.json()["data"]["header"]["message"]["slot"])
@@ -175,13 +178,12 @@ if __name__ == "__main__":
     '''
     rocketpool minipool status | grep Validator.index
     '''
-    validators_indices = list(find_validator_index())
     eth2_api_url = ETH2_API_URL
 
     parser = argparse.ArgumentParser(
         description="Show validator duties of current and next epoch to find largest gap."
     )
-    parser.add_argument("indices", metavar="index", type=int, nargs="+", help="validator indices", default=validators_indices)
+    parser.add_argument("indices", metavar="index", type=int, nargs="*", help="validator indices", default='auto')
 
     args = parser.parse_args()
 
