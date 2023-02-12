@@ -181,7 +181,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Show validator duties of current and next epoch to find largest gap."
     )
-    parser.add_argument("indices", metavar="index", type=int, nargs="+", help="validator indices")
+    parser.add_argument("indices", metavar="index", type=int, nargs="+", help="validator indices", default=validators_indices)
 
     args = parser.parse_args()
 
