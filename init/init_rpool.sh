@@ -1,15 +1,24 @@
 #!/bin/bash
-# https://docs.rocketpool.net/guides/node/docker.html#process-overview
-# https://docs.rocketpool.net/guides/node/docker.html#downloading-the-rocket-pool-cli
-# https://docs.rocketpool.net/guides/node/native.html#setting-up-the-binaries
+__docs__="
 
-# rETH to ETH
-# https://coinmarketcap.com/currencies/rocket-pool-eth/reth/eth/
-# rETH ratio to peg
-# https://dune.com/drworm/rocketpool
+SeeAlso:
+    ~/local/tools/get_validator_duties.py
 
-# RPL to ETH
-# https://www.coingecko.com/en/coins/rocket-pool/eth
+
+References:
+    https://docs.rocketpool.net/guides/node/docker.html#process-overview
+    https://docs.rocketpool.net/guides/node/docker.html#downloading-the-rocket-pool-cli
+    https://docs.rocketpool.net/guides/node/native.html#setting-up-the-binaries
+
+rETH to ETH
+    https://coinmarketcap.com/currencies/rocket-pool-eth/reth/eth/
+
+rETH ratio to peg
+    https://dune.com/drworm/rocketpool
+
+RPL to ETH:
+    https://www.coingecko.com/en/coins/rocket-pool/eth
+"
 
 
 
@@ -586,6 +595,11 @@ migrate_to_mainnet(){
 voting_on_proposals(){
     __doc__="
     Link your delegate wallet to https://vote.rocketpool.net
+
+    Or
+    
+    via CLI:
+    https://docs.rocketpool.net/guides/odao/proposals.html#making-a-proposal
     "
 }
 

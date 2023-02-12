@@ -135,27 +135,26 @@ def main():
                 user_name = 'Erotemic'
                 repo_name = repo_suffix
 
-            sheild_url = f'https://img.shields.io/github/stars/{user_name}/{repo_name}?style=social&label=stars:{repo_name}'
-            link_url = f'https://github.com/{user_name}/{repo_name}'
-
-            md_githubstars = f'[![GitHub stars]({sheild_url})]({link_url})'
+            main_link_url = f'https://github.com/{user_name}/{repo_name}'
+            gh_sheild_url = f'https://img.shields.io/github/stars/{user_name}/{repo_name}?style=social&label=stars:{repo_name}'
+            md_githubstars = f'[![GitHub stars]({gh_sheild_url})]({main_link_url})'
             # print(md_link)
 
             if repo_suffix in nopypi_list:
                 pypkg_attrs = {}
             else:
-                pypkg_attrs = pypkg_links(repo_name, link_url)
+                pypkg_attrs = pypkg_links(repo_name, main_link_url)
 
             rst_dclr = ub.codeblock(
                 f'''
-                .. |gh_sheild_{repo_suffix}| image:: {sheild_url}
+                .. |gh_sheild_{repo_suffix}| image:: {gh_sheild_url}
                 :target:
                 ''')
 
             if 'line' in repo_name and 'profiler' in repo_name:
                 pypkg_attrs.pop('md_docs')
 
-            md_name = f'[{repo_name}]({link_url})'
+            md_name = f'[{repo_name}]({main_link_url})'
             repo_rows.append({
                 'repo': repo_suffix,
                 'repo_name': repo_name,
@@ -166,8 +165,8 @@ def main():
                 **pypkg_attrs,
 
                 'rst_dclr': rst_dclr,
-                'link_url': link_url,
-                'sheild_url': sheild_url,
+                'main_link_url': main_link_url,
+                'gh_sheild_url': gh_sheild_url,
             })
             # print(rst_dclr)
 
@@ -184,10 +183,14 @@ def main():
                 repo_name = repo_suffix
 
             sheild_url = f'https://img.shields.io/gitlab/stars/{user_name}/{repo_name}?style=social&label=stars:{repo_name}'
-            link_url = f'https://gitlab.kitware.com/{user_name}/{repo_name}'
+            main_link_url = f'https://gitlab.kitware.com/{user_name}/{repo_name}'
+            gh_user_name = 'Kitware'
+            gh_link_url = f'https://github.com/{gh_user_name}/{repo_name}'
+            gh_sheild_url = f'https://img.shields.io/github/stars/{gh_user_name}/{repo_name}?style=social&label=stars:{repo_name}'
+            md_githubstars = f'[![GitHub stars]({gh_sheild_url})]({gh_link_url})'
 
-            # print(f'* {link_url}')
-            # md_link = f'[![GitLab stars]({sheild_url})]({link_url})'
+            # print(f'* {main_link_url}')
+            # md_link = f'[![GitLab stars]({sheild_url})]({main_link_url})'
             # print(md_link)
             rst_dclr = ub.codeblock(
                 f'''
@@ -198,19 +201,20 @@ def main():
             if repo_suffix in nopypi_list:
                 pypkg_attrs = {}
             else:
-                pypkg_attrs = pypkg_links(repo_name, link_url)
+                pypkg_attrs = pypkg_links(repo_name, main_link_url)
 
-            md_name = f'[{repo_name}]({link_url})'
+            md_name = f'[{repo_name}]({main_link_url})'
             repo_rows.append({
                 'repo': repo_suffix,
                 'repo_name': repo_name,
                 'user_name': user_name,
                 'md_name': md_name,
 
+                'md_githubstars': md_githubstars,
                 **pypkg_attrs,
 
                 'rst_dclr': rst_dclr,
-                'link_url': link_url,
+                'main_link_url': main_link_url,
                 'sheild_url': sheild_url,
             })
 
