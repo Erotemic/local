@@ -1,6 +1,9 @@
+#!/usr/bin/env python3
 """
 Attestation duties are known for current + next epoch. Proposal duties are
 known for current epoch.
+
+python3 ~/local/tools/get_validator_duties.py
 
 Referenes:
     https://ethereum.github.io/beacon-APIs/#/
@@ -95,6 +98,10 @@ def main(validators_indices='auto', eth2_api_url=ETH2_API_URL):
 
     in_next_epoch = False
 
+    def humanize_timedelta(delta):
+        sign = math.copysign(1, delta.total_seconds())
+        return ('' if sign >= 0 else '-') + str(abs(delta))
+
     def _update_gap(end, start, gap_store):
         gap = end - start
         assert gap.total_seconds() >= 0
@@ -108,15 +115,16 @@ def main(validators_indices='auto', eth2_api_url=ETH2_API_URL):
 
         suf = ""
         if not in_next_epoch and slot >= next_epoch_start_slot:
+            epoch_change_delta = humanize_timedelta(next_epoch_start_time - prev_end_time)
             print("- " * 40)
             print(
-                f"Time until epoch change: {math.floor((next_epoch_start_time - prev_end_time).total_seconds())} seconds"
+                f"Time until epoch change: {epoch_change_delta}"
             )
             print(
                 f"Epoch boundary (proposal duties are not yet known for next epoch): {next_epoch_start_time}"
             )
             print(
-                f"Time until next duty: {math.floor((slot_start - next_epoch_start_time).total_seconds())} seconds"
+                f"Time until next duty: {humanize_timedelta((slot_start - next_epoch_start_time))} seconds"
             )
             print("- " * 40)
             suf = "(after prev. slot duty or current time)"
@@ -124,7 +132,7 @@ def main(validators_indices='auto', eth2_api_url=ETH2_API_URL):
             _update_gap(next_epoch_start_time, prev_end_time, cur_epoch_gap_store)
             in_next_epoch = True
 
-        print(f"Gap - {math.floor((slot_start - prev_end_time).total_seconds())} seconds {suf}")
+        print(f"Gap - {humanize_timedelta(slot_start - prev_end_time)} {suf}")
 
         if validators:
             print(
@@ -145,7 +153,7 @@ def main(validators_indices='auto', eth2_api_url=ETH2_API_URL):
     longest_gap, gap_time_range = cur_epoch_gap_store.values()
     print("*" * 80)
     print(
-        f"{longest_gap.total_seconds()} seconds"
+        f"{humanize_timedelta(longest_gap)} "
         f" ({int(longest_gap.total_seconds()) // SECONDS_PER_SLOT} slots),"
         f" from {gap_time_range[1].strftime('%H:%M:%S')}"
         f" until {gap_time_range[0].strftime('%H:%M:%S')}"
@@ -155,7 +163,7 @@ def main(validators_indices='auto', eth2_api_url=ETH2_API_URL):
     longest_gap, gap_time_range = overall_gap_store.values()
     print("*" * 80)
     print(
-        f"{longest_gap.total_seconds()} seconds"
+        f"{humanize_timedelta(longest_gap)}"
         f" ({int(longest_gap.total_seconds()) // SECONDS_PER_SLOT} slots),"
         f" from {gap_time_range[1].strftime('%H:%M:%S')}"
         f" until {gap_time_range[0].strftime('%H:%M:%S')}"
