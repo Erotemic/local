@@ -33,7 +33,9 @@ CommandLine:
 #    fi
 #fi
 
+# shellcheck disable=SC1091
 source "$HOME/local/init/freshstart_ubuntu.sh"
+# shellcheck disable=SC1091
 source "$HOME/local/init/utils.sh"
 
 HAVE_SUDO=${HAVE_SUDO:=$(have_sudo)}
@@ -53,6 +55,7 @@ fi
 echo "ENSURE SYMLINKS"
 # TODO: terminator doesnt configure to automatically use the joncrall profile
 # in the terminator config. Why?
+# shellcheck disable=SC1091
 source "$HOME/local/init/ensure_symlinks.sh"
 ensure_config_symlinks
 
@@ -64,6 +67,7 @@ if [ "$HAVE_SUDO" == "True" ]; then
     cat /etc/ssh/sshd_config
     sudo systemctl restart sshd.service
 
+    # shellcheck disable=SC2016
     __notes__='
     To setup ssh, get the service working with basic password auth, so you can
     login with password auth as a one-time thing to send over your ssh public
@@ -172,6 +176,7 @@ if [[ "$IS_HEADLESS" == "False" ]]; then
     # 7z sensors
     
     if [[ "$(type -P google-chrome)" == "" ]]; then
+        # shellcheck disable=SC1091
         source "$HOME/local/init/freshstart_ubuntu.sh"
         install_chrome
         sudo apt-get install chrome-gnome-shell # for gnome shell extension integration
@@ -193,6 +198,7 @@ if [[ "$IS_HEADLESS" == "False" ]]; then
     #install_transcrypt
     git clone https://github.com/Erotemic/transcrypt.git "$HOME"/code/transcrypt
 
+    # shellcheck disable=SC1091
     source "$HOME"/local/init/utils.sh
     mkdir -p "$HOME"/.local/bin
     safe_symlink "$HOME"/code/transcrypt/transcrypt "$HOME"/.local/bin/transcrypt
@@ -202,7 +208,7 @@ if [[ "$IS_HEADLESS" == "False" ]]; then
     git clone https://gitlab.com/Erotemic/erotemic.git "$HOME"/code/erotemic
     # Input username
     # Input password
-    cd "$HOME"/code/erotemic
+    cd "$HOME"/code/erotemic || exit
 
     # The user must supply a password here
     transcrypt -c aes-256-cbc 
@@ -218,6 +224,7 @@ fi
 
 
 if [[ "$WITH_SSH_KEYS" == "True" ]]; then
+    # shellcheck disable=SC1091
     source "$HOME"/local/init/freshstart_ubuntu.sh
     setup_single_use_ssh_keys
 fi
@@ -244,6 +251,7 @@ if [[ "$SETUP_PYTHON" == "True" ]]; then
         libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev 
 
     #source "$HOME"/local/init/freshstart_ubuntu.sh
+    # shellcheck disable=SC1091
     source "$HOME"/local/tools/pyenv_ext/pyenv_ext_commands.sh
     install_pyenv
     export PYENV_ROOT="$HOME/.pyenv"
@@ -357,4 +365,5 @@ fi
 
 
 export DID_MY_BASHRC_INIT=""
+# shellcheck disable=SC1091
 source "$HOME/.bashrc"
