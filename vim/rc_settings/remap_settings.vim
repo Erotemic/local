@@ -261,8 +261,9 @@ noremap <leader>/ :/\(^.*>>> .*\)\@<!\(^.*#.*\)\@<!
 " Function Keys
 
 " === F2 ===
-call FKeyFuncMap('<F2>', ':call PythonRevert()<CR>')
-call FKeyFuncMap('<F3>', ':call PythonInvert()<CR>')
+call FKeyFuncMap('<F2>', ':source ~/local/vim/portable_vimrc<CR>')
+"call FKeyFuncMap('<F2>', ':call PythonRevert()<CR>')
+"call FKeyFuncMap('<F3>', ':call PythonInvert()<CR>')
 
 " === F3 ===
 call FKeyFuncMap('<c-F2>', ':call NumberLineRevert()<CR>')

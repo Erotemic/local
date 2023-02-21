@@ -224,9 +224,8 @@ install_rocketpool_cli(){
 
 
 update_smartstack(){
-    # https://docs.rocketpool.net/guides/node/updates.html#updating-the-smartnode-stack
-    rocketpool service stop
 
+    ### DOWNLOAD NEW STUF FIRST
     ### Download and instll the new latest CLI version
     DOWNLOAD_DIR="$HOME/tmp"
     INSTALL_PREFIX="$HOME/.local"
@@ -253,6 +252,10 @@ update_smartstack(){
     gpg --import "$DOWNLOAD_DIR/smartnode-signing-key-v3.asc"
     gpg --verify "$DOWNLOAD_DIR/rocketpool.sig" "$DOWNLOAD_DIR/rocketpool"
 
+    # COPY STUFF BEFORE
+    # https://docs.rocketpool.net/guides/node/updates.html#updating-the-smartnode-stack
+    rocketpool service stop
+
     # If everything looks good install the new binary by copying it into your
     # binary directory (this will overwrite the previous binary)
     mkdir -p "$INSTALL_PREFIX/bin"
@@ -266,9 +269,8 @@ update_smartstack(){
     #### Run the install upgrade
     rocketpool service install -d
 
-    # Check configuration (amek sure nothing is new)
+    # Check configuration (make sure nothing is new)
     rocketpool service config
-
 
     # Restart the service
     rocketpool service start

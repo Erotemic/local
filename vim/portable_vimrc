@@ -158,6 +158,11 @@ Plug 'davidhalter/jedi-vim'
 Plug 'https://github.com/airblade/vim-gitgutter'
 Plug 'cespare/vim-toml', {'branch': 'main' }
 
+" https://github.com/dense-analysis/neural
+Plug 'dense-analysis/neural'
+Plug 'muniftanjim/nui.nvim'
+Plug 'elpiloto/significant.nvim'
+
 "Plug 'jmcantrell/vim-virtualenv'
 "Plug 'cjrh/vim-conda'
 
@@ -399,11 +404,12 @@ if exists("g:loaded_vimtk")
 
     call vimtk#quickopen('ka', '~/code/kwarray/kwarray/__init__.py')
     call vimtk#quickopen('ki', '~/code/kwimage/kwimage/__init__.py')
+    call vimtk#quickopen('kg', '~/code/kwgis/kwgis/__init__.py')
     call vimtk#quickopen('kn', '~/code/kwannot/kwannot/__init__.py')
     call vimtk#quickopen('kp', '~/code/kwplot/kwplot/__init__.py')
 
     call vimtk#quickopen('a', '~/code/watch/watch/__init__.py')
-    call vimtk#quickopen('f', '~/code/watch/watch/tasks/fusion/fit.py')
+    call vimtk#quickopen('f', '~/code/watch/watch/tasks/fusion/fit_lightning.py')
     call vimtk#quickopen('o', '~/code/watch/watch/mlops/schedule_evaluation.py')
     call vimtk#quickopen('wo', '~/code/watch/watch/mlops/aggregate.py')
     "call vimtk#quickopen('e', '~/code/watch/watch/tasks/fusion/experiments/crall/expt_drop1_2021-11-17.sh')
@@ -514,3 +520,13 @@ endif
 
 
 endif
+
+
+" Configure Neural like so in Vimscript
+let g:neural = {
+\   'source': {
+\       'openai': {
+\           'api_key': $EROTEMIC_OPENAI_API_KEY,
+\       },
+\   },
+\}
