@@ -3,6 +3,12 @@
 A git tool for handling the dev/<version> branch patterns
 
 See the GitDevbranchConfig for functionality
+
+Requires:
+    scriptconfig
+    git-python
+    packaging
+    ubelt
 """
 import git
 import ubelt as ub

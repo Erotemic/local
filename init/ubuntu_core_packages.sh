@@ -1357,7 +1357,10 @@ docker_modern_2021_04_22(){
     # Change docker to use storage on an external drive
     # Ubuntu/Debian: edit your /etc/default/docker file with the -g option: 
     cat /etc/default/docker
-    sudo sed -ie 's|^#* *DOCKER_OPTS.*|DOCKER_OPTS="-g /data/docker"|g' /etc/default/docker
+    # https://forums.docker.com/t/solved-docker-service-fail-to-start-after-update/134444
+    # Dont use -g anymore
+    #sudo sed -ie 's|^#* *DOCKER_OPTS.*|DOCKER_OPTS="-g /data/docker"|g' /etc/default/docker
+    sudo sed -ie 's|^#* *DOCKER_OPTS.*|DOCKER_OPTS="--data-root /data/docker"|g' /etc/default/docker
     sudo sed -ie 's|^#* *export DOCKER_TMPDIR.*|export DOCKER_TMPDIR=/data/docker-tmp|g' /etc/default/docker
     cat /etc/default/docker
 
