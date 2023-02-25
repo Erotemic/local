@@ -70,7 +70,7 @@ class CleanDevBranchConfig(scfg.DataConfig):
     __command__ = 'clean'
 
     repo_dpath = scfg.Value('.', help='location of the repo')
-    keep_last = scfg.Value(3, help='previous number of dev branches to keep')
+    keep_last = scfg.Value(1, help='previous number of dev branches to keep')
     remove_merged = scfg.Value(False, isflag=True, help='if True, remove other merged branhes as well')
 
     @classmethod
