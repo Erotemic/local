@@ -4,6 +4,7 @@ A git tool for handling the dev/<version> branch patterns
 
 See the GitDevbranchConfig for functionality
 
+<<<<<<< HEAD
 Notes:
     to remove branches from remotes
 
@@ -13,6 +14,13 @@ Notes:
 
         git fetch --prune
 
+=======
+Requires:
+    scriptconfig
+    git-python
+    packaging
+    ubelt
+>>>>>>> 66db930628cabb170c48b83884c51421277b3ed3
 """
 import git
 import ubelt as ub
@@ -74,7 +82,7 @@ class CleanDevBranchConfig(scfg.DataConfig):
     __command__ = 'clean'
 
     repo_dpath = scfg.Value('.', help='location of the repo')
-    keep_last = scfg.Value(3, help='previous number of dev branches to keep')
+    keep_last = scfg.Value(1, help='previous number of dev branches to keep')
     remove_merged = scfg.Value(False, isflag=True, help='if True, remove other merged branhes as well')
 
     @classmethod
