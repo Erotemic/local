@@ -78,7 +78,7 @@ let double_multi='pythonDoubleStringMulti,pythonRawDoubleStringMulti'
 "         positive ahead:  @=
 "         negative ahead:  @!
 
-Python2or3 << EOF
+python3 << EOF
 
 if 0:
     import xdev

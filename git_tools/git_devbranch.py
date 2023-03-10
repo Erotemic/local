@@ -3,6 +3,16 @@
 A git tool for handling the dev/<version> branch patterns
 
 See the GitDevbranchConfig for functionality
+
+Notes:
+    to remove branches from remotes
+
+        f"git push origin --delete {branch_name}"
+
+    to see results:
+
+        git fetch --prune
+
 """
 import git
 import ubelt as ub
@@ -133,9 +143,13 @@ def dev_branches(repo):
     for info in branch_infos:
         if info['branch_name'].startswith('dev/'):
             vstr = info['branch_name'].split('/')[-1]
-            info['version'] = Version(vstr)
-            # if not isinstance(info['version'], LegacyVersion):
-            dev_infos.append(info)
+            try:
+                info['version'] = Version(vstr)
+            except Exception:
+                ...
+            else:
+                # if not isinstance(info['version'], LegacyVersion):
+                dev_infos.append(info)
 
     versioned_dev_branches = sorted(dev_infos, key=lambda x: x['version'])
     return versioned_dev_branches

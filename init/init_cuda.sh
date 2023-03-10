@@ -20,6 +20,9 @@ install_nivida_drivers_apt(){
     #sudo apt install nvidia-drivers-396
     sudo apt install nvidia-driver-435
 
+    apt-cache search 'nvidia-driver-' | grep '^nvidia-driver-*'
+    sudo apt install nvidia-driver-525 nvidia-dkms-525
+
 
     # Restart, ensure you have tpl-archive and then run 
     ls ~/tpl-archive/cuda
@@ -188,6 +191,8 @@ uninstall_local_cuda()
 
 
 download_cuda_runfiles(){
+    # https://developer.nvidia.com/cuda-downloads
+    # # https://developer.nvidia.com/cuda-toolkit-archive
     mkdir -p ~/tpl-archive/cuda
     cd ~/tpl-archive/cuda
     wget http://developer.download.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda_10.1.243_418.87.00_linux.run
@@ -198,6 +203,9 @@ download_cuda_runfiles(){
 
     wget https://developer.download.nvidia.com/compute/cuda/11.5.1/local_installers/cuda_11.5.1_495.29.05_linux.run
     sudo sh cuda_11.5.1_495.29.05_linux.run
+
+    wget https://developer.download.nvidia.com/compute/cuda/12.1.0/local_installers/cuda_12.1.0_530.30.02_linux.run
+    wget https://developer.download.nvidia.com/compute/cuda/12.0.1/local_installers/cuda_12.0.1_525.85.12_linux.run
     
 
     # Older versions have to be downloaded manually via https://developer.nvidia.com/cuda-toolkit-archive
@@ -304,6 +312,17 @@ change_cuda_version()
         chmod +x ~/tpl-archive/cuda/cuda_11.5.1_495.29.05_linux.run
         # Not sure if I installed cublas correctly via this command
         sh ~/tpl-archive/cuda/cuda_11.5.1_495.29.05_linux.run --silent --toolkit --no-opengl-libs --no-man-page "--toolkitpath=$CUDA_PREFIX"  "--defaultroot=$CUDA_PREFIX" "--tmpdir=$PWD"
+    fi
+
+
+    # version 12
+    if [ "$cuda_version" == "12.0.1" ]; then
+        cuda_version="12.0.1"
+        unlink "$HOME/.local/cuda"
+        CUDA_PREFIX=$HOME/.local/"cuda-$cuda_version"
+        mkdir -p "$CUDA_PREFIX"
+        ln -s "$CUDA_PREFIX" "$HOME/.local/cuda"
+        sh ~/tpl-archive/cuda/cuda_12.0.1_525.85.12_linux.run --silent --toolkit --no-opengl-libs --no-man-page "--toolkitpath=$CUDA_PREFIX"  "--defaultroot=$CUDA_PREFIX" "--tmpdir=$PWD"
     fi
 
     ls -al "$HOME/.local/cuda"

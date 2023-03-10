@@ -450,3 +450,21 @@ source ~/.bash_completion.d/python-argcomplete
 if [ -f "$HOME/.bash_completion.d/python-argcomplete" ]; then
     source ~/.bash_completion.d/python-argcomplete
 fi
+
+
+# Would be nice if there was a better way so this just installed
+lfcd () {
+    tmp="$(mktemp)"
+    # `command` is needed in case `lfcd` is aliased to `lf`
+    command lf -last-dir-path="$tmp" "$@"
+    if [ -f "$tmp" ]; then
+        dir="$(cat "$tmp")"
+        rm -f "$tmp"
+        if [ -d "$dir" ]; then
+            if [ "$dir" != "$(pwd)" ]; then
+                cd "$dir"
+            fi
+        fi
+    fi
+}
+alias lf=lfcd

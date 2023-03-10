@@ -90,6 +90,10 @@ call NERD_TREE_WITH_BAT()
 let g:ale_linters = {'cython': ['flake8'], 'python': ['flake8'], 'sh': ['shellcheck']}
 let g:ale_fixers = {'python': ['autoflake'], 'sh': ['shellcheck']}
 
+" Get rid of errors that look like comments
+" https://www.reddit.com/r/vim/comments/b9amj9/how_do_i_get_rid_of_ale_errors_on_the_line_i_am/
+let g:ale_virtualtext_cursor=0
+
 
 "-------------------------
 "PLUGIN: Synstastic (DEPRECATED) 

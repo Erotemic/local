@@ -353,3 +353,6 @@ inoremap <C-U> <C-G>u<C-U>
 
 " Remap execute macro from @ to \
 nmap <leader>2 @
+
+" https://stackoverflow.com/questions/4256697/vim-search-and-highlight-but-do-not-jump
+nnoremap <silent> # :let @/= '\<' . expand('<cword>') . '\>' <bar> set hls <cr>

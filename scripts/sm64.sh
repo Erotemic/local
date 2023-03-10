@@ -1,4 +1,7 @@
 #!/bin/bash
+__doc__='
+SeeAlso:
+'
 ARG1=$1
 if [[ "$ARG1" == "cd" ]]; then
     echo "$HOME"/code/sm64-port/build/us_pc
