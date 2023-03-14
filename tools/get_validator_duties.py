@@ -14,6 +14,10 @@ import math
 from datetime import datetime, timedelta
 
 import requests
+try:
+    from rich import print
+except ImportError:
+    ...
 
 
 SLOTS_PER_EPOCH = 32
