@@ -300,6 +300,7 @@ if exists("g:loaded_vimtk")
     "call vimtk#quickopen('F', '~/code/ibeis/ibeis/init/filter_annots.py')
     "call vimtk#quickopen('g', '~/code/ibeis/ibeis/gui/inspect_gui.py')
     "call vimtk#quickopen('G', '~/code/ibeis/ibeis/gui/newgui.py')
+    call vimtk#quickopen('g', '~/code/delayed_image/delayed_image/delayed_nodes.py')
     """"""""""""""
     "call vimtk#quickopen('H', '~/code/ibeis/ibeis/algo/hots/pipeline.py')
     "call vimtk#quickopen('h', '~/code/graphid/graphid/core/annot_inference.py')
