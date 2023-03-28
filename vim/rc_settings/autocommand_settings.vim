@@ -122,7 +122,7 @@ au MyVimRC Filetype cmake setlocal tabstop=2
 
 " Prewrite Modifications
 " Remove trailing whitespace
-:call AuPreWritePatterns(':%s/  *$//e', '*.py', '*.c', '*.cxx', '*.cpp', '*.h', '*.hpp', '*.hxx', '*.cmake', 'CMakeLists.txt')
+:call AuPreWritePatterns(':%s/  *$//e', '*.py', '*.c', '*.cxx', '*.cpp', '*.h', '*.hpp', '*.hxx', '*.cmake', 'CMakeLists.txt', '*.rst', '*.sh')
 au MyVimRC BufWritePre *.py :%s/\s\+$//e
 au MyVimRC BufWritePre *.py :%s/\+//e
 

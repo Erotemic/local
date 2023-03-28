@@ -38,9 +38,15 @@ Example Usage:
     # compile-time requirements, but the script handles these for modern
     # versions of CPython
     source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+<<<<<<< HEAD
     #pyenv_create_virtualenv 3.8.13 full
     pyenv_create_virtualenv 3.11.2 full
     #pyenv_create_virtualenv pypy3.7-7.3.9 most
+=======
+    pyenv_create_virtualenv 3.8.13 full
+    pyenv_create_virtualenv 3.11.2 most
+    pyenv_create_virtualenv pypy3.7-7.3.9 most
+>>>>>>> 19454b1b692b121f3d2ba5babc3b2a2c45953f04
 
     source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
     build_vim_for_pyenv
@@ -664,7 +670,7 @@ build_vim_for_pyenv(){
     make install
 
     # BROKEN
-    pip install ubelt pyperclip shellcheck-py six xinspect psutil pyflakes
+    pip install ubelt pyperclip shellcheck-py six xinspect psutil pyflakes packaging
     #if [[ -d "$HOME/code/vimtk" ]]; then
     #    unlink_or_backup "$HOME/.vim/bundle/vimtk"
     #    ln -s "$HOME/code/vimtk" "$HOME/.vim/bundle/vimtk"

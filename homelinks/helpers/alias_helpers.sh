@@ -61,6 +61,7 @@ alias data='cd ~/data'
 alias loc='cd ~/local'
 alias lc='cd ~/local'
 alias mi='cd ~/misc'
+alias sw='smartwatch'
 
 #alias vf='cd ~/local/vim/vimfiles'
 #alias vfb='cd ~/local/vim/vimfiles/bundle'
@@ -152,28 +153,59 @@ alias vdd='vd ~/work'
 alias ebrc='gvim ~/.bashrc'
 alias ea='gvim ~/local/homelinks/helpers/alias_helpers.sh'
 
-alias drl='docker run -it $(docker image ls -a --format={{.ID}} | head -1) bash'
+alias drl='docker_run_last'
+alias dei='docker_execinto'
 
 alias dmsg=dmesg
 
 
+docker_run_last(){
+    docker run -it "$(docker image ls -a --format='{{.ID}}' | head -1)" bash
+}
+
+
+docker_execinto(){
+    pyblock "
+    import ubelt as ub
+    import rich
+    rich.print(ub.cmd('docker ps', verbose=0)['out'])
+    info = ub.cmd('docker ps --format={{.ID}}')
+    container_ids = info['out'].strip().split(chr(10))
+    if len(container_ids) == 0:
+        raise Exception('no running containers')
+    elif len(container_ids) == 1:
+        print('Only one choice, execing into it')
+        chosen_id = container_ids[0]
+    else:
+        import rich.prompt
+        valid_choices = list([str(c) for c in range(len(container_ids))])
+        ans = rich.prompt.Prompt.ask('Which container?', choices=valid_choices)
+        if ans:
+            index = int(ans)
+            chosen_id = container_ids[index]
+        else:
+            raise Exception
+    ub.cmd(f'docker exec -it {chosen_id} bash', system=True, verbose=2)
+    "
+}
+
 clean_latex()
 {
-    rm *.aux
-    rm *.bbl
-    rm *.brf 
-    rm *.log 
-    rm *.bak 
-    rm *.blg 
-    rm *.tips 
-    rm *.synctex
-    rm main.pdf
-    rm main.dvi
+    rm -- *.aux
+    rm -- *.bbl
+    rm --  *.brf
+    rm --  *.log
+    rm --  *.bak
+    rm --  *.blg
+    rm --  *.tips
+    rm --  *.synctex
+    rm --  main.pdf
+    rm --  main.dvi
 
-    rm *.fdb_latexmk
-    rm *.fls
-    rm *.lof
-    rm *.toc
+    rm --  *.fdb_latexmk
+    rm --  *.fls
+    rm --  *.lof
+    rm --  *.toc
 
     latexmk -c
 }
@@ -206,8 +238,8 @@ alias rrr='reset_my_env && source ~/.bashrc'
 
 
 reset_my_env(){
-    DID_MY_BASHRC_INIT=""
-} 
+    export DID_MY_BASHRC_INIT=""
+}
 
 
 cls()
@@ -243,13 +275,13 @@ astyle_cpp()
     #          according to the currently requested predefined style or bracket type. If no  style  or
     #          bracket  type is requested the brackets will be attached. If --add-one-line-brackets is
     #          also used the result will be one line brackets.
-         
+
     #   --convert-tabs, -c
     #          Convert tabs to spaces in the non-indentation part of the line. The  number  of  spaces
     #          inserted  will  maintain the spacing of the tab. The current setting for spaces per tab
     #          is used. It may not produce the expected results if --convert-tabs is used when  chang‐
     #          ing spaces per tab. Tabs are not replaced in quotes.
-              
+
     #   --max-code-length=#, -xC#
     #   --break-after-logical, -xL
     #          The  option  --max\[u2011]code\[u2011]length  will  break  a line if the code exceeds #
@@ -263,8 +295,8 @@ astyle_cpp()
 
     #'
     #export ASTYLE_OPTIONS="--style=allman --indent=spaces --indent-preproc-cond --convert-tabs --indent-namespaces --indent-labels --indent-col1-comments --pad-oper --pad-header --unpad-paren --delete-empty-lines --add-brackets "
-    
-    #--attach-inlines 
+
+    #--attach-inlines
     #--attach-extern-c
     #--indent-preproc-cond
     export ASTYLE_OPTIONS="--style=ansi --indent=spaces  --indent-classes  --indent-switches  --indent-col1-comments --pad-oper --unpad-paren --delete-empty-lines --add-brackets"
@@ -282,7 +314,7 @@ astyle_cpp()
     #'--indent-switches': '-S',
     #'--indent-preproc-cond ': '-xw',
     #'--indent-col1-comments': '-Y',
-    #'--pad-oper': '-p', 
+    #'--pad-oper': '-p',
     #'--unpad-paren': '-U',
     #'-delete-empty-lines': '-xe',
     #'--add-brackets': '-j',
@@ -295,7 +327,7 @@ astyle_cpp()
 
 
 # Start TMUX session
-# References: 
+# References:
 #     http://lukaszwrobel.pl/blog/tmux-tutorial-split-terminal-windows-easily
 #     https://gist.github.com/MohamedAlaa/2961058
 #change_terminal_title()
@@ -431,14 +463,14 @@ complete -W "PATH LD_LIBRARY_PATH CPATH CMAKE_PREFIX_PATH" "pathvar_remove"
 #    # echo "deactivate_venv OLD_VENV=$OLD_VENV"
 #    if [ "$OLD_VENV" != "" ]; then
 #        #if [ -n "$(type -t rvm)" ] && [ "$(type -t rvm)" = function ]; then
-#        #    echo rvm is a function; 
+#        #    echo rvm is a function;
 #        #else
 #        #    echo rvm is NOT a function;
 #        #fi
 #        if [ -n "$(type -t deactivate)" ] && [ "$(type -t deactivate)" = function ]; then
 #            # deactivate bash function exists
 #            deactivate
-#            # reset LD_LIBRARY_PATH 
+#            # reset LD_LIBRARY_PATH
 #            remove_ld_library_path_entry $OLD_VENV/local/lib
 #            remove_ld_library_path_entry $OLD_VENV/lib
 #            remove_path_entry $OLD_VENV/bin
@@ -594,7 +626,7 @@ pyedit()
 
 
 permit_erotemic_gitrepo()
-{ 
+{
     __doc__="""
     change git config from https to ssh
     """
@@ -613,7 +645,7 @@ normalize_line_endings(){
     find . -not -type d -exec file "{}" ";" | grep CRLF
     sudo apt install dos2unix
     '''
-    
+
     for fpath in "$@"
     do
     #echo "fpath = $fpath"
@@ -671,12 +703,12 @@ pywhich(){
 
 
 gitk(){
-    # always spawn gitk in the background 
+    # always spawn gitk in the background
     GITK_EXE="$(which gitk)"
     $GITK_EXE "$@"&
 }
 
-randpw(){ 
+randpw(){
     __doc__="""
     Generate a random password
 
@@ -704,7 +736,7 @@ randpw_words(){
 
     #    # 7 words from a 7776 dictionary should beat the Type0-Adversary
 
-    #    # Word security level 
+    #    # Word security level
     #    import math
     #    vocab_size = 25487
     #    vocab_size = 7776
@@ -768,7 +800,7 @@ randpw_words(){
 }
 
 
-randint(){ 
+randint(){
     head -c128 /dev/random | sha512sum | python -c "import string, ubelt, sys; print(ubelt.hash_data(sys.stdin.read(), base=list(string.digits))[0:32])"
 }
 
@@ -784,11 +816,11 @@ git-tarball-hash()
     CURRENT_COMMIT=0418a4cf84b83a22a4d2aca704543f93677260d6
     echo "CURRENT_COMMIT = $CURRENT_COMMIT"
     git archive --format=tar.gz -o /tmp/temp-repo.tar.gz "$(git rev-parse HEAD)"
-    sha256sum /tmp/temp-repo.tar.gz 
+    sha256sum /tmp/temp-repo.tar.gz
 
-    md5sum /tmp/temp-repo.tar.gz 
-    sha1sum /tmp/temp-repo.tar.gz 
-    sha512sum /tmp/temp-repo.tar.gz 
+    md5sum /tmp/temp-repo.tar.gz
+    sha1sum /tmp/temp-repo.tar.gz
+    sha512sum /tmp/temp-repo.tar.gz
 }
 
 
@@ -797,7 +829,7 @@ orig_sedr(){
     Recursive sed
 
     Args:
-        search 
+        search
         replace
         pattern (defaults to *.py)
 
@@ -820,10 +852,10 @@ orig_sedr(){
     argv[4] = LIVE_RUN = '$LIVE_RUN' - set to 'True' to do the run for real
     "
 
-    find . -type f -iname "${PATTERN}" 
+    find . -type f -iname "${PATTERN}"
 
     if [[ "$LIVE_RUN" == "True" ]]; then
-        find . -type f -iname "${PATTERN}" -exec sed -i "s|${SEARCH}|${REPLACE}|g" {} + 
+        find . -type f -iname "${PATTERN}" -exec sed -i "s|${SEARCH}|${REPLACE}|g" {} +
     else
         # https://unix.stackexchange.com/questions/97297/how-to-report-sed-in-place-changes
         #find . -type f -iname "${PATTERN}" -exec sed "s|${SEARCH}|${REPLACE}|g" {} + | grep "${REPLACE}"
@@ -842,7 +874,7 @@ search_remotes(){
         target_dpath : path to a directory thats on a remote
 
     Ignore:
-        target_dpath = '/home/joncrall/work/sealions'  
+        target_dpath = '/home/joncrall/work/sealions'
     """
     target_dpath=$1
 
@@ -899,11 +931,11 @@ all_dir_sizes(){
 
     sudo du -sh * | sort -h
 
-    sudo find . -maxdepth 1 -iregex '.*/..*' -exec du -sh {} \; 
+    sudo find . -maxdepth 1 -iregex '.*/..*' -exec du -sh {} \;
     sudo find . -maxdepth 1 -iregex '.*/..*' -exec echo {} \; | sort -h
     sudo find . -maxdepth 1 -iregex '.*/..*' -exec echo {} \; | sort -h
 
-    find . -maxdepth 1 -exec du -sh {} + 
+    find . -maxdepth 1 -exec du -sh {} +
     | sort -h
 
     "
@@ -919,7 +951,7 @@ clean_python2(){
     find . -regex ".*\(__pycache__\|\.py[co]\)" -delete || find . -iname "*.pyc" -delete || find . -iname "*.pyo" -delete
     find . -type d -empty -delete
 
-    pyblock " 
+    pyblock "
 
     import os
     dpath = '.'
@@ -930,7 +962,7 @@ clean_python2(){
 
     "
 
-    
+
 }
 
 
@@ -998,7 +1030,7 @@ untilfail()
 
     Example:
         flaky_funcion(){
-            echo "try..." && ( [ $(($RANDOM % 2)) -eq 0 ] && echo "got there" ) || (echo "not this time" && false) 
+            echo "try..." && ( [ $(($RANDOM % 2)) -eq 0 ] && echo "got there" ) || (echo "not this time" && false)
         }
         untilfail flaky_funcion
 
@@ -1023,16 +1055,16 @@ untilpass()
     Example:
         # Define a function that fails most of the time
         flaky_funcion(){
-            echo "try..." && ( [ $(($RANDOM % 10)) -eq 0 ] && echo "got there" ) || (echo "not this time" && false) 
+            echo "try..." && ( [ $(($RANDOM % 10)) -eq 0 ] && echo "got there" ) || (echo "not this time" && false)
         }
-        
+
         # Run that function until it passes
         untilpass flaky_funcion
     '''
     _handle_help "$@" || return 0
     "$@"
     while [ $? -ne 0 ];
-    do 
+    do
         "$@"
     done
 }
