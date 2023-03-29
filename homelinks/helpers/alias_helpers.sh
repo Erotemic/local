@@ -144,6 +144,8 @@ alias wads='cd $(smartwatch_dvc --tags="phase2_data" --hardware="ssd")'
 alias wadh6='cd $(smartwatch_dvc --tags="phase2_data" --hardware="hdd")/Drop6'
 alias wads6='cd $(smartwatch_dvc --tags="phase2_data" --hardware="ssd")/Drop6'
 
+alias wads6m='cd $(smartwatch_dvc --tags="phase2_data" --hardware="ssd")/Drop6-MeanYear10GSD'
+
 alias wadf='cd $HOME/flash1/smart_watch_dvc'
 alias wau='cd $HOME/code/watch/watch/utils'
 alias wad3='cd $HOME/data/dvc-repos/smart_watch_dvc/Aligned-Drop3-TA1-2022-03-10'
