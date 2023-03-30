@@ -5,10 +5,10 @@ pyenv virtual enviornments.
 
 Main user-facing functions:
 
-    install_pyenv - 
+    install_pyenv -
         Helps install pyenv itself
 
-    pyenv_create_virtualenv - 
+    pyenv_create_virtualenv -
         Creates a new python environment for a new python version
 
 
@@ -38,21 +38,17 @@ Example Usage:
     # compile-time requirements, but the script handles these for modern
     # versions of CPython
     source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-<<<<<<< HEAD
-    #pyenv_create_virtualenv 3.8.13 full
-    pyenv_create_virtualenv 3.11.2 full
-    #pyenv_create_virtualenv pypy3.7-7.3.9 most
-=======
+
     pyenv_create_virtualenv 3.8.13 full
     pyenv_create_virtualenv 3.11.2 most
     pyenv_create_virtualenv pypy3.7-7.3.9 most
->>>>>>> 19454b1b692b121f3d2ba5babc3b2a2c45953f04
 
     source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
     build_vim_for_pyenv
 "
 
 install_pyenv(){
+    # shellcheck disable=SC2016
     __doc__='
     Perform installation of the pyenv library
 
@@ -94,13 +90,13 @@ install_pyenv(){
 
 pyenv_create_virtualenv(){
     __doc__="
-    The conda variant is: 
+    The conda variant is:
         conda create -y -n <venv-name> python=<target-pyversion>
 
     This command will seek to do something similar
 
     Args:
-        PYTHON_VERSION (str) 
+        PYTHON_VERSION (str)
         OPTIMIZE_PRESET (str, default=most): can be off, most, or full
 
     Example:
@@ -131,7 +127,7 @@ pyenv_create_virtualenv(){
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
         pyenv_create_virtualenv 2.7.17 off
-        
+
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
         PYTHON_VERSION=3.4.10
         pyenv_create_virtualenv 3.4.10 off
@@ -194,7 +190,7 @@ pyenv_create_virtualenv(){
     #    #ln -s /usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2 $HOME/tmp/sslhack/libssl1.0-dev/lib/x86_64-linux-gnu
     #    #ln -s /usr/lib/x86_64-linux-gnu/libssl.so.1.0.2 $HOME/tmp/sslhack/libssl1.0-dev/lib/x86_64-linux-gnu
     #    #CFLAGS="-I${HACK_INCLUDE1} -I${HACK_INCLUDE2}" LDFLAGS="-L${HACK_LIB1}" pyenv install 3.4.10
-        
+
     #fi
 
     #PYTHON_CFLAGS="
@@ -215,64 +211,64 @@ pyenv_create_virtualenv(){
     if [[ "$OPTIMIZE_PRESET" == "full" ]] || [[ "$OPTIMIZE_PRESET" == "all" ]]; then
         PROFILE_TASK=$(_strip_double_whitespace "-m test.regrtest --pgo
             test_array
-            test_base64 
-            test_binascii 
-            test_binop 
-            test_bisect 
-            test_bytes 
-            test_bz2 
-            test_cmath 
-            test_codecs 
-            test_collections 
-            test_complex 
-            test_dataclasses 
-            test_datetime 
-            test_decimal 
-            test_difflib 
-            test_embed 
-            test_float 
-            test_fstring 
-            test_functools 
-            test_generators 
-            test_hashlib 
-            test_heapq 
-            test_int 
-            test_itertools 
-            test_json 
-            test_long 
-            test_lzma 
-            test_math 
-            test_memoryview 
-            test_operator 
-            test_ordered_dict 
-            test_pickle 
-            test_pprint 
-            test_re 
-            test_set 
-            test_sqlite 
-            test_statistics 
-            test_struct 
-            test_tabnanny 
-            test_time 
-            test_unicode 
-            test_xml_etree 
-            test_xml_etree_c 
+            test_base64
+            test_binascii
+            test_binop
+            test_bisect
+            test_bytes
+            test_bz2
+            test_cmath
+            test_codecs
+            test_collections
+            test_complex
+            test_dataclasses
+            test_datetime
+            test_decimal
+            test_difflib
+            test_embed
+            test_float
+            test_fstring
+            test_functools
+            test_generators
+            test_hashlib
+            test_heapq
+            test_int
+            test_itertools
+            test_json
+            test_long
+            test_lzma
+            test_math
+            test_memoryview
+            test_operator
+            test_ordered_dict
+            test_pickle
+            test_pprint
+            test_re
+            test_set
+            test_sqlite
+            test_statistics
+            test_struct
+            test_tabnanny
+            test_time
+            test_unicode
+            test_xml_etree
+            test_xml_etree_c
         ")
 
         PYTHON_CONFIGURE_OPTS=$(_strip_double_whitespace "
-            --enable-shared 
-            --enable-optimizations 
+            --enable-shared
+            --enable-optimizations
             --with-computed-gotos
             --with-lto")
 
         if lscpu | grep Intel ; then
-            PYTHON_CFLAGS="-march=native -mtune=intel -O3 -pipe" 
+            PYTHON_CFLAGS="-march=native -mtune=intel -O3 -pipe"
         else
-            PYTHON_CFLAGS="-march=native -O3 -pipe" 
+            PYTHON_CFLAGS="-march=native -O3 -pipe"
         fi
     elif [[ "$OPTIMIZE_PRESET" == "most" ]]; then
         # FIXME: most and full are the same, what is the real breakdown?
-        PROFILE_TASK=$(_strip_double_whitespace "-m test.regrtest 
+        PROFILE_TASK=$(_strip_double_whitespace "-m test.regrtest
             --pgo test_array test_base64 test_binascii test_binhex test_binop
             test_c_locale_coercion test_csv test_json test_hashlib test_unicode
             test_codecs test_traceback test_decimal test_math test_compile
@@ -281,8 +277,8 @@ pyenv_create_virtualenv(){
             test_dict test_long test_bytes test_memoryview test_io test_pickle")
 
         PYTHON_CONFIGURE_OPTS=$(_strip_double_whitespace "
-            --enable-shared 
-            --enable-optimizations 
+            --enable-shared
+            --enable-optimizations
             --with-computed-gotos
             --with-lto")
 
@@ -290,15 +286,15 @@ pyenv_create_virtualenv(){
         # -pipe option: https://gcc.gnu.org/onlinedocs/gcc-4.1.2/gcc/Overall-Options.html
         # TODO: maybe use --mtune=intel?
         if lscpu | grep Intel ; then
-            PYTHON_CFLAGS="-march=native -mtune=intel -O3 -pipe" 
+            PYTHON_CFLAGS="-march=native -mtune=intel -O3 -pipe"
         else
-            PYTHON_CFLAGS="-march=native -O3 -pipe" 
+            PYTHON_CFLAGS="-march=native -O3 -pipe"
         fi
         MAKE_OPTS=""
     elif [[ "$OPTIMIZE_PRESET" == "off" || "$OPTIMIZE_PRESET" == "none" ]] ; then
         PROFILE_TASK=""
         PYTHON_CONFIGURE_OPTS="--enable-shared"
-        PYTHON_CFLAGS="-march=native -O2 -pipe" 
+        PYTHON_CFLAGS="-march=native -O2 -pipe"
     else
         echo "UNKNOWN OPT PRESET"
         return 1
@@ -407,14 +403,14 @@ deactivate_venv()
     echo "deactivate_venv OLD_VENV=$OLD_VENV"
     if [ "$OLD_VENV" != "" ]; then
         #if [ -n "$(type -t rvm)" ] && [ "$(type -t rvm)" = function ]; then
-        #    echo rvm is a function; 
+        #    echo rvm is a function;
         #else
         #    echo rvm is NOT a function;
         #fi
         if [ -n "$(type -t deactivate)" ] && [ "$(type -t deactivate)" = function ]; then
             # deactivate bash function exists
             deactivate
-            # reset LD_LIBRARY_PATH 
+            # reset LD_LIBRARY_PATH
             remove_ld_library_path_entry "$OLD_VENV/local/lib"
             remove_ld_library_path_entry "$OLD_VENV/lib"
             remove_path_entry "$OLD_VENV/bin"
@@ -460,6 +456,7 @@ workon_py()
 
     if [ -f "$PYENV_ACTIVATE_CAND1" ]; then
         deactivate_venv
+        # shellcheck disable=SC1090
         source "$PYENV_ACTIVATE_CAND1"
     elif [ -d "$NEW_VENV/conda-meta" ]; then
         #echo "NEW CONDA VENV"
@@ -476,6 +473,7 @@ workon_py()
         # Activate the new venv
         export LD_LIBRARY_PATH=$NEW_VENV/local/lib:$LD_LIBRARY_PATH
         export LD_LIBRARY_PATH=$NEW_VENV/lib:$LD_LIBRARY_PATH
+        # shellcheck disable=SC1091
         source "$NEW_VENV/bin/activate"
     fi
     # echo "new venv doesn't exist"
@@ -496,10 +494,10 @@ refresh_workon_autocomplete(){
         KNOWN_CONDA_ENVS="$(/bin/ls -1 "$_CONDA_ROOT/envs" | sort)"
     else
         KNOWN_CONDA_ENVS=""
-    fi 
+    fi
     # shellcheck disable=SC2155
     KNOWN_VIRTUAL_ENVS="$(/bin/ls -1 "$HOME" | grep venv | sort)"
-    
+
     if [[ "$(which pyenv)" ]]; then
         KNOWN_PYENV_ENVS=$(find "$(pyenv root)"/versions/*/envs/* -maxdepth 0 -type d -printf "%f\n")
     fi
@@ -518,7 +516,7 @@ rebuild_python(){
     __doc__='
     Rebuild python with with the same config (useful if ubuntu breaks your libs on you)
     '
-    #python3 -m sysconfig 
+    #python3 -m sysconfig
     #python3 -m sysconfig  | grep -i '\-j'
     CONFIG_ARGS=$(python -c "import sysconfig; print(sysconfig.get_config_var('CONFIG_ARGS'))")
     PYTHON_CFLAGS=$(python -c "import sysconfig; print(sysconfig.get_config_var('CONFIGURE_CFLAGS'))")
@@ -542,8 +540,9 @@ rebuild_python(){
 
 
 new_pyenv_venv(){
+    # shellcheck disable=SC2016
     __doc__='
-    Create a new pyenv virtual environment 
+    Create a new pyenv virtual environment
 
     # Uninstall everything
     pip uninstall $(echo $(pip freeze | sed -e '"'s/==.*//'"')) -y
@@ -565,6 +564,7 @@ new_pyenv_venv(){
 }
 
 update_pyenv(){
+    # shellcheck disable=SC2016
     __doc__='
     export PATH="$PYENV_ROOT/bin:$PATH"
     eval "$($PYENV_ROOT/bin/pyenv init -)"
@@ -589,18 +589,19 @@ build_vim_for_pyenv(){
     build_vim_for_pyenv
     "
 
-    if [[ ! -d "$HOME/code/vim" ]]; then 
+    if [[ ! -d "$HOME/code/vim" ]]; then
         git clone https://github.com/vim/vim.git ~/code/vim
-    else 
-        cd "$HOME/code/vim"
-        git fetch
+    else
+        (cd "$HOME/code/vim" && git fetch)
     fi
 
+    # shellcheck disable=SC1091
     source "$HOME/local/init/utils.sh"
     apt_ensure build-essential libtinfo-dev libncurses-dev gnome-devel libgtk-3-dev libxt-dev
 
     #./configure --help
     #./configure --help | grep python
+    # shellcheck disable=SC2164
     cd "$HOME/code/vim"
 
     # https://github.com/vim/vim/issues/6457
@@ -648,7 +649,7 @@ build_vim_for_pyenv(){
         CONFIG_DIR='$CONFIG_DIR'
     "
 
-    # THIS WORKS! 
+    # THIS WORKS!
     export LDFLAGS="-rdynamic"
     make distclean
     ./configure \
@@ -659,10 +660,11 @@ build_vim_for_pyenv(){
         "--with-python3-command=$PYTHON_CMD" \
         "--with-python3-config-dir=$CONFIG_DIR" \
         --enable-gui=gtk3
-    cat src/auto/config.mk 
+    cat src/auto/config.mk
 
     # Ensure the version of python matches (there are cases due to system
     # configs where it might not)
+    # shellcheck disable=SC2002
     cat src/auto/config.mk | grep 'PYTHON3\|prefix'
 
     make -j"$(nproc)"
@@ -692,7 +694,7 @@ _pyenv_best_version_match(){
     # vim hates this syntax highlight apparently
     readarray -t arr <<< "$AVAILALBE_VERSION"
     BEST_MATCH=None
-    for arg in "${arr[@]}"; do 
+    for arg in "${arr[@]}"; do
         arg=$(echo "$arg" | xargs echo -n)
         if [[ $arg == $PYTHON_VERSION* ]]; then
             BEST_MATCH=$arg
