@@ -29,7 +29,7 @@ nuc_notes(){
     # https://www.intel.com/content/www/us/en/support/articles/000060119/intel-nuc.html
 
     K - slim
-    F - 
+    F -
 
     BXNUC10I5 F N HN 1
 
@@ -88,7 +88,7 @@ install_rocketpool_cli(){
 
     PREFIX=$HOME/.local
     mkdir -p "$PREFIX/bin"
-    wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/rocketpool-cli-linux-"${ARCH}" -O ./rocketpool 
+    wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/rocketpool-cli-linux-"${ARCH}" -O ./rocketpool
     wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/rocketpool-cli-linux-"${ARCH}".sig -O ./rocketpool.sig
     wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/smartnode-signing-key-v3.asc -O ./smartnode-signing-key-v3.asc
 
@@ -96,8 +96,9 @@ install_rocketpool_cli(){
     # https://github.com/jclapis
     gpg --import ./smartnode-signing-key-v3.asc
     gpg --verify rocketpool.sig rocketpool
-    mv ./rocketpool "$PREFIX/bin/rocketpool"
 
+
+    mv ./rocketpool "$PREFIX/bin/rocketpool"
     chmod +x "$HOME"/.local/bin/rocketpool
     rocketpool --version
 
@@ -115,7 +116,7 @@ install_rocketpool_cli(){
     rocketpool service version
 
     ## Check status in docker
-    
+
     docker ps
     rocketpool service logs eth1
     rocketpool service logs eth2
@@ -136,13 +137,13 @@ install_rocketpool_cli(){
 
     # To change concensus clients
     # https://docs.rocketpool.net/guides/node/change-clients.html#changing-consensus-clients
-    rocketpool service config 
+    rocketpool service config
     # Manual Interaction, simply change it
     # And verify it looks ok
     rocketpool service logs eth2
 
 
-    # Sycing blockchain state: 
+    # Sycing blockchain state:
     # https://docs.rocketpool.net/guides/node/starting-rp.html#waiting-for-your-eth-clients-to-sync
     # Note: This can take DAYS to finish!
     rocketpool node sync
@@ -274,7 +275,7 @@ update_smartstack(){
 
     # Restart the service
     rocketpool service start
-    
+
 }
 
 
@@ -295,7 +296,7 @@ firewall(){
 
 
 
-    ## Allow out rules are only needed if we are denying out trafic, which 
+    ## Allow out rules are only needed if we are denying out trafic, which
     ## we probably wont by default
 
     # allow traffic out on port 53 -- DNS
@@ -313,7 +314,7 @@ firewall(){
     # you only need this if you're using DHCP
     sudo ufw allow out 67 comment 'allow the DHCP client to update'
     sudo ufw allow out 68 comment 'allow the DHCP client to update'
-        
+
 
     sudo ufw status
     sudo ufw enable
@@ -342,18 +343,18 @@ firewall(){
 
     #cat /etc/ssh/sshd_config | sed 'Password
     cat /etc/ssh/sshd_config | grep 'Password'
-    
 
-    sudo sed -i 's|^ChallengeResponseAuthentication|##ChallengeResponseAuthentication|g' /etc/ssh/sshd_config 
-    sudo sed -i 's|^PasswordAuthentication|##PasswordAuthentication|g' /etc/ssh/sshd_config 
-    sudo sed -i 's|^PermitRootLogin|##PermitRootLogin|g' /etc/ssh/sshd_config 
+
+    sudo sed -i 's|^ChallengeResponseAuthentication|##ChallengeResponseAuthentication|g' /etc/ssh/sshd_config
+    sudo sed -i 's|^PasswordAuthentication|##PasswordAuthentication|g' /etc/ssh/sshd_config
+    sudo sed -i 's|^PermitRootLogin|##PermitRootLogin|g' /etc/ssh/sshd_config
     sudo_appendto /etc/ssh/sshd_config  "
     ChallengeResponseAuthentication no
     PasswordAuthentication no
     PermitRootLogin prohibit-password
     "
     sudo systemctl restart sshd
-    
+
 }
 
 
@@ -387,7 +388,7 @@ configure_metric_monitoring_server(){
 
     # Follow instructions on the browser for:
     # https://docs.rocketpool.net/guides/node/grafana.html#importing-the-rocket-pool-dashboard
-    
+
 }
 
 
@@ -411,7 +412,7 @@ verify_checkpoint_sync(){
     curl http://localhost:5052/eth/v1/beacon/headers/finalized
     curl http://localhost:5052/eth/v1/node/syncing
 
-    # Does seem to need export HTTP port enabled 
+    # Does seem to need export HTTP port enabled
     curl http://localhost:5052/eth/v1/beacon/blocks/head/root
     curl http://pewter:5052/eth/v1/beacon/blocks/head/root
 
@@ -422,7 +423,7 @@ verify_checkpoint_sync(){
 
     curl -s http://localhost:5052/eth/v1/beacon/headers/finalized | jq .'data.header.message'
     curl -s https://sync-mainnet.beaconcha.in:5052/eth/v1/beacon/headers/finalized | jq .'data.header.message'
-    
+
 }
 
 
@@ -473,7 +474,7 @@ unattended_upgrades(){
     sudo apt install -y unattended-upgrades update-notifier-common
 
     cat /etc/apt/apt.conf.d/20auto-upgrades
-    
+
     sudo_writeto /etc/apt/apt.conf.d/20auto-upgrades '
     APT::Periodic::Update-Package-Lists "1";
     APT::Periodic::Unattended-Upgrade "1";
@@ -509,7 +510,7 @@ install_ntp(){
     "
     sudo apt install ntp -y
     sudo cp --archive /etc/ntp.conf "/etc/ntp.conf-COPY-$(date +"%Y%m%d%H%M%S")"
-    
+
     sudo sed -i -r -e "s/^((server|pool).*)/# \1         # commented by $(whoami) on $(date +"%Y-%m-%d @ %H:%M:%S")/" /etc/ntp.conf
     echo -e "\npool pool.ntp.org iburst         # added by $(whoami) on $(date +"%Y-%m-%d @ %H:%M:%S")" | sudo tee -a /etc/ntp.conf
 
@@ -599,7 +600,7 @@ voting_on_proposals(){
     Link your delegate wallet to https://vote.rocketpool.net
 
     Or
-    
+
     via CLI:
     https://docs.rocketpool.net/guides/odao/proposals.html#making-a-proposal
     "

@@ -164,6 +164,10 @@ def _parse_custom_urls():
     for fpath in config_fpaths:
         if os.path.exists(fpath):
             for line in open(fpath, 'r').read().splitlines():
+                # if line.startswith('U2FsdGVk'):
+                if line.startswith('U2FsdG'):
+                    # File is probably encrypted, ignore it.
+                    continue
                 line = line.strip()
                 if line and not line.startswith('#'):
                     parts = line.split(' ')

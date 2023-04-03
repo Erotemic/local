@@ -1,13 +1,11 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Used by
 $HOME/local/homelinks/helpers/git_helpers.sh
 """
-from __future__ import absolute_import, division, print_function
 import sys
 import re
 import os
-from six.moves import zip
 from os.path import exists, join, dirname, split, isdir
 import REPOS1
 
