@@ -3,8 +3,8 @@ __doc__='
 Erotemics Bash Utilities
 ========================
 
-These are reasonably simple and standalone bash utilities that help automate 
-common bash tasks. 
+These are reasonably simple and standalone bash utilities that help automate
+common bash tasks.
 
 These utilties were written by a Python programer, and thus, while many of the
 functions are pure-bash, but some do rely on python, and many of them have the
@@ -15,7 +15,7 @@ An overview and example usage of some of the selected utilities are as follows:
 
 * have_sudo - prints True if current user is a sudoer
 
-* codeblock <TEXT> - removes leading indentation from a multiline bash string 
+* codeblock <TEXT> - removes leading indentation from a multiline bash string
 
 * pyblock [PYEXE] <TEXT> [ARGS...] - uses codeblock to remove leading indentation and executes the code in Python
 
@@ -69,7 +69,7 @@ _handle_help(){
     The commands must define a __doc__ variable then they must call
     this function as such:
 
-        _handle_help "$@" || return 
+        _handle_help "$@" || return
 
         or if using in a top-level script
 
@@ -96,7 +96,7 @@ system_python(){
         echo "python3"
     else
         echo "python"
-    fi 
+    fi
 }
 
 
@@ -127,7 +127,7 @@ have_sudo(){
     # Old python-based implementation
     #_PYEXE=$(system_python)
     #$_PYEXE -c "$(codeblock "
-    #    import grp, pwd 
+    #    import grp, pwd
     #    user = '$(whoami)'
     #    groups = [g.gr_name for g in grp.getgrall() if user in g.gr_mem]
     #    gid = pwd.getpwnam(user).pw_gid
@@ -230,7 +230,7 @@ pyblock(){
             import sys
             print(sys.argv)
         " "arg1" "arg2 and still arg2" arg3)
-        echo "OUTPUT = $OUTPUT" 
+        echo "OUTPUT = $OUTPUT"
     '
     _handle_help "$@" || return 0
     if [[ $# -eq 0 ]]; then
@@ -261,15 +261,15 @@ pyblock(){
 
 codeblock()
 {
-    if [ "-h" == "$1" ] || [ "--help" == "$1" ]; then 
+    if [ "-h" == "$1" ] || [ "--help" == "$1" ]; then
         # Use codeblock to show the usage of codeblock, so you can use
         # codeblock while you codeblock.
         codeblock '
             Unindents code before its executed so you can maintain a pretty
-            indentation in your code file. Multiline strings simply begin  
-            with 
+            indentation in your code file. Multiline strings simply begin
+            with
                 "$(codeblock "
-            and end with 
+            and end with
                 ")"
 
             Usage:
@@ -426,7 +426,7 @@ append_if_missing()
 
     Example:
         source $HOME/local/init/utils.sh
-        
+
         fpath="/tmp/foo.txt"
         text="my config option"
 
@@ -455,7 +455,7 @@ append_if_missing()
 
 exists(){
     __doc__='
-    Bash version of os.path.exists from Python 
+    Bash version of os.path.exists from Python
 
     Returns 0 if the path exists, otherwise returns 1
 
@@ -615,13 +615,13 @@ apt_ensure(){
     if we already have all requested packages.
 
     Args:
-        *ARGS : one or more requested packages 
+        *ARGS : one or more requested packages
 
     Environment:
         UPDATE : if this is populated also runs and apt update
 
     Example:
-        apt_ensure git curl htop 
+        apt_ensure git curl htop
     "
     _handle_help "$@" || return 0
     # Note the $@ is not actually an array, but we can convert it to one
@@ -630,7 +630,7 @@ apt_ensure(){
     MISS_PKGS=()
     HIT_PKGS=()
     _SUDO=""
-    if [ "$(whoami)" != "root" ]; then 
+    if [ "$(whoami)" != "root" ]; then
         # Only use the sudo command if we need it (i.e. we are not root)
         _SUDO="sudo "
     fi
@@ -638,7 +638,7 @@ apt_ensure(){
     for PKG_NAME in ${ARGS[@]}
     do
         # Check if the package is already installed or not
-        if dpkg -l "$PKG_NAME" | grep "^ii *$PKG_NAME" > /dev/null; then 
+        if dpkg -l "$PKG_NAME" | grep "^ii *$PKG_NAME" > /dev/null; then
             echo "Already have PKG_NAME='$PKG_NAME'"
             # shellcheck disable=SC2268,SC2206
             HIT_PKGS=(${HIT_PKGS[@]} "$PKG_NAME")
@@ -697,7 +697,7 @@ sedfile(){
     #echo "SEARCH='$SEARCH'"
     #echo "REPLACE='$REPLACE'"
     #echo "INPLACE='$INPLACE'"
-    # Do replace into a temp file 
+    # Do replace into a temp file
     # https://stackoverflow.com/questions/15965073/return-value-of-sed-for-no-match/15966279
     grep -q -m 1 "${SEARCH}" "${FILEPATH}"
     RET_CODE="$?"
@@ -717,10 +717,10 @@ sedr(){
     Recursive sed
 
     Args:
-        search 
+        search
         replace
         pattern (passed as -iname to find defaults to *.py)
-        live_run 
+        live_run
 
     Example:
         __EROTEMIC_ALWAYS_RELOAD__=1
@@ -750,7 +750,7 @@ sedr(){
     #find . -type f -iname "${PATTERN}" -print
     if [[ "$INPLACE" == "True" ]]; then
         # Live RUN
-        find . -type f -iname "${PATTERN}" -exec sed -i "s|${SEARCH}|${REPLACE}|g" {} + 
+        find . -type f -iname "${PATTERN}" -exec sed -i "s|${SEARCH}|${REPLACE}|g" {} +
     else
         # https://unix.stackexchange.com/questions/97297/how-to-report-sed-in-place-changes
         #find . -type f -iname "${PATTERN}" -exec sed "s|${SEARCH}|${REPLACE}|g" {} + | grep "${REPLACE}"
@@ -783,8 +783,8 @@ exthist(){
         __EROTEMIC_ALWAYS_RELOAD__=1
         source $HOME/local/init/utils.sh && exthist $HOME/code/ubelt -a -r
         source $HOME/local/init/utils.sh && exthist $HOME/local -r
-        source $HOME/local/init/utils.sh && exthist $HOME/local 
-        exthist $HOME/local -r 
+        source $HOME/local/init/utils.sh && exthist $HOME/local
+        exthist $HOME/local -r
         exthist $HOME/local
 
         exthist --help
@@ -813,7 +813,7 @@ exthist(){
             *)    # unknown option
             echo "$1"
             # all other positional args specify directories
-            DPATH_LIST+=("$1") 
+            DPATH_LIST+=("$1")
             shift # past argument
             ;;
         esac
@@ -850,22 +850,22 @@ exthist(){
 
             #echo "ALL_SUBDIRS = $(bash_array_repr "${ALL_SUBDIRS[@]}")"
             #echo "n=${#ALL_SUBDIRS[@]}"
-            #find "${ALL_SUBDIRS[@]}" -maxdepth 1 -xtype f -path '*/*.*' 
+            #find "${ALL_SUBDIRS[@]}" -maxdepth 1 -xtype f -path '*/*.*'
 
             # TODO: breakup dirs option
-            # TODO: 
+            # TODO:
             find "${ALL_SUBDIRS[@]}" -maxdepth 1 -xtype f -path '*/*.*' | rev | cut -d. -f1 | cut -d/ -f1 | rev  | tr '[:upper:]' '[:lower:]' | sort | uniq --count | sort -rn
 
         else
             # Logic is
-            # reverse the string, 
-            # remove everything after the "first" . and / 
+            # reverse the string,
+            # remove everything after the "first" . and /
             # reverse again (aka we got everything after the last . or /)
             # convert to lowercase
             # sort, unique, and count
             find "$DPATH" -maxdepth 1 -xtype f | rev | cut -d. -f1 | cut -d/ -f1 | rev  | tr '[:upper:]' '[:lower:]' | sort | uniq --count | sort -rn
         fi
-    done 
+    done
 
     #echo "
     #* RECURSIVE = $RECURSIVE
@@ -906,8 +906,8 @@ _extlist_group(){
     #echo "+!!FIND_FILE_OPTS = $FIND_FILE_OPTS"
     #local _DPATH
     for _DPATH in "$@"; do
-        #find $_DPATH -maxdepth 1 -xtype f "$FIND_FILE_OPTS" | rev | cut -d. -f1 | cut -d/ -f1 | rev  | tr '[:upper:]' '[:lower:]' 
-        find "$_DPATH" -maxdepth 1 -xtype f | rev | cut -d. -f1 | cut -d/ -f1 | rev  | tr '[:upper:]' '[:lower:]' 
+        #find $_DPATH -maxdepth 1 -xtype f "$FIND_FILE_OPTS" | rev | cut -d. -f1 | cut -d/ -f1 | rev  | tr '[:upper:]' '[:lower:]'
+        find "$_DPATH" -maxdepth 1 -xtype f | rev | cut -d. -f1 | cut -d/ -f1 | rev  | tr '[:upper:]' '[:lower:]'
         #echo "-!! _DPATH = $_DPATH"
     done
     #echo "!!FIND_FILE_OPTS = $FIND_FILE_OPTS"
@@ -975,7 +975,7 @@ bash_array_repr(){
 #            # User specified a specific set of remotes
 #            # Always force when user specifies the remotes
 #            FORCE=YES
-#            for REMOTE in "${POSITIONAL[@]}" 
+#            for REMOTE in "${POSITIONAL[@]}"
 #            do :
 #                echo "REMOTE = $REMOTE"
 #                if [ "$UNMOUNT" == "YES" ]; then
@@ -990,7 +990,7 @@ bash_array_repr(){
 #            echo "ERROR NEED TO SPECIFY REMOTE"
 #        fi
 #    fi
-    
+
 #}
 
 
@@ -1020,7 +1020,7 @@ curl_verify_hash(){
         EXPECTED_HASH="fdsfsd"
 
         __EROTEMIC_ALWAYS_RELOAD__=1
-        source $HOME/local/init/utils.sh 
+        source $HOME/local/init/utils.sh
 
         URL=https://file-examples-com.github.io/uploads/2017/02/file_example_JSON_1kb.json \
         VERBOSE=0 \
@@ -1032,7 +1032,7 @@ curl_verify_hash(){
             curl_verify_hash
 
         __EROTEMIC_ALWAYS_RELOAD__=1
-        source $HOME/local/init/utils.sh 
+        source $HOME/local/init/utils.sh
         GO_KEY=go1.17.5.linux-amd64
         URL="https://go.dev/dl/${GO_KEY}.tar.gz"
         declare -A GO_KNOWN_HASHES=(
@@ -1165,7 +1165,7 @@ joinby(){
         *ARR: elements of the strings to join
 
     Usage:
-        source $HOME/local/init/utils.sh 
+        source $HOME/local/init/utils.sh
         ARR=("foo" "bar" "baz")
         RESULT=$(joinby / "${ARR[@]}")
         echo "RESULT = $RESULT"
@@ -1219,7 +1219,7 @@ is_probably_decrypted(){
 		echo "False"
         return 2
     else
-        # check if the first line contains "Salted" in base64 
+        # check if the first line contains "Salted" in base64
         # (indicative of openssl encryption)
         firstbytes=$(head -c8 "$FPATH" | LC_ALL=C tr -d '\0')
         if [[ $firstbytes == "U2FsdGVk" ]]; then
@@ -1311,7 +1311,7 @@ ls_array(){
     fi
     if [[ "$toggle_nullglob" == "1" ]]; then
         # Disable nullglob if it was off to make sure it doesn't interfere with anything later
-        shopt -u nullglob 
+        shopt -u nullglob
     fi
     # Copy the array into the dynamically named variable
     readarray -t "$arr_name" < <(printf '%s\n' "${array[@]}")
@@ -1320,7 +1320,7 @@ ls_array(){
 
 string_contains() {
     __doc__='
-    Check the string in argument 1 contains the string in argument 2. 
+    Check the string in argument 1 contains the string in argument 2.
 
     Args:
         string : the string to search
