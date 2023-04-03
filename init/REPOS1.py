@@ -167,7 +167,7 @@ def _parse_custom_urls():
                 # if line.startswith('U2FsdGVk'):
                 if line.startswith('U2FsdG'):
                     # File is probably encrypted, ignore it.
-                    continue
+                    break
                 line = line.strip()
                 if line and not line.startswith('#'):
                     parts = line.split(' ')
