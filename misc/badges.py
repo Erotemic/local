@@ -69,6 +69,7 @@ crall-thesis-2017
 
 
 pypogo
+sm64-random-assets
 shitspotter
 
 """.split('\n')
@@ -90,7 +91,7 @@ computer-vision/ndsampler
 computer-vision/delayed_image
 computer-vision/cmd_queue
 
-watch/watch
+computer-vision/geowatch
 """.split('\n')
 
 
@@ -113,7 +114,8 @@ def main():
 
     nopypi_list = [
         'hotspotter', 'crall-thesis-2017', 'shitspotter',
-        'watch/watch',
+        'sm64-random-assets',
+        # 'watch/watch',
     ]
 
     refs = [[f'|gh_sheild_{repo_suffix}|'] for repo_suffix in github_repos if repo_suffix.strip()]
@@ -233,7 +235,7 @@ def main():
     subset = subset.rename(mapping, axis=1)
     tablestr = tabulate(subset.values.tolist(), tablefmt='markdown', headers=subset.columns)
     # print(tablestr)
-    print(subset.to_markdown())
+    print(ub.highlight_code(subset.to_markdown(), 'markdown'))
 
 
 # .. ..  Notes

@@ -451,6 +451,14 @@ if [ -f "$HOME/.bash_completion.d/python-argcomplete" ]; then
     source ~/.bash_completion.d/python-argcomplete
 fi
 
+__note__='
+Per CLI enable
+
+eval "$(register-python-argcomplete geowatch)"
+eval "$(register-python-argcomplete kwcoco)"
+
+'
+
 
 # Would be nice if there was a better way so this just installed
 lfcd () {

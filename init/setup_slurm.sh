@@ -1,6 +1,6 @@
 #!/bin/bash
 __doc__='
-Script to help setup slurm. 
+Script to help setup slurm.
 
 This script is only meant to get slurm working for the use-case where a single
 user is using it as a queue on a single system. In general slurm is much more
@@ -10,7 +10,7 @@ powerful and can provide resource managment across distributed systems. See
 This script was designed to be run interactively. In other words the user
 should not simply execute this script blindly. Instead, the user should look at
 each section, understand what it does, potentially modify it to their
-specifications, and execute it explicitly. 
+specifications, and execute it explicitly.
 
 To use it as a non-interactive script you can try...
     source ~/local/init/setup_slurm.sh && run_fresh_slurm_install
@@ -29,22 +29,8 @@ References:
 '
 
 # ----------------------------------
-# A subset of Jon Crall's bash utilities 
+# A subset of Jon Crall's bash utilities
 # source ~/local/init/utils.sh
-
-system_python(){
-    __doc__="
-    Return name of system python
-    "
-    if [ "$(type -P python)" != "" ]; then
-        echo "python"
-    elif [ "$(type -P python3)" != "" ]; then
-        echo "python3"
-    else
-        echo "python"
-    fi 
-}
-
 
 have_sudo(){
     __doc__='
@@ -88,13 +74,13 @@ apt_ensure(){
     if we already have all requested packages.
 
     Args:
-        *ARGS : one or more requested packages 
+        *ARGS : one or more requested packages
 
     Environment:
         UPDATE : if this is populated also runs and apt update
 
     Example:
-        apt_ensure git curl htop 
+        apt_ensure git curl htop
     "
     # Note the $@ is not actually an array, but we can convert it to one
     # https://linuxize.com/post/bash-functions/#passing-arguments-to-bash-functions
@@ -102,7 +88,7 @@ apt_ensure(){
     MISS_PKGS=()
     HIT_PKGS=()
     # Root on docker does not use sudo command, but users do
-    if [ "$(whoami)" == "root" ]; then 
+    if [ "$(whoami)" == "root" ]; then
         _SUDO=""
     else
         _SUDO="sudo "
@@ -112,7 +98,7 @@ apt_ensure(){
     do
         #apt_ensure_single $EXE_NAME
         RESULT=$(dpkg -l "$PKG_NAME" | grep "^ii *$PKG_NAME")
-        if [ "$RESULT" == "" ]; then 
+        if [ "$RESULT" == "" ]; then
             echo "Do not have PKG_NAME='$PKG_NAME'"
             # shellcheck disable=SC2268,SC2206
             MISS_PKGS=(${MISS_PKGS[@]} "$PKG_NAME")
@@ -138,7 +124,7 @@ codeblock()
     # Prevents python indentation errors in bash
     #python -c "from textwrap import dedent; print(dedent('$1').strip('\n'))"
     local PYEXE
-    PYEXE=$(system_python)
+    PYEXE=python3
     echo "$1" | $PYEXE -c "import sys; from textwrap import dedent; print(dedent(sys.stdin.read()).strip('\n'))"
 }
 
@@ -150,7 +136,7 @@ pyblock(){
     necessary to escape some characters.'
 
     # Default values
-    PYEXE=$(system_python)
+    PYEXE=python3
     TEXT=""
     if [ $# -gt 1 ] && [[ $(type -P "$1") != "" ]] ; then
         # If the first arg executable, then assume it is a python executable
@@ -177,7 +163,7 @@ ensure_slurm_binaries(){
     # INSTALL THE SLURM BINARIES
     ############################
     # Ensure the slurm packages are installed
-    apt_ensure slurm slurm-client slurmctld slurmd slurmdbd slurm-wlm slurm-wlm-basic-plugins 
+    apt_ensure slurm slurm-client slurmctld slurmd slurmdbd slurm-wlm slurm-wlm-basic-plugins
 
     # On Ubuntu 21.10 installs slurm 20.11.4 this seems to install config and
     # files and make directories Trying to note them here
@@ -200,7 +186,7 @@ ensure_slurm_binaries(){
         /lib/systemd/system/slurmdbd.service
         /lib/systemd/system/slurmd.service
     "
-    
+
     # Optional: install the slurm GUI
     #apt_ensure sview
 }
@@ -270,7 +256,7 @@ setup_machine_hardware_variables(){
     MAX_MEMORY=$(python -c "import psutil; print(int(.95 * (psutil.virtual_memory().total - psutil.swap_memory().total) / 1e6))")
 
     # Get information about CPUS
-    # Note: 
+    # Note:
     #lscpu | grep -E '^Thread|^Core|^Socket|^CPU\('
     NUM_CPUS=$(cat /proc/cpuinfo | awk '/^processor/{print $3}' | wc -l)
     NUM_SOCKETS=$(lscpu | grep -E '^Thread' | awk '{split($0,a,":"); print a[2]}' | tr -d '[:space:]')
@@ -284,7 +270,7 @@ setup_machine_hardware_variables(){
     # Note:
     # slurmd -C will print the physical configuration of the system
     ###########################
-    # REPORT THE INFERED VALUES 
+    # REPORT THE INFERED VALUES
     ###########################
 
     codeblock "
@@ -296,7 +282,7 @@ setup_machine_hardware_variables(){
 
     MAX_MEMORY='$MAX_MEMORY'
 
-    # Note NUM_CPUS should be equal to NUM_SOCKETS * NUM_CORES * NUM_THREADS_PER_CORE 
+    # Note NUM_CPUS should be equal to NUM_SOCKETS * NUM_CORES * NUM_THREADS_PER_CORE
     NUM_CPUS='$NUM_CPUS'
     NUM_SOCKETS='$NUM_SOCKETS'
     NUM_CORES='$NUM_CORES'
@@ -315,10 +301,10 @@ generate_slurm_config(){
     ############################################
     # GENERATE REASONABLE DEFAULT CONFIGURATIONS
     ############################################
-    echo "Checking for default slurm config" 
+    echo "Checking for default slurm config"
 
     setup_machine_hardware_variables
-    
+
 
     # This config is for newer versions of slurm
     # NEW
@@ -348,7 +334,7 @@ generate_slurm_config(){
             TaskPlugin=task/none
             InactiveLimit=0
             KillWait=30
-            MinJobAge=7776000 
+            MinJobAge=7776000
             SlurmctldTimeout=120
             SlurmdTimeout=300
             Waittime=0
@@ -370,8 +356,8 @@ generate_slurm_config(){
             SlurmdLogFile=$SLURM_LOG_DPATH/slurmd.log
             NodeName=$CONTROL_MACHINE Gres=gpu:$NUM_GPUS NodeAddr=localhost CPUs=$NUM_CPUS RealMemory=$MAX_MEMORY Sockets=$NUM_SOCKETS CoresPerSocket=$NUM_CORES ThreadsPerCore=$NUM_THREADS_PER_CORE State=UNKNOWN TmpDisk=223895
             PartitionName=bot Nodes=$CONTROL_MACHINE Default=YES MaxTime=INFINITE State=UP Priority=0
-            PartitionName=mid Nodes=$CONTROL_MACHINE Default=NO MaxTime=INFINITE State=UP Priority=10 
-            PartitionName=top Nodes=$CONTROL_MACHINE Default=NO MaxTime=INFINITE State=UP Priority=100 
+            PartitionName=mid Nodes=$CONTROL_MACHINE Default=NO MaxTime=INFINITE State=UP Priority=10
+            PartitionName=top Nodes=$CONTROL_MACHINE Default=NO MaxTime=INFINITE State=UP Priority=100
             PreemptType=preempt/partition_prio
             PreemptMode=REQUEUE
             ")
@@ -446,8 +432,8 @@ generate_slurm_config(){
         # Create named partitions with different priorities
         PartitionName=debug Nodes=ALL Default=YES MaxTime=INFINITE State=UP
         PartitionName=bot Nodes=$CONTROL_MACHINE Default=NO MaxTime=INFINITE State=UP Priority=0
-        PartitionName=mid Nodes=$CONTROL_MACHINE Default=NO MaxTime=INFINITE State=UP Priority=10 
-        PartitionName=top Nodes=$CONTROL_MACHINE Default=NO MaxTime=INFINITE State=UP Priority=100 
+        PartitionName=mid Nodes=$CONTROL_MACHINE Default=NO MaxTime=INFINITE State=UP Priority=10
+        PartitionName=top Nodes=$CONTROL_MACHINE Default=NO MaxTime=INFINITE State=UP Priority=100
         ")
 
         # Replaced new parts
@@ -488,7 +474,7 @@ generate_slurm_config(){
         echo "already exists SLURM_CONFIG_FPATH = $SLURM_CONFIG_FPATH"
     fi
 
-    sudo chmod 600 "$SLURMDBD_CONFIG_FPATH"
+    #sudo chmod 600 "$SLURMDBD_CONFIG_FPATH"
     sudo chmod 644 "$SLURM_CONFIG_FPATH"
     sudo chmod 644 "$SLURM_GRES_FPATH"
     sudo chmod a+rX $SLURM_ETC_DPATH
@@ -525,19 +511,20 @@ slurm_extra_config(){
     echo "ensure SLURM_LIB_DPATH = $SLURM_LIB_DPATH"
     echo "ensure SLURM_LOG_DPATH = $SLURM_LOG_DPATH"
     echo "ensure SLURM_ETC_DPATH = $SLURM_ETC_DPATH"
-    sudo mkdir -p $SLURM_LOG_DPATH
-    sudo mkdir -p $SLURM_RUN_DPATH
-    sudo mkdir -p $SLURM_LIB_DPATH
-    sudo mkdir -p $SLURM_ETC_DPATH
-    sudo mkdir -p $SLURM_ETC_DPATH
-    
+    sudo mkdir -p "$SLURM_LOG_DPATH"
+    sudo mkdir -p "$SLURM_RUN_DPATH"
+    sudo mkdir -p "$SLURM_LIB_DPATH"
+    sudo mkdir -p "$SLURM_ETC_DPATH"
+    sudo mkdir -p "$SLURM_ETC_DPATH"
+
     SLURMDBD_CONFIG_FPATH=$SLURM_ETC_DPATH/slurmdbd.conf
     if [ ! -f "$SLURMDBD_CONFIG_FPATH" ] || [ "$SLURM_RESET_CONFIG_FLAG" ] ; then
-        sudo_writeto $SLURMDBD_CONFIG_FPATH "$SLURMDBD_CONFIG_TEXT"
+        sudo_writeto "$SLURMDBD_CONFIG_FPATH" "$SLURMDBD_CONFIG_TEXT"
         echo "write to SLURMDBD_CONFIG_FPATH = $SLURMDBD_CONFIG_FPATH"
     else
         echo "already exists SLURMDBD_CONFIG_FPATH = $SLURMDBD_CONFIG_FPATH"
     fi
+    sudo chmod 600 "$SLURMDBD_CONFIG_FPATH"
 
     SLURM_CGROUP_FPATH=$SLURM_ETC_DPATH/cgroup.conf
     SLURM_CGROUP_TEXT=$(codeblock "
@@ -548,7 +535,7 @@ slurm_extra_config(){
     ConstrainRAMSpace=yes
     ")
     if [ ! -f "$SLURM_CGROUP_FPATH" ] || [ "$SLURM_RESET_CONFIG_FLAG" ] ; then
-        sudo_writeto $SLURM_CGROUP_FPATH "$SLURM_CGROUP_TEXT"
+        sudo_writeto "$SLURM_CGROUP_FPATH" "$SLURM_CGROUP_TEXT"
         echo "write to SLURM_CGROUP_FPATH = $SLURM_CGROUP_FPATH"
     else
         echo "already exists SLURM_CGROUP_FPATH = $SLURM_CGROUP_FPATH"
@@ -673,7 +660,7 @@ activate_slurm(){
     sudo systemctl start slurmd
 
     #echo "[setup_slurm] activate_slurm - restart service"
-    #sudo systemctl restart slurmctld slurmdbd slurmd 
+    #sudo systemctl restart slurmctld slurmdbd slurmd
 
     echo "[setup_slurm] activate_slurm - check status"
     systemctl status slurmctld slurmdbd slurmd -l --no-pager
@@ -689,15 +676,17 @@ activate_slurm(){
 troubleshoot_slurm(){
     __doc__="""
     Following [2]_ to troubleshoot issue with error: '
-    
+
     srun: Required node not available (down, drained or reserved'.
 
     References:
         ..[2] https://slurm.schedmd.com/troubleshoot.html
     """
     # Double check everything wrote out correctly
-    cat /etc/slurm-llnl/gres.conf
-    pygmentize -l pacmanconf /etc/slurm-llnl/slurm.conf
+    #cat /etc/slurm-llnl/gres.conf
+    #pygmentize -l pacmanconf /etc/slurm-llnl/slurm.conf
+    cat /etc/slurm/gres.conf
+    pygmentize -l pacmanconf /etc/slurm/slurm.conf
 
     # Is the daemon running?
     pgrep slurmctld
@@ -707,9 +696,10 @@ troubleshoot_slurm(){
     scontrol ping
 
     # Check the log-dir for indications of failure
-    ls /var/log/slurm-llnl/
-    sudo cat /var/log/slurm-llnl/slurmd.log
-    sudo cat /var/log/slurm-llnl/slurmctld.log
+    #ls /var/log/slurm-llnl/
+    ls /var/log/slurm/
+    sudo cat /var/log/slurmd.log
+    sudo cat /var/log/slurmctld.log
 
     # State of each partitions
     sinfo
@@ -726,11 +716,12 @@ troubleshoot_slurm(){
     scancel --state=RUNNING
     scancel --state=SUSPENDED
 
-    sudo scontrol update nodename=namek state=idle
+    #sudo scontrol update nodename=namek state=idle
+    sudo scontrol update nodename="$HOSTNAME" state=idle
 }
 
 _debug(){
-    __doc__=" 
+    __doc__="
     Additional debugging commands. Used to develop and debug the setup script.
     Not used in production.
     "
@@ -745,7 +736,7 @@ _debug(){
 
     sudo systemctl restart slurmctld slurmd
 
-    # 
+    #
     sudo systemctl stop slurmd
     sudo systemctl disable slurmd
     sudo systemctl enable slurmd
@@ -771,14 +762,17 @@ __purge_slurm_and_config__(){
 
     Not used in the main script. Helper used in development.
     "
-    sudo apt-get purge slurm slurm-client slurmctld slurmd slurmdbd slurm-wlm slurm-wlm-basic-plugins 
+    sudo systemctl stop slurmctld slurmd
+    sudo systemctl disable slurmctld slurmd
+
+    sudo apt-get purge slurm slurm-client slurmctld slurmd slurmdbd slurm-wlm slurm-wlm-basic-plugins
 
     tree /var/*/slurm*
     tree /etc/slurm*
 
-    sudo rm -rf /var/run/slurm 
-    sudo rm -rf /var/log/slurm 
-    sudo rm -rf /var/lib/slurm 
+    sudo rm -rf /var/run/slurm
+    sudo rm -rf /var/log/slurm
+    sudo rm -rf /var/lib/slurm
 
     sudo rm -rf /var/run/slurm-llnl/
     sudo rm -rf /var/log/slurm-llnl/
@@ -805,16 +799,20 @@ slurm_usage_and_options(){
     This is a set of commands you can use to demo / test that slurm is working.
     """
 
+    # Check available partitions
+    sinfo
+
     # Queue a job in the background
     mkdir -p "$HOME/.cache/slurm/logs"
     sbatch --job-name="test_job1" --output="$HOME/.cache/slurm/logs/job-%j-%x.out" --wrap="python -c 'import sys; sys.exit(1)'"
     sbatch --job-name="test_job2" --output="$HOME/.cache/slurm/logs/job-%j-%x.out" --wrap="echo 'hello'"
 
     #ls $HOME/.cache/slurm/logs
-    cat "$HOME/.cache/slurm/logs/test_echo.log"
+    ls -al "$HOME"/.cache/slurm/logs/*.out
+    cat "$HOME"/.cache/slurm/logs/*.out
 
     # Queue a job (and block until completed)
-    srun -c 2 -p priority --gres=gpu:1 echo "hello"
+    srun -c 2 -p top --gres=gpu:1 echo "hello"
     srun echo "hello"
 
     # List jobs in the queue
@@ -827,7 +825,7 @@ slurm_usage_and_options(){
     # Cancel a job with a specific id
     scancel 6
 
-    # Cancel all jobs from a user 
+    # Cancel all jobs from a user
     scancel --user="$USER"
 
     # You can setup complicated pipelines
@@ -841,7 +839,7 @@ slurm_usage_and_options(){
     # This will not work if the slurmdbd is not running.
 
     # Jobs within since 3:30pm
-    sudo sacct --starttime 15:35:00 
+    sudo sacct --starttime 15:35:00
 
     sudo sacct
     sudo sacct --format="JobID,JobName%30,Partition,Account,AllocCPUS,State,ExitCode,elapsed,start"
@@ -862,7 +860,7 @@ run_fresh_slurm_install(){
     Note: sudo is required.
 
     Usage:
-        # First, authenticate as sudo (makes running the script smoother) 
+        # First, authenticate as sudo (makes running the script smoother)
         sudo echo authenticate as sudo
 
         # Option 1:

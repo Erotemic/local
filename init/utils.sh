@@ -308,9 +308,7 @@ _simple_codeblock()
     copy-pastable implementation
     Prevents indentation errors in bash
     '
-    local PYEXE
-    PYEXE=$(system_python)
-    echo "$1" | $PYEXE -c "import sys; from textwrap import dedent; print(dedent(sys.stdin.read()).strip('\n'))"
+    echo "$1" | python -c "import sys; from textwrap import dedent; print(dedent(sys.stdin.read()).strip('\n'))"
 }
 
 

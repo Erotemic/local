@@ -4,7 +4,6 @@ A git tool for handling the dev/<version> branch patterns
 
 See the GitDevbranchConfig for functionality
 
-<<<<<<< HEAD
 Notes:
     to remove branches from remotes
 
@@ -14,13 +13,11 @@ Notes:
 
         git fetch --prune
 
-=======
 Requires:
     scriptconfig
     git-python
     packaging
     ubelt
->>>>>>> 66db930628cabb170c48b83884c51421277b3ed3
 """
 import git
 import ubelt as ub
@@ -106,7 +103,7 @@ class CleanDevBranchConfig(scfg.DataConfig):
         remove_branches = versioned_branch_names[0:-keep_last]
 
         merged_branches = find_merged_branches(repo)
-        remove_branches = list(ub.oset(remove_branches) | ub.oset(merged_branches))
+        remove_branches = list(ub.oset(remove_branches) | ub.oset(merged_branches) - {'release'})
 
         print('remove_branches = {}'.format(ub.repr2(remove_branches, nl=1)))
         if not remove_branches:

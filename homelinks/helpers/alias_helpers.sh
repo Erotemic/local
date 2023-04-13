@@ -62,6 +62,7 @@ alias loc='cd ~/local'
 alias lc='cd ~/local'
 alias mi='cd ~/misc'
 alias sw='smartwatch'
+alias gw='geowatch'
 
 #alias vf='cd ~/local/vim/vimfiles'
 #alias vfb='cd ~/local/vim/vimfiles/bundle'
