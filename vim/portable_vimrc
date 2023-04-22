@@ -427,6 +427,7 @@ if exists("g:loaded_vimtk")
     call vimtk#quickopen('W', '~/code/watch/aws/README.rst')
 
     call vimtk#quickopen('z', '~/data/dvc-repos/smart_data_dvc/')
+    call vimtk#quickopen('Z', '~/data/dvc-repos/smart_expt_dvc/')
 else
     "echo "vimtk not loaded"
 endif
