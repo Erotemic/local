@@ -52,6 +52,57 @@ nuc_notes(){
 }
 
 
+upgrade_rocketpool_cli()
+{
+    # Download the new stuff.
+    ARCH=$(uname -m)
+    declare -A ARCH_LUT=(
+        ["x86"]="amd64"
+        ["x86_64"]="amd64"
+        ["aarch64"]="arm64"
+    )
+    ARCH="${ARCH_LUT[${ARCH}]}"
+    echo "ARCH = $ARCH"
+
+    PREFIX=$HOME/.local
+    mkdir -p "$PREFIX/bin"
+    wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/rocketpool-cli-linux-"${ARCH}" -O ./rocketpool
+    wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/rocketpool-cli-linux-"${ARCH}".sig -O ./rocketpool.sig
+    wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/smartnode-signing-key-v3.asc -O ./smartnode-signing-key-v3.asc
+
+    # Sign key belongs to:
+    # https://github.com/jclapis
+    gpg --import ./smartnode-signing-key-v3.asc
+    gpg --verify rocketpool.sig rocketpool
+
+
+    # Stop the existing node
+    rocketpool service stop
+    rocketpool --version
+
+    # Move the new cli into place
+    mv ./rocketpool "$PREFIX/bin/rocketpool"
+    chmod +x "$HOME"/.local/bin/rocketpool
+    rocketpool --version
+
+    #### TO UPGRADE FROM EXISTING INSTALL
+    # https://docs.rocketpool.net/guides/node/updates.html#updating-the-smartnode-stack
+    rocketpool service install -d
+
+    # Check the changes that were made
+    rocketpool service config
+
+    # Typically let reconfigure restart the service
+    # You might need to try several times is docker wants to be weird
+    #rocketpool service start
+
+    ## Check status:
+    rocketpool service status
+    rocketpool service version
+
+}
+
+
 install_rocketpool_cli(){
     __doc__="
     Downloads and installs rocketpool via the docker interface.
@@ -97,7 +148,6 @@ install_rocketpool_cli(){
     gpg --import ./smartnode-signing-key-v3.asc
     gpg --verify rocketpool.sig rocketpool
 
-
     mv ./rocketpool "$PREFIX/bin/rocketpool"
     chmod +x "$HOME"/.local/bin/rocketpool
     rocketpool --version
@@ -109,7 +159,7 @@ install_rocketpool_cli(){
 
     #### TO UPGRADE FROM EXISTING INSTALL
     # https://docs.rocketpool.net/guides/node/updates.html#updating-the-smartnode-stack
-    rocketpool service install -d
+    #rocketpool service install -d
 
     ## Check status:
     rocketpool service status
