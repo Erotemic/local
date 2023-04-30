@@ -153,7 +153,7 @@ Plug 'vim-scripts/taglist.vim'
 "Plug 'google/vim-searchindex'
 Plug 'ervandew/supertab'
 Plug 'davidhalter/jedi-vim'
-"Plug 'LaTeX-Box-Team/LaTeX-Box'
+Plug 'LaTeX-Box-Team/LaTeX-Box'
 
 Plug 'https://github.com/airblade/vim-gitgutter'
 Plug 'cespare/vim-toml', {'branch': 'main' }
