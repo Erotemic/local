@@ -136,6 +136,7 @@ alias work='cd ~/work'
 alias vid='cd ~/data/dvc-repos/viame_dvc'
 
 alias wa='cd $HOME/code/watch'
+alias wa2='cd $HOME/code/watch2'
 
 
 alias wad='cd $(smartwatch_dvc --tags="phase2_data" --hardware="auto")'

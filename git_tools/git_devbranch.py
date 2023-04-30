@@ -66,10 +66,14 @@ class UpdateDevBranch(scfg.DataConfig):
             # dev_branches = [b for b in repo.branches if b.name.startswith('dev/')]
             # branch_versions = sorted(dev_branches, key=lambda x: Version(x.name.split('/')[-1]))
             # latest = branch_versions[-1]
-            if repo.active_branch.name == latest.name:
+            try:
+                active_branch_name = repo.active_branch.name
+            except TypeError:
+                active_branch_name = None
+            if active_branch_name == latest.name:
                 print('Already on the latest dev branch')
             else:
-                print('repo.active_branch = {!r}'.format(repo.active_branch))
+                print('active_branch_name = {!r}'.format(active_branch_name))
                 print('latest = {!r}'.format(latest))
                 repo.git.checkout(latest.name)
 

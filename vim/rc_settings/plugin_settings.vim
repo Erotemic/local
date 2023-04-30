@@ -206,6 +206,14 @@ more_flake8_errors = {
 
 flake8_errors = flake8_errors + list(more_flake8_errors.keys())
 
+other_project_flake8_errors = {
+    'E303': 'Too many blank lines',
+    'E226': 'Spaces around operator',
+    'E231': 'Missing whitespace after ,',
+}
+if 0:
+    flake8_errors += list(other_project_flake8_errors.keys())
+
 flake8_args_list = [
     '--max-line-length 79',
     '--ignore=' + ','.join(flake8_errors)
