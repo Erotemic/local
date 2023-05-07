@@ -9,7 +9,7 @@ wine_1_9()
     sudo apt-key add Release.key
 
     wget -qO - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add -
-    
+
     wget -nc https://dl.winehq.org/wine-builds/winehq.key
     sudo apt-key add winehq.key
 
@@ -19,7 +19,7 @@ wine_1_9()
     sudo apt-add-repository "deb https://dl.winehq.org/wine-builds/ubuntu $(lsb_release -cs) main" -y
     sudo apt update && sudo apt install --install-recommends winehq-stable -y
 
-    
+
     #sudo apt update -y
     #sudo apt-add-repository 'https://dl.winehq.org/wine-builds/ubuntu/'
 
@@ -70,8 +70,8 @@ starcraft2(){
     navigate here: https://lutris.net/games/starcraft-ii/
     click install
     "
-    
-    sudo dpkg --add-architecture i386 
+
+    sudo dpkg --add-architecture i386
     sudo apt update && sudo apt upgrade -y
 
 }
@@ -89,11 +89,11 @@ starcraft2_OLD(){
     # /home/joncrall/Downloads/StarCraft-II-Setup.exe
 
     # DOUBLE CLICKED .EXE AND DID MANUAL SETUP
-    
+
 
 
     sudo add-apt-repository ppa:alexlarsson/flatpak -y
-    sudo apt-get update -y 
+    sudo apt-get update -y
     sudo apt install --install-recommends flatpak
     flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
     flatpak remote-add --if-not-exists winepak https://dl.winepak.org/repo/winepak.flatpakrepo
@@ -122,8 +122,8 @@ get_latest_winetricks(){
 
 reinstall_hearthstone(){
     # https://www.reddit.com/r/hearthstone/comments/4uspc8/are_other_linux_users_having_problems_with/
-    export WINEPREFIX="$HOME/.wine" 
-    WINEPREFIX="$HOME/.wine" 
+    export WINEPREFIX="$HOME/.wine"
+    WINEPREFIX="$HOME/.wine"
     wineboot -u
 
     wintricks vcrun2015
@@ -131,7 +131,7 @@ reinstall_hearthstone(){
     # DOWNLOAD Installer
     # http://www.battle.net/download/getInstallerForGame?os=win&locale=enUS&version=LIVE&gameProgram=HEARTHSTONE
     wine ~/Downloads/Hearthstone-Setup.exe
-    
+
     # Overrides
     #export WINEDLLOVERRIDES="api-ms-win-crt-runtime-l1-1-0.dll,api-ms-win-crt-stdio-l1-1-0.dll,ucrtbase,vcruntime140"
     #w_override_dlls disabled "api-ms-win-crt-runtime-l1-1-0.dll,api-ms-win-crt-stdio-l1-1-0.dll,ucrtbase,vcruntime140"
@@ -148,8 +148,8 @@ reinstall_hearthstone(){
 #    wine cmd /c regedit temp-override-dll.reg
     #winepreopts=(env PULSE_LATENCY_MSEC=60 WINEPREFIX="${wineprefixprefolder}/wine" WINEDLLOVERRIDES="msvcp100=n,b;api-ms-win-crt-runtime-l1-1-0=n,b;api-ms-win-crt-heap-l1-1-0=n,b;api-ms-win-crt-locale-l1-1-0=n,b;api-ms-win-crt-stdio-l1-1-0=n,b;ucrtbase=n,b;vcruntime140=n,b;api-ms-win-crt-convert-l1-1-0=n,b;api-ms-win-crt-time-l1-1-0=n,b;")
     #winepostopts=(-opengl)
-    #"${winepreopts[@]}" wine start 'C:\users\Public\Desktop\StarCraft II.lnk' "${winepostopts[@]}" 2&>>/dev/null & 
-    
+    #"${winepreopts[@]}" wine start 'C:\users\Public\Desktop\StarCraft II.lnk' "${winepostopts[@]}" 2&>>/dev/null &
+
 
 }
 
@@ -165,17 +165,17 @@ new_wine32_install(){
     # Start fresh with a new wine directory
     rm -rf $HOME/.wine32-dotnet45
 
-    # Make new WINEPREFIX 
-    export WINEPREFIX="$HOME/.wine32-dotnet45" 
+    # Make new WINEPREFIX
+    export WINEPREFIX="$HOME/.wine32-dotnet45"
     export WINEARCH=win32
-    WINEPREFIX="$HOME/.wine32-dotnet45" 
+    WINEPREFIX="$HOME/.wine32-dotnet45"
     WINEARCH=win32
 
     echo "WINEARCH=$WINEARCH"
     echo "WINEPREFIX=$WINEPREFIX"
 
     echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
-    
+
     # Initial configuration of new wine prefix
     wineboot -u
     # Run and exit
@@ -185,9 +185,9 @@ new_wine32_install(){
     ~/tmp/winetricks -q --unattended windowscodecs msxml3 mfc42
     ~/tmp/winetricks -q --unattended corefonts
     ~/tmp/winetricks -q --unattended dotnet45
-    
-    
-    #bash winetricks -q dotnet30 
+
+
+    #bash winetricks -q dotnet30
     # Had to do a manual download in this process
     ~/tmp/winetricks -q corefonts
     ~/tmp/winetricks -q dotnet452
@@ -221,16 +221,16 @@ dotnet_winetricks(){
 
 install_hearthstone()
 {
-    #export WINEPREFIX="$HOME/.wine32-dotnet45" 
+    #export WINEPREFIX="$HOME/.wine32-dotnet45"
     #export WINEARCH=win32
-    #WINEPREFIX="$HOME/.wine32-dotnet45" 
+    #WINEPREFIX="$HOME/.wine32-dotnet45"
     #WINEARCH=win32
-    #export WINEPREFIX="$HOME/.wine32-dotnet45" 
+    #export WINEPREFIX="$HOME/.wine32-dotnet45"
     #export WINEARCH=win32
-    #WINEPREFIX="$HOME/.wine32-dotnet45" 
+    #WINEPREFIX="$HOME/.wine32-dotnet45"
     #WINEARCH=win32
-    export WINEPREFIX="$HOME/.wine" 
-    WINEPREFIX="$HOME/.wine" 
+    export WINEPREFIX="$HOME/.wine"
+    WINEPREFIX="$HOME/.wine"
     # https://www.reddit.com/r/hearthstone/comments/23fwzq/tutorial_how_to_play_hearthstone_on_linux_via_wine/
 
     # rm -rf .wine
@@ -283,7 +283,7 @@ install_hearthstone()
     qmake ArenaTracker.pro -r -spec linux-g++
     cd ~/code/build-ArenaTracker-Desktop_Qt_5_6_1_GCC_64bit-Release
     make -j9
-    
+
 
 
     #cd ~/tmp
@@ -316,17 +316,17 @@ ubuntu_wine_prereqs(){
     sudo apt-get install python-wxgtk2.8
     sudo apt-get install python-wxversion
     sudo apt-get install python-wxpython
-    
+
     python -c "import wxversion"
     python2.6 -c "import wxversion"
     python3 -c "import wxversion"
 
-    sudo pip install --upgrade --trusted-host wxpython.org --pre -f http://wxpython.org/Phoenix/snapshot-builds/ wxPython_Phoenix 
+    sudo pip install --upgrade --trusted-host wxpython.org --pre -f http://wxpython.org/Phoenix/snapshot-builds/ wxPython_Phoenix
     sudo -H pip install --upgrade --pre -f http://wxpython.org/Phoenix/snapshot-builds/ --trusted-host wxpython.org wxPython_Phoenix
-    
+
 
     python -c "import wx; print(wx.VERSION_STRING)"
-    
+
 
     sudo apt-get install playonlinux
     sudo apt-get remove playonlinux
@@ -338,7 +338,7 @@ ubuntu_wine_prereqs(){
     #sudo apt-get install wine -y
 
     # Prevents
-    # p11-kit: couldn't load module: /usr/lib/i386-linux-gnu/pkcs11/p11-kit-trust.so: 
+    # p11-kit: couldn't load module: /usr/lib/i386-linux-gnu/pkcs11/p11-kit-trust.so:
     # /usr/lib/i386-linux-gnu/pkcs11/p11-kit-trust.so: cannot open shared object file: No such file or directory
     sudo apt-get install libp11-kit-gnome-keyring:i386
     sudo apt-get install winbind
@@ -379,7 +379,7 @@ linux_arena_tracker(){
     touch ~/.wine/drive_c/users/joncrall/Local\ Settings/Application\ Data/Blizzard/Hearthstone/Logs/log.config
 
     # Can edit build Settings to Release mode in project settings
-    # in the qt creator when in the arenatracker project 
+    # in the qt creator when in the arenatracker project
 
     chmod +x /home/joncrall/code/build-ArenaTracker-Desktop_Qt_5_6_1_GCC_64bit-Debug/ArenVaTracker
     cd ~/code/Arena-Tracker/opencv_install/lib
@@ -412,9 +412,9 @@ linux_arena_tracker(){
     #theme=1
     #tooltipScale=10
     #transparent=1
-        
-    
-    
+
+
+
 }
 
 
@@ -446,7 +446,7 @@ install_cockatrice()
 
     apt-file search Qt5MultimediaConfig.cmake
     apt-file search Qt5SvgConfig.cmake
-    
+
     sudo apt install qtbase5-dev qtmultimedia5-dev libqt5svg5-dev libqt5websockets5-dev -y
 
     fix_mesa_libEGL(){
@@ -468,7 +468,7 @@ install_cockatrice()
         # REMOVE IT
         sudo unlink /usr/lib/x86_64-linux-gnu/libEGL.so
 
-        # FIND WHICH ONES DO EXIST 
+        # FIND WHICH ONES DO EXIST
         ls /usr/lib/x86_64-linux-gnu/libEGL*
         # Not sure if option (a) or (b) is right
         # (a) ln -s /usr/lib/x86_64-linux-gnu/libEGL.so.1 /usr/lib/x86_64-linux-gnu/libEGL.so
@@ -477,7 +477,7 @@ install_cockatrice()
     }
 
     deactivate_venv
-    
+
     cd ~/code
     git clone https://github.com/Cockatrice/Cockatrice
     cd ~/code/Cockatrice
@@ -486,7 +486,7 @@ install_cockatrice()
     cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/.local
     make -j9
     make install
-    
+
     #cmake .. -DWITH_QT4=1 -DWITH_SERVER=0 -DWITH_CLIENT=1 -DWITH_ORACLE=1 -DCMAKE_INSTALL_PREFIX=$HOME/.local
     #make -j9
     #make install
@@ -497,4 +497,8 @@ shandalar(){
     # This sort of works, but crashes with visual glitches when I try to start a new game
     cd /home/joncrall/Documents/mtg/Manalink_1.3.2/Manalink1.3.2_20010711
     wine Magic/Program/Magic.exe
+}
+
+install_dolphin(){
+
 }

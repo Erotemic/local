@@ -12,8 +12,29 @@ import git as pygit
 import ubelt as ub
 
 
+def find_git_root(dpath):
+    cwd = dpath.resolve()
+    parts = cwd.parts
+
+    for i in reversed(range(0, len(parts))):
+        p = ub.Path(*parts[0:i])
+        cand = p / '.git'
+        if cand.exists():
+            return p
+
+    return None
+
+
 def main():
-    repo = pygit.Repo('.')
+    dpath = ub.Path('.')
+    repo_root = find_git_root(dpath)
+
+    if repo_root is None:
+        raise Exception('Could not find git repo')
+
+    # Find the repo root.
+    import os
+    repo = pygit.Repo(os.fspath(repo_root))
 
     assert not repo.active_branch.is_remote()
     assert repo.active_branch.is_valid()
