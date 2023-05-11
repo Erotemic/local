@@ -159,8 +159,7 @@ noremap  <leader>a :call vimtk#execute_text_in_terminal(mode())<CR>
 vnoremap <leader>a :call vimtk#execute_text_in_terminal(visualmode())<CR>
 noremap  <leader>m :call vimtk#execute_text_in_terminal('word')<CR>
 
-vnoremap <leader>a :call ToggleTermSendVisualLines()<CR>
-#"vimtk#execute_text_in_terminal(visualmode())<CR>
+"vimtk#execute_text_in_terminal(visualmode())<CR>
 
 noremap <leader>C :call vimtk#copy_current_fpath()<Esc>
 noremap <leader>f :call vimtk#copy_current_module()<Esc>

@@ -38,13 +38,13 @@ apt_ensure(){
     if we already have all requested packages.
 
     Args:
-        *ARGS : one or more requested packages 
+        *ARGS : one or more requested packages
 
     Environment:
         UPDATE : if this is populated also runs and apt update
 
     Example:
-        apt_ensure git curl htop 
+        apt_ensure git curl htop
     "
     # Note the $@ is not actually an array, but we can convert it to one
     # https://linuxize.com/post/bash-functions/#passing-arguments-to-bash-functions
@@ -52,7 +52,7 @@ apt_ensure(){
     MISS_PKGS=()
     HIT_PKGS=()
     # Root on docker does not use sudo command, but users do
-    if [ "$(whoami)" == "root" ]; then 
+    if [ "$(whoami)" == "root" ]; then
         _SUDO=""
     else
         _SUDO="sudo "
@@ -62,7 +62,7 @@ apt_ensure(){
     do
         #apt_ensure_single $EXE_NAME
         RESULT=$(dpkg -l "$PKG_NAME" | grep "^ii *$PKG_NAME")
-        if [ "$RESULT" == "" ]; then 
+        if [ "$RESULT" == "" ]; then
             echo "Do not have PKG_NAME='$PKG_NAME'"
             # shellcheck disable=SC2268,SC2206
             MISS_PKGS=(${MISS_PKGS[@]} "$PKG_NAME")
@@ -89,7 +89,7 @@ ensure_required_packages(){
     "
 
     # Root on docker does not use sudo command, but users do
-    if [ "$(whoami)" == "root" ]; then 
+    if [ "$(whoami)" == "root" ]; then
         _SUDO=""
     else
         _SUDO="sudo "
@@ -119,21 +119,21 @@ system_python(){
         echo "python3"
     else
         echo "python"
-    fi 
+    fi
 }
 
 
 codeblock()
 {
-    if [ "-h" == "$1" ] || [ "--help" == "$1" ]; then 
+    if [ "-h" == "$1" ] || [ "--help" == "$1" ]; then
         # Use codeblock to show the usage of codeblock, so you can use
         # codeblock while you codeblock.
         codeblock '
             Unindents code before its executed so you can maintain a pretty
-            indentation in your code file. Multiline strings simply begin  
-            with 
+            indentation in your code file. Multiline strings simply begin
+            with
                 "$(codeblock "
-            and end with 
+            and end with
                 ")"
 
             Usage:
@@ -365,7 +365,7 @@ install_go(){
         ["go1.18.10.linux-armv6l-sha256"]="e9f2f2361364c04a8f0d12228e4c5c2b870f4d1639ca92031c4013a95aa205be"
         ["go1.18.10.linux-ppc64le-sha256"]="761014290febf0e10dfeba44ec551792dad32270a11debee8ed4f30c5f3c760d"
         ["go1.18.10.linux-s390x-sha256"]="9755ab0460a04b535e513fac84db2e1ae6a197d66d3a097e14aed3b3114df85d"
-    
+
         ["go1.17.5.linux-386-sha256"]="4f4914303bc18f24fd137a97e595735308f5ce81323c7224c12466fd763fc59f"
         ["go1.17.5.linux-amd64-sha256"]="bd78114b0d441b029c8fe0341f4910370925a4d270a6a590668840675b0c653e"
         ["go1.17.5.linux-arm64-sha256"]="6f95ce3da40d9ce1355e48f31f4eb6508382415ca4d7413b1e7a3314e6430e7e"
@@ -505,7 +505,7 @@ initialize_ipfs(){
 
     # https://github.com/lucas-clemente/quic-go/wiki/UDP-Receive-Buffer-Size
     # Optional: Increase max buffer size to 2.5MB
-    #if [ "$(whoami)" == "root" ]; then 
+    #if [ "$(whoami)" == "root" ]; then
     #    sysctl -w net.core.rmem_max=2500000
     #else
     #    sudo sysctl -w net.core.rmem_max=2500000
@@ -710,7 +710,7 @@ init_ipfs_cluster(){
 
 start_ipfs_cluster(){
 
-    # https://cluster.ipfs.io/documentation/deployment/bootstrap/ 
+    # https://cluster.ipfs.io/documentation/deployment/bootstrap/
     ### probably needs to make a service for this:
     ipfs-cluster-service daemon
 }
@@ -766,15 +766,15 @@ setup_lotus_filecoin(){
     dismount_super_secrets
 
     # Need to get a "DataCap" by connecting an establish github account
-    # to 
+    # to
     # For me, the verified message I got for my first data cap is here
     # https://filfox.info/en/message/bafy2bzacea4xbidxeycalqw73ef4mj4ekqrpyeisw5avfcpo4grmdpgh7ecim
 
-    # We are going to start a deal to 
+    # We are going to start a deal to
 
     # Find a few storage providers on https://plus.fil.org/miners and import their client ids
 
-    # We have an IPFS directory we can use 
+    # We have an IPFS directory we can use
     Qmd4PzLWTZiawH1W3VzoAbkyh9hCopjqSVAddYF8PrYBfE
     bafybeieomldhqd2iehx6bgtnkwznw2q3ozzjlu5pkkmjjmintp2fer4koq
 
@@ -789,7 +789,7 @@ setup_lotus_filecoin(){
     lotus client deal
 
     lotus client list-deals --show-failed
-    lotus client list-deals 
+    lotus client list-deals
 
     lotus client list-transfers
 
@@ -833,10 +833,10 @@ main(){
     install_prereqs
 
     # Step 1: Ensure we have a go executable
-    install_go 
+    install_go
 
     # Step 2: Install IPFS itself
-    install_ipfs 
+    install_ipfs
 
     # Step 3: Initialize IPFS
     initialize_ipfs
@@ -855,9 +855,32 @@ main(){
 install_client_only(){
 
     # Step 1: Ensure we have a go executable
-    install_go 
+    install_go
 
-    install_ipfs 
+    install_ipfs
 
     ipfs init
+}
+
+
+install-ipfs-update(){
+    # https://github.com/ipfs/ipfs-update
+    # https://docs.ipfs.tech/how-to/ipfs-updater/
+    wget https://dist.ipfs.tech/ipfs-update/v1.9.0/ipfs-update_v1.9.0_linux-amd64.tar.gz
+    tar -xvzf ipfs-update_v1.9.0_linux-amd64.tar.gz
+    export INSTALL_PREFIX=$HOME/.local
+    mv ipfs-update/ipfs-update "$INSTALL_PREFIX"/bin/
+    rm -rf ipfs-update
+    ipfs-update install latest
+}
+
+install-ipget(){
+    # https://dist.ipfs.tech/#ipget
+    curl -LJO https://dist.ipfs.tech/ipget/v0.9.1/ipget_v0.9.1_linux-amd64.tar.gz
+    tar -xvzf ipget_v0.9.1_linux-amd64.tar.gz
+    export INSTALL_PREFIX=$HOME/.local
+    mv ipget/ipget "$INSTALL_PREFIX"/bin/
+    rm -rf ipget
+
+    ipget bafybeicydgguvhts4ejcnyausvw6sff453htpxp5tktcigdyy6hdkuovgy --progress
 }

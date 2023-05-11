@@ -64,6 +64,21 @@ install_pyenv(){
         export PATH="$PYENV_ROOT/bin:$PATH"
         eval "$($PYENV_ROOT/bin/pyenv init -)"
         eval "$($PYENV_ROOT/bin/pyenv init -)"
+
+    TODO:
+        # https://github.com/pyenv/pyenv-installer
+        # no compile?
+        # new installer:
+        curl https://pyenv.run | bash
+        export PYENV_ROOT="$HOME/.pyenv"
+        if [ -d "$PYENV_ROOT" ]; then
+            export PATH="$PYENV_ROOT/bin:$PATH"
+            eval "$("$PYENV_ROOT"/bin/pyenv init -)"
+            eval "$("$PYENV_ROOT"/bin/pyenv init --path)"
+            source "$PYENV_ROOT/completions/pyenv.bash"
+        fi
+        pyenv install mambaforge-22.9.0-3
+        pyenv global mambaforge-22.9.0-3
     '
     _handle_help "$@" || return 0
 
