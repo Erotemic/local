@@ -128,6 +128,7 @@ codeblock()
     if [ "-h" == "$1" ] || [ "--help" == "$1" ]; then
         # Use codeblock to show the usage of codeblock, so you can use
         # codeblock while you codeblock.
+        # shellcheck disable=SC2016
         codeblock '
             Unindents code before its executed so you can maintain a pretty
             indentation in your code file. Multiline strings simply begin
@@ -184,6 +185,7 @@ sudo_writeto()
 
 
 verify_hash(){
+    # shellcheck disable=SC2016
     __doc__='
     Verifies the hash of a file
 
@@ -198,7 +200,7 @@ verify_hash(){
     local VERBOSE=${4:-${VERBOSE:-"3"}}
 
     $(system_python) -c "import sys; sys.exit(0 if ('$HASHER' in {'sha256sum', 'sha512sum'}) else 1)"
-
+    # shellcheck disable=SC2181
     if [ $? -ne 0 ]; then
         echo "HASHER = $HASHER is not in the known list"
         return 1
@@ -271,7 +273,7 @@ curl_verify_hash(){
     local VERBOSE=${6:-${VERBOSE:-"3"}}
 
     $(system_python) -c "import sys; sys.exit(0 if ('$HASHER' in {'sha256sum', 'sha512sum'}) else 1)"
-
+    # shellcheck disable=SC2181
     if [ $? -ne 0 ]; then
         echo "HASHER = $HASHER is not in the known list"
         return 1
@@ -413,6 +415,7 @@ install_ipfs(){
     "
     # IPFS itself
     mkdir -p "$HOME/temp/setup-ipfs"
+    # shellcheck disable=SC2164
     cd "$HOME/temp/setup-ipfs"
 
     export INSTALL_PREFIX=$HOME/.local
@@ -598,8 +601,10 @@ install_ipfs_cluster(){
     References:
         https://cluster.ipfs.io/documentation/deployment/setup/
     "
+    # shellcheck disable=SC1090
     source ~/local/init/utils.sh
     mkdir -p "$HOME/temp/setup-ipfs-cluster"
+    # shellcheck disable=SC2164
     cd "$HOME/temp/setup-ipfs-cluster"
 
     ARCH="$(dpkg --print-architecture)"
@@ -743,6 +748,7 @@ setup_lotus_filecoin(){
     sudo apt install mesa-opencl-icd ocl-icd-opencl-dev gcc git bzr jq pkg-config curl clang build-essential hwloc libhwloc-dev wget -y && sudo apt upgrade -y
 
     git clone https://github.com/filecoin-project/lotus.git "$HOME"/code/lotus
+    # shellcheck disable=SC2164
     cd ~/code/lotus/
     git checkout v1.15.1
 
@@ -753,6 +759,7 @@ setup_lotus_filecoin(){
     # https://github.com/filecoin-project/lotus/discussions/8499
     sudo make install
 
+    # shellcheck disable=SC1090
     source ~/local/init/utils.sh
     tmux_spawn "FULLNODE_API_INFO=wss://api.chain.love lotus daemon --lite"
 
