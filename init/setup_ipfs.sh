@@ -406,6 +406,10 @@ install_ipfs(){
 
     source ~/local/init/setup_ipfs.sh
     install_ipfs
+
+    References:
+        https://dist.ipfs.tech/#kubo
+        https://dist.ipfs.io/kubo/
     "
     # IPFS itself
     mkdir -p "$HOME/temp/setup-ipfs"
@@ -415,7 +419,7 @@ install_ipfs(){
 
     ARCH="$(dpkg --print-architecture)"
     echo "ARCH = $ARCH"
-    IPFS_VERSION="v0.14.0"
+    IPFS_VERSION="v0.20.0"
     IPFS_KEY=kubo_${IPFS_VERSION}_linux-${ARCH}
     URL="https://dist.ipfs.io/kubo/${IPFS_VERSION}/${IPFS_KEY}.tar.gz"
     #IPFS_KEY=go-ipfs_${IPFS_VERSION}_linux-${ARCH}
@@ -429,6 +433,8 @@ install_ipfs(){
     declare -A IPFS_KNOWN_HASHES=(
         ["kubo_v0.14.0_linux-amd64-sha512"]="d841cc5c727c41ba40a815bc1a63e2bc2b9e1ce591e5cd9815707bfcd4400f2d3700dbc18dfaa8460748279a89d2cc6086b1dedc2ab37d4d7dc4ab8f1c50e723"
         ["kubo_v0.14.0_linux-arm64-sha512"]="aba56721621e4f4b42350bfe43fa50e2166e8841e65da948b24eb243d962effa4a6b8b8a55dac35fc34961b65d739d3ac0550654819e59804a66d211f95f822c"
+        ["kubo_v0.20.0_linux-amd64-sha512"]="2113053565c8e6ccd1c28b70ef2a12871d3485256b8d5c8576a1bacb530a91d1a9eaeb619368353355d236f75b2dbda205da6051004cffad7086edbbdd116951"
+        ["kubo_v0.20.0_linux-arm64-sha512"]="ba94be6d35ca77b056c4a9367122ce33484e21c0650e9001800f69bea27e5af1c84840e9df944542eaa909a9b50131a53a47a4cae56cbff5efcf30fe4282d2ad"
     )
     EXPECTED_HASH="${IPFS_KNOWN_HASHES[${IPFS_KEY}-sha512]}"
     BASENAME=$(basename "$URL")
@@ -575,7 +581,7 @@ install_ipfs_service(){
         [Service]
         Environment=\"IPFS_PATH=$IPFS_PATH\"
         User=$USER
-        ExecStart=${IPFS_EXE} daemon
+        ExecStart=${IPFS_EXE} daemon --mount
         [Install]
         WantedBy=multiuser.target
         "
@@ -812,7 +818,7 @@ setup_lotus_filecoin(){
 
 configure_ipfs_location(){
     # Move the IPFS folder to a data drive and symlink to the homedrive
-    IPFS_PATH=$HOME/.ipfs
+    export IPFS_PATH=$HOME/.ipfs
     # For example...
     IPFS_STORAGE_DPATH=/data/ipfs
 
@@ -866,8 +872,12 @@ install_client_only(){
 install-ipfs-update(){
     # https://github.com/ipfs/ipfs-update
     # https://docs.ipfs.tech/how-to/ipfs-updater/
+    wget https://dist.ipfs.tech/ipfs-update/v1.9.0/ipfs-update_v1.9.0_linux-arm.tar.gz
+    tar -xvzf ipfs-update_v1.9.0_linux-arm.tar.gz
+
     wget https://dist.ipfs.tech/ipfs-update/v1.9.0/ipfs-update_v1.9.0_linux-amd64.tar.gz
     tar -xvzf ipfs-update_v1.9.0_linux-amd64.tar.gz
+
     export INSTALL_PREFIX=$HOME/.local
     mv ipfs-update/ipfs-update "$INSTALL_PREFIX"/bin/
     rm -rf ipfs-update
@@ -883,4 +893,36 @@ install-ipget(){
     rm -rf ipget
 
     ipget bafybeicydgguvhts4ejcnyausvw6sff453htpxp5tktcigdyy6hdkuovgy --progress
+}
+
+local_ipfs_mount(){
+    __doc__="
+    References:
+        https://github.com/ipfs/kubo/blob/master/docs/fuse.md
+    "
+    sudo apt-get install fuse
+    #sudo usermod -a -G fuse "$USER"
+
+    sudo systemctl stop ipfs.service
+
+    sudo mkdir /ipfs
+    sudo mkdir /ipns
+    sudo chown "$USER" /ipfs
+    sudo chown "$USER" /ipns
+
+    # MANUAL: Ensure the daemon is run with --mount as done in install_ipfs_service
+
+    sudo systemctl start ipfs.service
+    systemctl status ipfs.service
+
+    #sudo systemctl stop ipfs.service
+
+
+    # Case where fuse did not exist
+    sudo addgroup fuse
+    sudo usermod -G fuse -a "$USER"
+    sudo chgrp fuse /etc/fuse.conf
+    sudo chmod g+r  /etc/fuse.conf
+
+
 }

@@ -28,7 +28,8 @@ PROJECT_URLS = []
 config_fpaths = [
     expanduser('~/code/erotemic/homelinks/repos.txt'),
     expanduser('~/internal/repos.txt'),
-    expanduser('~/local/repos.txt'),
+    # expanduser('~/local/repos.txt'),
+    expanduser('~/local/repos.yaml'),
 ]
 
 
@@ -158,18 +159,27 @@ VIM_REPOS_WITH_SUBMODULES = [
 
 
 def _parse_custom_urls():
+    import pathlib
     dpath_to_url = defaultdict(list)
 
     seen = set([])
     for fpath in config_fpaths:
         if os.path.exists(fpath):
-            for line in open(fpath, 'r').read().splitlines():
+            fpath = pathlib.Path(fpath)
+            lines = fpath.read_text().splitlines()
+            for line in lines:
                 # if line.startswith('U2FsdGVk'):
                 if line.startswith('U2FsdG'):
                     # File is probably encrypted, ignore it.
                     break
-                line = line.strip()
-                if line and not line.startswith('#'):
+                if line.strip() and not line.strip().startswith('#'):
+                    if '__doc__' in line:
+                        continue
+                    if line.startswith(' '):
+                        continue
+                    if line.startswith('-'):
+                        line = line.lstrip('-').strip()
+                    line = line.strip()
                     parts = line.split(' ')
                     # Allow text files to specify url and dpath
                     # default to code dir if dpath not given

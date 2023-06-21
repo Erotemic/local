@@ -408,40 +408,6 @@ firewall(){
 }
 
 
-configure_metric_monitoring_server(){
-    __doc__="
-    Rocket pool eth to reth
-    https://coinmarketcap.com/currencies/rocket-pool-eth/reth/eth/
-
-    # Ratio to the peg
-    https://dune.com/drworm/rocketpool
-    "
-
-    # https://docs.rocketpool.net/guides/node/grafana.html#enabling-the-metrics-server
-    SUBNET_CIDR_IP=$(docker inspect rocketpool_monitor-net | grep -Po "(?<=\"Subnet\": \")[0-9./]+")
-    echo "SUBNET_CIDR_IP = $SUBNET_CIDR_IP"
-    # Allow docker subnet
-    sudo ufw allow from "$SUBNET_CIDR_IP" to any port 9103 comment "Allow prometheus access to node-exporter"
-
-    LOCAL_IP=$(ifconfig eno1 | grep -Po "(?<=inet )[0-9./]+")
-    LOCAL_IP_PREFIX=$(echo "${LOCAL_IP}" | cut -d "." -f1-3)
-    echo "LOCAL_IP = $LOCAL_IP"
-    echo "LOCAL_IP_PREFIX = $LOCAL_IP_PREFIX"
-
-    # Allow machines in the local network
-    sudo ufw allow from "${LOCAL_IP_PREFIX}.0/24" proto tcp to any port 3100 comment 'Allow grafana from local network'
-
-    echo "Now naviate on your machine to: $LOCAL_IP:3100"
-
-    # Reset the admin password for grafana (if you forgot your original password)
-    docker exec -it rocketpool_grafana grafana-cli admin reset-admin-password admin
-
-    # Follow instructions on the browser for:
-    # https://docs.rocketpool.net/guides/node/grafana.html#importing-the-rocket-pool-dashboard
-
-}
-
-
 
 verify_checkpoint_sync(){
 
@@ -661,4 +627,103 @@ checking_attestation_schedule(){
     _=""
     # https://ethereum.github.io/beacon-APIs/#/
     # https://gist.github.com/pietjepuk2/eb021db978ad20bfd94dce485be63150
+}
+
+
+configure_metric_monitoring_server(){
+    __doc__="
+    Rocket pool eth to reth
+    https://coinmarketcap.com/currencies/rocket-pool-eth/reth/eth/
+
+    # Ratio to the peg
+    https://dune.com/drworm/rocketpool
+
+    # https://docs.rocketpool.net/guides/node/grafana.html#enabling-the-metrics-server
+    "
+
+    # https://docs.rocketpool.net/guides/node/grafana.html#enabling-the-metrics-server
+    SUBNET_CIDR_IP=$(docker inspect rocketpool_monitor-net | grep -Po "(?<=\"Subnet\": \")[0-9./]+")
+    echo "SUBNET_CIDR_IP = $SUBNET_CIDR_IP"
+    # Allow docker subnet
+    sudo ufw allow from "$SUBNET_CIDR_IP" to any port 9103 comment "Allow prometheus access to node-exporter"
+
+    LOCAL_IP=$(ifconfig eno1 | grep -Po "(?<=inet )[0-9./]+")
+    LOCAL_IP_PREFIX=$(echo "${LOCAL_IP}" | cut -d "." -f1-3)
+    echo "LOCAL_IP = $LOCAL_IP"
+    echo "LOCAL_IP_PREFIX = $LOCAL_IP_PREFIX"
+
+    # Allow machines in the local network
+    sudo ufw allow from "${LOCAL_IP_PREFIX}.0/24" proto tcp to any port 3100 comment 'Allow grafana from local network'
+
+    echo "Now naviate on your machine to: $LOCAL_IP:3100"
+
+    # Reset the admin password for grafana (if you forgot your original password)
+    docker exec -it rocketpool_grafana grafana-cli admin reset-admin-password admin
+
+    # Follow instructions on the browser for:
+    # https://docs.rocketpool.net/guides/node/grafana.html#importing-the-rocket-pool-dashboard
+
+}
+
+
+configure_grafana_dashboard(){
+    # First, import the latest dashboard as described in
+    # https://docs.rocketpool.net/guides/node/grafana.html#enabling-the-metrics-server
+    # Then go to share -> export it, and now we can programatically modify the file.
+    FPATH="$HOME/Downloads/Rocket Pool Dashboard v1.3.0-1684781005746.json"
+    echo "FPATH = $FPATH"
+    cat "$FPATH"
+
+    python -c "if 1:
+
+    fpath = ub.Path('$HOME/Downloads/Rocket Pool Dashboard v1.3.0-1684781005746.json').expand()
+    import json
+    data = json.loads(fpath.read_text())
+    walker = ub.IndexableWalker(data)
+
+    title_to_pannel = {}
+
+    for panel in data['panels']:
+        title = panel.get('title', None)
+        if title is not None:
+            title_to_pannel[title] = panel
+
+    for p, v in walker:
+        if isinstance(v, str) and 'node_network_transmit_bytes_total' in v:
+            print(p)
+    #walker[['panels', 24, 'targets', 1]]
+    #walker[['panels', 24]]
+    #walker[['panels', 3]]
+
+    sq = chr(34)
+    title_to_pannel['CPU Temp']['targets'][0]['expr'] = f'node_hwmon_temp_celsius{{job={sq}node{sq}, chip={sq}platform_coretemp_0{sq}, sensor={sq}temp1{sq}}}'
+
+    # Add chip='nvme_nvme0', sensor='temp1'
+    title_to_pannel['Disk Temp']
+
+    # Add device=eno1
+    title_to_pannel['Network Usage']['targets'][0]['expr']
+
+    title_to_pannel['Total Net I/O']['targets'][0]['expr']
+
+    # Add device='nvme0n1'
+    title_to_pannel['SSD Latency']['targets'][0]['expr']
+    "
+
+    sed -i 's|node_hwmon_temp_celsius{job=\"node\"||g' "$FPATH"
+}
+
+
+prune_nethermind(){
+    __doc__="
+    Note: pruning takes a long time, make sure that you let it run to
+    completion.
+
+    References:
+        https://docs.rocketpool.net/guides/node/pruning.html#prerequisites
+    "
+    rocketpool service prune-eth1
+
+    # Follow status with:
+    rocketpool service logs eth1
 }

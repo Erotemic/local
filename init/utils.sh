@@ -1366,3 +1366,44 @@ rich_confirm() {
     $_PYEXE -c "import sys, rich.prompt; sys.exit(0 if rich.prompt.Confirm.ask('$MESSAGE') else 1)"
     return $?
 }
+
+rich_link(){
+    __doc__='
+    Use the rich library to make a clickable link
+
+    Example:
+        source ~/local/init/utils.sh
+        DESC=Link
+        PATH=$HOME
+        rich_link $HOME
+        rich_link $HOME Home
+    '
+    local _PATH=$1
+    local _DESC=${2:-Link}
+    python -c "if 1:
+        import rich
+        path='$_PATH'
+        desc='$_DESC'
+        rich.print(f'{desc}: [link={path}]{path}[/link]')
+    "
+}
+
+
+#Ignore:
+#python -c "import rich; rich.print('[link=/home]/home[/link]')"
+
+
+remove_empty_dirs(){
+    __doc__='
+    Remove empty directories
+
+    ARGS:
+        DPATH : defaults to .
+
+    References:
+        https://www.cyberciti.biz/faq/howto-find-delete-empty-directories-files-in-unix-linux/
+    '
+    _handle_help "$@" || return 0
+    DPATH="${1:-.}"
+    find "$DPATH" -empty -type d -delete
+}

@@ -12,6 +12,7 @@ import ubelt as ub
 class FindBloatConfig(scfg.DataConfig):
     repo_dpath = scfg.Value('.', help='path to the repo')
     size_thresh = scfg.Value('20MiB', help='flag files larger than this size')
+    io_workers = scfg.Value(10, help='number of IO worker threads')
     yes = scfg.Value(False, isflag=True, help='if True then dont ask before rewriting')
 
 
@@ -63,9 +64,15 @@ def main(cmdline=1, **kwargs):
             'path': relpath,
         })
 
-    for row in ub.ProgIter(rows, desc='populate size'):
-        sizestr = repo.git.cat_file('-s', row['object_id'])
-        row['size'] = int(sizestr)
+    jobs = ub.JobPool(mode='thread', max_workers=config.io_workers)
+
+    for row in ub.ProgIter(rows, desc='submit populate size'):
+        job = jobs.submit(repo.git.cat_file, '-s', row['object_id'])
+        job.row = row
+
+    for job in jobs.as_completed(desc='collect populate size'):
+        sizestr = job.result()
+        job.row['size'] = int(sizestr)
 
     rows = sorted(rows, key=lambda r: -r['size'])
 
@@ -89,7 +96,10 @@ def main(cmdline=1, **kwargs):
         rich.print(rows_df)
     else:
         all_commits = [r['commit_id'] for r in big_rows]
-        common_base = repo.git.merge_base('--all', *all_commits)
+        if len(all_commits) == 1:
+            common_base = all_commits[0]
+        else:
+            common_base = repo.git.merge_base('--all', *all_commits)
         print('common_base = {}'.format(ub.urepr(common_base, nl=1)))
 
         ans = config.yes or rich.prompt.Confirm.ask('Purge these files from the repo and rewrite history?')

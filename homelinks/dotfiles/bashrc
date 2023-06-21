@@ -476,3 +476,5 @@ lfcd () {
     fi
 }
 alias lf=lfcd
+
+export AWS_DEFAULT_PROFILE=iarpa

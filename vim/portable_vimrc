@@ -364,7 +364,7 @@ if exists("g:loaded_vimtk")
 
 
     "call vimtk#quickopen('l', '~/code/VIAME/plugins')
-    call vimtk#quickopen('2', '~/code/watch-smartflow-dags/pull_results.py')
+    call vimtk#quickopen('2', '~/code/watch-smartflow-dags/prepare_system.sh')
     "call vimtk#quickopen('s', '~/code/VIAME/packages/kwiver/sprokit')
     "call vimtk#quickopen('v', '~/code/VIAME/packages/kwiver/vital')
     "call vimtk#quickopen('a', '~/code/VIAME/packages/kwiver/arrows')
@@ -406,6 +406,7 @@ if exists("g:loaded_vimtk")
 
     call vimtk#quickopen('ka', '~/code/kwarray/kwarray/__init__.py')
     call vimtk#quickopen('ki', '~/code/kwimage/kwimage/__init__.py')
+    call vimtk#quickopen('ku', '~/code/kwutil/kwutil/__init__.py')
     call vimtk#quickopen('kg', '~/code/kwgis/kwgis/__init__.py')
     call vimtk#quickopen('kn', '~/code/kwannot/kwannot/__init__.py')
     call vimtk#quickopen('kp', '~/code/kwplot/kwplot/__init__.py')

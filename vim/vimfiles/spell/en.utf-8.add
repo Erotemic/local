@@ -517,3 +517,5 @@ elapsed
 GDAL
 Precompiled
 recurse
+reproject
+ducktype

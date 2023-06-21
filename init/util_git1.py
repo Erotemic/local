@@ -328,6 +328,14 @@ if __name__ == '__main__':
     varargs = sys.argv[1:]
     if len(varargs) == 1 and varargs[0] == 'clone_repos':
         clone_repos()
+    elif len(varargs) == 1 and varargs[0] == 'list':
+        for repodir, repourl in zip(REPOS1.PROJECT_REPOS, REPOS1.PROJECT_URLS):
+            try:
+                import ubelt as ub
+                repodir = ub.Path(repodir).shrinkuser()
+            except Exception:
+                ...
+            print(f'- {{"dpath": {repodir}, "url": {repourl}}}')
     else:
         varargs2 = []
         for a in varargs:

@@ -1,4 +1,14 @@
 #.my_github_repos
+.__doc__: &__doc__
+  - |
+      SeeAlso:
+        $HOME/local/homelinks/helpers/git_helpers.sh
+        ~/local/init/util_git1.py
+        ~/local/init/REPOS1.py
+
+        gg-clone
+
+
 #
 #https://github.com/Erotemic/dtool_ibeis           
 #https://github.com/Erotemic/vtool_ibeis           
@@ -28,23 +38,47 @@
 #https://github.com/Erotemic/crall-thesis-2017     
 #https://github.com/Erotemic/hotspotter            
 
-https://github.com/Erotemic/ibeis                 
+# 'https://github.com/Erotemic/plottool.git',
+# 'https://github.com/Erotemic/guitool.git',
+# 'https://github.com/Erotemic/vtool.git',
+# 'https://github.com/Erotemic/dtool.git',
+# 'https://github.com/Erotemic/utool.git',
+# https://github.com/WildbookOrg/ibeis.git ~/code
+# https://github.com/Erotemic/clab.git
+# https://github.com/Erotemic/graphid.git
+# https://github.com/Erotemic/VIAME.git
+# https://github.com/Erotemic/kwiver.git
+# https://github.com/Erotemic/sphinx.git
+# git@github.com:Erotemic/local.git $HOME
+# git@github.com:Erotemic/misc.git $HOME
+# git@hyrule.cs.rpi.edu:crall-candidacy-2015.git $HOME/latex
+# git@hyrule.cs.rpi.edu:crall-iccvw-2017.git $HOME/latex
+# git@hyrule.cs.rpi.edu:crall-thesis-2017.git $HOME/latex
 
+https://github.com/Erotemic/local.git $HOME
+https://github.com/Erotemic/misc.git $HOME
 
-https://github.com/Erotemic/misc                  
-https://github.com/Erotemic/local                 
-
-https://github.com/Erotemic/pypogo                
-
-https://github.com/Erotemic/vimtk                 
-https://github.com/Erotemic/mkinit                
-https://github.com/Erotemic/git-sync              
-https://github.com/Erotemic/supersetup            
-https://github.com/Erotemic/xinspect              
-https://github.com/Erotemic/xdev                  
-
-https://github.com/Erotemic/timerit               
-https://github.com/Erotemic/progiter              
-https://github.com/Erotemic/ubelt                 
-https://github.com/Erotemic/xdoctest              
-https://github.com/Erotemic/xcookie              
+https://github.com/pyutils/line_profiler.git
+https://github.com/Erotemic/git-sync.git
+https://github.com/Erotemic/git_well.git
+https://github.com/Erotemic/ibeis.git
+https://github.com/Erotemic/mkinit.git
+https://github.com/Erotemic/progiter.git
+https://github.com/Erotemic/pypogo.git
+https://github.com/Erotemic/supersetup.git
+https://github.com/Erotemic/supersetup.git.git
+https://github.com/Erotemic/timerit.git
+https://github.com/Erotemic/ubelt.git
+https://github.com/Erotemic/vimtk.git
+https://github.com/Erotemic/xcookie.git
+https://github.com/Erotemic/xdev.git
+https://github.com/Erotemic/xdoctest.git
+https://github.com/Erotemic/xinspect.git
+https://gitlab.kitware.com/computer-vision/delayed_image.git 
+https://gitlab.kitware.com/computer-vision/kwarray.git 
+https://gitlab.kitware.com/computer-vision/kwcoco.git 
+https://gitlab.kitware.com/computer-vision/kwimage.git 
+https://gitlab.kitware.com/computer-vision/kwplot.git 
+https://gitlab.kitware.com/computer-vision/ndsampler.git
+https://gitlab.kitware.com/computer-vision/netharn.git 
+https://gitlab.kitware.com/utils/scriptconfig.git 

@@ -3,6 +3,9 @@ __doc__="""
 Git helpers
 
 Depends on ~/local/init/util_git1.py
+
+SeeAlso:
+    ~/local/repos.yaml
 """
 #source $HOME/local/init/utils.sh
 
@@ -15,12 +18,17 @@ Depends on ~/local/init/util_git1.py
 gg-status()
 {
     $(system_python) ~/local/init/util_git1.py 'git status' == "$@"
-    #python -m utool.util_git 
+    #python -m utool.util_git
 }
 
 gg-pull()
 {
     $(system_python) ~/local/init/util_git1.py 'git pull' == "$@"
+}
+
+gg-list()
+{
+    $(system_python) ~/local/init/util_git1.py 'list'
 }
 
 gg-push()
@@ -97,7 +105,7 @@ alias ggss=gg-short-status
 
 #git_remote_sync()
 #{
-#    if [[ "$HOSTNAME" == "hyrule"  ]]; then 
+#    if [[ "$HOSTNAME" == "hyrule"  ]]; then
 #        gcwip ; ssh lev "cd $(pwd) && git pull"
 #    else
 #        gcwip ; ssh lev "cd $(pwd) && git pull" ; ssh hyrule "cd $(pwd) && git pull"
@@ -215,7 +223,7 @@ git-diff-branch(){
         NEW_BRANCH
 
     source ~/local/homelinks/helpers/git_helpers.sh
-    git-diff-branch README.rst HEAD main 
+    git-diff-branch README.rst HEAD main
     FPATH=predict.py
     OLD_BRANCH=landcover-fix
     "
@@ -253,7 +261,7 @@ git-branch-cat(){
 
     GIT_ROOT=$(git rev-parse --show-toplevel)
     REL_PATH=$(realpath --relative-to="$GIT_ROOT" "$FPATH")
-    git show "${BRANCH_NAME}:${REL_PATH}" 
+    git show "${BRANCH_NAME}:${REL_PATH}"
 }
 
 
@@ -265,5 +273,5 @@ git-clean-repo(){
 
     git reflog expire --expire-unreachable=now --all
     git gc --prune=now
-    
+
 }
