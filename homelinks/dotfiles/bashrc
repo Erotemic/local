@@ -49,6 +49,7 @@ if [ "$IS_JONCRALL" ]; then
     export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
 fi
 export CODE_DIR=$HOME/code
+export CODE_DPATH=$HOME/code
 
 ############
 # USER LEVEL (takes top priority)
