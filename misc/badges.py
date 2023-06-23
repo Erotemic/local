@@ -59,6 +59,7 @@ xdev
 progiter
 timerit
 git-sync
+git_well
 pyutils/line_profiler
 
 
@@ -84,6 +85,7 @@ computer-vision/kwcoco
 computer-vision/kwarray
 computer-vision/kwimage
 computer-vision/kwplot
+computer-vision/kwutil
 
 computer-vision/netharn
 computer-vision/ndsampler
