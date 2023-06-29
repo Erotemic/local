@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""
+Requires:
+    python3 -m pip install scriptconfig rich
+"""
 import scriptconfig as scfg
 import ubelt as ub
 import rich
@@ -15,7 +19,7 @@ class ValidatorDuties(scfg.DataConfig):
     """
     Example:
 
-        python ~/local/tools/rocketpool_helper.py duties
+        python3 ~/local/tools/rocketpool_helper.py duties
 
     """
     __command__ = 'duties'

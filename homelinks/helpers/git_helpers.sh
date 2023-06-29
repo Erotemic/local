@@ -211,7 +211,8 @@ alias gitpr=git-pullreq-url
 
 #git-update-branch(){
 #}
-alias gup='python ~/local/git_tools/git_devbranch.py update'
+#alias gup='python ~/local/git_tools/git_devbranch.py update'
+alias gup='python -m git_well branch_upgrade'
 
 
 git-diff-branch(){
