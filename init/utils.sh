@@ -1395,7 +1395,7 @@ rich_link(){
 
 remove_empty_dirs(){
     __doc__='
-    Remove empty directories
+    Remove empty directories recursively
 
     ARGS:
         DPATH : defaults to .

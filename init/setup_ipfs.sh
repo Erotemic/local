@@ -584,10 +584,14 @@ install_ipfs_service(){
         [Service]
         Environment=\"IPFS_PATH=$IPFS_PATH\"
         User=$USER
-        ExecStart=${IPFS_EXE} daemon --mount
+        ExecStart=${IPFS_EXE} daemon
         [Install]
         WantedBy=multiuser.target
         "
+
+    # Note: can add "--mount" to ExecStart if you
+    # Want to mount ipfs via fuse
+    #
     #sudo systemctl daemon-reload
     sudo systemctl start ipfs
     sudo systemctl status ipfs
