@@ -1,5 +1,5 @@
 #!/bin/bash
-__doc__="""
+__doc__="
 
 Idenpotent script for initializing an ubuntu system
 
@@ -25,7 +25,7 @@ CommandLine:
     export IS_HEADLESS=False
     export WITH_SSH_KEYS=False
     source ~/local/init.sh
-"""
+"
 
 #if [[ "$(type -P python)" == "" ]]; then
 #    if [[ "$(type -P python3)" != "" ]]; then
@@ -62,7 +62,7 @@ ensure_config_symlinks
 if [ "$HAVE_SUDO" == "True" ]; then
     # minimal server
     # https://ubuntu.com/server/docs/service-openssh
-    apt_ensure openssh-server openssh-client 
+    apt_ensure openssh-server openssh-client
     apt_ensure net-tools
     cat /etc/ssh/sshd_config
     sudo systemctl restart sshd.service
@@ -90,14 +90,14 @@ if [ "$HAVE_SUDO" == "True" ]; then
 fi
 
 if [ "$HAVE_SUDO" == "True" ]; then
-    apt_ensure openssh_server 
-    apt_ensure git 
-    apt_ensure gcc g++ build-essential 
-    apt_ensure gfortran 
+    apt_ensure openssh_server
+    apt_ensure git
+    apt_ensure gcc g++ build-essential
+    apt_ensure gfortran
     apt_ensure curl net-tools
     apt_ensure jq expect
-    apt_ensure htop tmux tree 
-    apt_ensure sshfs 
+    apt_ensure htop tmux tree
+    apt_ensure sshfs
     apt_ensure p7zip-full pgpgpg lm-sensors
     apt_ensure astyle codespell
     apt_ensure synaptic
@@ -119,7 +119,7 @@ fi
 if [ "$IS_HEADLESS" == "False" ]; then
     if [ "$(type -P terminator)" == "" ]; then
         echo "ENSURE TERMINATOR"
-            # Dont use buggy gtk2 version 
+            # Dont use buggy gtk2 version
             # https://bugs.launchpad.net/ubuntu/+source/terminator/+bug/1568132
             sudo add-apt-repository ppa:gnome-terminator/nightly-gtk3 -y
             sudo apt update
@@ -129,13 +129,13 @@ fi
 
 if [ ! -d ~/.ssh ]; then
     echo "ENSURE SSH"
-    mkdir -p ~/.ssh 
+    mkdir -p ~/.ssh
     chmod 700 ~/.ssh
 
     if [ ! -f ~/.ssh/authorized_keys ]; then
         touch ~/.ssh/authorized_keys
         chmod 640 ~/.ssh/authorized_keys
-    fi 
+    fi
     echo "TODO: YOU MUST MANUALLY SET UP YOUR KEYS"
 fi
 
@@ -144,7 +144,7 @@ if [ "$HAVE_SUDO" == "True" ]; then
     apt_ensure vim-gtk3
     if [ ! -d ~/.local/share/vim ]; then
         if [ "$(type -P ctags)" = "" ]; then
-            apt_ensure exuberant-ctags 
+            apt_ensure exuberant-ctags
             apt_ensure libgtk-3-dev gnome-devel ncurses-dev build-essential libtinfo-dev
         fi
     fi
@@ -154,7 +154,7 @@ if [ "$HAVE_SUDO" == "True" ]; then
 fi
 
 
-# 
+#
 if [ ! -d ~/.vim/autoload/plug.vim ]; then
     curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 fi
@@ -164,9 +164,9 @@ if [[ "$IS_HEADLESS" == "False" ]]; then
     #apt_ensure redshift  # ubuntu has nightlight now
     apt_ensure caffeine vlc
     apt_ensure sshfs wmctrl xdotool xclip git astyle
-    apt_ensure git curl htop tmux tree 
+    apt_ensure git curl htop tmux tree
     apt_ensure gcc gcc g++ gfortran build-essential
-    apt_ensure p7zip-full  
+    apt_ensure p7zip-full
     apt_ensure gpg pgpgpg
     apt_ensure net-tools nmap
     apt_ensure lm-sensors
@@ -174,7 +174,7 @@ if [[ "$IS_HEADLESS" == "False" ]]; then
     apt_ensure gitk gparted okular remmina rsync gitk xsel graphviz feh
     # packages not in 20.04, but mayb other ones?
     # 7z sensors
-    
+
     if [[ "$(type -P google-chrome)" == "" ]]; then
         # shellcheck disable=SC1091
         source "$HOME/local/init/freshstart_ubuntu.sh"
@@ -211,7 +211,7 @@ if [[ "$IS_HEADLESS" == "False" ]]; then
     cd "$HOME"/code/erotemic || exit
 
     # The user must supply a password here
-    transcrypt -c aes-256-cbc 
+    transcrypt -c aes-256-cbc
     # Reply no to using a random password
     # Input password
 
@@ -248,7 +248,7 @@ if [[ "$SETUP_PYTHON" == "True" ]]; then
     # Dependencies for building Python
     apt_ensure make build-essential libssl-dev zlib1g-dev \
         libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
-        libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev 
+        libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev
 
     #source "$HOME"/local/init/freshstart_ubuntu.sh
     # shellcheck disable=SC1091
@@ -294,14 +294,14 @@ fi
 # gg-clone
 # developer setup my repos
 
-# TODO: setup nvidia drivers on appropriate systems: see init_cuda 
+# TODO: setup nvidia drivers on appropriate systems: see init_cuda
 
 # TODO: setup secrets and internal state
 
 #source ~/.bashrc
 #deactivate_venv
 
-## 
+##
 ## TODO: get the netharn supersetup working with my "repos"
 ## Do this after the encrypted repo is setup
 ## Then do it once more, as we may pull more secret repos
@@ -311,7 +311,7 @@ fi
 ensure_dev_versions_of_my_libs(){
 
     mylibs=(
-    ubelt 
+    ubelt
     mkinit
     xdoctest
     vimtk
@@ -329,7 +329,7 @@ ensure_dev_versions_of_my_libs(){
     #pypogo
     #torch_liberator
 
-    for name in "${mylibs[@]}" 
+    for name in "${mylibs[@]}"
     do
         echo "name = $name"
         dpath=$HOME/code/$name

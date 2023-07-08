@@ -422,7 +422,7 @@ install_ipfs(){
 
     ARCH="$(dpkg --print-architecture)"
     echo "ARCH = $ARCH"
-    IPFS_VERSION="v0.20.0"
+    IPFS_VERSION="v0.21.0"
     IPFS_KEY=kubo_${IPFS_VERSION}_linux-${ARCH}
     URL="https://dist.ipfs.io/kubo/${IPFS_VERSION}/${IPFS_KEY}.tar.gz"
     #IPFS_KEY=go-ipfs_${IPFS_VERSION}_linux-${ARCH}
@@ -438,6 +438,9 @@ install_ipfs(){
         ["kubo_v0.14.0_linux-arm64-sha512"]="aba56721621e4f4b42350bfe43fa50e2166e8841e65da948b24eb243d962effa4a6b8b8a55dac35fc34961b65d739d3ac0550654819e59804a66d211f95f822c"
         ["kubo_v0.20.0_linux-amd64-sha512"]="2113053565c8e6ccd1c28b70ef2a12871d3485256b8d5c8576a1bacb530a91d1a9eaeb619368353355d236f75b2dbda205da6051004cffad7086edbbdd116951"
         ["kubo_v0.20.0_linux-arm64-sha512"]="ba94be6d35ca77b056c4a9367122ce33484e21c0650e9001800f69bea27e5af1c84840e9df944542eaa909a9b50131a53a47a4cae56cbff5efcf30fe4282d2ad"
+        ["kubo_v0.21.0_linux-amd64.tar.gz"]="ae6be96a112159fee9994c1c9547cbaf71438eb0fa819e898ddfa677c964f15ec5c9698d1a2f121f2c7dac88b0d032938941d2bffa755fac61d9fcaa1829050f"
+        ["kubo_v0.21.0_linux-arm64.tar.gz"]="1eeb4015f135a1775e8cd96ab249f14a94306170bd714a97c3d907979022d7a5fb6a1070bf0e598e0b02bc439cf4f2a3e61901d5db245993fce29f6a7ce675d9"
+
     )
     EXPECTED_HASH="${IPFS_KNOWN_HASHES[${IPFS_KEY}-sha512]}"
     BASENAME=$(basename "$URL")
@@ -462,7 +465,8 @@ _scrape_ipfs_version_info(){
     pip install beautifulsoup4
     __doc__='
     import requests
-    base_url = "https://dist.ipfs.io/go-ipfs"
+    import json
+    base_url = "https://dist.ipfs.io/kubo"
     resp = requests.get(base_url + "/versions")
     versions = [v for v_ in resp.text.split("\n") if (v:= v_.strip())]
     from distutils.version import LooseVersion
@@ -478,7 +482,7 @@ _scrape_ipfs_version_info(){
         dist_url = base_url + f"/{ver}/dist.json"
         dist_resp_fpath = ub.grabdata(dist_url, fname=ub.hash_data(dist_url) + ".json", expires=1000)
         dist_data = json.loads(ub.Path(dist_resp_fpath).read_text())
-        data = dist_resp.json()
+        #data = dist_resp.json()
 
         dist_data["releaseLink"]
         for plat_name, items in dist_data["platforms"].items():
@@ -488,14 +492,14 @@ _scrape_ipfs_version_info(){
                 hash = arch_info["sha512"]
                 arch_info["full_url"] = full_url
                 arch_info["plat_name"] = plat_name
-                arch_info["arch"] = arch
+                arch_info["arch"] = arch_name
                 table.append(arch_info)
 
     for arch_info in table:
-        name = arch_info["link"]
+        name = arch_info["link"].lstrip("/")
         sha = arch_info["sha512"]
         if arch_info["plat_name"] in {"linux"}:
-            if arch_info["arch"] in {"amd64", "arm64", "arm"}:
+            if arch_info["arch"] in {"amd64", "arm64"}:
                 line = f""" ["{name}"]="{sha}" """.strip()
                 print(line)
     '
