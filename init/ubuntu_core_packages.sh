@@ -11,7 +11,7 @@ common_paths()
 #    # https://www.unixmen.com/install-xnconvert-ubuntu/
 #    sudo add-apt-repository --remove ppa:dhor/myway
 #    sudo add-apt-repository ppa:dhor/myway -y
-#    sudo apt-get update 
+#    sudo apt-get update
 #    sudo apt-get install xnconvert -y
 #}
 
@@ -38,7 +38,7 @@ install_languagetool(){
 }
 
 
-custom_tmux() 
+custom_tmux()
 {
     sudo apt install autotools-dev automake libevent-dev libncurses5-dev
     co
@@ -58,7 +58,7 @@ custom_tmux()
 
 install_core()
 {
-    sudo apt update -y 
+    sudo apt update -y
     sudo apt upgrade -y
     # Git
     sudo apt install -y git
@@ -68,7 +68,7 @@ install_core()
     sudo apt update
     sudo apt install git -y
     git --version
-    
+
 
     # Vim / Gvim
     #sudo apt install -y vim
@@ -76,21 +76,21 @@ install_core()
     #sudo apt remove -y vim
     #sudo apt remove -y vim-gnome
 
-    sudo apt install -y exuberant-ctags 
+    sudo apt install -y exuberant-ctags
 
     # Trash put
     #sudo apt install -y trash-cli
     sudo apt install -y gvfs-bin
     # make sure you have permission to trash
     #ls -al ~/.local/share/
-    #sudo chown -R $USERNAME:$USERNAME ~/.local/share/Trash 
+    #sudo chown -R $USERNAME:$USERNAME ~/.local/share/Trash
     #sudo chown $USERNAME:$USERNAME ~/.local/share/Trash/files
     #sudo chown -R $USERNAME:$USERNAME ~/.local/share/Trash/info
     #ls -al ~/.local/share/
     #ls -al ~/.local/share/Trash
     #sudo ls -al ~/.local/share/Trash/files
     #sudo ls -al ~/.local/share/Trash/info
-    
+
     # Commonly used and frequently forgotten
     sudo apt install -y wmctrl xsel xdotool xclip
     sudo apt install -y xclip
@@ -106,14 +106,14 @@ install_core()
     # sqlite db  editor
     #sudo apt install sqliteman
     sudo apt install -y postgresql
-    sudo apt install -y sqlitebrowser 
+    sudo apt install -y sqlitebrowser
     #References: http://stackoverflow.com/questions/7454796/taglist-exuberant-ctags-not-found-in-path
     sudo apt install -y hdfview
 
     # for editing desktop sidebar icons
     sudo apt install alacarte
 
-    # anti-virus 
+    # anti-virus
     # https://www.upcloud.com/support/scanning-ubuntu-14-04-server-for-malware/
     sudo apt install clamav clamav-daemon
     sudo freshclam
@@ -124,7 +124,7 @@ install_core()
 
 truely_ergonomic_keyboard_setup()
 {
-    
+
     __readme__="""
     Truly Ergonomic keyboard - Firmware Upgrade
     -------------------------------------------
@@ -175,19 +175,19 @@ truely_ergonomic_keyboard_setup()
 
 
     # OLD STUFF:
-    
-    #ar -x libwxbase3.0-0_3.0.2-1+b1_amd64.deb 
+
+    #ar -x libwxbase3.0-0_3.0.2-1+b1_amd64.deb
     #tar -xzvf control.tar.gz
     #tar -xzvf data.tar.gz
 
     https://packages.debian.org/jessie/amd64/libwxbase3.0-0/download
 
-    # 
-    
+    #
+
     #sudo apt remove libwxbase3.0-0 libwxgtk3.0-0 libwxgtk-webview3.0-0
     #In Ubuntu before 15.04 vivid (or derivatives like Linux Mint 17.2) you have to:
     #1. add the ubuntu-toolchain-r/test ppa to get libstdc++6-4.9
-    sudo add-apt-repository ppa:ubuntu-toolchain-r/test 
+    sudo add-apt-repository ppa:ubuntu-toolchain-r/test
     sudo apt update
     sudo apt upgrade
     sudo apt install libstdc++6
@@ -211,12 +211,12 @@ truely_ergonomic_keyboard_setup()
     sudo cp 40-tek.rules /etc/udev/rules.d/
 
     sudo ./tek
-    # Now 
+    # Now
 }
 
 install_dropbox()
 {
-    # Dropbox 
+    # Dropbox
     #cd ~/tmp
     #cd ~/tmp && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
     #.dropbox-dist/dropboxd
@@ -240,7 +240,7 @@ install_core_extras()
     sudo apt install -y valgrind synaptic gitg expect
     sudo apt install -y sysstat
     sudo apt install -y subversion
-    sudo apt install -y remmina 
+    sudo apt install -y remmina
 
 
     #sudo apt install -y screen
@@ -270,22 +270,22 @@ install_core_extras()
 
     # ssh file system
     sudo apt install sshfs -y
-    mkdir ~/ami    
+    mkdir ~/ami
     sshfs -o idmap=user ibeis-hackathon:/home/ubuntu ~/ami
     sshfs -o idmap=user lev:/ ~/lev
 
-    mkdir -p ~/remote_machinename    
+    mkdir -p ~/remote_machinename
     sshfs -o follow_symlinks,idmap=user remote_machinename:/home/local/KHQ/jon.crall ~/remote_machinename
 
     # unmount
     fusermount -u ~/remote_machinename
-    
+
 
 
     sudo apt update
     sudo apt install patchutils
     #http://superuser.com/questions/403664/how-can-i-copy-and-paste-text-out-of-a-remote-vim-to-a-local-vim
-    # 
+    #
 }
 
 install_fresh_flash_player()
@@ -297,7 +297,7 @@ install_fresh_flash_player()
     sudo add-apt-repository universe
     sudo apt install pepperflashplugin-nonfree
     sudo update-pepperflashplugin-nonfree --status
-    sudo update-pepperflashplugin-nonfree --install 
+    sudo update-pepperflashplugin-nonfree --install
 
     sudo add-apt-repository ppa:nilarimogard/webupd8
     sudo apt update
@@ -310,7 +310,7 @@ install_skype()
     # References: https://help.ubuntu.com/community/Skype
     #sudo dpkg --add-architecture i386
     sudo add-apt-repository "deb http://archive.canonical.com/ $(lsb_release -sc) partner"
-    sudo apt update 
+    sudo apt update
     sudo apt install skype -y
     #sudo apt install -y skype
 }
@@ -340,13 +340,13 @@ install_chrome()
     sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
     sudo apt update
     # Google Chrome
-    sudo apt install -y google-chrome-stable 
+    sudo apt install -y google-chrome-stable
 
 
     # for extensions.gnome.org integration
     sudo apt install chrome-gnome-shell
 }
- 
+
 install_spotify()
 {
     #cat /etc/apt/sources.list
@@ -361,7 +361,7 @@ install_spotify()
     echo deb http://repository.spotify.com stable non-free | sudo tee /etc/apt/sources.list.d/spotify.list
     sudo apt-get update -y
     sudo apt-get install spotify-client -y
-    
+
 }
 
 install_vpn()
@@ -387,7 +387,7 @@ install_vpn()
     # Open network manager, click add, click vpn, then click add from file
     # select the *.ovpn file
 
-    sudo chcon -t cert_t ~/.config/openvpn/* 
+    sudo chcon -t cert_t ~/.config/openvpn/*
 
 
     Add the following tow lines to oovpn file
@@ -398,7 +398,7 @@ install_vpn()
     openvpn --script-security 2 --config ~/.config/openvpn/imryrr1-udp-1194-VPN/imryrr1-udp-1194-VPN.ovpn \
         --x509-username-field jon.crall
 
-    
+
     #Reference: https://bugs.launchpad.net/ubuntu/+source/dnsmasq/+bug/1639776
     #There is a workaround for the openvpn issue on ubuntu
     #16.04. After connecting to the vpn, run:
@@ -415,11 +415,11 @@ install_vpn()
     #Edit /etc/NetworkManager/NetworkManager.conf and comment out the line
     #dns=dnsmasq line, so it looks like "#dns=dnsmasq" and then restart
     #Network Manager with sudo restart network-manager.
-    
+
 
 }
 
- 
+
 install_latex()
 {
     # texlive latest
@@ -479,7 +479,7 @@ install_latex()
 
     # Support for utf8
     #sudo tlmgr install euenc
-     
+
     # Fix TL2016 bug
     # https://www.tug.org/pipermail/tex-live/2016-June/038678.html
     #http://tex.stackexchange.com/questions/27982/what-are-texlives-four-different-texmf-folders
@@ -490,7 +490,7 @@ install_latex()
     ##sudo cp algorithm2e.sty.backup /usr/local/texlive/2016/texmf-dist/tex/latex/algorithm2e/algorithm2e.sty
     #iconv -f ISO-8859-1 -t UTF-8//TRANSLIT algorithm2e.sty.backup -o ~/latex/crall-iccv-2017/algorithm3e.sty
     #file ~/latex/crall-iccv-2017/algorithm3e.sty
-    
+
 }
 
 
@@ -511,7 +511,7 @@ install_python()
     pip install guppy
 
     #https://github.com/rogerbinns/apsw/releases/download/3.8.6-r1/apsw-3.8.6-r1.win32-py2.7.exe
-    sudo apt install -y libsqlite3-dev 
+    sudo apt install -y libsqlite3-dev
     sudo apt install -y sqlite3
     sudo apt install -y libsqlite3
     sudo apt install -y python-apsw
@@ -542,28 +542,28 @@ install_hdf5()
 install_cuda_prereq()
 {
     sudo apt install -y libprotobuf-dev
-    sudo apt install -y libleveldb-dev 
-    sudo apt install -y libsnappy-dev 
-    sudo apt install -y libboost-all-dev 
-    sudo apt install -y libopencv-dev 
+    sudo apt install -y libleveldb-dev
+    sudo apt install -y libsnappy-dev
+    sudo apt install -y libboost-all-dev
+    sudo apt install -y libopencv-dev
 
     install_hdf5
 
     sudo apt install -y libgflags-dev
     sudo apt install -y libgoogle-glog-dev
     sudo apt install -y liblmdb-dev
-    sudo apt install -y protobuf-compiler 
+    sudo apt install -y protobuf-compiler
 
-    #sudo apt install -y gcc-4.6 
-    #sudo apt install -y g++-4.6 
+    #sudo apt install -y gcc-4.6
+    #sudo apt install -y g++-4.6
     #sudo apt install -y gcc-4.6-multilib
-    #sudo apt install -y g++-4.6-multilib 
+    #sudo apt install -y g++-4.6-multilib
     sudo apt install libpthread-stubs0-dev
 
     sudo apt install -y gfortran
     sudo apt install -y libjpeg62
     sudo apt install -y libfreeimage-dev
-    sudo apt install -y libatlas-base-dev 
+    sudo apt install -y libatlas-base-dev
 
     sudo apt install -y python-dev
     #sudo apt install -y python-pip
@@ -576,8 +576,8 @@ install_xlib()
 {
     # for gnome-shell-grid
     sudo pip install svn+https://python-xlib.svn.sourceforge.net/svnroot/python-xlib/trunk/
-    sudo apt install -y python-wnck 
-    sudo apt install -y wmctrl 
+    sudo apt install -y python-wnck
+    sudo apt install -y wmctrl
     sudo apt install -y xdotool
 }
 
@@ -591,7 +591,7 @@ install_virtualbox()
     sudo apt install virtualbox dkms
     # download addons and mount on guest machine
     #http://download.virtualbox.org/virtualbox/4.1.12/
-    
+
     python -c 'import ubelt; print(ubelt.grabdata("http://releases.ubuntu.com/16.04/ubuntu-16.04.6-desktop-i386.iso"))'
     python -c 'import ubelt; print(ubelt.grabdata("http://download.virtualbox.org/virtualbox/4.1.12/VBoxGuestAdditions_4.1.12.iso"))'
     python -c 'import ubelt; print(ubelt.grabdata("http://mirror.solarvps.com/centos/7.0.1406/isos/x86_64/CentOS-7.0-1406-x86_64-DVD.iso"))'
@@ -677,7 +677,7 @@ install_numba()
 {
     # References: http://askubuntu.com/questions/588688/importerror-no-module-named-llvmlite-binding
     # References: http://askubuntu.com/questions/576510/error-while-trying-to-install-llvmlite-on-ubuntu-14-04
-    sudo apt install zlib1g zlib1g-dev 
+    sudo apt install zlib1g zlib1g-dev
     sudo apt install libedit-dev
     sudo apt install llvm-3.5 llvm-3.5-dev llvm-dev
     sudo apt install llvm-3.6 llvm-3.6-dev llvm-dev
@@ -726,13 +726,13 @@ NoneEnabled yes
 EOL'
    sudo service ssh restart
    ssh -V
-    
+
 
 }
 
 
 secure_ssl_pip()
-{ 
+{
     pip install pyasn1
     pip install ndg-httpsclient
     pip install pyopenssl
@@ -756,7 +756,7 @@ install_screen_capture()
     mokutil --sb-state
 
     sudo apt install kdenlive
-    
+
 }
 
 
@@ -810,20 +810,20 @@ fix_softwarecenter_color()
     # http://askubuntu.com/questions/160932/text-in-ubuntu-software-center-is-unreadable
 gksudo gedit /usr/share/software-center/ui/gtk3/css/softwarecenter.css
 
-# Replace 
+# Replace
 '@define-color light-aubergine #DED7DB;'
 '@define-color super-light-aubergine #F4F1F3;'
-# With 
+# With
 '@define-color light-aubergine #333333;'
 '@define-color super-light-aubergine #333333;'
-    
+
 }
 
 
 
 fix_gnome3_workspaces_multimonior()
 {
-    sudo apt install gconf-editor 
+    sudo apt install gconf-editor
     #http://gregcor.com/2011/05/07/fix-dual-monitors-in-gnome-3-aka-my-workspaces-are-broken/
     gsettings get org.gnome.shell.overrides workspaces-only-on-primary
     gsettings set org.gnome.shell.overrides workspaces-only-on-primary false
@@ -861,13 +861,13 @@ git_and_hg()
 
 svn_repos()
 {
-    # https://code.google.com/p/groupsac/source/checkout 
+    # https://code.google.com/p/groupsac/source/checkout
     svn checkout http://groupsac.googlecode.com/svn/trunk/ groupsac-read-only
 }
 
 video_driver_info(){
-    # find info on current video driver 
-    # http://ubuntuforums.org/showthread.php?t=1795372 
+    # find info on current video driver
+    # http://ubuntuforums.org/showthread.php?t=1795372
     lspci  -mm | grep VGA
 
     # Which video driver is in use
@@ -896,7 +896,7 @@ make_venv_physical()
     if [[ -L "$dpath" && -d "$dpath" ]]; then\
         echo "$dpath is a symlink directory"; \
         mv "$dpath" "$dpath"_temp
-        mkdir "$dpath" 
+        mkdir "$dpath"
         cp -R "$dpath"_temp/* "$dpath"
         rm "$dpath"_temp
     elif [[ -d "$dpath" ]]; then echo \
@@ -915,12 +915,12 @@ install_brightness_adjust()
     xrandr -q | grep " connected"
     xrandr --output DVI-I-2 --brightness 0.2
     xrandr --output DVI-I-3 --brightness 0.2
-    
+
 }
 
 trackball(){
     # http://askubuntu.com/questions/66253/how-to-configure-logitech-marble-trackball
-    # Changes mouse behavior such that 
+    # Changes mouse behavior such that
     # holding a special button and moving the trackball will scroll.
 
     #MOUSE_ID=$(xinput --list | grep -i -m 1 'mouse' | grep -o 'id=[0-9]\+' | grep -o '[0-9]\+')
@@ -945,15 +945,15 @@ trackball(){
     xinput set-int-prop "$dev" "$we" 8 1
 
     # Thise commands dont seemt to work even though set-int-prop is depricated
-    xinput set-prop --type=int  "$device" "$we Button" 8 
+    xinput set-prop --type=int  "$device" "$we Button" 8
     xinput set-prop --type=int  "$device" "$we" 1
     #xinput set-prop "$device" --type=int −−format=8 "$we" 1
     #xinput set-prop "$device" --type=int −−format=8 "$we Button" 8
     #xinput set-prop "$device" --type=int −−format=8 "$we" 1
 
     #--set-int-prop device property format value
-    
-    
+
+
     # --set-prop [--type=atom|float|int] [--format=8|16|32] device property value [...]
     #     Set the property to the given value(s).  If not specified, the format and type of the property are left as-is.  The
     #     arguments are interpreted according to the property type.
@@ -1011,7 +1011,7 @@ fix_monitor_positions()
     wget -O "$HOME"/.config/autostart/update-monitor-position.desktop https://raw.githubusercontent.com/NicolasBernaerts/ubuntu-scripts/master/ubuntugnome/update-monitor-position.desktop
     sed -i -e 's/^Exec=.*$/Exec=update-monitor-position 5/' "$HOME"/.config/autostart/update-monitor-position.desktop
     chmod +x "$HOME"/.config/autostart/update-monitor-position.desktop
-        
+
 
     mkdir ~/.config/autostart
     sh -c 'cat >> ~/.config/autostart/fixmonitor.desktop << EOL
@@ -1049,14 +1049,14 @@ fix_audio_hyrule(){
     lspci -vvv
     lsmod
 
-        
+
 
     pacmd list-cards
     pacmd set-card-profile 2  output:analog-stereo
     pacmd set-default-sink 2
-       
+
     # http://askubuntu.com/questions/824481/constant-high-frequency-beep-on-startup-no-other-sound
-    # https://answers.launchpad.net/ubuntu/+source/alsa-driver/+question/402824 
+    # https://answers.launchpad.net/ubuntu/+source/alsa-driver/+question/402824
 
      # https://ubuntuforums.org/showthread.php?t=1121805
     sudo apt --purge remove linux-sound-base alsa-base alsa-utils
@@ -1064,7 +1064,7 @@ fix_audio_hyrule(){
     sudo apt install gdm ubuntu-desktop
 
     # http://www.linuxquestions.org/questions/ubuntu-63/how-to-set-default-sound-card-in-ubuntu-4175480799/
-    cat /proc/asound/modules 
+    cat /proc/asound/modules
 
 
     lspci | grep Audio
@@ -1083,7 +1083,7 @@ fix_audio_hyrule(){
 
     # http://askubuntu.com/questions/629634/after-reinstall-alsa-and-pulse-audio-system-setting-missing
     sudo apt remove --purge alsa-base pulseaudio
-    sudo apt install alsa-base* pulseaudio* pulseaudio-module-bluetooth* pulseaudio-module-x11* 
+    sudo apt install alsa-base* pulseaudio* pulseaudio-module-bluetooth* pulseaudio-module-x11*
     #unity-control-center* unity-control-center-signon* webaccounts-extension-common* xul-ext-webaccounts*
     #indicator-sound* libcanberra-pulse* osspd* osspd-pulseaudio*
     # http://techgage.com/news/disabling_nvidias_hdmi_audio_under_linux/
@@ -1091,7 +1091,7 @@ fix_audio_hyrule(){
     echo "$kerneldirs"
     cd "${kerneldirs[-1]}"
     sudo make menuconfig
-    D S 
+    D S
 }
 
 old_setup_ssh_server()
@@ -1116,7 +1116,7 @@ setup_ssh_server() {
     sudo sed -i 's/#Banner \/etc\/issue.net/Banner \/etc\/issue.net/' /etc/ssh/sshd_config
     sudo service ssh restart
     #sudo restart ssh
-    cat /etc/issue.net 
+    cat /etc/issue.net
     COMP_BUBBLE=$(python -c "import utool as ut; print(ut.bubbletext(ut.get_computer_name()))")
     #sh -c "echo \"$COMP_BUBBLE\" > tmp.txt" && cat tmp.txt && rm tmp.txt
     sudo sh -c "echo \"$COMP_BUBBLE\" >> /etc/issue.net"
@@ -1134,7 +1134,7 @@ razer_mouse(){
     sudo add-apt-repository ppa:nilarimogard/webupd8
     sudo apt update
     sudo apt install razercfg qrazercfg
-    
+
     # https://terrycain.github.io/razer-drivers/#ubuntu
     # NOTE THIS PPA IS DEPRICATED. SEE LINK FOR THE NEW ONE
     #sudo add-apt-repository ppa:terrz/razerutils
@@ -1166,10 +1166,10 @@ add_ssh_authorized_pubkey()
 {
     # This is for adding a pubkey on a remote machine
     mkdir -p ~/.ssh
-    
-    # MANUAL: append the contents of 
-    local:~/.ssh/is_rsa 
-    to 
+
+    # MANUAL: append the contents of
+    local:~/.ssh/is_rsa
+    to
     remote:~/.ssh/authorized_keys
 
     # Fix permissions
@@ -1183,23 +1183,23 @@ fix_wacom(){
     xinput --list | grep Wacom
     xsetwacom --list devices
     xsetwacom --list parameters
-    
+
     #xsetwacom --get "Wacom Bamboo 16FG 4x5 Pen stylus" all
 
     # Set pen devices to only use the first monitor
     WACOM_PEN_DEVICES=("Wacom Bamboo 16FG 4x5 Pen stylus"
                        "Wacom Bamboo 16FG 4x5 Pen eraser")
-    for wacom_dev in "${WACOM_PEN_DEVICES[@]}"; do 
+    for wacom_dev in "${WACOM_PEN_DEVICES[@]}"; do
         xsetwacom --set "$wacom_dev" MapToOutput HEAD-0
     done
 
     # Invert the y-axis so I can use it "upside-down"
     WACOM_DEVICES=("Wacom Bamboo 16FG 4x5 Pen stylus"
-                   "Wacom Bamboo 16FG 4x5 Pen eraser"        
-                   "Wacom Bamboo 16FG 4x5 Finger touch"      
+                   "Wacom Bamboo 16FG 4x5 Pen eraser"
+                   "Wacom Bamboo 16FG 4x5 Finger touch"
                    "Wacom Bamboo 16FG 4x5 Pad pad"
                    )
-    for wacom_dev in "${WACOM_DEVICES[@]}"; do 
+    for wacom_dev in "${WACOM_DEVICES[@]}"; do
         xsetwacom --set "$wacom_dev" Rotate half
     done
 }
@@ -1261,7 +1261,7 @@ remap_capslock_as_shift
     mkdir -p ~/.xkb/keymap
     mkdir -p ~/.xkb/symbols
     setxkbmap -print > ~/.xkb/keymap/mykbd
-    
+
     echo '
     partial modifier_keys
     xkb_symbols "swap_l_shift_ctrl" {
@@ -1271,7 +1271,7 @@ remap_capslock_as_shift
     '
 
 
-    xkbcomp -I"$HOME"/.xkb ~/.xkb/keymap/mykbd "$DISPLAY" 
+    xkbcomp -I"$HOME"/.xkb ~/.xkb/keymap/mykbd "$DISPLAY"
 
 
     #https://askubuntu.com/questions/371394/how-to-remap-caps-lock-key-to-shift-left-key
@@ -1285,7 +1285,7 @@ remap_capslock_as_shift
 
     keycode 37 = Control_L NoSymbol Control_L
     keycode 50 = Shift_L ISO_Next_Group Shift_L ISO_Next_Group
-    
+
 
     xmodmap -e "remove shift = Shift_L"
     xmodmap -e "add control = Shift_L"
@@ -1304,7 +1304,7 @@ keycode 37 = Control_L
 keycode 64 = Control_L
 add control = Control_L Control_R
 add mod1 = Alt_L Meta_L
-    
+
 }
 
 gmail_api(){
@@ -1314,7 +1314,7 @@ gmail_api(){
 podman(){
 
     sudo rm /etc/apt/sources.list.d/nvidia-docker.*
-    
+
 
     cat /etc/apt/sources.list
 
@@ -1343,7 +1343,7 @@ docker_modern_2021_04_22(){
 
      sudo apt update -y
      sudo apt install docker-ce docker-ce-cli containerd.io -y
-     
+
     # Add self to docker group
     sudo groupadd docker
     sudo usermod -aG docker "$USER"
@@ -1355,7 +1355,7 @@ docker_modern_2021_04_22(){
 
 
     # Change docker to use storage on an external drive
-    # Ubuntu/Debian: edit your /etc/default/docker file with the -g option: 
+    # Ubuntu/Debian: edit your /etc/default/docker file with the -g option:
     cat /etc/default/docker
     # https://forums.docker.com/t/solved-docker-service-fail-to-start-after-update/134444
     # Dont use -g anymore
@@ -1372,9 +1372,9 @@ docker_modern_2021_04_22(){
                 sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
 
     # Install the NVIDIA Runtime:
-    #DISTRIBUTION=$(. /etc/os-release;echo "$ID""$VERSION_ID") 
+    #DISTRIBUTION=$(. /etc/os-release;echo "$ID""$VERSION_ID")
     #echo "DISTRIBUTION = $DISTRIBUTION"
-    #curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add - 
+    #curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
     #curl -s -L https://nvidia.github.io/nvidia-docker/"$DISTRIBUTION"/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
 
     sudo apt-get update -y
@@ -1407,7 +1407,7 @@ docker-cleanup-old-stuff(){
 
 make_private_permissions()
 {
-    # https://unix.stackexchange.com/questions/79395/how-does-the-sticky-bit-work 
+    # https://unix.stackexchange.com/questions/79395/how-does-the-sticky-bit-work
     # https://unix.stackexchange.com/questions/129551/is-it-possible-to-prevent-files-created-being-world-readable
 
     #chmod g-r g-x [path]
@@ -1512,7 +1512,7 @@ install_ipp(){
   # Please download and install IPP from https://software.intel.com/en-us/intel-ipp
   mkdir -p ~/tmp
   cd ~/tmp
-  tar -xvzf ~/tpl-archive/ipp/l_ipp_2018.0.128.tgz 
+  tar -xvzf ~/tpl-archive/ipp/l_ipp_2018.0.128.tgz
   cd ~/tmp/l_ipp_2018.0.128
 
   ./install.sh --help
@@ -1588,7 +1588,7 @@ ttygif_record_terminal(){
     cd "$HOME"/code
     git clone https://github.com/icholy/ttygif.git
     cd ttygif
-    PREFIX=$HOME/.local make 
+    PREFIX=$HOME/.local make
     PREFIX=$HOME/.local make install
 
     import pyperclip
@@ -1619,21 +1619,33 @@ home_printer(){
 
     # Manually download the scanner driver due to EULA
     # It is a deb file: /home/joncrall/Downloads/brscan4-0.4.9-1.amd64.deb
+    # Or
 
     # Add Scanner to network
     sudo brsaneconfig4 -a name=BrotherScanner 'model=Brother HL-L3290CDW series' ip=192.168.222.229
-    brsaneconfig4 -q 
-    
+    brsaneconfig4 -q
 
     https://askubuntu.com/questions/314314/laser-printer-scanner-brother-dcp-8110dn-ubuntu-what-is-its-uri
     https://www.linuxquestions.org/questions/linux-newbie-8/how-to-install-brother-printer-4175598881/
     """
 
+    ##### NEW
+
+    ipfs get bafkreiacpnzwjbzcvsgi5mnjyqm5fbfgkywmoy76vslubivxljudwcjjoi -o brscan4-0.4.11-1.amd64.deb
+
+    # Should have sha256 of:
+    # d20f5225cc7547ca8efa425a528b7a5c4b4ed1a757c96a9127843088bf2a5b87  hll3290cdwpdrv-1.0.2-0.i386.deb
+    ipfs get bafybeiazg435mapgue3r5ybp6nzow4q2x2izo652gntp7667npjaemqupq -o hll3290cdwpdrv-1.0.2-0.i386.deb
+    sha256sum hll3290cdwpdrv-1.0.2-0.i386.deb
+    sudo dpkg  -i  --force-all hll3290cdwpdrv-1.0.2-0.i386.deb
+
+    ##### OLD
+
     cd Downloads
     cp "$HOME"/Downloads/linux-brprinter-installer-2.2.2-2.gz "$HOME"/tmp
     cd "$HOME"/tmp
     gunzip linux-brprinter-installer-2.2.2-2.gz
-    sudo bash linux-brprinter-installer-2.2.2-2 
+    sudo bash linux-brprinter-installer-2.2.2-2
 
     # I then had to enter the model name
     #MFC-J880DW
@@ -1644,7 +1656,7 @@ home_printer(){
     #192.168.222.229
 
     sudo usermod -a -G scanner "$USER"
-    
+
 }
 
 
@@ -1705,7 +1717,7 @@ fix_bluetooth_headphones(){
     #wget https://launchpad.net/ubuntu/+source/bluez/5.52-0ubuntu2/+build/18277594/+files/bluez_5.52-0ubuntu2_amd64.deb
     #wget https://launchpad.net/ubuntu/+source/bluez/5.52-0ubuntu2/+build/18277594/+files/libbluetooth3_5.52-0ubuntu2_amd64.deb
     #wget https://launchpad.net/ubuntu/+source/bluez/5.52-0ubuntu2/+build/18277594/+files/bluez-cups_5.52-0ubuntu2_amd64.deb
-    #wget https://launchpad.net/ubuntu/+source/bluez/5.52-0ubuntu2/+build/18277594/+files/bluez-obexd_5.52-0ubuntu2_amd64.deb 
+    #wget https://launchpad.net/ubuntu/+source/bluez/5.52-0ubuntu2/+build/18277594/+files/bluez-obexd_5.52-0ubuntu2_amd64.deb
     #sudo dpkg -i *.deb
 
 
@@ -1782,7 +1794,7 @@ github_gh_api(){
 
     "$HOME"/code/github/cli/bin/gh version
     "$HOME"/code/github/cli/bin/gh help
-    
+
 }
 
 circlci_cli(){
@@ -1870,7 +1882,7 @@ world_community_grid(){
     exec su "$USER"
     #7. In the same terminal window, start the BOINC Manager:
     sudo boincmgr -d /var/lib/boinc-client
-    
+
 }
 
 
@@ -1916,7 +1928,7 @@ install_go(){
     #    dpath=ub.ensuredir('$HOME/tmp'), verbose=3))"
 
     #__EROTEMIC_ALLOW_RELOAD__=1
-    #source $HOME/local/init/utils.sh 
+    #source $HOME/local/init/utils.sh
 
     #URL="https://golang.org/dl/go1.15.linux-amd64.tar.gz"
     #BASENAME=$(basename $URL)
@@ -1929,7 +1941,7 @@ install_go(){
     mkdir "$HOME"/.local
     tar -C "$HOME"/.local -xzf "$BASENAME"
     # Add $HOME/.local/go to your path or make symlinks
-    ln -s "$HOME"/.local/go/bin/go "$HOME"/.local/bin/go 
+    ln -s "$HOME"/.local/go/bin/go "$HOME"/.local/bin/go
     ln -s "$HOME"/.local/go/bin/gofmt "$HOME"/.local/bin/gofmt
 }
 
@@ -1950,7 +1962,7 @@ install_ipfs(){
     BASENAME=$(basename $URL)
     #CURL_OPTS=""
     curl_verify_hash $URL "$BASENAME" "e737fd6ccbd1917d302fcdc9e8d29" sha256sum
-    
+
     tar -xvzf "$BASENAME"
     cp go-ipfs/ipfs "$HOME"/.local/bin
 
@@ -1975,7 +1987,7 @@ install_ipfs(){
         ipfs cat /ipfs/QmQPeNsJPyVWPFDVHb77w8G42Fvo15z4bG2X8D2GhfbSXc/about
     "
 
-    # In a background tmux session? 
+    # In a background tmux session?
     ipfs daemon
 
     ipfs swarm peers
@@ -1991,7 +2003,7 @@ install_ipfs(){
     curl "http://127.0.0.1:8080/ipfs/$msg_hash"
 
     # We are not exposed to the world by default
-    # But if we were this would work: 
+    # But if we were this would work:
     curl "https://ipfs.io/ipfs/$msg_hash"
 
     IDENTIFIER="Erotemic <erotemic@gmail.com>"
@@ -1999,7 +2011,7 @@ install_ipfs(){
     codeblock "
     Hello Universe! Again, The last message was cool, but lame in comparison.
 
-    QmRrfsFGsjuJZRiNb22eGTvX6RDoHSUaSrzNRxiMGPEUd1 
+    QmRrfsFGsjuJZRiNb22eGTvX6RDoHSUaSrzNRxiMGPEUd1
     QmNiNW6W1cjg8JddZy1FyEjZJfUjLAn433eWYNdqDDYq7m
     QmXhQGNHnU46mX48w62jpyK6RWCjxBsPdxBkfrji66MWjC
 
@@ -2014,8 +2026,8 @@ install_ipfs(){
 
     Hey, update: I did it! 4AC8B478335ED6ED667715F3622BE571405441B4
 
-    Anyways, isn't it cool how easy it is to make a unique message? 
-    It's also really cool how easy it is to uses hashes as message ids. 
+    Anyways, isn't it cool how easy it is to make a unique message?
+    It's also really cool how easy it is to uses hashes as message ids.
 
     I certainly hope we can make it through these troubled times.
     " > _tosign.txt
@@ -2036,7 +2048,7 @@ install_ipfs(){
     ipfs key export -o todo-hide-secret-file-test.key test
 
     # https://stackoverflow.com/questions/39803954/ipfs-how-to-add-a-file-to-an-existing-folder
-    
+
     k51qzi5uqu5dhdij66ntfd6bsozesxh82pfkgys54n2qsmck96nwkr6mvlimk1
     ipfs name publish -k test k51qzi5uqu5dhdij66ntfd6bsozesxh82pfkgys54n2qsmck96nwkr6mvlimk1
 
@@ -2047,7 +2059,7 @@ install_ipfs(){
     # To get the IPFS node online we need to:
     # (1) give the machine a static IP on your local (router) network
     # (2) Forward port 4001 to your machine
-    
+
 }
 
 install_gwe(){
@@ -2058,7 +2070,7 @@ install_gwe(){
 
     # Make sure nvidia coolbits allow modifying clock settings
     nvidia-xconfig --cool-bits=12
-    
+
 
     flatpak --user remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
     flatpak --user install flathub com.leinardi.gwe
@@ -2152,7 +2164,7 @@ overclock_gpu_cli(){
     #nvidia-settings -c :0 -a '[gpu:0]/GPUGraphicsClockOffset[2]=100'
     #nvidia-settings -c :0 -a '[gpu:1]/GPUMemoryTransferRateOffset[2]=1000'
     #nvidia-settings -c :0 -a '[gpu:1]/GPUGraphicsClockOffset[2]=100'
-    
+
 
     # https://briot-jerome.developpez.com/fichiers/blog/nvidia-smi/list.txt
 
@@ -2161,9 +2173,9 @@ overclock_gpu_cli(){
     power.max_limit
     power.default_limit
 
-    nvidia-smi --query-gpu=index,name,pstate,power.limit,clocks.gr,clocks.max.gr,clocks.mem,clocks.max.mem --format=csv 
-    
-    
+    nvidia-smi --query-gpu=index,name,pstate,power.limit,clocks.gr,clocks.max.gr,clocks.mem,clocks.max.mem --format=csv
+
+
 
     WATTS_i0=$(nvidia-smi --id=0 -q -d POWER | grep "Default Power Limit" | python -c "import sys; print(0.9 * float(sys.stdin.read().split(':')[-1].strip().split(' ')[0]))")
     WATTS_i1=$(nvidia-smi --id=1 -q -d POWER | grep "Default Power Limit" | python -c "import sys; print(0.9 * float(sys.stdin.read().split(':')[-1].strip().split(' ')[0]))")
@@ -2179,10 +2191,10 @@ overclock_gpu_cli(){
     nvidia-settings -c :0 -a '[gpu:1]/GPUMemoryTransferRateOffsetAllPerformanceLevels=0'
     nvidia-settings -c :0 -a '[gpu:1]/GPUGraphicsClockOffsetAllPerformanceLevels=0'
 
-    nvidia-settings -c :0 -q '[gpu:0]/GPUMemoryTransferRateOffsetAllPerformanceLevels' 
-    nvidia-settings -c :0 -q '[gpu:1]/GPUMemoryTransferRateOffsetAllPerformanceLevels' 
-    nvidia-settings -c :0 -q '[gpu:0]/GPUGraphicsClockOffset' 
-    nvidia-settings -c :0 -q '[gpu:1]/GPUGraphicsClockOffset' 
+    nvidia-settings -c :0 -q '[gpu:0]/GPUMemoryTransferRateOffsetAllPerformanceLevels'
+    nvidia-settings -c :0 -q '[gpu:1]/GPUMemoryTransferRateOffsetAllPerformanceLevels'
+    nvidia-settings -c :0 -q '[gpu:0]/GPUGraphicsClockOffset'
+    nvidia-settings -c :0 -q '[gpu:1]/GPUGraphicsClockOffset'
 
 
 
@@ -2211,7 +2223,7 @@ overclock_gpu_cli(){
     sudo nvidia-smi --help
     #-gtt 65
 
-    
+
 
 
 }
@@ -2257,14 +2269,14 @@ install_aws_cli(){
     gpg --import aws.pub
 
     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscli-exe-linux-x86_64.zip"
-    curl https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip.sig -o awscli-exe-linux-x86_64.zip.sig 
-    gpg --verify awscli-exe-linux-x86_64.zip.sig awscli-exe-linux-x86_64.zip 
-    unzip awscli-exe-linux-x86_64.zip 
+    curl https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip.sig -o awscli-exe-linux-x86_64.zip.sig
+    gpg --verify awscli-exe-linux-x86_64.zip.sig awscli-exe-linux-x86_64.zip
+    unzip awscli-exe-linux-x86_64.zip
 
     cd "$HOME"/tmp
     ./aws/install --install-dir "$HOME"/.local/aws-cli --bin-dir "$HOME"/.local/bin --update
 
-    
+
 }
 
 
@@ -2277,7 +2289,7 @@ reaper(){
     cd "$HOME"/tmp/reaper
     EXPECTED_HASH=caf7ff6790b83a67f3d7666e266e60568c4d60d270fa4a1c5ae177365329e4f9 \
     URL=https://dlcf.reaper.fm/6.x/reaper642_linux_x86_64.tar.xz \
-        curl_verify_hash 
+        curl_verify_hash
     7z x reaper642_linux_x86_64.tar.xz
     7z x reaper642_linux_x86_64.tar
 
@@ -2304,14 +2316,14 @@ install_pipewire(){
     systemctl --user restart pipewire
     systemctl --user --now enable pipewire pipewire-pulse
     pactl info
-    
+
     #systemctl --user --now enable pipewire-media-session.service
     sudo apt remove ofono
     sudo apt remove ofono-phonesim
-    
+
     # Rollback
     #systemctl --user unmask pulseaudio
-    #systemctl --user --now disable pipewire{,-pulse}.{socket,service}    
+    #systemctl --user --now disable pipewire{,-pulse}.{socket,service}
     #systemctl --user --now enable pulseaudio.service pulseaudio.socket
 
 
@@ -2326,12 +2338,12 @@ install_pipewire(){
     sudo apt install libpipewire-0.3-dev
     if [ -d "$HOME"/code/qpwgraph ]; then
         git clone https://gitlab.freedesktop.org/rncbc/qpwgraph.git "$HOME"/code/qpwgraph
-    fi 
+    fi
     cd "$HOME"/code/qpwgraph
     cmake -DCMAKE_INSTALL_PREFIX="$HOME"/.local -B build
     cmake --build build
     cmake --install build
-    
+
 }
 
 rasberry_pi(){
@@ -2362,9 +2374,9 @@ install_xrdp_remote_desktop()
     # References:
     #     https://askubuntu.com/questions/680413/14-04-3-xrdp-gnome-session-session-ubuntu-2d-not-work
 
-    cat ~/.xsession 
+    cat ~/.xsession
     echo gnome-session --session=gnome-fallback > ~/.xsession
-    
+
     # --- CLIENT ---
     # Update REMINA on the client to the latest and greatest
     #sudo apt-add-repository ppa:remmina-ppa-team/remmina-next -y
@@ -2385,7 +2397,7 @@ install_xrdp_remote_desktop()
     # http://scarygliders.net/2011/11/17/x11rdp-ubuntu-11-10-gnome-3-xrdp-customization-new-hotness/
     # http://askubuntu.com/questions/445485/ubuntu-14-server-and-xrdp
     # http://askubuntu.com/questions/499088/ubuntu-14-x-with-xfce4-session-desktop-terminates-abruptly/499180#499180
-    # http://askubuntu.com/questions/449785/ubuntu-14-04-xrdp-grey 
+    # http://askubuntu.com/questions/449785/ubuntu-14-04-xrdp-grey
     sudo /etc/init.d/xrdp start
     sudo /etc/init.d/xrdp stop
 
@@ -2394,7 +2406,7 @@ install_xrdp_remote_desktop()
     #sudo apt-add-repository ppa:ubuntu-mate-dev/trusty-mate
     #sudo add-apt-repository --remove ppa:ubuntu-mate-dev/ppa
     #sudo add-apt-repository --remove ppa:ubuntu-mate-dev/trusty-mate
-    #sudo apt update 
+    #sudo apt update
     #sudo apt upgrade
     #sudo apt install ubuntu-mate-core ubuntu-mate-desktop
     #echo mate-session >~/.xsession
@@ -2403,13 +2415,13 @@ install_xrdp_remote_desktop()
     # http://askubuntu.com/questions/247501/i-get-failed-to-load-session-ubuntu-2d-when-using-xrdp
 
     sudo apt install gnome-session-fallback
-    cat ~/.xsession 
+    cat ~/.xsession
     echo gnome-session --session=gnome-fallback > ~/.xsession
 
     # http://c-nergy.be/blog/?p=5305
     sudo apt update
     sudo apt install xfce4
- 
+
     # this works but has tab key issue
     echo xfce4-session >~/.xsession
     sudo service xrdp restart
@@ -2432,13 +2444,13 @@ install_xrdp_remote_desktop()
     sed -i 's/switch_window_key/empty/' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
 
     sed 's/switch_window_key/empty/' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml | grep Super\&gt\;Tab
-    
+
 
 
 
     gvim ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
 
-    # tab key solution is here 
+    # tab key solution is here
     #http://askubuntu.com/questions/352121/bash-auto-completion-with-xubuntu-and-xrdp-from-windows
     #vim ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
     # had a similar issue running XFCE4 over VNC and the workaround for me was
@@ -2447,12 +2459,12 @@ install_xrdp_remote_desktop()
     # file to unset the following mapping
     #    <       <property name="&lt;Super&gt;Tab" type="string" value="switch_window_key"/>
     #    ---
-    #    >    
+    #    >
 
 
     # Copy paste?
     #http://askubuntu.com/questions/498873/how-to-install-xrdp-on-ubuntu-14-04-trusty
-    
+
     #echo >> ~/.xsession
 }
 
@@ -2466,7 +2478,7 @@ install_xrdp_v2(){
         remmina-plugin-xdmcp remmina-plugin-spice \
         remmina-plugin-rdp remmina-plugin-secret remmina-plugin-vnc \
         remmina-plugin-www
-    
+
     # Ensure version is > v1.4.20 to have ssh tunnel
     # https://remmina.org/remmina-rdp-ssh-tunnel/
     # https://gitlab.com/Remmina/Remmina/-/merge_requests/2293
@@ -2503,7 +2515,7 @@ install_qgis(){
 
 install_vscode(){
     # https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64
-    # 
+    #
     #ipfs get QmNRyckC3z8LhR7Bbg9vPMagtUXaVxAc9r8yFbKcwCcm3w -o code_1.66.0-1648620611_amd64.deb
     apt_ensure wget gpg
     wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
@@ -2531,7 +2543,7 @@ livesplit_obs(){
     wget https://github.com/CryZe/obs-livesplit-one/releases/download/v0.2.0/obs-livesplit-one-v0.2.0-x86_64-unknown-linux-gnu.tar.gz
     mkdir -p "$HOME"/.config/obs-studio/plugins
     tar -zxvf obs-livesplit-one-*-x86_64-unknown-linux-gnu.tar.gz -C "$HOME"/.config/obs-studio/plugins/
-    
+
 
     # Mario livesplit
     # https://one.livesplit.org/#/splits-io/u9
@@ -2539,7 +2551,7 @@ livesplit_obs(){
 
     curl https://sh.rustup.rs -sSf | sh
     https://github.com/CryZe/livesplit-one-desktop
-    
+
 }
 
 install-git-quick-stats(){
@@ -2562,7 +2574,7 @@ global_ulimit(){
     # https://serverfault.com/questions/610130/how-to-set-ulimit-value-permanently
     cat /etc/security/limits.conf
 
-    
+
 
     sudo_appendto /etc/security/limits.conf '* soft    nofile             4096'
     sudo_appendto /etc/security/limits.conf '* soft    nofile             8192'
@@ -2583,6 +2595,6 @@ install_yq(){
     INSTALL_PREFIX=$HOME/.local
     wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O "$INSTALL_PREFIX/bin/yq"
     chmod +x "$INSTALL_PREFIX/bin/yq"
-    
+
 
 }
