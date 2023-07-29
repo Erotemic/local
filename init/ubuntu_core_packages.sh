@@ -1619,15 +1619,28 @@ home_printer(){
 
     # Manually download the scanner driver due to EULA
     # It is a deb file: /home/joncrall/Downloads/brscan4-0.4.9-1.amd64.deb
+    # Or
 
     # Add Scanner to network
     sudo brsaneconfig4 -a name=BrotherScanner 'model=Brother HL-L3290CDW series' ip=192.168.222.229
-    brsaneconfig4 -q
 
+    brsaneconfig4 -q
 
     https://askubuntu.com/questions/314314/laser-printer-scanner-brother-dcp-8110dn-ubuntu-what-is-its-uri
     https://www.linuxquestions.org/questions/linux-newbie-8/how-to-install-brother-printer-4175598881/
     """
+
+    ##### NEW
+
+    ipfs get bafkreiacpnzwjbzcvsgi5mnjyqm5fbfgkywmoy76vslubivxljudwcjjoi -o brscan4-0.4.11-1.amd64.deb
+
+    # Should have sha256 of:
+    # d20f5225cc7547ca8efa425a528b7a5c4b4ed1a757c96a9127843088bf2a5b87  hll3290cdwpdrv-1.0.2-0.i386.deb
+    ipfs get bafybeiazg435mapgue3r5ybp6nzow4q2x2izo652gntp7667npjaemqupq -o hll3290cdwpdrv-1.0.2-0.i386.deb
+    sha256sum hll3290cdwpdrv-1.0.2-0.i386.deb
+    sudo dpkg  -i  --force-all hll3290cdwpdrv-1.0.2-0.i386.deb
+
+    ##### OLD
 
     cd Downloads
     cp "$HOME"/Downloads/linux-brprinter-installer-2.2.2-2.gz "$HOME"/tmp

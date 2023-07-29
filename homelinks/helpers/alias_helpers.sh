@@ -81,6 +81,7 @@ alias co='cd $CODE_DIR'
 alias remote='cd ~/remote'
 
 alias nh='cd $CODE_DIR/netharn'
+alias mra='cd $CODE_DIR/sm64-random-assets'
 alias nd='cd $HOME/code/ndsampler'
 alias kwc='cd $HOME/code/kwcoco'
 alias sc='cd $HOME/code/scriptconfig'
@@ -147,6 +148,7 @@ alias wadh='cd $(geowatch_dvc --tags="phase2_data" --hardware="hdd")'
 alias wads='cd $(geowatch_dvc --tags="phase2_data" --hardware="ssd")'
 alias wadh6='cd $(geowatch_dvc --tags="phase2_data" --hardware="hdd")/Drop6'
 alias wads6='cd $(geowatch_dvc --tags="phase2_data" --hardware="ssd")/Drop6'
+alias wads7='cd $(geowatch_dvc --tags="drop7_data" --hardware="ssd")'
 
 alias wads6m='cd $(geowatch_dvc --tags="phase2_data" --hardware="ssd")/Drop6-MeanYear10GSD-V2'
 

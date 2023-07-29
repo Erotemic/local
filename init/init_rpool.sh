@@ -727,3 +727,13 @@ prune_nethermind(){
     # Follow status with:
     rocketpool service logs eth1
 }
+
+claim_rewards(){
+    __doc__="
+    References:
+        https://docs.rocketpool.net/guides/node/skimming.html#:~:text=Automatic%20Distribution%20%E2%80%8B,by%20following%20the%20steps%20below.&text=Navigate%20to%20the%20setting%20Smartnode,Auto%20Distribute%20Threshold%20shown%20below.
+        https://docs.rocketpool.net/guides/node/responsibilities.html#how-ethereum-staking-works
+    "
+    rocketpool node claim-rewards
+    rocketpool minipool distribute-balance
+}
