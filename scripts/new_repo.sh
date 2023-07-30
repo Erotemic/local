@@ -1,5 +1,9 @@
 #!/bin/sh
 echo '
+DEPRECATED: Use xcookie instead
+
+This can be removed
+
 CommandLine:
     new_repo.sh <reponame>
 
@@ -76,11 +80,11 @@ sudo bash -c "cat > $repo_fpath/config" <<'EOF'
 	bare = true
 
 [branch "master"]
-    remote = origin 
+    remote = origin
     merge = refs/heads/master
 
 [branch "next"]
-    remote = origin 
+    remote = origin
     merge = refs/heads/next
 
 [remote "hyrule"]
