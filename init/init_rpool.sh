@@ -74,6 +74,9 @@ upgrade_rocketpool_cli()
         # Sign key belongs to:
         # https://github.com/jclapis
         gpg --import ./smartnode-signing-key-v3.asc
+
+        # Optional
+        python3 ~/local/scripts/xgpg.py edit_trust D17FBE7E12 ultimate
     fi
 
     gpg --verify rocketpool.sig rocketpool
