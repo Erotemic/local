@@ -1407,3 +1407,25 @@ remove_empty_dirs(){
     DPATH="${1:-.}"
     find "$DPATH" -empty -type d -delete
 }
+
+
+is_reboot_required(){
+    __doc__="
+    Check to see if a reboot is needed.
+    Prints a message to the screen.
+
+    Returns:
+        0 if yes else 1
+
+    References:
+        https://www.cyberciti.biz/faq/how-to-find-out-if-my-ubuntudebian-linux-server-needs-a-reboot/
+        https://askubuntu.com/questions/1337713/what-creates-the-file-var-run-reboot-required
+    "
+    if test -f /var/run/reboot-required; then
+        cat /var/run/reboot-required
+        return 0
+    else
+        echo "** OK: No reboot needed **"
+        return 1
+    fi
+}

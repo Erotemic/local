@@ -76,11 +76,10 @@ upgrade_rocketpool_cli()
         gpg --import ./smartnode-signing-key-v3.asc
 
         # Optional
-        python3 ~/local/scripts/xgpg.py edit_trust D17FBE7E12 ultimate
+        python3 ~/local/scripts/xgpg.py edit_trust D17FBE7E12E2C9DC21CE2BC3E00CDCDC74B1E3F5 ultimate
     fi
 
     gpg --verify rocketpool.sig rocketpool
-
 
     # Stop the existing node
     rocketpool service stop
@@ -673,9 +672,20 @@ configure_metric_monitoring_server(){
 
 
 configure_grafana_dashboard(){
-    # First, import the latest dashboard as described in
-    # https://docs.rocketpool.net/guides/node/grafana.html#enabling-the-metrics-server
-    # Then go to share -> export it, and now we can programatically modify the file.
+    __doc__="
+
+    Manual Steps
+    ------------
+    First, import the latest dashboard as described in
+    https://docs.rocketpool.net/guides/node/grafana.html#enabling-the-metrics-server
+
+    That is, click Dashboards (the 4 squares icon) -> +import
+
+    The current dashboard id (2023-07-30) is 18391
+
+    Then go to share -> export it, and now we can programatically modify the file.
+
+    "
     FPATH="$HOME/Downloads/Rocket Pool Dashboard v1.3.0-1684781005746.json"
     echo "FPATH = $FPATH"
     cat "$FPATH"
@@ -740,6 +750,170 @@ claim_rewards(){
         https://docs.rocketpool.net/guides/node/skimming.html#:~:text=Automatic%20Distribution%20%E2%80%8B,by%20following%20the%20steps%20below.&text=Navigate%20to%20the%20setting%20Smartnode,Auto%20Distribute%20Threshold%20shown%20below.
         https://docs.rocketpool.net/guides/node/responsibilities.html#how-ethereum-staking-works
     "
+
+    # Look at expected rewards
+    rocketpool node rewards
+
+    # Look at minimpool EL rewards
+    rocketpool minipool status | grep "Minipool Balance (EL)" -A 3 | grep "Your portion"
+
+    # Claim node rewards
     rocketpool node claim-rewards
+
+    # Claim minipool rewards
     rocketpool minipool distribute-balance
+}
+
+stake_on_behalf(){
+    __doc__="
+    To add stake more RPL
+
+    References:
+        https://docs.rocketpool.net/guides/node/create-validator.html#staking-via-the-website
+    "
+    echo "
+    These instructions are currently manual
+
+    Before you Start
+    ----------------
+    You should have a wallet (this could be your delegate wallet) with funds
+    that you want to stake on behalf of the node.
+
+    Instructions
+    ------------
+    * Navigate to https://stake.rocketpool.net/stake-behalf
+
+    * Connect the webpage to your metamask wallet.
+
+    * Enter your node's address in the 'Node Address' box (this is the address you see when you run).
+
+    ..code:: bash
+
+        rocketpool node status | grep -E 'The node .*0x[a-z0-9].* has a balance'
+
+    * You are then prompted for how much RPL you would like approve to stake.
+
+    * Metamask will then prompt you to set a limit (which can be filled in automatically) and sign the approval.
+
+    * The previous steps just allowed a smart contract to move the money for you.
+
+    * Now go back to stake on behalf and follow the remaining prompts entering
+    the max amount of RPL you approved and then signing the transaction.
+    "
+}
+
+is_reboot_required(){
+    if test -f /var/run/reboot-required; then
+        cat /var/run/reboot-required
+    else
+        echo "Nothing to do"
+    fi
+}
+
+
+terms(){
+
+    __doc__="
+
+    References:
+        https://launchpad.ethereum.org/en/faq#:~:text=A%20validator%20client%20is%20the,key%20pairs%2C%20controlling%20many%20validators.
+
+    VC - validator client.
+
+    BN - becon node.
+
+    EC - execution client.
+
+    "
+}
+
+
+rescue_node(){
+    __doc__="
+    For running maintainence that takes EC or BN offline.
+
+    References:
+        https://rescuenode.com/
+        https://twitter.com/0xPatches/status/1597704860962795520?lang=en
+        https://gist.github.com/jshufro/a22724f06702c8342b5d1b29ee0a6190
+        https://github.com/Rocket-Rescue-Node/guarded-beacon-proxy
+    "
+
+    # It is a very good idea to enable doppleganger mode before you do this.
+
+    # On the staking node run:
+    rocketpool node sign-message -m "Rescue Node $(date +%s)"
+
+    # Paste the message into https://rescuenode.com/
+    # follow propmts (like picking the correct CC) then copy the result
+    # into ~/.rocketpool/override/validator.yml
+
+    cat << EOF
+    Q. I'm curious how the rocketpool rescue node works in terms of security. Specifically, how is the ~/.rocketpool/override/validator.yml doing, and how is it secure to have another machine perform your attestations (i.e. how does this work without giving the rescue node your private keys)?
+
+    In the about section I see the tech specs: https://gist.github.com/jshufro/a22724f06702c8342b5d1b29ee0a6190
+
+    But I'm not sure if this answers all my questions. I see:
+
+    > Node Operators using the rescue node acknowledge that they are trusting its maintainers not to steal tips or MEV. The maintainers will not be able to steal their keys or funds.
+
+    But I don't understand exactly why that is the case.
+
+    ---
+
+    The validator is the only application in the stack that has access to the
+    keys, and it never sends them to the beacon node. the rescue node is
+    essentially just a beacon node, so it never gets access to the keys.
+
+    The validator.yml changes just tell your validator to connect to the rescue
+    node instead of its local beacon node
+
+    But since the validator doesn't send the keys to the beacon node, it
+    doesn't matter
+
+    --
+
+    Mostly yes, still grokking a few things. I understand that the validator
+    (lodestar in my case) would be the only application with private key access.
+
+    It's unclear to me what 'the becon node' is in this setting. I was under
+    the impression that the validator was the 'Beacon Node' and that was the same
+    thing as the concensus client. Is that not the case? Otherwise I dont
+    understand why the validator connects to itself.
+
+    When I run 'rp service stats' I'm noticing that there are 'ETH1' and 'ETH2' services.
+    Is the becon node the ETH2 service?  I also see that on my node, the ETH2 service command is an invocation of lodestar, so is lodestar
+      actually connecting to itself by running in different docker containers?
+    "
+
+    ---
+
+    So the VC has access to private keys, and it delegates attestations to the
+    BN server. Normally I would delegate to my own local instance, but in this case
+    I would override it to call out to the rescue node.
+
+    Is it the case that the BN server is also talking to the ETH1 service, and
+    when I delegate to the rescue node it has its own ETH1 client running?
+
+    If that is true, then the last question I have is how the rescue node is
+    able to perform attestation if my VC is down.
+
+    Patches: if your VC is down you cannot perform attestations
+    [3:23 PM]Patches: 'delegates' is the wrong word here
+    [3:23 PM]Patches: the bn and ec talk to each other and their peers to sync the ethereum chain
+    [3:23 PM]Patches: the vc talks to the bn to perform duties
+    --
+    So I have to keep my VC up if I'm using the rescue node? If that is true then I think everything makes sense. If not, I still have questions.
+    --
+    Patches: that is correct
+    [3:25 PM]Patches: in general, if you haven't given your keys away, it's impossible to perform duties when your VC is down
+    [3:25 PM]Patches: the VC is the thing that does that, after all
+    [3:26 PM]Patches: rescue node isn't there for power failures or internet outages
+    [3:26 PM]Patches: it's there for fixing corrupt chain data, doing emergency maintenance, pruning
+    [3:27 PM]erotemic: Yeah, that would've been my question. But that makes sense. The rescue node is for when the BN and EC are down. I think I'm getting a handle on it.
+    [3:27 PM]Patches: there's a few other niche use-cases
+    [] Patches: like if you want to deposit a minipool right away but only just set up your node, you can use infura+rescuenode to deposit before your clients finish syncing
+    [3:28 PM]Patches: but for the most part people use it to prune and to resync
+EOF
+
 }

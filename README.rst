@@ -87,8 +87,15 @@ Badges / shields for my projects:
 
 .. .. See ~/local/misc/badges.py for autogen
 
-Contributions to External Repos 
+Contributions to External Repos
 -------------------------------
+
+
+TODO: find a way to script this
+
+
+Link to see closed PRs
+https://github.com/pulls?q=is%3Apr+author%3AErotemic+archived%3Afalse+is%3Aclosed
 
 * https://github.com/HadrienG/taxadb/commits?author=Erotemic
 * https://github.com/Kitware/SMQTK/commits?author=Erotemic

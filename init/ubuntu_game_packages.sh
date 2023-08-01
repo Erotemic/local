@@ -42,7 +42,7 @@ cleanup_sources_list(){
     #https://askubuntu.com/questions/760896/how-can-i-fix-apt-error-w-target-packages-is-configured-multiple-times
 }
 
-starcraft2(){
+starcraft2_2020(){
     __heredoc__ = """
     https://www.reddit.com/r/starcraft/comments/9ugzrz/definitive_linux_sc2_guide/
     https://lutris.net/games/starcraft-ii/
@@ -58,6 +58,71 @@ starcraft2(){
     # Change preferences so games are downloaded to /data/lutris or wherever
     # you have space
 
+    # See https://github.com/lutris/lutris/wiki/Installing-drivers#installing-vulkan
+    # for 18.04 (needs update for 19.04 / 20.04)
+    #sudo add-apt-repository ppa:kisak/kisak-mesa -y
+    ##sudo add-apt-repository --remove ppa:kisak/kisak-mesa
+    #sudo apt install ppa-purge
+    #sudo ppa-purge ppa:kisak/kisak-mesa
+
+    manual_steps="
+    navigate here: https://lutris.net/games/starcraft-ii/
+    click install
+    "
+
+    sudo dpkg --add-architecture i386
+    sudo apt update && sudo apt upgrade -y
+}
+
+starcraft2_2023_did_not_work(){
+    __heredoc__ = """
+    https://www.reddit.com/r/starcraft/comments/9ugzrz/definitive_linux_sc2_guide/
+    https://lutris.net/games/starcraft-ii/
+    """
+    #sudo apt-get install libvulkan1 libvulkan1:i386
+    ##sudo apt-get install mesa-vulkan-drivers mesa-vulkan-drivers:i386
+
+    # Remove old lutris
+    #sudo apt-get remove lutris -y
+    #sudo add-apt-repository --remove ppa:lutris-team/lutris -y
+    #sudo apt-get update
+    #sudo apt-get update -y
+
+    #sudo add-apt-repository --remove ppa:lutris-team/lutris-staging -y
+    #sudo apt-get update
+    #sudo apt-get update -y
+    #sudo apt-get install lutris -y
+    #sudo apt-get remove lutris -y
+
+    #git clone https://github.com/lutris/lutris.git $HOME/code/lutris
+    #cd $HOME/code/lutris
+
+    #sudo apt install python3-yaml python3-requests python3-pil python3-gi python3-gi-cairo \
+    #  gir1.2-gtk-3.0 gir1.2-gnomedesktop-3.0 gir1.2-webkit2-4.0 \
+    #  gir1.2-notify-0.7 psmisc cabextract unzip p7zip curl fluid-soundfont-gs \
+    #  x11-xserver-utils python3-evdev libc6-i386  libgirepository1.0-dev \
+    #  python3-setproctitle python3-distro
+
+    #lib32gcc1
+
+    #virtualenv --system-site-packages $HOME/code/lutris/venv-lutris
+    #source $HOME/code/lutris/venv-lutris/bin/activate
+    #cd $HOME/code/lutris
+    #python3 setup.py install
+    #
+    flatpak install flathub com.github.tchx84.Flatseal
+    flatpak run com.github.tchx84.Flatseal
+
+
+
+    flatpak install flathub net.lutris.Lutris
+    sudo flatpak override net.lutris.Lutris --filesystem=host
+    flatpak run net.lutris.Lutris
+    # user, -y
+
+
+    # Change preferences so games are downloaded to /data/lutris or wherever
+    # you have space
 
     # See https://github.com/lutris/lutris/wiki/Installing-drivers#installing-vulkan
     # for 18.04 (needs update for 19.04 / 20.04)
@@ -74,6 +139,9 @@ starcraft2(){
     sudo dpkg --add-architecture i386
     sudo apt update && sudo apt upgrade -y
 
+    export DXVK_FILTER_DEVICE_NAME="GeForce RTX 3090"
+    #DXVK_FILTER_DEVICE_NAME="GeForce RTX 3090" lutris
+    DXVK_FILTER_DEVICE_NAME="GeForce RTX 3090" lutris -d
 }
 
 starcraft2_OLD(){
@@ -84,7 +152,7 @@ starcraft2_OLD(){
 
     cd ~/Downloads
     # broken link
-    wget -O Battle.net-Setup.exe https://www.battle.net/download/getInstallerForGame?os=win&locale=enUS&version=LIVE&gameProgram=BATTLENET_APP
+    wget -O Battle.net-Setup.exe "https://www.battle.net/download/getInstallerForGame?os=win&locale=enUS&version=LIVE&gameProgram=BATTLENET_APP"
 
     # /home/joncrall/Downloads/StarCraft-II-Setup.exe
 

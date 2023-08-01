@@ -61,6 +61,14 @@ pip install gpg-lite
 python -m pip install git+https://gitlab.com/biomedit/gpg-lite.git
 
 ~/misc/learn/send_me_a_gpg_message.sh
+
+
+Requirements
+============
+
+sudo apt install expect -y
+pip install fire ubelt
+
 """
 import warnings
 import ubelt as ub
