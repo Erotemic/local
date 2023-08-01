@@ -529,11 +529,5 @@ endif
 
 " Configure Neural like so in Vimscript
 if v:version > 801
-let g:neural = {
-\   'source': {
-\       'openai': {
-\           'api_key': $EROTEMIC_OPENAI_API_KEY,
-\       },
-\   },
-\}
+    let g:neural = {'source': { 'openai': { 'api_key': $EROTEMIC_OPENAI_API_KEY, }, }, }
 endif
