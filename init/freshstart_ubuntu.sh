@@ -30,7 +30,6 @@ install_git_config(){
 
 
 basic_apt_install(){
-
     # High priority
     sudo apt install htop git tmux tree curl gcc g++ gfortran build-essential p7zip-full curl -y
 
@@ -55,9 +54,9 @@ simple_setup_manual()
     if [ ! -d "$HOME"/misc ]; then
         git clone https://github.com/Erotemic/misc.git "$HOME/misc"
     fi
-    source ~/local/init/freshstart_ubuntu.sh 
+    source ~/local/init/freshstart_ubuntu.sh
 
-    source ~/local/init/ensure_symlinks.sh 
+    source ~/local/init/ensure_symlinks.sh
     ensure_config_symlinks
     simple_setup_auto
 
@@ -76,7 +75,7 @@ local_remote_presetup(){
     REMOTE_USER=jon.crall
     ssh-copy-id $REMOTE_USER@$REMOTE
     #In event of slowdown: sshpass -f <(printf '%s\n' kwpass=yourpass) ssh-copy-id $REMOTE_USER@$REMOTE
-    rsync -avzupR ~/./tpl-archive/ $REMOTE_USER@$REMOTE:. 
+    rsync -avzupR ~/./tpl-archive/ $REMOTE_USER@$REMOTE:.
 }
 
 set_global_git_config(){
@@ -103,7 +102,7 @@ setup_single_use_ssh_keys(){
     mkdir -p ~/.ssh
     cd ~/.ssh
 
-    # WHERES MY POST-QUANTUM CRYPTO AT?!  
+    # WHERES MY POST-QUANTUM CRYPTO AT?!
     # Unfortunately I think ED25519 cant be PQ-resistant because its fixed at 256 bits :(
     # Note: add a passphrase in -N for extra secure
     echo "USER = $USER"
@@ -119,7 +118,7 @@ setup_single_use_ssh_keys(){
 
     eval "$(ssh-agent -s)"
     ssh-add ~/.ssh/id_"${HOSTNAME}"_"${USER}"_ed25519
-    
+
     echo "TODO: Register public key with appropriate services"
     echo " https://github.com/profile/keys "
     echo " https://gitlab.com/profile/keys "
@@ -143,7 +142,7 @@ setup_remote_ssh_keys(){
     # setup local machine with a special public / private key pair
     ssh-add id_myname_rsa
 
-    # Add this public key to remote authorized_keys so they recognize you.  
+    # Add this public key to remote authorized_keys so they recognize you.
     # You may have to type in your password for each of these, but it will be
     # the last time.
     REMOTE_USER=jon.crall
@@ -190,8 +189,8 @@ simple_setup_auto(){
         #ssh-copy-id username@remote
     fi
 
-    source ~/local/init/freshstart_ubuntu.sh 
-    source ~/local/init/ensure_symlinks.sh 
+    source ~/local/init/freshstart_ubuntu.sh
+    source ~/local/init/ensure_symlinks.sh
     ensure_config_symlinks
 
     source ~/.bashrc
@@ -205,7 +204,7 @@ simple_setup_auto(){
     pip install setuptools --upgrade
     pip install six
     pip install jedi
-    pip install pep8 autopep8 flake8 pylint 
+    pip install pep8 autopep8 flake8 pylint
     pip install line_profiler
 
     pip install Cython
@@ -276,13 +275,13 @@ simple_setup_auto(){
 
     python ~/local/init/init_ipython_config.py
 
-    #deactivate 
+    #deactivate
     #setup_venv2
     #source ~/venv2/bin/activate
     #pip install setuptools --upgrade
     #pip install six
     #pip install jedi
-    #pip install pep8 autopep8 flake8 pylint 
+    #pip install pep8 autopep8 flake8 pylint
     #pip install line_profiler
 
     #pip install Cython
@@ -358,8 +357,8 @@ entry_prereq_git_and_local()
     # usermod -d /home/newHomeDir -m newUsername
 
     # If on a new computer, then make a new ssh key
-    
-    if [[ "$HOSTNAME" == "calculex"  ]]; then 
+
+    if [[ "$HOSTNAME" == "calculex"  ]]; then
         new_setup_ssh_keys
     fi
 
@@ -377,12 +376,12 @@ entry_prereq_git_and_local()
     # If local does not exist
     if [ ! -f ~/local ]; then
         git clone https://github.com/Erotemic/local.git
-        cd local/init 
+        cd local/init
     fi
 }
 
 freshtart_ubuntu_script()
-{ 
+{
     __doc__="
     CommandLine:
         source ~/local/init/freshstart_ubuntu.sh
@@ -398,7 +397,7 @@ freshtart_ubuntu_script()
     sudo apt install symlinks -y
 
     source ~/local/init/freshstart_ubuntu.sh
-    source ~/local/init/ensure_symlinks.sh 
+    source ~/local/init/ensure_symlinks.sh
     ensure_config_symlinks
 
     source ~/.bashrc
@@ -409,7 +408,7 @@ freshtart_ubuntu_script()
     #make_sshkey
 
     #sudo apt install trash-cli
-    sudo apt install -y exuberant-ctags 
+    sudo apt install -y exuberant-ctags
 
     # Vim
     #sudo apt install -y vim
@@ -420,7 +419,7 @@ freshtart_ubuntu_script()
     #sudo apt install terminator -y
 
     if [ "$(which terminator)" == "" ]; then
-        # Dont use buggy gtk2 version 
+        # Dont use buggy gtk2 version
         # https://bugs.launchpad.net/ubuntu/+source/terminator/+bug/1568132
 
         #sudo add-apt-repository ppa:gnome-terminator
@@ -442,7 +441,7 @@ freshtart_ubuntu_script()
 
     #sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 10
 
-    # Python 
+    # Python
     setup_venv3
     source ~/venv3/bin/activate
 
@@ -469,14 +468,14 @@ freshtart_ubuntu_script()
 
     # Install machine specific things
 
-    if [[ "$HOSTNAME" == "hyrule"  ]]; then 
+    if [[ "$HOSTNAME" == "hyrule"  ]]; then
         echo "SETUP HYRULE STUFF"
         customize_sudoers
         source settings_hyrule.sh
         hyrule_setup_sshd
         hyrule_setup_fstab
         hyrule_create_users
-    elif [[ "$HOSTNAME" == "Ooo"  ]]; then 
+    elif [[ "$HOSTNAME" == "Ooo"  ]]; then
         echo "SETUP Ooo STUFF"
         install_dropbox
         customize_sudoers
@@ -486,7 +485,7 @@ freshtart_ubuntu_script()
         # Make sure dropbox has been initialized first
         install_fonts
 
-        # 
+        #
         install_spotify
     else
         echo "UNKNOWN HOSTNAME"
@@ -496,8 +495,8 @@ freshtart_ubuntu_script()
     sudo apt install -y pkg-config
     sudo apt install -y libtk-img-dev
     sudo apt install -y libblas-dev liblapack-dev
-    sudo apt install -y libav-tools libgeos-dev 
-    sudo apt install -y libfftw3-dev libfreetype6-dev 
+    sudo apt install -y libav-tools libgeos-dev
+    sudo apt install -y libfftw3-dev libfreetype6-dev
     sudo apt install -y libatlas-base-dev liblcms1-dev zlib1g-dev
     sudo apt install -y libjpeg-dev libopenjpeg-dev libpng12-dev libtiff5-dev
 
@@ -522,7 +521,7 @@ freshtart_ubuntu_script()
     #pip install dateutils
     #pip install pyreadline
     #pip install pyparsing
-    
+
     #pip install networkx
 
     #pip install simplejson
@@ -592,7 +591,7 @@ setup_venv3(){
         mkdir -p ~/tmp
         curl https://bootstrap.pypa.io/get-pip.py > ~/tmp/get-pip.py
 
-        # Test if we have distutils; if not, install it. 
+        # Test if we have distutils; if not, install it.
         python3 -c "from distutils import sysconfig as distutils_sysconfig"
         if [ "$?" != "0" ]; then
             sudo apt install python3-distutils -y
@@ -609,8 +608,8 @@ setup_venv3(){
     PYVERSUFF=$(python3 -c "import sysconfig; print(sysconfig.get_config_var('VERSION'))")
     PYTHON3_VERSION_VENV="$HOME/venv$PYVERSUFF"
     mkdir -p "$PYTHON3_VERSION_VENV"
-    python3 -m virtualenv -p "$PYEXE" "$PYTHON3_VERSION_VENV" 
-    python3 -m virtualenv --relocatable "$PYTHON3_VERSION_VENV" 
+    python3 -m virtualenv -p "$PYEXE" "$PYTHON3_VERSION_VENV"
+    python3 -m virtualenv --relocatable "$PYTHON3_VERSION_VENV"
 
     PYTHON3_VENV="$HOME/venv3"
     # symlink to the real env
@@ -669,7 +668,7 @@ setup_poetry_env(){
 
     python -m venv "$VENV_PREFIX"/py38
     source "$VENV_PREFIX"/py38/bin/activate
-    
+
 }
 
 
@@ -683,8 +682,8 @@ pyenv_packages(){
     pip install pyqt5
     pip install pyyaml ipython
     pip install line_profiler
-    pip install six pep8 autopep8 flake8 pylint 
-    pip install pygtrie 
+    pip install six pep8 autopep8 flake8 pylint
+    pip install pygtrie
     pip install dvc[all]
     pip install pytest
     pip install parse
@@ -752,7 +751,7 @@ setup_conda_env(){
     curl "$CONDA_URL" > "$CONDA_INSTALL_SCRIPT"
 
     # For security, it is important to verify the hash
-    echo "${CONDA_EXPECTED_SHA256}  ${CONDA_INSTALL_SCRIPT}" > conda_expected_hash.sha256 
+    echo "${CONDA_EXPECTED_SHA256}  ${CONDA_INSTALL_SCRIPT}" > conda_expected_hash.sha256
     if ! sha256sum --status -c conda_expected_hash.sha256; then
         GOT_HASH=$(sha256sum "$CONDA_INSTALL_SCRIPT")
         echo "GOT_HASH      = $GOT_HASH"
@@ -766,10 +765,10 @@ setup_conda_env(){
         sh "$CONDA_INSTALL_SCRIPT" -b -p "$_CONDA_ROOT"
         # Activate the basic conda environment
         source "$_CONDA_ROOT/etc/profile.d/conda.sh"
-        # Update the base 
-        conda update --name base conda --yes 
+        # Update the base
+        conda update --name base conda --yes
 
-        #conda update -y -n base conda 
+        #conda update -y -n base conda
         conda create -y -n conda38 python=3.8 --override-channels --channel conda-forge
         #conda activate conda38
     fi
@@ -836,7 +835,7 @@ install_conda_basics(){
 
     #conda install -y -c dsdale24 pyqt5
     #conda install -y -c conda-forge opencv
-    #conda install -c pytorch pytorch 
+    #conda install -c pytorch pytorch
 
     #conda uninstall pytorch
 
@@ -846,7 +845,7 @@ install_conda_basics(){
     conda install -y -c pytorch pytorch
 
     pyblock "import torch; print(torch.cuda.is_available())"
-    
+
     # conda install -y -c pytorch magma-cuda80
     # conda install -y -c pytorch magma-cuda90
 
@@ -856,7 +855,7 @@ install_conda_basics(){
 
     # TRY TO WORK WITH GXX_LINUX-64
     #conda install numpy pyyaml mkl mkl-include setuptools cmake cffi typing
-    #export CMAKE_PREFIX_PATH="$(dirname $(which conda))/../" 
+    #export CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"
 
     #CC="cc" CPP="gcc" CXX="c++" python setup.py install
 }
@@ -881,8 +880,8 @@ setup_venv2(){
     PYVERSUFF=$(python2 -c "import sysconfig; print(sysconfig.get_config_var('VERSION'))")
     PYTHON2_VERSION_VENV="$HOME/venv$PYVERSUFF"
     mkdir -p "$PYTHON2_VERSION_VENV"
-    python2 -m virtualenv -p "$PYEXE" "$PYTHON2_VERSION_VENV" 
-    python2 -m virtualenv --relocatable "$PYTHON2_VERSION_VENV" 
+    python2 -m virtualenv -p "$PYEXE" "$PYTHON2_VERSION_VENV"
+    python2 -m virtualenv --relocatable "$PYTHON2_VERSION_VENV"
 
     PYTHON2_VENV="$HOME/venv2"
     # symlink to the real env
@@ -910,9 +909,9 @@ setup_venv2(){
 #    PYTHON2_VENV="$HOME/venv2"
 #    mkdir -p $PYTHON2_VENV
 #    python2.7 -m pip install pip setuptools virtualenv -U --user
-#    python2.7 -m virtualenv -p $(which python2.7) $PYTHON2_VENV 
-#    #python2 -m virtualenv -p /usr/bin/python2.7 $PYTHON2_VENV 
-#    #python2 -m virtualenv --relocatable $PYTHON2_VENV 
+#    python2.7 -m virtualenv -p $(which python2.7) $PYTHON2_VENV
+#    #python2 -m virtualenv -p /usr/bin/python2.7 $PYTHON2_VENV
+#    #python2 -m virtualenv --relocatable $PYTHON2_VENV
 #}
 
 
@@ -981,7 +980,7 @@ patch_venv_with_shared_libs(){
                 shutil.copytree(src, dest, symlink)
             else:
                 shutil.copy2(src, dest)
-                    
+
         def install_shared(bin_dir, symlink=True):
             # copy (symlink by default) the python shared library to the target
             print('Installing shared lib...')
@@ -1003,13 +1002,13 @@ patch_venv_with_shared_libs(){
                 if libfiles:
                     break
 
-            assert len(libfiles) > 0, 'no python libs found' 
+            assert len(libfiles) > 0, 'no python libs found'
 
             for libpython in libfiles:
                 target_file = join(target_shared, os.path.basename(libpython))
 
                 copyfile(libpython, target_file)
-                
+
             print('done.')
 
         bin_dir = join(os.environ['VIRTUAL_ENV'], 'bin')  # hack
@@ -1033,7 +1032,7 @@ patch_venv_with_ld_library(){
     "
     ACTIVATE_SCRIPT=$VIRTUAL_ENV/bin/activate
 
-    # apply the patch 
+    # apply the patch
     pyblock "
         import textwrap
         from os.path import exists
@@ -1093,7 +1092,7 @@ patch_venv_with_ld_library(){
             new_text = ''.join(new_lines)
             open(new_path, 'w').write(new_text)
     "
-    #diff -u $VIRTUAL_ENV/bin/activate.old $VIRTUAL_ENV/bin/activate 
+    #diff -u $VIRTUAL_ENV/bin/activate.old $VIRTUAL_ENV/bin/activate
 }
 
 setup_venv37(){
@@ -1102,7 +1101,7 @@ setup_venv37(){
     PYTHON3_VENV="$HOME/venv3_7"
     mkdir -p "$PYTHON3_VENV"
     ~/.local/bin/python3 -m venv "$PYTHON3_VENV"
-    ln -s "$PYTHON3_VENV" ~/venv3 
+    ln -s "$PYTHON3_VENV" ~/venv3
 
 }
 
@@ -1118,7 +1117,7 @@ setup_venvpypy(){
     #pip -m install virtualenv --user
     #pip install virtualenv
     pypy -m ensurepip
-    virtualenv -p /usr/bin/pypy "$PYPY_VENV" 
+    virtualenv -p /usr/bin/pypy "$PYPY_VENV"
 
     pypy -m ensurepip
     sudo apt install pypy-pip
@@ -1127,7 +1126,7 @@ setup_venvpypy(){
     sudo add-apt-repository ppa:pypy/ppa
     sudo apt update
     sudo apt install pypy3
-    
+
 }
 
 install_chrome()
@@ -1137,7 +1136,7 @@ install_chrome()
     sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
     sudo apt update
     # Google Chrome
-    sudo apt install -y google-chrome-stable 
+    sudo apt install -y google-chrome-stable
 }
 
 reinstall_chrome(){
@@ -1150,7 +1149,7 @@ install_fonts()
     # Download fonts
     #sudo apt -y install nautilus-dropbox
 
-    mkdir -p ~/tmp 
+    mkdir -p ~/tmp
     cd ~/tmp
     wget https://github.com/antijingoist/open-dyslexic/archive/master.zip
     7z x master.zip
@@ -1200,7 +1199,7 @@ install_dropbox_fonts2(){
 
 virtualbox_ubuntu_init()
 {
-    sudo apt install dkms 
+    sudo apt install dkms
     sudo apt update
     sudo apt upgrade
     # Press Ctrl+D to automatically install virtualbox addons do this
@@ -1213,21 +1212,21 @@ virtualbox_ubuntu_init()
 }
 
 nopassword_on_sudo()
-{ 
+{
     # DEPRICATE: we dont do this anymore
     # CAREFUL. THIS IS HUGE SECURITY RISK
     # References: http://askubuntu.com/questions/147241/execute-sudo-without-password
-    cat /etc/sudoers > ~/tmp/sudoers.next  
-    echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >> ~/tmp/sudoers.next  
+    cat /etc/sudoers > ~/tmp/sudoers.next
+    echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >> ~/tmp/sudoers.next
     # Copy over the new sudoers file
     visudo -c -f ~/tmp/sudoers.next
     if [ "$?" -eq "0" ]; then
         sudo cp ~/tmp/sudoers.next /etc/sudoers
-    fi 
+    fi
     rm ~/tmp/sudoers.next
-} 
+}
 
- 
+
 nautilus_hide_unwanted_sidebar_items()
 {
     __doc__="
@@ -1247,22 +1246,22 @@ nautilus_hide_unwanted_sidebar_items()
         ls ~/.config/user-dirs*
         ls /etc/xdg/user-dirs*
 
-        cat ~/.config/user-dirs.dirs 
+        cat ~/.config/user-dirs.dirs
         cat ~/.config/user-dirs.locale
 
-        cat /etc/xdg/user-dirs.conf 
-        cat /etc/xdg/user-dirs.defaults 
+        cat /etc/xdg/user-dirs.conf
+        cat /etc/xdg/user-dirs.defaults
 
-        #cat ~/.config/user-dirs.conf 
+        #cat ~/.config/user-dirs.conf
     fi
 
     ### --------------------------------------
     ### modify local config files in $HOME/.config
     ### --------------------------------------
-    
+
     chmod u+w ~/.config/user-dirs.dirs
     #sed -i 's/XDG_DOCUMENTS_DIR/#XDG_DOCUMENTS_DIR/' ~/.config/user-dirs.dirs
-    sed -i 's/XDG_TEMPLATES_DIR/#XDG_TEMPLATES_DIR/' ~/.config/user-dirs.dirs 
+    sed -i 's/XDG_TEMPLATES_DIR/#XDG_TEMPLATES_DIR/' ~/.config/user-dirs.dirs
     sed -i 's/XDG_PUBLICSHARE_DIR/#XDG_PUBLICSHARE_DIR/' ~/.config/user-dirs.dirs
     sed -i 's/XDG_MUSIC_DIR/#XDG_MUSIC_DIR/' ~/.config/user-dirs.dirs
     sed -i 's/XDG_PICTURES_DIR/#XDG_PICTURES_DIR/' ~/.config/user-dirs.dirs
@@ -1275,12 +1274,12 @@ nautilus_hide_unwanted_sidebar_items()
     ### Modify global config files in /etc/xdg
     ### --------------------------------------
 
-    #sudo sed -i 's/DOCUMENTS/#DOCUMENTS/'     /etc/xdg/user-dirs.defaults 
-    sudo sed -i 's/TEMPLATES/#TEMPLATES/'     /etc/xdg/user-dirs.defaults 
-    sudo sed -i 's/PUBLICSHARE/#PUBLICSHARE/' /etc/xdg/user-dirs.defaults 
-    sudo sed -i 's/MUSIC/#MUSIC/'             /etc/xdg/user-dirs.defaults 
-    sudo sed -i 's/PICTURES/#PICTURES/'       /etc/xdg/user-dirs.defaults 
-    sudo sed -i 's/VIDEOS/#VIDEOS/'           /etc/xdg/user-dirs.defaults 
+    #sudo sed -i 's/DOCUMENTS/#DOCUMENTS/'     /etc/xdg/user-dirs.defaults
+    sudo sed -i 's/TEMPLATES/#TEMPLATES/'     /etc/xdg/user-dirs.defaults
+    sudo sed -i 's/PUBLICSHARE/#PUBLICSHARE/' /etc/xdg/user-dirs.defaults
+    sudo sed -i 's/MUSIC/#MUSIC/'             /etc/xdg/user-dirs.defaults
+    sudo sed -i 's/PICTURES/#PICTURES/'       /etc/xdg/user-dirs.defaults
+    sudo sed -i 's/VIDEOS/#VIDEOS/'           /etc/xdg/user-dirs.defaults
     ###
     sudo sed -i "s/enabled=true/enabled=false/" /etc/xdg/user-dirs.conf
     sudo_appendto /etc/xdg/user-dirs.conf  "enabled=false"
@@ -1328,7 +1327,7 @@ setup_ibeis()
     # Options
     ./_scripts/bootstrap.py --no-syspkg --nosudo
 
-    cd 
+    cd
     IBEIS_WORK_DIR="$(python -c 'import ibeis; print(ibeis.get_workdir())')"
     echo "$IBEIS_WORK_DIR"
     ln -s "$IBEIS_WORK_DIR"  work
@@ -1365,14 +1364,14 @@ setup_development_environment(){
 
     # Install machine specific things
 
-    if [[ "$HOSTNAME" == "hyrule"  ]]; then 
+    if [[ "$HOSTNAME" == "hyrule"  ]]; then
         echo "SETUP HYRULE STUFF"
         customize_sudoers
         source settings_hyrule.sh
         hyrule_setup_sshd
         hyrule_setup_fstab
         hyrule_create_users
-    elif [[ "$HOSTNAME" == "Ooo"  ]]; then 
+    elif [[ "$HOSTNAME" == "Ooo"  ]]; then
         echo "SETUP Ooo STUFF"
         install_dropbox
         customize_sudoers
@@ -1382,7 +1381,7 @@ setup_development_environment(){
         # Make sure dropbox has been initialized first
         install_fonts
 
-        # 
+        #
         install_spotify
     else
         echo "UNKNOWN HOSTNAME"
@@ -1391,8 +1390,8 @@ setup_development_environment(){
     # Extended development environment
     sudo apt install -y pkg-config
     sudo apt install -y libtk-img-dev
-    sudo apt install -y libav-tools libgeos-dev 
-    sudo apt install -y libfftw3-dev libfreetype6-dev 
+    sudo apt install -y libav-tools libgeos-dev
+    sudo apt install -y libfftw3-dev libfreetype6-dev
     sudo apt install -y libatlas-base-dev liblcms1-dev zlib1g-dev
     sudo apt install -y libjpeg-dev libopenjpeg-dev libpng12-dev libtiff5-dev
 
@@ -1422,7 +1421,7 @@ setup_development_environment(){
     pip install pyreadline
     #pip install pyparsing
     pip install parse
-    
+
     pip install networkx
     pip install Pygments
     pip install colorama
@@ -1459,32 +1458,32 @@ local_apt(){
     apt download $PKG_NAME
     PKG_DEB=$(echo $PKG_NAME*.deb)
     # Cant get this to work
-    dpkg -i "$PKG_DEB" --force-not-root --root="$HOME" 
+    dpkg -i "$PKG_DEB" --force-not-root --root="$HOME"
     #--------
 }
 
 
 customize_sudoers()
-{ 
+{
     # References: http://askubuntu.com/questions/147241/execute-sudo-without-password
     # Make timeout for sudoers a bit longer
-    cat /etc/sudoers > ~/tmp/sudoers.next  
-    sed -i 's/^Defaults.*env_reset/Defaults    env_reset, timestamp_timeout=480/' ~/tmp/sudoers.next 
+    cat /etc/sudoers > ~/tmp/sudoers.next
+    sed -i 's/^Defaults.*env_reset/Defaults    env_reset, timestamp_timeout=480/' ~/tmp/sudoers.next
     # Copy over the new sudoers file
     sudo visudo -c -f ~/tmp/sudoers.next
     if [ "$?" -eq "0" ]; then
         sudo cp ~/tmp/sudoers.next /etc/sudoers
-    fi 
+    fi
     rm ~/tmp/sudoers.next
-    #cat ~/tmp/sudoers.next  
-    #sudo cat /etc/sudoers 
-} 
+    #cat ~/tmp/sudoers.next
+    #sudo cat /etc/sudoers
+}
 
 
 gnome_settings()
 {
     # NOTE: mouse scroll wheel behavior was fixed by unplugging and replugging
-    # the mouse. Odd. 
+    # the mouse. Odd.
 
     #gconftool-2 --all-dirs "/"
     #gconftool-2 --all-dirs "/desktop/url-handlers"
@@ -1497,7 +1496,7 @@ gnome_settings()
     #gconftool-2 --get /apps/nautilus/preferences/desktop_font
     #gconftool-2 --get /desktop/gnome/interface/monospace_font_name
 
-    #gconftool-2 -a "/apps/gnome-terminal/profiles/Default" 
+    #gconftool-2 -a "/apps/gnome-terminal/profiles/Default"
     #gsettings set org.gnome.desktop.lockdown disable-lock-screen 'true'
     #sudo -u gdm gconftool-2 --type=bool --set /desktop/gnome/sound/event_sounds false
     #sudo apt install -y gnome-tweak-tool
@@ -1520,7 +1519,7 @@ gnome_settings()
     gsettings set org.gnome.nautilus.preferences enable-interactive-search true
     #gsettings set org.gnome.nautilus.preferences enable-interactive-search false
 
-    gconftool-2 --get /apps/gnome-screensaver/lock_enabled 
+    gconftool-2 --get /apps/gnome-screensaver/lock_enabled
     gconftool-2 --get /desktop/gnome/sound/event_sounds
 
     #sudo apt install nautilus-open-terminal
@@ -1540,10 +1539,10 @@ big_apt_install(){
     sudo apt install -y astyle automake autotools-dev build-essential curl expect exuberant-ctags g++ gcc gfortran gitg gparted graphviz hardinfo hdfview htop imagemagick libatlas-base-dev libatlas-base-dev libblas-dev libboost-all-dev libevent-dev libfftw3-dev libfreeimage-dev libfreetype6-dev libgeos-dev libgflags-dev libgoogle-glog-dev libjpeg-dev libjpeg62 liblapack-dev libleveldb-dev liblmdb-dev libncurses5-dev libopencv-dev libprotobuf-dev libpthread-stubs0-dev libsnappy-dev libtiff5-dev libtk-img-dev lm-sensors mdadm okular openssh-server p7zip-full patchutils pkg-config postgresql protobuf-compiler python-dev python3-dev python3-tk remmina rsync sqlitebrowser sshfs symlinks synaptic terminator tmux tree valgrind vim-gnome wmctrl xclip xdotool xsel zlib1g-dev initramfs-tools gdisk openssh-server libhdf5-serial-dev libhdf5-openmpi-dev xbacklight hdf5-tools libsqlite3-dev sqlite3 sysstat gitk
 
     sudo apt-get install git-lfs
-    
 
-    libav-tools 
-    libopenjpeg-dev libpng12-dev 
+
+    libav-tools
+    libopenjpeg-dev libpng12-dev
 
     sudo apt-get install network-manager-openvpn-gnome -y
 
@@ -1569,7 +1568,7 @@ big_apt_install(){
     wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
     sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
     sudo apt update -y
-    sudo apt install -y google-chrome-stable 
+    sudo apt install -y google-chrome-stable
 
     sudo add-apt-repository ppa:unit193/encryption -y
     sudo apt update
@@ -1583,7 +1582,7 @@ big_apt_install(){
 
 
 retro_console(){
-    # https://github.com/Swordfish90/cool-retro-term 
+    # https://github.com/Swordfish90/cool-retro-term
     wget https://github.com/Swordfish90/cool-retro-term/releases/download/1.1.1/Cool-Retro-Term-1.1.1-x86_64.AppImage
     chmod a+x Cool-Retro-Term-1.1.1-x86_64.AppImage
     ./Cool-Retro-Term-1.1.1-x86_64.AppImage
@@ -1605,7 +1604,7 @@ brio_webcam(){
     v4l2-ctl -d /dev/video0 --set-ctrl=backlight_compensation=0
     v4l2-ctl -d /dev/video0 --set-ctrl=focus_absolute=10
     v4l2-ctl -d /dev/video0 --set-ctrl=zoom_absolute=100
-    
+
     #v4l2-ctl -d /dev/video0 --set-ctrl=focus_auto=0
     #v4l2-ctl -d /dev/video0 --set-ctrl=focus_absolute=255
     #v4l2-ctl -d /dev/video0 --set-ctrl=focus_absolute=0
@@ -1621,7 +1620,7 @@ fix_dns_issue(){
     #There is a workaround for the openvpn issue on ubuntu
     #16.04. After connecting to the vpn, run:
     sudo pkill dnsmasq
-    sudo sed -i 's/^\(dns=dnsmasq\)/#\1/g' /etc/NetworkManager/NetworkManager.conf 
+    sudo sed -i 's/^\(dns=dnsmasq\)/#\1/g' /etc/NetworkManager/NetworkManager.conf
 }
 
 resetup_ooo_after_os_reinstall()
@@ -1631,13 +1630,13 @@ resetup_ooo_after_os_reinstall()
     # raid to get things working again
     sudo apt-get install gdisk mdadm rsync -y
     # Simply scan for your preconfigured raid
-    sudo mdadm --assemble --scan 
+    sudo mdadm --assemble --scan
     cat /proc/mdstat
     sudo update-initramfs -u
-    
+
     sudo mdadm --examine "$RAID_PARTS"
     sudo mdadm --detail /dev/md0
-    
+
 
     # Mount the RAID (temporary. modify fstab to automount)
     sudo mkdir -p /media/joncrall/raid
@@ -1653,7 +1652,7 @@ resetup_ooo_after_os_reinstall()
     # Allow authorized keys
     COMP_BUBBLE=$(python -c "import utool as ut; print(ut.bubbletext(ut.get_computer_name()))")
     sudo sh -c "echo \"$COMP_BUBBLE\" >> /etc/issue.net"
-    cat /etc/issue.net 
+    cat /etc/issue.net
     sudo sed -i 's/#AuthorizedKeysFile\t%h\/.ssh\/authorized_keys/AuthorizedKeysFile\t%h\/.ssh\/authorized_keys/' /etc/ssh/sshd_config
 
 
@@ -1718,7 +1717,7 @@ install_transcrypt(){
     git clone https://gitlab.com/Erotemic/erotemic.git
     cd "$HOME"/code/erotemic
 
-    # new roaming 
+    # new roaming
     #mkdir -p $HOME/code/roaming
     #cd $HOME/code/roaming
 
@@ -1733,14 +1732,14 @@ install_transcrypt(){
     echo 'secret plans' >> dummy_secrets
 
     # Copy and paste the following command to initialize a cloned repository:
-    transcrypt -c aes-256-cbc 
+    transcrypt -c aes-256-cbc
     transcrypt -c aes-256-cbc -p 'pass1'
     transcrypt --cipher=aes256-GCM
     "
     #git clone https://gitlab.com/Erotemic/erotemic.git
 
     # The user must supply a password here
-    transcrypt -c aes-256-cbc 
+    transcrypt -c aes-256-cbc
 }
 
 
@@ -1761,7 +1760,7 @@ fix_ubuntu_18_04_sound_pop_issue(){
     "
     sudo echo "obtaining sudo"
     # First, there are two system files that need modification
-    # Changing the values here should fix the issue in your current session. 
+    # Changing the values here should fix the issue in your current session.
     cat /sys/module/snd_hda_intel/parameters/power_save
     cat /sys/module/snd_hda_intel/parameters/power_save_controller
     # Flip the 1 to a 0
@@ -1771,7 +1770,7 @@ fix_ubuntu_18_04_sound_pop_issue(){
 
     # To make this change persistant we must modify a config file
     if [ -f "/etc/default/tlp" ]; then
-        # Some systems (usually laptops) have this controlled via TLP 
+        # Some systems (usually laptops) have this controlled via TLP
         sudo sed -i 's/SOUND_POWER_SAVE_ON_BAT=1/SOUND_POWER_SAVE_ON_BAT=0/' /etc/default/tlp
         sudo sed -i 's/SOUND_POER_SAVE_CONTROLLER=Y/SOUND_POER_SAVE_CONTROLLER=N/' /etc/default/tlp
     elif [ -f "/etc/modprobe.d/alsa-base.conf" ]; then
@@ -1806,8 +1805,8 @@ latest_clickclose_gnome(){
     #curl_verify_hash https://codeload.github.com/p91paul/middleclickclose/zip/7c1653bf00da0bc28296ce921cc79ccf4d91e6d4 middleclickclose.zip f0890d8ad6d967844
     curl_verify_hash https://codeload.github.com/p91paul/middleclickclose/zip/9700cda07e6a644b5c4704efeb701f87f6991939 middleclickclose.zip 1ac8f0984412f744d4
 
-    #curl https://codeload.github.com/p91paul/middleclickclose/zip/7c1653bf00da0bc28296ce921cc79ccf4d91e6d4 -o middleclickclose.zip 
-    7z x -y middleclickclose.zip 
+    #curl https://codeload.github.com/p91paul/middleclickclose/zip/7c1653bf00da0bc28296ce921cc79ccf4d91e6d4 -o middleclickclose.zip
+    7z x -y middleclickclose.zip
 
     mkdir -p "$HOME"/.local/share/gnome-shell/extensions
     # Remove old version
@@ -1817,7 +1816,7 @@ latest_clickclose_gnome(){
 
     # reload gnome shell (alternative to alt-f2 + r)
     killall -3 gnome-shell
-    
+
 }
 
 
@@ -1849,7 +1848,7 @@ htop_like_resource_monitors(){
 
     #sudo apt install bashtop
     bashtop
-    pip install bpytop 
+    pip install bpytop
 
     #sudo add-apt-repository ppa:bashtop-monitor/bashtop
     #sudo apt update
@@ -1861,7 +1860,7 @@ htop_like_resource_monitors(){
 check_hdd_health(){
     # https://superuser.com/questions/171195/how-to-check-the-health-of-a-hard-drive
     sudo smartctl -a /dev/sda | less
-    
+
     sudo apt-get install gsmartcontrol
 }
 
@@ -1891,7 +1890,7 @@ benchmark()
 
     # https://hewlettpackard.github.io/dlcookbook-dlbs/#/
     git clone https://github.com/HewlettPackard/dlcookbook-dlbs.git ./dlbs   # Install benchmarking suite
-    cd ./dlbs  
+    cd ./dlbs
     source ./scripts/environment.sh                                          # Initialize host environment
     python ./python/dlbs/experimenter.py help --frameworks                   # List supported DL frameworks
     docker pull nvcr.io/nvidia/pytorch:18.06-py3                             # Pull PyTorch docker image from NGC
@@ -1936,14 +1935,14 @@ benchmark()
 
     params="exp.status,exp.framework_title,exp.effective_batch,results.time,results.throughput,exp.model_title,exp.docker_image"
 
-    #python "$logparser" ./pytorch/logs/*.log --output_file './results.json' 
+    #python "$logparser" ./pytorch/logs/*.log --output_file './results.json'
     #python "$reporter" --summary_file '${HOME}/dlbs/results.json'\             # Parse summary file and build
     #                 --type 'weak-scaling'\                                  #     weak scaling report
     #                 --target_variable 'results.time'                        #     using batch time as performance metric
 
     python "$DLBS_ROOT"/python/dlbs/bench_data.py parse ./pytorch/*.log  --output results.json
 
-    python "$DLBS_ROOT"/python/dlbs/bench_data.py summary  results.json 
+    python "$DLBS_ROOT"/python/dlbs/bench_data.py summary  results.json
 
     python "$DLBS_ROOT"/python/dlbs/bench_data.py report  results.json --report strong
     python "$DLBS_ROOT"/python/dlbs/bench_data.py report  results.json --report regular
@@ -1953,11 +1952,11 @@ benchmark()
 
     python "$DLBS_ROOT"/python/dlbs/bench_data.py summary results.json --report weak
     python "$DLBS_ROOT"/python/dlbs/bench_data.py summary results.json --report string
-    #--output_params ${params}                           
-    
+    #--output_params ${params}
+
     docker run -ti nvcr.io/nvidia/tensorflow:18.07-py3 /bin/bash
     nvidia-docker run -ti nvcr.io/nvidia/tensorflow:18.07-py3 /bin/bash
-    
+
 }
 
 
@@ -2001,7 +2000,7 @@ fix_legacy_trust_store(){
     SLACK_SOURCES_FPATH=/etc/apt/sources.list.d/slack.list
     # Export the key from the deprecated apt-key registry into a file in the share keyrings folder
     sudo apt-key export "$SLACK_KEY_ID" | sudo gpg --dearmour -o "$SLACK_KEYRING_FPATH"
-    # Then update the sources list such that it points to the file 
+    # Then update the sources list such that it points to the file
     cat $SLACK_SOURCES_FPATH
     sudo sed -i "s|deb https|deb [signed-by=$SLACK_KEYRING_FPATH] https|" $SLACK_SOURCES_FPATH
     cat $SLACK_SOURCES_FPATH
@@ -2068,7 +2067,7 @@ connect_to_wifi_headless(){
     #sudo netplan apply
 
     nmcli connection up id "$WIFI_DEVICE"
-    
+
     # https://www.linuxfordevices.com/tutorials/ubuntu/connect-wifi-terminal-command-line
     nmcli dev wifi connect "$HOME_WIFI_NAME" password "$HOME_WIFI_PASS"
 
@@ -2103,7 +2102,7 @@ allow_power_read(){
             # TODO: can we make ourselves this group with a new login?
             echo "
             Run:
-            
+
             sudo su '$USER'
 
             and try again
