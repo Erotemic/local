@@ -82,6 +82,7 @@ alias remote='cd ~/remote'
 
 alias nh='cd $CODE_DIR/netharn'
 alias mra='cd $CODE_DIR/sm64-random-assets'
+alias gtw='cd $CODE_DIR/git_well'
 alias nd='cd $HOME/code/ndsampler'
 alias kwc='cd $HOME/code/kwcoco'
 alias sc='cd $HOME/code/scriptconfig'

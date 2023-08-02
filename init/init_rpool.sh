@@ -848,6 +848,18 @@ rescue_node(){
     # follow propmts (like picking the correct CC) then copy the result
     # into ~/.rocketpool/override/validator.yml
 
+    rp service start
+
+    # Now you can perform maintainence
+    # e.g. rocketpool service resync-eth1
+
+    docker image prune -a --filter "until=24h"
+
+    # remove the extra line from:
+    #  ~/.rocketpool/override/validator.yml
+
+    rp service start
+
     cat << EOF
     Q. I'm curious how the rocketpool rescue node works in terms of security. Specifically, how is the ~/.rocketpool/override/validator.yml doing, and how is it secure to have another machine perform your attestations (i.e. how does this work without giving the rescue node your private keys)?
 
@@ -916,4 +928,15 @@ rescue_node(){
     [3:28 PM]Patches: but for the most part people use it to prune and to resync
 EOF
 
+    .191 * 2
+
+}
+
+
+cleanup(){
+    # Free a few hundred MB in /var/log/journal
+    journalctl --vacuum-time=10d
+
+    # Remove old kernels and packages
+    sudo apt-get autoremove
 }
