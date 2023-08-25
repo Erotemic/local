@@ -54,6 +54,13 @@ nuc_notes(){
 
 upgrade_rocketpool_cli()
 {
+    __doc__="
+    Download the latest smartnode
+
+    https://github.com/rocket-pool/smartnode-install/releases
+
+    "
+
     # Download the new stuff.
     ARCH=$(uname -m)
     declare -A ARCH_LUT=(

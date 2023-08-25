@@ -27,7 +27,7 @@ resetup_raid_after_os_reinstall()
     # raid to get things working again
     sudo apt-get install gdisk mdadm rsync -y
     # Simply scan for your preconfigured raid
-    sudo mdadm --assemble --scan 
+    sudo mdadm --assemble --scan
     # Mount the RAID (temporary. modify fstab to automount)
     sudo mkdir -p /media/$USER/raid
     sudo mount /dev/md0 /media/$USER/raid
@@ -53,8 +53,8 @@ sudo apt install zfsutils-linux -y
 
 
 
-# Show all devices wheter or not they are mounted 
-lsblk 
+# Show all devices wheter or not they are mounted
+lsblk
 cat /proc/scsi/scsi
 lsblk --scsi
 lsblk --scsi --output NAME,KNAME,LABEL,MOUNTPOINT,UUID,PARTTYPE,PARTUUID,MODEL,TYPE,SIZE,STATE | grep disk
@@ -68,7 +68,7 @@ lsblk --scsi |awk 'NR==1{print $0" DEVICE-ID(S)"}NR>1{dev=$1;gsub("[^[:alnum:]]"
 
 
 # Use the above information to determine which devices correspond to the drives
-# Define disks (represents unique hard drives connected to the motherboard) 
+# Define disks (represents unique hard drives connected to the motherboard)
 DISK1=/dev/sda
 DISK2=/dev/sdb
 DISK3=/dev/sdc
@@ -95,16 +95,16 @@ sudo mdadm --examine $RAID_DISKS
 # Formated everything with a GPT (guid partition table) and added the raid flag
 
 # However, now lets do it via the parted CLI
-create-raid-parition(){
-    __doc__="""
+create_raid_parition(){
+    __doc__="
     Setup a the disk for usage in a RAID, parition, format, and flags.
-    """
+    "
     _DISK=$1
     _PART=$2
     _LABEL=$3
 
     echo "Create the GPT for $_DISK"
-    sudo parted "$_DISK" mktable gpt                           # Create the GPT 
+    sudo parted "$_DISK" mktable gpt                           # Create the GPT
     sleep 1
 
     echo "Create a primary partition for $_DISK"
@@ -118,13 +118,13 @@ create-raid-parition(){
     # NOTE: we may not need to preformat the drive (because we fill format the raid device)
     sleep 3
     echo "Format the $_PART partition using the ext4 filesystem"
-    sudo mkfs.ext4 -L "$_LABEL" "$_PART"   # Format the partition 
+    sudo mkfs.ext4 -L "$_LABEL" "$_PART"   # Format the partition
 }
 
-create-raid-parition $DISK1 $PART1 "Raid-Disk-1"
-create-raid-parition $DISK2 $PART2 "Raid-Disk-2"
-create-raid-parition $DISK3 $PART3 "Raid-Disk-3"
-create-raid-parition $DISK4 $PART4 "Raid-Disk-4"
+create_raid_parition $DISK1 $PART1 "Raid-Disk-1"
+create_raid_parition $DISK2 $PART2 "Raid-Disk-2"
+create_raid_parition $DISK3 $PART3 "Raid-Disk-3"
+create_raid_parition $DISK4 $PART4 "Raid-Disk-4"
 # --- </FORMAT EACH DRIVE> ---
 
 
@@ -196,7 +196,7 @@ sudo sh -c "echo '/dev/md0  $MOUNT_DPATH              ext4    defaults        0 
 
 __directory_setup(){
     mkdir -p /raid/home
-    mkdir -p /raid/home/$USER
+    mkdir -p /raid/home/"$USER"
 
     rsync -avrP /media/joncrall/lacie /raid/unsorted
 }
@@ -236,7 +236,7 @@ f2fs_notes(){
     sudo apt-get install f2fs-tools -y
 
     # Output info about file systems
-    lsblk -fs 
+    lsblk -fs
 
     # Determine which disk devices should be formatted
     lsblk | grep disk
@@ -250,8 +250,8 @@ f2fs_notes(){
     sudo mkfs -t "$FS_FORMAT" "$DEVICE_DPATH"
 
     # Create mount point with group permissions
-    sudo mkdir -p "$MOUNT_DPATH" 
-    sudo chown "$USER":"$USER" "$MOUNT_DPATH" 
+    sudo mkdir -p "$MOUNT_DPATH"
+    sudo chown "$USER":"$USER" "$MOUNT_DPATH"
     sudo chmod 777 "$MOUNT_DPATH"
     sudo mount "$DEVICE_DPATH" "$MOUNT_DPATH"
     #sudo umount $MOUNT_DPATH
@@ -277,7 +277,7 @@ f2fs_notes(){
     sudo mount "$DEVICE_DPATH" "$MOUNT_DPATH"
     #sudo umount $MOUNT_DPATH
 
-    ln -s "/media/$USER/flash1" "$HOME/flash1" 
+    ln -s "/media/$USER/flash1" "$HOME/flash1"
 }
 
 
@@ -288,7 +288,7 @@ btrfs_notes(){
     sudo apt install btrfs-progs -y
 
     # Output info about file systems
-    lsblk -fs 
+    lsblk -fs
 
     # Determine which disk devices should be formatted
     lsblk | grep disk
@@ -307,45 +307,45 @@ btrfs_notes(){
     sudo mount "$DEVICE_DPATH" "$MOUNT_DPATH"
 
     # Create mount point with group permissions
-    sudo mkdir -p "$MOUNT_DPATH" 
-    sudo chown "$USER":"$USER" "$MOUNT_DPATH" 
+    sudo mkdir -p "$MOUNT_DPATH"
+    sudo chown "$USER":"$USER" "$MOUNT_DPATH"
     sudo chmod 777 "$MOUNT_DPATH"
     #sudo umount $MOUNT_DPATH
 
     FSTAB_LINE="${DEVICE_DPATH}  ${MOUNT_DPATH}              $FS_FORMAT    defaults        0 0  # from erotemic local"
     grep "$FSTAB_LINE" /etc/fstab || sudo sh -c "echo '$FSTAB_LINE' >> /etc/fstab"
 
-    ln -s "/media/$USER/flash1" "$HOME/flash1" 
+    ln -s "/media/$USER/flash1" "$HOME/flash1"
 }
 
 
 ################################
 #
-#  ####### #######  #####  
-#       #  #       #     # 
-#      #   #       #       
-#     #    #####    #####  
-#    #     #             # 
-#   #      #       #     # 
-#  ####### #        #####  
+#  ####### #######  #####
+#       #  #       #     #
+#      #   #       #
+#     #    #####    #####
+#    #     #             #
+#   #      #       #     #
+#  ####### #        #####
 #
 ################################
 
 
 
-zfs-init-on-reinstall(){
+zfs_init_on_reinstall(){
     __doc__="
     https://unix.stackexchange.com/questions/483465/restore-zfs-pool-and-storage-data-after-a-system-re-install
     "
 
     POOL_NAME=data
-    sudo zpool $POOL_NAME 
+    sudo zpool $POOL_NAME
     zpool status
 
 }
 
 
-zfs-notes(){
+zfs_notes(){
     __doc__="
         # ZFS RAID
         https://linuxconfig.org/configuring-zfs-on-ubuntu-20-04
@@ -382,10 +382,10 @@ zfs-notes(){
     ls /dev/disk/by-id/ -al | grep nvme2n1
 
     #/dev/nvme1n1               1.9T  1.6T  239G  88% /media/joncrall/flash1
-    
+
 
     #nvme1n1             259:3    0   1.8T  0 disk /media/joncrall/flash1
-    #nvme2n1             259:4    0   1.8T  0 disk 
+    #nvme2n1             259:4    0   1.8T  0 disk
     #lrwxrwxrwx 1 root root  13 Apr  6 11:46 nvme-Samsung_SSD_970_EVO_Plus_2TB_S59CNM0RB05028D -> ../../nvme1n1
     #lrwxrwxrwx 1 root root  13 Apr  6 11:46 nvme-Samsung_SSD_970_EVO_Plus_2TB_S59CNM0RB05113H -> ../../nvme2n1
 
@@ -394,7 +394,7 @@ zfs-notes(){
 
     ls -al /dev/disk/by-id
     ls -al /dev/disk/by-uuid/
-    
+
     POOL_NAME=data
     CACHE_DISK=/dev/disk/by-id/nvme-Samsung_SSD_970_EVO_Plus_2TB_S59CNM0RB05113H
     ls -al $CACHE_DISK
@@ -403,7 +403,7 @@ zfs-notes(){
 
 }
 
-zfs-configure-memory(){
+zfs_configure_memory(){
     # https://linuxhint.com/configure-zfs-cache-high-speed-io/
 
     python -c "import pint; print(pint.UnitRegistry().parse_expression('32GiB').to('bytes'))"
@@ -419,7 +419,7 @@ zfs-configure-memory(){
     "
 }
 
-zfs-clear-errors(){
+zfs_clear_errors(){
     zpool status
     # If you get ZFS checksum errors, but SMART says the HDD is ok, you might
     # have just had a hickup. You can clear the errors.  If they come back
@@ -427,15 +427,13 @@ zfs-clear-errors(){
     sudo zpool clear data
 }
 
-zfs-scrub(){
-
+zfs_scrub(){
     zpool status
     zpool scrub data
-
 }
 
 
-zfs-setup-info(){
+zfs_setup_info(){
     set -x
     lsblk --scsi --output NAME,KNAME,TYPE,SIZE,STATE | grep disk
     zpool list
@@ -494,7 +492,7 @@ zfs_fix_replace_sdx_names_with_id_names(){
 
     # Remount the pool
     sudo zpool mount "$POOL_NAME"
-    
+
 }
 
 
@@ -543,7 +541,4 @@ zfs_tuning(){
                 _ = file.read()
 
     "
-
-
-
 }

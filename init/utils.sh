@@ -711,7 +711,7 @@ export -f sedfile
 
 
 sedr(){
-    __doc__="""
+    __doc__="
     Recursive sed
 
     Args:
@@ -729,7 +729,7 @@ sedr(){
 
     SeeAlso:
        xdev sed
-    """
+    "
     _handle_help "$@" || return 0
 
     local SEARCH=${1:-${SEARCH:-""}}

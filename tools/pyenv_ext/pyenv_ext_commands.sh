@@ -356,15 +356,15 @@ pathvar_remove()
     local _VAL=$2
     # shellcheck disable=SC2155
     local _PYEXE=$(system_python)
-    $_PYEXE -c "
-if __name__ == '__main__':
-    import os
-    from os.path import expanduser, abspath
-    val = abspath(expanduser('$_VAL'))
-    oldpathvar = '${!_VAR}'.split(os.pathsep)
-    newpathvar = [p for p in oldpathvar if p and abspath(p) != val]
-    print(os.pathsep.join(newpathvar))
-"
+    $_PYEXE -c "if 1:
+        if __name__ == '__main__':
+            import os
+            from os.path import expanduser, abspath
+            val = abspath(expanduser('$_VAL'))
+            oldpathvar = '${!_VAR}'.split(os.pathsep)
+            newpathvar = [p for p in oldpathvar if p and abspath(p) != val]
+            print(os.pathsep.join(newpathvar))
+    "
 }
 
 
@@ -716,4 +716,66 @@ _pyenv_best_version_match(){
         fi
     done
     echo "$BEST_MATCH"
+}
+
+install_conda(){
+    __doc__="
+    In some cases conda is a better choice than pyenv. While pyenv can install
+    conda, if you need the conda manager, installing conda in a standalone way
+    is a better idea.
+
+    To update to a newer version see: [CondaHashes]_ and [CondaInstallers]_.
+
+    References:
+        .. [CondaHashes] https://docs.conda.io/en/latest/miniconda_hashes.html
+        .. [CondaInstallers] https://docs.conda.io/en/latest/miniconda.html#linux-installers
+    "
+    mkdir -p ~/tmp/setup-conda
+    cd ~/tmp/setup-conda
+
+    #CONDA_VERSION=4.10.3
+    #CONDA_PY_VERSION=py38
+    CONDA_VERSION=23.5.2-0
+    CONDA_PY_VERSION=py311
+    #ARCH="$(dpkg --print-architecture)"  # different convention
+    ARCH="$(arch)"
+    OS=Linux
+    CONDA_KEY="Miniconda3-${CONDA_PY_VERSION}_${CONDA_VERSION}-${OS}-${ARCH}"
+    echo "CONDA_KEY = $CONDA_KEY"
+    CONDA_INSTALL_SCRIPT_FNAME="${CONDA_KEY}.sh"
+    CONDA_URL="https://repo.anaconda.com/miniconda/${CONDA_INSTALL_SCRIPT_FNAME}"
+
+    declare -A CONDA_KNOWN_SHA256=(
+        ["Miniconda3-py311_23.5.2-0-Linux-x86_64"]="634d76df5e489c44ade4085552b97bebc786d49245ed1a830022b0b406de5817"
+        ["Miniconda3-py38_4.10.3-Linux-x86_64"]="935d72deb16e42739d69644977290395561b7a6db059b316958d97939e9bdf3d"
+        ["Miniconda3-py38_4.10.3-Linux-aarch64"]="19584b4fb5c0656e0cf9de72aaa0b0a7991fbd6f1254d12e2119048c9a47e5cc"
+        ["Miniconda3-py38_4.10.3-Linux-aarch64"]="19584b4fb5c0656e0cf9de72aaa0b0a7991fbd6f1254d12e2119048c9a47e5cc"
+    )
+    CONDA_EXPECTED_SHA256="${CONDA_KNOWN_SHA256[${CONDA_KEY}]}"
+    echo "CONDA_EXPECTED_SHA256 = $CONDA_EXPECTED_SHA256"
+
+    curl "$CONDA_URL" -O "$CONDA_INSTALL_SCRIPT_FNAME"
+
+    # For security, it is important to verify the hash
+    if ! echo "${CONDA_EXPECTED_SHA256}  ${CONDA_INSTALL_SCRIPT_FNAME}" | sha256sum --status -c; then
+        GOT_HASH=$(sha256sum "$CONDA_INSTALL_SCRIPT_FNAME")
+        echo "GOT_HASH      = $GOT_HASH"
+        echo "EXPECTED_HASH = $CONDA_EXPECTED_SHA256"
+        echo "Downloaded file does not match hash! DO NOT CONTINUE!"
+    else
+        echo "Hash verified, continue with install"
+        chmod +x "$CONDA_INSTALL_SCRIPT_FNAME "
+        # Install miniconda to user local directory
+        _CONDA_ROOT=$HOME/.local/conda
+
+        # Update if the root already exist, otherwise fresh install
+        if [ -d "$_CONDA_ROOT" ]; then
+            sh "$CONDA_INSTALL_SCRIPT_FNAME" -b -p "$_CONDA_ROOT" -u
+        else
+            sh "$CONDA_INSTALL_SCRIPT_FNAME" -b -p "$_CONDA_ROOT"
+        fi
+
+        # Activate the basic conda environment
+        source "$_CONDA_ROOT/etc/profile.d/conda.sh"
+    fi
 }

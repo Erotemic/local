@@ -1,7 +1,10 @@
 #!/bin/bash
+__doc__="
+TODO: move to git-well
+"
 
 autoconfigure_local_git_autosign(){
-    __heredoc_="
+    __doc__="
     Attempts to autoconfigure your local git repo to use the appropriate GPG
     signing key. This key must already exist.
 
@@ -14,6 +17,9 @@ autoconfigure_local_git_autosign(){
     (5) that ssh key uses the same email as your gpg key (which should always be the case)
 
     ~/local/scripts/git-autoconf-gpgsign.sh Erotemic
+
+    Ignore:
+        REMOTE_PAT=Erotemic
     "
 
     echo " --- Begin AutoConfigure GPGSign --- "
@@ -34,7 +40,7 @@ autoconfigure_local_git_autosign(){
     #ssh-add -L
 
     # Use verbose ssh to determine which identity is being used to connect to a remote
-    #GIT_SSH_COMMAND="ssh -v" git ls-remote $REMOTE_URL 
+    #GIT_SSH_COMMAND="ssh -v" git ls-remote $REMOTE_URL
     #GIT_SSH_COMMAND="ssh -v" git ls-remote $REMOTE_URL 2>&1 >/dev/null | grep "identity file"
 
     GIT_SSH_COMMAND="ssh -v" git ls-remote "$REMOTE_URL" 2> /tmp/my_ssh_stderr_file

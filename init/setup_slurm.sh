@@ -674,14 +674,14 @@ activate_slurm(){
 
 
 troubleshoot_slurm(){
-    __doc__="""
+    __doc__="
     Following [2]_ to troubleshoot issue with error: '
 
     srun: Required node not available (down, drained or reserved'.
 
     References:
         ..[2] https://slurm.schedmd.com/troubleshoot.html
-    """
+    "
     # Double check everything wrote out correctly
     #cat /etc/slurm-llnl/gres.conf
     #pygmentize -l pacmanconf /etc/slurm-llnl/slurm.conf
@@ -792,12 +792,12 @@ __purge_slurm_and_config__(){
 
 
 slurm_usage_and_options(){
-    __doc__="""
+    __doc__="
     This shows a few things you can do with slurm.
 
     This is not part of the setup script.
     This is a set of commands you can use to demo / test that slurm is working.
-    """
+    "
 
     # Check available partitions
     sinfo

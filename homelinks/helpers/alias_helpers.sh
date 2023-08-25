@@ -253,12 +253,12 @@ reset_my_env(){
 
 cls()
 {
-    __doc__="""
+    __doc__="
     Clears the terminal screen
 
     References:
         https://askubuntu.com/questions/25077/how-to-really-clear-the-terminal
-    """
+    "
     tput reset
 }
 
@@ -616,7 +616,7 @@ we-pypy()
 
 pyedit()
 {
-    __doc__="""
+    __doc__="
     Open a python module's source code in your favorite editor.
 
     Args:
@@ -626,7 +626,7 @@ pyedit()
         source ~/local/homelinks/helpers/alias_helpers.sh
         modname=typing
         pyedit typing
-    """
+    "
     modname=$1
     cmd="python -c \"import ${modname}, xdev; xdev.editfile(${modname}.__file__)\""
     echo "$cmd"
@@ -728,11 +728,11 @@ gitk(){
 }
 
 randpw(){
-    __doc__="""
+    __doc__="
     Generate a random password
 
     https://www.howtogeek.com/howto/30184/10-ways-to-generate-a-random-password-from-the-command-line/
-    """
+    "
     #< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-16};echo;
     #head -c${1:-2048} /dev/urandom | sha512sum
     #head -c${1:-2048} /dev/urandom | sha512sum
@@ -844,7 +844,7 @@ git-tarball-hash()
 
 
 orig_sedr(){
-    __doc__="""
+    __doc__="
     Recursive sed
 
     Args:
@@ -855,7 +855,7 @@ orig_sedr(){
     Example:
         source ~/local/homelinks/helpers/alias_helpers.sh
         sedr foo bar
-    """
+    "
     SEARCH=$1
     REPLACE=$2
     PATTERN=$3
@@ -884,7 +884,7 @@ orig_sedr(){
 
 
 search_remotes(){
-    __doc__="""
+    __doc__="
     Attempt to massage a path native to a remote to a local path that works
     with the 'Erotemic mounted remote scheme': i.e. where you sshfs mount your
     remote machines onto ~/remote
@@ -894,10 +894,10 @@ search_remotes(){
 
     Ignore:
         target_dpath = '/home/joncrall/work/sealions'
-    """
+    "
     target_dpath=$1
 
-    pyblock """
+    pyblock "
     import ubelt as ub
     import glob
     from os.path import join
@@ -932,7 +932,7 @@ search_remotes(){
         print(local_candidates[0])
     else:
         print(local_candidates)
-    """
+    "
 }
 
 
@@ -1026,13 +1026,16 @@ ssh-edit-config(){
 
 ipfs-service(){
     ARG=$1
+    if [[ "$ARG" == "" ]]; then
+        ARG="status"
+    fi
     if [[ "$ARG" == "status" ]]; then
         _SUDO=""
     else
         _SUDO="sudo"
     fi
     $_SUDO systemctl "${ARG}" ipfs.service
-    $_SUDO systemctl "${ARG}" ipfs-cluster.service
+    #$_SUDO systemctl "${ARG}" ipfs-cluster.service
 }
 
 

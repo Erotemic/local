@@ -1,12 +1,12 @@
 #!/bin/bash
-__doc__="""
+__doc__="
 Git helpers
 
 Depends on ~/local/init/util_git1.py
 
 SeeAlso:
     ~/local/repos.yaml
-"""
+"
 #source $HOME/local/init/utils.sh
 
 

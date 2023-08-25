@@ -125,7 +125,7 @@ install_core()
 truely_ergonomic_keyboard_setup()
 {
 
-    __readme__="""
+    __readme__="
     Truly Ergonomic keyboard - Firmware Upgrade
     -------------------------------------------
 
@@ -133,7 +133,7 @@ truely_ergonomic_keyboard_setup()
 
     To give yourself this permission, copy 40-tek.rules into /etc/udev/rules.d.
     Otherwise, you might have to run the tool as root.
-    """
+    "
 
     # REQUIRES:
     # libwx_gtk2u_webview-3.0.so.0
@@ -1593,7 +1593,7 @@ ttygif_record_terminal(){
 
     import pyperclip
 
-    __notes__="""
+    __notes__="
 
     ttyrec progiter_record3
     ipython
@@ -1607,12 +1607,12 @@ ttygif_record_terminal(){
 
     ttyrec mydemo
     ttygif mydemo -f
-    """
+    "
 }
 
 
 home_printer(){
-    __doc__="""
+    __doc__="
     Brother HL-L3290CDW
 
     https://support.brother.com/g/b/downloadlist.aspx?c=us&lang=en&prod=hll3290cdw_us&os=128
@@ -1628,7 +1628,7 @@ home_printer(){
 
     https://askubuntu.com/questions/314314/laser-printer-scanner-brother-dcp-8110dn-ubuntu-what-is-its-uri
     https://www.linuxquestions.org/questions/linux-newbie-8/how-to-install-brother-printer-4175598881/
-    """
+    "
 
     ##### NEW
 
@@ -1840,9 +1840,9 @@ android_studio(){
     cd platform-tools
 
 
-    __doc__="""
+    __doc__="
     adb = android debugging tool
-    """
+    "
     sudo apt-get install adb -y
 
     adb devices

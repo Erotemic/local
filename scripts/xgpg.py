@@ -84,7 +84,9 @@ class _ExpectScript:
     Helps build expect scripts that can be run in bash.
 
     Example:
-        >>> from gpg_tool import _ExpectScript  # NOQA
+        >>> import sys, ubelt
+        >>> sys.path.append(ubelt.expandpath('~/local/scripts'))
+        >>> from xgpg import _ExpectScript  # NOQA
         >>> script = _ExpectScript('ftp')
         >>> script - '> ftp'
         >>> script < 'quit'
@@ -153,7 +155,6 @@ class _ExpectScript:
         return text
 
     def execute(self):
-        import ubelt as ub
         text = self.finalize()
         ub.cmd(text, shell=True, verbose=3)
 
@@ -241,6 +242,19 @@ def _keyalgo_prompt(script, keyalgo, keysize, curve, capabilities):
         script < (curve_code)
 
 
+# https://security.stackexchange.com/questions/41208/what-is-the-exact-meaning-of-this-gpg-output-regarding-trust
+# https://www.gnupg.org/documentation/manuals/gnupg/OpenPGP-Key-Management.html#OpenPGP-Key-Management
+TRUST_CODES = [
+    {'code': '-', 'trust': 1, 'desc': 'No ownertrust assigned / not yet calculated'},
+    {'code': 'e', 'trust': 1, 'desc': 'Trust calculation has failed; probably due to an expired key'},
+    {'code': 'q', 'trust': 1, 'desc': 'Not enough information for calculation'},
+    {'code': 'n', 'trust': 2, 'desc': 'Never trust this key'},
+    {'code': 'm', 'trust': 3, 'desc': 'Marginally trusted'},
+    {'code': 'f', 'trust': 4, 'desc': 'Fully trusted'},
+    {'code': 'u', 'trust': 5, 'desc': 'Ultimately trusted'},
+]
+
+
 def _known_entries(identifier=None, verbose=0):
     """
     References:
@@ -307,7 +321,11 @@ def _known_entries(identifier=None, verbose=0):
 def _find_key_index(keyid):
     # Find the key index because apparently edit key does not respect the !
     entries = _known_entries(keyid, verbose=3)
-    assert len(entries) == 1, 'ambiguous identity'
+    if len(entries) == 0:
+        raise ValueError(f'No entries found for keyid={keyid}')
+    elif len(entries) > 1:
+        print('entries = {}'.format(ub.urepr(entries, nl=1)))
+        raise AssertionError('ambiguous identity')
     entry = entries[0]
     key_index = -1
     found = None
@@ -385,7 +403,7 @@ class GPGCLI:
                 only applicable for ECC
 
         CommandLine:
-            python ~/code/erotemic/safe/gpg_tool.py create_new_key \
+            python xgpg.py create_new_key \
                 --name "Emmy Noether" --email "emmy.noether@uni-goetingen.de" \
                 --keysize=min
 
@@ -461,9 +479,7 @@ class GPGCLI:
                 Note: if the parent key has a passphrase this must match
 
         Example:
-            >>> import sys, ubelt
-            >>> sys.path.append(ubelt.expandpath('~/code/erotemic/safe'))
-            >>> from gpg_tool import *  # NOQA
+            >>> from xgpg import *  # NOQA
             >>> parent_keyid = '9258E7A3'
             >>> capabilities = {'sign'}
             >>> text = add_subkey(parent_keyid, capabilities)
@@ -536,6 +552,15 @@ class GPGCLI:
             s.execute()
 
     @staticmethod
+    def check_keyid(keyid):
+        """
+        CommandLine:
+            xgpg.py check_keyid --keyid=4EA85E0336D74943541C8F803C957FA10181A006
+        """
+        keyindex = _find_key_index(keyid)
+        print('keyindex = {}'.format(ub.urepr(keyindex, nl=1)))
+
+    @staticmethod
     def revoke_subkey(keyid, dry=False):
         keyindex = _find_key_index(keyid)
 
@@ -574,9 +599,9 @@ class GPGCLI:
         """
         extend = '1y'
 
-        python ~/code/erotemic/safe/gpg_tool.py renew_subkey --keyid=83466B8331F038E054D3BD327466EDAC8816B8C0 --extend=17y
-        python ~/code/erotemic/safe/gpg_tool.py renew_subkey --keyid=4EA85E0336D74943541C8F803C957FA10181A006 --extend=1y
-        python ~/code/erotemic/safe/gpg_tool.py renew_subkey --keyid=83CC3E5EDD797685C0555F856947220A6E973063 --extend=1y
+        xgpg.py renew_subkey --keyid=83466B8331F038E054D3BD327466EDAC8816B8C0 --extend=17y
+        xgpg.py renew_subkey --keyid=4EA85E0336D74943541C8F803C957FA10181A006 --extend=1y
+        xgpg.py renew_subkey --keyid=83CC3E5EDD797685C0555F856947220A6E973063 --extend=1y
         """
         keyindex = _find_key_index(keyid)
 

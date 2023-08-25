@@ -567,6 +567,47 @@ shandalar(){
     wine Magic/Program/Magic.exe
 }
 
-install_dolphin(){
+#install_dolphin(){
+#}
+
+
+fix_steam(){
+    # https://askubuntu.com/questions/1422163/unable-to-launch-steam-couldnt-import-apt-please-install-python3-apt-or-upda
+    ## https://linuxconfig.org/how-to-install-steam-on-ubuntu-16-04-xenial-xerus
+#    sudo add-apt-repository multiverse
+
+#    # http://repo.steampowered.com/steam/
+#    curl http://repo.steampowered.com/steam/archive/stable/steam.gpg -O steam.gpg
+#    sudo mv steam.gpg /usr/share/keyrings/steam.gpg
+#    sudo tee /etc/apt/sources.list.d/steam-stable.list <<'EOF'
+#deb [arch=amd64,i386 signed-by=/usr/share/keyrings/steam.gpg] https://repo.steampowered.com/steam/ stable steam
+#deb-src [arch=amd64,i386 signed-by=/usr/share/keyrings/steam.gpg] https://repo.steampowered.com/steam/ stable steam
+#EOF
+#    sudo dpkg --add-architecture i386
+
+#    sudo apt update
+#    sudo apt install steam
+
+    sudo apt remove steam steam-launcher steam-installer
+    sudo apt purge steam steam-launcher steam-installer
+
+    sudo rm -rf ~/.local/share/steam
+    sudo rm -rf ~/.steam
+    sudo rm -f ~/.steampath
+    sudo rm -f ~/.steamid
+    sudo rm -rf /usr/lib/steam
+    sudo dpkg --add-architecture i386
+
+    sudo apt update
+    sudo apt install wget gdebi-core libgl1-mesa-glx:i386
+
+    #wget -O ~/steam.deb http://media.steampowered.com/client/installer/steam.deb
+    #sudo gdebi ~/steam.deb
+    #
+    sudo add-apt-repository multiverse
+    sudo apt update
+    sudo apt install steam
+
+
 
 }

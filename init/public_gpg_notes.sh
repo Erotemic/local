@@ -1,5 +1,5 @@
 #!/bin/bash
-__doc__="""
+__doc__="
 
 Notes about how to create, export/import, and use GPG keys
 
@@ -27,7 +27,7 @@ See Also
 ========
 pip install gpg-lite
 python -m pip install git+https://gitlab.com/biomedit/gpg-lite.git
-"""
+"
 
 __gpg_notes__(){
     UserName="<firstname> <lastname>"
@@ -173,7 +173,7 @@ send-me-an-encrypted-message(){
     # Unless you have marked my public key as trusted  (i.e. you are sure that
     # it came from me) you will be warned. You can say yes, unless you think
     # this message might have been modified by a man in the middle.
-    gpg --output $ENCRYPTED_FPATH --encrypt --armor --recipient $RECPIENT_FINGERPRINT  $SECRET_TEXT_FPATH 
+    gpg --output $ENCRYPTED_FPATH --encrypt --armor --recipient $RECPIENT_FINGERPRINT  $SECRET_TEXT_FPATH
     cat $ENCRYPTED_FPATH
 
     # now send the contents of "encrypted-message.asc" over a plain text channel
@@ -209,7 +209,7 @@ autoconfigure_local_git_autosign(){
     #ssh-add -L
 
     # Use verbose ssh to determine which identity is being used to connect to a remote
-    #GIT_SSH_COMMAND="ssh -v" git ls-remote $REMOTE_URL 
+    #GIT_SSH_COMMAND="ssh -v" git ls-remote $REMOTE_URL
     #GIT_SSH_COMMAND="ssh -v" git ls-remote $REMOTE_URL 2>&1 >/dev/null | grep "identity file"
 
     GIT_SSH_COMMAND="ssh -v" git ls-remote "$REMOTE_URL" 2> /tmp/my_ssh_stderr_file

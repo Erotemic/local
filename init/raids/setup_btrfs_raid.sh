@@ -1,5 +1,5 @@
 #!/bin/bash
-__doc__="""
+__doc__="
 Based on benchmarks, it might be faster to use btrfs for a RAID-10 solution on
 an older machine.
 
@@ -14,7 +14,7 @@ References:
     https://btrfs.wiki.kernel.org/index.php/Using_Btrfs_with_Multiple_Devices
     https://linuxhint.com/install-and-use-btrfs-on-ubuntu-lts/
     https://blog.programster.org/btrfs-cheatsheet
-"""
+"
 
 sudo apt update
 sudo apt install btrfs-progs -y
@@ -27,7 +27,7 @@ lsblk --scsi --output NAME,KNAME,LABEL,MOUNTPOINT,UUID,PARTTYPE,PARTUUID,MODEL,T
 lsblk --output NAME,FSTYPE,KNAME,LABEL,MOUNTPOINT,UUID,PARTTYPE,PARTUUID,MODEL,TYPE,SIZE,STATE | grep disk
 
 # Find the ones we want to use
-# On OOO start out with 
+# On OOO start out with
 #sda  sda                                           ST10000DM0004-1ZC101      disk   9.1T running
 #sdc  sdc                                           ST10000DM0004-1ZC101      disk   9.1T running
 
@@ -36,9 +36,9 @@ lsblk --output NAME,FSTYPE,KNAME,LABEL,MOUNTPOINT,UUID,PARTTYPE,PARTUUID,MODEL,T
 DISK1=/dev/sda
 DISK2=/dev/sdc
 
-sudo parted "$DISK1" mktable gpt                            # Create the GPT 
+sudo parted "$DISK1" mktable gpt                            # Create the GPT
 sudo parted "$DISK1" mkpart primary btrfs 0% 100%           # Create the partition
-sudo parted "$DISK2" mktable gpt                            # Create the GPT 
+sudo parted "$DISK2" mktable gpt                            # Create the GPT
 sudo parted "$DISK2" mkpart primary btrfs 0% 100%           # Create the partition
 
 # We now have parts
@@ -86,12 +86,12 @@ DISK4=/dev/sde
 # Format the new disks
 #sdc    sdc ST10000DM0004-1ZC101      disk   9.1T running
 #sde    sde ST10000DM0004-1ZC101      disk   9.1T running
-sudo parted "$DISK3" mktable gpt                            # Create the GPT 
+sudo parted "$DISK3" mktable gpt                            # Create the GPT
 sudo parted "$DISK3" mkpart primary btrfs 0% 100%           # Create the partition
-sudo parted "$DISK4" mktable gpt                            # Create the GPT 
+sudo parted "$DISK4" mktable gpt                            # Create the GPT
 sudo parted "$DISK4" mkpart primary btrfs 0% 100%           # Create the partition
-#└─sdc1 sdc1                                                                                           0fc63daf-8483-4772-8e79-3d69d8477de4 9a9e2c5c-9b3c-419a-88d2-05255d8255e4                           part   9.1T 
-#└─sde1 sde1                                                                                           0fc63daf-8483-4772-8e79-3d69d8477de4 28297476-5a88-4eeb-a8aa-4298029dcb34                           part   9.1T 
+#└─sdc1 sdc1                                                                                           0fc63daf-8483-4772-8e79-3d69d8477de4 9a9e2c5c-9b3c-419a-88d2-05255d8255e4                           part   9.1T
+#└─sde1 sde1                                                                                           0fc63daf-8483-4772-8e79-3d69d8477de4 28297476-5a88-4eeb-a8aa-4298029dcb34                           part   9.1T
 
 PART3=/dev/sdc1
 PART4=/dev/sde1
@@ -112,10 +112,10 @@ sudo watch btrfs filesystem df /data
 sudo watch btrfs balance status /data/
 
 sudo apt install sysstat
-iostat -m -d 2 /dev/sd*1 
+iostat -m -d 2 /dev/sd*1
 
 # Add to fstab
-lsblk --fs  /dev/sda1 
+lsblk --fs  /dev/sda1
 
 # UUID=e5b5c118-fb56-4fad-a45d-ff5fad9a649d /data           btrfs   defaults      0  0
 sudo sh -c "echo '# appended to fstab by by install scripts' >> /etc/fstab"
