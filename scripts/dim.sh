@@ -1,7 +1,14 @@
 #!/bin/bash
-__doc__='''
-dim.sh
-''' 
+__doc__="
+Dim the screen with redshift
+
+Usage
+-----
+
+dim.sh [-u] [-h] [value]
+
+The value can be 0, 1, 2, 3, or 5 or a fractional value between them.
+"
 
 # notes:
 #xrandr | grep " connected"
@@ -31,6 +38,8 @@ fi
 if [ "$ARG_0" == "-u" ]; then
     #redshift -O 6500 -b 1.0
     redshift -x
+elif [[ "$ARG_0" == "-h" ]] || [[ "$ARG_0" == "--help" ]]; then
+    echo "$__doc__"
 elif [ "$ARG_0" == "0" ]; then
     #redshift -O 6500 -b 1.0
     redshift -x
@@ -42,55 +51,55 @@ elif [ "$ARG_0" == "3" ]; then
     redshift -O 2000 -b .3
 else
     # Complex case, interpolate betweeen integer values:
-    CMD=$(python -c "
-import math
+    CMD=$(python -c "if 1:
+        import math
 
-def interpolate(pts, x):
-    x = max(min(pts.keys()), x)
-    x = min(max(pts.keys()), x)
+        def interpolate(pts, x):
+            x = max(min(pts.keys()), x)
+            x = min(max(pts.keys()), x)
 
-    x1 = math.floor(x)
-    x2 = math.ceil(x)
+            x1 = math.floor(x)
+            x2 = math.ceil(x)
 
-    y1 = pts[x1]
-    y2 = pts[x2]
+            y1 = pts[x1]
+            y2 = pts[x2]
 
-    if y1 == y2:
-        y = y1
-    else:
-        alpha = (x2 - x) / (x2 - x1)
-        y = (alpha * y1) + ((1 - alpha) * y2)
-    return y
+            if y1 == y2:
+                y = y1
+            else:
+                alpha = (x2 - x) / (x2 - x1)
+                y = (alpha * y1) + ((1 - alpha) * y2)
+            return y
 
-def main():
-    arg = '$ARG_0'
-    if arg:
-        x = float(arg)
+        def main():
+            arg = '$ARG_0'
+            if arg:
+                x = float(arg)
 
-        O_pts = {
-            0: 6500,
-            1: 3000,
-            2: 2500,
-            3: 2000,
-            4: 1000,  # Absolute min xrandr blueness
-        }
-        b_pts = {
-            0: 1.0,
-            1: 0.6,
-            2: 0.5,
-            3: 0.3,
-            4: 0.1, # Absolute min xrandr brightness
-        }
+                O_pts = {
+                    0: 6500,
+                    1: 3000,
+                    2: 2500,
+                    3: 2000,
+                    4: 1000,  # Absolute min xrandr blueness
+                }
+                b_pts = {
+                    0: 1.0,
+                    1: 0.6,
+                    2: 0.5,
+                    3: 0.3,
+                    4: 0.1, # Absolute min xrandr brightness
+                }
 
-        O = int(interpolate(O_pts, x))
-        b = float(interpolate(b_pts, x))
+                O = int(interpolate(O_pts, x))
+                b = float(interpolate(b_pts, x))
 
-        print('redshift -O {} -b {:.4f}'.format(O, b))
-    else:
-        print('echo no argument')
+                print('redshift -O {} -b {:.4f}'.format(O, b))
+            else:
+                print('echo no argument')
 
-main()
-")
+        main()
+        ")
     echo "CMD = $CMD"
     $CMD
 fi

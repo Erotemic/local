@@ -1,6 +1,6 @@
 #!/bin/bash
 __doc__="
-TODO: move to git-well
+NOTE: moved to git-well
 "
 
 autoconfigure_local_git_autosign(){
