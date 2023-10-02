@@ -2600,3 +2600,12 @@ install_yq(){
 
 
 }
+
+install_rclone(){
+    # https://rclone.org/install/
+    mkdir -p "$HOME"/temp/install-rclone
+    cd  "$HOME"/temp/install-rclone
+    curl https://downloads.rclone.org/rclone-current-linux-amd64.zip -o rclone.zip
+    7z x rclone.zip
+    cp rclone-v1.63.1-linux-amd64/rclone "$HOME"/.local/bin/rclone
+}

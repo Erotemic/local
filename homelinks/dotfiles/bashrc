@@ -76,6 +76,10 @@ if [ -d "$HOME/.local" ]; then
     export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$HOME/.local
 fi
 
+if [ -f "$HOME/.elan/env" ]; then
+    source "$HOME"/.elan/env
+fi
+
 
 if [ -d "$HOME/.local/opt" ]; then
     #if [ -d "$HOME/.local/opt/android-studio" ]; then

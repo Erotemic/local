@@ -75,7 +75,7 @@ alias lt='cd ~/latex/'
 
 alias scr='cd ~/scripts'
 # Special navigation
-alias code='cd $CODE_DIR'
+#alias code='cd $CODE_DIR'
 alias co='cd $CODE_DIR'
 
 alias remote='cd ~/remote'
@@ -1116,4 +1116,10 @@ readshelf(){
             print('key={}'.format(key))
             print('value={}'.format(ub.repr2(value)))
     "
+}
+
+ubuntu_update(){
+    # tmux_spawn echo "hi"
+    #cmd_queue new "update system"
+    sudo apt update -y && sudo apt upgrade -y
 }

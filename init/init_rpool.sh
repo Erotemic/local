@@ -473,6 +473,7 @@ cleanup_firewall(){
 
 cancel_transaction(){
     WALLET_ADDRESS=0x402d4Df6E2e147cCF1edEd8B0F697cFa3c55E6F1
+    echo "WALLET_ADDRESS = $WALLET_ADDRESS"
     https://goerli.etherscan.io/address/0x402d4Df6E2e147cCF1edEd8B0F697cFa3c55E6F1
 
     0x85bc12e229200035baca224d07d957a05beb6464902040e717e6f9215c7b02fc
@@ -934,9 +935,6 @@ rescue_node(){
     [] Patches: like if you want to deposit a minipool right away but only just set up your node, you can use infura+rescuenode to deposit before your clients finish syncing
     [3:28 PM]Patches: but for the most part people use it to prune and to resync
 EOF
-
-    .191 * 2
-
 }
 
 

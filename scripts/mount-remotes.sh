@@ -21,6 +21,9 @@ CommandLine:
     source ~/local/scripts/mount-remotes.sh
     mount_remote remotename
 
+
+
+    /home/joncrall/remote/yardrat/data/dvc-repos/smart_expt_dvc/_yardrat_bas_test/eval/flat/bas_poly_eval/bas_poly_eval_id_07a37793/confusion_analysis/site_viz/_flat/
 "
 
 
@@ -54,12 +57,33 @@ already_mounted(){
 }
 
 mount_remote(){
+    __doc__="
+    Executes the sshfs command. Note some options like those discussed in
+    [SE344255]_ can help make this faster.
+
+    References:
+        .. [SE344255] https://superuser.com/questions/344255/faster-way-to-mount-a-remote-file-system-than-sshfs
+        .. [autocache] https://libfuse.github.io/doxygen/structfuse__config.html#a9db154b1f75284dd4fccc0248be71f66
+
+
+    Note: rclone mount might be a good alternative to sshfs?
+
+    TEST Rclone
+        mkdir -p $HOME/test-rclone/namek
+        rclone mount namek $HOME/test-rclone/namek
+    "
     REMOTE=$1
     mkdir -p "$HOME"/remote
     MOUNTPOINT=$HOME/remote/$REMOTE
     mkdir -p "$MOUNTPOINT"
     echo "Mounting: $REMOTE"
+
+    # Basic
     sshfs -o follow_symlinks,idmap=user "$REMOTE": "$MOUNTPOINT"
+
+    # Experimental Options?
+    #sshfs -o follow_symlinks,idmap=user,max_conns=4 "$REMOTE": "$MOUNTPOINT"
+    #sshfs -o follow_symlinks,idmap=user,max_conns=4,auto_cache,reconnect "$REMOTE": "$MOUNTPOINT"
 }
 
 mount_remote_if_available(){

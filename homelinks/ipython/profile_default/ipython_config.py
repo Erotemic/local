@@ -29,6 +29,12 @@ c.InteractiveShellApp.exec_lines.append('%autoreload 2')
 #c.InteractiveShellApp.exec_lines.append('%pylab qt4')
 c.InteractiveShellApp.exec_lines.append(textwrap.dedent(
     '''
+    # https://stackoverflow.com/questions/70766518/how-to-change-ipython-error-highlighting-color
+    try:
+        from IPython.core import ultratb
+        ultratb.VerboseTB._tb_highlight = "bg:ansired"
+    except Exception:
+        print("Error patching background color for tracebacks, they'll be the ugly default instead")
     try:
         import numpy as np
     except ImportError:

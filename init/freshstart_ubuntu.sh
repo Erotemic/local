@@ -2130,3 +2130,24 @@ allow_power_read(){
     ls -al /sys/class/powercap/intel-rapl/intel-rapl:0/energy_uj
     cat /sys/class/powercap/intel-rapl/intel-rapl:0/energy_uj
 }
+
+
+remove_sticky_dock_on_second_monitor(){
+    __doc__="
+    I had an issue where when I had 3 setup setup horizontally, so monitors 1,
+    2, and 3 were aranged from left to right, and my main monitor (2) was in
+    the middle. When I moved from 2 to 1 my mouse got stuck on the left edge.
+    This seems to be due to 'dock pressure'.
+
+    The following post gave inspiration for the fix:
+    https://askubuntu.com/questions/1432443/ubuntu-22-04-only-display-side-bar-when-activities-button-clicked-windows-key-p
+
+    which was to set 'require-pressure-to-show' in org.gnome.shell.extensions.dash-to-dock to false
+
+    This has the effect of not letting me see the dock anymore without using
+    the super key, but that doesn't bother me.
+    "
+    gsettings set org.gnome.shell.extensions.dash-to-dock require-pressure-to-show false
+    gsettings get org.gnome.shell.extensions.dash-to-dock require-pressure-to-show
+
+}

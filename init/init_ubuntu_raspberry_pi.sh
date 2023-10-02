@@ -15,8 +15,8 @@ setup_pi_sd_card_on_host_system(){
     * Insert the SD card to the host system.
     * Start the GUI
     * Select Operating System:
-       - Other General Purpose OS -> 
-       - Ubuntu -> 
+       - Other General Purpose OS ->
+       - Ubuntu ->
        - Ubuntu Server (21.04 / latest) 64 bit
     * Selet Storage: the SD card
     * Click Write
@@ -68,14 +68,14 @@ setup_pi_sd_card_on_host_system(){
     # try with that and defaults here
     ## Append this to the end of user-data
     #codeblock "
-    ## This is the user-data configuration file for cloud-init. 
+    ## This is the user-data configuration file for cloud-init.
     ## The cloud-init documentation has more details:
     ##
     ## https://cloudinit.readthedocs.io/
     ##
     ## Please note that the YAML format employed by this file is sensitive to
     ## differences in whitespace
-    
+
     ## On first boot, set the user's password and
     ## expire user passwords
     #chpasswd:
@@ -92,7 +92,7 @@ setup_pi_sd_card_on_host_system(){
     #    sudo: [ \"ALL=(ALL) NOPASSWD:ALL\" ]
     #    shell: /bin/bash
     #    groups: [adm, audio, cdrom, dialout, floppy, video, plugdev, dip, netdev, sudo]
-    #    ssh-authorized-keys: 
+    #    ssh-authorized-keys:
     #      - ${SSH_PUBLIC_KEY}
 
     ## Reboot after cloud-init completes
@@ -122,7 +122,7 @@ sudo hostnamectl set-hostname $PI_HOSTNAME
 
 # This has some user interaction with passwords / full names / etc
 # TODO: non interactive
-sudo adduser "$PI_USERNAME" 
+sudo adduser "$PI_USERNAME"
 sudo usermod -a -G adm,dialout,cdrom,floppy,sudo,audio,dip,video,plugdev,netdev,lxd "$PI_USERNAME"
 
 __onhost__="
@@ -327,6 +327,46 @@ install_boinc()
     sudo chmod 664 /etc/boinc-client/gui_rpc_auth.cfg
     #boinc --no_gui_rpc --attach_project http://www.worldcommunitygrid.org "$BOINC_WCG_ACCOUNT_KEY"
     #boinc --attach_project http://www.worldcommunitygrid.org "$BOINC_WCG_ACCOUNT_KEY"
-    boinc 
+    boinc
     #/var/lib/boinc/gui_rpc_auth.cfg
+}
+
+setup_wireless(){
+    # https://askubuntu.com/questions/406166/how-can-i-configure-my-headless-server-to-connect-to-a-wireless-network-automati
+
+    # List wireless card devices
+    iwconfig
+
+    # Set this environ to the right wireless device
+    DEVICE_NAME=wlan0
+
+    # List status
+    iwlist "$DEVICE_NAME" s
+
+    # List available network names
+    iwlist "$DEVICE_NAME" s | grep ESSID
+
+    # https://linuxconfig.org/ubuntu-22-04-connect-to-wifi-from-command-line
+
+    # Seems like our setup may have configured the right files for us.
+    nmcli dev wifi list
+    nmcli dev status
+
+    sudo nmcli --ask dev wifi connect "WhoWhatWhenWhereWifi-5G"
+
+    #DEVICE_NAME=wlan0
+    #nmcli "$DEVICE_NAME" wifi on
+    # https://askubuntu.com/questions/882806/ethernet-device-not-managed
+
+    sudo nmcli dev set wlan0 managed yes
+
+    sudo systemctl restart NetworkManager
+
+    nmcli connection up id wlan0
+
+
+    ###
+    ## Something with
+    cat /etc/netplan/50-cloud-init.yaml
+    sudo netplan apply
 }
