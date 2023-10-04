@@ -53,6 +53,7 @@ alias cgrep='grep -I -ER \
     #--exclude "*.css*" \
 
 
+alias fd='fdfind'
 alias ipy='ipython'
 
 # General navigation

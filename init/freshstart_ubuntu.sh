@@ -1398,12 +1398,12 @@ setup_development_environment(){
     # Commonly used and frequently forgotten
     sudo apt install -y wmctrl xsel xdotool xclip
     sudo apt install -y gparted htop tree
+    sudo apt install -y fd-find
     sudo apt install -y tmux astyle
     sudo apt install -y synaptic okular
     sudo apt install -y openssh-server
-
     sudo apt install -y valgrind synaptic gitg expect
-    sudo apt install sshfs -y
+    sudo apt install -y sshfs
 
     pip install numpy
     pip install scipy
