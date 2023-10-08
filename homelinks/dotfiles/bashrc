@@ -76,8 +76,9 @@ if [ -d "$HOME/.local" ]; then
     export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$HOME/.local
 fi
 
-if [ -f "$HOME/.elan/env" ]; then
-    source "$HOME"/.elan/env
+if [ -d "$HOME/.elan/bin" ]; then
+    #source "$HOME"/.elan/env
+    export PATH="$HOME/.elan/bin:$PATH"
 fi
 
 
