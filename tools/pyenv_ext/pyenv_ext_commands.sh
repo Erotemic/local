@@ -348,6 +348,19 @@ pyenv_create_virtualenv(){
     fi
 }
 
+
+new_venv(){
+    __doc__="
+    Create a new venv with the current version of Python and the chosen name.
+    "
+    VENV_NAME=$1
+    CHOSEN_PYTHON_VERSION=$(python -c "import sys; print('.'.join(map(str, sys.version_info[0:3])))")
+    VERSION_PREFIX=$(pyenv prefix "$CHOSEN_PYTHON_VERSION")
+    VENV_PATH=$VERSION_PREFIX/envs/$VENV_NAME
+    CHOSEN_PYEXE=$VERSION_PREFIX/bin/python
+    $CHOSEN_PYEXE -m venv "$VENV_PATH"
+}
+
 pathvar_remove()
 {
     __doc__="
@@ -734,6 +747,8 @@ install_conda(){
     "
     mkdir -p ~/tmp/setup-conda
     cd ~/tmp/setup-conda
+    #https://repo.anaconda.com/miniconda/Miniconda3-py311_23.5.2-0-Windows-x86_64.exe
+    #https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 
     #CONDA_VERSION=4.10.3
     #CONDA_PY_VERSION=py38
@@ -766,7 +781,8 @@ install_conda(){
         echo "Downloaded file does not match hash! DO NOT CONTINUE!"
     else
         echo "Hash verified, continue with install"
-        chmod +x "$CONDA_INSTALL_SCRIPT_FNAME "
+        echo "CONDA_INSTALL_SCRIPT_FNAME = $CONDA_INSTALL_SCRIPT_FNAME"
+        chmod +x "$CONDA_INSTALL_SCRIPT_FNAME"
         # Install miniconda to user local directory
         _CONDA_ROOT=$HOME/.local/conda
 
@@ -778,6 +794,7 @@ install_conda(){
         fi
 
         # Activate the basic conda environment
+        _CONDA_ROOT=$HOME/.local/conda
         source "$_CONDA_ROOT/etc/profile.d/conda.sh"
     fi
 }

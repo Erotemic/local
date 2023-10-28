@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #Jon's Note: .profile runs this
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
@@ -99,7 +101,7 @@ fi
 #export LATEX='~/latex/'
 #sudo ssh-agent ~/.ssh/id_rsa
 #export VIEW_CMD=nautilus
- 
+
 # Windows-like commands
 #alias explorer=nautilus
 #alias start=nautilus
@@ -114,14 +116,30 @@ fi
 
 view-directory()
 {
+    __doc__="
+    References:
+        https://unix.stackexchange.com/questions/364997/open-a-directory-in-the-default-file-manager-and-select-a-file
+    "
     if [ $# -eq 0 ]; then
-        nautilus .& > /dev/null 2>&1
+        #xdg-open .
+        #nautilus .& > /dev/null 2>&1
+        FPATH=$(readlink -f .)
     else
-        nautilus $1& > /dev/null 2>&1
+        #nautilus $1& > /dev/null 2>&1
+        FPATH=$(readlink -f "$1")
     fi
+    #echo "FPATH=$FPATH"
+    xdg-open "$FPATH"
+    #dbus-send --session --print-reply \
+    #    --dest=org.freedesktop.FileManager1 \
+    #    --type=method_call \
+    #    /org/freedesktop/FileManager1 \
+    #    org.freedesktop.FileManager1.ShowItems \
+    #    array:string:"file://${FPATH}" \
+    #    string:""
 }
 
 vd()
 {
-    view-directory $@
+    view-directory "$@"
 }

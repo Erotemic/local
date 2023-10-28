@@ -488,3 +488,5 @@ alias lf=lfcd
 
 export AWS_DEFAULT_PROFILE=iarpa
 cd "$_ORIG_DIR"
+
+export PYTHONBREAKPOINT=ipdb.set_trace
