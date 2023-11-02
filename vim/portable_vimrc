@@ -139,6 +139,7 @@ Plug 'dense-analysis/ale'
 " apt_ensure libevent-dev
 " pip install https://github.com/Rykka/instant-rst.py/archive/master.zip
 " pip install greenlet gevent
+" TO use: :InstantRst
 Plug 'gu-fan/InstantRst'
 
 
