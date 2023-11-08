@@ -59,7 +59,7 @@ https://github.com/Erotemic/local.git $HOME
 https://github.com/Erotemic/misc.git $HOME
 
 https://github.com/pyutils/line_profiler.git
-https://github.com/Erotemic/git-sync.git
+#https://github.com/Erotemic/git-sync.git
 https://github.com/Erotemic/git_well.git
 https://github.com/Erotemic/ibeis.git
 https://github.com/Erotemic/mkinit.git
