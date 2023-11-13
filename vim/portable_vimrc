@@ -139,6 +139,7 @@ Plug 'dense-analysis/ale'
 " apt_ensure libevent-dev
 " pip install https://github.com/Rykka/instant-rst.py/archive/master.zip
 " pip install greenlet gevent
+" TO use: :InstantRst
 Plug 'gu-fan/InstantRst'
 
 
@@ -159,9 +160,9 @@ Plug 'https://github.com/airblade/vim-gitgutter'
 Plug 'cespare/vim-toml', {'branch': 'main' }
 
 " https://github.com/dense-analysis/neural
-Plug 'dense-analysis/neural'
-Plug 'muniftanjim/nui.nvim'
-Plug 'elpiloto/significant.nvim'
+"Plug 'dense-analysis/neural'
+"Plug 'muniftanjim/nui.nvim'
+"Plug 'elpiloto/significant.nvim'
 
 Plug 'Erotemic/lean.vim'
 
@@ -533,6 +534,6 @@ endif
 
 
 " Configure Neural like so in Vimscript
-if v:version > 801
-    let g:neural = {'source': { 'openai': { 'api_key': $EROTEMIC_OPENAI_API_KEY, }, }, }
-endif
+"if v:version > 801
+"    let g:neural = {'source': { 'openai': { 'api_key': $EROTEMIC_OPENAI_API_KEY, }, }, }
+"endif

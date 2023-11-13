@@ -169,13 +169,13 @@ let g:syntastic_tex_checkers=['chktex']
 " SCRIPTING VIM IN PYTHON 
 " http://orestis.gr/blog/2008/08/10/scripting-vim-with-python/
 
-Python2or3 << EOF
-import vim
-latex_errors = [
-] 
-ccktex_args_list = [
-    #'--max-line-length 80',
-]
-args = ' '.join(ccktex_args_list)
-#vim.command('let g:syntastic_tex_chktex_args = "%s"' % args)
-EOF
+"Python2or3 << EOF
+"import vim
+"latex_errors = [
+"] 
+"ccktex_args_list = [
+"    #'--max-line-length 80',
+"]
+"args = ' '.join(ccktex_args_list)
+"#vim.command('let g:syntastic_tex_chktex_args = "%s"' % args)
+"EOF

@@ -150,7 +150,7 @@ au MyVimRC BufWritePre *.vue :%s/\+//e
 "au BufNewFile,BufRead *.node set ft=cmake
 "au BufNewFile,BufRead *.ele  set ft=cmake
 "au BufNewFile,BufRead *.ahk, set ft=Autohotkey
-""Read vidtk config files as vidtk config file
+"Read vidtk config files as vidtk config file
 "au BufRead,BufNewFile *.conf setfiletype vidtkconf
 "
 au MyVimRC FileType cpp setlocal foldmethod=syntax

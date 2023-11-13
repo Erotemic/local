@@ -143,6 +143,8 @@ alias wa='cd $HOME/code/watch'
 alias wsd='cd $HOME/code/watch-smartflow-dags/'
 alias wa2='cd $HOME/code/watch2'
 
+alias xv='cd $HOME/data/dvc-repos/xview2'
+
 
 alias wad='cd $(geowatch_dvc --tags="phase2_data" --hardware="auto")'
 alias wae='cd $(geowatch_dvc --tags="phase2_expt" --hardware="auto")'

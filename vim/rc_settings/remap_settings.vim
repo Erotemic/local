@@ -63,22 +63,14 @@ noremap <c-f> :call vimtk#format_paragraph('{"max_width": 80, "myprefix": False,
 noremap <leader>el :call PyCiteLookup()<CR>
 
 " Python Debugging Snippets
-"noremap  <c-b>   :call PyMakeEmbed()<CR><Esc>
-"inoremap <c-b>   <Esc>:call PyMakeEmbed()<CR>i
 noremap  <c-b>   :call vimtk_snippets#insert_xdev_embed()<CR><Esc>
 inoremap <c-b>   <Esc>:call vimtk_snippets#insert_xdev_embed()<CR>i
 
-"noremap  <m-b>   :call PyMakeWithEmbed(mode())<CR><Esc>
-"vnoremap <m-b>   :call PyMakeWithEmbed(visualmode())<CR><Esc>
-"inoremap <m-b> <Esc>:call PyMakeWithEmbed()<CR>i
 noremap  <m-b>   :call vimtk_snippets#insert_xdev_embed_on_exception_context(mode())<CR><Esc>
 vnoremap <m-b>   :call vimtk_snippets#insert_xdev_embed_on_exception_context(visualmode())<CR><Esc>
 inoremap <m-b> <Esc>:call vimtk_snippets#insert_xdev_embed_on_exception_context()<CR>i
 
 " Timing
-"noremap  <c-M-B> :call PyMakeTimerit(mode())<CR><Esc>
-"vnoremap <c-M-B> :call PyMakeTimerit(visualmode())<CR><Esc>
-
 noremap  <c-M-B> :call vimtk_snippets#insert_timerit(mode())<CR><Esc>
 vnoremap <c-M-B> :call vimtk_snippets#insert_timerit(visualmode())<CR><Esc>
 
@@ -86,13 +78,8 @@ vnoremap <c-M-B> :call vimtk_snippets#insert_timerit(visualmode())<CR><Esc>
 noremap <leader>d  :call InsertDocstr()<CR>
 noremap <leader>ed :call InsertDocstr()<CR>
 noremap <leader>ea :call InsertDocstrOnlyArgs()<CR>
-"noremap <leader>ec :call InsertDocstrOnlyCommandLine()<CR>
 noremap <leader>ec :call vimtk_snippets#insert_docstr_commandline()<CR>
 
-"noremap <leader>em :call InsertPyMain()<CR>
-"noremap <leader>eh :call PyInsertHeader()<CR>
-"noremap <leader>eH :call PyInsertHeader('script')<CR>
-"noremap <leader>ek :call PyMakeXDevKwargs()<CR>
 noremap <leader>em :call vimtk_snippets#insert_python_main()<CR>
 noremap <leader>es :call vimtk_snippets#insert_python_scriptconfig_template()<CR>
 noremap <leader>eh :call vimtk_snippets#insert_python_header()<CR>
@@ -103,9 +90,6 @@ noremap <leader>ek :call vimtk_snippets#insert_xdev_global_kwargs()<CR>
 noremap <c-d> :call InsertDocstr()<CR>
 noremap <c-1> :call InsertDocstr()<CR>
 inoremap <c-1> :call InsertDocstr()<CR>
-
-"inoremap <c-2> :call AutoPep8Block()<CR>
-"noremap <c-2> :call AutoPep8Block()<CR>
 
 " Misc python snippets
 
@@ -142,11 +126,6 @@ vimtk.reload()
 vimtk.Python._convert_selection_to_literal_dict()
 EOF
 endfunc
-
-
-" Doctest editing
-"vnoremap gd :call PyFormatDoctest()<CR>
-"vnoremap gu :call PyUnFormatDoctest()<CR>
 
 
 " -------- Interactive Editing
@@ -199,13 +178,13 @@ noremap  <leader>ft :call FocusTerm()<CR>
 
 
 "func! VimtkReload()
-""let __doc__ =<< trim __DOC__
-""FIXME: broken, is there any way to do this?
+"let __doc__ =<< trim __DOC__
+"FIXME: broken, is there any way to do this?
 
-""A workaround is to define this function in your vimrc
+"A workaround is to define this function in your vimrc
 
-""Reloads vimtk after changes are made or it is updated
-""__DOC__
+"Reloads vimtk after changes are made or it is updated
+"__DOC__
 
 "" Unset the guard flags
 "let g:loaded_vimtk_autoload = 0
@@ -218,7 +197,6 @@ noremap  <leader>ft :call FocusTerm()<CR>
 "" https://vi.stackexchange.com/questions/26479/refreshing-vim-file-from-within-a-function
 ":source $MYVIMRC
 ":exec "source " . g:vimtk_autoload_fpath
-
 "endfunc
 
 
@@ -227,7 +205,6 @@ noremap <leader>R :source ~/local/vim/portable_vimrc<CR>
 
 
 " Hack to reload vimtk plugin as well
-
 "let g:loaded_vimtk=0
 "let g:loaded_vimtk_autoload=0
 "source ~/local/vim/vimfiles/bundle/vimtk/plugin/vimtk.vim
@@ -248,7 +225,6 @@ noremap <leader>> :s/^\( *[^ ].*\)\([^ ]\)>>>/\1\2/g<CR>
 
 " Search in non-doctests and non-comments (DOES NOT WORK BECAUSE not or, cannot
 " have a not and I dont think)
-
 let __doc__ =<< trim END
     from xdev.regex_builder import RegexBuilder 
     b = RegexBuilder.coerce('vim')
@@ -258,7 +234,6 @@ let __doc__ =<< trim END
 END
 
 noremap <leader>/ :/\(^.*>>> .*\)\@<!\(^.*#.*\)\@<!
-":noremap <leader>/ :/\(^.*>>>\)\@!
 
 " Function Keys
 
