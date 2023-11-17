@@ -38,12 +38,27 @@ setup_local_pseudo_mount(){
 }
 
 is_available(){
-    # Quickly tests if a remote is available
-    #"
-    ## https://serverfault.com/questions/200468/how-can-i-set-a-short-timeout-with-the-ping-command
-    #sudo apt install fping -y
-    #"
-    RESULT="$(fping -c1 -t100 "$1" 2>&1 >/dev/null | grep 1/1/0)"
+    __doc__="
+    Quickly tests if a remote is available
+
+    References:
+        https://serverfault.com/questions/200468/how-can-i-set-a-short-timeout-with-the-ping-command
+
+    Requirements:
+        sudo apt install fping -y
+
+    Ignore:
+        source ~/local/scripts/mount-remotes.sh
+        is_available namek
+        is_available toothbrush
+
+    "
+    if [ "$(which fping)" == "" ];  then
+        echo "Error: fping is not installed. sudo apt install fping"
+        exit 1
+    fi
+    REMOTE=$1
+    RESULT="$(fping -c1 -t100 "$REMOTE" 2>&1 >/dev/null | grep 1/1/0)"
     if [ "$RESULT" != "" ]; then
         echo "True"
     fi
@@ -127,8 +142,36 @@ mount_remote_if_available(){
     fi
 }
 
+
+check_status(){
+    __doc__="
+    Check status of a mount point
+
+    References:
+        https://unix.stackexchange.com/questions/687459/how-to-check-in-bash-if-a-file-is-currently-in-use-from-a-sshfs-mount
+
+    REMOTE=namek
+    "
+    REMOTE=$1
+    MOUNTPOINT=$HOME/remote/$REMOTE
+
+    echo "Checking Status of REMOTE=$REMOTE"
+    lsof "$MOUNTPOINT"
+    fuser "$MOUNTPOINT"
+
+    # shellcheck disable=SC2009
+    ps aux | grep -i sftp | grep -v grep
+}
+
 unmount_if_mounted()
 {
+    __doc__="
+    Unmount a mountpoint.
+
+    References:
+        https://unix.stackexchange.com/questions/313852/is-there-a-user-level-foolproof-way-to-force-termination-of-sshfs-connections
+
+    "
     REMOTE=$1
     FORCE=$2
     MOUNTPOINT=$HOME/remote/$REMOTE
@@ -140,7 +183,15 @@ unmount_if_mounted()
         # Note, if the ssh session is cut then try
         # kill -9 $(pgrep -lf sshfs | cut -d " " -f2)
         # or user the lazy -z option with fusermount
-        fusermount -u "$MOUNTPOINT"
+
+        if [[ "$FORCE" != "" ]]; then
+            # TODO: add -z when force is true
+            # References:
+            fusermount -uz "$MOUNTPOINT"
+        else
+            fusermount -u "$MOUNTPOINT"
+        fi
+
     else
         echo "Was not mounted MOUNTPOINT = $MOUNTPOINT"
     fi
@@ -148,50 +199,70 @@ unmount_if_mounted()
 
 
 # https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
+#
+if [[ ${BASH_SOURCE[0]} != "$0" ]]; then
+    # We are sourcing the library
+    echo "Sourcing prepare_system as a library and environment"
+else
 
-if [[ $# -gt 0 ]]; then
-    POSITIONAL=()
-    while [[ $# -gt 0 ]]
-    do
-    key="$1"
+    if [[ $# -gt 0 ]]; then
+        POSITIONAL=()
 
-    case $key in
-        -u|--unmount)
-        UNMOUNT=YES
-        shift # past argument
-        ;;
-        -f|--force)
-        FORCE=YES
-        shift # past argument
-        ;;
-        *)    # unknown option
-        POSITIONAL+=("$1") # save it in an array for later
-        shift # past argument
-        ;;
-    esac
-    done
-    set -- "${POSITIONAL[@]}" # restore positional parameters
-
-    if [[ ${#POSITIONAL[@]} -gt 0 ]]; then
-        # User specified a specific set of remotes
-        # Always force when user specifies the remotes
-        FORCE=YES
-        for REMOTE in "${POSITIONAL[@]}"
-        do :
-            if [ "$UNMOUNT" == "YES" ]; then
-                unmount_if_mounted "$REMOTE" "$FORCE"
-            else
-                mount_remote_if_available "$REMOTE" "$FORCE"
-            fi
+        while [[ $# -gt 0 ]]
+        do
+            key="$1"
+            case $key in
+                -u|--unmount)
+                UNMOUNT=YES
+                shift # past argument
+                ;;
+                -f|--force)
+                FORCE=YES
+                shift # past argument
+                ;;
+                -s|--status)
+                STATUS=YES
+                shift # past argument
+                ;;
+                -h|--help)
+                SHOW_HELP=YES
+                shift # past argument
+                ;;
+                *)    # unknown option
+                POSITIONAL+=("$1") # save it in an array for later
+                shift # past argument
+                ;;
+            esac
         done
-    else
-        echo "ERROR NEED TO SPECIFY REMOTE"
-    fi
-fi
 
-#fusermount -u ~/remote1
-#if [ "$(is_available remote1)" != "" ]; then
-#    mkdir -p ~/remote1
-#fi
-# FOR UNMOUNT
-# fusermount -u ~/remote1
+        set -- "${POSITIONAL[@]}" # restore positional parameters
+
+        if [[ "$SHOW_HELP" == "YES" ]]; then
+            echo "TODO: SHOW HELP FOR MOUNT_REMOTES"
+        elif [[ ${#POSITIONAL[@]} -gt 0 ]]; then
+            # User specified a specific set of remotes
+            # Always force when user specifies the remotes
+            FORCE=YES
+            for REMOTE in "${POSITIONAL[@]}"
+            do :
+
+                if [ "$STATUS" == "YES" ]; then
+                    check_status "$REMOTE"
+                elif [ "$UNMOUNT" == "YES" ]; then
+                    unmount_if_mounted "$REMOTE" "$FORCE"
+                else
+                    mount_remote_if_available "$REMOTE" "$FORCE"
+                fi
+            done
+        else
+            echo "ERROR NEED TO SPECIFY REMOTE"
+        fi
+    fi
+
+    #fusermount -u ~/remote1
+    #if [ "$(is_available remote1)" != "" ]; then
+    #    mkdir -p ~/remote1
+    #fi
+    # FOR UNMOUNT
+    # fusermount -u ~/remote1
+fi
