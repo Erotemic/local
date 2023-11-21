@@ -139,7 +139,7 @@ alias work='cd ~/work'
 
 alias vid='cd ~/data/dvc-repos/viame_dvc'
 
-alias wa='cd $HOME/code/watch'
+alias wa='cd $HOME/code/geowatch'
 alias wsd='cd $HOME/code/watch-smartflow-dags/'
 alias wa2='cd $HOME/code/watch2'
 
@@ -157,7 +157,7 @@ alias wads7='cd $(geowatch_dvc --tags="drop7_data" --hardware="ssd")'
 alias wads6m='cd $(geowatch_dvc --tags="phase2_data" --hardware="ssd")/Drop6-MeanYear10GSD-V2'
 
 alias wadf='cd $HOME/flash1/smart_watch_dvc'
-alias wau='cd $HOME/code/watch/watch/utils'
+alias wau='cd $HOME/code/geowatch/geowatch/utils'
 alias wad3='cd $HOME/data/dvc-repos/smart_watch_dvc/Aligned-Drop3-TA1-2022-03-10'
 
 
