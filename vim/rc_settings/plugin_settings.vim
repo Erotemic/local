@@ -210,8 +210,16 @@ other_project_flake8_errors = {
     'E303': 'Too many blank lines',
     'E226': 'Spaces around operator',
     'E231': 'Missing whitespace after ,',
+    'E261': 'At least two spaces before inline comment',
+    'E302': 'Expected 2 blank lines, found 1',
+    'E401': 'Multiple imports on 1 line',
+    'E402': 'Module level import not at top of the file',
+    'E128': 'Continuation of underindented line',
+    'E131': 'Continuation of hanging indent',
+    'E116': 'Unexpected comment indent',
 }
 if 0:
+    # TODO: dynamically enable / disable these based on the project
     flake8_errors += list(other_project_flake8_errors.keys())
 
 flake8_args_list = [

@@ -724,6 +724,21 @@ pywhich(){
 
 
 
+git_file_history () {
+  while (( "$#" )); do
+    git log --oneline --name-status --follow $1;
+    shift;
+  done | perl -ne 'if( s{^(?:[ACDMRTUXB]|R\d+)\s+}{} ) { s{\s+}{\n}g; print; }' | sort -u
+}
+
+gitk_follow(){
+    # https://stackoverflow.com/questions/14194232/using-gitk-to-view-the-full-history-of-a-moved-file
+    GITK_EXE="$(which gitk)"
+    # used as:
+    $GITK_EXE -- $(git_file_history "$@")
+}
+
+
 gitk(){
     # always spawn gitk in the background
     GITK_EXE="$(which gitk)"
