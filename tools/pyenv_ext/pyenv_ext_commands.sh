@@ -742,7 +742,8 @@ install_conda(){
     To update to a newer version see: [CondaHashes]_ and [CondaInstallers]_.
 
     References:
-        .. [CondaHashes] https://docs.conda.io/en/latest/miniconda_hashes.html
+        #.. [CondaHashes] https://docs.conda.io/en/latest/miniconda_hashes.html
+        .. [CondaHashes] https://docs.conda.io/projects/miniconda/en/latest/miniconda-hashes.html
         .. [CondaInstallers] https://docs.conda.io/en/latest/miniconda.html#linux-installers
     "
     mkdir -p ~/tmp/setup-conda
@@ -752,10 +753,10 @@ install_conda(){
 
     #CONDA_VERSION=4.10.3
     #CONDA_PY_VERSION=py38
-    CONDA_VERSION=23.5.2-0
+    CONDA_VERSION=23.10.0-1
     CONDA_PY_VERSION=py311
     #ARCH="$(dpkg --print-architecture)"  # different convention
-    ARCH="$(arch)"
+    ARCH="$(arch)"  # e.g. x86_64
     OS=Linux
     CONDA_KEY="Miniconda3-${CONDA_PY_VERSION}_${CONDA_VERSION}-${OS}-${ARCH}"
     echo "CONDA_KEY = $CONDA_KEY"
@@ -763,6 +764,7 @@ install_conda(){
     CONDA_URL="https://repo.anaconda.com/miniconda/${CONDA_INSTALL_SCRIPT_FNAME}"
 
     declare -A CONDA_KNOWN_SHA256=(
+        ["Miniconda3-py311_23.10.0-1-Linux-x86_64"]="d0643508fa49105552c94a523529f4474f91730d3e0d1f168f1700c43ae67595"
         ["Miniconda3-py311_23.5.2-0-Linux-x86_64"]="634d76df5e489c44ade4085552b97bebc786d49245ed1a830022b0b406de5817"
         ["Miniconda3-py38_4.10.3-Linux-x86_64"]="935d72deb16e42739d69644977290395561b7a6db059b316958d97939e9bdf3d"
         ["Miniconda3-py38_4.10.3-Linux-aarch64"]="19584b4fb5c0656e0cf9de72aaa0b0a7991fbd6f1254d12e2119048c9a47e5cc"
