@@ -2609,3 +2609,31 @@ install_rclone(){
     7z x rclone.zip
     cp rclone-v1.63.1-linux-amd64/rclone "$HOME"/.local/bin/rclone
 }
+
+install_oathtool(){
+    __doc__='
+    References:
+        https://gist.github.com/vlobachev/c7f8e72420db9d5835e2843389450b33
+        https://gist.github.com/rofl0r/877a765369184875f35966dc5ceced2f
+    '
+    sudo apt-get install oathtool
+
+    # shellcheck disable=SC2016
+    __github_setup_instructions='
+    Login to GitHub and navigate to your profile security settings:
+
+        https://github.com/settings/security
+
+    Configure an authenticator app if it is not configured.
+    If you have an authenticator app configured, click edit.
+
+    Under the bar code there will be an option to view a setup key.
+    Copy the key and save it in a secret manager.
+
+    export GITHUB_SETUP_KEY="<github-provided-setup-key>"
+    oathtool --base32 --totp=SHA1 "$GITHUB_SETUP_KEY"
+
+    There will be a place where you enter your first code in the security page.
+    This registers oathtool with github.
+    '
+}
