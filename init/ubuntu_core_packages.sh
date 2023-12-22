@@ -2609,3 +2609,15 @@ install_rclone(){
     7z x rclone.zip
     cp rclone-v1.63.1-linux-amd64/rclone "$HOME"/.local/bin/rclone
 }
+
+init_aider(){
+    # https://github.com/paul-gauthier/aider
+    pip install aider-chat
+
+    # Usage
+    load_secrets
+    export OPENAI_API_KEY=$EROTEMIC_OPENAI_API_KEY
+    echo "OPENAI_API_KEY = $OPENAI_API_KEY"
+    aider hello.js
+
+}

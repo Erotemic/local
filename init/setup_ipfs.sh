@@ -941,3 +941,116 @@ local_ipfs_mount(){
 
 
 }
+
+
+check_ipfs_status(){
+    __doc__="
+    References:
+        https://discuss.ipfs.tech/t/how-can-i-tell-if-my-ipfs-node-is-publicly-available/14237
+        https://discuss.ipfs.tech/t/feasibility-for-self-hosting-scientific-datasets/17355
+    "
+
+    # Check if accelerated dht is on
+    ipfs config --json Routing.AcceleratedDHTClient
+
+    # Check your id
+    ipfs id
+
+    # Alternative single-output way to get the NodeID
+    ipfs config --json Identity.PeerID
+
+    # Force providing a CID
+    ipfs dht provide bafybeie275n5f4f64vodekmodnktbnigsvbxktffvy2xxkcfsqxlie4hrm
+
+    # Quick status
+    systemctl -l status ipfs.service --no-pager
+
+    # Full service logs
+    journalctl -u ipfs.service
+
+    # Get your WAN IP Address
+    WAN_IP_ADDRESS=$(curl ifconfig.me)
+    echo "WAN_IP_ADDRESS = $WAN_IP_ADDRESS"
+
+    # Check if node is visible to WAN
+    # https://canyouseeme.org/
+    # https://portchecker.co/canyouseeme
+
+
+    # Check if the DHT has been initially populated
+    ipfs stats dht
+}
+
+setup_firewall(){
+    sudo ufw status
+
+    # Add rules to allow IPFS trafic on port 4001
+    sudo ufw allow in 4001/udp comment 'Public IPFS libp2p UDP swarm port'
+    sudo ufw allow 4001/tcp comment 'Public IPFS libp2p swarm port'
+    sudo ufw allow from 127.0.0.1 to 127.0.0.1 port 5001 proto tcp comment 'Private IPFS API'
+    sudo ufw allow from 127.0.0.1 to 127.0.0.1 port 8080 proto tcp comment 'Protected IPFS Gateway + read only API subset'
+
+    # https://docs.ipfs.tech/how-to/nat-configuration/#configuration-options
+    #
+    IPFS_PORT=4001
+    WAN_IP_ADDRESS=$(curl ifconfig.me)
+    echo "WAN_IP_ADDRESS = $WAN_IP_ADDRESS"
+
+    echo "[
+        \"/ip4/${WAN_IP_ADDRESS}/tcp/${IPFS_PORT}\",
+        \"/ip4/${WAN_IP_ADDRESS}/udp/${IPFS_PORT}/quic\",
+        \"/ip4/${WAN_IP_ADDRESS}/udp/${IPFS_PORT}/quic-v1\",
+        \"/ip4/${WAN_IP_ADDRESS}/udp/${IPFS_PORT}/quic-v1/webtransport\",
+    ]"
+    echo "WAN_IP_ADDRESS = $WAN_IP_ADDRESS"
+    ipfs config --json Addresses.AppendAnnounce
+
+}
+
+tweaks(){
+    __doc__="
+    https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
+    "
+    # Original values on mojo       212992
+    # Original value on toothbrush 2621440
+    sysctl net.core.rmem_max
+    sysctl net.core.wmem_max
+
+    sudo sysctl -w net.core.rmem_max=2500000
+    sudo sysctl -w net.core.wmem_max=2500000
+}
+
+
+check_pin_random_data(){
+    RANDOM_SUFFIX=$(head -c128 /dev/random | sha512sum)
+    echo "
+    This is some random data
+    Written on $(date) by $HOSTNAME
+    $RANDOM_SUFFIX
+    " > random_data.txt
+    ipfs add --pin random_data.txt | tee "test_pin_job.log"
+    NEW_CID=$(tail -n 1 test_pin_job.log | cut -d ' ' -f 2)
+    echo "NEW_CID=$NEW_CID"
+
+    PEER_ID=$(ipfs config --json Identity.PeerID)
+    echo "PEER_ID=$PEER_ID"
+
+    CHECK_URL="https://ipfs-check.on.fleek.co/?cid=${NEW_CID}&multiaddr=%2Fp2p%2F${PEER_ID}"
+    echo "CHECK_URL = $CHECK_URL"
+
+
+    NEW_CID=QmaRssZfmkya5LX53hoyxHgk4RzTvo9grUCcR412xCva4B
+    PEER_ID=12D3KooWMJxwdSsxYwyb6KCqHNpBcE2oM9HWz6yNkRHiavgQLsbr
+    CHECK_URL="https://ipfs-check.on.fleek.co/?cid=${NEW_CID}&multiaddr=%2Fp2p%2F${PEER_ID}"
+    echo "CHECK_URL = $CHECK_URL"
+
+    ipfs dht findprovs QmaRssZfmkya5LX53hoyxHgk4RzTvo9grUCcR412xCva4B
+    ipfs cat QmaRssZfmkya5LX53hoyxHgk4RzTvo9grUCcR412xCva4B
+
+    # ip4/172.100.113.212/tcp/4001
+
+    # Check
+    # http://ipfs.io/ipfs/QmaRssZfmkya5LX53hoyxHgk4RzTvo9grUCcR412xCva4B
+    # https://ipfs-check.on.fleek.co/
+    # https://pl-diagnose.on.fleek.co/#/diagnose/access-content?
+}

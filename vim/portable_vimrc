@@ -140,6 +140,11 @@ Plug 'LaTeX-Box-Team/LaTeX-Box'
 Plug 'https://github.com/airblade/vim-gitgutter'
 Plug 'cespare/vim-toml', {'branch': 'main' }
 
+" AI Tools
+" Codium - meh
+" https://github.com/Exafunction/codeium.vim
+" Plug 'Exafunction/codeium.vim'  
+
 " Do after:
 " apt_ensure libevent-dev
 " pip install https://github.com/Rykka/instant-rst.py/archive/master.zip

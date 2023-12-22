@@ -70,7 +70,8 @@ let g:Tex_DefaultTargetFormat='pdf'
 "let g:Tex_MultipleCompileFormats='pdf'
 "let g:Tex_CompileRule_pdf = 'pdflatex -shell-escape --synctex=-1 -src-specials -interaction=nonstopmode $*'
 let g:Tex_MultipleCompileFormats='pdf,bib,pdf'
-let g:Tex_CompileRule_pdf = 'lualatex -shell-escape --synctex=-1 -src-specials --output-directory=auxdir -interaction=nonstopmode $*'
+"let g:Tex_CompileRule_pdf = 'lualatex -shell-escape --synctex=-1 -src-specials --output-directory=auxdir -interaction=nonstopmode $*'
+let g:Tex_CompileRule_pdf = 'pdflatex -shell-escape --synctex=-1 -src-specials --output-directory=auxdir -interaction=nonstopmode $*'
 " Use main.tex.mainfile to compile
 let g:Tex_UseMakefile = 1
 let g:Tex_IgnoreLevel = 8

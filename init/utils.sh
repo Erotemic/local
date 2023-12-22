@@ -1050,7 +1050,7 @@ curl_verify_hash(){
     local EXPECTED_HASH=${3:-${EXPECTED_HASH:-'*'}}
     local HASHER=${4:-sha256sum}
     local CURL_OPTS=${5:-"${CURL_OPTS}"}
-    local VERBOSE=${6:-${VERBOSE:-"3"}}
+    local VERBOSE=${6:-${VERBOSE:-"2"}}
 
     $(system_python) -c "import sys; sys.exit(0 if ('$HASHER' in {'sha256sum', 'sha512sum'}) else 1)"
 
@@ -1059,7 +1059,7 @@ curl_verify_hash(){
         return 1
     fi
 
-    if [ "$VERBOSE" -ge 3 ]; then
+    if [ "$VERBOSE" -ge 2 ]; then
         codeblock "
             curl_verify_hash
                 * URL='$URL'
@@ -1079,7 +1079,7 @@ curl_verify_hash(){
 
 verify_hash(){
     __doc__='
-    Verifies the hash of a file
+    Verifies the hash *prefix* of a file
 
     Example:
         FPATH="$(which ls)"
@@ -1093,7 +1093,7 @@ verify_hash(){
     local FPATH=${1:-${FPATH:-"Unspecified"}}
     local EXPECTED_HASH=${2:-${EXPECTED_HASH:-'*'}}
     local HASHER=${3:-sha256sum}
-    local VERBOSE=${4:-${VERBOSE:-"3"}}
+    local VERBOSE=${4:-${VERBOSE:-"2"}}
 
     $(system_python) -c "import sys; sys.exit(0 if ('$HASHER' in {'sha256sum', 'sha512sum'}) else 1)"
 
@@ -1129,8 +1129,106 @@ verify_hash(){
         fi
         return 0
     fi
-
 }
+
+
+curl_grabdata(){
+    __doc__='
+    Similar to curl_verify_hash.
+
+    Implements "grabdata" capabilities to prevent redownloading files that already exist.
+
+    Also uses more concise bash commands and less Python.
+
+    Example:
+        URL=https://file-examples-com.github.io/uploads/2017/02/file_example_JSON_1kb.json
+        DST=file_example_JSON_1kb.json
+        EXPECTED_HASH="21b4d800cc282ca452f7394e95d5382340ac3481a002c21da681005a44f18ea6cf43959990cd715b4657f180e0e96d6087fe724f3200e909f9fd70ebcd5511bd"
+
+        __EROTEMIC_ALWAYS_RELOAD__=1
+        source $HOME/local/init/utils.sh
+
+        URL=$URL \
+        EXPECTED_HASH="$EXPECTED_HASH" \
+        VERBOSE=1 \
+            curl_grabdata
+    '
+    _handle_help "$@" || return 0
+
+    # -- <ARGUMENT PARSING> ---
+    local URL=${1:-${URL:-""}}
+    local DEFAULT_DST
+    #local DEFAULT_DPATH
+    DEFAULT_DST=$(basename "$URL")
+    local DST=${2:-${DST:-$DEFAULT_DST}}
+    local EXPECTED_HASH=${3:-${EXPECTED_HASH:-''}}
+    local HASHER=${4:-sha512sum}
+    local CURL_OPTS=${5:-"${CURL_OPTS}"}
+    local VERBOSE=${4:-${VERBOSE:-"2"}}
+    # -- </ARGUMENT PARSING> ---
+
+    # -- <ARGUMENT VALIDATION> ---
+    $(system_python) -c "import sys; sys.exit(0 if ('$HASHER' in {'sha256sum', 'sha512sum'}) else 1)"
+    if [ $? -ne 0 ]; then
+        echo "HASHER = $HASHER is not in the known list"
+        return 1
+    fi
+    if [ "$VERBOSE" -ge 2 ]; then
+        codeblock "
+            _curl_grabdata
+                * URL='$URL'
+                * DST='$DST'
+                * HASHER='$HASHER'
+                * EXPECTED_HASH='$EXPECTED_HASH'
+                * CURL_OPTS='$CURL_OPTS'
+            "
+    fi
+    if test -d "$DST" ; then
+        echo "ERROR DST cannot be a directory"
+        return 1
+    fi
+    # -- </ARGUMENT VALIDATION> ---
+
+    # -- <BODY> ---
+    # This snippet should be copy/pastable into standalone scripts
+    #
+    # Expects Variables:
+    #   URL=
+    #   EXPECTED_HASH=
+    #   DST=
+    #   HASHER=
+    #   CURL_OPTS=
+    echo "${EXPECTED_HASH}  $DST" > "$DST.$HASHER"
+
+    if ! test -f "$DST" ; then
+        echo "Downloading $URL to $DST"
+        # shellcheck disable=SC2086
+        curl $CURL_OPTS "$URL" -o "$DST"
+    else
+        echo "Already downloaded $DST"
+        if $HASHER --status -c "$DST.$HASHER"; then
+            echo "Hash is valid"
+            return 0
+        else
+            echo "WARNING: Data exists, but hash is INVALID! Redownloading"
+            # shellcheck disable=SC2086
+            curl $CURL_OPTS "$URL" -o "$DST"
+        fi
+    fi
+
+    if $HASHER --status -c "$DST.$HASHER"; then
+        echo "Hash is valid"
+    else
+        echo "ERROR: Hash is INVALID!"
+        echo "GOT hash:"
+        $HASHER "$DST"
+        echo "Wanted hash:"
+        cat "$DST.$HASHER"
+        return 1
+    fi
+    # -- </BODY> ---
+}
+
 
 _harden_one_symlink(){
     __doc__="
