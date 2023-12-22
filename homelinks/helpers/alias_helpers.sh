@@ -45,8 +45,9 @@ alias cgrep='grep -I -ER \
     --exclude "*.so*" \
     --exclude "*.o*" \
     --exclude "*.coverage*" \
+    --exclude "*.ipynb*" \
     --exclude "tags"'
-
+    #
     #--exclude "*.rst*" \
     #--exclude "*.js" \
     #--exclude "*.html*" \

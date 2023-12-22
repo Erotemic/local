@@ -119,7 +119,6 @@ ersatztv(){
 
     docker run -d \
       --name ersatztv \
-      --runtime nvidia \
       -e TZ=America/Eastern \
       -v /data/store/ErsatzTV/config:/root/.local/share/ersatztv \
       -v /data/store/ErsatzTV/media:/root/media:ro \
@@ -127,6 +126,7 @@ ersatztv(){
       --restart unless-stopped \
       jasongdove/ersatztv
 
+      #--runtime nvidia \
       #jasongdove/ersatztv:develop-nvidia
       jasongdove/ersatztv
       #-v /path/to/config:/root/.local/share/ersatztv \
