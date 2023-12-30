@@ -147,6 +147,7 @@ from_docker(){
     JELLYIN_CONFIG_DPATH=/data/jellyfin/config
     JELLYIN_CACHE_DPATH=/data/jellyfin/cache
     JELLYIN_MEDIA_DPATH=/data/jellyfin/media
+    JELLYIN_MEDIA_DPATH=/media/joncrall/GZ_PHOTOS/Media/
 
     mkdir -p $JELLYIN_CONFIG_DPATH
     mkdir -p $JELLYIN_CACHE_DPATH
