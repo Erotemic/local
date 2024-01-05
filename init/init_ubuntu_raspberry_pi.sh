@@ -2,14 +2,20 @@
 __doc__="
 Getting the OS on the SD card requires a few steps, but its not that bad.
 
+The [SDM]_ tool might be a good alternative. Need to look into it.
+
 References:
     https://raspberrypi.stackexchange.com/questions/111722/rpi-4-running-ubuntu-server-20-04-cant-connect-to-wifi
     https://www.cyberciti.biz/faq/ubuntu-change-hostname-command/
+    .. [SDM] https://github.com/gitbls/sdm
 "
 
 setup_pi_sd_card_on_host_system(){
     # On the host system install the rpi-imager software
-    sudo snap install rpi-imager
+    sudo apt install rpi-imager
+
+    rpi-imager \
+
 
     __manual_instructions__="
     * Insert the SD card to the host system.
@@ -17,8 +23,9 @@ setup_pi_sd_card_on_host_system(){
     * Select Operating System:
        - Other General Purpose OS ->
        - Ubuntu ->
-       - Ubuntu Server (21.04 / latest) 64 bit
+       - Ubuntu Server (22.04 LTS / latest) 64 bit
     * Selet Storage: the SD card
+    * Optional: click advanced usage to modify defaults like WIFI / username
     * Click Write
     * Wait for the OS to download, install, and verify (10-20 minutes)
     "
@@ -32,7 +39,8 @@ setup_pi_sd_card_on_host_system(){
 
 
     # This is where the SD card auto-mounted for me
-    SYSTEM_BOOT_DPATH="/media/$USER/system-boot"
+    export SYSTEM_BOOT_DPATH="/media/$USER/system-boot"
+    ls $SYSTEM_BOOT_DPATH
 
     # Check the original config to make sure we dont loose anything important
     echo "---"
@@ -110,6 +118,13 @@ setup_pi_sd_card_on_host_system(){
 
     # Default settings will require you to change password here and relogin
     ssh ubuntu@192.168.222.29
+
+
+    New notes:
+
+    To ssh with a forced password use
+    ssh -o PubkeyAuthentication=no -o PreferredAuthentications=password joncrall@192.168.222.17
+
     "
 }
 
@@ -128,8 +143,8 @@ sudo usermod -a -G adm,dialout,cdrom,floppy,sudo,audio,dip,video,plugdev,netdev,
 __onhost__="
     exit
 
-    ssh-copy-id joncrall@192.168.222.29
-    ssh joncrall@192.168.222.29
+    ssh-copy-id joncrall@192.168.222.17
+    ssh joncrall@192.168.222.17
 "
 
 quick_local_setup(){

@@ -2151,3 +2151,18 @@ remove_sticky_dock_on_second_monitor(){
     gsettings get org.gnome.shell.extensions.dash-to-dock require-pressure-to-show
 
 }
+
+install_tor(){
+
+    curl_grabdata https://archive.torproject.org/tor-package-archive/torbrowser/13.0.8/tor-expert-bundle-linux-x86_64-13.0.8.tar.gz
+    curl_grabdata https://archive.torproject.org/tor-package-archive/torbrowser/13.0.8/tor-expert-bundle-linux-x86_64-13.0.8.tar.gz.asc
+
+    gpg --auto-key-locate nodefault,wkd --locate-keys torbrowser@torproject.org
+
+    gpg --verify tor-expert-bundle-linux-x86_64-13.0.8.tar.gz.asc tor-expert-bundle-linux-x86_64-13.0.8.tar.gz
+
+    mkdir -p .local/opt/tor
+    mv tor-expert-bundle-linux-x86_64-13.0.8.tar.gz .local/opt/tor/
+    cd .local/opt/tor/
+    tar -xvf tor-expert-bundle-linux-x86_64-13.0.8.tar.gz .local/opt/tor/
+}

@@ -150,3 +150,36 @@ ersatztv(){
 
 
 }
+
+from_docker(){
+    docker pull jellyfin/jellyfin
+
+    #JELLYIN_CONFIG_DPATH=/path/to/config
+    #JELLYIN_CACHE_DPATH=/path/to/cache
+    #JELLYIN_MEDIA_DPATH=/path/to/media
+
+    JELLYIN_CONFIG_DPATH=/data/jellyfin/config
+    JELLYIN_CACHE_DPATH=/data/jellyfin/cache
+    JELLYIN_MEDIA_DPATH=/data/jellyfin/media
+    JELLYIN_MEDIA_DPATH=/media/joncrall/GZ_PHOTOS/Media/
+
+    mkdir -p $JELLYIN_CONFIG_DPATH
+    mkdir -p $JELLYIN_CACHE_DPATH
+    mkdir -p $JELLYIN_MEDIA_DPATH
+
+    docker run -d \
+         --name jellyfin \
+         --net=host \
+         --volume ${JELLYIN_CONFIG_DPATH}:/config \
+         --volume ${JELLYIN_CACHE_DPATH}:/cache \
+         --mount type=bind,source=${JELLYIN_MEDIA_DPATH},target=/media \
+         --restart=unless-stopped \
+         jellyfin/jellyfin
+         #--user uid:gid \
+
+    curl_verify_hash \
+        https://download.blender.org/demo/movies/BBB/bbb_sunflower_1080p_30fps_normal.mp4.zip \
+        "$JELLYIN_MEDIA_DPATH/bbb.mp4.zip" \
+        "e320fef389ec749117d0c1583945039266a40f25483881c2ff0d33207e62b362"
+
+}
