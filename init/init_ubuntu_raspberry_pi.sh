@@ -133,14 +133,20 @@ __onhost__="
 "
 
 quick_local_setup(){
-    source "$HOME/local/init/utils.sh"
     git clone https://github.com/Erotemic/local.git
+    source "$HOME/local/init/utils.sh"
 
     source "$HOME/local/init/ensure_symlinks.sh"
     ensure_config_symlinks
 }
 quick_local_setup
 source "$HOME/local/init/utils.sh"
+
+
+setup_basic(){
+    sudo apt install git curl jq expect htop tmux tree sshfs p7zip-full pgpgpg lm-sensors rsync symlinks net-tools -y
+    sudo apt install -y network-manager -y
+}
 
 
 do_system_updates(){
@@ -369,4 +375,41 @@ setup_wireless(){
     ## Something with
     cat /etc/netplan/50-cloud-init.yaml
     sudo netplan apply
+}
+
+
+debug_broken_ethernet(){
+    # https://www.mendrugory.com/post/no-ethernet-ubuntu/
+    # https://askubuntu.com/questions/1416493/how-to-enable-ethernet-interface-ubuntu-22-04
+    # https://ubuntuforums.org/showthread.php?t=1490833
+    # https://www.freshblurbs.com/blog/2022/08/07/fix-eth0-rpi-ubuntu.html
+    sudo lshw -C network
+    sudo lshw -class network
+
+    sudo apt install -y network-manager -y
+    sudo systemctl restart NetworkManager
+
+    sudo ifconfig eth0 up
+
+    sudo journalctl -b | grep -E "dhcpcd|wlan0|eth0|wpa"
+    sudo dhclient -v
+
+    #sudo EDITOR=vim crontab -e
+    # Add Line:
+    # @reboot dhclient -v
+    # https://stackoverflow.com/questions/610839/how-can-i-programmatically-create-a-new-cron-job
+
+    # Workaround to run above command on every reboot
+    # (Doesn work because not root?)
+    #(crontab -l ; echo "@reboot dhclient -v") 2>&1 | grep -v "no crontab" | sort | uniq | crontab -
+
+    sudo systemctl enable systemd-networkd
+    sudo systemctl status networking.service
+
+    sudo systemctl enable NetworkManager
+    sudo systemctl status NetworkManager
+
+    nmcli device show
+
+
 }

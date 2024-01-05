@@ -2,12 +2,14 @@
 __doc__="
 https://jellyfin.org/docs/general/installation/linux
 "
-sudo apt install curl gnupg
-sudo add-apt-repository universe
 
-sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://repo.jellyfin.org/jellyfin_team.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/jellyfin.gpg
 
+install_jellyfin_from_apt(){
+    sudo apt install curl gnupg
+    sudo add-apt-repository universe
+
+    sudo mkdir -p /etc/apt/keyrings
+    curl -fsSL https://repo.jellyfin.org/jellyfin_team.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/jellyfin.gpg
 
 cat <<EOF | sudo tee /etc/apt/sources.list.d/jellyfin.sources
 Types: deb
@@ -18,19 +20,31 @@ Architectures: $( dpkg --print-architecture )
 Signed-By: /etc/apt/keyrings/jellyfin.gpg
 EOF
 
-sudo apt update
-sudo apt install jellyfin
+    sudo apt update
+    sudo apt install jellyfin
 
-sudo systemctl start jellyfin
-sudo systemctl status jellyfin
+    sudo systemctl start jellyfin
+    sudo systemctl status jellyfin
 
-echo "Navigate to: http://localhost:8096/"
+    echo "Navigate to: http://localhost:8096/"
 
-Default username is "jellyfin"
-Default password is empty
+    Default username is "jellyfin"
+    Default password is empty
 
-sudo ufw status
-sudo ufw allow proto tcp from 192.168.222.1/24 to any port 8096,8920 comment 'allow Jellyfin via TCP'
+    sudo ufw status
+    sudo ufw allow proto tcp from 192.168.222.1/24 to any port 8096,8920 comment 'allow Jellyfin via TCP'
+    __notes__='
+
+    The apt jellyfin working directory is:
+        /var/lib/jellyfin
+
+    Logs are in:
+        /var/log/jellyfin
+
+    Cache is in:
+        /var/cache/jellyfin/
+    '
+}
 
 source_dependencies(){
     # Install dotNET SDK 8.0
