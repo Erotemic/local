@@ -37,10 +37,9 @@ setup_pi_sd_card_on_host_system(){
     # reinstalling the OS.
     load_secrets
 
-
     # This is where the SD card auto-mounted for me
     export SYSTEM_BOOT_DPATH="/media/$USER/system-boot"
-    ls $SYSTEM_BOOT_DPATH
+    ls "$SYSTEM_BOOT_DPATH"
 
     # Check the original config to make sure we dont loose anything important
     echo "---"
@@ -165,6 +164,14 @@ setup_basic(){
     sudo apt install -y network-manager -y
     sudo apt install ntfs-3g -y
 
+    # https://forums.raspberrypi.com/viewtopic.php?t=362047
+    # See Also: /etc/netplan/50-cloud-init.yaml
+}
+
+setup_display_manager(){
+    # https://phoenixnap.com/kb/how-to-install-a-gui-on-ubuntu
+    sudo apt update
+    sudo apt install gnome-session gdm3 ubuntu-desktop
 }
 
 

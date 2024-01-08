@@ -161,6 +161,7 @@ setup_jelly(){
 
     JELLYIN_MEDIA_DPATH=/data/store
 
+    sudo mount -t ntfs /dev/disk/by-uuid/24C6CCB2C6CC8610 /data
 
 }
 
