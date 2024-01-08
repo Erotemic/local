@@ -140,6 +140,8 @@ sudo hostnamectl set-hostname $PI_HOSTNAME
 sudo adduser "$PI_USERNAME"
 sudo usermod -a -G adm,dialout,cdrom,floppy,sudo,audio,dip,video,plugdev,netdev,lxd "$PI_USERNAME"
 
+sudo usermod -a -G docker "$USER"
+
 __onhost__="
     exit
 
@@ -161,6 +163,8 @@ source "$HOME/local/init/utils.sh"
 setup_basic(){
     sudo apt install git curl jq expect htop tmux tree sshfs p7zip-full pgpgpg lm-sensors rsync symlinks net-tools -y
     sudo apt install -y network-manager -y
+    sudo apt install ntfs-3g -y
+
 }
 
 
@@ -409,7 +413,7 @@ debug_broken_ethernet(){
     sudo journalctl -b | grep -E "dhcpcd|wlan0|eth0|wpa"
     sudo dhclient -v
 
-    #sudo EDITOR=vim crontab -e
+    sudo EDITOR=vim crontab -e
     # Add Line:
     # @reboot dhclient -v
     # https://stackoverflow.com/questions/610839/how-can-i-programmatically-create-a-new-cron-job

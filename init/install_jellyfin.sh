@@ -151,6 +151,19 @@ ersatztv(){
 
 }
 
+
+setup_jelly(){
+    ls /dev/disk/by-uuid/ -al
+    DISK_UUID=24C6CCB2C6CC8610
+    #printf '\nUUID=%s /data ntfs-3g uid=$user,gid=$user,umask=0022 0 2\n' "$DISK_UUID" | sudo tee -a /etc/fstab
+    printf '\nUUID=%s /data ntfs defaults 0 0\n' "$DISK_UUID" | sudo tee -a /etc/fstab
+    cat /etc/fstab
+
+    JELLYIN_MEDIA_DPATH=/data/store
+
+
+}
+
 from_docker(){
     docker pull jellyfin/jellyfin
 
@@ -161,7 +174,7 @@ from_docker(){
     JELLYIN_CONFIG_DPATH=/data/jellyfin/config
     JELLYIN_CACHE_DPATH=/data/jellyfin/cache
     JELLYIN_MEDIA_DPATH=/data/jellyfin/media
-    JELLYIN_MEDIA_DPATH=/media/joncrall/GZ_PHOTOS/Media/
+    #JELLYIN_MEDIA_DPATH=/media/joncrall/GZ_PHOTOS/Media/
 
     mkdir -p $JELLYIN_CONFIG_DPATH
     mkdir -p $JELLYIN_CACHE_DPATH
