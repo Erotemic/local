@@ -73,20 +73,36 @@ upgrade_rocketpool_cli()
 
     PREFIX=$HOME/.local
     mkdir -p "$PREFIX/bin"
-    wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/rocketpool-cli-linux-"${ARCH}" -O ./rocketpool
-    wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/rocketpool-cli-linux-"${ARCH}".sig -O ./rocketpool.sig
+    #wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/rocketpool-cli-linux-"${ARCH}" -O ./rocketpool
+    #wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/rocketpool-cli-linux-"${ARCH}".sig -O ./rocketpool.sig
+    curl -L https://github.com/rocket-pool/smartnode-install/releases/latest/download/rocketpool-cli-linux-"${ARCH}" -o ./rocketpool
+    curl -L https://github.com/rocket-pool/smartnode-install/releases/latest/download/rocketpool-cli-linux-"${ARCH}".sig -o ./rocketpool.sig
 
-    if ! test -f ./smartnode-signing-key-v3.asc; then
-        wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/smartnode-signing-key-v3.asc -O ./smartnode-signing-key-v3.asc
+    #if ! test -f ./smartnode-signing-key-v3.asc; then
+    #    wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/smartnode-signing-key-v3.asc -O ./smartnode-signing-key-v3.asc
+    #    # Sign key belongs to:
+    #    # https://github.com/jclapis
+    #    gpg --import ./smartnode-signing-key-v3.asc
+    #    # Optional
+    #    python3 ~/local/scripts/xgpg.py edit_trust D17FBE7E12E2C9DC21CE2BC3E00CDCDC74B1E3F5 ultimate
+    #fi
+
+    # New sign key (2024-01-10)
+    if ! test -f ./fornax-signing-key.asc; then
+        wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/fornax-signing-key.asc -O ./fornax-signing-key.asc
         # Sign key belongs to:
-        # https://github.com/jclapis
-        gpg --import ./smartnode-signing-key-v3.asc
-
+        # dante@rocketpool.net
+        # https://github.com/0xfornax
+        gpg --import ./fornax-signing-key.asc
         # Optional
-        python3 ~/local/scripts/xgpg.py edit_trust D17FBE7E12E2C9DC21CE2BC3E00CDCDC74B1E3F5 ultimate
+        python3 ~/local/scripts/xgpg.py edit_trust 6EE3177694F55603F0DD24EAEBE71B95855BCBD5 ultimate
     fi
 
     gpg --verify rocketpool.sig rocketpool
+
+    # Check the version of the new file
+    chmod +x ./rocketpool
+    ./rocketpool --version
 
     # Stop the existing node
     rocketpool service stop

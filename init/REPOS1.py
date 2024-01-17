@@ -175,7 +175,10 @@ def _parse_custom_urls():
                 if line.strip() and not line.strip().startswith('#'):
                     if '__doc__' in line:
                         continue
+                    line = line.strip()
                     if line.startswith(' '):
+                        continue
+                    if line.startswith('repos:'):
                         continue
                     if line.startswith('-'):
                         line = line.lstrip('-').strip()

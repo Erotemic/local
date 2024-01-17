@@ -8,7 +8,6 @@
 
         gg-clone
 
-
 #
 #https://github.com/Erotemic/dtool_ibeis           
 #https://github.com/Erotemic/vtool_ibeis           
@@ -55,30 +54,32 @@
 # git@hyrule.cs.rpi.edu:crall-iccvw-2017.git $HOME/latex
 # git@hyrule.cs.rpi.edu:crall-thesis-2017.git $HOME/latex
 
-https://github.com/Erotemic/local.git $HOME
-https://github.com/Erotemic/misc.git $HOME
-
-https://github.com/pyutils/line_profiler.git
-#https://github.com/Erotemic/git-sync.git
-https://github.com/Erotemic/git_well.git
-https://github.com/Erotemic/ibeis.git
-https://github.com/Erotemic/mkinit.git
-https://github.com/Erotemic/progiter.git
-https://github.com/Erotemic/pypogo.git
-https://github.com/Erotemic/supersetup.git
-https://github.com/Erotemic/supersetup.git.git
-https://github.com/Erotemic/timerit.git
-https://github.com/Erotemic/ubelt.git
-https://github.com/Erotemic/vimtk.git
-https://github.com/Erotemic/xcookie.git
-https://github.com/Erotemic/xdev.git
-https://github.com/Erotemic/xdoctest.git
-https://github.com/Erotemic/xinspect.git
-https://gitlab.kitware.com/computer-vision/delayed_image.git 
-https://gitlab.kitware.com/computer-vision/kwarray.git 
-https://gitlab.kitware.com/computer-vision/kwcoco.git 
-https://gitlab.kitware.com/computer-vision/kwimage.git 
-https://gitlab.kitware.com/computer-vision/kwplot.git 
-https://gitlab.kitware.com/computer-vision/ndsampler.git
-https://gitlab.kitware.com/computer-vision/netharn.git 
-https://gitlab.kitware.com/utils/scriptconfig.git 
+repos: 
+  - https://github.com/Erotemic/local.git $HOME
+  - https://github.com/Erotemic/misc.git $HOME
+  - https://github.com/pyutils/line_profiler.git
+  # - https://github.com/Erotemic/git-sync.git
+  - https://github.com/Erotemic/git_well.git
+  - https://github.com/Erotemic/ibeis.git
+  - https://github.com/Erotemic/mkinit.git
+  - https://github.com/Erotemic/progiter.git
+  - https://github.com/Erotemic/pypogo.git
+  - https://github.com/Erotemic/supersetup.git
+  - https://github.com/Erotemic/timerit.git
+  - https://github.com/Erotemic/ubelt.git
+  - https://github.com/Erotemic/vimtk.git
+  - https://github.com/Erotemic/xcookie.git
+  - https://github.com/Erotemic/xdev.git
+  - https://github.com/Erotemic/xdoctest.git
+  - https://github.com/Erotemic/xinspect.git
+  - https://gitlab.kitware.com/computer-vision/delayed_image.git 
+  - https://gitlab.kitware.com/computer-vision/cmd_queue.git 
+  - https://gitlab.kitware.com/computer-vision/simple_dvc.git 
+  - https://gitlab.kitware.com/computer-vision/kwarray.git 
+  - https://gitlab.kitware.com/computer-vision/kwcoco.git 
+  - https://gitlab.kitware.com/computer-vision/kwimage.git 
+  - https://gitlab.kitware.com/computer-vision/kwplot.git 
+  - https://gitlab.kitware.com/computer-vision/ndsampler.git
+  - https://gitlab.kitware.com/computer-vision/netharn.git 
+  - https://gitlab.kitware.com/computer-vision/geowatch.git 
+  - https://gitlab.kitware.com/utils/scriptconfig.git 
