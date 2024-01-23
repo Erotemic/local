@@ -984,11 +984,20 @@ check_ipfs_status(){
 setup_firewall(){
     sudo ufw status
 
-    # Add rules to allow IPFS trafic on port 4001
+    # Check ports currently in use:  sudo lsof -i -P -n | grep LISTEN
+    # https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#firewall-with-ufw-uncomplicated-firewall
+
+    # ssh should be allowed
+    sudo ufw allow "22/tcp" comment 'Allow SSH'
+
+    # Add rules to allow IPFS traffic on port 4001
     sudo ufw allow in 4001/udp comment 'Public IPFS libp2p UDP swarm port'
-    sudo ufw allow 4001/tcp comment 'Public IPFS libp2p swarm port'
+    sudo ufw allow in 4001/tcp comment 'Public IPFS libp2p TCP swarm port'
     sudo ufw allow from 127.0.0.1 to 127.0.0.1 port 5001 proto tcp comment 'Private IPFS API'
     sudo ufw allow from 127.0.0.1 to 127.0.0.1 port 8080 proto tcp comment 'Protected IPFS Gateway + read only API subset'
+
+    # Enable firewall if needed
+    sudo ufw enable
 
     # https://docs.ipfs.tech/how-to/nat-configuration/#configuration-options
     #

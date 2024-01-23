@@ -146,11 +146,16 @@ alias wa2='cd $HOME/code/watch2'
 
 alias xv='cd $HOME/data/dvc-repos/xview2'
 
+alias wad2='cd $(geowatch_dvc --tags="phase2_data" --hardware="auto")'
+alias wae2='cd $(geowatch_dvc --tags="phase2_expt" --hardware="auto")'
+alias wadh2='cd $(geowatch_dvc --tags="phase2_data" --hardware="hdd")'
+alias wads2='cd $(geowatch_dvc --tags="phase2_data" --hardware="ssd")'
 
-alias wad='cd $(geowatch_dvc --tags="phase2_data" --hardware="auto")'
-alias wae='cd $(geowatch_dvc --tags="phase2_expt" --hardware="auto")'
-alias wadh='cd $(geowatch_dvc --tags="phase2_data" --hardware="hdd")'
-alias wads='cd $(geowatch_dvc --tags="phase2_data" --hardware="ssd")'
+alias wad='cd $(geowatch_dvc --tags="phase3_data" --hardware="auto")'
+alias wae='cd $(geowatch_dvc --tags="phase3_expt" --hardware="auto")'
+alias wadh='cd $(geowatch_dvc --tags="phase3_data" --hardware="hdd")'
+alias wads='cd $(geowatch_dvc --tags="phase3_data" --hardware="ssd")'
+
 alias wadh6='cd $(geowatch_dvc --tags="phase2_data" --hardware="hdd")/Drop6'
 alias wads6='cd $(geowatch_dvc --tags="phase2_data" --hardware="ssd")/Drop6'
 alias wads7='cd $(geowatch_dvc --tags="drop7_data" --hardware="ssd")'

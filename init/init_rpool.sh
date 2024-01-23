@@ -100,6 +100,9 @@ upgrade_rocketpool_cli()
 
     gpg --verify rocketpool.sig rocketpool
 
+    # Check current version:
+    rocketpool --version
+
     # Check the version of the new file
     chmod +x ./rocketpool
     ./rocketpool --version
@@ -754,6 +757,18 @@ configure_grafana_dashboard(){
 }
 
 
+retart_services(){
+    # List all services
+    rocketpool service status
+
+    # Restart grafana service
+    docker restart rocketpool_grafana
+
+    # Restart prometheus
+    docker restart rocketpool_prometheus
+}
+
+
 prune_nethermind(){
     __doc__="
     Note: pruning takes a long time, make sure that you let it run to
@@ -861,6 +876,33 @@ rescue_node(){
         https://twitter.com/0xPatches/status/1597704860962795520?lang=en
         https://gist.github.com/jshufro/a22724f06702c8342b5d1b29ee0a6190
         https://github.com/Rocket-Rescue-Node/guarded-beacon-proxy
+
+
+   Notes on the nethermind incident
+        Previous advice:
+            run:
+
+            Run the sign command.
+
+            Goto https://rescuenode.com/ and paste that in the window to obtain your rescuenode temporary credentials.
+
+            run rocketpool s c
+            Go to Addons in the TUI.
+            Select Rescue Node and enable it, paste the user name and credential in the appropriate text boxes.
+
+            Exit to the main menu and Select  Execution Client (ETH1) .
+
+            Downgrade to Nethermind 1.22.0 by changing the last digits the Container Tagsettings.
+            The line should look like ║ Container Tag                nethermind/nethermind:1.22.0
+
+            Update: The nethermind team reports that you should be able to keep
+            version 1.25.1 and resync with that version if you do not want to
+            rollback to a previous database format, but a resync will still be
+            needed until further notice.
+
+            Exit and save. The new older Nethermind docker container will be downloaded.
+            Once rocketpool restarts resync the eth1 client by running rocketpool s resync-eth1.  Say Yes.
+            Confirm on https://beaconcha.in/ that your node is attesting again.
     "
 
     # It is a very good idea to enable doppleganger mode before you do this.
@@ -869,9 +911,24 @@ rescue_node(){
     rocketpool node sign-message -m "Rescue Node $(date +%s)"
 
     # Paste the message into https://rescuenode.com/
-    # follow propmts (like picking the correct CC) then copy the result
+    # follow propmts (like picking the correct CC)
+    #
+    # In older versions of smartnode, the user had to copy the result
     # into ~/.rocketpool/override/validator.yml
+    #
+    # However, now there is a different method in the TUI
+    # Make a note of the username / password it displays
+    # Open the Config Menu
+    rocketpool service config
 
+    # Navigate to Addons
+    # Select Rescue Node
+    # Check Enabled, which will bring up the username / password box.
+    # Paste in the username given by the rescuenode prompt
+    # Save the changes and exit the TUI, restart the service when it prompts
+    # you
+
+    # Or manually do it
     rp service start
 
     # Now you can perform maintainence
@@ -879,8 +936,17 @@ rescue_node(){
 
     docker image prune -a --filter "until=24h"
 
-    # remove the extra line from:
+    # After maintainence is done, diable the rescue node.
+    # In old versions we you would remove the extra line from:
     #  ~/.rocketpool/override/validator.yml
+    # In new versions do this in the TUI
+    rocketpool service config
+
+    # Navigate to Addons
+    # Select Rescue Node
+    # Uncheck Enabled
+    # Save the changes and exit the TUI, restart the service when it prompts
+    # you
 
     rp service start
 
