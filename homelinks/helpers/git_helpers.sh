@@ -232,6 +232,7 @@ git-diff-branch(){
     FPATH=$1
     OLD_BRANCH=$2
     NEW_BRANCH=${3:-HEAD}
+    CONTEXT=${4:-3}
 
     GIT_ROOT=$(git rev-parse --show-toplevel)
     TMP_OLD_FPATH=$(mktemp /tmp/git-branch-diff.XXXXXX)
@@ -244,7 +245,7 @@ git-diff-branch(){
     echo "REL_PATH = $REL_PATH"
     git show "${OLD_BRANCH}:${REL_PATH}" > "$TMP_OLD_FPATH" && \
     git show "${NEW_BRANCH}:${REL_PATH}" > "$TMP_NEW_FPATH" && \
-        colordiff -U 3 "$TMP_OLD_FPATH" "${TMP_NEW_FPATH}"
+        colordiff -U "$CONTEXT" "$TMP_OLD_FPATH" "${TMP_NEW_FPATH}"
 }
 
 
