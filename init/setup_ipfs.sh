@@ -883,6 +883,14 @@ install_client_only(){
     ipfs init
 }
 
+pin_named_content(){
+    ipfs pin add --name "Crall-Thesis-2017-Final-State" --progress QmTD1nZ4pbrB1SnjkLGt9Cs37mZbabXqjn6YZaAKVEoSvY
+    ipfs pin add --name "crall-2023-mcc-fm-relation-paper.pdf" --progress bafkreih66fikzpaic3opzhuyunje7sqapgpyzaxxs3mvbhdpin65x3bbru
+
+    # List named pins
+    ipfs pin ls --type="recursive" --names
+}
+
 
 install-ipfs-update(){
     # https://github.com/ipfs/ipfs-update
@@ -940,6 +948,12 @@ local_ipfs_mount(){
     sudo chmod g+r  /etc/fuse.conf
 
 
+}
+
+ipfs_howto(){
+    # Remove a pin
+    ipfs pin rm QmPptXKFKi6oTJL3VeCNy5Apk8MJsHhCAAwVmegHhuRY83
+    ipfs pin rm bafybeif2yoidrnrzbpofcdlvl33em5e6eoslk4ryb7pe6ployl7najdi7q
 }
 
 
@@ -1048,6 +1062,8 @@ check_pin_random_data(){
     echo "CHECK_URL = $CHECK_URL"
 
 
+    NEW_CID=QmYxGEEr5K6SbT7hV9d4DJCGFhjJt1d2rSPrdQWB4Fjp9B
+
     NEW_CID=QmaRssZfmkya5LX53hoyxHgk4RzTvo9grUCcR412xCva4B
     PEER_ID=12D3KooWMJxwdSsxYwyb6KCqHNpBcE2oM9HWz6yNkRHiavgQLsbr
     CHECK_URL="https://ipfs-check.on.fleek.co/?cid=${NEW_CID}&multiaddr=%2Fp2p%2F${PEER_ID}"
@@ -1058,6 +1074,44 @@ check_pin_random_data(){
 
     # ip4/172.100.113.212/tcp/4001
 
+    # Check
+    # http://ipfs.io/ipfs/QmaRssZfmkya5LX53hoyxHgk4RzTvo9grUCcR412xCva4B
+    # https://ipfs-check.on.fleek.co/
+    # https://pl-diagnose.on.fleek.co/#/diagnose/access-content?
+}
+
+
+check_external_availability(){
+    __doc__="
+    Tools to check external availability
+
+    https://ipfs-check.on.fleek.co
+    https://pl-diagnose.on.fleek.co/#/diagnose/access-content
+
+    "
+    # Get this nodes peer-id
+    PEER_ID=$(ipfs config --json Identity.PeerID)
+    echo "PEER_ID=$PEER_ID"
+
+    # Create a file unique to the specific node.
+    echo "The PeerID of $HOSTNAME is $PEER_ID" > unique_node_file.txt
+    ipfs add --progress --pin unique_node_file.txt | tee "unique_node_file.txt.pin.log"
+    NEW_CID=$(tail -n 1 unique_node_file.txt.pin.log | cut -d ' ' -f 2)
+    echo "NEW_CID=$NEW_CID"
+    # Give it a name
+    ipfs pin add --name "UniqueFileFor-${HOSTNAME}" --progress "$NEW_CID"
+
+    # FOR MOJO: Qmc4RtnxBt6Tf6XAMuFraoDND5ofAFGJ4yUKL1YPxoYWbS
+    # FOR IPFS: QmdJhwGS7Y5hd2HoHLWV8sBHwTPadP89WQZxXFLCob74or
+
+    # Generate URL to check its availability
+    CHECK_URL="https://ipfs-check.on.fleek.co/?cid=${NEW_CID}&multiaddr=%2Fp2p%2F${PEER_ID}"
+    echo "CHECK_URL = $CHECK_URL"
+
+    ipfs dht findprovs QmaRssZfmkya5LX53hoyxHgk4RzTvo9grUCcR412xCva4B
+    ipfs cat QmaRssZfmkya5LX53hoyxHgk4RzTvo9grUCcR412xCva4B
+
+    # ip4/172.100.113.212/tcp/4001
     # Check
     # http://ipfs.io/ipfs/QmaRssZfmkya5LX53hoyxHgk4RzTvo9grUCcR412xCva4B
     # https://ipfs-check.on.fleek.co/
