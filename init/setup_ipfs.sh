@@ -1116,4 +1116,10 @@ check_external_availability(){
     # http://ipfs.io/ipfs/QmaRssZfmkya5LX53hoyxHgk4RzTvo9grUCcR412xCva4B
     # https://ipfs-check.on.fleek.co/
     # https://pl-diagnose.on.fleek.co/#/diagnose/access-content?
+    #
+
+
+    # Check if port 4001 is open on the WAN
+    WAN_IP_ADDRESS=$(curl ifconfig.me)
+    echo "WAN_IP_ADDRESS = $WAN_IP_ADDRESS"
 }

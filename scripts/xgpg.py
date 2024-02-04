@@ -767,6 +767,17 @@ class GPGCLI:
 
     @staticmethod
     def edit_trust(keyid, level, dry=False):
+        """
+        TODO:
+            # Use this method that has less dependencies.
+            # https://security.stackexchange.com/questions/129474/how-to-raise-a-key-to-ultimate-trust-on-another-machine
+            KEY_FPATH=aws2.pub
+            KEY_ID=$(gpg --list-packets <"$KEY_FPATH" | awk '$1=="keyid:"{print$2;exit}')
+            echo "KEY_ID = $KEY_ID"
+            (echo 5; echo y; echo save) |
+              gpg --command-fd 0 --no-tty --no-greeting -q --edit-key "$KEY_ID" trust
+
+        """
         script = _ExpectScript('gpg --expert --pinentry-mode loopback --edit-key {} '.format(keyid))
         script - ('gpg> ')
         script < ('trust')
