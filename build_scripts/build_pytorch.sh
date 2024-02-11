@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 __doc__="
 References:
     # https://github.com/pytorch/pytorch/tree/v1.10.0-rc1#install-dependencies

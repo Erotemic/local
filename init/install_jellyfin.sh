@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 __doc__="
 https://jellyfin.org/docs/general/installation/linux
 "

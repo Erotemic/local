@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 __doc__="
 Based on benchmarks, it might be faster to use btrfs for a RAID-10 solution on
 an older machine.

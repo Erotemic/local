@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Alias definitions.
 # You may want to put all your additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.
@@ -171,19 +171,34 @@ alias vdd='vd ~/work'
 alias ebrc='gvim ~/.bashrc'
 alias ea='gvim ~/local/homelinks/helpers/alias_helpers.sh'
 
-alias drl='docker_run_last'
 alias dei='docker_execinto'
 
 alias dmsg=dmesg
 
 
+alias drl='docker_run_last'
 docker_run_last(){
     docker run -it "$(docker image ls -a --format='{{.ID}}' | head -1)" bash
 }
 
 
+alias del='docker_exec_last'
+docker_exec_last(){
+    __doc__="
+    Get a shell into the most recently created and running container
+    "
+    CONTAINER_NAME="$(docker ps --format='{{.Names}}' | head -1)"
+    docker exec -it "$CONTAINER_NAME" bash
+}
+
+
 docker_execinto(){
-    pyblock "
+    __doc__="
+    Use Python to enumerate all running containers, and then
+    prompt the user for which one they want to shell into.
+    If there is only one option, dont prompt and just shell into it.
+    "
+    python -c "if 1:
     import ubelt as ub
     import rich
     rich.print(ub.cmd('docker ps', verbose=0)['out'])
@@ -318,6 +333,8 @@ astyle_cpp()
     #--attach-extern-c
     #--indent-preproc-cond
     export ASTYLE_OPTIONS="--style=ansi --indent=spaces  --indent-classes  --indent-switches  --indent-col1-comments --pad-oper --unpad-paren --delete-empty-lines --add-brackets"
+    # shellcheck disable=SC2086
+    # shellcheck disable=SC2068
     astyle $ASTYLE_OPTIONS $@
 
 
@@ -732,6 +749,7 @@ pywhich(){
 
 git_file_history () {
   while (( "$#" )); do
+    # shellcheck disable=SC2086
     git log --oneline --name-status --follow $1;
     shift;
   done | perl -ne 'if( s{^(?:[ACDMRTUXB]|R\d+)\s+}{} ) { s{\s+}{\n}g; print; }' | sort -u
@@ -741,6 +759,7 @@ gitk_follow(){
     # https://stackoverflow.com/questions/14194232/using-gitk-to-view-the-full-history-of-a-moved-file
     GITK_EXE="$(which gitk)"
     # used as:
+    # shellcheck disable=SC2046
     $GITK_EXE -- $(git_file_history "$@")
 }
 

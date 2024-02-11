@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 __doc__="
 
 Need to ensure ~/.ssh/config has the remote setup

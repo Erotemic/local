@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 '
 ./symbolic_rebase.sh --base=master --branch=dev/python3-support \
     --depends="dev/find_numpy dev/update-openblas-0.2.20 dev/update-opencv dev/update-vtk dev/update-caffe"

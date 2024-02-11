@@ -172,7 +172,7 @@ ls -al ~/.local/bin/*vim*
 #/usr/local/bin/gvim-8 --version
 #/usr/bin/gvim --version
 
-echo "hi"#!/bin/bash
+echo "hi"#!/usr/bin/env bash
 __heredoc__="""
 Builds mmdetection wheels for specific docker images 
 

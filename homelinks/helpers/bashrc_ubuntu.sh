@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #Jon's Note: .profile runs this
 # ~/.bashrc: executed by bash(1) for non-login shells.

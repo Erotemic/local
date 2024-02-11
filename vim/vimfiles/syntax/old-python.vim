@@ -344,9 +344,9 @@ let single_multi='pythonSingleStringMulti,pythonRawSingleStringMulti'
 let double_multi='pythonDoubleStringMulti,pythonRawDoubleStringMulti'
 
 call MyTextEnableCodeSnip('sh', '\s*\(#!/bin/sh\)\@=', "'''", single_multi) 
-call MyTextEnableCodeSnip('sh', '\s*\(#!/bin/bash\)\@=', "'''", single_multi)
+call MyTextEnableCodeSnip('sh', '\s*\(#!/usr/bin/env bash\)\@=', "'''", single_multi)
 call MyTextEnableCodeSnip('sh', '\s*\(#!/bin/sh\)\@=', '"""', double_multi) 
-call MyTextEnableCodeSnip('sh', '\s*\(#!/bin/bash\)\@=', '"""', double_multi)
+call MyTextEnableCodeSnip('sh', '\s*\(#!/usr/bin/env bash\)\@=', '"""', double_multi)
         
         "\ start="\(\s* # STARTBLOCK\)\@<=" end="# ENDBLOCK"
         "\ start="^\s*#\s*CODEBLOCK[\n ]*" end="#\s*ENDBLOCK"
@@ -357,7 +357,7 @@ syn region pythonCodeblockSnippet
 
 
 " Within a multiline string check if it starts with a shebang #!  e.g.
-" #!/bin/bash. The end pattern is a bit hacky and might fail for nested tripple
+" #!/usr/bin/env bash. The end pattern is a bit hacky and might fail for nested tripple
 " quotes.
 "syn region pythonShebangCodeblock
 "    \ start="^\s*#!" end=+('''|""")+ keepend

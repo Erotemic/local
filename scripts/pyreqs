@@ -1,2 +1,2 @@
-#!/bin/bash
+#!/usr/bin/env bash
 python ~/local/tools/supported_python_versions_pip.py "$@"

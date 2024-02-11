@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 WINTITLE="IPython" # Main Thunderbird window has this in titlebar
 PROGNAME="$PORT_SCRIPTS/linux_scripts/qtc" # This is the name of the binary for t-bird
 

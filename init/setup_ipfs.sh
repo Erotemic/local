@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 __doc__="
 Minimal requirements bash script to install and init IPFS
 

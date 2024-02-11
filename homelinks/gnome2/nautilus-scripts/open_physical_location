@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if [ -h $NAUTILUS_SCRIPT_SELECTED_FILE_PATHS ]; then
     var="$(readlink $NAUTILUS_SCRIPT_SELECTED_FILE_PATHS)"
 else

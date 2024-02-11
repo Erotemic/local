@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 cd ~/code/opencv
 #rm -rf ~/code/opencv/build

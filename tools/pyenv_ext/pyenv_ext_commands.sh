@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 __doc__="
 This script is meant to help with the installation, creation, and management of
 pyenv virtual enviornments.

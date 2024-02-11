@@ -88,7 +88,7 @@ if 0:
     b = xdev.RegexBuilder.coerce('vim')
 
     syntax_infos = [
-        {'filetype': 'sh', 'header': '#!/bin/bash'},
+        {'filetype': 'sh', 'header': '#!/usr/bin/env bash'},
         {'filetype': 'sh', 'header': '#!/bin/sh'},
         {'filetype': 'python', 'header': '#!/usr/bin/env python'},
     ]
@@ -134,10 +134,10 @@ call MyTextEnableCodeSnip('sh', '\#!\/bin\/bash', "'''", single_multi)
 
 " OLD MANUAL CALLS
 "call MyTextEnableCodeSnip('sh', '\s*\(#!/bin/sh\)\@=',   "'''", single_multi) 
-"call MyTextEnableCodeSnip('sh', '\s*\(\#!/bin/bash\)\@=', "'''", single_multi)
+"call MyTextEnableCodeSnip('sh', '\s*\(\#!/usr/bin/env bash\)\@=', "'''", single_multi)
 "call MyTextEnableCodeSnip('sh', 'bash', "'''", single_multi)
 "call MyTextEnableCodeSnip('sh', '\s*\(#!/bin/sh\)\@=',   '"""', double_multi) 
-"call MyTextEnableCodeSnip('sh', '\s*\(#!/bin/bash\)\@=', '"""', double_multi)
+"call MyTextEnableCodeSnip('sh', '\s*\(#!/usr/bin/env bash\)\@=', '"""', double_multi)
 
 " Try escaping quotes, move leading space inside lookbehind
 "call MyTextEnableCodeSnip('sh', '\(\s*#!\/bin\/sh\)\@=',   "'''", single_multi) 
@@ -146,9 +146,9 @@ call MyTextEnableCodeSnip('sh', '\#!\/bin\/bash', "'''", single_multi)
 "call MyTextEnableCodeSnip('sh', '\(\s*#!\/bin\/bash\)\@=', '"""', double_multi)
 
 "call MyTextEnableCodeSnip('sh', '\s*#!/bin/sh',   "'''", single_multi) 
-"call MyTextEnableCodeSnip('sh', '\s*#!/bin/bash', "'''", single_multi)
+"call MyTextEnableCodeSnip('sh', '\s*#!/usr/bin/env bash', "'''", single_multi)
 "call MyTextEnableCodeSnip('sh', '\s*#!/bin/sh',   '"""', double_multi) 
-"call MyTextEnableCodeSnip('sh', '\s*#!/bin/bash', '"""', double_multi)
+"call MyTextEnableCodeSnip('sh', '\s*#!/usr/bin/env bash', '"""', double_multi)
 
 "call MyTextEnableCodeSnip('sh', '+\s*#!\/bin\/sh+',   "+\('''\)\@=+", single_multi) 
 "call MyTextEnableCodeSnip('sh', '+\s*#!\/bin\/sh+',   '+\("""\)\@=+', double_multi) 
@@ -166,7 +166,7 @@ syn region pythonCodeblockSnippet
         \ contained contains=pythonStatement,pythonDoctest,pythonConditional,pythonRepeat,pythonOperator,pythonException,pythonInclude,pythonDecorator,pythonFunction,pythonComment,pythonString,pythonRawString,pythonFmtString,pythonEscape, pythonTodo, pythonBuiltin, pythonExceptions, pythonSpaceError
 
 " Within a multiline string check if it starts with a shebang #!  e.g.
-" #!/bin/bash. The end pattern is a bit hacky and might fail for nested tripple
+" #!/usr/bin/env bash. The end pattern is a bit hacky and might fail for nested tripple
 " quotes.
 "syn region pythonShebangCodeblock
 "    \ start="^\s*#!" end=+('''|""")+ keepend

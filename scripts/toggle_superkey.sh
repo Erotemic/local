@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/usr/bin/env bash 
 __heredoc__='
 Changes the superkey between Alt_R and Super_L so I can play starcraft without
 hitting the superkey and messing everything up.

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 __doc__="
 Getting the OS on the SD card requires a few steps, but its not that bad.
 

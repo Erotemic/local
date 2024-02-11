@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 echo -en "\033]0;RSync Kenya\a"
 #export SERVER_ADDRESS=ibeis.cs.uic.edu
 #export SERVER_ADDRESS=131.193.42.63

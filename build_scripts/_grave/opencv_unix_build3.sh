@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 source ~/py3env/bin/activate
 
 # FIXME: relative path

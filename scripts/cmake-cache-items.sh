@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 __heredoc__(){
     if [ "$noop" == "defined for some reason" ]
     then

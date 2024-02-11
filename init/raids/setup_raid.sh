@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 __doc__="
 References:
     https://www.icc-usa.com/raid-calculator

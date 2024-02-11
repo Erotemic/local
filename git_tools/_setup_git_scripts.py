@@ -9,7 +9,7 @@ import stat
 
 SCRIPT_HEADER = ub.codeblock(
     r'''
-    #!/bin/bash
+    #!/usr/bin/env bash
     # References:
     # https://stackoverflow.com/questions/59895/getting-the-source-directory-of-a-bash-script-from-within
 

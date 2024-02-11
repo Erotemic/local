@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Records the CPU temp and writes it to a temporary file.
 
 

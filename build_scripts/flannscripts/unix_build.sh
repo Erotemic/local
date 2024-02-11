@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #REPODIR=$(cd $(dirname $0) ; pwd)
 #cd $REPODIR/flann
 

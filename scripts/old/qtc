@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #ipython qtconsole --colors=Linux --autocall 2 --pylab=qt
 
 QT_API=pyqt5 ipython qtconsole --colors=Linux --gui=qt --matplotlib=qt --pylab=qt  

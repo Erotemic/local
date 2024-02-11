@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 cmake -G "Unix Makefiles" \
     -D fletch_BUILD_WITH_PYTHON:BOOL=True \
     -D fletch_ENABLE_GLog:BOOL=True \
@@ -26,7 +26,7 @@ cmake -G "Unix Makefiles" \
 
 
 kwiver_travis(){
-    #!/bin/bash
+    #!/usr/bin/env bash
     cmake -G "Unix Makefiles" \
         -D fletch_BUILD_WITH_PYTHON:BOOL=True \
         -D fletch_ENABLE_GLog:BOOL=True \

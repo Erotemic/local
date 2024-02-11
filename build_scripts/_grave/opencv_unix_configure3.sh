@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 cd ~/code/opencv3
 mkdir build
 cd build

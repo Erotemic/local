@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 source "$HOME"/local/init/utils.sh
 
 ensure_config_symlinks()
