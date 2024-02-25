@@ -38,11 +38,25 @@ EOF
     The apt jellyfin working directory is:
         /var/lib/jellyfin
 
+        /var/lib/jellyfin/data
+
+    Metadata Path:
+        /var/lib/jellyfin/metadata
+
     Logs are in:
         /var/log/jellyfin
 
     Cache is in:
         /var/cache/jellyfin/
+
+    Other dirs:
+        /etc/jellyfin/
+
+    FFMpeg Path:
+        /usr/lib/jellyfin-ffmpeg/ffmpeg
+
+    Transcodes:
+        /var/lib/jellyfin/transcodes
     '
 }
 
