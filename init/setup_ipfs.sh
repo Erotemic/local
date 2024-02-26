@@ -24,10 +24,16 @@ Test:
 export INSTALL_PREFIX=$HOME/.local
 # Ensure you have this installed in your path
 export PATH=$INSTALL_PREFIX/bin:$PATH
+
+
+# Note: you may want to set these explicitly in your local bashrc
 export IPFS_PATH=$HOME/.ipfs
 export IPFS_CLUSTER_PATH=$HOME/.ipfs-cluster
+
 #export IPFS_PATH=/data/ipfs
 #export IPFS_CLUSTER_PATH=/data/ipfs-cluster
+export IPFS_PATH=/flash/ipfs
+export IPFS_CLUSTER_PATH=/flash/ipfs-cluster
 
 
 apt_ensure(){
@@ -327,6 +333,9 @@ install_go(){
         soup = BeautifulSoup(got.text, 'html.parser')
         for item in soup.find_all(name='table'):
             if 'downloadtable' in item.attrs.get('class', []):
+                if 'id' not in item.parent.parent.attrs:
+                    continue
+                raise Exception
                 go_version = Version(item.parent.parent.attrs['id'].replace('go', ''))
                 if go_version < Version('1.17'):
                     continue
@@ -345,7 +354,7 @@ install_go(){
     "
     ARCH="$(dpkg --print-architecture)"
     echo "ARCH = $ARCH"
-    GO_VERSION="1.19.5"
+    GO_VERSION="1.22.0"
     OS_KEY=linux
     GO_KEY=go${GO_VERSION}.${OS_KEY}-${ARCH}
     URL="https://go.dev/dl/${GO_KEY}.tar.gz"
@@ -354,6 +363,9 @@ install_go(){
     mkdir -p "$STAGING_DPATH"
 
     declare -A GO_KNOWN_HASHES=(
+        ["go1.22.0.linux-amd64-sha256"]="f6c8a87aa03b92c4b0bf3d558e28ea03006eb29db78917daec5cfb6ec1046265"
+        ["go1.22.0.linux-arm64-sha256"]="6a63fef0e050146f275bf02a0896badfe77c11b6f05499bb647e7bd613a45a10"
+
         ["go1.19.5.linux-386-sha256"]="f68331aa7458a3598060595f5601d5731fd452bb2c62ff23095ddad68854e510"
         ["go1.19.5.linux-amd64-sha256"]="36519702ae2fd573c9869461990ae550c8c0d955cd28d2827a6b159fda81ff95"
         ["go1.19.5.linux-arm64-sha256"]="fc0aa29c933cec8d76f5435d859aaf42249aa08c74eb2d154689ae44c08d23b3"
@@ -422,7 +434,7 @@ install_ipfs(){
 
     ARCH="$(dpkg --print-architecture)"
     echo "ARCH = $ARCH"
-    IPFS_VERSION="v0.21.0"
+    IPFS_VERSION="v0.26.0"
     IPFS_KEY=kubo_${IPFS_VERSION}_linux-${ARCH}
     URL="https://dist.ipfs.io/kubo/${IPFS_VERSION}/${IPFS_KEY}.tar.gz"
     #IPFS_KEY=go-ipfs_${IPFS_VERSION}_linux-${ARCH}
@@ -438,11 +450,16 @@ install_ipfs(){
         ["kubo_v0.14.0_linux-arm64-sha512"]="aba56721621e4f4b42350bfe43fa50e2166e8841e65da948b24eb243d962effa4a6b8b8a55dac35fc34961b65d739d3ac0550654819e59804a66d211f95f822c"
         ["kubo_v0.20.0_linux-amd64-sha512"]="2113053565c8e6ccd1c28b70ef2a12871d3485256b8d5c8576a1bacb530a91d1a9eaeb619368353355d236f75b2dbda205da6051004cffad7086edbbdd116951"
         ["kubo_v0.20.0_linux-arm64-sha512"]="ba94be6d35ca77b056c4a9367122ce33484e21c0650e9001800f69bea27e5af1c84840e9df944542eaa909a9b50131a53a47a4cae56cbff5efcf30fe4282d2ad"
-        ["kubo_v0.21.0_linux-amd64.tar.gz"]="ae6be96a112159fee9994c1c9547cbaf71438eb0fa819e898ddfa677c964f15ec5c9698d1a2f121f2c7dac88b0d032938941d2bffa755fac61d9fcaa1829050f"
-        ["kubo_v0.21.0_linux-arm64.tar.gz"]="1eeb4015f135a1775e8cd96ab249f14a94306170bd714a97c3d907979022d7a5fb6a1070bf0e598e0b02bc439cf4f2a3e61901d5db245993fce29f6a7ce675d9"
+        ["kubo_v0.21.0_linux-amd64-sha512"]="ae6be96a112159fee9994c1c9547cbaf71438eb0fa819e898ddfa677c964f15ec5c9698d1a2f121f2c7dac88b0d032938941d2bffa755fac61d9fcaa1829050f"
+        ["kubo_v0.21.0_linux-arm64-sha512"]="1eeb4015f135a1775e8cd96ab249f14a94306170bd714a97c3d907979022d7a5fb6a1070bf0e598e0b02bc439cf4f2a3e61901d5db245993fce29f6a7ce675d9"
+
+        ["kubo_v0.26.0_linux-amd64-sha512"]="4c1ac8d2750ea49a3dd1ef57654a6a2e46db7ce3cf5f44c5e99218c0da73d6b0e35216e4fc20ddba9d5073b1ffbba0c3ec39df7e48be110cac048cc0ddc840f5"
+        ["kubo_v0.26.0_linux-arm64-sha512"]="02406250d6a97b8aac2f0152158d38669f64574c0b1395755c9965666cbc288100c047df68a386a62fa4dce67cfa5f2d90c895a94f71ab9f7c7b0bdf19d8abd9"
 
     )
     EXPECTED_HASH="${IPFS_KNOWN_HASHES[${IPFS_KEY}-sha512]}"
+    echo "IPFS_KEY = $IPFS_KEY"
+    echo "EXPECTED_HASH = $EXPECTED_HASH"
     BASENAME=$(basename "$URL")
     curl_verify_hash "$URL" "$BASENAME" "$EXPECTED_HASH" sha512sum
 
@@ -527,7 +544,8 @@ initialize_ipfs(){
     # To run a node you have to start the ipfs daemon (we can do it in tmux)
     # You will also need to ensure port 4001 is open
     # TODO: test if daemon already running
-    tmux new-session -d -s "ipfs_daemon" "ipfs daemon"
+    # TODO: use systemctl instead
+    #tmux new-session -d -s "ipfs_daemon" "ipfs daemon"
 
     # Maybe server is not the best profile?
     # https://docs.ipfs.io/how-to/command-line-quick-start/#prerequisites
@@ -535,20 +553,23 @@ initialize_ipfs(){
     #ipfs init --profile badgerds
     ipfs init --profile lowpower
 
-    # Swarm wont work until the daemon is running, so retry until it works
-    max_retry=60
-    counter=0
-    COMMAND="ipfs swarm peers"
-    until $COMMAND
-    do
-       sleep 5
-       # https://unix.stackexchange.com/questions/168354/can-i-see-whats-going-on-in-a-tmux-session-without-attaching-to-it/168384
-       # check whats going on with the deamon
-       tmux capture-pane -pt "ipfs_daemon" -S -10
-       [[ counter -eq $max_retry ]] && echo "Failed!" && exit 1
-       echo "Trying again. Try #$counter"
-       ((counter++))
-    done
+    sudo systemctl start ipfs
+    sudo systemctl status ipfs
+
+    ## Swarm wont work until the daemon is running, so retry until it works
+    #max_retry=60
+    #counter=0
+    #COMMAND="ipfs swarm peers"
+    #until $COMMAND
+    #do
+    #   sleep 5
+    #   # https://unix.stackexchange.com/questions/168354/can-i-see-whats-going-on-in-a-tmux-session-without-attaching-to-it/168384
+    #   # check whats going on with the deamon
+    #   tmux capture-pane -pt "ipfs_daemon" -S -10
+    #   [[ counter -eq $max_retry ]] && echo "Failed!" && exit 1
+    #   echo "Trying again. Try #$counter"
+    #   ((counter++))
+    #done
 
     # Quick test that we can look at the IPFS README
 	ipfs cat /ipfs/QmQPeNsJPyVWPFDVHb77w8G42Fvo15z4bG2X8D2GhfbSXc/readme
@@ -859,14 +880,14 @@ main(){
     # Step 2: Install IPFS itself
     install_ipfs
 
-    # Step 3: Initialize IPFS
-    initialize_ipfs
-
     # Step 3.1 init ipfs as a service
     install_ipfs_service
 
+    # Step 3.2: Initialize IPFS
+    initialize_ipfs
+
     # Step 3.5 test pinning
-    ipfs pin add QmWhKBAQ765YH2LKMQapWp7mULkQxExrjQKeRAWNu5mfBK --progress
+    ipfs pin add --name test_kwcoco_file.json QmWhKBAQ765YH2LKMQapWp7mULkQxExrjQKeRAWNu5mfBK --progress
 
     # Step 4 (optional): Pin my shit
     #pin_my_shit
@@ -967,6 +988,9 @@ check_ipfs_status(){
     # Check if accelerated dht is on
     ipfs config --json Routing.AcceleratedDHTClient
 
+    # Do we want to turn it on?
+    # https://github.com/ipfs/kubo/issues/9990
+
     # Check your id
     ipfs id
 
@@ -975,6 +999,7 @@ check_ipfs_status(){
 
     # Force providing a CID
     ipfs dht provide bafybeie275n5f4f64vodekmodnktbnigsvbxktffvy2xxkcfsqxlie4hrm
+    ipfs dht provide bafybeihuem7qz2djallypbb6bo5z7ojqnjz5s4xj6j3c4w4aztqln4tbzu
 
     # Quick status
     systemctl -l status ipfs.service --no-pager
@@ -1026,6 +1051,7 @@ setup_firewall(){
         \"/ip4/${WAN_IP_ADDRESS}/udp/${IPFS_PORT}/quic-v1/webtransport\",
     ]"
     echo "WAN_IP_ADDRESS = $WAN_IP_ADDRESS"
+    ipfs config edit  # Manually add above lines
     ipfs config --json Addresses.AppendAnnounce
 
 }
