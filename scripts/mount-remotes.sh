@@ -119,7 +119,9 @@ mount_remote_if_available(){
         exit 1
     fi
 
-    if [ "$REMOTE" == "$HOSTNAME" ];  then
+    REMOTE_LOWER=${REMOTE,,}
+    HOSTNAME_LOWER=${HOSTNAME,,}
+    if [ "$REMOTE_LOWER" == "$HOSTNAME_LOWER" ];  then
         echo "Attempting to mount self. Ensuring symlink instead"
         if [ ! -L "$MOUNTPOINT" ]; then
             echo "Creating symlink to home"
