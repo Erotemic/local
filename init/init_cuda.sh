@@ -5,13 +5,22 @@
 
 install_nivida_drivers_apt(){
     __heredoc__="
-    These are instructions for using apt to install the drivers. 
+    These are instructions for using apt to install the drivers.
     This is probably the best way to get the baseline drivers on the system.
     "
     #sudo add-apt-repository ppa:graphics-drivers/ppa
     #sudo apt-get update
     #sudo apt remove --purge nvidia-*
     #sudo apt install nvidia-drivers-396
+
+    # Check what ubuntu knows about
+    ubuntu-drivers devices
+
+    # Check what is already installed
+    sudo apt list --installed | grep nvidia
+
+    # Check what is available
+    sudo apt search nvidia-driver
 
     # It looks like this one works with the above PPA (maybe?)
 
@@ -22,9 +31,13 @@ install_nivida_drivers_apt(){
 
     apt-cache search 'nvidia-driver-' | grep '^nvidia-driver-*'
     sudo apt install nvidia-driver-525 nvidia-dkms-525
+    sudo apt install nvidia-driver-525
+
+    # Installing a newer version seems to correctly flag old versions for removal
+    sudo apt install nvidia-driver-545
 
 
-    # Restart, ensure you have tpl-archive and then run 
+    # Restart, ensure you have tpl-archive and then run
     ls ~/tpl-archive/cuda
     source ~/local/init/init_cuda.sh
     cuda_version=10.1
@@ -35,7 +48,7 @@ install_nivida_drivers_apt(){
 
 preinstall_nvidia_drivers_run(){
     __heredoc__="
-    This should be run before installing nvidia drivers for the first time. 
+    This should be run before installing nvidia drivers for the first time.
     After running, reboot, then install nvidia drivers.
     "
     sudo apt-get install freeglut3-dev build-essential libx11-dev libxmu-dev libxi-dev libgl1-mesa-glx libglu1-mesa libglu1-mesa-dev -y
@@ -47,7 +60,7 @@ preinstall_nvidia_drivers_run(){
     TO_APPEND=`pyblock "
         # Find which of these lines are not in the blacklist and add them
         needed = [line.strip() for line in '''
-            blacklist amd76x_edac 
+            blacklist amd76x_edac
             blacklist vga16fb
             blacklist nouveau
             blacklist rivafb
@@ -63,7 +76,7 @@ preinstall_nvidia_drivers_run(){
                 print(line)
     "`
     echo "TO_APPEND = $TO_APPEND"
-    sudo_appendto /etc/modprobe.d/blacklist.conf "$TO_APPEND" 
+    sudo_appendto /etc/modprobe.d/blacklist.conf "$TO_APPEND"
     cat /etc/modprobe.d/blacklist.conf
     sudo apt-get remove --purge nvidia-*
 
@@ -75,7 +88,7 @@ preinstall_nvidia_drivers_run(){
 
 install_nvidia_drivers_run(){
     __heredoc__="
-    Make sure you ran preinstall_nvidia_drivers and rebooted before running this 
+    Make sure you ran preinstall_nvidia_drivers and rebooted before running this
     "
     # may need to reboot after nouveau is diabled
     sudo sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-390.42.run --disable-nouveau --accept-license
@@ -101,10 +114,10 @@ install_nvidia_drivers_manual_fallback(){
 
     sudo update-initramfs -u
 
-    # Then rerun 
+    # Then rerun
     sudo sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-390.42.run --disable-nouveau --accept-license
 }
-    
+
 
 
 current_cudnn_info()
@@ -167,7 +180,7 @@ uninstall_local_cuda()
                 path = ':'.join(parts)
 
             elif os.path.exists(path) or os.path.islink(path):
-                if mode == 'link' and os.path.islink(path): 
+                if mode == 'link' and os.path.islink(path):
                     print('UNLINK ' + path)
                     os.unlink(path)
                 elif mode == 'file':
@@ -206,17 +219,17 @@ download_cuda_runfiles(){
 
     wget https://developer.download.nvidia.com/compute/cuda/12.1.0/local_installers/cuda_12.1.0_530.30.02_linux.run
     wget https://developer.download.nvidia.com/compute/cuda/12.0.1/local_installers/cuda_12.0.1_525.85.12_linux.run
-    
+
 
     # Older versions have to be downloaded manually via https://developer.nvidia.com/cuda-toolkit-archive
 
     cd ~/tpl-archive/cuda
-    
+
     sudo sh cuda_11.2.1_460.32.03_linux.run
 
     cd ~/tpl-archive/cuda
-    
-    
+
+
 }
 
 
@@ -234,7 +247,7 @@ change_cuda_version()
 
         ls ~/tpl-archive/cuda
         source ~/local/init/init_cuda.sh
-        change_cuda_version 8.0 
+        change_cuda_version 8.0
     '''
     # UNFINISHED
 
@@ -254,7 +267,7 @@ change_cuda_version()
 
     # version 8
     if [ "$cuda_version" == "8.0" ]; then
-        sh ~/tpl-archive/cuda/cuda-linux64-rel-8.0.61-21551265.run -prefix=$HOME/.local/cuda-8.0 -noprompt -manifest "$HOME/.local/cuda/manifest_cuda.txt" -nosymlink 
+        sh ~/tpl-archive/cuda/cuda-linux64-rel-8.0.61-21551265.run -prefix=$HOME/.local/cuda-8.0 -noprompt -manifest "$HOME/.local/cuda/manifest_cuda.txt" -nosymlink
         unlink "$HOME/.local/cuda"
         ln -s "$HOME/.local/cuda-8.0" "$HOME/.local/cuda"
     fi
@@ -262,14 +275,14 @@ change_cuda_version()
     # version 9
     if [ "$cuda_version" == "9.1" ]; then
         unlink "$HOME/.local/cuda"
-        sh ~/tpl-archive/cuda/cuda-linux.9.1.85-23083092.run "-prefix=$HOME/.local/cuda-9.1" -noprompt -manifest "$HOME/.local/cuda/manifest_cuda.txt" -nosymlink 
+        sh ~/tpl-archive/cuda/cuda-linux.9.1.85-23083092.run "-prefix=$HOME/.local/cuda-9.1" -noprompt -manifest "$HOME/.local/cuda/manifest_cuda.txt" -nosymlink
         ln -s "$HOME/.local/cuda-9.1" "$HOME/.local/cuda"
     fi
 
     if [ "$cuda_version" == "9.2" ]; then
         unlink "$HOME/.local/cuda"
         CUDA_PREFIX=$HOME/.local/cuda-9.2
-        sh ~/tpl-archive/cuda/cuda-9.2/cuda-linux.9.2.148-24330188.run "-prefix=$CUDA_PREFIX" -noprompt -manifest "$HOME/.local/cuda/manifest_cuda.txt" -nosymlink 
+        sh ~/tpl-archive/cuda/cuda-9.2/cuda-linux.9.2.148-24330188.run "-prefix=$CUDA_PREFIX" -noprompt -manifest "$HOME/.local/cuda/manifest_cuda.txt" -nosymlink
         ln -s "$CUDA_PREFIX" "$HOME/.local/cuda"
     fi
     if [ "$cuda_version" == "10.1" ]; then
@@ -330,7 +343,7 @@ change_cuda_version()
     # IS there any way to get these to work locally? No. These are nvidia drivers. They need to be system level
     #sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run --help
     #sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run -a
-    #sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run -a -x 
+    #sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run -a -x
     #sh ~/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run --info
 }
 
@@ -443,7 +456,7 @@ prep_cuda_runfile(){
     rm $HOME/tpl-archive/cuda/NVIDIA-Linux-x86_64-375.26.run
     rm $HOME/tpl-archive/cuda/cuda-samples-linux-8.0.61-21551265.run
 
-    
+
     sh ~/tpl-archive/cuda/cuda_9.1.85_387.26_linux.run --silent --toolkitpath=$HOME/.local/cuda/ --no-opengl-libs --verbose --extract=$HOME/tpl-archive/cuda
     #rm $HOME/tpl-archive/cuda/NVIDIA-Linux-x86_64-387.26.run
     rm $HOME/tpl-archive/cuda/cuda-samples.9.1.85-23083092-linux.run
@@ -556,7 +569,7 @@ fix-bad-symlinks(){
     for f in $(ls $FNAME.*); do
       echo "File -> $f"
     done
-    
+
 
     sudo rm libcudnn.so.
     sudo ln -s libcudnn.so libcudnn.so.7

@@ -34,3 +34,7 @@ install_keepassxc(){
 notes(){
     echo "https://www.chucknemeth.com/linux/security/keyring/keepassxc-keyring"
 }
+
+remove_syncthing(){
+    sudo apt remove syncthing
+}

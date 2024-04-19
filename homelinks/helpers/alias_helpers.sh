@@ -181,6 +181,10 @@ docker_run_last(){
     docker run -it "$(docker image ls -a --format='{{.ID}}' | head -1)" bash
 }
 
+list_running_services(){
+    systemctl list-units --type=service --state=active
+}
+
 
 alias del='docker_exec_last'
 docker_exec_last(){
@@ -243,7 +247,7 @@ clean_latex()
     latexmk -c
 }
 
-clean_emptydirs()
+remove_empty_dirs()
 {
     # https://unix.stackexchange.com/questions/46322/how-can-i-recursively-delete-empty-directories-in-my-home-directory
     find . -type d -empty -print
@@ -1166,3 +1170,4 @@ ubuntu_update(){
     #cmd_queue new "update system"
     sudo apt update -y && sudo apt upgrade -y
 }
+

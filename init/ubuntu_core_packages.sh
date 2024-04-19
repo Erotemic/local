@@ -2648,3 +2648,8 @@ install_oathtool(){
     This registers oathtool with github.
     '
 }
+
+install_festival(){
+    sudo apt-get install festival
+    sudo apt-get install festival festvox-kallpc16k
+}

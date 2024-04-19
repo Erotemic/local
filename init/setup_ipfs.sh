@@ -354,7 +354,7 @@ install_go(){
     "
     ARCH="$(dpkg --print-architecture)"
     echo "ARCH = $ARCH"
-    GO_VERSION="1.22.0"
+    GO_VERSION="1.22.2"
     OS_KEY=linux
     GO_KEY=go${GO_VERSION}.${OS_KEY}-${ARCH}
     URL="https://go.dev/dl/${GO_KEY}.tar.gz"
@@ -363,6 +363,9 @@ install_go(){
     mkdir -p "$STAGING_DPATH"
 
     declare -A GO_KNOWN_HASHES=(
+        ["go1.22.2.linux-amd64-sha256"]="5901c52b7a78002aeff14a21f93e0f064f74ce1360fce51c6ee68cd471216a17"
+        ["go1.22.2.linux-arm64-sha256"]="36e720b2d564980c162a48c7e97da2e407dfcc4239e1e58d98082dfa2486a0c1"
+
         ["go1.22.0.linux-amd64-sha256"]="f6c8a87aa03b92c4b0bf3d558e28ea03006eb29db78917daec5cfb6ec1046265"
         ["go1.22.0.linux-arm64-sha256"]="6a63fef0e050146f275bf02a0896badfe77c11b6f05499bb647e7bd613a45a10"
 

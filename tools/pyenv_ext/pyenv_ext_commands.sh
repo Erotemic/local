@@ -45,6 +45,9 @@ Example Usage:
     #
     pyenv_create_virtualenv 3.12.0 full
 
+    pyenv_create_virtualenv 3.12.3 off
+
+
     source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
     build_vim_for_pyenv
 "
