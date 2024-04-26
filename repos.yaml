@@ -3,7 +3,8 @@
   - |
       SeeAlso:
         $HOME/local/homelinks/helpers/git_helpers.sh
-        ~/local/init/util_git1.py
+        python3 ~/local/init/util_git1.py list
+        python3 ~/local/init/util_git1.py clone_repos
         ~/local/init/REPOS1.py
 
         gg-clone
@@ -66,6 +67,8 @@ repos:
   - https://github.com/Erotemic/pypogo.git
   - https://github.com/Erotemic/supersetup.git
   - https://github.com/Erotemic/timerit.git
+  - https://github.com/Erotemic/networkx_algo_common_subtree.git
+  - https://github.com/Erotemic/mathutf.git
   - https://github.com/Erotemic/ubelt.git
   - https://github.com/Erotemic/vimtk.git
   - https://github.com/Erotemic/xcookie.git
@@ -75,6 +78,7 @@ repos:
   - https://github.com/Erotemic/ibeis.git
   - https://github.com/Erotemic/utool.git
   - https://github.com/Erotemic/vtool_ibeis.git
+  - https://github.com/Erotemic/vtool_ibeis_ext.git
   - https://github.com/Erotemic/dtool_ibeis.git
   - https://github.com/Erotemic/guitool_ibeis.git
   - https://github.com/Erotemic/plottool_ibeis.git
@@ -87,6 +91,7 @@ repos:
   - https://gitlab.kitware.com/computer-vision/kwcoco.git 
   - https://gitlab.kitware.com/computer-vision/kwutil.git 
   - https://gitlab.kitware.com/computer-vision/kwimage.git 
+  - https://gitlab.kitware.com/computer-vision/kwimage_ext.git 
   - https://gitlab.kitware.com/computer-vision/kwplot.git 
   - https://gitlab.kitware.com/computer-vision/ndsampler.git
   - https://gitlab.kitware.com/computer-vision/netharn.git 

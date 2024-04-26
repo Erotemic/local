@@ -167,6 +167,46 @@ install_chrome()
 }
 
 
+install_veracrypt(){
+    __doc__="
+    The official website is:
+        https://veracrypt.fr/en/Downloads.html
+    "
+
+    sudo apt install libfuse-dev
+
+    # Copied link to the generic installer on 2024-04-25
+    mkdir -p $HOME/temp/veracrypt
+    cd $HOME/temp/veracrypt
+    curl -L https://launchpad.net/veracrypt/trunk/1.26.7/+download/veracrypt-1.26.7-setup.tar.bz2 -o veracrypt-1.26.7-setup.tar.bz2
+    curl -L https://launchpad.net/veracrypt/trunk/1.26.7/+download/veracrypt-1.26.7-setup.tar.bz2.sig -o veracrypt-1.26.7-setup.tar.bz2.sig
+
+    VERACRYPT_FINGERPRINT=5069A233D55A0EEB174A5FC3821ACD02680D16DE
+    if ! test -f VeraCrypt_PGP_public_key.asc; then
+        curl -L https://www.idrix.fr/VeraCrypt/VeraCrypt_PGP_public_key.asc -o VeraCrypt_PGP_public_key.asc
+        if printf "1507915290af06da1d2ac0f37f26a70b2340d3fcbdffb1930228f6a590dfcef6 VeraCrypt_PGP_public_key.asc" | sha256sum --check --status ; then
+            echo "Looks Ok"
+            gpg --import ./VeraCrypt_PGP_public_key.asc
+            if ! gpg -k 5069A233D55A0EEB174A5FC3821ACD02680D16DE ; then
+                echo "Bad Fingerprint!"
+            else
+                echo "Good Fingerprint"
+                # Optional for ultimate trust
+                python3 ~/local/scripts/xgpg.py edit_trust 5069A233D55A0EEB174A5FC3821ACD02680D16DE ultimate
+            fi
+        else
+            echo "BAD HASH"
+        fi
+    fi
+    gpg --verify veracrypt-1.26.7-setup.tar.bz2.sig veracrypt-1.26.7-setup.tar.bz2
+    tar xvjf veracrypt-1.26.7-setup.tar.bz2
+
+    mkdir -p $HOME/.local/opt/veracrypt
+    ./veracrypt-1.26.7-setup-console-x64 --target $HOME/.local/opt/veracrypt
+
+}
+
+
 if [[ "$IS_HEADLESS" == "False" ]]; then
     #apt_ensure redshift  # ubuntu has nightlight now
     apt_ensure sshfs wmctrl xdotool xclip git
