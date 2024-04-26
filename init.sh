@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 __doc__="
 
-Idenpotent script for initializing an ubuntu system
+Idempotent script for initializing an ubuntu system
 
 Dont put something in here that can't run twice efficiently.
 
@@ -90,18 +90,11 @@ if [ "$HAVE_SUDO" == "True" ]; then
 fi
 
 if [ "$HAVE_SUDO" == "True" ]; then
-    apt_ensure openssh_server
-    apt_ensure git
-    apt_ensure gcc g++ build-essential
-    apt_ensure gfortran
-    apt_ensure curl net-tools
-    apt_ensure jq expect
-    apt_ensure htop tmux tree
-    apt_ensure sshfs
-    apt_ensure p7zip-full pgpgpg lm-sensors
-    apt_ensure astyle codespell
-    apt_ensure synaptic
-    apt_ensure rsync valgrind symlinks
+    apt_ensure openssh_server openssh-client sshfs net-tools
+    apt_ensure gcc g++ gfortran build-essential
+    apt_ensure git curl jq expect htop tmux tree p7zip-full pgpgpg lm-sensors btop
+    apt_ensure codespell rsync valgrind symlinks fd-find
+    # apt_ensure astyle synaptic
 else
     echo "We dont have sudo. Hopefully we wont need it"
 fi
@@ -121,7 +114,7 @@ if [ "$IS_HEADLESS" == "False" ]; then
         echo "ENSURE TERMINATOR"
             # Dont use buggy gtk2 version
             # https://bugs.launchpad.net/ubuntu/+source/terminator/+bug/1568132
-            sudo add-apt-repository ppa:gnome-terminator/nightly-gtk3 -y
+            #sudo add-apt-repository ppa:gnome-terminator/nightly-gtk3 -y
             sudo apt update
             sudo apt install terminator -y
     fi
@@ -140,13 +133,12 @@ if [ ! -d ~/.ssh ]; then
 fi
 
 if [ "$HAVE_SUDO" == "True" ]; then
-    apt_ensure python3-pip
-    apt_ensure vim-gtk3
+    apt_ensure python3-pip vim-gtk3
     if [ ! -d ~/.local/share/vim ]; then
-        if [ "$(type -P ctags)" = "" ]; then
-            apt_ensure exuberant-ctags
-            apt_ensure libgtk-3-dev gnome-devel ncurses-dev build-essential libtinfo-dev
-        fi
+        #if [ "$(type -P ctags)" = "" ]; then
+        #    # apt_ensure exuberant-ctags
+        #    apt_ensure libgtk-3-dev gnome-devel ncurses-dev build-essential libtinfo-dev
+        #fi
     fi
     # If you need to build from scratch
     #source ~/local/build_scripts/init_vim.sh
@@ -159,19 +151,30 @@ if [ ! -d ~/.vim/autoload/plug.vim ]; then
     curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 fi
 
+install_chrome()
+{
+    # Google PPA
+    # https://askubuntu.com/questions/79280/how-to-install-chrome-browser-properly-via-command-line
+    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+    sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+    sudo apt update
+    # Google Chrome
+    sudo apt install -y google-chrome-stable
+
+
+    # for extensions.gnome.org integration
+    sudo apt install chrome-gnome-shell
+}
+
 
 if [[ "$IS_HEADLESS" == "False" ]]; then
     #apt_ensure redshift  # ubuntu has nightlight now
-    apt_ensure caffeine vlc
-    apt_ensure sshfs wmctrl xdotool xclip git astyle
+    apt_ensure sshfs wmctrl xdotool xclip git
     apt_ensure git curl htop tmux tree
     apt_ensure gcc gcc g++ gfortran build-essential
-    apt_ensure p7zip-full
-    apt_ensure gpg pgpgpg
-    apt_ensure net-tools nmap
-    apt_ensure lm-sensors
-    apt_ensure psensor
+    apt_ensure vlc p7zip-full gpg pgpgpg net-tools lm-sensors
     apt_ensure gitk gparted okular remmina rsync gitk xsel graphviz feh
+    # apt_ensure astyle psensor nmap caffeine
     # packages not in 20.04, but mayb other ones?
     # 7z sensors
 
@@ -181,13 +184,16 @@ if [[ "$IS_HEADLESS" == "False" ]]; then
         install_chrome
         sudo apt-get install chrome-gnome-shell # for gnome shell extension integration
     fi
-    if [ ! -e /snap/bin/spotify ]; then
-        sudo snap install spotify
-    fi
-    if [[ "$(type -P veracrypt)" == "" ]]; then
-        sudo add-apt-repository ppa:unit193/encryption -y
-        sudo apt update && sudo apt install veracrypt -y
-    fi
+    #if [ ! -e /snap/bin/spotify ]; then
+    #    sudo snap install spotify
+    #fi
+    # TODO:
+    # do a new way to install veracrypt securely
+    # https://askubuntu.com/questions/929195/what-is-the-recommended-way-to-use-veracrypt-in-ubuntu
+    #if [[ "$(type -P veracrypt)" == "" ]]; then
+    #    sudo add-apt-repository ppa:unit193/encryption -y
+    #    sudo apt update && sudo apt install veracrypt -y
+    #fi
     #if [[ "$(type -P zotero)" == "" ]]; then
     #    sh ~/local/build_scripts/install_zotero.sh
     #fi
@@ -218,7 +224,10 @@ if [[ "$IS_HEADLESS" == "False" ]]; then
     # Setup private personal environment if possible
     PRIVATE_INIT="$HOME"/code/erotemic/init.sh
     if is_probably_decrypted "$PRIVATE_INIT"; then
+        echo "Seems like we are decrypted"
         bash "$PRIVATE_INIT"
+    else
+        echo "Does not look decrypted"
     fi
 fi
 
@@ -229,7 +238,10 @@ if [[ "$WITH_SSH_KEYS" == "True" ]]; then
     setup_single_use_ssh_keys
 fi
 
-
+HAS_NVIDIA=$(which nvidia-smi)
+if [[ "$HAS_NVIDIA" != "" ]]; then
+    apt_ensure nvtop
+fi
 
 if [[ "$SETUP_PYTHON" == "True" ]]; then
 
@@ -258,10 +270,13 @@ if [[ "$SETUP_PYTHON" == "True" ]]; then
     export PATH="$PYENV_ROOT/bin:$PATH"
     # shellcheck disable=SC2086
     eval "$($PYENV_ROOT/bin/pyenv init -)"
-    pyenv_create_virtualenv 3.9.9 full
-    pip install -e ~/local/rob
+    #pyenv_create_virtualenv 3.12.3 full
+    #
+    source "$HOME"/local/tools/pyenv_ext/pyenv_ext_commands.sh
+    pyenv_create_virtualenv 3.11.2 full
+    #pip install -e ~/local/rob
 
-    python ~/local/init/util_git1.py 'clone_repos'
+    python3 ~/local/init/util_git1.py 'clone_repos'
     #export PYENV_ROOT="$HOME/.pyenv"
     #if [ -d "$PYENV_ROOT" ]; then
     #    export PATH="$PYENV_ROOT/bin:$PATH"
@@ -275,8 +290,8 @@ if [[ "$SETUP_PYTHON" == "True" ]]; then
     #    pyenv_create_virtualenv 3.9.9 full
     #fi
 
-    python ~/local/init/util_git1.py 'clone_repos'
-    pip install -e ~/local/rob
+    #python3 ~/local/init/util_git1.py 'clone_repos'
+    #pip install -e ~/local/rob
 
 fi
 
@@ -285,7 +300,40 @@ fi
 #    unalias python
 #fi
 
+init_vim(){
+    source ~/local/init/utils.sh
+    #safe_symlink ~/local/vim/vimfiles ~/.vim
+    safe_symlink ~/local/vim/portable_vimrc ~/.vimrc
 
+    # To use vimtk at the system level we want to get relevant packages from
+    # the system manager.
+    apt_ensure python3-pyperclip python3-flake8
+
+
+    if [[ -d "$HOME/code/vimtk" ]]; then
+        rm -rf $HOME/.vim/bundle/vimtk
+        safe_symlink $HOME/code/vimtk $HOME/.vim/bundle/vimtk
+    else
+        git clone git@github.com:Erotemic/vimtk.git $HOME/code/vimtk
+        echo "no vimtk dev"
+    fi
+
+    # Run vim once to install plugins
+    vim -en -c ":q"
+    vim -en -c ":PlugInstall | qa"
+
+    mkdir -p ~/.vim_tmp
+}
+
+
+# TODO: ensure we pip install vimtk requirements
+# ubelt, pyperclip
+
+#hack_vimtk_deps(){
+#    deactivate_venv
+#    pip3 install pyperclip psutil pep8 autopep8 flake8 pylint pytest --user
+
+#}
 #source ~/local/vim/init_vim.sh
 
 # TODO: setup ssh keys

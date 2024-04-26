@@ -325,7 +325,12 @@ def is_gitrepo(repo_dir):
 
 
 if __name__ == '__main__':
+    """
+    python ~/local/init/util_git1.py list
+    python ~/local/init/util_git1.py clone_repos
+    """
     varargs = sys.argv[1:]
+
     if len(varargs) == 1 and varargs[0] == 'clone_repos':
         clone_repos()
     elif len(varargs) == 1 and varargs[0] == 'list':

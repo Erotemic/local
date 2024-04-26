@@ -188,31 +188,6 @@ pyenv_create_virtualenv(){
     fi
     CHOSEN_PYTHON_VERSION=$BEST_MATCH
 
-    #if [[ "$PYTHON_VERSION" =~ ^3.4..* ]]; then
-    #    # https://github.com/pyenv/pyenv/issues/945
-    #    # Need to ensure libssl1.0
-
-    #    # Doesnt work
-    #    #mkdir -p $HOME/tmp/sslhack/libssl1.0-dev
-    #    #cd $HOME/tmp/sslhack/libssl1.0-dev
-    #    #wget https://debian.sipwise.com/debian-security/pool/main/o/openssl1.0/libssl1.0-dev_1.0.2l-2+deb9u3_amd64.deb
-    #    ##apt-get download libssl1.0-dev
-    #    #ar x libssl1.0-dev_1.0.2l-2+deb9u3_amd64.deb data.tar.xz
-    #    #tar -xf data.tar.xz --strip-components=2
-    #    #rm data.tar.xz
-
-    #    #HACK_INCLUDE1=$HOME/tmp/sslhack/libssl1.0-dev/include
-    #    #HACK_INCLUDE2=$HOME/tmp/sslhack/libssl1.0-dev/include/x86_64-linux-gnu
-    #    #HACK_LIB1=$HOME/tmp/sslhack/libssl1.0-dev/lib/x86_64-linux-gnu
-    #    #echo "HACK_INCLUDE1 = $HACK_INCLUDE1"
-    #    #echo "HACK_INCLUDE2 = $HACK_INCLUDE2"
-
-    #    #ln -s /usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2 $HOME/tmp/sslhack/libssl1.0-dev/lib/x86_64-linux-gnu
-    #    #ln -s /usr/lib/x86_64-linux-gnu/libssl.so.1.0.2 $HOME/tmp/sslhack/libssl1.0-dev/lib/x86_64-linux-gnu
-    #    #CFLAGS="-I${HACK_INCLUDE1} -I${HACK_INCLUDE2}" LDFLAGS="-L${HACK_LIB1}" pyenv install 3.4.10
-
-    #fi
-
     #PYTHON_CFLAGS="
     #    -march=x86-64
     #    -march=rocketlake

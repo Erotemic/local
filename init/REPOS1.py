@@ -158,6 +158,14 @@ VIM_REPOS_WITH_SUBMODULES = [
 # make ycm_support_libs
 
 
+def is_probably_encrypted(line):
+    return line.startswith('U2FsdG')
+
+
+def parse_repo_config_file(fpath):
+    ...
+
+
 def _parse_custom_urls():
     import pathlib
     dpath_to_url = defaultdict(list)
@@ -166,45 +174,80 @@ def _parse_custom_urls():
     for fpath in config_fpaths:
         if os.path.exists(fpath):
             fpath = pathlib.Path(fpath)
-            lines = fpath.read_text().splitlines()
-            for line in lines:
-                # if line.startswith('U2FsdGVk'):
-                if line.startswith('U2FsdG'):
-                    # File is probably encrypted, ignore it.
-                    break
-                if line.strip() and not line.strip().startswith('#'):
-                    if '__doc__' in line:
-                        continue
-                    line = line.strip()
-                    if line.startswith(' '):
-                        continue
-                    if line.startswith('repos:'):
-                        continue
-                    if line.startswith('-'):
-                        line = line.lstrip('-').strip()
-                    line = line.strip()
-                    parts = line.split(' ')
-                    # Allow text files to specify url and dpath
-                    # default to code dir if dpath not given
-                    if len(parts) == 1:
-                        url = parts[0]
-                        dpath = CODE_DIR
-                    else:
-                        assert len(parts) == 2
-                        url, dpath = parts
-                        dpath = expandvars(expanduser(dpath))
+            text = fpath.read_text()
+            lines = text.splitlines()
+            if lines and is_probably_encrypted(lines[0]):
+                # File is probably encrypted, ignore it.
+                continue
 
-                        # try:
-                        #     os.makedirs(dpath, exist_ok=True)
-                        # except Exception:
-                        #     ub.ensuredir(dpath)
-                        if not os.path.exists(dpath):
-                            os.makedirs(dpath)
+            if fpath.suffix.lower() in {'.yaml', '.yml'}:
+                try:
+                    import yaml
+                    config = yaml.safe_load(text)
+                except ImportError:
+                    print('warning: cannot parse yaml')
+                else:
+                    items = config['repos']
+                    for line in items:
+                        # TODO: consolidate
+                        line = line.strip()
+                        parts = line.split(' ')
+                        # Allow text files to specify url and dpath
+                        # default to code dir if dpath not given
+                        if len(parts) == 1:
+                            url = parts[0]
+                            dpath = CODE_DIR
+                        else:
+                            assert len(parts) == 2
+                            url, dpath = parts
+                            dpath = expandvars(expanduser(dpath))
 
-                    if (dpath, url) in seen:
-                        continue
-                    seen.add((dpath, url))
-                    dpath_to_url[dpath].append(url)
+                            # try:
+                            #     os.makedirs(dpath, exist_ok=True)
+                            # except Exception:
+                            #     ub.ensuredir(dpath)
+                            if not os.path.exists(dpath):
+                                os.makedirs(dpath)
+
+                        if (dpath, url) in seen:
+                            continue
+                        seen.add((dpath, url))
+                        dpath_to_url[dpath].append(url)
+            else:
+                for line in lines:
+                    if line.strip() and not line.strip().startswith('#'):
+                        if '__doc__' in line:
+                            continue
+                        line = line.strip()
+                        if line.startswith(' '):
+                            continue
+                        if line.startswith('repos:'):
+                            continue
+                        if line.startswith('-'):
+                            line = line.lstrip('-').strip()
+                        line = line.strip()
+                        parts = line.split(' ')
+                        # Allow text files to specify url and dpath
+                        # default to code dir if dpath not given
+                        if len(parts) == 1:
+                            url = parts[0]
+                            dpath = CODE_DIR
+                        else:
+                            assert len(parts) == 2
+                            url, dpath = parts
+                            dpath = expandvars(expanduser(dpath))
+
+                            # try:
+                            #     os.makedirs(dpath, exist_ok=True)
+                            # except Exception:
+                            #     ub.ensuredir(dpath)
+                            if not os.path.exists(dpath):
+                                os.makedirs(dpath)
+
+                        if (dpath, url) in seen:
+                            continue
+                        seen.add((dpath, url))
+                        dpath_to_url[dpath].append(url)
     return dpath_to_url
 
 
@@ -212,7 +255,6 @@ def update_urls():
     global PROJECT_URLS
     global PROJECT_REPOS
     for dpath, urls in _parse_custom_urls().items():
-        print('urls = {!r}'.format(urls))
         repos_urls, repos = repo_list(urls, dpath)
 
         PROJECT_URLS += repos_urls
@@ -220,8 +262,16 @@ def update_urls():
 
 
 update_urls()
-# print('PROJECT_URLS = {!r}'.format(PROJECT_URLS))
-try:
+
+
+def main():
     print('PROJECT_REPOS = {}'.format(ub.repr2(PROJECT_REPOS)))
-except NameError:
-    pass
+
+
+# print('PROJECT_URLS = {!r}'.format(PROJECT_URLS))
+if __name__ == '__main__':
+    """
+    CommandLine:
+        python ~/local/init/REPOS1.py
+    """
+    main()

@@ -337,8 +337,10 @@ zfs_init_on_reinstall(){
     __doc__="
     https://unix.stackexchange.com/questions/483465/restore-zfs-pool-and-storage-data-after-a-system-re-install
     "
-
+    sudo apt install zfsutils-linux -y
+    zpool import
     POOL_NAME=data
+    sudo zpool import "$POOL_NAME" -f
     sudo zpool $POOL_NAME
     zpool status
 
@@ -554,4 +556,29 @@ zfs_tuning(){
                 _ = file.read()
 
     "
+}
+
+
+mount_old_lvm(){
+
+    lsblk --fs
+
+    sudo mkdir -p /mnt/old_os
+    sudo mount -t ext4 /dev/nvme1n1p2 /mnt/old_os
+    sudo mount /dev/nvme1n1 /mnt/old_os
+
+    # Search for LVM partitions
+    sudo vgscan
+
+    # Display info about LVM partitions
+    sudo lvdisplay
+
+    sudo vgdisplay
+    sudo lvdisplay /dev/vgubuntu
+
+    mkdir /mnt/my_mount_point
+    mount /dev/VG_NAME/LV_NAME /mnt/my_mount_point
+
+    mount /dev/vgubuntu/root
+
 }

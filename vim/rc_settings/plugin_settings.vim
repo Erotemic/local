@@ -4,7 +4,8 @@
 
 Python2or3 << EOF
 import vimtk
-import ubelt as ub
+import textwrap
+#import ubelt as ub
 vimtk.CONFIG['vimtk_auto_importable_modules'].update({
     'it': 'import itertools as it',
     'nh': 'import netharn as nh',
@@ -25,13 +26,13 @@ vimtk.CONFIG['vimtk_auto_importable_modules'].update({
     'kwcoco': 'import kwcoco',
     'xdev': 'import xdev',
     'scfg': 'import scriptconfig as scfg',
-    'profile': ub.codeblock(
+    'profile': textwrap.dedent(
         '''
         try:
             from xdev import profile
         except ImportError:
             from ubelt import identity as profile
-        ''')
+        ''').strip(chr(10))
 })
 EOF
 

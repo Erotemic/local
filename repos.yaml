@@ -72,14 +72,25 @@ repos:
   - https://github.com/Erotemic/xdev.git
   - https://github.com/Erotemic/xdoctest.git
   - https://github.com/Erotemic/xinspect.git
+  - https://github.com/Erotemic/ibeis.git
+  - https://github.com/Erotemic/utool.git
+  - https://github.com/Erotemic/vtool_ibeis.git
+  - https://github.com/Erotemic/dtool_ibeis.git
+  - https://github.com/Erotemic/guitool_ibeis.git
+  - https://github.com/Erotemic/plottool_ibeis.git
+  - https://github.com/Erotemic/pyflann_ibeis.git
+  - https://github.com/Erotemic/pyhesaff.git
   - https://gitlab.kitware.com/computer-vision/delayed_image.git 
   - https://gitlab.kitware.com/computer-vision/cmd_queue.git 
   - https://gitlab.kitware.com/computer-vision/simple_dvc.git 
   - https://gitlab.kitware.com/computer-vision/kwarray.git 
   - https://gitlab.kitware.com/computer-vision/kwcoco.git 
+  - https://gitlab.kitware.com/computer-vision/kwutil.git 
   - https://gitlab.kitware.com/computer-vision/kwimage.git 
   - https://gitlab.kitware.com/computer-vision/kwplot.git 
   - https://gitlab.kitware.com/computer-vision/ndsampler.git
   - https://gitlab.kitware.com/computer-vision/netharn.git 
   - https://gitlab.kitware.com/computer-vision/geowatch.git 
+  - https://gitlab.kitware.com/computer-vision/torch_liberator.git 
   - https://gitlab.kitware.com/utils/scriptconfig.git 
+  - https://gitlab.kitware.com/python/liberator.git 
