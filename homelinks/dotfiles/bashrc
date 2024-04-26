@@ -10,8 +10,10 @@ See Also:
     $HOME/local/homelinks/helpers/alias_helpers.sh
 '
 # Speedup when working on a remote drive
-_ORIG_DIR=$(pwd)
-cd "$HOME"
+if [[ $PWD == *remote* ]]; then
+    _ORIG_DIR=$(pwd)
+    cd "$HOME"
+fi
 
 BENCH_BASHRC=""
 if [ "$BENCH_BASHRC" ] ; then
@@ -493,6 +495,10 @@ lfcd () {
 alias lf=lfcd
 
 export AWS_DEFAULT_PROFILE=iarpa
-cd "$_ORIG_DIR"
+
+
+if [[ "$_ORIG_DIR" != "" ]]; then
+    cd "$_ORIG_DIR"
+fi
 
 export PYTHONBREAKPOINT=ipdb.set_trace

@@ -36,6 +36,8 @@ install_nivida_drivers_apt(){
     # Installing a newer version seems to correctly flag old versions for removal
     sudo apt install nvidia-driver-545
 
+    sudo apt install nvidia-driver-530
+
 
     # Restart, ensure you have tpl-archive and then run
     ls ~/tpl-archive/cuda

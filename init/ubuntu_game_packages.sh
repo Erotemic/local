@@ -1,4 +1,28 @@
 
+battlenet_in_steam(){
+    __doc__="
+    # https://www.gamingonlinux.com/2023/12/battlenet-broke-in-wine-proton-heres-how-to-fix-for-steam-deck-linux/
+    # https://www.reddit.com/r/linux_gaming/comments/11s4pkd/how_to_run_battlenet_on_linux/
+
+    # Add To Command;
+    WINE_SIMULATE_WRITECOPY=1 %command%
+
+    # Did not work
+
+    But I did get it to work.
+    I used proton compatability v8.0-5
+
+    I used
+    WINE_SIMULATE_WRITECOPY=1
+
+    I restarted
+
+    not sure what did it.
+    "
+
+}
+
+
 wine_1_9()
 {
     # http://ubuntuhandbook.org/index.php/2020/01/install-wine-5-0-stable-ubuntu-18-04-19-10/

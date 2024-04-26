@@ -29,17 +29,17 @@ resetup_raid_after_os_reinstall()
     # Simply scan for your preconfigured raid
     sudo mdadm --assemble --scan
     # Mount the RAID (temporary. modify fstab to automount)
-    sudo mkdir -p /media/$USER/raid
-    sudo mount /dev/md0 /media/$USER/raid
+    sudo mkdir -p /media/"$USER"/raid
+    sudo mount /dev/md0 /media/"$USER"/raid
     # Modify fstab so RAID auto-mounts at startup
     sudo sh -c "echo '# appended to fstab by by install scripts' >> /etc/fstab"
     sudo sh -c "echo 'UUID=4bf557b1-cbf7-414c-abde-a09a25e351a6  /media/$USER/raid              ext4    defaults        0 0' >> /etc/fstab"
 
-    sudo ln -s /media/$USER/raid /raid
+    sudo ln -s /media/"$USER"/raid /raid
 }
 
 __notes__(){
-    (cd $HOME/misc/notes && python -m hardwareinfo)
+    (cd "$HOME"/misc/notes && python -m hardwareinfo)
 }
 
 
@@ -399,9 +399,22 @@ zfs_notes(){
     CACHE_DISK=/dev/disk/by-id/nvme-Samsung_SSD_970_EVO_Plus_2TB_S59CNM0RB05113H
     ls -al $CACHE_DISK
     sudo zpool add $POOL_NAME cache $CACHE_DISK
-
-
 }
+
+
+zfs_remove_cache_device(){
+    __doc__="
+    Commands to remove the L2 arc cache device
+    "
+    POOL_NAME=data
+    CACHE_DISK=/dev/disk/by-id/nvme-Samsung_SSD_970_EVO_Plus_2TB_S59CNM0RB05113H
+    # Dry run first
+    sudo zpool remove -n $POOL_NAME $CACHE_DISK
+
+    # Real run
+    sudo zpool remove -m $POOL_NAME $CACHE_DISK
+}
+
 
 zfs_configure_memory(){
     # https://linuxhint.com/configure-zfs-cache-high-speed-io/
