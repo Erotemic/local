@@ -559,6 +559,11 @@ zfs_tuning(){
 }
 
 
+
+################################
+# On New Setup
+################################
+
 mount_old_lvm(){
 
     lsblk --fs
@@ -580,5 +585,32 @@ mount_old_lvm(){
     mount /dev/VG_NAME/LV_NAME /mnt/my_mount_point
 
     mount /dev/vgubuntu/root
+}
 
+
+readd_flash1(){
+
+    ls -al /dev/disk/by-id/nvme-Samsung_SSD_970_EVO_Plus_2TB_S59CNM0RB05028D
+    ls -al /dev/nvme1n1
+
+    DEVICE_DPATH=/dev/disk/by-id/nvme-Samsung_SSD_970_EVO_Plus_2TB_S59CNM0RB05028D
+    MOUNT_NAME="flash1"
+    MOUNT_DPATH=/media/$USER/$MOUNT_NAME
+    FS_FORMAT="btrfs"
+    # If mounted unmount
+    sudo umount "$DEVICE_DPATH"
+    # Create mount point with group permissions
+    sudo mkdir -p "$MOUNT_DPATH"
+    sudo chown "$USER":"$USER" "$MOUNT_DPATH"
+    sudo chmod 777 "$MOUNT_DPATH"
+
+    sudo mount "$DEVICE_DPATH" "$MOUNT_DPATH"
+
+    #sudo umount $MOUNT_DPATH
+
+    FSTAB_LINE="${DEVICE_DPATH}  ${MOUNT_DPATH}              $FS_FORMAT    defaults        0 0  # from erotemic local"
+    echo "FSTAB_LINE = $FSTAB_LINE"
+    grep "$FSTAB_LINE" /etc/fstab || sudo sh -c "echo '$FSTAB_LINE' >> /etc/fstab"
+
+    ln -s "/media/$USER/flash1" "$HOME/flash1"
 }

@@ -455,3 +455,7 @@ fi
 export DID_MY_BASHRC_INIT=""
 # shellcheck disable=SC1091
 source "$HOME/.bashrc"
+
+
+ln -s "/" "$HOME/root"
+

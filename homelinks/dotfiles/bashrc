@@ -465,8 +465,8 @@ activate-global-python-argcomplete --dest ~/.bash_completion.d
 source ~/.bash_completion.d/python-argcomplete
 "
 # activate-global-python-argcomplete --dest ~/.bash_completion.d
-if [ -f "$HOME/.bash_completion.d/python-argcomplete" ]; then
-    source ~/.bash_completion.d/python-argcomplete
+if [ -f "$HOME/.bash_completion.d/_python-argcomplete" ]; then
+    source ~/.bash_completion.d/_python-argcomplete
 fi
 
 __note__='
