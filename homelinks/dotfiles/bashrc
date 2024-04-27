@@ -503,3 +503,4 @@ if [[ "$_ORIG_DIR" != "" ]]; then
 fi
 
 export PYTHONBREAKPOINT=ipdb.set_trace
+export PATH=$HOME/.local/bin/:$PATH

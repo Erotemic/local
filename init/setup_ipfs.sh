@@ -19,6 +19,8 @@ Test:
     apt update -y && apt install curl -y && curl https://raw.githubusercontent.com/Erotemic/shitspotter/main/dev/standalone_install_ipfs.sh > standalone_install_ipfs.sh
     source standalone_install_ipfs.sh
     main
+
+    source ~/local/init/setup_ipfs.sh
 "
 
 export INSTALL_PREFIX=$HOME/.local
@@ -30,10 +32,10 @@ export PATH=$INSTALL_PREFIX/bin:$PATH
 export IPFS_PATH=$HOME/.ipfs
 export IPFS_CLUSTER_PATH=$HOME/.ipfs-cluster
 
-#export IPFS_PATH=/data/ipfs
-#export IPFS_CLUSTER_PATH=/data/ipfs-cluster
-export IPFS_PATH=/flash/ipfs
-export IPFS_CLUSTER_PATH=/flash/ipfs-cluster
+export IPFS_PATH=/data/ipfs
+export IPFS_CLUSTER_PATH=/data/ipfs-cluster
+#export IPFS_PATH=/flash/ipfs
+#export IPFS_CLUSTER_PATH=/flash/ipfs-cluster
 
 
 apt_ensure(){

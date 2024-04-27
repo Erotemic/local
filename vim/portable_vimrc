@@ -134,7 +134,8 @@ Plug 'scrooloose/nerdtree'
 
 Plug 'ervandew/supertab'
 
-" Plug 'majutsushi/tagbar'
+Plug 'majutsushi/tagbar'
+
 " Plug 'vim-scripts/taglist.vim'
 " Plug 'davidhalter/jedi-vim'
 " Plug 'LaTeX-Box-Team/LaTeX-Box'
