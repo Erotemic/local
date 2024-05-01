@@ -10,6 +10,8 @@ Example:
        User jon.crall
 
 Notes:
+    sshfs -o follow_symlinks,idmap=user EE_534: ~/remote/EE_534
+
     sshfs -o follow_symlinks,idmap=user remote1: ~/remote/remote1
     fusermount -u ~/remote/remote1
 

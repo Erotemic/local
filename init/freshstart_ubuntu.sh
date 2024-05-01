@@ -599,10 +599,10 @@ gnome_settings()
     #sudo -u gdm gconftool-2 --type=bool --set /desktop/gnome/sound/event_sounds false
     #sudo apt install -y gnome-tweak-tool
 
-    gconftool-2 --set "/apps/gnome-terminal/profiles/Default/background_color" --type string "#1111111"
-    gconftool-2 --set "/apps/gnome-terminal/profiles/Default/foreground_color" --type string "#FFFF6999BBBB"
-    gconftool-2 --set /apps/gnome-screensaver/lock_enabled --type bool false
-    gconftool-2 --set /desktop/gnome/sound/event_sounds --type=bool false
+    #gconftool-2 --set "/apps/gnome-terminal/profiles/Default/background_color" --type string "#1111111"
+    #gconftool-2 --set "/apps/gnome-terminal/profiles/Default/foreground_color" --type string "#FFFF6999BBBB"
+    #gconftool-2 --set /apps/gnome-screensaver/lock_enabled --type bool false
+    #gconftool-2 --set /desktop/gnome/sound/event_sounds --type=bool false
 
     # try and disable password after screensaver lock
     gsettings get org.gnome.desktop.lockdown disable-lock-screen
@@ -689,6 +689,7 @@ install_travis_cmdline_tool(){
 
 disable_screen_lock(){
     # References: https://askubuntu.com/questions/1041230/how-to-disable-screen-locking-in-ubuntu-18-04-gnome-shell
+    gsettings get org.gnome.desktop.screensaver lock-enabled
     gsettings set org.gnome.desktop.screensaver lock-enabled false
     # also can do it via settings -> privacy -> screen lock
 }

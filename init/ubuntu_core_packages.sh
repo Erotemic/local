@@ -592,10 +592,16 @@ install_virtualbox()
     # download addons and mount on guest machine
     #http://download.virtualbox.org/virtualbox/4.1.12/
 
+    # Add user to group for perms
+    sudo groupadd vboxusers
+    sudo usermod -aG vboxusers "$USER"
+
     python -c 'import ubelt; print(ubelt.grabdata("http://releases.ubuntu.com/16.04/ubuntu-16.04.6-desktop-i386.iso"))'
     python -c 'import ubelt; print(ubelt.grabdata("http://download.virtualbox.org/virtualbox/4.1.12/VBoxGuestAdditions_4.1.12.iso"))'
     python -c 'import ubelt; print(ubelt.grabdata("http://mirror.solarvps.com/centos/7.0.1406/isos/x86_64/CentOS-7.0-1406-x86_64-DVD.iso"))'
     python -c 'import ubelt; print(ubelt.grabdata("http://download.virtualbox.org/virtualbox/4.1.12/VBoxGuestAdditions_4.1.12.iso"))'
+    python -c 'import ubelt; print(ubelt.grabdata("https://download.freebsd.org/releases/amd64/amd64/ISO-IMAGES/14.0/FreeBSD-14.0-RELEASE-amd64-disc1.iso"))'
+
     #http://mirror.centos.org/centos/7/isos/x86_64/
 }
 
@@ -1864,9 +1870,6 @@ world_community_grid(){
     ___doc__="
     Instructions for installing worldcommunitygrid
     https://www.worldcommunitygrid.org/join.action#os-linux-debian
-
-    TODO:
-        - [ ] How do we hook contributing to WCG up to ETH or some other cyrpto as a proof-of-useful-work mechanism?
     "
     #1. In a terminal window, run the following command:
     sudo apt install boinc-client boinc-manager
@@ -1874,8 +1877,10 @@ world_community_grid(){
     sudo systemctl enable boinc-client
     #3. Start the BOINC client:
     sudo systemctl start boinc-client
+    ###
+    sudo systemctl status boinc-client
     #4. Allow group access to client access file:
-    sudo chmod g+r /var/lib/boinc-client/gui_rpc_auth.cfg
+    #sudo chmod g+r /var/lib/boinc-client/gui_rpc_auth.cfg
     #5. Add your Linux user to the BOINC group to allow the BOINC Manager to communicate with the BOINC client
     sudo usermod -a -G boinc "$USER"
     #6. Allow your terminal to pick up the privileges of the new group:
@@ -2652,4 +2657,9 @@ install_oathtool(){
 install_festival(){
     sudo apt-get install festival
     sudo apt-get install festival festvox-kallpc16k
+}
+
+gnome_boxes_extras(){
+    # install deps for boxes to run VMS
+    sudo apt-get install qemu-kvm
 }

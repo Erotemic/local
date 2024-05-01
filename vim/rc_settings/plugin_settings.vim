@@ -122,7 +122,7 @@ let g:syntastic_cython_checkers=['flake8']
 
 Python2or3 << EOF
 # SHELL-check !!NOT!! SPELL-check
-import vim
+
 # See Also: ~/.config/shellcheckrc
 shellcheck_errors = {
     'SC2016': 'single quotes prevent expansion',
@@ -245,31 +245,25 @@ cython_flake8_args_list = [
 ]
 cython_flake8_args = ' '.join(cython_flake8_args_list)
 
-vim.command('let g:syntastic_sh_shellcheck_args = "{}"'.format(shellcheck_args))
-vim.command('let g:syntastic_python_flake8_args = "%s"' % flake8_args)
-vim.command('let g:syntastic_cython_flake8_args = "%s"' % cython_flake8_args)
+import vim
+#vim.command('let g:syntastic_sh_shellcheck_args = "{}"'.format(shellcheck_args))
+#vim.command('let g:syntastic_python_flake8_args = "%s"' % flake8_args)
+#vim.command('let g:syntastic_cython_flake8_args = "%s"' % cython_flake8_args)
 
-vim.command('let g:ale_sh_shellcheck_args = "{}"'.format(shellcheck_args))
-vim.command('let g:ale_python_flake8_options = "%s"' % flake8_args)
-vim.command('let g:ale_cython_flake8_options = "%s"' % cython_flake8_args)
+vim.command('let g:ale_sh_shellcheck_options = "{}"'.format(shellcheck_args))
+vim.command('let g:ale_python_flake8_options = "{}"'.format(flake8_args))
+vim.command('let g:ale_cython_flake8_options = "{}"'.format(cython_flake8_args))
 EOF
 
 "-------------------------
 " PLUGIN: Syntastic C++
-"let g:syntastic_gpp_include_dirs=['$INSTALL_32/OpenCV/include']
-"let g:syntastic_cpp_include_dirs=['C:/Program Files (x86)/OpenCV/include']
-let g:syntastic_cpp_check_header = 0
-let g:syntastic_cpp_no_include_search = 1
-let g:syntastic_cpp_no_default_include_dirs =1
-let g:syntastic_cpp_remove_include_errors = 1
-"let g:syntastic_cpp_compiler = 'clang++'
-let g:syntastic_cpp_compiler_options = ' -std=c++11 -stdlib=libc++ -lstdc++'
-let g:syntastic_cpp_compiler_options = ' -std=c++11 -stdlib=libc++'
+"let g:syntastic_cpp_check_header = 0
+"let g:syntastic_cpp_no_include_search = 1
+"let g:syntastic_cpp_no_default_include_dirs =1
+"let g:syntastic_cpp_remove_include_errors = 1
+"let g:syntastic_cpp_compiler_options = ' -std=c++11 -stdlib=libc++ -lstdc++'
+"let g:syntastic_cpp_compiler_options = ' -std=c++11 -stdlib=libc++'
 
-"let g:syntastic_cpp_include_dirs = ['include', '../include']
-"let g:syntastic_cpp_compiler = 'clang++'
-"let g:syntastic_c_include_dirs = ['include', '../include']
-"let g:syntastic_c_compiler = 'clang'
 
 
 

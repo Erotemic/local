@@ -569,8 +569,8 @@ mount_old_lvm(){
     lsblk --fs
 
     sudo mkdir -p /mnt/old_os
-    sudo mount -t ext4 /dev/nvme1n1p2 /mnt/old_os
-    sudo mount /dev/nvme1n1 /mnt/old_os
+    #sudo mount -t ext4 /dev/nvme1n1p2 /mnt/old_os
+    #sudo mount /dev/nvme1n1 /mnt/old_os
 
     # Search for LVM partitions
     sudo vgscan
@@ -578,13 +578,13 @@ mount_old_lvm(){
     # Display info about LVM partitions
     sudo lvdisplay
 
-    sudo vgdisplay
-    sudo lvdisplay /dev/vgubuntu
+    #sudo vgdisplay
+    #sudo lvdisplay /dev/vgubuntu
 
-    mkdir /mnt/my_mount_point
-    mount /dev/VG_NAME/LV_NAME /mnt/my_mount_point
-
-    mount /dev/vgubuntu/root
+    #mkdir /mnt/my_mount_point
+    #mount /dev/VG_NAME/LV_NAME /mnt/my_mount_point
+    lsblk | grep lvm -C 10
+    sudo mount /dev/vgubuntu/root /mnt/old_os
 }
 
 

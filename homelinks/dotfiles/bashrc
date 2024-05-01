@@ -262,8 +262,14 @@ if [ "$BENCH_BASHRC" ] ; then
     echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - AfterSource"
 fi
 
+# References:
+#     https://www.reddit.com/r/zsh/comments/x7uj9e/measuring_the_best_value_of_histsize/
 # set history to not ignore leading whitespace
 export HISTCONTROL=
+# Remember last 10000 commands in memory
+export HISTSIZE=10000
+# Remember last 1000000 commands on disk
+export HISTFILESIZE=1000000
 
 
 # If IBM CPLEX is installed

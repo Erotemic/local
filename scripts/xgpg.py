@@ -860,6 +860,11 @@ class GPGCLI:
         """
         Signs text that proves its from you.
 
+        CommandLine:
+            KEY_ID=$(xgpg.py lookup_keyid "Crall" --allow_mainkey=False --capabilities=sign)
+            echo "KEY_ID=$KEY_ID"
+            xgpg.py sign_text --text "Hello this is a message" --sign_keyid="$KEY_ID"
+
         Example:
             import sys, ubelt
             sys.path.append(ubelt.expandpath('~/local/scripts'))
