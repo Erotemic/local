@@ -1123,3 +1123,7 @@ install_tor(){
     cd .local/opt/tor/
     tar -xvf tor-expert-bundle-linux-x86_64-13.0.8.tar.gz .local/opt/tor/
 }
+
+startup_disk_creator(){
+    sudo apt install usb-creator-gtk
+}
