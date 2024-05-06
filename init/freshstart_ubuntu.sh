@@ -948,6 +948,51 @@ fix_legacy_trust_store(){
         /bin/awk '{print "sudo apt-key export "$10$11" | sudo gpg --dearmour -o /usr/share/keyrings/"$1}' | \
         xargs -I'{}' bash -c "eval '{}'"
 
+    python -c "if 1:
+        import subprocess
+        import re
+        from collections import defaultdict
+        import pathlib
+        # List all apt-keys
+        proc = subprocess.Popen(
+            'sudo apt-key list',
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+        stdout, stderr = proc.communicate()
+
+        # Build a regex that matches a 20 byte hex string
+        key_pat_part = '  *'.join(['[A-F0-9]{4}'] * 10)
+        gpg_pat = re.compile(' *' + key_pat_part)
+
+        # Parse stdout to map filenames to keys
+        lines = stdout.decode('utf8').split(chr(10))
+        current_fpath = None
+        path_to_keys = defaultdict(list)
+        for line in lines:
+            if set(line) == '-':
+                current_fpath = None
+            if line.startswith('/etc/apt/trusted'):
+                current_fpath = line
+            if gpg_pat.match(line):
+                key = line.replace(' ', '')
+                path_to_keys[current_fpath].append(key)
+
+        # Build commands to export to the keyrings path and execute them
+        keyrings_dpath = pathlib.Path('/usr/share/keyrings/')
+        for fpath, keys in path_to_keys.items():
+            if 'trusted.gpg.d' in fpath:
+                assert len(keys) == 1
+                key_tail = keys[0][-8:]
+                old_fpath = pathlib.Path(fpath)
+                new_fpath = keyrings_dpath / old_fpath.name
+                if not new_fpath.exists():
+                    command = f'sudo apt-key export {key_tail} | sudo gpg --dearmour -o {new_fpath}'
+                    subprocess.check_output(command, shell=True)
+    "
+
+    # sudo apt-key export 0EBFCD88 | sudo gpg --dearmor -o /usr/share/keyrings/docker-ce.gpg
+
     # For slack
     sudo apt-key list 2>&1 | grep slack -B 2 -A 1
 
