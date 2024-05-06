@@ -1,4 +1,4 @@
-#.my_github_repos
+---
 .__doc__: &__doc__
   - |
       SeeAlso:
@@ -9,34 +9,32 @@
 
         gg-clone
 
-#
-#https://github.com/Erotemic/dtool_ibeis           
-#https://github.com/Erotemic/vtool_ibeis           
-#https://github.com/Erotemic/guitool_ibeis         
-#https://github.com/Erotemic/pyflann_ibeis         
-#https://github.com/Erotemic/plottool_ibeis        
-#https://github.com/Erotemic/graphid               
-#https://github.com/Erotemic/utool                 
-#https://github.com/Erotemic/terminator2           
-#https://github.com/Erotemic/clab                  
-#https://github.com/Erotemic/fixtex                
-#https://github.com/Erotemic/baseline-viame-2018   
-#https://github.com/Erotemic/pydir                 
-#https://github.com/Erotemic/futures_actors        
-#https://github.com/Erotemic/bintrees              
-#https://github.com/Erotemic/mtgmonte              
-#https://github.com/Erotemic/sandbox_utools        
-#https://github.com/Erotemic/yael                  
-#https://github.com/Erotemic/ibeis_userguide       
-#https://github.com/Erotemic/vim-quickopen-tvio    
-#https://github.com/Erotemic/hs_userguide          
-#https://github.com/Erotemic/tpl-hotspotter        
-#https://github.com/Erotemic/demo-hotspotter       
-#https://github.com/Erotemic/netharn               
-
-#https://github.com/Erotemic/pitch_constellations                                                                                                                        
-#https://github.com/Erotemic/crall-thesis-2017     
-#https://github.com/Erotemic/hotspotter            
+# https://github.com/Erotemic/dtool_ibeis
+# https://github.com/Erotemic/vtool_ibeis
+# https://github.com/Erotemic/guitool_ibeis
+# https://github.com/Erotemic/pyflann_ibeis
+# https://github.com/Erotemic/plottool_ibeis
+# https://github.com/Erotemic/graphid
+# https://github.com/Erotemic/utool
+# https://github.com/Erotemic/terminator2
+# https://github.com/Erotemic/clab
+# https://github.com/Erotemic/fixtex
+# https://github.com/Erotemic/baseline-viame-2018
+# https://github.com/Erotemic/pydir
+# https://github.com/Erotemic/futures_actors
+# https://github.com/Erotemic/bintrees
+# https://github.com/Erotemic/mtgmonte
+# https://github.com/Erotemic/sandbox_utools
+# https://github.com/Erotemic/yael
+# https://github.com/Erotemic/ibeis_userguide
+# https://github.com/Erotemic/vim-quickopen-tvio
+# https://github.com/Erotemic/hs_userguide
+# https://github.com/Erotemic/tpl-hotspotter
+# https://github.com/Erotemic/demo-hotspotter
+# https://github.com/Erotemic/netharn
+# https://github.com/Erotemic/pitch_constellations
+# https://github.com/Erotemic/crall-thesis-2017
+# https://github.com/Erotemic/hotspotter
 
 # 'https://github.com/Erotemic/plottool.git',
 # 'https://github.com/Erotemic/guitool.git',
@@ -55,7 +53,7 @@
 # git@hyrule.cs.rpi.edu:crall-iccvw-2017.git $HOME/latex
 # git@hyrule.cs.rpi.edu:crall-thesis-2017.git $HOME/latex
 
-repos: 
+repos:
   - https://github.com/Erotemic/local.git $HOME
   - https://github.com/Erotemic/misc.git $HOME
   - https://github.com/pyutils/line_profiler.git
@@ -65,7 +63,7 @@ repos:
   - https://github.com/Erotemic/mkinit.git
   - https://github.com/Erotemic/progiter.git
   - https://github.com/Erotemic/pypogo.git
-  - https://github.com/Erotemic/supersetup.git
+  # - https://github.com/Erotemic/supersetup.git
   - https://github.com/Erotemic/timerit.git
   - https://github.com/Erotemic/networkx_algo_common_subtree.git
   - https://github.com/Erotemic/mathutf.git
@@ -84,18 +82,18 @@ repos:
   - https://github.com/Erotemic/plottool_ibeis.git
   - https://github.com/Erotemic/pyflann_ibeis.git
   - https://github.com/Erotemic/pyhesaff.git
-  - https://gitlab.kitware.com/computer-vision/delayed_image.git 
-  - https://gitlab.kitware.com/computer-vision/cmd_queue.git 
-  - https://gitlab.kitware.com/computer-vision/simple_dvc.git 
-  - https://gitlab.kitware.com/computer-vision/kwarray.git 
-  - https://gitlab.kitware.com/computer-vision/kwcoco.git 
-  - https://gitlab.kitware.com/computer-vision/kwutil.git 
-  - https://gitlab.kitware.com/computer-vision/kwimage.git 
-  - https://gitlab.kitware.com/computer-vision/kwimage_ext.git 
-  - https://gitlab.kitware.com/computer-vision/kwplot.git 
+  - https://gitlab.kitware.com/computer-vision/delayed_image.git
+  - https://gitlab.kitware.com/computer-vision/cmd_queue.git
+  - https://gitlab.kitware.com/computer-vision/simple_dvc.git
+  - https://gitlab.kitware.com/computer-vision/kwarray.git
+  - https://gitlab.kitware.com/computer-vision/kwcoco.git
+  - https://gitlab.kitware.com/computer-vision/kwutil.git
+  - https://gitlab.kitware.com/computer-vision/kwimage.git
+  - https://gitlab.kitware.com/computer-vision/kwimage_ext.git
+  - https://gitlab.kitware.com/computer-vision/kwplot.git
   - https://gitlab.kitware.com/computer-vision/ndsampler.git
-  - https://gitlab.kitware.com/computer-vision/netharn.git 
-  - https://gitlab.kitware.com/computer-vision/geowatch.git 
-  - https://gitlab.kitware.com/computer-vision/torch_liberator.git 
-  - https://gitlab.kitware.com/utils/scriptconfig.git 
-  - https://gitlab.kitware.com/python/liberator.git 
+  - https://gitlab.kitware.com/computer-vision/netharn.git
+  - https://gitlab.kitware.com/computer-vision/geowatch.git
+  - https://gitlab.kitware.com/computer-vision/torch_liberator.git
+  - https://gitlab.kitware.com/utils/scriptconfig.git
+  - https://gitlab.kitware.com/python/liberator.git

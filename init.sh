@@ -3,7 +3,7 @@ __doc__="
 
 Idempotent script for initializing an ubuntu system
 
-Dont put something in here that can't run twice efficiently.
+Don't put something in here that can't run twice efficiently.
 
 CommandLine:
     sudo apt install git -y
@@ -34,7 +34,7 @@ CommandLine:
 #fi
 
 # shellcheck disable=SC1091
-source "$HOME/local/init/freshstart_ubuntu.sh"
+# source "$HOME/local/init/freshstart_ubuntu.sh"
 # shellcheck disable=SC1091
 source "$HOME/local/init/utils.sh"
 
@@ -90,11 +90,67 @@ if [ "$HAVE_SUDO" == "True" ]; then
 fi
 
 if [ "$HAVE_SUDO" == "True" ]; then
-    apt_ensure openssh_server openssh-client sshfs net-tools
+    apt_ensure openssh-server openssh-client sshfs net-tools
     apt_ensure gcc g++ gfortran build-essential
-    apt_ensure git curl jq expect htop tmux tree p7zip-full pgpgpg lm-sensors btop
-    apt_ensure codespell rsync valgrind symlinks fd-find
+    apt_ensure git curl jq expect htop tmux tree p7zip-full gpg pgpgpg lm-sensors btop
+    apt_ensure rsync symlinks fd-find
+    # apt_ensure valgrind codespell
     # apt_ensure astyle synaptic
+
+
+    if [[ "$IS_HEADLESS" == "False" ]]; then
+        #apt_ensure redshift  # ubuntu has nightlight now
+        apt_ensure wmctrl xdotool xclip
+        apt_ensure gparted okular remmina gitk xsel graphviz feh
+        # apt_ensure astyle psensor nmap caffeine
+        # packages not in 20.04, but maybe other ones?
+        # 7z sensors
+
+        #if [[ "$(type -P google-chrome)" == "" ]]; then
+        #    # shellcheck disable=SC1091
+        #    source "$HOME/local/init/freshstart_ubuntu.sh"
+        #    install_chrome
+        #    sudo apt-get install chrome-gnome-shell # for gnome shell extension integration
+        #fi
+        #if [ ! -e /snap/bin/spotify ]; then
+        #    sudo snap install spotify
+        #fi
+        # TODO:
+        # do a new way to install veracrypt securely
+        # https://askubuntu.com/questions/929195/what-is-the-recommended-way-to-use-veracrypt-in-ubuntu
+        #if [[ "$(type -P veracrypt)" == "" ]]; then
+        #    sudo add-apt-repository ppa:unit193/encryption -y
+        #    sudo apt update && sudo apt install veracrypt -y
+        #fi
+        #if [[ "$(type -P zotero)" == "" ]]; then
+        #    sh ~/local/build_scripts/install_zotero.sh
+        #fi
+
+        apt_ensure python3-pip vim-gtk3
+        #if [ ! -d ~/.local/share/vim ]; then
+        #    #if [ "$(type -P ctags)" = "" ]; then
+        #    #    # apt_ensure exuberant-ctags
+        #    #    apt_ensure libgtk-3-dev gnome-devel ncurses-dev build-essential libtinfo-dev
+        #    #fi
+        #fi
+        # If you need to build from scratch
+        #source ~/local/build_scripts/init_vim.sh
+        #do_vim_build
+
+        # In 2024 on 22.04 there is an issue with terminator
+        # https://askubuntu.com/questions/1509058/input-delay-on-terminal-ubuntu-22-04-4
+
+        #if [ "$(type -P terminator)" == "" ]; then
+        #    echo "ENSURE TERMINATOR"
+        #        # Dont use buggy gtk2 version
+        #        # https://bugs.launchpad.net/ubuntu/+source/terminator/+bug/1568132
+        #        #sudo add-apt-repository ppa:gnome-terminator/nightly-gtk3 -y
+        #        sudo apt update
+        #        sudo apt install terminator -y
+        #fi
+
+    fi
+
 else
     echo "We dont have sudo. Hopefully we wont need it"
 fi
@@ -102,22 +158,23 @@ fi
 
 _GITUSER="$(git config --global user.name)"
 if [ "$_GITUSER" == "" ]; then
-  echo "ENSURE GIT CONFIG"
-  # TODO: need to determine the right user.email depending on the system being set up
-  set_global_git_config
-  mkdir -p ~/tmp
-  mkdir -p ~/code
-fi
+    echo "ENSURE GIT CONFIG"
+    # TODO: need to determine the right user.email depending on the system being set up
+    git config --global user.name "$USER"
+    git config --global user.email erotemic@gmail.com
+    #git config --global user.email jon.crall@kitware.com
+    git config --global push.default current
+    git config --global core.editor "vim"
+    git config --global rerere.enabled false
+    git config --global core.fileMode false
+    git config --global alias.co checkout
+    git config --global alias.submodpull 'submodule update --init --recursive'
+    #git config --global merge.conflictstyle diff3
+    git config --global merge.conflictstyle merge
+    git config --global core.autocrlf false
 
-if [ "$IS_HEADLESS" == "False" ]; then
-    if [ "$(type -P terminator)" == "" ]; then
-        echo "ENSURE TERMINATOR"
-            # Dont use buggy gtk2 version
-            # https://bugs.launchpad.net/ubuntu/+source/terminator/+bug/1568132
-            #sudo add-apt-repository ppa:gnome-terminator/nightly-gtk3 -y
-            sudo apt update
-            sudo apt install terminator -y
-    fi
+    mkdir -p ~/tmp
+    mkdir -p ~/code
 fi
 
 if [ ! -d ~/.ssh ]; then
@@ -130,19 +187,6 @@ if [ ! -d ~/.ssh ]; then
         chmod 640 ~/.ssh/authorized_keys
     fi
     echo "TODO: YOU MUST MANUALLY SET UP YOUR KEYS"
-fi
-
-if [ "$HAVE_SUDO" == "True" ]; then
-    apt_ensure python3-pip vim-gtk3
-    if [ ! -d ~/.local/share/vim ]; then
-        #if [ "$(type -P ctags)" = "" ]; then
-        #    # apt_ensure exuberant-ctags
-        #    apt_ensure libgtk-3-dev gnome-devel ncurses-dev build-essential libtinfo-dev
-        #fi
-    fi
-    # If you need to build from scratch
-    #source ~/local/build_scripts/init_vim.sh
-    #do_vim_build
 fi
 
 
@@ -176,8 +220,8 @@ install_veracrypt(){
     sudo apt install libfuse-dev
 
     # Copied link to the generic installer on 2024-04-25
-    mkdir -p $HOME/temp/veracrypt
-    cd $HOME/temp/veracrypt
+    mkdir -p "$HOME"/temp/veracrypt
+    cd "$HOME"/temp/veracrypt
     curl -L https://launchpad.net/veracrypt/trunk/1.26.7/+download/veracrypt-1.26.7-setup.tar.bz2 -o veracrypt-1.26.7-setup.tar.bz2
     curl -L https://launchpad.net/veracrypt/trunk/1.26.7/+download/veracrypt-1.26.7-setup.tar.bz2.sig -o veracrypt-1.26.7-setup.tar.bz2.sig
 
@@ -187,12 +231,12 @@ install_veracrypt(){
         if printf "1507915290af06da1d2ac0f37f26a70b2340d3fcbdffb1930228f6a590dfcef6 VeraCrypt_PGP_public_key.asc" | sha256sum --check --status ; then
             echo "Looks Ok"
             gpg --import ./VeraCrypt_PGP_public_key.asc
-            if ! gpg -k 5069A233D55A0EEB174A5FC3821ACD02680D16DE ; then
+            if ! gpg -k "$VERACRYPT_FINGERPRINT" ; then
                 echo "Bad Fingerprint!"
             else
                 echo "Good Fingerprint"
                 # Optional for ultimate trust
-                python3 ~/local/scripts/xgpg.py edit_trust 5069A233D55A0EEB174A5FC3821ACD02680D16DE ultimate
+                python3 ~/local/scripts/xgpg.py edit_trust "$VERACRYPT_FINGERPRINT" ultimate
             fi
         else
             echo "BAD HASH"
@@ -201,43 +245,11 @@ install_veracrypt(){
     gpg --verify veracrypt-1.26.7-setup.tar.bz2.sig veracrypt-1.26.7-setup.tar.bz2
     tar xvjf veracrypt-1.26.7-setup.tar.bz2
 
-    mkdir -p $HOME/.local/opt/veracrypt
-    ./veracrypt-1.26.7-setup-console-x64 --target $HOME/.local/opt/veracrypt
+    mkdir -p "$HOME"/.local/opt/veracrypt
+    # FIXME: has interactive step
+    ./veracrypt-1.26.7-setup-console-x64 --target "$HOME"/.local/opt/veracrypt
 
 }
-
-
-if [[ "$IS_HEADLESS" == "False" ]]; then
-    #apt_ensure redshift  # ubuntu has nightlight now
-    apt_ensure sshfs wmctrl xdotool xclip git
-    apt_ensure git curl htop tmux tree
-    apt_ensure gcc gcc g++ gfortran build-essential
-    apt_ensure vlc p7zip-full gpg pgpgpg net-tools lm-sensors
-    apt_ensure gitk gparted okular remmina rsync gitk xsel graphviz feh
-    # apt_ensure astyle psensor nmap caffeine
-    # packages not in 20.04, but mayb other ones?
-    # 7z sensors
-
-    if [[ "$(type -P google-chrome)" == "" ]]; then
-        # shellcheck disable=SC1091
-        source "$HOME/local/init/freshstart_ubuntu.sh"
-        install_chrome
-        sudo apt-get install chrome-gnome-shell # for gnome shell extension integration
-    fi
-    #if [ ! -e /snap/bin/spotify ]; then
-    #    sudo snap install spotify
-    #fi
-    # TODO:
-    # do a new way to install veracrypt securely
-    # https://askubuntu.com/questions/929195/what-is-the-recommended-way-to-use-veracrypt-in-ubuntu
-    #if [[ "$(type -P veracrypt)" == "" ]]; then
-    #    sudo add-apt-repository ppa:unit193/encryption -y
-    #    sudo apt update && sudo apt install veracrypt -y
-    #fi
-    #if [[ "$(type -P zotero)" == "" ]]; then
-    #    sh ~/local/build_scripts/install_zotero.sh
-    #fi
-fi
 
 
 if [[ "$IS_HEADLESS" == "False" ]]; then
@@ -329,7 +341,6 @@ if [[ "$SETUP_PYTHON" == "True" ]]; then
     #    #pyenv_create_virtualenv 3.8.6 most
     #    pyenv_create_virtualenv 3.9.9 full
     #fi
-
     #python3 ~/local/init/util_git1.py 'clone_repos'
     #pip install -e ~/local/rob
 
@@ -351,10 +362,10 @@ init_vim(){
 
 
     if [[ -d "$HOME/code/vimtk" ]]; then
-        rm -rf $HOME/.vim/bundle/vimtk
-        safe_symlink $HOME/code/vimtk $HOME/.vim/bundle/vimtk
+        rm -rf "$HOME"/.vim/bundle/vimtk
+        safe_symlink "$HOME"/code/vimtk "$HOME"/.vim/bundle/vimtk
     else
-        git clone git@github.com:Erotemic/vimtk.git $HOME/code/vimtk
+        git clone https://github.com/Erotemic/vimtk.git "$HOME"/code/vimtk
         echo "no vimtk dev"
     fi
 
@@ -397,7 +408,7 @@ init_vim(){
 # $(system_python) ~/local/init/util_git1.py 'clone_repos'
 
 ensure_dev_versions_of_my_libs(){
-
+    # Not needed, should be handled by the git tools
     mylibs=(
     ubelt
     mkinit
@@ -437,7 +448,6 @@ ensure_dev_versions_of_my_libs(){
     done
 
     pip install shellcheck-py
-
 }
 
 
@@ -458,4 +468,3 @@ source "$HOME/.bashrc"
 
 
 ln -s "/" "$HOME/root"
-
