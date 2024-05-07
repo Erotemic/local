@@ -3,37 +3,41 @@
 
 
 Python2or3 << EOF
-import vimtk
-import textwrap
-#import ubelt as ub
-vimtk.CONFIG['vimtk_auto_importable_modules'].update({
-    'it': 'import itertools as it',
-    'nh': 'import netharn as nh',
-    'np': 'import numpy as np',
-    'pd': 'import pandas as pd',
-    'ub': 'import ubelt as ub',
-    'nx': 'import networkx as nx',
-    'Image': 'from PIL import Image',
-    'mpl': 'import matplotlib as mpl',
-    'nn': 'from torch import nn',
-    'torch_data': 'import torch.utils.data as torch_data',
-    'F': 'import torch.nn.functional as F',
-    'math': 'import math',
-    ####
-    'ndsampler': 'import ndsampler',
-    'kwarray': 'import kwarray',
-    'kwimage': 'import kwimage',
-    'kwcoco': 'import kwcoco',
-    'xdev': 'import xdev',
-    'scfg': 'import scriptconfig as scfg',
-    'profile': textwrap.dedent(
-        '''
-        try:
-            from xdev import profile
-        except ImportError:
-            from ubelt import identity as profile
-        ''').strip(chr(10))
-})
+try:
+    import vimtk
+except ImportError:
+    ...
+else:
+    import textwrap
+    #import ubelt as ub
+    vimtk.CONFIG['vimtk_auto_importable_modules'].update({
+        'it': 'import itertools as it',
+        'nh': 'import netharn as nh',
+        'np': 'import numpy as np',
+        'pd': 'import pandas as pd',
+        'ub': 'import ubelt as ub',
+        'nx': 'import networkx as nx',
+        'Image': 'from PIL import Image',
+        'mpl': 'import matplotlib as mpl',
+        'nn': 'from torch import nn',
+        'torch_data': 'import torch.utils.data as torch_data',
+        'F': 'import torch.nn.functional as F',
+        'math': 'import math',
+        ####
+        'ndsampler': 'import ndsampler',
+        'kwarray': 'import kwarray',
+        'kwimage': 'import kwimage',
+        'kwcoco': 'import kwcoco',
+        'xdev': 'import xdev',
+        'scfg': 'import scriptconfig as scfg',
+        'profile': textwrap.dedent(
+            '''
+            try:
+                from xdev import profile
+            except ImportError:
+                from ubelt import identity as profile
+            ''').strip(chr(10))
+    })
 EOF
 
 

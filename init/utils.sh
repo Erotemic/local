@@ -1040,6 +1040,25 @@ curl_verify_hash(){
         EXPECTED_HASH="${GO_KNOWN_HASHES[${GO_KEY}-sha256]}"
         BASENAME=$(basename "$URL")
         curl_verify_hash "$URL" "$BASENAME" "$EXPECTED_HASH" sha256sum "-L"
+
+    Notes:
+       To verify a hash without this special command you can use the following pattern, first we setup demodata,
+       to illustrate this.
+
+       # Write a file,
+       echo "demodata" > demo.txt
+       # Given environment variables with a filepath and its expected hash, check if via
+       FPATH=demo.txt
+       EXPECTED_HASH=63dd7b5024e7859775e6f2afac439664ed2841e993ac5d171ab430f776b0f2cc
+
+       # This command has exit code 0 for success
+       echo "$EXPECTED_HASH $FPATH" | sha256sum -c
+       echo $?
+
+       # This command has exit code 1 for failure
+       echo "badbeafbadbeafbadbeafbadbeafbadbeafbadbeafbadbeafbadbeafbadbeafb $FPATH" | sha256sum -c
+       echo $?
+
     '
     _handle_help "$@" || return 0
 

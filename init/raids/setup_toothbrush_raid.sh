@@ -338,7 +338,7 @@ zfs_init_on_reinstall(){
     https://unix.stackexchange.com/questions/483465/restore-zfs-pool-and-storage-data-after-a-system-re-install
     "
     sudo apt install zfsutils-linux -y
-    zpool import
+    # zpool import
     POOL_NAME=data
     sudo zpool import "$POOL_NAME" -f
     sudo zpool $POOL_NAME
@@ -594,23 +594,28 @@ readd_flash1(){
     ls -al /dev/nvme1n1
 
     DEVICE_DPATH=/dev/disk/by-id/nvme-Samsung_SSD_970_EVO_Plus_2TB_S59CNM0RB05028D
-    MOUNT_NAME="flash1"
-    MOUNT_DPATH=/media/$USER/$MOUNT_NAME
-    FS_FORMAT="btrfs"
-    # If mounted unmount
-    sudo umount "$DEVICE_DPATH"
-    # Create mount point with group permissions
-    sudo mkdir -p "$MOUNT_DPATH"
-    sudo chown "$USER":"$USER" "$MOUNT_DPATH"
-    sudo chmod 777 "$MOUNT_DPATH"
+    if [ ! -e $DEVICE_DPATH ]; then
+        echo "Chosen device DOES NOT EXIST!"
+    else
+        echo "Chosen device exists"
+        MOUNT_NAME="flash1"
+        MOUNT_DPATH=/media/$USER/$MOUNT_NAME
+        FS_FORMAT="btrfs"
+        # If mounted unmount
+        sudo umount "$DEVICE_DPATH"
+        # Create mount point with group permissions
+        sudo mkdir -p "$MOUNT_DPATH"
+        sudo chown "$USER":"$USER" "$MOUNT_DPATH"
+        sudo chmod 777 "$MOUNT_DPATH"
 
-    sudo mount "$DEVICE_DPATH" "$MOUNT_DPATH"
+        sudo mount "$DEVICE_DPATH" "$MOUNT_DPATH"
 
-    #sudo umount $MOUNT_DPATH
+        #sudo umount $MOUNT_DPATH
 
-    FSTAB_LINE="${DEVICE_DPATH}  ${MOUNT_DPATH}              $FS_FORMAT    defaults        0 0  # from erotemic local"
-    echo "FSTAB_LINE = $FSTAB_LINE"
-    grep "$FSTAB_LINE" /etc/fstab || sudo sh -c "echo '$FSTAB_LINE' >> /etc/fstab"
+        FSTAB_LINE="${DEVICE_DPATH}  ${MOUNT_DPATH}              $FS_FORMAT    defaults        0 0  # from erotemic local"
+        echo "FSTAB_LINE = $FSTAB_LINE"
+        grep "$FSTAB_LINE" /etc/fstab || sudo sh -c "echo '$FSTAB_LINE' >> /etc/fstab"
 
-    ln -s "/media/$USER/flash1" "$HOME/flash1"
+        ln -s "/media/$USER/flash1" "$HOME/flash1"
+    fi
 }

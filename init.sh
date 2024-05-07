@@ -329,20 +329,12 @@ if [[ "$SETUP_PYTHON" == "True" ]]; then
     #pip install -e ~/local/rob
 
     python3 ~/local/init/util_git1.py 'clone_repos'
-    #export PYENV_ROOT="$HOME/.pyenv"
-    #if [ -d "$PYENV_ROOT" ]; then
-    #    export PATH="$PYENV_ROOT/bin:$PATH"
-    #    eval "$($PYENV_ROOT/bin/pyenv init -)"
-    #    eval "$($PYENV_ROOT/bin/pyenv init --path)"
-    #    #eval "$(pyenv init --path)"
-    #    #eval "$(pyenv init -)"
-    #    source $PYENV_ROOT/completions/pyenv.bash
-    #    export PYENV_PREFIX=$(pyenv prefix)
-    #    #pyenv_create_virtualenv 3.8.6 most
-    #    pyenv_create_virtualenv 3.9.9 full
-    #fi
-    #python3 ~/local/init/util_git1.py 'clone_repos'
-    #pip install -e ~/local/rob
+
+    # Optional
+    __option__='
+    source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+    build_vim_for_pyenv
+    '
 
 fi
 
@@ -408,6 +400,9 @@ init_vim(){
 # $(system_python) ~/local/init/util_git1.py 'clone_repos'
 
 ensure_dev_versions_of_my_libs(){
+
+    python3 ~/local/init/util_git1.py 'clone_repos'
+
     # Not needed, should be handled by the git tools
     mylibs=(
     ubelt
@@ -454,7 +449,7 @@ ensure_dev_versions_of_my_libs(){
 customize_ubuntu_dock(){
     gsettings get org.gnome.shell favorite-apps
     gsettings set org.gnome.shell favorite-apps "['org.gnome.Nautilus.desktop', 'gvim.desktop', 'google-chrome.desktop', 'terminator.desktop']"
-    gsettings set org.gnome.desktop.interface clock-format '12h'
+    # gsettings set org.gnome.desktop.interface clock-format '12h'
 }
 
 if [[ "$IS_HEADLESS" != "True" ]]; then
@@ -467,4 +462,7 @@ export DID_MY_BASHRC_INIT=""
 source "$HOME/.bashrc"
 
 
-ln -s "/" "$HOME/root"
+
+if [ ! -d $HOME/root ]; then
+    ln -s "/" "$HOME/root"
+fi

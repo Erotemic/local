@@ -26,10 +26,10 @@ PROJECT_URLS = []
 # New more configurable stuff
 # These will populate PROJECT_REPOS and PROJECT_URLS
 config_fpaths = [
-    expanduser('~/code/erotemic/homelinks/repos.txt'),
-    expanduser('~/internal/repos.txt'),
     # expanduser('~/local/repos.txt'),
     expanduser('~/local/repos.yaml'),
+    expanduser('~/code/erotemic/homelinks/repos.txt'),
+    expanduser('~/internal/repos.txt'),
 ]
 
 
@@ -185,7 +185,8 @@ def _parse_custom_urls():
                     import yaml
                     config = yaml.safe_load(text)
                 except ImportError:
-                    print('warning: cannot parse yaml')
+                    print('warning: cannot parse yaml. '
+                          'Please pip install pyyaml')
                 else:
                     items = config['repos']
                     for line in items:
