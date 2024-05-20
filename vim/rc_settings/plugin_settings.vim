@@ -458,5 +458,13 @@ let g:SuperTabDefaultCompletionType = "context"
 let g:autopep8_aggressive=1
 
 
+"-------------------------
+" PLUGIN: InstantRST
+" https://github.com/gu-fan/InstantRst/blob/master/after/ftplugin/rst/instantRst.vim
+
+let g:instant_rst_port = 5125
+
+
+
 " References:
 "     SCRIPTING VIM IN PYTHON - http://orestis.gr/blog/2008/08/10/scripting-vim-with-python/

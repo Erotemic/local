@@ -277,3 +277,14 @@ git-clean-repo(){
     git gc --prune=now
 
 }
+
+git-rebase-resign(){
+    __doc__="
+    Usage:
+        git-rebase-resign -i main
+
+    References:
+        .. [SO397149] https://superuser.com/questions/397149/can-you-gpg-sign-old-commits
+    "
+    git rebase --exec 'git commit --amend --no-edit -n -S' "$@"
+}

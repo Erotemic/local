@@ -96,6 +96,7 @@ alias kwg='cd $HOME/code/kwgis'
 alias kwe='cd $HOME/code/kwimage_ext'
 alias kwp='cd $HOME/code/kwplot'
 alias di='cd $HOME/code/delayed_image'
+alias iq='cd $HOME/code/SMQTK-IQR/'
 
 alias cv='cd $CODE_DIR/opencv'
 #alias fl='cd $CODE_DIR/fletch/'
@@ -170,6 +171,9 @@ alias wad3='cd $HOME/data/dvc-repos/smart_watch_dvc/Aligned-Drop3-TA1-2022-03-10
 alias vdd='vd ~/work'
 alias ebrc='gvim ~/.bashrc'
 alias ea='gvim ~/local/homelinks/helpers/alias_helpers.sh'
+alias edit_ssh_config='gvim ~/.ssh/config'
+alias edit_bashrc='gvim ~/.bashrc'
+alias edit_aliases='gvim ~/local/homelinks/helpers/alias_helpers.sh'
 
 alias dei='docker_execinto'
 

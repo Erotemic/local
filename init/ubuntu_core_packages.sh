@@ -1371,11 +1371,16 @@ docker_modern_2021_04_22(){
     cat /etc/default/docker
 
     # https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html
-    distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
-          && curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
-          && curl -s -L https://nvidia.github.io/libnvidia-container/"$distribution"/libnvidia-container.list | \
-                sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
-                sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+    #distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
+    #      && curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
+    #      && curl -s -L https://nvidia.github.io/libnvidia-container/"$distribution"/libnvidia-container.list | \
+    #            sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+    #            sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+
+    curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
+      && curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | \
+        sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+        sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
 
     # Install the NVIDIA Runtime:
     #DISTRIBUTION=$(. /etc/os-release;echo "$ID""$VERSION_ID")
@@ -1384,10 +1389,13 @@ docker_modern_2021_04_22(){
     #curl -s -L https://nvidia.github.io/nvidia-docker/"$DISTRIBUTION"/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
 
     sudo apt-get update -y
-    sudo apt-get install -y nvidia-docker2
+    # https://github.com/NVIDIA/nvidia-docker/issues/1268
+    #sudo apt-get install -y nvidia-docker2
+    sudo apt-get install -y nvidia-container-toolkit
+
     sudo systemctl restart docker
 
-    sudo docker run --rm --gpus all nvidia/cuda:11.0-base nvidia-smi
+    docker run --rm --gpus all docker.io/nvidia/cuda:11.4.3-cudnn8-devel-ubuntu20.04 nvidia-smi
 
 }
 
@@ -1879,15 +1887,32 @@ world_community_grid(){
     sudo systemctl start boinc-client
     ###
     sudo systemctl status boinc-client
-    #4. Allow group access to client access file:
-    #sudo chmod g+r /var/lib/boinc-client/gui_rpc_auth.cfg
-    #5. Add your Linux user to the BOINC group to allow the BOINC Manager to communicate with the BOINC client
+    #4. Add your Linux user to the BOINC group to allow the BOINC Manager to communicate with the BOINC client
     sudo usermod -a -G boinc "$USER"
-    #6. Allow your terminal to pick up the privileges of the new group:
+    #5. Allow your terminal to pick up the privileges of the new group:
     # shellcheck disable=SC2093
     exec su "$USER"
-    #7. In the same terminal window, start the BOINC Manager:
+    #6. In the same terminal window, start the BOINC Manager:
     sudo boincmgr -d /var/lib/boinc-client
+
+    #7. Allow group access to client access file:
+    sudo ls -alL /var/lib/boinc-client/gui_rpc_auth.cfg
+    sudo chmod g+r /var/lib/boinc-client/gui_rpc_auth.cfg
+
+    # List tasks, if gui-rpc-auth can be read this will work.
+    boinccmd --get_tasks
+
+    # You will need to login to your projects
+    # Tools -> Add Project
+    # Select the project, enter username / password
+    # OR attempt to automate
+    load_secrets
+    boinccmd --project_attach https://www.worldcommunitygrid.org/ "$(load_secret_var wcg_weak_account_key)"
+    boinccmd --project_attach https://climateprediction.net/ "$(load_secret_var cpdn_weak_account_key)"
+    boinccmd --project_attach https://www.gpugrid.net/ "$(load_secret_var gpugrid_weak_account_key)"
+    # References:
+    # https://www.reddit.com/r/BOINC/comments/dxjwap/is_there_a_way_to_use_boinc_from_the_command_line/
+    # #boinccmd --project_attach https://www.worldcommunitygrid.org/ YOURACCOUNTKEY
 
 }
 

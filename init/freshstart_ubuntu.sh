@@ -1172,3 +1172,10 @@ install_tor(){
 startup_disk_creator(){
     sudo apt install usb-creator-gtk
 }
+
+fix_2204_slow_terminal(){
+    # https://askubuntu.com/questions/1509058/input-delay-on-terminal-ubuntu-22-04-4/1509474#1509474
+    sudo add-apt-repository ppa:vanvugt/mutter
+    sudo apt update
+    sudo apt upgrade
+}

@@ -34,6 +34,13 @@ install_nivida_drivers_apt(){
     sudo apt install nvidia-driver-525
 
     # Installing a newer version seems to correctly flag old versions for removal
+    sudo apt remove nvidia-driver-545
+    sudo apt remove libnvidia-compute-545
+    sudo apt autoremove
+    sudo apt list --installed | grep nvidia
+
+    sudo apt install nvidia-driver-535
+
     sudo apt install nvidia-driver-545
 
     sudo apt install nvidia-driver-530

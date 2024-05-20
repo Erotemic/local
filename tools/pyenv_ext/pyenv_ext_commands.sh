@@ -43,8 +43,7 @@ Example Usage:
     pyenv_create_virtualenv 3.11.2 most
     #pyenv_create_virtualenv pypy3.7-7.3.9 most
     #
-    pyenv_create_virtualenv 3.12.0 full
-
+    pyenv_create_virtualenv 3.11.9 off
     pyenv_create_virtualenv 3.12.3 off
 
 
