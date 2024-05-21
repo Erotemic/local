@@ -96,7 +96,7 @@ alias kwg='cd $HOME/code/kwgis'
 alias kwe='cd $HOME/code/kwimage_ext'
 alias kwp='cd $HOME/code/kwplot'
 alias di='cd $HOME/code/delayed_image'
-alias iq='cd $HOME/code/SMQTK-IQR/'
+alias iq='cd $HOME/code/smqtk-repos/SMQTK-IQR/'
 
 alias cv='cd $CODE_DIR/opencv'
 #alias fl='cd $CODE_DIR/fletch/'
