@@ -1178,4 +1178,7 @@ fix_2204_slow_terminal(){
     sudo add-apt-repository ppa:vanvugt/mutter
     sudo apt update
     sudo apt upgrade
+
+    sudo apt-get install gir1.2-mutter-10=42.9-0ubuntu7vv1 mutter-common=42.9-0ubuntu7vv1 libmutter-10-0=42.9-0ubuntu7vv1
+    sudo apt-mark hold gir1.2-mutter-10 mutter-common libmutter-10-0
 }

@@ -1334,6 +1334,57 @@ podman(){
 }
 
 
+docker_modern_2024_05_23(){
+    __doc__="
+     https://docs.docker.com/engine/install/ubuntu/
+     https://docs.docker.com/engine/install/linux-postinstall/
+     https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker
+     "
+     sudo apt install apt-transport-https ca-certificates curl gnupg lsb-release -y
+
+     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+     echo \
+      "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+      $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+     sudo apt update -y
+     sudo apt install docker-ce docker-ce-cli containerd.io -y
+
+    # Add self to docker group
+    sudo groupadd docker
+    sudo usermod -aG docker "$USER"
+    # NEED TO LOGOUT / LOGIN to revaluate groups
+    su - "$USER"  # or we can do this
+
+     # Test
+     docker run hello-world
+
+    # Change docker to use storage on an external drive
+    cat /etc/default/docker
+    sudo sed -ie 's|^#* *DOCKER_OPTS.*|DOCKER_OPTS="--data-root /data/docker"|g' /etc/default/docker
+    sudo sed -ie 's|^#* *export DOCKER_TMPDIR.*|export DOCKER_TMPDIR=/data/docker-tmp|g' /etc/default/docker
+    cat /etc/default/docker
+
+    source "$(which authenticate.sh)"
+    # https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html
+    curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
+      && curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | \
+        sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+        sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+    # Install the NVIDIA Runtime:
+    sudo apt-get update -y
+    sudo apt-get install -y nvidia-container-toolkit
+
+    sudo systemctl restart docker
+    sudo systemctl daemon-reload
+    sudo systemctl restart docker
+
+
+    docker run --rm --gpus all docker.io/nvidia/cuda:11.4.3-cudnn8-devel-ubuntu20.04 nvidia-smi
+}
+
+
 docker_modern_2021_04_22(){
     # https://docs.docker.com/engine/install/ubuntu/
     # https://docs.docker.com/engine/install/linux-postinstall/

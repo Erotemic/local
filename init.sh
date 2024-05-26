@@ -402,6 +402,7 @@ init_vim(){
 ensure_dev_versions_of_my_libs(){
 
     python3 ~/local/init/util_git1.py 'clone_repos'
+    python3 ~/local/init/util_git1.py 'install_repos'
 
     # Not needed, should be handled by the git tools
     mylibs=(

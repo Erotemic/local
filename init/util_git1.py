@@ -296,6 +296,20 @@ def clone_repos():
             oscmd('git clone ' + repourl)
 
 
+def install_repos():
+    import pathlib
+    for repodir, repourl in zip(REPOS1.PROJECT_REPOS, REPOS1.PROJECT_URLS):
+        print('[git] checkexist: ' + repodir)
+        repodir = pathlib.Path(repodir)
+        if (repodir / 'pyproject.toml').exists():
+            # repo = Repo(url=repourl, dpath=repodir)
+            # if repo.owner() in :
+            #     pass
+            # repo.clone()
+            cd(repodir)
+            oscmd('pip install -e .')
+
+
 def setup_develop_repos(repo_dirs):
     """ Run python installs """
     for repodir in repo_dirs:
@@ -333,6 +347,8 @@ if __name__ == '__main__':
 
     if len(varargs) == 1 and varargs[0] == 'clone_repos':
         clone_repos()
+    if len(varargs) == 1 and varargs[0] == 'install_repos':
+        install_repos()
     elif len(varargs) == 1 and varargs[0] == 'list':
         for repodir, repourl in zip(REPOS1.PROJECT_REPOS, REPOS1.PROJECT_URLS):
             try:
