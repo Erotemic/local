@@ -651,7 +651,7 @@ apt_ensure(){
         if [ "${UPDATE}" != "" ]; then
             $_SUDO apt update -y
         fi
-        $_SUDO apt install -y "${MISS_PKGS[@]}"
+        DEBIAN_FRONTEND=noninteractive $_SUDO apt install -y "${MISS_PKGS[@]}"
     else
         echo "No missing packages"
     fi
