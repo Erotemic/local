@@ -748,8 +748,10 @@ secure_ssl_pip()
 install_screen_capture()
 {
     #sudo apt install recordmydesktop gtk-recordmydesktop
+    authenticate
     sudo add-apt-repository ppa:obsproject/obs-studio -y
-    sudo apt update && sudo apt install obs-studio -y
+    sudo apt update
+    sudo apt install obs-studio -y
 
     sudo apt-get install -y v4l2loopback-dkms
 
@@ -763,8 +765,63 @@ install_screen_capture()
 
     sudo apt install kdenlive
 
+    # See also:
+    # https://github.com/occ-ai/obs-backgroundremoval
+
+    # With flatpak
+    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+    flatpak install flathub com.obsproject.Studio
+    flatpak install com.obsproject.Studio.Plugin.BackgroundRemoval
+
+    flatpak run com.obsproject.Studio
+
 }
 
+
+cudnn_for_obs_background_removal(){
+    #####
+    # For CUDNN
+    authenticate
+    wget https://developer.download.nvidia.com/compute/cudnn/9.1.1/local_installers/cudnn-local-repo-ubuntu2204-9.1.1_1.0-1_amd64.deb
+    sudo dpkg -i cudnn-local-repo-ubuntu2204-9.1.1_1.0-1_amd64.deb
+    sudo cp /var/cudnn-local-repo-ubuntu2204-9.1.1/cudnn-*-keyring.gpg /usr/share/keyrings/
+    sudo apt-get update
+    #sudo apt-get -y install cudnn
+    sudo apt-get -y install cudnn-cuda-12
+    sudo apt-get remove cudnn9-cuda-12
+    audo apt autoremove
+
+    # Install cudnn 8.x insteads of 9.x
+    sudo apt install nvidia-cudnn
+
+    sudo apt search cudnn
+
+    sudo updatedb
+    locate libnvinfer
+    locate cudnn
+
+
+    # TODO? https://docs.nvidia.com/deeplearning/tensorrt/install-guide/index.html
+    sudo apt-get install python3-libnvinfer-dev
+
+    # Not sure if necessary?
+    #pip install nvidia-tensorrt
+    #pip uninstall nvidia-tensorrt
+    #pip install nvidia-tensorrt==8.4.1.5
+    pip install tensorrt==8.6.1
+    pip uninstall tensorrt
+
+    locate libnvinfer.so.8
+
+    ###
+    ## https://docs.nvidia.com/deeplearning/tensorrt/install-guide/index.html
+    pip install cuda-python
+    pip uninstall cuda-python
+
+    LD_LIBRARY_PATH=/home/joncrall/.pyenv/versions/3.11.9/envs/pyenv3.11.9/lib/python3.11/site-packages/tensorrt_libs/:$LD_LIBRARY_PATH obs
+
+}
 
 encryprtion()
 {
@@ -795,9 +852,9 @@ encryprtion()
 
 
     # TRUECRYPT IS DEPRICATED. DO NOT USE
-    sudo add-apt-repository ppa:stefansundin/truecrypt -y
-    sudo apt update
-    sudo apt install truecrypt -y
+    #sudo add-apt-repository ppa:stefansundin/truecrypt -y
+    #sudo apt update
+    #sudo apt install truecrypt -y
 }
 
 
@@ -1366,7 +1423,7 @@ docker_modern_2024_05_23(){
     sudo sed -ie 's|^#* *export DOCKER_TMPDIR.*|export DOCKER_TMPDIR=/data/docker-tmp|g' /etc/default/docker
     cat /etc/default/docker
 
-    source "$(which authenticate.sh)"
+    authenticate
     # https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html
     curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
       && curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | \
@@ -1857,9 +1914,12 @@ github_gh_api(){
     git clone https://github.com/cli/cli.git "$HOME"/code/github/cli
     cd "$HOME"/code/github/cli
     make
+    prefix=$HOME/.local make -e install
 
     "$HOME"/code/github/cli/bin/gh version
     "$HOME"/code/github/cli/bin/gh help
+
+    gh auth login
 
 }
 
@@ -2739,3 +2799,12 @@ gnome_boxes_extras(){
     # install deps for boxes to run VMS
     sudo apt-get install qemu-kvm
 }
+
+install_plocate(){
+    # https://askubuntu.com/questions/1442958/plocate-taking-very-long-with-database-init
+
+    # Need to edit /etc/updatedb.conf
+    # to exclude directories that should not be scanned
+    sudo apt install plocate
+}
+

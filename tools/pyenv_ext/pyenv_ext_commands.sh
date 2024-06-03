@@ -45,6 +45,7 @@ Example Usage:
     #
     pyenv_create_virtualenv 3.11.9 off
     pyenv_create_virtualenv 3.12.3 off
+    pyenv_create_virtualenv 3.6.15 off
 
 
     source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh

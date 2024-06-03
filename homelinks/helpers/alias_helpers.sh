@@ -276,6 +276,7 @@ ep()
 # FIXME if I work on a mac
 #alias rrr='source ~/.profile'
 alias rrr='reset_my_env && source ~/.bashrc'
+alias sbrc='source ~/.bashrc'
 
 
 reset_my_env(){

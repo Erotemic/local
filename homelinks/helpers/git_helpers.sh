@@ -199,6 +199,11 @@ git-pullreq-url(){
     if [[ "$HOST_URL" == *"github"* ]]; then
         #echo "github"
         echo "$REPO_URL/pulls/"
+
+        if type gh ; then
+            gh pr view
+        fi
+
     elif [[ "$HOST_URL" == *"gitlab"* ]]; then
         #echo "gitlab"
         echo "$REPO_URL/-/merge_requests/"
