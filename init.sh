@@ -464,6 +464,6 @@ source "$HOME/.bashrc"
 
 
 
-if [ ! -d $HOME/root ]; then
+if [ ! -d "$HOME"/root ]; then
     ln -s "/" "$HOME/root"
 fi

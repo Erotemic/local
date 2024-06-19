@@ -2808,3 +2808,12 @@ install_plocate(){
     sudo apt install plocate
 }
 
+
+install_neovim(){
+    # https://www.reddit.com/r/vim/comments/1d8xjd8/where_are_the_vim_llm_plugins/
+    # https://www.reddit.com/r/neovim/comments/zut77y/the_best_neovim_gui/?share_id=td-Mf3OvRxoEPNykm5WPp
+    # # https://neovide.dev/installation.html
+    sudo apt install neovim
+    ln -sf ~/.vim ~/.config/nvim
+    ln -sf ~/.vim/vimrc ~/.vim/init.vim
+}

@@ -401,14 +401,16 @@ install_fonts()
 {
     # Download fonts
     #sudo apt -y install nautilus-dropbox
+    #
+    #
 
     mkdir -p ~/tmp
     cd ~/tmp
-    wget https://github.com/antijingoist/open-dyslexic/archive/master.zip
-    7z x master.zip
+    wget https://github.com/antijingoist/open-dyslexic/archive/e98e98ce61d4ee628e6c173cb54eb35cbd01bc4c.zip
+    7z x e98e98ce61d4ee628e6c173cb54eb35cbd01bc4c.zip
 
-    wget https://downloads.sourceforge.net/project/cm-unicode/cm-unicode/0.7.0/cm-unicode-0.7.0-ttf.tar.xz
-    7z x cm-unicode-0.7.0-ttf.tar.xz && 7z x cm-unicode-0.7.0-ttf.tar && rm cm-unicode-0.7.0-ttf.tar
+    #wget https://downloads.sourceforge.net/project/cm-unicode/cm-unicode/0.7.0/cm-unicode-0.7.0-ttf.tar.xz
+    #7z x cm-unicode-0.7.0-ttf.tar.xz && 7z x cm-unicode-0.7.0-ttf.tar && rm cm-unicode-0.7.0-ttf.tar
 
     _SUDO ""
     #_SUDO sudo
@@ -428,12 +430,12 @@ install_fonts()
     $_SUDO cp -v "$HOME"/tmp/DyslexicBundle/*.ttf "$TTF_FONT_DIR"/
     $_SUDO cp -v "$HOME"/tmp/DyslexicBundle/*.otf "$OTF_FONT_DIR"/
 
-    ls ~/Dropbox/Fonts/
-    cd ~/Dropbox/Fonts/
-    $_SUDO cp -v ~/Dropbox/Fonts/*.ttf "$TTF_FONT_DIR"/
-    $_SUDO cp -v ~/Dropbox/Fonts/*.otf "$OTF_FONT_DIR"/
-    $_SUDO cp -v ~/tmp/open-dyslexic-master/otf/*.otf "$OTF_FONT_DIR"/
-    $_SUDO cp -v ~/tmp/cm-unicode-0.7.0/*.ttf "$TTF_FONT_DIR"/
+    #ls ~/Dropbox/Fonts/
+    #cd ~/Dropbox/Fonts/
+    #$_SUDO cp -v ~/Dropbox/Fonts/*.ttf "$TTF_FONT_DIR"/
+    #$_SUDO cp -v ~/Dropbox/Fonts/*.otf "$OTF_FONT_DIR"/
+    #$_SUDO cp -v ~/tmp/open-dyslexic-master/otf/*.otf "$OTF_FONT_DIR"/
+    #$_SUDO cp -v ~/tmp/cm-unicode-0.7.0/*.ttf "$TTF_FONT_DIR"/
 
     $_SUDO fc-cache -f -v
 
@@ -1012,6 +1014,8 @@ fix_legacy_trust_store(){
 }
 
 install_rust(){
+    # https://rust-lang.github.io/rustup/environment-variables.html
+    #export RUSTUP_HOME=$HOME/.local/
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 }
 

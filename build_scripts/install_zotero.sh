@@ -1,6 +1,7 @@
-__heredoc__='''
+#!/bin/bash
+__doc__='
 source ~/local/build_scripts/install_zotero.sh
-'''
+'
 #mkdir ~/tmp
 #cd ~/tmp
 #wget http://download.zotero.org/standalone/4.0.11/Zotero-4.0.11_linux-x86_64.tar.bz2
@@ -19,18 +20,17 @@ cd ~/tmp/setup-zotero
 
 #https://www.zotero.org/download/client/dl?channel=release&platform=linux-x86_64&version=5.0.96.2
 #req = requests.get('https://www.zotero.org/download/client/dl?channel=release&platform=linux-x86_64&version=5.0.84')
-source $HOME/local/init/utils.sh
-pyblock """
-import requests
-req = requests.get('https://www.zotero.org/download/client/dl?channel=release&platform=linux-x86_64')
-with open('zotero.tar.bz2', 'wb') as file:
-    file.write(req.content)
-"""
+python -c "if 1:
+    import requests
+    req = requests.get('https://www.zotero.org/download/client/dl?channel=release&platform=linux-x86_64')
+    with open('zotero.tar.bz2', 'wb') as file:
+        file.write(req.content)
+"
 tar jxvf zotero.tar.bz2
 mkdir -p ~/.local/opt/
 mv Zotero_linux-x86_64 ~/.local/opt/
 ~/.local/opt/Zotero_linux-x86_64/set_launcher_icon
-rm ~/.local/share/applications/zotero.desktop
+rm -f ~/.local/share/applications/zotero.desktop
 ln -s ~/.local/opt/Zotero_linux-x86_64/zotero.desktop ~/.local/share/applications/
 
 

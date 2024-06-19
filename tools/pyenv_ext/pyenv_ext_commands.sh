@@ -110,14 +110,19 @@ install_pyenv(){
 
 pyenv_create_virtualenv(){
     __doc__="
-    The conda variant is:
-        conda create -y -n <venv-name> python=<target-pyversion>
+    Create a virtual environment for a specific version of Python with specific
+    optimizations enabled.
 
-    This command will seek to do something similar
+    If the specific version of Python is not available it will be compiled.
 
     Args:
         PYTHON_VERSION (str)
         OPTIMIZE_PRESET (str, default=most): can be off, most, or full
+
+    Notes:
+        This command does something similar to the conda command
+
+        conda create -y -n <venv-name> python=<target-pyversion>
 
     Example:
         # See Available versions
@@ -694,20 +699,39 @@ build_vim_for_pyenv(){
 _pyenv_best_version_match(){
     __doc__="
     Finds a valid pyenv version that matches a user request
+
+    Args:
+       PYTHON_VERSION: the semantic version string
+
+    Example:
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        _pyenv_best_version_match '3.11'
+        _pyenv_best_version_match '3.11.2'
+        _pyenv_best_version_match '3'
     "
     PYTHON_VERSION=$1
-    #VENV_NAME=$2
 
+    # List available python versions and read them into a bash array
+    # This relies on the fact that higher versions are stored last
     AVAILALBE_VERSION=$(pyenv install --list)
-    # vim hates this syntax highlight apparently
     readarray -t arr <<< "$AVAILALBE_VERSION"
     BEST_MATCH=None
+
+    # Loop over all possible versions and find one that has the chosen prefix.
+    # Avoid dev and release candidates if not explicitly requested.
     for arg in "${arr[@]}"; do
         arg=$(echo "$arg" | xargs echo -n)
-        if [[ $arg == $PYTHON_VERSION* ]]; then
+        if [[ "$arg" == "$PYTHON_VERSION" ]]; then
+            # Always choose an exact match
+            BEST_MATCH=$arg
+            break
+        elif [[ $arg == $PYTHON_VERSION* ]] && [[ "$arg" != *"-dev" ]] && [[ "$arg" != *"a"* ]]; then
+            # Otherwise choose a matching prefix, as long as it is not a dev or prerelease version
             BEST_MATCH=$arg
         fi
     done
+
+    # Print out the result
     echo "$BEST_MATCH"
 }
 

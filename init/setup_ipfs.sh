@@ -439,7 +439,7 @@ install_ipfs(){
 
     ARCH="$(dpkg --print-architecture)"
     echo "ARCH = $ARCH"
-    IPFS_VERSION="v0.26.0"
+    IPFS_VERSION="v0.29.0"
     IPFS_KEY=kubo_${IPFS_VERSION}_linux-${ARCH}
     URL="https://dist.ipfs.io/kubo/${IPFS_VERSION}/${IPFS_KEY}.tar.gz"
     #IPFS_KEY=go-ipfs_${IPFS_VERSION}_linux-${ARCH}
@@ -460,6 +460,9 @@ install_ipfs(){
 
         ["kubo_v0.26.0_linux-amd64-sha512"]="4c1ac8d2750ea49a3dd1ef57654a6a2e46db7ce3cf5f44c5e99218c0da73d6b0e35216e4fc20ddba9d5073b1ffbba0c3ec39df7e48be110cac048cc0ddc840f5"
         ["kubo_v0.26.0_linux-arm64-sha512"]="02406250d6a97b8aac2f0152158d38669f64574c0b1395755c9965666cbc288100c047df68a386a62fa4dce67cfa5f2d90c895a94f71ab9f7c7b0bdf19d8abd9"
+
+        ["kubo_v0.29.0_linux-amd64-sha512"]="2df5191393e0dee5e7a6f301d56a3f9d19041dd4076bb78483af042fed3b107a08968c6853b5b84f3699139b1527556f9c812e6924ea079e8be5909dc77fe65b"
+        ["kubo_v0.29.0_linux-arm64-sha512"]="40703f884caa717c24d95867facb23d485ca5d7f41a93c60e33c5adbdb67375159b5e3aa76daaebb61b7d0b10498154f6b23acc2f260a34e036f852df7e588d7"
 
     )
     EXPECTED_HASH="${IPFS_KNOWN_HASHES[${IPFS_KEY}-sha512]}"
