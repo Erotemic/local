@@ -46,6 +46,9 @@ Example Usage:
     pyenv_create_virtualenv 3.11.9 off
     pyenv_create_virtualenv 3.12.3 off
     pyenv_create_virtualenv 3.6.15 off
+    pyenv_create_virtualenv 3.7 off
+    pyenv_create_virtualenv 3.8 off
+    pyenv_create_virtualenv 3.12 full
 
 
     source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
@@ -116,8 +119,16 @@ pyenv_create_virtualenv(){
     If the specific version of Python is not available it will be compiled.
 
     Args:
-        PYTHON_VERSION (str)
-        OPTIMIZE_PRESET (str, default=most): can be off, most, or full
+        PYTHON_VERSION (str):
+            The requested version of Python to install.
+            Must match an entry in 'pyenv install --list'.
+
+        OPTIMIZE_PRESET (str | None):
+            controls the level of profile-guided optimization.
+            defaults to 'most', can be off, most, or full
+
+        VENV_NAME (str | None):
+            Name of the new environment. In unspecified, it chooses a default.
 
     Notes:
         This command does something similar to the conda command
@@ -176,12 +187,13 @@ pyenv_create_virtualenv(){
         pyenv_create_virtualenv 3.10.5 full
 
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
-        pyenv_create_virtualenv 3.11.0rc2 none
+        pyenv_create_virtualenv 3.11 full geowatch-3.11-bleeding
     "
     _handle_help "$@" || return 0
 
     local PYTHON_VERSION=$1
     local OPTIMIZE_PRESET=${2:-"most"}
+    local VENV_NAME=${3:-"auto"}
 
     local CHOSEN_PYTHON_VERSION=$PYTHON_VERSION
     # shellcheck disable=SC2155
@@ -303,11 +315,13 @@ pyenv_create_virtualenv(){
     MAKE_OPTS=""
     MAKE_OPTS="-j$(nproc)"
 
+    echo "Preparing to compile Python if needed"
+
     MAKE_OPTS="$MAKE_OPTS" \
     PROFILE_TASK="$PROFILE_TASK" \
     PYTHON_CFLAGS="$PYTHON_CFLAGS" \
     PYTHON_CONFIGURE_OPTS="$PYTHON_CONFIGURE_OPTS" \
-        pyenv install "$CHOSEN_PYTHON_VERSION" --verbose
+        pyenv install "$CHOSEN_PYTHON_VERSION" -s --verbose
 
     #pyenv shell $CHOSEN_PYTHON_VERSION
     #pyenv global $CHOSEN_PYTHON_VERSION
@@ -317,15 +331,17 @@ pyenv_create_virtualenv(){
 
     $CHOSEN_PYEXE --version
 
-    VENV_NAME=pyenv$CHOSEN_PYTHON_VERSION
+    if [[ "$VENV_NAME" == "auto" ]]; then
+        VENV_NAME=pyenv$CHOSEN_PYTHON_VERSION
+    fi
     VENV_PATH=$VERSION_PREFIX/envs/$VENV_NAME
 
     if [[ $CHOSEN_PYTHON_VERSION == 2.7.* ]]; then
-        echo "2.7"
+        echo "Creating a 2.7 environment in $VENV_PATH"
         $CHOSEN_PYEXE -m pip install virtualenv
         $CHOSEN_PYEXE -m virtualenv "$VENV_PATH"
     else
-        echo "3.x"
+        echo "Creating a 3.x environment in $VENV_PATH"
         # Create the virtual environment
         $CHOSEN_PYEXE -m venv "$VENV_PATH"
     fi
