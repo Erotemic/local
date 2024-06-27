@@ -440,7 +440,7 @@ if exists("g:loaded_vimtk")
     "call vimtk#quickopen('e', '~/code/geowatch/geowatch/tasks/fusion/experiments/crall/expt_drop3_2022-03-21.sh')
     "call vimtk#quickopen('e', '~/code/geowatch/geowatch/tasks/fusion/experiments/crall/expt_drop4_bas_2022-08-12.sh')
     "
-    call vimtk#quickopen('e', '~/code/geowatch/dev/experiments/crall/expt_drop8_2024-02-09.sh')
+    call vimtk#quickopen('e', '~/code/geowatch/dev/experiments/crall/cifar_simple_resnet.sh')
     call vimtk#quickopen('E', '~/code/geowatch/dev/experiments/crall/expt_drop6_2023-03-09.sh')
     "call vimtk#quickopen('E', '~/code/geowatch/dev/experiments/crall/expt_drop4_sc_2022-08-19.sh')
 
