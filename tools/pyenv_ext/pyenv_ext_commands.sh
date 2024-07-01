@@ -51,6 +51,7 @@ Example Usage:
     pyenv_create_virtualenv 3.10 off
     pyenv_create_virtualenv 3.12 full
 
+    pyenv_create_virtualenv 3.11 most neovim
 
     source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
     build_vim_for_pyenv

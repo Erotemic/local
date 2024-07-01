@@ -2813,7 +2813,35 @@ install_neovim(){
     # https://www.reddit.com/r/vim/comments/1d8xjd8/where_are_the_vim_llm_plugins/
     # https://www.reddit.com/r/neovim/comments/zut77y/the_best_neovim_gui/?share_id=td-Mf3OvRxoEPNykm5WPp
     # # https://neovide.dev/installation.html
+    # https://github.com/neovim/neovim/blob/master/BUILD.md
     sudo apt install neovim
     ln -sf ~/.vim ~/.config/nvim
-    ln -sf ~/.vim/vimrc ~/.vim/init.vim
+    ln -sf ~/.vimrc ~/.vim/init.vim
+
+    # sudo apt remove lua5.4 lua5.4 lua-luv-dev libvterm-dev luajit libluajit-5.1-dev lua-mpack lua-lpeg libunibilium-dev libmsgpack-dev
+    # sudo apt install ninja-build gettext cmake unzip curl build-essential
+
+    cd "$HOME"/code
+    git clone git@github.com:neovim/neovim.git
+    cd "$HOME"/code/neovim
+    rm -rf build
+    git checkout stable
+
+
+    make CMAKE_BUILD_TYPE=RelWithDebInfo CMAKE_INSTALL_PREFIX="$HOME"/.local/opt/neovim -j16
+    make CMAKE_BUILD_TYPE=RelWithDebInfo CMAKE_INSTALL_PREFIX="$HOME"/.local/opt/neovim install
+
+    cargo install --git https://github.com/neovide/neovide
+
+    # Create venv specifically for neovim
+    pyenv_create_virtualenv 3.11 most neovim
+    we neovim
+    pip install pynvim
+
+    # Not sure exatly what needs to happen to get this to work
+
+    curl -fLo "$HOME"/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    curl -fLo "$HOME"/.local/opt/neovim/share/nvim/runtime/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+    #mkdir "$HOME"/.config/nvim
 }

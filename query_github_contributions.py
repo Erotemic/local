@@ -61,4 +61,3 @@ pulls = repo.get_pulls(state='all', sort='created', base='master')
 
 for pr in pulls:
     print(pr.number)
-

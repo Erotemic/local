@@ -128,10 +128,11 @@ highlight Cursor guifg=blue guibg=orange
 
 " Set the font to one I like if it hasn't been done already
 " Dont change it if I've already got one I like
-:call ToggleFont(0)
-"if !exists("g:myfontindex") 
-"    :exec "call ToggleFont(0)"
-"endif
+if has('nvim')
+    set guifont=monospace:h9
+else
+    call ToggleFont(0)
+endif 
 
 "---------
 " clean these up

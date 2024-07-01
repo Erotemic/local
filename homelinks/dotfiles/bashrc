@@ -98,6 +98,11 @@ if [ -d "$HOME/.local/opt" ]; then
         export CPATH=$HOME/.local/opt/node/include:$CPATH
         export LD_LIBRARY_PATH=$HOME/.local/opt/node/lib:$LD_LIBRARY_PATH
     fi
+
+    if [ -d "$HOME/.local/opt/neovim" ]; then
+        export PATH=$PATH:$HOME/.local/opt/neovim/bin
+        export LD_LIBRARY_PATH=$HOME/.local/opt/neovim/lib:$LD_LIBRARY_PATH
+    fi
 fi
 
 

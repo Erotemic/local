@@ -66,6 +66,7 @@ else
 endif
 if !filereadable($VIMFILES_DPATH . "/autoload/plug.vim")
   " Automatic installation if vim plug does not exist
+  " TODO: secure this
   echo "Installing Vim Plug"
   execute 'silent !curl -fLo ' . $VIMFILES_DPATH . '/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
@@ -91,6 +92,20 @@ if has('win32')
     "command! -nargs=1 Python2or3 python3 <args>
 endif
 
+
+if has('nvim')
+    let g:python3_host_prog = '/home/joncrall/.pyenv/versions/3.11.9/envs/neovim/bin/python'
+    " https://github.com/neovide/neovide/issues/2565
+    let g:neovide_position_animation_length = 0
+    let g:neovide_cursor_animation_length = 0.00
+    let g:neovide_cursor_trail_size = 0
+    let g:neovide_cursor_animate_in_insert_mode = 0
+    let g:neovide_cursor_animate_command_line = 0
+    let g:neovide_scroll_animation_far_lines = 0
+    let g:neovide_scroll_animation_length = 0.00
+endif
+
+
 if has('python3')
     command! -nargs=1 Python2or3 python3 <args>
 elseif has('python')
@@ -106,19 +121,37 @@ if !empty(glob($VIMRUNTIME . "/mswin.vim"))
     source $VIMRUNTIME/mswin.vim
 endif
 
-behave mswin
+if ! has('nvim')
+    behave mswin
+endif
 
 "source ~/local/vim/rc/venv_presource.vim
 set encoding=utf8
 
-if v:version > 801
+" mkdir -p ~/.vim/files/info
+if has('neovim')
+    " https://www.reddit.com/r/vim/comments/povbkh/tip_viminfo_per_project/
+    "set viminfo+=n~/.vim/viminfo
+    set shadafile=.vim/main.shada
+    ":set viminfo='100,n$VIMFILES_DPATH/files/info/nviminfo
+else
+    ":set viminfo='100,n$VIMFILES_DPATH/files/info/viminfo
+    set viminfofile=.vim/.viminfo
+    
+endif
+
+"if v:version > 801
 
 let g:markdown_fenced_languages = ['html', 'python', 'bash=sh']
 "let g:vimtk_default_mappings = 1
 
 "===========PLUGINS==========="
 
+"if has('nvim')
+"    call plug#begin('~/.local/share/nvim/site/autoload/plug.vim')
+"else
 call plug#begin($VIMFILES_DPATH . '/bundle')
+"endif
 
 Plug 'sjl/badwolf'
 Plug 'Erotemic/vimtk', {'branch': 'main', 'do': 'pip install -e .'}
@@ -225,6 +258,7 @@ call plug#end()            " required
 if filereadable($HOME_DPATH . "/.vim/bundle/vimtk/plugin/vimtk.vim")
     source $VIMFILES_DPATH/bundle/vimtk/plugin/vimtk.vim
     source $HOME/.vim/bundle/vimtk/plugin/vimtk.vim
+
 endif
 
 
@@ -488,8 +522,6 @@ endif
 "set visualbell
 "set noeb vb t_vb=
 
-" mkdir -p ~/.vim/files/info
-:set viminfo='100,n$VIMFILES_DPATH/files/info/viminfo
 let g:startify_bookmarks = ['~/.vimrc', '~/.bashrc']
 "python3 << EOF
 "listvars = {
@@ -547,7 +579,7 @@ if has("clipboard")
 endif
 
 
-endif
+"endif
 
 
 " Configure Neural like so in Vimscript
