@@ -16,8 +16,29 @@ if [[ $PWD == *remote* ]]; then
 fi
 
 BENCH_BASHRC=""
+function trace_tick(){
+    __doc__="
+    Helper to time shell scripts
+
+    References:
+        https://unix.stackexchange.com/questions/39644/how-can-i-profile-a-shell-script
+    "
+    local CURR_TIME=$(/usr/bin/python3 -c "import time; print(int(time.time()*1000))")
+    if [ -z "$LAST_TIME" ]
+    then
+        START_TIME=$CURR_TIME
+        LAST_TIME=$CURR_TIME
+    fi
+
+    local DELTA=$(("$CURR_TIME" - "$LAST_TIME"))
+    local TOTAL_DELTA=$(("$CURR_TIME" - "$START_TIME"))
+    LAST_TIME=$CURR_TIME
+
+    printf "elapsed(ms):%-6s delta(ms):%-6s %s\n" $TOTAL_DELTA $DELTA "$1"
+}
+
 if [ "$BENCH_BASHRC" ] ; then
-    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Start"
+    trace_tick "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Start"
 fi
 
 ######################
@@ -84,6 +105,7 @@ if [ -d "$HOME/.elan/bin" ]; then
 fi
 
 
+
 if [ -d "$HOME/.local/opt" ]; then
     #if [ -d "$HOME/.local/opt/android-studio" ]; then
     #    export PATH=$PATH:$HOME/.local/opt/android-studio/bin
@@ -107,7 +129,7 @@ fi
 
 
 if [ "$BENCH_BASHRC" ] ; then
-    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Pre tty"
+    trace_tick "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Pre tty"
 fi
 
 # Fix GPG signing for git commits
@@ -118,7 +140,7 @@ export GPG_TTY=$(tty)
 
 
 if [ "$BENCH_BASHRC" ] ; then
-    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Post tty"
+    trace_tick "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Post tty"
 fi
 
 
@@ -188,7 +210,7 @@ fi
 ##############
 
 if [ "$BENCH_BASHRC" ] ; then
-    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - SysLevel"
+    trace_tick "[BenchBashRC]: $(date "+%H:%M:%S:%N") - SysLevel"
 fi
 
 
@@ -198,7 +220,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:
 
 
 if [ "$BENCH_BASHRC" ] ; then
-    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - PreConda"
+    trace_tick "[BenchBashRC]: $(date "+%H:%M:%S:%N") - PreConda"
 fi
 
 ## Add the conda command to our environment if it exists
@@ -210,11 +232,11 @@ fi
 #fi
 
 if [ "$BENCH_BASHRC" ] ; then
-    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - PostConda"
+    trace_tick "[BenchBashRC]: $(date "+%H:%M:%S:%N") - PostConda"
 fi
 
 if [ "$BENCH_BASHRC" ] ; then
-    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - PrePyenv"
+    trace_tick "[BenchBashRC]: $(date "+%H:%M:%S:%N") - PrePyenv"
 fi
 
 #source $HOME/local/tools/pyenv_ext/pyenv_ext_commands.sh
@@ -223,15 +245,16 @@ export PYENV_ROOT="$HOME/.pyenv"
 if [ -d "$PYENV_ROOT" ]; then
     export PATH="$PYENV_ROOT/bin:$PATH"
     eval "$("$PYENV_ROOT"/bin/pyenv init -)"
-    eval "$("$PYENV_ROOT"/bin/pyenv init --path)"
+    #eval "$("$PYENV_ROOT"/bin/pyenv init --path)"
     #eval "$(pyenv init --path)"
     #eval "$(pyenv init -)"
     source "$PYENV_ROOT/completions/pyenv.bash"
     export PYENV_PREFIX
     PYENV_PREFIX=$(pyenv prefix)
+    #echo "PYENV_PREFIX = $PYENV_PREFIX"
 fi
 if [ "$BENCH_BASHRC" ] ; then
-    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - PostPyenv"
+    trace_tick "[BenchBashRC]: $(date "+%H:%M:%S:%N") - PostPyenv"
 fi
 
 
@@ -245,26 +268,26 @@ else
 fi
 
 if [ "$BENCH_BASHRC" ] ; then
-    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Source Utils"
+    trace_tick "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Source Utils"
 fi
 
 source "$HOME/local/init/utils.sh"
 
 if [ "$BENCH_BASHRC" ] ; then
-    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Source GitHelpers"
+    trace_tick "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Source GitHelpers"
 fi
 
 source "$HOME/local/homelinks/helpers/git_helpers.sh"
 
 if [ "$BENCH_BASHRC" ] ; then
-    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Source AliasHelpers"
+    trace_tick "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Source AliasHelpers"
 fi
 
 source "$HOME/local/homelinks/helpers/alias_helpers.sh"
 
 
 if [ "$BENCH_BASHRC" ] ; then
-    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - AfterSource"
+    trace_tick "[BenchBashRC]: $(date "+%H:%M:%S:%N") - AfterSource"
 fi
 
 # References:
@@ -338,7 +361,7 @@ export HISTFILESIZE=1000000
 
 
 if [ "$BENCH_BASHRC" ] ; then
-    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Python Env "
+    trace_tick "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Python Env "
 fi
 
 
@@ -401,7 +424,7 @@ fi
 
 
 if [ "$BENCH_BASHRC" ] ; then
-    echo "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Load local"
+    trace_tick "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Load local"
 fi
 
 
@@ -515,3 +538,8 @@ fi
 
 export PYTHONBREAKPOINT=ipdb.set_trace
 export PATH=$HOME/.local/bin/:$PATH
+
+
+if [ "$BENCH_BASHRC" ] ; then
+    trace_tick "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Finished"
+fi

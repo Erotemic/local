@@ -73,7 +73,6 @@ install_pyenv(){
     Ignore:
         export PATH="$PYENV_ROOT/bin:$PATH"
         eval "$($PYENV_ROOT/bin/pyenv init -)"
-        eval "$($PYENV_ROOT/bin/pyenv init -)"
 
     TODO:
         # https://github.com/pyenv/pyenv-installer
