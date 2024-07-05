@@ -29,9 +29,12 @@ export PATH=$INSTALL_PREFIX/bin:$PATH
 
 
 # Note: you may want to set these explicitly in your local bashrc
-export IPFS_PATH=$HOME/.ipfs
-export IPFS_CLUSTER_PATH=$HOME/.ipfs-cluster
+#export IPFS_PATH=$HOME/.ipfs
+#export IPFS_CLUSTER_PATH=$HOME/.ipfs-cluster
 
+
+# NOTE: its very important that this enviornment variable be the same between
+# local ipfs pin commands and the systemctl service running your ipfs daemon
 export IPFS_PATH=/data/ipfs
 export IPFS_CLUSTER_PATH=/data/ipfs-cluster
 #export IPFS_PATH=/flash/ipfs
@@ -356,7 +359,7 @@ install_go(){
     "
     ARCH="$(dpkg --print-architecture)"
     echo "ARCH = $ARCH"
-    GO_VERSION="1.22.2"
+    GO_VERSION="1.22.4"
     OS_KEY=linux
     GO_KEY=go${GO_VERSION}.${OS_KEY}-${ARCH}
     URL="https://go.dev/dl/${GO_KEY}.tar.gz"
@@ -365,6 +368,9 @@ install_go(){
     mkdir -p "$STAGING_DPATH"
 
     declare -A GO_KNOWN_HASHES=(
+        ["go1.22.4.linux-amd64-sha256"]="ba79d4526102575196273416239cca418a651e049c2b099f3159db85e7bade7d"
+        ["go1.22.4.linux-arm64-sha256"]="a8e177c354d2e4a1b61020aca3562e27ea3e8f8247eca3170e3fa1e0c2f9e771"
+
         ["go1.22.2.linux-amd64-sha256"]="5901c52b7a78002aeff14a21f93e0f064f74ce1360fce51c6ee68cd471216a17"
         ["go1.22.2.linux-arm64-sha256"]="36e720b2d564980c162a48c7e97da2e407dfcc4239e1e58d98082dfa2486a0c1"
 
@@ -1006,8 +1012,8 @@ check_ipfs_status(){
     ipfs config --json Identity.PeerID
 
     # Force providing a CID
-    ipfs dht provide bafybeie275n5f4f64vodekmodnktbnigsvbxktffvy2xxkcfsqxlie4hrm
-    ipfs dht provide bafybeihuem7qz2djallypbb6bo5z7ojqnjz5s4xj6j3c4w4aztqln4tbzu
+    ipfs routing provide bafybeie275n5f4f64vodekmodnktbnigsvbxktffvy2xxkcfsqxlie4hrm
+    ipfs routing provide bafybeihuem7qz2djallypbb6bo5z7ojqnjz5s4xj6j3c4w4aztqln4tbzu
 
     # Quick status
     systemctl -l status ipfs.service --no-pager
