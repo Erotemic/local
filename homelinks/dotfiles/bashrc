@@ -529,7 +529,7 @@ lfcd () {
 }
 alias lf=lfcd
 
-export AWS_DEFAULT_PROFILE=iarpa
+#export AWS_DEFAULT_PROFILE=iarpa
 
 
 if [[ "$_ORIG_DIR" != "" ]]; then
