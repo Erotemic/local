@@ -427,9 +427,12 @@ if [ "$BENCH_BASHRC" ] ; then
     trace_tick "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Load local"
 fi
 
+# For machine-specific bashrc things that will not be published on github
+if is_probably_decrypted "$HOME/.bashrc-erotemic-public.sh" > /dev/null ; then 
+    source "$HOME/.bashrc-erotemic-public.sh"
+fi
 
 if is_probably_decrypted "$HOME/.bashrc-erotemic.sh" > /dev/null ; then 
-    # For machine-specific bashrc things that will not be published on github
     source "$HOME/.bashrc-erotemic.sh"
 fi
 
