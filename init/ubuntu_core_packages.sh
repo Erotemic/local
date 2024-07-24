@@ -424,15 +424,15 @@ install_latex()
 {
     # texlive latest
     # https://www.tug.org/texlive/acquire-netinstall.html
-    echo 'latex'
+    #echo 'latex'
     # Latex (ubuntu uses texlive 2013, use something more recent)
-    sudo apt purge texlive texlive-base pgf -y
+    #sudo apt purge texlive texlive-base pgf -y
 
-    mkdir -p ~/tmp
-    cd ~/tmp
-    wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
-    tar xzvf install-tl-unx.tar.gz
-    cd ~/tmp/install-tl-*
+    #mkdir -p ~/tmp
+    #cd ~/tmp
+    #wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
+    #tar xzvf install-tl-unx.tar.gz
+    #cd ~/tmp/install-tl-*
     #export TEXDIR=/opt/texlive
     #export TEXDIR=$HOME/.local/texlive
 
@@ -470,6 +470,8 @@ install_latex()
     #sudo apt install texlive-latex-recommended texlive-latex-extra texlive-luatex texlive-luatex-extra latexmk -y
     sudo apt install texlive-latex-recommended texlive-latex-extra texlive-luatex latexmk -y
     luaotfload-tool --update
+
+    sudo apt-get install texlive-pictures texlive-science imagemagick
 
     # cd /usr/local/texlive/2015/bin/x86_64-linux
     # Installed to /usr/local/texlive/2015/
