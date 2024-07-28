@@ -1026,4 +1026,7 @@ cleanup(){
 
     # Remove old kernels and packages
     sudo apt-get autoremove
+
+    # Remove old docker images without at least one container associated to them.
+    docker image prune -a --filter "until=2160h"
 }

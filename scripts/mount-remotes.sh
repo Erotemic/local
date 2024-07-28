@@ -17,15 +17,18 @@ Notes:
 
     sudo mount -t cifs -o dir_mode=0777,file_mode=0777 -osec=ntlmv2,domain=$DOMAIN,username=$USERNAME,password=$PASSWORD //$SMB_NAME $HOME/remote/$SMB_NAME
 
+    TODO:
+
+    if a nautilus window is hanging on a remove directory you may need to killall -9 ssfh [SE59348]_.
+
 CommandLine:
 
     # Force mount a specific remote
     source ~/local/scripts/mount-remotes.sh
     mount_remote remotename
 
-
-
-    /home/joncrall/remote/yardrat/data/dvc-repos/smart_expt_dvc/_yardrat_bas_test/eval/flat/bas_poly_eval/bas_poly_eval_id_07a37793/confusion_analysis/site_viz/_flat/
+References:
+    .. [SE59348] https://askubuntu.com/questions/59348/nautilus-is-frozen-cannot-be-used-and-cannot-be-killed
 "
 
 
