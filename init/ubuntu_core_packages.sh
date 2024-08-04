@@ -2847,3 +2847,53 @@ install_neovim(){
 
     #mkdir "$HOME"/.config/nvim
 }
+
+
+monitor_pcie_bus(){
+    __doc__="
+    I want to measure the saturation of the BUS / PCIe lanes on the
+    motherboard. The CPU / GPU isn't useful if data can't be transferred
+    efficiently between disk, RAM, and the processing unit.
+
+    Perhaps PCM is a way to do this?
+
+    https://github.com/intel/pcm/discussions/804
+
+
+    Looks like it might not work on my CPU, and there might not be a general
+    solution:
+    https://unix.stackexchange.com/questions/102117/how-to-measure-pci-express-bus-usage
+    "
+    # Intel provides the Performance Counter Monitor (pcm)
+    # https://github.com/intel/pcm
+    sudo apt install pcm
+
+    sudo pcm
+
+
+    # Try with grafana using docker
+    # https://github.com/intel/pcm/blob/master/doc/DOCKER_README.md
+    modprobe msr
+    docker run -d --name pcm --privileged -p 9738:9738 ghcr.io/intel/pcm
+
+    # https://github.com/intel/pcm/blob/master/scripts/grafana/README.md
+    cd "$HOME/code"
+    git clone https://github.com/intel/pcm
+
+    cd "$HOME"/code/pcm/scripts/grafana
+    # Dont use local host, find the real ip of the system
+    sudo bash start.sh http://192.168.222.16:9738
+
+    # login with user/pass admin/admin
+
+
+    # Stop dashboard server
+    cd "$HOME"/code/pcm/scripts/grafana
+    sudo bash stop.sh
+
+    # Stop data server
+    docker stop pcm
+
+    # Check the docker server is stopped
+    docker ps
+}

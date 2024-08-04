@@ -174,7 +174,7 @@ Plug 'gu-fan/InstantRst'
 
 " Plug 'vim-scripts/taglist.vim'
 " Plug 'davidhalter/jedi-vim'
-" Plug 'LaTeX-Box-Team/LaTeX-Box'
+Plug 'LaTeX-Box-Team/LaTeX-Box'
 " Plug 'Erotemic/lean.vim'
 " Plug 'https://github.com/airblade/vim-gitgutter'
 " Plug 'cespare/vim-toml', {'branch': 'main' }

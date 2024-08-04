@@ -22,7 +22,10 @@ alias watch='watch -n .5'
 alias df='df -x"squashfs" -x"tmpfs"'
 
 #alias cgrep='grep -I --exclude-dir "*build*" --exclude-dir .git -ER'
-alias cgrep='grep -I -ER \
+alias cgrep='grep \
+    --binary-files=without-match \
+    --extended-regexp \
+    --dereference-recursive \
     --exclude-dir "build" \
     --exclude-dir "cmake-build" \
     --exclude-dir "build-*" \
@@ -52,6 +55,40 @@ alias cgrep='grep -I -ER \
     #--exclude "*.js" \
     #--exclude "*.html*" \
     #--exclude "*.css*" \
+    #
+
+alias cgrep2='grep \
+    --binary-files=without-match \
+    --extended-regexp \
+    --recursive \
+    --exclude-dir "build" \
+    --exclude-dir "cmake-build" \
+    --exclude-dir "build-*" \
+    --exclude-dir "build_*" \
+    --exclude-dir "node_modules" \
+    --exclude-dir "static" \
+    --exclude-dir ".mypy_cache" \
+    --exclude-dir .git \
+    --exclude-dir .pytest_cache \
+    --exclude-dir htmlcov \
+    --exclude-dir "volumes" \
+    --exclude-dir "*.egg-info" \
+    --exclude "searchindex.js" \
+    --exclude "*.dot*" \
+    --exclude "profile_output.*" \
+    --exclude "*.pipe*" \
+    --exclude "*.zip*" \
+    --exclude "*.pkl*" \
+    --exclude "*.pyc*" \
+    --exclude "*.so*" \
+    --exclude "*.o*" \
+    --exclude "*.coverage*" \
+    --exclude "*.ipynb*" \
+    --exclude "tags"'
+
+alias cgrep3='
+fd --no-follow --type file . --exec grep --extended-regexp --binary-files=without-match
+'
 
 
 alias fd='fdfind'
