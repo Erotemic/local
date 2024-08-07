@@ -422,6 +422,7 @@ if exists("g:loaded_vimtk")
     "call vimtk#quickopen('a', '~/code/VIAME/packages/kwiver/arrows')
 
     "call vimtk#quickopen('k', '~/code/kwiver')
+    call vimtk#quickopen('k', '~/code/smqtk-repos/SMQTK-IQR/smqtk_iqr/__init__.py')
     "call vimtk#quickopen('K', '~/code/VIAME/packages/kwiver')
 
     "call vimtk#quickopen('r', '~/code/kwiver/sprokit')

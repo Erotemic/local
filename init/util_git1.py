@@ -79,6 +79,7 @@ class Repo(object):
         if dpath is None and repo.url is not None and code_dir is not None:
             dpath = join(code_dir, repo.reponame)
         if dpath is not None:
+            dpath = os.fspath(dpath)
             repo.dpath = dpath.replace('\\', '/')
 
     def owner(repo):
@@ -213,31 +214,33 @@ class Repo(object):
         """
         import ubelt as ub
         prefix = repo.dpath
-        with ChdirContext(repo.dpath, verbose=False):
-            info = ub.cmd('git status', verbose=False)
-            out = info['out']
-            out = out.replace('-', ' ')
-            # parse git status
-            is_clean_msg1 = 'Your branch is up to date with'
-            is_clean_msgs = [
-                'nothing to commit, working directory clean',
-                'nothing to commit, working tree clean',
-            ]
-            msg2 = 'nothing added to commit but untracked files present'
+        info = ub.cmd('git status', verbose=False, cwd=repo.dpath)
+        out = info['out']
+        out = out.replace('-', ' ')
+        # parse git status
+        is_clean_msg1 = 'Your branch is up to date with'
+        is_clean_msgs = [
+            'nothing to commit, working directory clean',
+            'nothing to commit, working tree clean',
+        ]
+        msg2 = 'nothing added to commit but untracked files present'
 
-            needs_commit_msgs = [
-                'Changes to be committed',
-                'Changes not staged for commit',
-                'Your branch is ahead of',
-            ]
+        needs_commit_msgs = [
+            'Changes to be committed',
+            'Changes not staged for commit',
+            'Your branch is ahead of',
+        ]
 
-            suffix = ''
-            if is_clean_msg1 in out and any(msg in out for msg in is_clean_msgs):
-                suffix += ub.color_text('is clean', 'blue')
-            if msg2 in out:
-                suffix += ub.color_text('has untracked files', 'yellow')
-            if any(msg in out for msg in needs_commit_msgs):
-                suffix += ub.color_text('has changes', 'red')
+        suffix = ''
+        if is_clean_msg1 in out and any(msg in out for msg in is_clean_msgs):
+            suffix += ub.color_text('is clean', 'blue')
+        if msg2 in out:
+            suffix += ub.color_text('has untracked files', 'yellow')
+        if any(msg in out for msg in needs_commit_msgs):
+            suffix += ub.color_text('has changes', 'red')
+
+        branch_name = ub.cmd('git rev-parse --abbrev-ref HEAD', cwd=repo.dpath).stdout.strip()
+        suffix += f' branch: {branch_name}'
         print(prefix + ' ' + suffix)
 
     def is_gitrepo(repo):
@@ -338,11 +341,7 @@ def is_gitrepo(repo_dir):
     return exists(gitdir) and isdir(gitdir)
 
 
-if __name__ == '__main__':
-    """
-    python ~/local/init/util_git1.py list
-    python ~/local/init/util_git1.py clone_repos
-    """
+def main():
     varargs = sys.argv[1:]
 
     if len(varargs) == 1 and varargs[0] == 'clone_repos':
@@ -368,3 +367,11 @@ if __name__ == '__main__':
         command = ' '.join(varargs2)
         # Apply command to all repos
         gg_command(command)
+
+
+if __name__ == '__main__':
+    """
+    python ~/local/init/util_git1.py list
+    python ~/local/init/util_git1.py clone_repos
+    """
+    main()
