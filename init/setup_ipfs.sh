@@ -1154,7 +1154,8 @@ check_external_availability(){
     CHECK_URL="https://ipfs-check.on.fleek.co/?cid=${NEW_CID}&multiaddr=%2Fp2p%2F${PEER_ID}"
     echo "CHECK_URL = $CHECK_URL"
 
-    ipfs dht findprovs QmaRssZfmkya5LX53hoyxHgk4RzTvo9grUCcR412xCva4B
+    ipfs routing findprovs QmaRssZfmkya5LX53hoyxHgk4RzTvo9grUCcR412xCva4B
+    ipfs routing findprovs bafybeiedwp2zvmdyb2c2axrcl455xfbv2mgdbhgkc3dile4dftiimwth2y
     ipfs cat QmaRssZfmkya5LX53hoyxHgk4RzTvo9grUCcR412xCva4B
 
     # ip4/172.100.113.212/tcp/4001
@@ -1168,6 +1169,20 @@ check_external_availability(){
     # Check if port 4001 is open on the WAN
     WAN_IP_ADDRESS=$(curl ifconfig.me)
     echo "WAN_IP_ADDRESS = $WAN_IP_ADDRESS"
+}
+
+cid_info(){
+    # Show the number of GB of the file via CumulativeSize
+    ipfs files stat /ipfs/bafybeiedwp2zvmdyb2c2axrcl455xfbv2mgdbhgkc3dile4dftiimwth2y
+
+    # Get child nodes
+    ipfs refs bafybeiedwp2zvmdyb2c2axrcl455xfbv2mgdbhgkc3dile4dftiimwth2y | wc
+
+    # Number of total nodes in the tree
+    ipfs refs --recursive bafybeiedwp2zvmdyb2c2axrcl455xfbv2mgdbhgkc3dile4dftiimwth2y | wc
+
+    # Number of total unique nodes in the tree
+    ipfs refs --unique --recursive bafybeiedwp2zvmdyb2c2axrcl455xfbv2mgdbhgkc3dile4dftiimwth2y | wc
 }
 
 
