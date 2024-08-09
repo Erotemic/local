@@ -568,7 +568,7 @@ initialize_ipfs(){
     ipfs init --profile lowpower
 
     sudo systemctl start ipfs
-    sudo systemctl status ipfs
+    systemctl status ipfs --no-pager
 
     ## Swarm wont work until the daemon is running, so retry until it works
     #max_retry=60
@@ -942,6 +942,12 @@ install-ipfs-update(){
     ipfs-update install latest
 }
 
+migration_tool(){
+    wget https://dist.ipfs.tech/fs-repo-migrations/v2.0.2/fs-repo-migrations_v2.0.2_linux-amd64.tar.gz
+    tar -xvzf fs-repo-migrations_v2.0.2_linux-amd64.tar.gz
+    ./fs-repo-migrations/fs-repo-migrations
+}
+
 install-ipget(){
     # https://dist.ipfs.tech/#ipget
     curl -LJO https://dist.ipfs.tech/ipget/v0.9.1/ipget_v0.9.1_linux-amd64.tar.gz
@@ -1162,4 +1168,19 @@ check_external_availability(){
     # Check if port 4001 is open on the WAN
     WAN_IP_ADDRESS=$(curl ifconfig.me)
     echo "WAN_IP_ADDRESS = $WAN_IP_ADDRESS"
+}
+
+
+remove_all_pins(){
+    # References:
+    # https://stackoverflow.com/questions/43118022/how-do-i-unpin-and-remove-all-ipfs-content-from-my-machine
+    #
+    # List named pins
+    ipfs pin ls --type="recursive" --names
+
+    # Remove all pins
+    ipfs pin ls --type recursive | cut -d' ' -f1 | xargs -n1 ipfs pin rm
+
+    # Garbage collect to cleanup
+    ipfs repo gc
 }
