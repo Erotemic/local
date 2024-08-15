@@ -291,8 +291,10 @@ if [[ "$WITH_SSH_KEYS" == "True" ]]; then
 fi
 
 HAS_NVIDIA=$(which nvidia-smi)
-if [[ "$HAS_NVIDIA" != "" ]]; then
-    apt_ensure nvtop
+if [ "$HAVE_SUDO" == "True" ]; then
+    if [[ "$HAS_NVIDIA" != "" ]]; then
+        apt_ensure nvtop
+    fi
 fi
 
 if [[ "$SETUP_PYTHON" == "True" ]]; then

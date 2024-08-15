@@ -100,6 +100,7 @@ let g:ale_fixers = {'python': ['autoflake'], 'sh': ['shellcheck']}
 let g:ale_virtualtext_cursor=0
 
 
+
 "-------------------------
 "PLUGIN: Synstastic (DEPRECATED) 
 let g:syntastic_aggregate_errors = 1
@@ -258,6 +259,9 @@ vim.command('let g:ale_sh_shellcheck_options = "{}"'.format(shellcheck_args))
 vim.command('let g:ale_python_flake8_options = "{}"'.format(flake8_args))
 vim.command('let g:ale_cython_flake8_options = "{}"'.format(cython_flake8_args))
 EOF
+
+" References: https://github.com/dense-analysis/ale/issues/1646
+let g:ale_yaml_yamllint_options='-d "{extends: relaxed, rules: {line-length: disable}}"'
 
 "-------------------------
 " PLUGIN: Syntastic C++
