@@ -1139,24 +1139,21 @@ check_external_availability(){
     PEER_ID=$(ipfs config --json Identity.PeerID)
     echo "PEER_ID=$PEER_ID"
 
-    # Create a file unique to the specific node.
-    echo "The PeerID of $HOSTNAME is $PEER_ID" > unique_node_file.txt
-    ipfs add --progress --pin unique_node_file.txt | tee "unique_node_file.txt.pin.log"
-    NEW_CID=$(tail -n 1 unique_node_file.txt.pin.log | cut -d ' ' -f 2)
-    echo "NEW_CID=$NEW_CID"
-    # Give it a name
-    ipfs pin add --name "UniqueFileFor-${HOSTNAME}" --progress "$NEW_CID"
+    CID=bafybeiedwp2zvmdyb2c2axrcl455xfbv2mgdbhgkc3dile4dftiimwth2y
 
     # FOR MOJO: Qmc4RtnxBt6Tf6XAMuFraoDND5ofAFGJ4yUKL1YPxoYWbS
     # FOR IPFS: QmdJhwGS7Y5hd2HoHLWV8sBHwTPadP89WQZxXFLCob74or
 
     # Generate URL to check its availability
-    CHECK_URL="https://ipfs-check.on.fleek.co/?cid=${NEW_CID}&multiaddr=%2Fp2p%2F${PEER_ID}"
+    CHECK_URL="https://ipfs-check.on.fleek.co/?cid=${CID}&multiaddr=%2Fp2p%2F${PEER_ID}"
     echo "CHECK_URL = $CHECK_URL"
 
     ipfs routing findprovs QmaRssZfmkya5LX53hoyxHgk4RzTvo9grUCcR412xCva4B
     ipfs routing findprovs bafybeiedwp2zvmdyb2c2axrcl455xfbv2mgdbhgkc3dile4dftiimwth2y
     ipfs cat QmaRssZfmkya5LX53hoyxHgk4RzTvo9grUCcR412xCva4B
+
+    # It might help downloads if your seeding node makes an announcement
+    ipfs routing provide bafybeiedwp2zvmdyb2c2axrcl455xfbv2mgdbhgkc3dile4dftiimwth2y
 
     # ip4/172.100.113.212/tcp/4001
     # Check
@@ -1171,6 +1168,18 @@ check_external_availability(){
     echo "WAN_IP_ADDRESS = $WAN_IP_ADDRESS"
 }
 
+peer_stuff(){
+    # http://bafybeiffgolqh2atgstf6kwuch7yyqfikyucio4rhvbmtusrfdeucptmae.ipfs.localhost:8080/how-to/observe-peers/
+    # See who you're directly connected to:
+    ipfs swarm peers
+
+    PEER_ID=12D3KooWCFcfiBevjQD42aRAELMUZXAGScRiN2NcAthokF4dMnVU
+    # Search for a peer
+    ipfs routing findpeer $PEER_ID
+    # Manually connect to a specific peer
+    ipfs swarm connect /p2p/12D3KooWCFcfiBevjQD42aRAELMUZXAGScRiN2NcAthokF4dMnVU
+}
+
 cid_info(){
     # Show the number of GB of the file via CumulativeSize
     ipfs files stat /ipfs/bafybeiedwp2zvmdyb2c2axrcl455xfbv2mgdbhgkc3dile4dftiimwth2y
@@ -1183,6 +1192,18 @@ cid_info(){
 
     # Number of total unique nodes in the tree
     ipfs refs --unique --recursive bafybeiedwp2zvmdyb2c2axrcl455xfbv2mgdbhgkc3dile4dftiimwth2y | wc
+}
+
+
+test_unique_pin_data(){
+
+    # Create a file unique to the specific node.
+    echo "The PeerID of $HOSTNAME is $PEER_ID" > unique_node_file.txt
+    ipfs add --progress --pin unique_node_file.txt | tee "unique_node_file.txt.pin.log"
+    NEW_CID=$(tail -n 1 unique_node_file.txt.pin.log | cut -d ' ' -f 2)
+    echo "NEW_CID=$NEW_CID"
+    # Give it a name
+    ipfs pin add --name "UniqueFileFor-${HOSTNAME}" --progress "$NEW_CID"
 }
 
 

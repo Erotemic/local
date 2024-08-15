@@ -1,6 +1,6 @@
 # http://matplotlib.org/users/customizing.html
 
-backend     : Qt5Agg
+backend     : QtAgg
 #backend.qt5 : PyQt5
 #backend.qt5 : PyQt5
 backend_fallback : True

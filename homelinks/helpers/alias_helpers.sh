@@ -216,6 +216,9 @@ alias dei='docker_execinto'
 
 alias dmsg=dmesg
 
+#unalias check_json
+alias check_json='python3 -c "import json, sys, pathlib; print(json.loads(pathlib.Path(sys.argv[1]).read_text()))"'
+
 
 alias drl='docker_run_last'
 docker_run_last(){

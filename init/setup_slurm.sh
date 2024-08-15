@@ -206,9 +206,7 @@ setup_machine_hardware_variables(){
 
     CONTROL_MACHINE=$HOSTNAME
 
-    #lsb_release -a | grep "21.10"
-    lsb_release -a | grep "20.04"
-    if [[ "$?" == "0" ]]; then
+    if lsb_release -a | grep "20.04" ; then
         IS_2004=True
     fi
     echo "IS_2004 = $IS_2004"
@@ -355,9 +353,11 @@ generate_slurm_config(){
             SlurmdDebug=3
             SlurmdLogFile=$SLURM_LOG_DPATH/slurmd.log
             NodeName=$CONTROL_MACHINE Gres=gpu:$NUM_GPUS NodeAddr=localhost CPUs=$NUM_CPUS RealMemory=$MAX_MEMORY Sockets=$NUM_SOCKETS CoresPerSocket=$NUM_CORES ThreadsPerCore=$NUM_THREADS_PER_CORE State=UNKNOWN TmpDisk=223895
-            PartitionName=bot Nodes=$CONTROL_MACHINE Default=YES MaxTime=INFINITE State=UP Priority=0
+            PartitionName=bot Nodes=$CONTROL_MACHINE Default=NO MaxTime=INFINITE State=UP Priority=0
             PartitionName=mid Nodes=$CONTROL_MACHINE Default=NO MaxTime=INFINITE State=UP Priority=10
             PartitionName=top Nodes=$CONTROL_MACHINE Default=NO MaxTime=INFINITE State=UP Priority=100
+            PartitionName=community Nodes=$CONTROL_MACHINE Default=YES MaxTime=INFINITE State=UP Priority=1
+            PartitionName=priority Nodes=$CONTROL_MACHINE Default=YES MaxTime=INFINITE State=UP Priority=99
             PreemptType=preempt/partition_prio
             PreemptMode=REQUEUE
             ")
@@ -434,12 +434,16 @@ generate_slurm_config(){
         PartitionName=bot Nodes=$CONTROL_MACHINE Default=NO MaxTime=INFINITE State=UP Priority=0
         PartitionName=mid Nodes=$CONTROL_MACHINE Default=NO MaxTime=INFINITE State=UP Priority=10
         PartitionName=top Nodes=$CONTROL_MACHINE Default=NO MaxTime=INFINITE State=UP Priority=100
+        PartitionName=community Nodes=$CONTROL_MACHINE Default=YES MaxTime=INFINITE State=UP Priority=1
+        PartitionName=priority Nodes=$CONTROL_MACHINE Default=YES MaxTime=INFINITE State=UP Priority=99
         ")
 
         # Replaced new parts
         # NodeName=linux[1-32] CPUs=16 RealMemory=62943 Sockets=2 CoresPerSocket=8 ThreadsPerCore=2 State=UNKNOWN
 
         # These are the new locations that need fixed permissions
+        sudo mkdir -p /var/spool/slurmd
+        sudo mkdir -p /var/spool/slurmctld
         sudo chown slurm:slurm /var/spool/slurmd
         sudo chown slurm:slurm /var/spool/slurmctld
     fi
@@ -851,6 +855,14 @@ slurm_usage_and_options(){
 }
 
 
+postinstall_test(){
+    __doc__="
+    Tests a few commands to check that the service is correctly running after
+    install
+    "
+}
+
+
 run_fresh_slurm_install(){
     __doc__="
     Perform a fresh install of slurm.
@@ -875,4 +887,5 @@ run_fresh_slurm_install(){
     ensure_slurm_binaries
     generate_slurm_config
     activate_slurm
+    postinstall_test
 }
