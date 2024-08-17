@@ -1186,3 +1186,10 @@ fix_2204_slow_terminal(){
     sudo apt-get install gir1.2-mutter-10=42.9-0ubuntu7vv1 mutter-common=42.9-0ubuntu7vv1 libmutter-10-0=42.9-0ubuntu7vv1
     sudo apt-mark hold gir1.2-mutter-10 mutter-common libmutter-10-0
 }
+
+install_nodejs(){
+# On Ubuntu 22.04
+# https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-22-04
+sudo apt install nodejs
+sudo apt install npm
+}

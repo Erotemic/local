@@ -1041,6 +1041,20 @@ curl_verify_hash(){
         BASENAME=$(basename "$URL")
         curl_verify_hash "$URL" "$BASENAME" "$EXPECTED_HASH" sha256sum "-L"
 
+    A no-dependency snippet that can be used in place of this looks like
+
+    .. code::
+
+        URL=https://file-examples-com.github.io/uploads/2017/02/file_example_JSON_1kb.json
+        DST=file_example_JSON_1kb.json
+        EXPECTED_SHA256="70d613e3acfba24fd2876fcbacaf639e1e111ef4d54baf70761c47673f37d6a3"
+        curl "$URL" -o "$DST"
+        if echo "${EXPECTED_SHA256} $DST" | sha256sum --status -c ; then
+            echo "checksum is ok"
+        else
+            echo "ERROR checksum is NOT the same"
+        fi
+
     Notes:
        To verify a hash without this special command you can use the following pattern, first we setup demodata,
        to illustrate this.
@@ -1171,6 +1185,20 @@ curl_grabdata(){
         EXPECTED_HASH="$EXPECTED_HASH" \
         VERBOSE=1 \
             curl_grabdata
+
+    A no-dependency snippet that can be used in place of this looks like
+
+    .. code::
+
+        URL=https://file-examples-com.github.io/uploads/2017/02/file_example_JSON_1kb.json
+        DST=file_example_JSON_1kb.json
+        EXPECTED_SHA256="70d613e3acfba24fd2876fcbacaf639e1e111ef4d54baf70761c47673f37d6a3"
+        curl "$URL" -o "$DST"
+        if echo "${EXPECTED_SHA256} $DST" | sha256sum --status -c ; then
+            echo "checksum is ok"
+        else
+            echo "ERROR checksum is NOT the same"
+        fi
     '
     _handle_help "$@" || return 0
 

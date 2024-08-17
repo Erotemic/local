@@ -435,7 +435,9 @@ install_ipfs(){
     References:
         https://dist.ipfs.tech/#kubo
         https://dist.ipfs.io/kubo/
+        https://dist.ipfs.tech/kubo/v0.29.0/
     "
+
     # IPFS itself
     mkdir -p "$HOME/temp/setup-ipfs"
     # shellcheck disable=SC2164
@@ -447,7 +449,7 @@ install_ipfs(){
     echo "ARCH = $ARCH"
     IPFS_VERSION="v0.29.0"
     IPFS_KEY=kubo_${IPFS_VERSION}_linux-${ARCH}
-    URL="https://dist.ipfs.io/kubo/${IPFS_VERSION}/${IPFS_KEY}.tar.gz"
+    URL="https://dist.ipfs.tech/kubo/${IPFS_VERSION}/${IPFS_KEY}.tar.gz"
     #IPFS_KEY=go-ipfs_${IPFS_VERSION}_linux-${ARCH}
     #URL="https://dist.ipfs.io/go-ipfs/${IPFS_VERSION}/${IPFS_KEY}.tar.gz"
     #declare -A IPFS_KNOWN_HASHES=(
@@ -471,9 +473,15 @@ install_ipfs(){
         ["kubo_v0.29.0_linux-arm64-sha512"]="40703f884caa717c24d95867facb23d485ca5d7f41a93c60e33c5adbdb67375159b5e3aa76daaebb61b7d0b10498154f6b23acc2f260a34e036f852df7e588d7"
 
     )
+    #DST=$(basename "$URL")
+    #EXPECTED_SHA512="$EXPECTED_HASH"
+    #curl "$URL" -o "$DST"
+    #if echo "${EXPECTED_SHA512} $DST" | sha512sum --status -c ; then
+    #    echo "checksum is ok"
+    #else
+    #    echo "ERROR checksum is NOT the same"
+    #fi
     EXPECTED_HASH="${IPFS_KNOWN_HASHES[${IPFS_KEY}-sha512]}"
-    echo "IPFS_KEY = $IPFS_KEY"
-    echo "EXPECTED_HASH = $EXPECTED_HASH"
     BASENAME=$(basename "$URL")
     curl_verify_hash "$URL" "$BASENAME" "$EXPECTED_HASH" sha512sum
 
