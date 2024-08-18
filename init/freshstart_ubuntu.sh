@@ -1179,12 +1179,16 @@ startup_disk_creator(){
 
 fix_2204_slow_terminal(){
     # https://askubuntu.com/questions/1509058/input-delay-on-terminal-ubuntu-22-04-4/1509474#1509474
+    # https://bugs.launchpad.net/ubuntu/+source/mutter/+bug/2059847
     sudo add-apt-repository ppa:vanvugt/mutter
     sudo apt update
     sudo apt upgrade
 
     sudo apt-get install gir1.2-mutter-10=42.9-0ubuntu7vv1 mutter-common=42.9-0ubuntu7vv1 libmutter-10-0=42.9-0ubuntu7vv1
     sudo apt-mark hold gir1.2-mutter-10 mutter-common libmutter-10-0
+
+    # Test is the issue is fixed?
+    sudo apt-mark unhold gir1.2-mutter-10 mutter-common libmutter-10-0
 }
 
 install_nodejs(){
