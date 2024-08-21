@@ -2897,3 +2897,30 @@ monitor_pcie_bus(){
     # Check the docker server is stopped
     docker ps
 }
+
+install_nodejs(){
+
+    # https://nodejs.org/en/download
+    URL=https://nodejs.org/dist/v22.6.0/node-v22.6.0-linux-x64.tar.xz
+    DST=node.tar.xz
+    EXPECTED_SHA256="acbbe539edc33209bb3e1b25f7545b5ca5d70e6256ed8318e1ec1e41e7b35703"
+    curl "$URL" -o "$DST"
+    if echo "${EXPECTED_SHA256} $DST" | sha256sum --status -c ; then
+        echo "checksum is ok"
+    else
+        echo "ERROR checksum is NOT the same"
+    fi
+
+
+    INSTALL_PREFIX="$HOME/.local/opt"
+    mkdir -p "$INSTALL_PREFIX"
+    tar -xvf "$DST" -C "$INSTALL_PREFIX"
+    ln -s "$INSTALL_PREFIX/node-v22.6.0-linux-x64" "$INSTALL_PREFIX/node"
+
+    if [ -d "$HOME/.local/opt/node" ]; then
+        export PATH=$PATH:$HOME/.local/opt/node/bin
+        export CPATH=$HOME/.local/opt/node/include:$CPATH
+        export LD_LIBRARY_PATH=$HOME/.local/opt/node/lib:$LD_LIBRARY_PATH
+    fi
+
+}

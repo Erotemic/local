@@ -25,7 +25,8 @@ def oscmd(command):
 
 class ChdirContext(object):
     """
-    References http://www.astropython.org/snippet/2009/10/chdir-context-manager
+    References:
+        http://www.astropython.org/snippet/2009/10/chdir-context-manager
     """
     def __init__(self, dpath=None, stay=False, verbose=None):
         if verbose is None:
@@ -269,6 +270,26 @@ def gitcmd(repo, command):
         repo_.issue(command)
 
 
+def bashcmd(repo, command):
+    try:
+        import ubelt as ub
+    except ImportError:
+        print()
+        print('WARNING: NO UBELT')
+        print("************")
+        try:
+            print('repo=%s' % ub.color_text(repo.dpath, 'yellow'))
+        except Exception:
+            print('repo = %r ' % (repo,))
+        os.chdir(repo)
+        os.system(command)
+        print("************")
+    else:
+        ub.cmd(command, shell=True, cwd=repo, verbose=3)
+        # repo_ = Repo(dpath=repo)
+        # repo_.issue(command)
+
+
 def gg_command(command):
     """ Runs a command on all of your PROJECT_REPOS """
     errors = []
@@ -276,6 +297,24 @@ def gg_command(command):
         try:
             if exists(repo) and exists(join(repo, '.git')):
                 gitcmd(repo, command)
+            else:
+                raise Exception('No checkout for {}'.format(repo))
+        except Exception as ex:
+            errors.append((repo, ex))
+
+    if errors:
+        print('There were {} errors'.format(len(errors)))
+        for repo, ex in errors:
+            print('ex = {!r} in {!r}'.format(ex, repo))
+
+
+def run_bash_command_in_repos(command):
+    """ Runs a command on all of your PROJECT_REPOS """
+    errors = []
+    for repo in REPOS1.PROJECT_REPOS:
+        try:
+            if exists(repo) and exists(join(repo, '.git')):
+                bashcmd(repo, command)
             else:
                 raise Exception('No checkout for {}'.format(repo))
         except Exception as ex:
@@ -318,7 +357,7 @@ def setup_develop_repos(repo_dirs):
     for repodir in repo_dirs:
         print('Installing: ' + repodir)
         cd(repodir)
-        assert exists('setup.py'), 'cannot setup a nonpython repo'
+        assert exists('setup.py') or exists('pyproject.toml'), 'cannot setup a nonpython repo'
         oscmd('python setup.py develop')
 
 
@@ -348,6 +387,9 @@ def main():
         clone_repos()
     if len(varargs) == 1 and varargs[0] == 'install_repos':
         install_repos()
+    if varargs[0] in {'cmd', 'command'}:
+        assert len(varargs) > 1
+        run_bash_command_in_repos(varargs[1:])
     elif len(varargs) == 1 and varargs[0] == 'list':
         for repodir, repourl in zip(REPOS1.PROJECT_REPOS, REPOS1.PROJECT_URLS):
             try:

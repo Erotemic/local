@@ -41,12 +41,14 @@ install_nivida_drivers_apt(){
     sudo apt autoremove
     sudo apt list --installed | grep nvidia
 
+    # Seems stable on Ubuntu 22.04
     sudo apt install nvidia-driver-535
 
     sudo apt install nvidia-driver-545
 
     sudo apt install nvidia-driver-530
 
+    sudo apt install nvidia-driver-550
 
     # Restart, ensure you have tpl-archive and then run
     #ls ~/tpl-archive/cuda
