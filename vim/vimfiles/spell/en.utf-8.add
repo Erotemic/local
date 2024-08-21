@@ -522,3 +522,6 @@ ducktype
 timesteps
 timestep
 KWCOCO
+datasheet
+heatmaps
+pixelwise
