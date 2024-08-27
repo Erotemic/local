@@ -30,6 +30,14 @@ CommandLine:
 References:
     .. [SE59348] https://askubuntu.com/questions/59348/nautilus-is-frozen-cannot-be-used-and-cannot-be-killed
 "
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
+	# Running as a script
+	set -eo pipefail
+fi
+
+if [[ "${DEBUG_MOUNT_REMOTES+x}" != "" ]]; then
+	set -x
+fi
 
 
 setup_local_pseudo_mount(){
@@ -59,8 +67,8 @@ is_available(){
 
     "
     if [ "$(which fping)" == "" ];  then
-        echo "Error: fping is not installed. sudo apt install fping"
-        exit 1
+        >&2 echo "Error: fping is not installed. sudo apt install fping"
+        return 1
     fi
     REMOTE=$1
     RESULT="$(fping -c1 -t100 "$REMOTE" 2>&1 >/dev/null | grep 1/1/0)"
@@ -101,6 +109,7 @@ mount_remote(){
     # Basic
     sshfs -o follow_symlinks,idmap=user "$REMOTE": "$MOUNTPOINT"
 
+    echo "Mounted on: $MOUNTPOINT"
     # Experimental Options?
     #sshfs -o follow_symlinks,idmap=user,max_conns=4 "$REMOTE": "$MOUNTPOINT"
     #sshfs -o follow_symlinks,idmap=user,max_conns=4,auto_cache,reconnect "$REMOTE": "$MOUNTPOINT"
@@ -131,12 +140,14 @@ mount_remote_if_available(){
         if [ ! -L "$MOUNTPOINT" ]; then
             echo "Creating symlink to home"
             ln -s "$HOME" "$MOUNTPOINT"
+            echo "Mounted on: $MOUNTPOINT"
         fi
         exit 0
     fi
 
     if [ "$(already_mounted "$MOUNTPOINT")" != "" ]; then
         echo "Already mounted: $REMOTE"
+        echo "Mounted on: $MOUNTPOINT"
     else
         if [ "$FORCE" != "" ]; then
             mount_remote "$REMOTE"
@@ -204,13 +215,7 @@ unmount_if_mounted()
     fi
 }
 
-
-# https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
-#
-if [[ ${BASH_SOURCE[0]} != "$0" ]]; then
-    # We are sourcing the library
-    echo "Sourcing prepare_system as a library and environment"
-else
+mount_remotes_main(){
 
     if [[ $# -gt 0 ]]; then
         POSITIONAL=()
@@ -272,4 +277,16 @@ else
     #fi
     # FOR UNMOUNT
     # fusermount -u ~/remote1
+
+}
+
+
+# https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
+#
+if [[ ${BASH_SOURCE[0]} != "$0" ]]; then
+    # We are sourcing the library
+    echo "Sourcing prepare_system as a library and environment"
+else
+    mount_remotes_main "${@}"
+    exit $?
 fi
