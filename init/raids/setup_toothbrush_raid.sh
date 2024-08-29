@@ -33,7 +33,7 @@ resetup_raid_after_os_reinstall()
     sudo mount /dev/md0 /media/"$USER"/raid
     # Modify fstab so RAID auto-mounts at startup
     sudo sh -c "echo '# appended to fstab by by install scripts' >> /etc/fstab"
-    sudo sh -c "echo 'UUID=4bf557b1-cbf7-414c-abde-a09a25e351a6  /media/$USER/raid              ext4    defaults        0 0' >> /etc/fstab"
+    sudo sh -c "echo 'UUID=4bf557b1-cbf7-414c-abde-a09a25e351a6  /media/$USER/raid              ext4    defaults,noatime        0 0' >> /etc/fstab"
 
     sudo ln -s /media/"$USER"/raid /raid
 }
@@ -192,7 +192,7 @@ MOUNT_DPATH=/media/$USER/raid
 echo "MOUNT_DPATH = $MOUNT_DPATH"
 sudo sh -c "echo '# appended to fstab raid setup scripts' >> /etc/fstab"
 #sudo sh -c "echo 'UUID=$MD0_UUID  $MOUNT_DPATH              ext4    defaults        0 0' >> /etc/fstab"
-sudo sh -c "echo '/dev/md0  $MOUNT_DPATH              ext4    defaults        0 0' >> /etc/fstab"
+sudo sh -c "echo '/dev/md0  $MOUNT_DPATH              ext4    defaults,noatime        0 0' >> /etc/fstab"
 
 __directory_setup(){
     mkdir -p /raid/home
@@ -256,7 +256,7 @@ f2fs_notes(){
     sudo mount "$DEVICE_DPATH" "$MOUNT_DPATH"
     #sudo umount $MOUNT_DPATH
 
-    FSTAB_LINE="${DEVICE_DPATH}  ${MOUNT_DPATH}              $FS_FORMAT    defaults        0 0  # from erotemic local"
+    FSTAB_LINE="${DEVICE_DPATH}  ${MOUNT_DPATH}              $FS_FORMAT    defaults,noatime        0 0  # from erotemic local"
     grep "$FSTAB_LINE" /etc/fstab || sudo sh -c "echo '$FSTAB_LINE' >> /etc/fstab"
 
 
@@ -312,7 +312,7 @@ btrfs_notes(){
     sudo chmod 777 "$MOUNT_DPATH"
     #sudo umount $MOUNT_DPATH
 
-    FSTAB_LINE="${DEVICE_DPATH}  ${MOUNT_DPATH}              $FS_FORMAT    defaults        0 0  # from erotemic local"
+    FSTAB_LINE="${DEVICE_DPATH}  ${MOUNT_DPATH}              $FS_FORMAT    defaults,noatime        0 0  # from erotemic local"
     grep "$FSTAB_LINE" /etc/fstab || sudo sh -c "echo '$FSTAB_LINE' >> /etc/fstab"
 
     ln -s "/media/$USER/flash1" "$HOME/flash1"
@@ -612,7 +612,7 @@ readd_flash1(){
 
         #sudo umount $MOUNT_DPATH
 
-        FSTAB_LINE="${DEVICE_DPATH}  ${MOUNT_DPATH}              $FS_FORMAT    defaults        0 0  # from erotemic local"
+        FSTAB_LINE="${DEVICE_DPATH}  ${MOUNT_DPATH}              $FS_FORMAT    defaults,noatime        0 0  # from erotemic local"
         echo "FSTAB_LINE = $FSTAB_LINE"
         grep "$FSTAB_LINE" /etc/fstab || sudo sh -c "echo '$FSTAB_LINE' >> /etc/fstab"
 

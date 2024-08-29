@@ -14,30 +14,30 @@
 # Each column (chunk of 2) reads from right (on top) to left (on bottom)
 
 #========================================================================
-# MoboPort Name | Software Device |  Disk Device    |  Serial Num        
+# MoboPort Name | Software Device |  Disk Device    |  Serial Num
 #========================================================================
-# ------------------------------- ----------------- ----------------- --                
-# SATA6G_E1     |  /dev/sde       |  Kingston SSD   |  50026B733300D0C7  
+# ------------------------------- ----------------- ----------------- --
+# SATA6G_E1     |  /dev/sde       |  Kingston SSD   |  50026B733300D0C7
 # SATA6G_E2     |  /dev/sdf       |  Baracuda1-17   |  Z4Z8A5GH
-# ------------------------------- ----------------- ----------------- --                
+# ------------------------------- ----------------- ----------------- --
 # SATA6G_1      |  /dev/sda       |  Baracuda2-17   |  Z504SR71
 # SATA6G_2      |  /dev/sdb       |  Baracuda3-17   |  Z4Z89N84
-# ------------------------------- ----------------- ----------------- --                
+# ------------------------------- ----------------- ----------------- --
 # SATA3G_3      |  /dev/sdc       |  Baracuda4-13   |  Z1E1V25E
 # SATA3G_4      |  /dev/sdd       |  Top HDD Mount  |  <variable>
-# ------------------------------- ----------------- ----------------- --                
+# ------------------------------- ----------------- ----------------- --
 # SATA3G_4      |  /dev/sd?       |  Top ESATA Port |  <variable>
 # SATA3G_5      |  /dev/sr0       |  Optical Disk   |  3743524285_2L8034501
-# ------------------------------- ----------------- ----------------- --               
+# ------------------------------- ----------------- ----------------- --
 #========================================================================
 
 
-# SATA6G_E1     |  /dev/sde       |  Kingston SSD   |  50026B733300D0C7  
+# SATA6G_E1     |  /dev/sde       |  Kingston SSD   |  50026B733300D0C7
 # SATA6G_E2     |  /dev/sdf       |  Baracuda17 no1 |  Z4Z8A5GH
-# ------------------------------- ----------------- ----------------- --                
+# ------------------------------- ----------------- ----------------- --
 # SATA6G_1      |  /dev/sda       |  Baracuda17 no2 |  Z504SR71
 # SATA6G_2      |  /dev/sdb       |  Baracuda17 no3 |  Z4Z89N84
-# ------------------------------- ----------------- ----------------- --                
+# ------------------------------- ----------------- ----------------- --
 # SATA3G_3      |  /dev/sdc       |  Baracuda13 no4 |  Z1E1V25E
 
 
@@ -48,21 +48,21 @@ resetup_raid_after_os_reinstall()
     # raid to get things working again
     sudo apt-get install gdisk mdadm rsync -y
     # Simply scan for your preconfigured raid
-    sudo mdadm --assemble --scan 
+    sudo mdadm --assemble --scan
     # Mount the RAID (temporary. modify fstab to automount)
     sudo mkdir -p /media/joncrall/raid
     sudo mount /dev/md0 /media/joncrall/raid
     # Modify fstab so RAID auto-mounts at startup
     sudo sh -c "echo '# appended to fstab by by install scripts' >> /etc/fstab"
-    sudo sh -c "echo 'UUID=4bf557b1-cbf7-414c-abde-a09a25e351a6  /media/joncrall/raid              ext4    defaults        0 0' >> /etc/fstab"
+    sudo sh -c "echo 'UUID=4bf557b1-cbf7-414c-abde-a09a25e351a6  /media/joncrall/raid              ext4    defaults,noatime        0 0' >> /etc/fstab"
 
     sudo ln -s /media/joncrall/raid /raid
 }
 
 
 
-# Show all devices wheter or not they are mounted 
-lsblk 
+# Show all devices wheter or not they are mounted
+lsblk
 cat /proc/scsi/scsi
 lsblk --scsi
 lsblk --scsi --output NAME,KNAME,LABEL,MOUNTPOINT,UUID,PARTTYPE,PARTUUID,MODEL,TYPE,SIZE,STATE | grep disk
@@ -79,7 +79,7 @@ lsblk --scsi
 
 
 
-# Define disks (represents unique hard drives connected to the motherboard) 
+# Define disks (represents unique hard drives connected to the motherboard)
 DISK1=/dev/sde
 DISK2=/dev/sda
 DISK3=/dev/sdb

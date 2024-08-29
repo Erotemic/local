@@ -79,7 +79,7 @@ sudo mkdir -p "$MOUNT_DPATH"
 sudo chown "$MOUNT_OWNER":"$MOUNT_GROUP" "$MOUNT_DPATH"
 
 # Setup fstab to auto-mount the device on startup (if it doesnt exist)
-FSTAB_LINE="${DEVICE_DPATH}  ${MOUNT_DPATH}              $FS_FORMAT    defaults        0 0  # from flash setup script"
+FSTAB_LINE="${DEVICE_DPATH}  ${MOUNT_DPATH}              $FS_FORMAT    defaults,noatime        0 0  # from flash setup script"
 grep "^$FSTAB_LINE" /etc/fstab || sudo sh -c "echo '$FSTAB_LINE' >> /etc/fstab"
 
 # Mount the device if the mount point exists, but the device is unmounted
