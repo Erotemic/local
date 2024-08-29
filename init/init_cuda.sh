@@ -44,6 +44,8 @@ install_nivida_drivers_apt(){
     # Seems stable on Ubuntu 22.04
     sudo apt install nvidia-driver-535
 
+    sudo apt install nvidia-driver-560  # dne
+
     sudo apt install nvidia-driver-545
 
     sudo apt install nvidia-driver-530

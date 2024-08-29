@@ -2,7 +2,7 @@
 __notes__='
 
 Get ubuntu version:
-    lsb_release -a”
+    lsb_release -a
 
 '
 
@@ -18,6 +18,11 @@ __install_gcc11_on_2004__(){
     # Make cmake recognize gcc11 first
     export CC=gcc-11
     export CXX=g++-11
+
+    # prereq
+    # LDflags needed for 20.04
+    export LDFLAGS='-ldl'
+    pip install cmake
 }
 
 git_ensure(){
@@ -36,6 +41,7 @@ cd "$HOME/code/btop/build"
 cmake -DCMAKE_INSTALL_PREFIX="$HOME/.local" -DBTOP_GPU=true "$HOME/code/btop"
 make -j9
 make install
+
 
 cd "$HOME/code/btop"
 PREFIX=$HOME/.local make

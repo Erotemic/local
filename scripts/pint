@@ -4,7 +4,7 @@ Standalone variant:
 
 python -c "import pint; print(pint.UnitRegistry().parse_expression('$1').to('$2'))"
 
-
+See xdev pint instead.
 """
 
 
@@ -16,6 +16,12 @@ def main():
     parser.add_argument('output_unit')
     args = parser.parse_args()
     ureg = pint.UnitRegistry()
+    ureg.define('gb = 1 * gigabyte = _ = GB')
+    ureg.define('mb = 1 * megabyte = _ = MB')
+    ureg.define('kb = 1 * kilobyte = _ = KB')
+    ureg.define('gib = 1 * gibibyte = _ = GiB')
+    ureg.define('mib = 1 * mebibyte = _ = MiB')
+    ureg.define('kib = 1 * kibibyte = _ = KiB')
     input = ureg.parse_expression(args.input_expr)
     output = input.to(args.output_unit)
     print(output.m)

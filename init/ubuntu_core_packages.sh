@@ -2924,3 +2924,22 @@ install_nodejs(){
     fi
 
 }
+
+ollama_via_docker(){
+    # https://hub.docker.com/r/ollama/ollama
+
+    # Given a machine setup with nvidia docker, run the ollama sever
+    docker run -d --gpus=all -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+
+    # And instruct it to download and run one of these models, depending on what you have resources for:
+    docker exec -it ollama ollama run llama3
+    docker exec -it ollama ollama run llama3.1:70b
+    docker exec -it ollama ollama run llama3.1:405b
+}
+
+
+disk_usage_checker(){
+    # https://www.reddit.com/r/linux/comments/mk9wuq/cli_replacement_for_baobab_disk_usage_analyzer/
+    # https://dev.yorhel.nl/ncdu
+    sudo apt install ncdu
+}
