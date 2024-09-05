@@ -2931,10 +2931,12 @@ ollama_via_docker(){
     # Given a machine setup with nvidia docker, run the ollama sever
     docker run -d --gpus=all -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
 
+    docker start ollama
+
     # And instruct it to download and run one of these models, depending on what you have resources for:
     docker exec -it ollama ollama run llama3
     docker exec -it ollama ollama run llama3.1:70b
-    docker exec -it ollama ollama run llama3.1:405b
+    #docker exec -it ollama ollama run llama3.1:405b
 }
 
 
@@ -2943,3 +2945,21 @@ disk_usage_checker(){
     # https://dev.yorhel.nl/ncdu
     sudo apt install ncdu
 }
+
+
+Please review and revise this email to the president of the company:
+
+Hi Anthony,
+
+I am preparing to submit my dog poop detection dataset to the WACV 2025 application track.
+
+and would like to ask your permission to include you in the acknowledgments
+section of the paper. I wanted to express gratitude for your suggestion regarding the inclusion of the third negative image, which was instrumental in shaping the project.
+
+I have attached a draft of the paper for your review. Please let me know if it is acceptable to acknowledge your contribution in this way.
+
+Thank you for considering my request.
+
+
+I'm planning to submit my dog poop detection dataset to the WACV 2025 application track, and I would like to include you in the acknowledgements for your suggestion to take the 3rd negative image, but I wanted to ask if that was ok with you before I did so. Ive attached the latest draft of the paper.
+

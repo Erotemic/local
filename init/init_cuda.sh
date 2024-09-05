@@ -52,6 +52,9 @@ install_nivida_drivers_apt(){
 
     sudo apt install nvidia-driver-550
 
+    # Try out 525
+    sudo apt install nvidia-driver-525
+
     # Restart, ensure you have tpl-archive and then run
     #ls ~/tpl-archive/cuda
     #source ~/local/init/init_cuda.sh
