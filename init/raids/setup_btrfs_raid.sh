@@ -117,6 +117,6 @@ iostat -m -d 2 /dev/sd*1
 # Add to fstab
 lsblk --fs  /dev/sda1
 
-# UUID=e5b5c118-fb56-4fad-a45d-ff5fad9a649d /data           btrfs   defaults      0  0
+# UUID=e5b5c118-fb56-4fad-a45d-ff5fad9a649d /data           btrfs   defaults,noatime      0  0
 sudo sh -c "echo '# appended to fstab by by install scripts' >> /etc/fstab"
-sudo sh -c "echo 'UUID=c34b5d87-a4bf-428d-8738-7c759534da1a  /data              btrfs    defaults        0 0' >> /etc/fstab"
+sudo sh -c "echo 'UUID=c34b5d87-a4bf-428d-8738-7c759534da1a  /data              btrfs    defaults,noatime        0 0' >> /etc/fstab"
