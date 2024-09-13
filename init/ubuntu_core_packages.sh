@@ -2936,6 +2936,8 @@ ollama_via_docker(){
     # And instruct it to download and run one of these models, depending on what you have resources for:
     docker exec -it ollama ollama run llama3
     docker exec -it ollama ollama run llama3.1:70b
+    docker exec -it ollama ollama run reflection
+    docker exec -it ollama ollama run codestral
     #docker exec -it ollama ollama run llama3.1:405b
 }
 

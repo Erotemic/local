@@ -926,14 +926,6 @@ install_client_only(){
     ipfs init
 }
 
-pin_named_content(){
-    ipfs pin add --name "Crall-Thesis-2017-Final-State" --progress QmTD1nZ4pbrB1SnjkLGt9Cs37mZbabXqjn6YZaAKVEoSvY
-    ipfs pin add --name "crall-2023-mcc-fm-relation-paper.pdf" --progress bafkreih66fikzpaic3opzhuyunje7sqapgpyzaxxs3mvbhdpin65x3bbru
-
-    # List named pins
-    ipfs pin ls --type="recursive" --names
-}
-
 
 install-ipfs-update(){
     # https://github.com/ipfs/ipfs-update
@@ -1227,4 +1219,21 @@ remove_all_pins(){
 
     # Garbage collect to cleanup
     ipfs repo gc
+}
+
+
+pin_named_content(){
+    ipfs pin add --name shitspotter-2024-07-03 --progress -- bafybeiedwp2zvmdyb2c2axrcl455xfbv2mgdbhgkc3dile4dftiimwth2y
+    ipfs pin add --name shitspotter-2021-12-27 --progress -- QmNj2MbeL183GtPoGkFv569vMY8nupUVGEVvvvqhjoAATG
+    ipfs pin add --name geowatch-models-2024-01-11 --progress -- bafybeiclo3c4bnhuumj77nxzodth442ybovw77cvbzp7ue23lsfnw4tyxa
+    ipfs pin add --name "Crall-Defense-Presentation-2017" --progress QmezNaQ2GypcN8951DxXWEkZdwxtZb8tohWKjHqqGVRDUi
+    ipfs pin add --name "Crall-Candidacy-Presentation-2016" --progress QmZDsmeJTwiQKFeCAWA5Vpq1hrK96xkmmLfgkSQ2DDp5qs
+    ipfs pin add --name "Crall-Thesis-2017-Final-State" --progress QmTD1nZ4pbrB1SnjkLGt9Cs37mZbabXqjn6YZaAKVEoSvY
+    ipfs pin add --name "crall-2023-mcc-fm-relation-paper.pdf" --progress bafkreih66fikzpaic3opzhuyunje7sqapgpyzaxxs3mvbhdpin65x3bbru
+    ipfs pin add --name "kwimage-demo-images" --progress bafybeihxu6egfuj2ab3kgpwg67nzd4c44hh5rx5lah4ocdwqhnmx3i6vxu
+    # References: https://www.reddit.com/r/ipfs/comments/1fbcft0/just_released_ipfs_redirect_for_reliable_gateway/
+    ipfs pin add --name "ipfs-redirect-2024-09-08-v2" --progress QmQonrckXZq37ZHDoRGN4xVBkqedvJRgYyzp2aBC5Ujpyp
+
+    # List named pins
+    ipfs pin ls --type="recursive" --names
 }

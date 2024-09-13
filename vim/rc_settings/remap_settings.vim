@@ -43,11 +43,13 @@ noremap <leader>qc ciw`<C-r>"`<Esc>
 " noremap <leader>hs :GitGutterStageHunk<CR>
 
 " File navigation
-noremap <C-T> :NERDTree<CR>
-noremap <leader>. :NERDTree<CR>
-noremap <leader>h :NERDTreeToggle<CR>
-"noremap <leader>h :Tlist<CR>
-noremap <leader>j :Tagbar<CR>
+if ! exists("g:vscode") 
+    noremap <C-T> :NERDTree<CR>
+    noremap <leader>. :NERDTree<CR>
+    noremap <leader>h :NERDTreeToggle<CR>
+    "noremap <leader>h :Tlist<CR>
+    noremap <leader>j :Tagbar<CR>
+endif
 
 
 " Text formatting

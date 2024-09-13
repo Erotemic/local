@@ -36,7 +36,7 @@ EOF
     __notes__='
 
     The apt jellyfin working directory is:
-        /var/lib/jellyfin
+        ls /var/lib/jellyfin
 
         /var/lib/jellyfin/data
 

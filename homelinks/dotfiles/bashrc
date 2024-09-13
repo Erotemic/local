@@ -547,3 +547,8 @@ export PATH=$HOME/.local/bin/:$PATH
 if [ "$BENCH_BASHRC" ] ; then
     trace_tick "[BenchBashRC]: $(date "+%H:%M:%S:%N") - Finished"
 fi
+
+# Machine specific configs
+if [[ "$HOSTNAME" == "toothbrush" ]]; then
+    export IPFS_PATH=/data/ipfs
+fi
