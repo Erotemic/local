@@ -280,7 +280,7 @@ class Slurm:
         Example:
             >>> Slurm.jobids()
         """
-        myjobs = Slurm.my_queue_info()
+        myjobs = Slurm.queue_info()
         # running_jobs = myjobs[myjobs['ST'] == 'R']
         # jobids = running_jobs['JOBID'].values.tolist()
         jobids = myjobs['JOBID'].values.tolist()
@@ -523,9 +523,9 @@ def main():
     index = -1
     # print(Slurm.queue_info().to_string())
     while True:
-        myjobs = Slurm.my_queue_info()
-        jobids = myjobs['JOBID'].values.tolist()
-        running_jobids = myjobs[myjobs['ST'] == 'R']['JOBID'].values.tolist()
+        alljobs = Slurm.queue_info()
+        jobids = alljobs['JOBID'].values.tolist()
+        running_jobids = alljobs[alljobs['ST'] == 'R']['JOBID'].values.tolist()
         # jobids = Slurm.jobids()
         print('\n--------')
         print('Select a jobid or enter a command')
@@ -601,8 +601,8 @@ def main():
                     print('Cannot watch jobid={}'.format(jobid))
                     special = None
 
-                myjobs = Slurm.my_queue_info()
-                running_jobids = myjobs[myjobs['ST'] == 'R']['JOBID'].values.tolist()
+                alljobs = Slurm.queue_info()
+                running_jobids = alljobs[alljobs['ST'] == 'R']['JOBID'].values.tolist()
 
                 if special == 'next':
                     index = (index + 1) % len(running_jobids)
