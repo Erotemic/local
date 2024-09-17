@@ -398,13 +398,21 @@ install_go(){
         ["go1.17.5.linux-ppc64le-sha256"]="3d4be616e568f0a02cb7f7769bcaafda4b0969ed0f9bb4277619930b96847e70"
         ["go1.17.5.linux-s390x-sha256"]="8087d4fe991e82804e6485c26568c2e0ee0bfde00ceb9015dc86cb6bf84ef40b"
     )
-    EXPECTED_HASH="${GO_KNOWN_HASHES[${GO_KEY}-sha256]}"
+    EXPECTED_SHA256="${GO_KNOWN_HASHES[${GO_KEY}-sha256]}"
+    echo "EXPECTED_SHA256 = $EXPECTED_SHA256"
     BASENAME=$(basename "$URL")
-    curl_verify_hash "$URL" "$STAGING_DPATH/$BASENAME" "$EXPECTED_HASH" sha256sum "-L"
+    DST="$STAGING_DPATH/$BASENAME"
+    curl -LJ "$URL" -o "$DST"
+    if echo "${EXPECTED_SHA256} $DST" | sha256sum --status -c ; then
+        echo "checksum is ok"
+    else
+        echo "ERROR checksum is NOT the same"
+    fi
 
     echo "Downloaded go archive to staging directory"
     ls -al "$STAGING_DPATH"
 
+    #export INSTALL_PREFIX=/usr/local
     if [[ "$INSTALL_PREFIX" == "" ]]; then
         INSTALL_PREFIX=$HOME/.local
         echo "defaulting INSTALL_PREFIX = $INSTALL_PREFIX"
@@ -930,7 +938,7 @@ install_client_only(){
 install-ipfs-update(){
     # https://github.com/ipfs/ipfs-update
     # https://docs.ipfs.tech/how-to/ipfs-updater/
-    wget https://dist.ipfs.tech/ipfs-update/v1.9.0/ipfs-update_v1.9.0_linux-arm.tar.gz
+    curl -LJO https://dist.ipfs.tech/ipfs-update/v1.9.0/ipfs-update_v1.9.0_linux-arm.tar.gz
     tar -xvzf ipfs-update_v1.9.0_linux-arm.tar.gz
 
     wget https://dist.ipfs.tech/ipfs-update/v1.9.0/ipfs-update_v1.9.0_linux-amd64.tar.gz
@@ -938,8 +946,9 @@ install-ipfs-update(){
 
     export INSTALL_PREFIX=$HOME/.local
     mv ipfs-update/ipfs-update "$INSTALL_PREFIX"/bin/
-    rm -rf ipfs-update
     ipfs-update install latest
+
+    #rm -rf ipfs-update
 }
 
 migration_tool(){

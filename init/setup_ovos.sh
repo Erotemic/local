@@ -103,3 +103,53 @@ tmux_logs(){
         INDEX=$((INDEX + 1))
     done
 }
+
+
+setup_inside_docker(){
+    __doc__="
+    "
+
+    docker pull ubuntu:24.04
+
+    docker create --name=ovos-sandbox --interactive --device /dev/snd:/dev/snd ubuntu:24.04 /bin/bash
+    docker start ovos-sandbox
+    docker ps -a
+    docker exec -it ovos-sandbox /bin/bash
+
+    export DEBIAN_FRONTEND=noninteractive
+    sudo apt update
+    sudo apt install git curl python3 -y
+
+    mkdir -p "$HOME"/code
+    cd "$HOME"/code
+    git clone https://github.com/OpenVoiceOS/ovos-installer.git
+    cd "$HOME"/code/ovos-installer
+
+mkdir -p ~/.config/ovos-installer
+cat <<EOF > ~/.config/ovos-installer/scenario.yaml
+---
+uninstall: false
+method: virtualenv
+channel: development
+profile: ovos
+features:
+  skills: true
+  extra_skills: false
+  gui: false
+rapsberry_pi_tuning: false
+share_telemetry: false
+EOF
+sudo ./setup.sh
+
+    docker stop ovos-sandbox
+    docker rm ovos-sandbox
+
+}
+
+speedup(){
+    # https://github.com/OpenVoiceOS/ovos-stt-plugin-chromium
+    # https://github.com/OscillateLabsLLC/ovos-rust-messagebus
+    git clone https://github.com/OscillateLabsLLC/ovos-rust-messagebus
+    cd ovos-rust-messagebus
+
+}
