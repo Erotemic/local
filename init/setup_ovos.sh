@@ -153,3 +153,11 @@ speedup(){
     cd ovos-rust-messagebus
 
 }
+
+setup_vm(){
+
+sudo apt install virt-manager
+sudo apt install virt-viewer
+
+
+}
