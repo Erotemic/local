@@ -156,9 +156,34 @@ speedup(){
 }
 
 setup_vm(){
+    # https://www.tecmint.com/install-qemu-kvm-ubuntu-create-virtual-machines/
 
-sudo apt install virt-manager
-sudo apt install virt-viewer
+    # check that virtualization is enabled (num should be greater than 0)
+    egrep -c '(vmx|svm)' /proc/cpuinfo
+    grep -E --color '(vmx|svm)' /proc/cpuinfo
+
+    sudo apt install cpu-checker -y
+    kvm-ok
+
+
+
+    sudo apt install virt-viewer virt-manager -y
+    sudo apt install qemu-kvm virt-manager virtinst libvirt-clients bridge-utils libvirt-daemon-system -y
+
+    sudo usermod -aG kvm "$USER"
+    sudo usermod -aG libvirt "$USER"  # to add your username to group libvirt
+    id "$USER"  # To verfiy that you are added to that group
+
+    sudo systemctl enable --now libvirtd
+
+    sudo virt-manager
+
+
+    sudo apt-get install deluged deluge-web deluge-console
+    sudo apt install transmission-cli
+
+    "magnet:?xt=urn:btih:2e8e44068b254814ea1a7d4969a9af1d78e0f51f&dn=ubuntu-22.04.5-desktop-amd64.iso&tr=https%3A%2F%2Ftorrent.ubuntu.com%2Fannounce&tr=https%3A%2F%2Fipv6.torrent.ubuntu.com%2Fannounce"
+
 
 
 }
