@@ -8,6 +8,7 @@ References:
     https://openvoiceos.github.io/ovos-technical-manual/
 
 Blind Install:
+    sudo apt install git python3 curl linux-tools-common linux-tools-`uname -r` -y
     sh -c "curl -s https://raw.githubusercontent.com/OpenVoiceOS/ovos-installer/main/installer.sh -o installer.sh && chmod +x installer.sh && sudo ./installer.sh && rm installer.sh"
 
     sh -c "curl -s https://raw.githubusercontent.com/OpenVoiceOS/ovos-installer/main/installer.sh -o installer.sh && chmod +x installer.sh && sudo ./installer.sh && rm installer.sh"
