@@ -601,6 +601,11 @@ refresh_workon_autocomplete(){
         PYENV_VERSION_DPATH=$(pyenv root)/versions
 
         ls_array VENV_DPATH_ARR "$PYENV_VERSION_DPATH/*/envs/*"
+        for item in "${VENV_DPATH_ARR[@]}"
+        do
+            echo "item = $item"
+        done
+        echo "array size: ${#VENV_DPATH_ARR[@]}"
 
         if [ "${#VENV_DPATH_ARR[@]}" -gt 0 ]; then
             KNOWN_PYENV_ENVS=$(find "$PYENV_VERSION_DPATH"/*/envs/* -maxdepth 0 -type d -printf "%f\n")

@@ -1424,6 +1424,7 @@ ls_array(){
         eval "$_restore_noglob"
 
         # Rest of your code
+        echo "array size: ${#myarray[@]}"
         for item in "${myarray[@]}"
         do
             echo "item = $item"
