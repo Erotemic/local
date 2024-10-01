@@ -515,6 +515,75 @@ we(){
 }
 
 
+function with_shopt_option() {
+    __doc__='
+    Modified from a Gemini response.
+    This doesnt seem to work great yet. The example without dependencies can be
+    slotted in, but it would be nice to make this function work generally.
+
+    Demo Setup:
+        mkdir -p $HOME/tmp/test/test_shopt_context
+        cd $HOME/tmp/test/test_shopt_context
+        mkdir -p dpath1
+        mkdir -p dpath1/dpath2
+        touch dpath1/fpath1
+        touch dpath1/fpath2
+        touch dpath1/dpath2/fpath3
+        touch dpath1/dpath2/fpath4
+
+    Usage Without Dependencies:
+
+        # ENTER CONTEXT
+        _option="nullglob"
+        _original_value=$(shopt -p "$_option")
+        shopt -s "$_option"
+
+        # YOUR COMMANDS HERE
+        cd $HOME/tmp/test/test_shopt_context
+        VENV_DPATH_ARR1=(*/fpath*)
+        VENV_DPATH_ARR2=(*/lpath*)
+
+        # EXIT CONTEXT
+        eval "$_original_value"
+
+        # Inspect
+        echo "${VENV_DPATH_ARR1[@]}"
+        echo "${VENV_DPATH_ARR2[@]}"
+
+    Ignore
+        shopt -p nullglob
+        shopt -s nullglob
+        shopt -u nullglob
+
+    Usage:
+        cd $HOME/tmp/test/test_shopt_context
+        VENV_DPATH_ARR1=(*/fpath*)
+        VENV_DPATH_ARR2=(*/lpath*)
+        echo "${VENV_DPATH_ARR1[@]}"
+        echo "${VENV_DPATH_ARR2[@]}"
+
+        # The problem is that things get expanded before they are passed into
+        # the context.
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        with_shopt_option "nullglob" echo */foo
+
+    '
+    local option="$1"
+    # Save the original value of the option
+    local original_value=$(shopt -p "$option")
+    # Set the option to the desired value
+    shopt -s "$option"
+
+    shift
+    # Execute the code within the context
+    "$@"
+
+    # Restore the original value of the option
+    eval "$original_value"
+}
+
+
+
 refresh_workon_autocomplete(){
     local KNOWN_CONDA_ENVS
     local KNOWN_VIRTUAL_ENVS
@@ -529,7 +598,17 @@ refresh_workon_autocomplete(){
     KNOWN_VIRTUAL_ENVS="$(/bin/ls -1 "$HOME" | grep venv | sort)"
 
     if [[ "$(which pyenv)" ]]; then
-        KNOWN_PYENV_ENVS=$(find "$(pyenv root)"/versions/*/envs/* -maxdepth 0 -type d -printf "%f\n")
+        PYENV_VERSION_DPATH=$(pyenv root)/versions
+
+        _option="nullglob"
+        _original_value=$(shopt -p "$_option")
+        shopt -s "$_option"
+        VENV_DPATH_ARR=("$PYENV_VERSION_DPATH"/*/envs/*)
+        eval "$_original_value"
+
+        if [ ${#VENV_DPATH_ARR[@]} -gt 0 ]; then
+            KNOWN_PYENV_ENVS=$(find "$PYENV_VERSION_DPATH"/*/envs/* -maxdepth 0 -type d -printf "%f\n")
+        fi
     fi
     # Remove newlines
     KNOWN_ENVS=$(echo "$KNOWN_CONDA_ENVS $KNOWN_VIRTUAL_ENVS $KNOWN_PYENV_ENVS" | tr '\n' ' ')
