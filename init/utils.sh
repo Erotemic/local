@@ -922,7 +922,7 @@ bash_array_repr(){
     _handle_help "$@" || return 0
 
     ARGS=("$@")
-    if [ "${#ARGS}" -gt 0 ]; then
+    if [ "${#ARGS[@]}" -gt 0 ]; then
         # Not sure if the double or single quotes is better here
         echo "($(printf "'%s' " "${ARGS[@]}"))"
         #echo "($(printf "\'%s\' " "${ARGS[@]}"))"
@@ -1383,7 +1383,7 @@ ls_array(){
         glob_pattern : a quoted glob pattern (to prevent immediate expansion)
 
     Example:
-        arr_name="myarray"
+        arr_name="my_array"
         glob_pattern="*"
         pass
         bash_array_repr "${array[@]}"
@@ -1399,10 +1399,17 @@ ls_array(){
         python -c "import ubelt; ubelt.Path(\"$HOME/tmp/tests/test_ls_arr/Real newline \n in fname\").expand().touch()"
         python -c "import ubelt; ubelt.Path(\"$HOME/tmp/tests/test_ls_arr/Realnewline\ninfname\").expand().touch()"
 
-        arr_name="myarray"
+        arr_name="my_array"
         glob_pattern="*"
         ls_array "$arr_name" "$glob_pattern"
-        bash_array_repr "${array[@]}"
+        echo "arr size: ${#my_array[@]}"
+        bash_array_repr "${my_array[@]}"
+
+        arr_name="my_empty_array"
+        glob_pattern="*doesnotmatch"
+        ls_array "$arr_name" "$glob_pattern"
+        echo "arr size: ${#my_empty_array[@]}"
+        bash_array_repr "${my_empty_array[@]}"
 
     Dependency Free Usage:
 
@@ -1417,15 +1424,15 @@ ls_array(){
         shopt -s "nullglob"
 
         # YOUR COMMANDS HERE
-        myarray=(*)
+        my_array=(*)
 
         # EXIT CONTEXT (restore settings)
         eval "$_restore_nullglob"
         eval "$_restore_noglob"
 
         # Rest of your code
-        echo "array size: ${#myarray[@]}"
-        for item in "${myarray[@]}"
+        echo "array size: ${#my_array[@]}"
+        for item in "${my_array[@]}"
         do
             echo "item = $item"
         done
@@ -1493,8 +1500,15 @@ ls_array(){
         shopt -u nullglob  # disable nullglob
     fi
 
-    # Copy the array into the dynamically named variable
-    readarray -t "$arr_name" < <(printf '%s\n' "${array[@]}")
+    if [ "${#array[@]}" -gt 1 ]; then
+        # If there are matches, copy the array into the dynamically named
+        # variable
+        readarray -t "$arr_name" < <(printf '%s\n' "${array[@]}")
+    else
+        # Otherwise, the above code doesnt handle empty arrays well so just
+        # explicitly define the empty array.
+        declare -a "$arr_name"='()'
+    fi
 }
 
 
