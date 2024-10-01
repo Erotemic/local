@@ -1027,8 +1027,12 @@ check_ipfs_status(){
     ipfs config --json Identity.PeerID
 
     # Force providing a CID
-    ipfs routing provide bafybeie275n5f4f64vodekmodnktbnigsvbxktffvy2xxkcfsqxlie4hrm
-    ipfs routing provide bafybeihuem7qz2djallypbb6bo5z7ojqnjz5s4xj6j3c4w4aztqln4tbzu
+    ipfs routing provide --verbose bafybeie275n5f4f64vodekmodnktbnigsvbxktffvy2xxkcfsqxlie4hrm
+    ipfs routing provide --verbose bafybeihuem7qz2djallypbb6bo5z7ojqnjz5s4xj6j3c4w4aztqln4tbzu
+    ipfs routing provide --verbose bafybeicajf2tn7bttkcdhhj4un7alfjbgx5hdhn6rsi66mnipwmrksen3y
+    ipfs routing provide --verbose -r bafybeih2r75jrkslgcs7b5orecbuypa5iohwnceeynr522ncwcbhi7nyr4
+    ipfs routing provide --verbose bafybeibn3kmmz3ytrlmt2pwbifvcwv7veddoeuabtifgvztetilnav2gom
+
 
     # Quick status
     systemctl -l status ipfs.service --no-pager
@@ -1047,6 +1051,27 @@ check_ipfs_status(){
 
     # Check if the DHT has been initially populated
     ipfs stats dht
+}
+
+force_announce_all_pins(){
+    __doc__="
+    Simple script that forces announcement of all pins.
+    "
+
+    # Read all stdout lines into a bash array
+    readarray -t LINES < <(ipfs pin ls --type="recursive")
+
+    # Loop over the lines, and accumulate only the CIDS into a new bash array
+    CIDS=()
+    for line in "${LINES[@]}"; do
+        CID=$(echo "$line" | cut -d' ' -f 1)
+        CIDS+=("$CID")
+    done
+    # Print out the CIDS to be announced
+    echo "${CIDS[@]}"
+
+    # Announce all CIDS
+    ipfs routing provide --verbose "${CIDS[@]}"
 }
 
 setup_firewall(){

@@ -125,6 +125,7 @@ if ! has('nvim')
     behave mswin
 endif
 
+" doesnt work with PYENV
 "source ~/local/vim/rc/venv_presource.vim
 set encoding=utf8
 
@@ -173,7 +174,7 @@ Plug 'majutsushi/tagbar'
 Plug 'gu-fan/InstantRst'
 
 " Plug 'vim-scripts/taglist.vim'
-" Plug 'davidhalter/jedi-vim'
+Plug 'davidhalter/jedi-vim'
 Plug 'LaTeX-Box-Team/LaTeX-Box'
 " Plug 'Erotemic/lean.vim'
 " Plug 'https://github.com/airblade/vim-gitgutter'

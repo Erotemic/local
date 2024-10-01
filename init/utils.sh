@@ -632,22 +632,20 @@ apt_ensure(){
         # Only use the sudo command if we need it (i.e. we are not root)
         _SUDO="sudo "
     fi
-    # shellcheck disable=SC2068
-    for PKG_NAME in ${ARGS[@]}
+    for PKG_NAME in "${ARGS[@]}"
     do
         # Check if the package is already installed or not
-        if dpkg -l "$PKG_NAME" | grep "^ii *$PKG_NAME" > /dev/null; then
+        if dpkg-query -W -f='${Status}' "$PKG_NAME" 2>/dev/null | grep -q "install ok installed"; then
             echo "Already have PKG_NAME='$PKG_NAME'"
-            # shellcheck disable=SC2268,SC2206
-            HIT_PKGS=(${HIT_PKGS[@]} "$PKG_NAME")
+            HIT_PKGS+=("$PKG_NAME")
         else
             echo "Do not have PKG_NAME='$PKG_NAME'"
-            # shellcheck disable=SC2268,SC2206
-            MISS_PKGS=(${MISS_PKGS[@]} "$PKG_NAME")
+            MISS_PKGS+=("$PKG_NAME")
         fi
     done
+
     # Install the packages if any are missing
-    if [ "${#MISS_PKGS}" -gt 0 ]; then
+    if [ "${#MISS_PKGS[@]}" -gt 0 ]; then
         if [ "${UPDATE}" != "" ]; then
             $_SUDO apt update -y
         fi
@@ -1337,6 +1335,7 @@ tmux_spawn(){
     References:
         https://serverfault.com/questions/103359/how-to-create-a-uuid-in-bash
     '''
+    _handle_help "$@" || return 0
     UUID=$(cat /proc/sys/kernel/random/uuid)
     SESSION_ID=$UUID
     COMMAND=$(joinby " " "$@")
@@ -1380,8 +1379,8 @@ ls_array(){
     Read the results of a glob pattern into an array
 
     Args:
-        arr_name
-        glob_pattern
+        arr_name : an out variable, an array with this name will be defined
+        glob_pattern : a quoted glob pattern (to prevent immediate expansion)
 
     Example:
         arr_name="myarray"
@@ -1405,57 +1404,94 @@ ls_array(){
         ls_array "$arr_name" "$glob_pattern"
         bash_array_repr "${array[@]}"
 
+    Dependency Free Usage:
+
+        # This function is not super easy to use without dependencies, but it
+        # can be done. We force setting of the values here which is a bit more
+        # work but also more concise.
+
+        # ENTER CONTEXT (ensure nullglob is off and nullglob is on)
+        _restore_nullglob=$(shopt -p "nullglob")
+        _restore_noglob=$(test -o noglob && echo "set -o noglob")
+        set +o noglob
+        shopt -s "nullglob"
+
+        # YOUR COMMANDS HERE
+        myarray=(*)
+
+        # EXIT CONTEXT (restore settings)
+        eval "$_restore_nullglob"
+        eval "$_restore_noglob"
+
+        # Rest of your code
+        for item in "${myarray[@]}"
+        do
+            echo "item = $item"
+        done
+
     References:
         .. [1] https://stackoverflow.com/a/18887210/887074
         .. [2] https://stackoverflow.com/questions/14564746/in-bash-how-to-get-the-current-status-of-set-x
+        .. [ShoptGist] https://gist.github.com/detain/dfa0e4d75647b424c5aea45a34af0713
 
     TODO:
         get the echo of shopt off
     '
+    _handle_help "$@" || return 0
     local arr_name="$1"
     local glob_pattern="$2"
 
-    local toggle_nullglob=""
     local toggle_noglob=""
+    local toggle_nullglob=""
     # Can check the "$-" variable to see what current settings are i.e. set -x, set -e
     # Can check "set -o" to get currentenabled options
     # Can check "shopt" to get current enabled options
 
-    if shopt nullglob; then
+    if shopt nullglob > /dev/null; then
         # Check if null glob is enabled, if it is, this will be true
         toggle_nullglob=0
     else
         toggle_nullglob=1
     fi
     # Check for -f to see if noglob is enabled
+    # The "$-" variable contains characters indicating options.
+    # The f corresponds to if noglob was set.
     if [[ -n "${-//[^f]/}" ]]; then
+        # Could also do
+        #set +o noglob  # enable noglob
+        #test -o noglob; echo $?
+        #set -o noglob  # enable noglob
+        #test -o noglob; echo $?
         toggle_noglob=1
     else
         toggle_noglob=0
     fi
 
-    if [[ "$toggle_nullglob" == "1" ]]; then
-        # Enable nullglob if it was off
-        shopt -s nullglob
-    fi
     if [[ "$toggle_noglob" == "1" ]]; then
-        # Enable nullglob if it was off
-        shopt -s nullglob
+        # If noglob was on, turn it off to enable glob expansion.
+        set +o noglob  # disable noglob
+    fi
+    if [[ "$toggle_nullglob" == "1" ]]; then
+        # If nullglob was off, turn it on, so no matches return empty
+        shopt -s nullglob  # enable nullglob
     fi
 
-    # The f corresponds to if noglob was set
-
+    # We have ensure nullglob and noglob are enabled
     # shellcheck disable=SC2206
     array=($glob_pattern)
 
+    # Restore state
     if [[ "$toggle_noglob" == "1" ]]; then
-        # need to reenable noglob
-        set -o noglob  # enable noglob
+        # If we enabled noglob, then we need to turn it off again
+        # (typically it is already on)
+        set -o noglob  # re-enable noglob
     fi
     if [[ "$toggle_nullglob" == "1" ]]; then
-        # Disable nullglob if it was off to make sure it doesn't interfere with anything later
-        shopt -u nullglob
+        # If we enabled nullglob, then we should disable it again
+        # typically this does happen because nullglob is off by default
+        shopt -u nullglob  # disable nullglob
     fi
+
     # Copy the array into the dynamically named variable
     readarray -t "$arr_name" < <(printf '%s\n' "${array[@]}")
 }

@@ -22,7 +22,7 @@ install_nivida_drivers_apt(){
     sudo apt list --installed | grep nvidia
 
     # Check what is available
-    sudo apt search nvidia-driver
+    apt-cache search 'nvidia-driver-' | grep '^nvidia-driver-[0-9]* ' | sort -h
 
     # It looks like this one works with the above PPA (maybe?)
 

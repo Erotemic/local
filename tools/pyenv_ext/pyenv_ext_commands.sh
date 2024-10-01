@@ -521,6 +521,8 @@ function with_shopt_option() {
     This doesnt seem to work great yet. The example without dependencies can be
     slotted in, but it would be nice to make this function work generally.
 
+    SeeAlso: the ls_array function
+
     Demo Setup:
         mkdir -p $HOME/tmp/test/test_shopt_context
         cd $HOME/tmp/test/test_shopt_context
@@ -571,7 +573,7 @@ function with_shopt_option() {
     local option="$1"
     # Save the original value of the option
     local original_value=$(shopt -p "$option")
-    # Set the option to the desired value
+    # Set the option to the desired value (note: should ideally be "-s" or "-u")
     shopt -s "$option"
 
     shift
@@ -581,8 +583,6 @@ function with_shopt_option() {
     # Restore the original value of the option
     eval "$original_value"
 }
-
-
 
 refresh_workon_autocomplete(){
     local KNOWN_CONDA_ENVS
@@ -600,11 +600,7 @@ refresh_workon_autocomplete(){
     if [[ "$(which pyenv)" ]]; then
         PYENV_VERSION_DPATH=$(pyenv root)/versions
 
-        _option="nullglob"
-        _original_value=$(shopt -p "$_option")
-        shopt -s "$_option"
-        VENV_DPATH_ARR=("$PYENV_VERSION_DPATH"/*/envs/*)
-        eval "$_original_value"
+        ls_array VENV_DPATH_ARR "$PYENV_VERSION_DPATH/*/envs/*"
 
         if [ ${#VENV_DPATH_ARR[@]} -gt 0 ]; then
             KNOWN_PYENV_ENVS=$(find "$PYENV_VERSION_DPATH"/*/envs/* -maxdepth 0 -type d -printf "%f\n")

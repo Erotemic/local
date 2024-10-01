@@ -609,8 +609,12 @@ gnome_settings()
     # try and disable password after screensaver lock
     gsettings get org.gnome.desktop.lockdown disable-lock-screen
     gsettings get org.gnome.desktop.screensaver lock-enabled
+    gsettings get org.gnome.desktop.screensaver lock-delay
     gsettings set org.gnome.desktop.lockdown disable-lock-screen 'true'
     gsettings set org.gnome.desktop.screensaver lock-enabled false
+    gsettings set org.gnome.desktop.screensaver lock-delay 36000
+
+    # Alt, set the lock delay to be big
 
     # need to enable to super+L works
     # gsettings set org.gnome.desktop.lockdown disable-lock-screen 'false'

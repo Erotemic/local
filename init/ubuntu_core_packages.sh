@@ -2930,8 +2930,8 @@ ollama_via_docker(){
 
     # Given a machine setup with nvidia docker, run the ollama sever
     docker run -d --gpus=all -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
-
     docker start ollama
+    docker exec -it ollama ollama run llama3.1:70b
 
     # And instruct it to download and run one of these models, depending on what you have resources for:
     docker exec -it ollama ollama run llama3

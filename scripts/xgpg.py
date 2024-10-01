@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Python helpers
+A Python CLI wrapper around GPG
 
 Vocabulary And Abbreviations
 ============================
@@ -261,6 +261,7 @@ def _known_entries(identifier=None, verbose=0):
         # Format of the colon listings
         https://github.com/gpg/gnupg/blob/master/doc/DETAILS
     """
+    import datetime as datetime_mod
     suffix = ''
     if identifier is not None:
         suffix = ' ' + chr(34) + identifier + chr(34)
@@ -305,6 +306,12 @@ def _known_entries(identifier=None, verbose=0):
         record = {}
         for i, val in enumerate(parts, start=1):
             record[field_info.get(i, i)] = val
+
+        if record.get('created', ''):
+            record['created'] = datetime_mod.datetime.fromtimestamp(int(record['created']))
+        if record.get('expires', ''):
+            record['expires'] = datetime_mod.datetime.fromtimestamp(int(record['expires']))
+
         if record['type'] == 'pub':
             if current is not None:
                 entries.append(current)
@@ -319,8 +326,11 @@ def _known_entries(identifier=None, verbose=0):
 
 
 def _find_key_index(keyid):
-    # Find the key index because apparently edit key does not respect the !
+    """
+    Find the key index because apparently edit key does not respect the !
+    """
     entries = _known_entries(keyid, verbose=3)
+    print(f'entries = {ub.urepr(entries, nl=2)}')
     if len(entries) == 0:
         raise ValueError(f'No entries found for keyid={keyid}')
     elif len(entries) > 1:
@@ -555,7 +565,12 @@ class GPGCLI:
     def check_keyid(keyid):
         """
         CommandLine:
+            xgpg.py check_keyid --keyid=4AC8B478335ED6ED667715F3622BE571405441B4
             xgpg.py check_keyid --keyid=4EA85E0336D74943541C8F803C957FA10181A006
+
+        Ignore:
+            # This command will show expired subkeys
+            gpg --list-options show-unusable-subkeys --list-keys 4AC8B478335ED6ED667715F3622BE571405441B4
         """
         keyindex = _find_key_index(keyid)
         print('keyindex = {}'.format(ub.urepr(keyindex, nl=1)))
@@ -767,7 +782,7 @@ class GPGCLI:
 
     @staticmethod
     def edit_trust(keyid, level, dry=False):
-        """
+        r"""
         TODO:
             # Use this method that has less dependencies.
             # https://security.stackexchange.com/questions/129474/how-to-raise-a-key-to-ultimate-trust-on-another-machine
@@ -776,6 +791,16 @@ class GPGCLI:
             echo "KEY_ID = $KEY_ID"
             (echo 5; echo y; echo save) |
               gpg --command-fd 0 --no-tty --no-greeting -q --edit-key "$KEY_ID" trust
+
+
+        Ignore:
+            # Another method with less dependences
+            https://blog.tersmitten.nl/how-to-ultimately-trust-a-public-key-non-interactively.html
+
+            RECIPIENT_FINGERPRINT=4AC8B478335ED6ED667715F3622BE571405441B4
+            gpg --list-keys --fingerprint --with-colons "$RECIPIENT_FINGERPRINT" | \
+                sed -E -n -e 's/^fpr:::::::::([0-9A-F]+):$/\1:6:/p' | \
+                gpg --import-ownertrust
 
         """
         script = _ExpectScript('gpg --expert --pinentry-mode loopback --edit-key {} '.format(keyid))
@@ -1056,6 +1081,6 @@ def main():
 if __name__ == '__main__':
     """
     CommandLine:
-        python ~/local/scripts/xgpg.py
+        python ~/local/scripts/xgpg.py --help
     """
     main()
