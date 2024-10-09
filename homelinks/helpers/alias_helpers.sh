@@ -617,10 +617,6 @@ complete -W "PATH LD_LIBRARY_PATH CPATH CMAKE_PREFIX_PATH" "pathvar_remove"
 #}
 
 
-source "$HOME/local/tools/pyenv_ext/pyenv_ext_commands.sh"
-execute_pyenv_ext_complete_script
-
-
 workon_pysys()
 {
     deactivate_venv

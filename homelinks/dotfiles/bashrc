@@ -411,6 +411,11 @@ if [[ "$_AUTOSTART_VENV" == "1" ]]; then
 
 fi
 
+if [ -d "$PYENV_ROOT" ]; then
+    source "$HOME/local/tools/pyenv_ext/pyenv_ext_commands.sh"
+    execute_pyenv_ext_complete_script
+fi
+
 # Clean paths again before workon stuff happens
 #export PATH=$(pathvar_clean PATH)
 #export LD_LIBRARY_PATH=$(pathvar_clean LD_LIBRARY_PATH)
