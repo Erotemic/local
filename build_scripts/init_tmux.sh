@@ -111,6 +111,8 @@ USE_SOURCE=true
 if [[ "$USE_SOURCE" == "true" ]]; then
 
     apt_ensure bison flex autotools-dev automake
+    #sudo apt-get install bison flex
+    #apt_ensure bison flex
 
     TMUX_DPATH=$HOME/code/tmux
     if [ ! -d "$TMUX_DPATH" ]; then
