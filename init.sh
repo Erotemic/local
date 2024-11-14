@@ -337,7 +337,8 @@ if [[ "$SETUP_PYTHON" == "True" ]]; then
     source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
     build_vim_for_pyenv
     '
-
+else
+    echo "Skipping Python setup"
 fi
 
 # Unset the python alias we set earlier because now we should be in a conda env
@@ -460,12 +461,17 @@ if [[ "$IS_HEADLESS" != "True" ]]; then
 fi
 
 
+# Include a symlink to the root in the user folder
+if [ ! -d "$HOME"/root ]; then
+    ln -fs "/" "$HOME/root"
+fi
+mkdir -p "$HOME"/.local
+mkdir -p "$HOME"/.local/bin
+mkdir -p "$HOME"/.local/opt
+
+
 export DID_MY_BASHRC_INIT=""
+
+echo "Reloading the updated bashrc"
 # shellcheck disable=SC1091
 source "$HOME/.bashrc"
-
-
-
-if [ ! -d "$HOME"/root ]; then
-    ln -s "/" "$HOME/root"
-fi

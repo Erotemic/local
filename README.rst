@@ -9,8 +9,13 @@ Initialize
 
 .. code:: bash
 
-    sudo apt install git -y
+    # Install git if necessary
+    if ! command -v "$COMMAND" &> /dev/null; then
+        sudo apt install git -y
+    fi
+    # Navigate to the home folder
     cd ~
+    # Clone the repo
     git clone https://github.com/Erotemic/local.git
 
     # If credentials are setup

@@ -834,6 +834,23 @@ randpw(){
     #head -c16777216 /dev/urandom | sha512sum | python -c "import string, ubelt, sys; print(ubelt.hash_data(sys.stdin.read(), base='alphanum')[0:64])"
 }
 
+randpw2(){
+    __doc__="
+    Generate a random password
+
+    https://www.howtogeek.com/howto/30184/10-ways-to-generate-a-random-password-from-the-command-line/
+    "
+    #< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-16};echo;
+    #head -c${1:-2048} /dev/urandom | sha512sum
+    #head -c${1:-2048} /dev/urandom | sha512sum
+    #head -c${1:-512} /dev/random | sha512sum
+    #head -c${1:-128} /dev/random | sha512sum
+
+    #head -c${1:-128} /dev/random | python -c "import ubelt, sys; print(ubelt.hash_data(sys.stdin.read(), base='abc'))"
+    #head -c16777216 /dev/random | sha512sum | python -c "import string, ubelt, sys; print(ubelt.hash_data(sys.stdin.read(), base=list(string.ascii_letters + string.digits + '_')))"
+    echo "$(diceware -n 4)#$(head -c16777216 /dev/urandom | base64 | python -c "import string, ubelt, sys; print(ubelt.hash_data(sys.stdin.read(), base='alphanum')[0:6])")"
+}
+
 randpw_words(){
     # pip install english-words (25487) words
     # pip install diceware

@@ -95,3 +95,20 @@ remove_pihole(){
     # git iproute2 dialog ca-certificates cron curl iputils-ping psmisc sudo unzip idn2 libcap2-bin dns-root-data libcap2 netcat-openbsd procps jq grep dnsutils lighttpd php8.1-common php8.1-cgi php8.1-sqlite3 php8.1-xml php8.1-intl
 
 }
+
+
+docker_pihole(){
+    __doc__="
+    I'm trying an alternate approach that hopefully will let pihole co-exist
+    with other services nicely.
+
+    References:
+        https://www.geeksforgeeks.org/create-your-own-secure-home-network-using-pi-hole-and-docker/
+    "
+
+    sudo apt-get install docker-compose-plugin
+
+    docker pull pihole/pihole
+
+
+}

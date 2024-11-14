@@ -21,6 +21,13 @@ Notes:
 
     if a nautilus window is hanging on a remove directory you may need to killall -9 ssfh [SE59348]_.
 
+
+    To get bash completion run:
+
+    .. code:: bash
+
+        mount-remotes.sh --build-bash-completion >> .bashrc
+
 CommandLine:
 
     # Force mount a specific remote
@@ -215,6 +222,11 @@ unmount_if_mounted()
     fi
 }
 
+
+build_bash_complete_script(){
+    echo 'complete -W "$(awk '\''/^Host / {print $2}'\'' ~/.ssh/config)" mount-remotes.sh'
+}
+
 mount_remotes_main(){
 
     if [[ $# -gt 0 ]]; then
@@ -239,6 +251,11 @@ mount_remotes_main(){
                 -h|--help)
                 SHOW_HELP=YES
                 shift # past argument
+                ;;
+                --build-bash-completion)
+                    # Give the user the command to build bash completion
+                    build_bash_complete_script
+                return 0
                 ;;
                 *)    # unknown option
                 POSITIONAL+=("$1") # save it in an array for later

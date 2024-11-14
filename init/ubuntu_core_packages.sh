@@ -1444,6 +1444,30 @@ docker_modern_2024_05_23(){
 }
 
 
+install_docker_compose(){
+
+    # https://docs.docker.com/engine/install/debian/#install-using-the-repository
+
+    # Add Docker's official GPG key:
+    sudo apt-get update
+    sudo apt-get install ca-certificates curl
+    sudo install -m 0755 -d /etc/apt/keyrings
+    sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+    sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+    # Add the repository to Apt sources:
+    echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+      sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    sudo apt-get update
+
+
+
+
+}
+
+
 docker_modern_2021_04_22(){
     # https://docs.docker.com/engine/install/ubuntu/
     # https://docs.docker.com/engine/install/linux-postinstall/
@@ -1922,6 +1946,9 @@ github_gh_api(){
     "$HOME"/code/github/cli/bin/gh help
 
     gh auth login
+
+    # Also get the act plugin
+    gh extension install https://github.com/nektos/gh-act
 
 }
 
@@ -2948,3 +2975,25 @@ disk_usage_checker(){
     sudo apt install ncdu
 }
 
+
+install_onlyoffice(){
+    __doc__="
+    https://helpcenter.onlyoffice.com/installation/desktop-install-ubuntu.aspx
+    "
+    # Get GPG keys
+    mkdir -p ~/.gnupg
+    chmod 700 ~/.gnupg
+    gpg --no-default-keyring --keyring gnupg-ring:/tmp/onlyoffice.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys CB2DE8E5
+    chmod 644 /tmp/onlyoffice.gpg
+    sudo chown root:root /tmp/onlyoffice.gpg
+    sudo mv /tmp/onlyoffice.gpg /usr/share/keyrings/onlyoffice.gpg
+
+    #
+    echo 'deb [signed-by=/usr/share/keyrings/onlyoffice.gpg] https://download.onlyoffice.com/repo/debian squeeze main' | sudo tee -a /etc/apt/sources.list.d/onlyoffice.list
+    sudo apt-get update
+
+    # Install
+    # FIXME: this is interactive
+    sudo apt-get install onlyoffice-desktopeditors -y
+
+}

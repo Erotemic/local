@@ -23,7 +23,7 @@ SeeAlso:
 
 Example Usage:
     # Assuming the local repo is installed, source required files
-    source ~/local/tools/utils.sh
+    source ~/local/init/utils.sh
     source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
 
     # Install or upgrade pyenv
@@ -50,8 +50,9 @@ Example Usage:
     pyenv_create_virtualenv 3.8 off
     pyenv_create_virtualenv 3.10 off
     pyenv_create_virtualenv 3.12 full
+    pyenv_create_virtualenv 3.13.0 full
 
-    pyenv_create_virtualenv 3.11.9 full
+    pyenv_create_virtualenv 3.11.9 off
     pyenv_create_virtualenv 3.11 most neovim
 
     source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
@@ -96,8 +97,18 @@ install_pyenv(){
     #sudo apt-get install -y \
     apt_ensure \
         make build-essential libssl-dev zlib1g-dev \
-        libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
-        libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev libgdbm-dev libc6-dev
+        libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm  \
+        xz-utils tk-dev libffi-dev liblzma-dev libgdbm-dev libc6-dev
+
+
+    # TODO: conditional
+    if lsb_release -a | grep "24.04" &> /dev/null; then
+        # For 24.04
+        apt_ensure libncurses-dev
+    else
+        # For 22.04
+        apt_ensure libncurses5-dev libncursesw5-dev
+    fi
 
     #apt_ensure python-openssl python3-openssl  # Is this needed?
 
@@ -219,6 +230,14 @@ pyenv_create_virtualenv(){
     # https://github.com/docker-library/python/issues/160#issuecomment-509426916
     # https://gist.github.com/nszceta/ec6efc9b5e54df70deeec7bceead0a1d
     # https://clearlinux.org/news-blogs/boosting-python-profile-guided-platform-specific-optimizations
+    # https://github.com/pyenv/pyenv/blob/1cabb6e02b14/plugins/python-build/README.md#building-for-maximum-performance
+
+    # Fixme: for 3.13+ use:
+    TEST_SQLITE_NAME="test_sqlite3"
+    TEST_UNICODE_NAME="test_str"
+    # Before use:
+    #TEST_SQLITE_NAME="test_sqlite"
+    #TEST_UNICODE_NAME="test_unicode"
 
     # List all presets
     # python3 -m test.regrtest --pgo
@@ -259,12 +278,12 @@ pyenv_create_virtualenv(){
             test_pprint
             test_re
             test_set
-            test_sqlite
+            $TEST_SQLITE_NAME
             test_statistics
             test_struct
             test_tabnanny
             test_time
-            test_unicode
+            $TEST_UNICODE_NAME
             test_xml_etree
             test_xml_etree_c
         ")
@@ -275,7 +294,7 @@ pyenv_create_virtualenv(){
             --with-computed-gotos
             --with-lto")
 
-        if lscpu | grep Intel ; then
+        if lscpu | grep Intel &> /dev/null ; then
             PYTHON_CFLAGS="-march=native -mtune=intel -O3 -pipe"
         else
             PYTHON_CFLAGS="-march=native -O3 -pipe"
@@ -284,7 +303,7 @@ pyenv_create_virtualenv(){
         # FIXME: most and full are the same, what is the real breakdown?
         PROFILE_TASK=$(_strip_double_whitespace "-m test.regrtest
             --pgo test_array test_base64 test_binascii test_binhex test_binop
-            test_c_locale_coercion test_csv test_json test_hashlib test_unicode
+            test_c_locale_coercion test_csv test_json test_hashlib $TEST_UNICODE_NAME
             test_codecs test_traceback test_decimal test_math test_compile
             test_threading test_time test_fstring test_re test_float test_class
             test_cmath test_complex test_iter test_struct test_slice test_set
@@ -797,6 +816,7 @@ _pyenv_best_version_match(){
 
     Example:
         source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        _pyenv_best_version_match '3.13'
         _pyenv_best_version_match '3.11'
         _pyenv_best_version_match '3.11.2'
         _pyenv_best_version_match '3'
@@ -817,7 +837,7 @@ _pyenv_best_version_match(){
             # Always choose an exact match
             BEST_MATCH=$arg
             break
-        elif [[ $arg == $PYTHON_VERSION* ]] && [[ "$arg" != *"-dev" ]] && [[ "$arg" != *"a"* ]]; then
+        elif [[ $arg == $PYTHON_VERSION* ]] && [[ "$arg" != *"-dev" ]] && [[ "$arg" != *"t" ]] && [[ "$arg" != *"a"* ]]; then
             # Otherwise choose a matching prefix, as long as it is not a dev or prerelease version
             BEST_MATCH=$arg
         fi
@@ -893,4 +913,13 @@ install_conda(){
         _CONDA_ROOT=$HOME/.local/conda
         source "$_CONDA_ROOT/etc/profile.d/conda.sh"
     fi
+}
+
+
+bootstrap_dependencies(){
+    __doc__="
+    https://github.com/openssl/openssl/blob/master/INSTALL.md
+    "
+    # See: ~/local/tools/pyenv_ext/bootstrap_dependencies.sh
+    echo 'local/tools/pyenv_ext/bootstrap_dependencies.sh'
 }
