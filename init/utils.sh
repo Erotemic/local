@@ -921,7 +921,7 @@ bash_array_repr(){
     '
     _handle_help "$@" || return 0
 
-    ARGS=("$@")
+    local ARGS=("$@")
     if [ "${#ARGS[@]}" -gt 0 ]; then
         # Not sure if the double or single quotes is better here
         echo "($(printf "'%s' " "${ARGS[@]}"))"
@@ -1437,6 +1437,14 @@ ls_array(){
             echo "item = $item"
         done
 
+    Alternatives:
+        my_array=()
+        while IFS= read -r item; do
+            my_array+=("$item")
+            echo "item = $item"
+        done < <(find . -maxdepth 1 -mindepth 1)
+        bash_array_repr "${my_array[@]}"
+
     References:
         .. [1] https://stackoverflow.com/a/18887210/887074
         .. [2] https://stackoverflow.com/questions/14564746/in-bash-how-to-get-the-current-status-of-set-x
@@ -1600,7 +1608,7 @@ remove_empty_dirs(){
         https://www.cyberciti.biz/faq/howto-find-delete-empty-directories-files-in-unix-linux/
     '
     _handle_help "$@" || return 0
-    DPATH="${1:-.}"
+    local DPATH="${1:-.}"
     find "$DPATH" -empty -type d -delete
 }
 

@@ -177,8 +177,8 @@ check_status(){
 
     REMOTE=namek
     "
-    REMOTE=$1
-    MOUNTPOINT=$HOME/remote/$REMOTE
+    local REMOTE=$1
+    local MOUNTPOINT=$HOME/remote/$REMOTE
 
     echo "Checking Status of REMOTE=$REMOTE"
     lsof "$MOUNTPOINT"
@@ -222,6 +222,22 @@ unmount_if_mounted()
     fi
 }
 
+list_mounted_remotes(){
+    __doc__="
+    Loop over
+    "
+    REMOTE_MOUNT_DPATH=$HOME/remote
+    while IFS= read -r _candidate_dpath; do
+        _candidate_remote=$(basename "$_candidate_dpath")
+        MOUNTPOINT=$REMOTE_MOUNT_DPATH/$_candidate_remote
+        if mountpoint "$MOUNTPOINT" > /dev/null; then
+            echo "mounted   - $_candidate_remote"
+        else
+            echo "unmounted - $_candidate_remote"
+        fi
+    done < <(find "$REMOTE_MOUNT_DPATH" -maxdepth 1 -mindepth 1 -type d)
+}
+
 
 build_bash_complete_script(){
     echo 'complete -W "$(awk '\''/^Host / {print $2}'\'' ~/.ssh/config)" mount-remotes.sh'
@@ -255,6 +271,11 @@ mount_remotes_main(){
                 --build-bash-completion)
                     # Give the user the command to build bash completion
                     build_bash_complete_script
+                return 0
+                ;;
+                --list)
+                    # Give the user the command to build bash completion
+                    list_mounted_remotes
                 return 0
                 ;;
                 *)    # unknown option
