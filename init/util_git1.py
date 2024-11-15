@@ -23,7 +23,7 @@ def oscmd(command):
     os.system(command)
 
 
-class ChdirContext(object):
+class ChdirContext:
     """
     References:
         http://www.astropython.org/snippet/2009/10/chdir-context-manager
@@ -54,7 +54,7 @@ class ChdirContext(object):
             return False  # return a falsey value on error
 
 
-class Repo(object):
+class Repo:
     """
     Handles a Python module repository
     """
@@ -352,6 +352,97 @@ def install_repos():
             oscmd('pip install -e .')
 
 
+def dev_status():
+    """
+    Build a table to indicate how far development has gotten to get an
+    indication of when we need to make a new release.
+    """
+    import ubelt as ub
+    import parse
+    import kwutil
+    import git
+    shortstat_pattern = parse.Parser('{num_files:d} files changed, {num_inserts:d} insertions(+), {num_deletes:d} deletions(-)')
+    rows = []
+    for repodir, repourl in zip(ub.ProgIter(REPOS1.PROJECT_REPOS), REPOS1.PROJECT_URLS):
+        repo = git.Repo(repodir)
+        row = {
+            'repodir': repodir,
+            'repo_name': ub.Path(repodir).name,
+        }
+        try:
+            candidate_target_branches = []
+            for branch in repo.branches:
+                if branch.name in {'main', 'master'}:
+                    candidate_target_branches.append(branch)
+
+            if len(candidate_target_branches) > 1:
+                raise NotImplementedError("both main and master exist, todo: determine which one is used or default to main")
+            elif len(candidate_target_branches) == 0:
+                raise NotImplementedError("no default branch")
+
+            main_branch = candidate_target_branches[0]
+
+            # https://stackoverflow.com/questions/2528111/how-can-i-calculate-the-number-of-lines-changed-between-two-commits-in-git
+            out = ub.cmd(f'git diff {main_branch.name}..{repo.active_branch.name} --shortstat', cwd=repodir)
+            result = shortstat_pattern.parse(out.stdout.strip())
+            if result is None:
+                shortstats = {
+                    'num_files': 0,
+                    'num_inserts': 0,
+                    'num_deletes': 0,
+                }
+            else:
+                shortstats = result.named
+
+            # https://stackoverflow.com/questions/50452866/how-to-show-date-and-time-of-a-commit-by-hash
+            active_date = kwutil.datetime.coerce(repo.active_branch.commit.committed_datetime)
+            main_date = kwutil.datetime.coerce(main_branch.commit.committed_datetime)
+
+            branch_delta = active_date - main_date
+            total_delta = kwutil.datetime.coerce('now') - main_date
+
+            # https://stackoverflow.com/questions/26413617/how-can-i-count-number-of-commits-between-two-branches
+            out = ub.cmd(f'git rev-list --count {repo.active_branch.name}  ^{main_branch}', cwd=repodir)
+            num_commits = int(out.stdout.strip())
+
+            row.update({
+                'main_branch': main_branch.name,
+                'dev_branch': repo.active_branch.name,
+                'dev_date': active_date,
+                'dev_delta': branch_delta,
+                'total_delta': total_delta,
+                'main_date': main_date,
+                'num_commits': num_commits,
+                **shortstats
+            })
+            # print(f'{ub.urepr(row, nl=0)}')
+        except Exception as ex:
+            raise
+            row['ex'] = ex
+        rows.append(row)
+    import pandas as pd
+    df = pd.DataFrame(rows)
+    df['num_changes'] = df['num_inserts'] + df['num_deletes']
+
+    df = df.sort_values('total_delta')
+    df = df.sort_values('num_changes')
+
+    is_developing = df['main_branch'] != df['dev_branch']
+    display_df = df.drop(['dev_date', 'main_branch', 'repodir'], axis=1)
+
+    if 1:
+        display_df['main_date'] = display_df['main_date'].map(lambda x: x.date())
+        display_df['dev_delta'] = display_df['dev_delta'].map(lambda x: kwutil.timedelta.coerce(x).format(unit='day', precision=1))
+        display_df['total_delta'] = display_df['total_delta'].map(lambda x: kwutil.timedelta.coerce(x).format(unit='day', precision=1))
+
+    developing_df = display_df[is_developing]
+    nonreleased_df = display_df[~is_developing]
+
+    import rich
+    rich.print(nonreleased_df.to_string())
+    rich.print(developing_df.to_string())
+
+
 def setup_develop_repos(repo_dirs):
     """ Run python installs """
     for repodir in repo_dirs:
@@ -385,9 +476,11 @@ def main():
 
     if len(varargs) == 1 and varargs[0] == 'clone_repos':
         clone_repos()
-    if len(varargs) == 1 and varargs[0] == 'install_repos':
+    elif len(varargs) == 1 and varargs[0] == 'install_repos':
         install_repos()
-    if varargs[0] in {'cmd', 'command'}:
+    elif len(varargs) == 1 and varargs[0] == 'dev_status':
+        dev_status()
+    elif varargs[0] in {'cmd', 'command'}:
         assert len(varargs) > 1
         run_bash_command_in_repos(varargs[1:])
     elif len(varargs) == 1 and varargs[0] == 'list':
@@ -415,5 +508,6 @@ if __name__ == '__main__':
     """
     python ~/local/init/util_git1.py list
     python ~/local/init/util_git1.py clone_repos
+    python ~/local/init/util_git1.py dev_status
     """
     main()

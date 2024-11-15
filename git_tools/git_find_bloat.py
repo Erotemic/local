@@ -1,5 +1,8 @@
 """
-Adapted from ~/code/watch/dev/maintain/find_git_bloat.sh
+Adapted from ~/code/geowatch/dev/maintain/find_git_bloat.sh
+
+TODO:
+    - [ ] Move to git-well
 
 References:
     .. [SO13403069] https://stackoverflow.com/questions/13403069/how-to-find-out-which-files-take-up-the-most-space-in-git-repo
