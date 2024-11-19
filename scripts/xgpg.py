@@ -871,7 +871,9 @@ class GPGCLI:
                 dst.delete()
             ub.cmd(command, verbose=3)
             if was_temp:
-                print(dst.read_text())
+                signed_text = dst.read_text()
+                print(signed_text)
+                toreturn = signed_text
                 dst.delete()
             else:
                 print(f'wrote to: {dst}')
@@ -882,7 +884,7 @@ class GPGCLI:
 
     @staticmethod
     def sign_text(text, sign_keyid, verbose=1):
-        """
+        r"""
         Signs text that proves its from you.
 
         CommandLine:
@@ -894,9 +896,51 @@ class GPGCLI:
             import sys, ubelt
             sys.path.append(ubelt.expandpath('~/local/scripts'))
             from xgpg import *  # NOQA
-            sign_keyid = '4AC8B478335ED6ED667715F3622BE571405441B4'
-            text = f'Hello. My public GPG key is: {sign_keyid}'
-            GPGCLI.sign_text(text, sign_keyid, verbose=1)
+            #sign_keyid = '4AC8B478335ED6ED667715F3622BE571405441B4'
+            sign_keyid = '70858F4D01314BF21427676F3D568E6559A34380'
+            #text = f'Hello. My public GPG key is: {sign_keyid}'
+
+            text = ub.codeblock(
+                rf'''
+                Uggg. That is pretty annoying. If only there was SOME WAY for
+                a user to make a claim as to what their public key was on
+                some independent account, like: hello reddit my public
+                CI-signing key is: {sign_keyid}.
+
+                And if only that key could be uploaded to some public server
+                and then accessed by other users. Maybe then there could be
+                some sort of linkage of confidence... like some authority could
+                place some sort of trust in a users public key. Maybe we could
+                make some sort of chain out of it. That would be a pretty good
+                plan. But I suppose the technology just isnt there. Its sad.
+
+                If only there was some way you could
+                verify that I wrote and released xdoctest v1.2.0:
+                https://github.com/Erotemic/xdoctest/releases/tag/v1.2.0
+
+                And then show you where the file and signature is:
+                curl -LO https://github.com/Erotemic/xdoctest/releases/download/v1.2.0/xdoctest-1.2.0-py3-none-any.whl
+                curl -LO https://github.com/Erotemic/xdoctest/releases/download/v1.2.0/xdoctest-1.2.0-py3-none-any.whl.asc
+                gpg --recv-keys --keyserver hkp://keyserver.ubuntu.com 70858F4D01314BF21427676F3D568E6559A34380
+
+                Maybe if you chose to trust me you could do something to indicate it with some ugly command like:
+
+                gpg --list-keys --fingerprint --with-colons {sign_keyid} | sed -E -n -e 's/^fpr:::::::::([0-9A-F]+):$/\1:6:/p' | gpg --import-ownertrust
+
+                And then have you independently verify that the guy writing
+                this message is very very likely to be the same guy who wrote
+                and released xdoctest 1.2.0.
+
+                gpg --verify xdoctest-1.2.0-py3-none-any.whl.asc xdoctest-1.2.0-py3-none-any.whl
+
+                Its too bad theres no possible good path forward here.
+                ''')
+            signed_text = GPGCLI.sign_text(text, sign_keyid, verbose=1)
+
+            how_to_verify_parts = []
+            how_to_verify_parts.append(f'gpg --recv-keys --keyserver hkp://keyserver.ubuntu.com {sign_keyid}')
+            how_to_verify_parts.append('echo "' + signed_text + '" | gpg --verify')
+            print(chr(10).join(how_to_verify_parts))
         """
         # Probably not secure
         if verbose:
@@ -918,8 +962,10 @@ class GPGCLI:
             print('text_fpath.name = {!r}'.format(text_fpath.name))
             print(f'text={text}')
             ub.Path(text_fpath.name).write_text(text)
-            GPGCLI.sign_file(src=text_fpath.name, dry=False,
-                             sign_keyid=sign_keyid, verbose=verbose)
+            signed_text = GPGCLI.sign_file(
+                src=text_fpath.name, dry=False,
+                sign_keyid=sign_keyid, verbose=verbose)
+        return signed_text
 
     @staticmethod
     def sign_and_encrypt_text(text, dst, sign_keyid, recipient=None, dry=False,
