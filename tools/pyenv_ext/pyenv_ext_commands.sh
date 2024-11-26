@@ -49,6 +49,7 @@ Example Usage:
     pyenv_create_virtualenv 3.7 off
     pyenv_create_virtualenv 3.8 off
     pyenv_create_virtualenv 3.10 off
+    pyenv_create_virtualenv 3.10.4 off
     pyenv_create_virtualenv 3.12 full
     pyenv_create_virtualenv 3.13.0 full
 

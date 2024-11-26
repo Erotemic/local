@@ -2966,6 +2966,23 @@ ollama_via_docker(){
     docker exec -it ollama ollama run reflection
     docker exec -it ollama ollama run codestral
     #docker exec -it ollama ollama run llama3.1:405b
+
+
+    # For a frontend:
+    # https://github.com/open-webui/open-webui
+    pip install open-webui
+
+    # Data saved in:
+    #/home/joncrall/.pyenv/versions/3.11.9/envs/pyenv3.11.9/lib/python3.11/site-packages/open_webui/data/vector_db/chroma.sqlite3
+    #/home/joncrall/.pyenv/versions/3.11.9/envs/pyenv3.11.9/lib/python3.11/site-packages/open_webui/data/webui.db
+    #
+    export OLLAMA_BASE_URL=http://localhost:11434
+    open-webui serve
+
+
+
+    docker run -d -p 3000:8080 --add-host=host.docker.internal:host-gateway -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+
 }
 
 
@@ -2995,5 +3012,15 @@ install_onlyoffice(){
     # Install
     # FIXME: this is interactive
     sudo apt-get install onlyoffice-desktopeditors -y
+
+}
+
+install_sweethome3d(){
+    __doc__="
+    https://sourceforge.net/projects/sweethome3d/postdownload
+    "
+    mkdir -p ~/.local/opt/sweethome3d
+    tar -xvf /home/joncrall/Downloads/SweetHome3D-7.5-linux-x64.tgz --directory "$HOME"/.local/opt/sweethome3d
+    /home/joncrall/.local/opt/sweethome3d/SweetHome3D-7.5
 
 }

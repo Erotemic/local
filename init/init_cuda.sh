@@ -1,4 +1,4 @@
-
+#!/bin/bash
 
 install_nivida_drivers_apt(){
     __doc__="
@@ -61,4 +61,52 @@ install_nivida_drivers_apt(){
     #cuda_version=10.1
     #change_cuda_version $cuda_version
     #change_cudnn_version 10.1 7.0
+}
+
+
+install_cuda_toolkit_and_cudnn(){
+    __doc__="
+    https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&Distribution=Debian&target_version=12&target_type=deb_local
+
+    https://docs.nvidia.com/cuda/cuda-installation-guide-linux/#network-repo-installation-for-ubuntu
+
+    https://developer.nvidia.com/cudnn-downloads
+    "
+    wget https://developer.download.nvidia.com/compute/cuda/12.6.3/local_installers/cuda-repo-debian12-12-6-local_12.6.3-560.35.05-1_amd64.deb
+    sudo dpkg -i cuda-repo-debian12-12-6-local_12.6.3-560.35.05-1_amd64.deb
+    sudo cp /var/cuda-repo-debian12-12-6-local/cuda-*-keyring.gpg /usr/share/keyrings/
+    sudo add-apt-repository contrib
+    sudo apt-get update
+    sudo apt-get -y install cuda-toolkit-12-6
+
+    sudo apt-get install zlib1g
+
+    OS_ID="$(lsb_release --short --id)"
+    if [[ "$OS_ID" == "Ubuntu" ]]; then
+        VERSION=$(lsb_release -rs)
+        if [[ "$VERSION" == "20.04" ]]; then
+            _DISTRO="ubuntu2004"
+        elif [[ "$VERSION" == "22.04" ]]; then
+            _DISTRO="ubuntu2204"
+        elif [[ "$VERSION" == "24.04" ]]; then
+            _DISTRO="ubuntu2404"
+        else
+            echo "Unsupported Ubuntu version: $VERSION"
+        fi
+    else
+        echo "Unsupported OS: $OS_ID"
+    fi
+    _ARCH=$(arch)
+    wget https://developer.download.nvidia.com/compute/cuda/repos/"${_DISTRO}"/"${_ARCH}"/cuda-keyring_1.1-1_all.deb
+    sudo dpkg -i cuda-keyring_1.1-1_all.deb
+
+    sudo apt-get update
+    sudo apt-get -y install cudnn
+    sudo apt-get -y install cudnn-cuda-11
+    sudo apt-get -y install cudnn-cuda-12
+
+
+
+
+
 }

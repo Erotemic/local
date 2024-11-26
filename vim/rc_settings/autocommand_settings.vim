@@ -60,6 +60,7 @@ endfu
 :call AuOnReadPatterns('set ft=python', '*.py.tpl')
 :call AuOnReadPatterns('set ft=cmake', '*.poly', '*.node', '.ele')
 :call AuOnReadPatterns('set ft=cython', '*.pyx', '.pxd')
+:call AuOnReadPatterns('set ft=dockerfile', '*.docker')
 :call AuOnReadPatterns('set ft=bash', 'secrets')
 :call AuOnReadPatterns('set ft=Autohotkey', '*.ahk')
 :call AuOnReadPatterns('set ft=conf', '*.conf')
