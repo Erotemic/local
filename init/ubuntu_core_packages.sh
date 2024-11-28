@@ -3019,8 +3019,12 @@ install_sweethome3d(){
     __doc__="
     https://sourceforge.net/projects/sweethome3d/postdownload
     "
+
+    ipfs get bafybeiahger5f37edpgnr3wk5mj462e46drfl6hcmbn6te3ek2ahmxfgnq -o SweetHome3D-7.5-linux-x64.tgz
+    ipfs pin add bafybeiahger5f37edpgnr3wk5mj462e46drfl6hcmbn6te3ek2ahmxfgnq
     mkdir -p ~/.local/opt/sweethome3d
-    tar -xvf /home/joncrall/Downloads/SweetHome3D-7.5-linux-x64.tgz --directory "$HOME"/.local/opt/sweethome3d
-    /home/joncrall/.local/opt/sweethome3d/SweetHome3D-7.5
+    tar -xvf SweetHome3D-7.5-linux-x64.tgz --directory "$HOME"/.local/opt/sweethome3d
+    ls /home/joncrall/.local/opt/sweethome3d/SweetHome3D-7.5
+    /home/joncrall/.local/opt/sweethome3d/SweetHome3D-7.5/SweetHome3D-Java3D-1_5_2
 
 }

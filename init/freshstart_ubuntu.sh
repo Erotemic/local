@@ -1201,3 +1201,33 @@ install_nodejs(){
 sudo apt install nodejs
 sudo apt install npm
 }
+
+
+setup_mime_gnome_open_defaults(){
+    __doc__="
+    https://chatgpt.com/share/67475b6d-acc0-8002-a90c-569dfca3b171
+    "
+
+    # Query what the mime type is for an extension
+    mimetype .zip
+    mimetype .7z
+    mimetype .tar.gz
+    mimetype .gz
+    mimetype .tar
+
+    # Query the current program that opens a specific mime type:
+    xdg-mime query default application/zip
+    xdg-mime query default application/x-7z-compressed
+    xdg-mime query default application/x-compressed-tar
+    xdg-mime query default application/gzip
+    xdg-mime query default application/x-tar
+
+    # Set the mime type for compressed files to use file roller
+    xdg-mime default org.gnome.FileRoller.desktop application/x-7z-compressed
+    xdg-mime default org.gnome.FileRoller.desktop application/zip
+    xdg-mime default org.gnome.FileRoller.desktop application/x-7z-compressed
+    xdg-mime default org.gnome.FileRoller.desktop application/x-compressed-tar
+    xdg-mime default org.gnome.FileRoller.desktop application/gzip
+    xdg-mime default org.gnome.FileRoller.desktop application/x-tar
+
+}
