@@ -612,7 +612,8 @@ gnome_settings()
     gsettings get org.gnome.desktop.screensaver lock-delay
     gsettings set org.gnome.desktop.lockdown disable-lock-screen 'true'
     gsettings set org.gnome.desktop.screensaver lock-enabled false
-    gsettings set org.gnome.desktop.screensaver lock-delay 36000
+    #gsettings set org.gnome.desktop.screensaver lock-delay 36000
+    gsettings set org.gnome.desktop.screensaver lock-delay 86400
 
     # Alt, set the lock delay to be big
 

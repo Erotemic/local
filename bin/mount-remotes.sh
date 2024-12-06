@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-__doc__="
+__doc__='
 
 Need to ensure ~/.ssh/config has the remote setup
 
@@ -36,7 +36,11 @@ CommandLine:
 
 References:
     .. [SE59348] https://askubuntu.com/questions/59348/nautilus-is-frozen-cannot-be-used-and-cannot-be-killed
-"
+
+
+TODO:
+    improve help docstring
+'
 if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
 	# Running as a script
 	set -eo pipefail
@@ -45,6 +49,7 @@ fi
 if [[ "${DEBUG_MOUNT_REMOTES+x}" != "" ]]; then
 	set -x
 fi
+
 
 
 setup_local_pseudo_mount(){
@@ -240,7 +245,24 @@ list_mounted_remotes(){
 
 
 build_bash_complete_script(){
+    # Echo out a oneliner that does the completions
     echo 'complete -W "$(awk '\''/^Host / {print $2}'\'' ~/.ssh/config)" mount-remotes.sh'
+}
+
+
+# Define a function to generate completion options
+_mount_remotes_completions() {
+    ## shellcheck disable=SC2207
+    #HOSTNAME_TEXTS="$(awk '/^Host / {print $2}' ~/.ssh/config | grep "^${COMP_WORDS[COMP_CWORD]}")"
+    mapfile -t HOSTNAMES < <(awk '/^Host / {print $2}' ~/.ssh/config)
+    # Copy the array of hostnames as the list of completions
+    COMPREPLY=("${HOSTNAMES[@]}")
+}
+
+_exec_bash_completions(){
+    # TODO: we probably need to source this?
+    # Register the function with the 'complete' command
+    complete -F _mount_remotes_completions mount-remotes.sh
 }
 
 mount_remotes_main(){
@@ -273,6 +295,11 @@ mount_remotes_main(){
                     build_bash_complete_script
                 return 0
                 ;;
+                --exec-bash-completion)
+                    # Give the user the command to build bash completion
+                    _exec_bash_completions
+                return 0
+                ;;
                 --list)
                     # Give the user the command to build bash completion
                     list_mounted_remotes
@@ -288,7 +315,7 @@ mount_remotes_main(){
         set -- "${POSITIONAL[@]}" # restore positional parameters
 
         if [[ "$SHOW_HELP" == "YES" ]]; then
-            echo "TODO: SHOW HELP FOR MOUNT_REMOTES"
+            echo "$__doc__"
         elif [[ ${#POSITIONAL[@]} -gt 0 ]]; then
             # User specified a specific set of remotes
             # Always force when user specifies the remotes

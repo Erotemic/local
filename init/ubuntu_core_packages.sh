@@ -3028,3 +3028,18 @@ install_sweethome3d(){
     /home/joncrall/.local/opt/sweethome3d/SweetHome3D-7.5/SweetHome3D-Java3D-1_5_2
 
 }
+
+install_openvpn3(){
+    sudo apt install apt-transport-https curl
+    sudo mkdir -p /etc/apt/keyrings    ### This might not exist in all distributions
+    sudo curl -sSfL https://packages.openvpn.net/packages-repo.gpg --output /etc/apt/keyrings/openvpn.asc
+
+    DISTRIBUTION=$(lsb_release -cs)
+    echo "DISTRIBUTION = $DISTRIBUTION"
+
+    sudo_appendto /etc/apt/sources.list.d/openvpn3.list "deb [signed-by=/etc/apt/keyrings/openvpn.asc] https://packages.openvpn.net/openvpn3/debian $DISTRIBUTION main"
+
+    cat /etc/apt/sources.list.d/openvpn3.list
+    sudo apt update -y
+    sudo apt install openvpn3 -y
+}

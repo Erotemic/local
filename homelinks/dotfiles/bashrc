@@ -492,7 +492,12 @@ complete -o default -F _pip_completion pip
 
 # Output of:
 # mount-remotes.sh --build-bash-completion
+#if type mount-remotes.sh >/dev/null; then
+#    mount-remotes.sh --exec-bash-completion
+#fi
 complete -W "$(awk '/^Host / {print $2}' ~/.ssh/config)" mount-remotes.sh
+
+complete -W "$(awk '/^Host / {print $2}' ~/.ssh/config)" vnc_over_ssh.sh
 
 
 # pip bash completion end
