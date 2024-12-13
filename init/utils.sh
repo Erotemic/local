@@ -23,6 +23,8 @@ An overview and example usage of some of the selected utilities are as follows:
 
 * sudo_writeto <fpath> <text> - Unindents text and writes it to a file with sudo privledges
 
+* sudo_appendto <fpath> <text> - Unindents text and appends it to a file with sudo privledges
+
 * curl_verify_hash <URL> <DST> <EXPECTED_HASH> [HASHER] [CURL_OPTS] [VERBOSE] - downloads a file with curl and also checks its hash.
 
 * joinby <SEP> [ARGS...] - joins all the arguments into a string separated by the separator
@@ -380,7 +382,7 @@ sudo_writeto()
 
 sudo_appendto()
 {
-    __doc__="
+    __doc__='
     Unindents text and appends it to a file with sudo privledges
 
     Usage:
@@ -391,13 +393,21 @@ sudo_appendto()
         text : text to unindent and write
 
     Example:
-        sudo_appendto /root-file '
+        sudo_appendto /root-file "
             # Text in this command is automatically dedented via codeblock
             option=True
             variable=False
-        '
+        "
         cat /root-file
-    "
+
+    A no-dependency snippet that can be used in place of this looks like
+
+    .. code::
+
+        TODO: is there anything concise we can use here?
+        sudo sh -c "echo \"$fixed_text\" >> $fpath"
+
+    '
     _handle_help "$@" || return 0
     # NOTE: FAILS WITH QUOTES IN BODY
     fpath=$1

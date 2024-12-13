@@ -2958,11 +2958,12 @@ ollama_via_docker(){
     # Given a machine setup with nvidia docker, run the ollama sever
     docker run -d --gpus=all -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
     docker start ollama
-    docker exec -it ollama ollama run llama3.1:70b
+    docker exec -it ollama ollama run llama3.3:70b
 
     # And instruct it to download and run one of these models, depending on what you have resources for:
     docker exec -it ollama ollama run llama3
     docker exec -it ollama ollama run llama3.1:70b
+    docker exec -it ollama ollama run llama3.3:70b
     docker exec -it ollama ollama run reflection
     docker exec -it ollama ollama run codestral
     #docker exec -it ollama ollama run llama3.1:405b
@@ -2973,9 +2974,10 @@ ollama_via_docker(){
     pip install open-webui
 
     # Data saved in:
-    #/home/joncrall/.pyenv/versions/3.11.9/envs/pyenv3.11.9/lib/python3.11/site-packages/open_webui/data/vector_db/chroma.sqlite3
-    #/home/joncrall/.pyenv/versions/3.11.9/envs/pyenv3.11.9/lib/python3.11/site-packages/open_webui/data/webui.db
-    #
+    __note__="
+    rm $HOME/.pyenv/versions/3.11.9/envs/pyenv3.11.9/lib/python3.11/site-packages/open_webui/data/vector_db/chroma.sqlite3
+    rm $HOME/joncrall/.pyenv/versions/3.11.9/envs/pyenv3.11.9/lib/python3.11/site-packages/open_webui/data/webui.db
+    "
     export OLLAMA_BASE_URL=http://localhost:11434
     open-webui serve
 

@@ -497,7 +497,10 @@ complete -o default -F _pip_completion pip
 #fi
 complete -W "$(awk '/^Host / {print $2}' ~/.ssh/config)" mount-remotes.sh
 
+alias vnc-over-ssh=vnc_over_ssh.sh
 complete -W "$(awk '/^Host / {print $2}' ~/.ssh/config)" vnc_over_ssh.sh
+complete -W "$(awk '/^Host / {print $2}' ~/.ssh/config)" vnc-over-ssh
+complete -W "$(awk '/^Host / {print $2}' ~/.ssh/config)" git-sync
 
 
 # pip bash completion end

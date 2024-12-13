@@ -1,6 +1,27 @@
 #!/usr/bin/env bash
 __doc__='
 
+Usage
+-----
+mount-remotes.sh [options] [remote_name]
+
+Positional Arguments
+--------------------
+
+    remote_name : the name of the remote to mount (default action if no other options are given)
+
+
+Options
+-------
+
+    -h, --help                    show the help message
+    -u, --unmount                 unmount the listed remote
+    -f, --force                   force the mount / unmount
+    -s, --status                  get status of a specific remote
+    --list                        list known remotes and which are mounted / unmounted (does not take a remote name)
+    --build-bash-completion       generate text to add to your bashrc (no positional arguments)
+
+
 Need to ensure ~/.ssh/config has the remote setup
 
 Example:
