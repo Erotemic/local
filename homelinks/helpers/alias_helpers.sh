@@ -219,6 +219,7 @@ alias dmsg=dmesg
 
 #unalias check_json
 alias check_json='python3 -c "import json, sys, pathlib; print(json.loads(pathlib.Path(sys.argv[1]).read_text()))"'
+alias squeue-full="squeue --format='%.8i %.12u %.64j %.12T %.10M %.12l %.10D %.10P'"
 
 
 alias drl='docker_run_last'
@@ -1239,11 +1240,34 @@ ubuntu_update(){
 }
 
 
-ollama(){
+ollama-terminal(){
     # Given a machine setup with nvidia docker, run the ollama sever
-    docker run -d --gpus=all -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
-    docker start ollama
-    docker exec -it ollama ollama run llama3.1:70b
+    CONTAINER_NAME=ollama
+    if docker inspect -f '{{.State.Running}}' "$CONTAINER_NAME" | grep -q "true"; then
+        echo "Container is running"
+    else
+        echo "Container needs to be started"
+        docker run -d --gpus=all -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+        docker start ollama
+    fi
+    docker exec -it ollama ollama run llama3.3:70b
+}
 
-
+ollama-web(){
+    CONTAINER_NAME=ollama
+    SERVER_URL=http://0.0.0.0:8080
+    if docker inspect -f '{{.State.Running}}' "$CONTAINER_NAME" | grep -q "true"; then
+        echo "Container is running"
+    else
+        echo "Container needs to be started"
+        docker start ollama
+    fi
+    if curl -s --connect-timeout 1 "$SERVER_URL" > /dev/null; then
+        echo "Server already running. Navigate to $SERVER_URL"
+    else
+        echo "Server is not running"
+        export OLLAMA_BASE_URL=http://localhost:11434
+        export OLLAMA_KEEP_ALIVE=1
+        open-webui serve
+    fi
 }
