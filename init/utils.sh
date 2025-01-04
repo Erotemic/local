@@ -356,9 +356,6 @@ sudo_writeto()
         fpath : path to write to
         text : text to unindent and write
 
-    FIXME:
-       - [ ] This seems to eat internal doublequotes
-
     Example:
         sudo_writeto /root-file '
             # Text in this command is automatically dedented via codeblock
@@ -373,17 +370,10 @@ sudo_writeto()
     fpath=$1
     text=$2
     fixed_text=$(codeblock "$text")
-    echo "
-    fpath = '$fpath'
-    text = '$text'
-    fixed_text = '$fixed_text'
-    "
-    # IS THERE A BETTER WAY TO FORWARD AN ENV TO SUDO SO sudo writeto works
-    sudo sh -c "echo \"$fixed_text\" > $fpath"
-#    # Maybe this?
-#    sudo sh -c "cat > ${fpath} << EOF
-#${fixed_text}
-#"
+    # References: https://unix.stackexchange.com/questions/379181/escape-a-variable-for-use-as-content-of-another-script
+    # Escape double quotes and backslashes in the text
+    escaped_text=$(printf "%s" "$fixed_text" | sed 's/["\\]/\\&/g')
+    sudo sh -c "echo \"$escaped_text\" > $fpath"
 }
 
 sudo_appendto()
