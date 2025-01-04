@@ -337,7 +337,10 @@ writeto()
     fpath=$1
     text=$2
     fixed_text=$(codeblock "$text")
-    sh -c "echo \"$fixed_text\" > $fpath"
+    #echo "$fixed_text"
+    echo "$fixed_text" > "$fpath"
+    # The bottom code eats internal double quotes, dont use it
+    #sh -c "echo \"$fixed_text\" > $fpath"
 }
 
 
@@ -352,6 +355,9 @@ sudo_writeto()
     Args:
         fpath : path to write to
         text : text to unindent and write
+
+    FIXME:
+       - [ ] This seems to eat internal doublequotes
 
     Example:
         sudo_writeto /root-file '
