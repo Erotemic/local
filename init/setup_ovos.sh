@@ -159,7 +159,7 @@ setup_vm(){
     # https://www.tecmint.com/install-qemu-kvm-ubuntu-create-virtual-machines/
 
     # check that virtualization is enabled (num should be greater than 0)
-    egrep -c '(vmx|svm)' /proc/cpuinfo
+    grep -Ec '(vmx|svm)' /proc/cpuinfo
     grep -E --color '(vmx|svm)' /proc/cpuinfo
 
     sudo apt install cpu-checker -y
@@ -183,7 +183,36 @@ setup_vm(){
     sudo apt install transmission-cli
 
     "magnet:?xt=urn:btih:2e8e44068b254814ea1a7d4969a9af1d78e0f51f&dn=ubuntu-22.04.5-desktop-amd64.iso&tr=https%3A%2F%2Ftorrent.ubuntu.com%2Fannounce&tr=https%3A%2F%2Fipv6.torrent.ubuntu.com%2Fannounce"
+}
 
 
+install_in_vm(){
+
+    sudo apt update -y
+    sudo apt upgrade -y
+
+    sudo apt install git python3 curl linux-tools-common "linux-tools-$(uname -r)" -y
+
+    mkdir -p "$HOME"/code
+    cd "$HOME"/code
+    git clone https://github.com/OpenVoiceOS/ovos-installer.git
+
+mkdir -p ~/.config/ovos-installer
+cat <<EOF > ~/.config/ovos-installer/scenario.yaml
+---
+uninstall: false
+method: virtualenv
+channel: development
+profile: ovos
+features:
+  skills: true
+  extra_skills: true
+  gui: true
+rapsberry_pi_tuning: false
+share_telemetry: false
+EOF
+
+    cd "$HOME"/code/ovos-installer
+    sudo ./setup.sh
 
 }
