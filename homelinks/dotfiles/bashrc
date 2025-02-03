@@ -455,7 +455,7 @@ if is_probably_decrypted "$HOME/.bashrc-local.sh" > /dev/null ; then
     source "$HOME/.bashrc-local.sh"
 fi
 
-DID_MY_BASHRC_INIT="TRUE"
+export DID_MY_BASHRC_INIT="TRUE"
 
 # super trick: make multiprocessing actually use multiple cores
 # https://stackoverflow.com/questions/15639779/why-does-multiprocessing-use-only-a-single-core-after-i-import-numpy
