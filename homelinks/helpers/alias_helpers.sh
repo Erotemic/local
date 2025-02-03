@@ -839,9 +839,12 @@ randpw2(){
     __doc__="
     Generate a random password (81.70 bits of entropy)
 
+    SeeAlso:
+        python ~/misc/notes/password_model.py
+
     https://www.howtogeek.com/howto/30184/10-ways-to-generate-a-random-password-from-the-command-line/
     "
-    echo "$(diceware -n 4)#$(head -c16777216 /dev/urandom | base64 | python -c "import string, ubelt, sys; print(ubelt.hash_data(sys.stdin.read(), base='alphanum')[0:6])")"
+    echo "$(diceware -n 4)@$(head -c16777216 /dev/urandom | base64 | python -c "import string, ubelt, sys; print(ubelt.hash_data(sys.stdin.read(), base=10)[0:7])")"
 }
 
 
@@ -1254,8 +1257,24 @@ ollama-terminal(){
 }
 
 ollama-web(){
+    __doc__="
+    pip install open_webui -U
+    "
     CONTAINER_NAME=ollama
     SERVER_URL=http://0.0.0.0:8080
+    MODEL_DPATH=/data/docker/ollama/models
+
+    # Check if the container exists
+    if ! docker inspect "$CONTAINER_NAME" > /dev/null 2>&1; then
+        echo "Container does not exist. Creating it..."
+        docker create \
+            --gpus=all \
+            --name "$CONTAINER_NAME" \
+            -v "$MODEL_DPATH:/root/.ollama" \
+            -p 11434:11434 \
+            ollama/ollama
+    fi
+
     if docker inspect -f '{{.State.Running}}' "$CONTAINER_NAME" | grep -q "true"; then
         echo "Container is running"
     else
