@@ -656,7 +656,7 @@ we-py3()
 #        # Activate the new venv
 #        conda activate $NEW_VENV
 #    fi
-#}
+#/}
 #workon_conda3()
 #{
 #    __doc__ "
@@ -1253,40 +1253,66 @@ ollama-terminal(){
         docker run -d --gpus=all -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
         docker start ollama
     fi
-    docker exec -it ollama ollama run llama3.3:70b
+    # List models
+    docker exec -it ollama ollama list
+    OLLAMA_MODEL=llama3.3:70b
+    echo "Connecting to ollama backend with model: $OLLAMA_MODEL"
+    docker exec -it ollama ollama run "$OLLAMA_MODEL"
 }
 
 ollama-web(){
     __doc__="
     pip install open_webui -U
+
+    docker pull ghcr.io/open-webui/open-webui:main
     "
     CONTAINER_NAME=ollama
-    SERVER_URL=http://0.0.0.0:8080
-    MODEL_DPATH=/data/docker/ollama/models
+    SERVER_URL=http://0.0.0.0:14771
+    DOCKER_DATA_DPATH=/data/docker
+    MODEL_DPATH=$DOCKER_DATA_DPATH/ollama/models
+    WEBUI_DATA_DPATH=$DOCKER_DATA_DPATH/open-webui
+    OLLAMA_PORT=11434
 
     # Check if the container exists
     if ! docker inspect "$CONTAINER_NAME" > /dev/null 2>&1; then
         echo "Container does not exist. Creating it..."
+        mkdir -p "$MODEL_DPATH"
         docker create \
             --gpus=all \
             --name "$CONTAINER_NAME" \
             -v "$MODEL_DPATH:/root/.ollama" \
-            -p 11434:11434 \
+            -p "$OLLAMA_PORT":"$OLLAMA_PORT" \
             ollama/ollama
     fi
 
     if docker inspect -f '{{.State.Running}}' "$CONTAINER_NAME" | grep -q "true"; then
-        echo "Container is running"
+        echo "ollama backend container is running"
     else
-        echo "Container needs to be started"
+        echo "ollama backend needs to be started"
         docker start ollama
     fi
     if curl -s --connect-timeout 1 "$SERVER_URL" > /dev/null; then
-        echo "Server already running. Navigate to $SERVER_URL"
+        echo "openweb-ui frontend already running. Navigate to $SERVER_URL"
     else
-        echo "Server is not running"
-        export OLLAMA_BASE_URL=http://localhost:11434
+        echo "openweb-ui frontend is not running"
+        mkdir -p "$WEBUI_DATA_DPATH"
+        export OLLAMA_BASE_URL=http://localhost:"$OLLAMA_PORT"
         export OLLAMA_KEEP_ALIVE=1
-        open-webui serve
+        export OLLAMA_DOCKER_BASE_URL=http://host.docker.internal:"$OLLAMA_PORT"
+
+        if ! docker inspect "$CONTAINER_NAME" > /dev/null 2>&1; then
+            docker run -d -p 14771:8080 \
+                -e WEBUI_AUTH=False \
+                -e OLLAMA_BASE_URL=$OLLAMA_DOCKER_BASE_URL \
+                -e OLLAMA_KEEP_ALIVE=$OLLAMA_KEEP_ALIVE \
+                --add-host=host.docker.internal:host-gateway \
+                -v "$WEBUI_DATA_DPATH":/app/backend/data \
+                --name open-webui \
+                ghcr.io/open-webui/open-webui:main
+        else
+            docker start open-webui
+        fi
+        echo "openweb-ui frontend started running. Navigate to $SERVER_URL"
+        echo "note: may take a second to fully spin up"
     fi
 }

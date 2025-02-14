@@ -2967,6 +2967,10 @@ ollama_via_docker(){
     docker exec -it ollama ollama run reflection
     docker exec -it ollama ollama run codestral
     #docker exec -it ollama ollama run llama3.1:405b
+    #
+
+    ollama run deepseek-r1:32b
+    ollama run deepseek-r1:8b
 
 
     # For a frontend:
@@ -3044,4 +3048,61 @@ install_openvpn3(){
     cat /etc/apt/sources.list.d/openvpn3.list
     sudo apt update -y
     sudo apt install openvpn3 -y
+}
+
+setup_stablediffusion(){
+    __doc__="
+    https://chatgpt.com/c/67a50428-68a8-8013-840b-c0b11430021c
+    "
+
+    cd "$HOME"/code
+    git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git
+    cd "$HOME"/code/stable-diffusion-webui
+    sudo apt-get install google-perftools
+
+    sudo apt-get install python3-venv -y
+
+    #deactivate_venv
+    #pyenv shell 3.10.14
+    #/home/joncrall/.pyenv/shims/python -m pip install venv
+
+    wget -O models/Stable-diffusion/v1-5-pruned.ckpt https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned.ckpt
+    wget -O models/Stable-diffusion/sdxl-base-1.0.safetensors https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/main/sd_xl_base_1.0.safetensors
+
+
+    export COMMANDLINE_ARGS="--xformers --enable-insecure-extension-access --no-half-vae --opt-sdp-attention --disable-nan-check --api --ckpt models/Stable-diffusion/v1-5-pruned.ckpt"
+    ACCELERATE=False python_cmd=/home/joncrall/.pyenv/shims/python ./webui.sh
+    ./webui.sh
+
+    we pyenv3.10.14
+    venv_dir="-" ./webui.sh
+
+    export COMMANDLINE_ARGS="--xformers --opt-sdp-attention --no-half-vae --ckpt models/Stable-diffusion/sdxl-base-1.0.safetensors --device-id=0"
+    venv_dir="-" ./webui.sh
+
+
+
+    # OR WITH DOCKER
+    docker run --gpus all --rm -d \
+      --name stable-diffusion \
+      -p 7860:7860 \
+      -e COMMANDLINE_ARGS="--device-id=0,1 --xformers --opt-sdp-attention" \
+      -v ~/stable-diffusion/models:/stable-diffusion-webui/models \
+      -v ~/stable-diffusion/output:/stable-diffusion-webui/outputs \
+      ghcr.io/automatic1111/stable-diffusion-webui:latest
+
+    # https://github.com/AbdBarho/stable-diffusion-webui-docker/wiki/Setup
+    cd "$HOME"/code
+    git clone git@github.com:AbdBarho/stable-diffusion-webui-docker.git
+    cd stable-diffusion-webui-docker
+    docker compose --profile download up --build
+    docker compose --profile comfy up --build
+
+    wget -O civit_ai_downloader.py https://raw.githubusercontent.com/ashleykleynhans/civitai-downloader/main/download.py
+
+
+
+
+
+
 }

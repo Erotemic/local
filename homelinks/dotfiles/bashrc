@@ -372,6 +372,7 @@ _CONDA_ROOT="$HOME/.local/conda/""$PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/en
 
 _AUTOSTART_VENV=1
 if [[ "$_AUTOSTART_VENV" == "1" ]]; then
+    source "$HOME/local/tools/pyenv_ext/pyenv_ext_commands.sh"
     if [ "$DID_MY_BASHRC_INIT" == "" ]; then
         # For some reason VIRTUAL_ENV is initialized as "", so unset it
         unset VIRTUAL_ENV

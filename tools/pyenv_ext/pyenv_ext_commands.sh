@@ -451,7 +451,7 @@ deactivate_venv()
     fi
 
     OLD_VENV=$VIRTUAL_ENV
-    echo "deactivate_venv OLD_VENV=$OLD_VENV"
+    #echo "deactivate_venv OLD_VENV=$OLD_VENV"
     if [ "$OLD_VENV" != "" ]; then
         #if [ -n "$(type -t rvm)" ] && [ "$(type -t rvm)" = function ]; then
         #    echo rvm is a function;
@@ -481,7 +481,7 @@ workon_py()
     Switch virtual environments
     "
     local NEW_VENV=$1
-    echo "workon_py: NEW_VENV = $NEW_VENV"
+    #echo "workon_py: NEW_VENV = $NEW_VENV"
 
     if [ ! -f "$NEW_VENV/bin/activate" ]; then
         # Check if it is the name of a conda or virtual env
