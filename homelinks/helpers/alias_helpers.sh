@@ -817,6 +817,33 @@ gitk(){
     $GITK_EXE "$@"&
 }
 
+randport(){
+   python -c "if 1:
+    import socket
+    import random
+
+    def get_random_unused_port():
+        # Commonly used ports to avoid
+        common_ports = set(range(1, 1024))  # Well-known ports (0-1023) are reserved
+        common_ports.update([
+            1080, 1433, 1521, 1723, 3306, 3389, 5432, 5900, 6379, 8080, 8443, 9000, 9200, 27017
+        ])
+
+        while True:
+            port = random.randint(1024, 65535)
+            if port in common_ports:
+                continue  # Skip common ports
+
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                if s.connect_ex(('localhost', port)) != 0:
+                    return port  # Port is available
+
+    if __name__ == '__main__':
+        port = get_random_unused_port()
+        print(f'Random unused port: {port}')
+    "
+}
+
 randpw(){
     __doc__="
     Generate a random password
