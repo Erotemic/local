@@ -244,7 +244,12 @@ setup_machine_hardware_variables(){
     gres_config_text = chr(10).join(cfglines)
     print(gres_config_text)
     ")
+
+    # https://slurm.schedmd.com/gres.conf.html
     # TODO: Find a better way to introspect GPU information
+    __dummy_example__="
+    NAME=gpu Type=NVIDIAGeForceRTX3090 File=/dev/nvidia1
+    "
 
     NUM_GPUS=$(echo "$SLURM_GRES_TEXT" | wc -l)
 
@@ -418,6 +423,8 @@ generate_slurm_config(){
         #
         # LOGGING AND ACCOUNTING
         AccountingStorageType=accounting_storage/none
+        # AccountingStorageEnforce= disable accounting
+        AccountingStoreFlags=job_comment
         JobCompType=jobcomp/none
         JobAcctGatherFrequency=30
         JobAcctGatherType=jobacct_gather/none
@@ -860,6 +867,9 @@ postinstall_test(){
     Tests a few commands to check that the service is correctly running after
     install
     "
+
+    sbatch  --job-name="test-job-name"     --output="test-job-output.txt"     --wrap 'echo "here we go"' --parsable
+    squeue
 }
 
 
@@ -888,4 +898,80 @@ run_fresh_slurm_install(){
     generate_slurm_config
     activate_slurm
     postinstall_test
+}
+
+
+
+fix_issue_after_update(){
+    __doc__="
+    After upgrading to 24.04, it looks like there was an issue in the slurmctl.
+    The main fatal error in the logs looked like:
+
+    slurmctld: fatal: Can not recover last_tres state, incompatible version,
+    got 9472 need >= 9728 <= 10240, start with '-i' to ignore this
+
+    As the docs stated, it seemed to be fixed after running:
+
+        sudo systemctl stop slurmctld
+        sudo slurmctld -i
+        sudo systemctl start slurmctld
+
+    I suppose this just caused me to loose previous jobs, which is fine.
+
+    References:
+        https://chatgpt.com/c/67b4a23c-fe34-8013-baf7-59c0c8b2884c
+    "
+    sudo systemctl stop slurmctld
+    sudo slurmctld -i
+    sudo systemctl start slurmctld
+
+    # Tried to remove spool files
+    sudo rm -rf /var/spool/slurm*/*
+
+
+    # oops, fix:
+    sudo mkdir -p /var/spool/slurmctld /var/spool/slurmd
+    # Set the correct ownership for the directories
+    sudo chown slurm:slurm /var/spool/slurmd
+    sudo chown slurm:slurm /var/spool/slurmctld
+    # Set the correct permissions
+    sudo chmod 751 /var/spool/slurmd
+    sudo chmod 751 /var/spool/slurmctld
+
+
+    sudo systemctl disable slurmdbd.service
+    sudo systemctl restart slurmd slurmctld
+    sudo systemctl status slurmd slurmctld
+
+    journalctl -u slurmctld --no-pager | tail -50
+    journalctl -u slurmdbd --no-pager | tail -50
+    journalctl -u slurmd --no-pager | tail -50
+
+
+    # Also try
+    sudo apt install libpmix-dev
+
+    sudo cat /var/log/slurmd.log
+
+    # Stop systemctl service
+    sudo systemctl stop slurmd slurmctld
+
+
+    # Manually start slurm host control and slurm node daemons
+    sudo /usr/sbin/slurmctld -D -vvv
+    #sudo /usr/sbin/slurmdbd -D -vvv
+    sudo /usr/sbin/slurmd -D -vvv
+
+    scontrol show nodes
+
+    # Also might need to
+    # write to /etc/slurm/mpi.conf "
+    # MpiDefault=pmix
+    #  "
+
+    # After a long time not getting very far, I ended up trying this:
+    sudo scontrol update NodeName=ALL State=RESUME
+    # and it got my node to start processing jobs again.
+
+
 }
