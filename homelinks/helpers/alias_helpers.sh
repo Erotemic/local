@@ -1339,7 +1339,7 @@ ollama-web(){
         export OLLAMA_KEEP_ALIVE=1
         export OLLAMA_DOCKER_BASE_URL=http://host.docker.internal:"$OLLAMA_PORT"
 
-        if ! docker inspect "$CONTAINER_NAME" > /dev/null 2>&1; then
+        if ! docker inspect open-webui > /dev/null 2>&1; then
             docker run -d -p $WEBUI_PORT:8080 \
                 -e WEBUI_AUTH=False \
                 -e OLLAMA_BASE_URL=$OLLAMA_DOCKER_BASE_URL \
