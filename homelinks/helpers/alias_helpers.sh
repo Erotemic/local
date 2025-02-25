@@ -1299,6 +1299,13 @@ ollama-web(){
     MODEL_DPATH=$DOCKER_DATA_DPATH/ollama/models
     WEBUI_DATA_DPATH=$DOCKER_DATA_DPATH/open-webui
     OLLAMA_PORT=11434
+    WEBUI_PORT=14771
+
+    ip_addresses=(0.0.0.0)
+    while IFS= read -r line; do
+        ip_addresses+=("$line")
+    done < <(ip -4 -o addr show scope global | grep -vE 'docker|virbr0' | awk '{print $4}' | cut -d'/' -f1)
+    echo "${ip_addresses[@]}"
 
     # Check if the container exists
     if ! docker inspect "$CONTAINER_NAME" > /dev/null 2>&1; then
@@ -1319,7 +1326,12 @@ ollama-web(){
         docker start ollama
     fi
     if curl -s --connect-timeout 1 "$SERVER_URL" > /dev/null; then
-        echo "openweb-ui frontend already running. Navigate to $SERVER_URL"
+        echo "openweb-ui frontend already running."
+        echo "Server is available on IP Addresses:"
+        for ip_address in "${ip_addresses[@]}"
+        do
+            echo "    http://${ip_address}:${WEBUI_PORT}"
+        done
     else
         echo "openweb-ui frontend is not running"
         mkdir -p "$WEBUI_DATA_DPATH"
@@ -1328,7 +1340,7 @@ ollama-web(){
         export OLLAMA_DOCKER_BASE_URL=http://host.docker.internal:"$OLLAMA_PORT"
 
         if ! docker inspect "$CONTAINER_NAME" > /dev/null 2>&1; then
-            docker run -d -p 14771:8080 \
+            docker run -d -p $WEBUI_PORT:8080 \
                 -e WEBUI_AUTH=False \
                 -e OLLAMA_BASE_URL=$OLLAMA_DOCKER_BASE_URL \
                 -e OLLAMA_KEEP_ALIVE=$OLLAMA_KEEP_ALIVE \
@@ -1339,7 +1351,12 @@ ollama-web(){
         else
             docker start open-webui
         fi
-        echo "openweb-ui frontend started running. Navigate to $SERVER_URL"
+        echo "openweb-ui frontend started running."
+        echo "Server is available on IP Addresses:"
+        for ip_address in "${ip_addresses[@]}"
+        do
+            echo "    http://${ip_address}:${WEBUI_PORT}"
+        done
         echo "note: may take a second to fully spin up"
     fi
 }
