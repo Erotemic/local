@@ -1295,7 +1295,7 @@ ollama-web(){
     "
     CONTAINER_NAME=ollama
     SERVER_URL=http://0.0.0.0:14771
-    DOCKER_DATA_DPATH=/data/docker
+    DOCKER_DATA_DPATH=/data/service/docker
     MODEL_DPATH=$DOCKER_DATA_DPATH/ollama/models
     WEBUI_DATA_DPATH=$DOCKER_DATA_DPATH/open-webui
     OLLAMA_PORT=11434
