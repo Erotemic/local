@@ -367,13 +367,25 @@ sudo_writeto()
     _handle_help "$@" || return 0
 
     # NOTE: FAILS WITH QUOTES IN BODY
+    #fpath=$1
+    #text=$2
+    #fixed_text=$(codeblock "$text")
+    ## References: https://unix.stackexchange.com/questions/379181/escape-a-variable-for-use-as-content-of-another-script
+    ## Escape double quotes and backslashes in the text
+    #escaped_text=$(printf "%s" "$fixed_text" | sed 's/["\\]/\\&/g')
+    #sudo sh -c "echo \"$escaped_text\" > $fpath"
+
+    # ChatGPT fixed this for me: https://chatgpt.com/c/67bd1f5d-b8e0-8013-804f-98712c75a955
     fpath=$1
-    text=$2
+    shift  # Remove first argument so "$@" now contains only the text
+    text="$*"
+
+    # Dedent the text
     fixed_text=$(codeblock "$text")
-    # References: https://unix.stackexchange.com/questions/379181/escape-a-variable-for-use-as-content-of-another-script
-    # Escape double quotes and backslashes in the text
-    escaped_text=$(printf "%s" "$fixed_text" | sed 's/["\\]/\\&/g')
-    sudo sh -c "echo \"$escaped_text\" > $fpath"
+
+    # Write to file using `tee` to properly handle multi-line input
+    echo "$fixed_text" | sudo tee "$fpath" > /dev/null
+
 }
 
 sudo_appendto()
