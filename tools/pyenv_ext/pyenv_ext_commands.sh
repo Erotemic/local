@@ -51,7 +51,7 @@ Example Usage:
     pyenv_create_virtualenv 3.10 off
     pyenv_create_virtualenv 3.10.4 off
     pyenv_create_virtualenv 3.12 full
-    pyenv_create_virtualenv 3.13.0 full
+    pyenv_create_virtualenv 3.13.2 full
 
     pyenv_create_virtualenv 3.11.9 off
     pyenv_create_virtualenv 3.11 most neovim
@@ -722,7 +722,9 @@ build_vim_for_pyenv(){
 
     # shellcheck disable=SC1091
     source "$HOME/local/init/utils.sh"
-    apt_ensure build-essential libtinfo-dev libncurses-dev gnome-devel libgtk-3-dev libxt-dev
+    #apt_ensure build-essential libtinfo-dev libncurses-dev gnome-devel libgtk-3-dev libxt-dev
+    # note: libtinfo-dev did not install because "selecting 'libncurses-dev' instead of 'libtinfo-dev'"
+    apt_ensure build-essential libncurses-dev gnome-devel libgtk-3-dev libxt-dev
 
     #./configure --help
     #./configure --help | grep python
@@ -732,7 +734,8 @@ build_vim_for_pyenv(){
     # https://github.com/vim/vim/issues/6457
     #git checkout v8.1.2424
     #git checkout v8.2.4030
-    git checkout v9.0.0824
+    #git checkout v9.0.0824
+    git checkout v9.1.1169
 
     # Build for the global pyenv python outside of venv
     CHOSEN_PYTHON_VERSION=$(python -V | cut -d' ' -f2)

@@ -3106,3 +3106,102 @@ setup_stablediffusion(){
 
 
 }
+
+delete_lots_of_files(){
+    __doc__="
+    To delete lots of files quickly there a few options that I would like to
+    explore.
+
+    References:
+        https://unix.stackexchange.com/questions/37329/efficiently-delete-large-directory-containing-thousands-of-files
+    "
+    find . -type f -delete
+    fd --type f .
+
+    python -c "if 1:
+        # Run a few tests
+        import ubelt as ub
+        path = ub.Path('.')
+        all_paths = path.ls()
+
+        methods = [
+            'find . -type f -delete',
+            'fdfind --type f . -x rm',
+            'rm -rf *',
+        ]
+
+        #dry_methods = [
+        #    'find . -type f',
+        #    'fdfind --type f .',
+        #]
+        #methods = dry_methods
+        import random
+
+        method_to_info = {}
+        for method in methods:
+            if method not in method_to_info:
+                method_to_info[method] = {
+                    'method': method,
+                    'times': [],
+                }
+
+        path_iter = iter(all_paths)
+
+        for i in range(100):
+            dpath = next(path_iter)
+            method = random.choice(methods)
+            with ub.Timer() as t:
+                result = ub.cmd(method, cwd=dpath)
+                assert result.returncode == 0
+            method_to_info[method]['times'].append(t.elapsed)
+
+        import numpy as np
+        results = []
+        import pandas as pd
+        for method, info in method_to_info.items():
+            for time in info['times']:
+                results.append({
+                    'method': method,
+                    'time': time,
+                })
+        result_df = pd.DataFrame(results)
+        result_df.groupby('method').describe()
+    "
+    __results__="
+                              time
+                             count      mean       std       min       25%       50%       75%       max
+    method
+    fdfind --type f . -x rm  377.0  0.027906  0.016609  0.003330  0.017805  0.024628  0.035943  0.096036
+    find . -type f -delete   433.0  0.036960  0.047920  0.001069  0.005282  0.023372  0.047214  0.400717
+    "
+
+    fd --type f . -x rm
+
+
+    #num_files(){
+    #    fd $1 | wc
+    #}
+    #fd -d 1 --type d -x bash -c 'tree "{}" | wc -l'
+
+    # From deep seek
+    # https://chat.deepseek.com/a/chat/s/e9b3314e-4439-46ab-be68-4c03ed48cae6
+    fd .tif | xargs -P 5 -I{} sh -c 'rm "{}" && echo "Deleted: {}"'
+    fd --type f . | xargs -P 5 -I{} sh -c 'rm "{}" && echo "Deleted: {}"'
+
+    # Dynamic rate limit (not sure if this actually works)
+    fd .tif | pv -l -s $(fd .tif | wc -l) | xargs -P 4 -I{} sh -c 'rm "{}" && echo "Deleted: {}"'
+
+}
+
+
+monitor_for_disk_overuse(){
+
+    # From deep seek
+    fd .tif | xargs -P 4 -I{} sh -c 'rm "{}" && echo "Deleted: {}"'
+
+    # Look for %util to not be too high (around 50-70% is probably good for not
+    # thrashing on an HDD)
+    iostat -x 1
+
+
+}

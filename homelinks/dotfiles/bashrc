@@ -377,7 +377,7 @@ if [[ "$_AUTOSTART_VENV" == "1" ]]; then
         # For some reason VIRTUAL_ENV is initialized as "", so unset it
         unset VIRTUAL_ENV
         #PYTHON_VERSION_PRIORITY=( "3.12.3" "3.11.2" "3.10.10" "3.10.5" "3.9.9" )
-        PYTHON_VERSION_PRIORITY=( "3.11.9" "3.11.2" "3.10.10" "3.10.5" "3.9.9" )
+        PYTHON_VERSION_PRIORITY=( "3.13.2" "3.11.9" "3.11.2" "3.10.10" "3.10.5" "3.9.9" )
         #PYTHON_VERSION_PRIORITY=( "3.10.5" )
         _found_env=0
         for CHOSEN_PYTHON_VERSION in "${PYTHON_VERSION_PRIORITY[@]}"; do

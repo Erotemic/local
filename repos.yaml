@@ -88,6 +88,8 @@ repos:
   - https://gitlab.kitware.com/computer-vision/simple_dvc.git
   - https://gitlab.kitware.com/computer-vision/kwarray.git
   - https://gitlab.kitware.com/computer-vision/kwcoco.git
+  - https://gitlab.kitware.com/computer-vision/kwcoco_explorer.git
+  - https://gitlab.kitware.com/computer-vision/kwcoco_dataloader.git
   - https://gitlab.kitware.com/computer-vision/kwutil.git
   - https://gitlab.kitware.com/computer-vision/kwimage.git
   - https://gitlab.kitware.com/computer-vision/kwimage_ext.git
