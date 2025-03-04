@@ -7,7 +7,7 @@ services:
     ports:
       - "11434:11434"
     volumes:
-      - /data/service/docker/ollama/models:/root/.ollama
+      - /data/service/docker/ollama:/root/.ollama
     deploy:
       resources:
         reservations:
@@ -37,7 +37,7 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /data/service/docker/ollama/models
+      device: /data/service/docker/ollama
       o: bind
   open_webui_data:
     driver: local
