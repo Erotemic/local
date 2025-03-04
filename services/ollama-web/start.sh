@@ -16,7 +16,7 @@ start_main(){
     SERVICE_DPATH="$(dirname "${BASH_SOURCE[0]}")"
     echo "Service directory: $SERVICE_DPATH"
 
-    export OPENWEBUI_PORT=1477
+    export OPENWEBUI_PORT=14771
 
     ip_addresses=(0.0.0.0)
     while IFS= read -r line; do
