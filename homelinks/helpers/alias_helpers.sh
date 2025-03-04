@@ -1295,70 +1295,73 @@ ollama-web(){
 
     docker pull ghcr.io/open-webui/open-webui:main
     "
-    CONTAINER_NAME=ollama
-    SERVER_URL=http://0.0.0.0:14771
-    DOCKER_DATA_DPATH=/data/service/docker
-    MODEL_DPATH=$DOCKER_DATA_DPATH/ollama/models
-    WEBUI_DATA_DPATH=$DOCKER_DATA_DPATH/open-webui
-    OLLAMA_PORT=11434
-    WEBUI_PORT=14771
+    # man I just need to use docker-compose x.x
+    ~/local/services/ollama-web/start.sh
 
-    ip_addresses=(0.0.0.0)
-    while IFS= read -r line; do
-        ip_addresses+=("$line")
-    done < <(ip -4 -o addr show scope global | grep -vE 'docker|virbr0' | awk '{print $4}' | cut -d'/' -f1)
-    echo "${ip_addresses[@]}"
+    #CONTAINER_NAME=ollama
+    #SERVER_URL=http://0.0.0.0:14771
+    #DOCKER_DATA_DPATH=/data/service/docker
+    #MODEL_DPATH=$DOCKER_DATA_DPATH/ollama/models
+    #WEBUI_DATA_DPATH=$DOCKER_DATA_DPATH/open-webui
+    #OLLAMA_PORT=11434
+    #WEBUI_PORT=14771
 
-    # Check if the container exists
-    if ! docker inspect "$CONTAINER_NAME" > /dev/null 2>&1; then
-        echo "Container does not exist. Creating it..."
-        mkdir -p "$MODEL_DPATH"
-        docker create \
-            --gpus=all \
-            --name "$CONTAINER_NAME" \
-            -v "$MODEL_DPATH:/root/.ollama" \
-            -p "$OLLAMA_PORT":"$OLLAMA_PORT" \
-            ollama/ollama
-    fi
+    #ip_addresses=(0.0.0.0)
+    #while IFS= read -r line; do
+    #    ip_addresses+=("$line")
+    #done < <(ip -4 -o addr show scope global | grep -vE 'docker|virbr0' | awk '{print $4}' | cut -d'/' -f1)
+    #echo "${ip_addresses[@]}"
 
-    if docker inspect -f '{{.State.Running}}' "$CONTAINER_NAME" | grep -q "true"; then
-        echo "ollama backend container is running"
-    else
-        echo "ollama backend needs to be started"
-        docker start ollama
-    fi
-    if curl -s --connect-timeout 1 "$SERVER_URL" > /dev/null; then
-        echo "openweb-ui frontend already running."
-        echo "Server is available on IP Addresses:"
-        for ip_address in "${ip_addresses[@]}"
-        do
-            echo "    http://${ip_address}:${WEBUI_PORT}"
-        done
-    else
-        echo "openweb-ui frontend is not running"
-        mkdir -p "$WEBUI_DATA_DPATH"
-        export OLLAMA_BASE_URL=http://localhost:"$OLLAMA_PORT"
-        export OLLAMA_KEEP_ALIVE=1
-        export OLLAMA_DOCKER_BASE_URL=http://host.docker.internal:"$OLLAMA_PORT"
+    ## Check if the container exists
+    #if ! docker inspect "$CONTAINER_NAME" > /dev/null 2>&1; then
+    #    echo "Container does not exist. Creating it..."
+    #    mkdir -p "$MODEL_DPATH"
+    #    docker create \
+    #        --gpus=all \
+    #        --name "$CONTAINER_NAME" \
+    #        -v "$MODEL_DPATH:/root/.ollama" \
+    #        -p "$OLLAMA_PORT":"$OLLAMA_PORT" \
+    #        ollama/ollama
+    #fi
 
-        if ! docker inspect open-webui > /dev/null 2>&1; then
-            docker run -d -p $WEBUI_PORT:8080 \
-                -e WEBUI_AUTH=False \
-                -e OLLAMA_BASE_URL=$OLLAMA_DOCKER_BASE_URL \
-                -e OLLAMA_KEEP_ALIVE=$OLLAMA_KEEP_ALIVE \
-                --add-host=host.docker.internal:host-gateway \
-                -v "$WEBUI_DATA_DPATH":/app/backend/data \
-                --name open-webui \
-                ghcr.io/open-webui/open-webui:main
-        else
-            docker start open-webui
-        fi
-        echo "openweb-ui frontend started running."
-        echo "Server is available on IP Addresses:"
-        for ip_address in "${ip_addresses[@]}"
-        do
-            echo "    http://${ip_address}:${WEBUI_PORT}"
-        done
-        echo "note: may take a second to fully spin up"
-    fi
+    #if docker inspect -f '{{.State.Running}}' "$CONTAINER_NAME" | grep -q "true"; then
+    #    echo "ollama backend container is running"
+    #else
+    #    echo "ollama backend needs to be started"
+    #    docker start ollama
+    #fi
+    #if curl -s --connect-timeout 1 "$SERVER_URL" > /dev/null; then
+    #    echo "openweb-ui frontend already running."
+    #    echo "Server is available on IP Addresses:"
+    #    for ip_address in "${ip_addresses[@]}"
+    #    do
+    #        echo "    http://${ip_address}:${WEBUI_PORT}"
+    #    done
+    #else
+    #    echo "openweb-ui frontend is not running"
+    #    mkdir -p "$WEBUI_DATA_DPATH"
+    #    export OLLAMA_BASE_URL=http://localhost:"$OLLAMA_PORT"
+    #    export OLLAMA_KEEP_ALIVE=1
+    #    export OLLAMA_DOCKER_BASE_URL=http://host.docker.internal:"$OLLAMA_PORT"
+
+    #    if ! docker inspect open-webui > /dev/null 2>&1; then
+    #        docker run -d -p $WEBUI_PORT:8080 \
+    #            -e WEBUI_AUTH=False \
+    #            -e OLLAMA_BASE_URL=$OLLAMA_DOCKER_BASE_URL \
+    #            -e OLLAMA_KEEP_ALIVE=$OLLAMA_KEEP_ALIVE \
+    #            --add-host=host.docker.internal:host-gateway \
+    #            -v "$WEBUI_DATA_DPATH":/app/backend/data \
+    #            --name open-webui \
+    #            ghcr.io/open-webui/open-webui:main
+    #    else
+    #        docker start open-webui
+    #    fi
+    #    echo "openweb-ui frontend started running."
+    #    echo "Server is available on IP Addresses:"
+    #    for ip_address in "${ip_addresses[@]}"
+    #    do
+    #        echo "    http://${ip_address}:${WEBUI_PORT}"
+    #    done
+    #    echo "note: may take a second to fully spin up"
+    #fi
 }

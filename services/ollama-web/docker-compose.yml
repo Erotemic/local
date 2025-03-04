@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - /data/service/docker/ollama/models:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    restart: unless-stopped
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    ports:
+      - "${OPENWEBUI_PORT:-14771}:8080"
+    environment:
+      - WEBUI_AUTH=False
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - OLLAMA_KEEP_ALIVE=1
+    volumes:
+      - /data/service/docker/open-webui:/app/backend/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - ollama
+    restart: unless-stopped
+
+volumes:
+  ollama_models:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/service/docker/ollama/models
+      o: bind
+  open_webui_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/service/docker/open-webui
+      o: bind
