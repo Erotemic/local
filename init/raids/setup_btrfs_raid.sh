@@ -120,3 +120,116 @@ lsblk --fs  /dev/sda1
 # UUID=e5b5c118-fb56-4fad-a45d-ff5fad9a649d /data           btrfs   defaults,noatime      0  0
 sudo sh -c "echo '# appended to fstab by by install scripts' >> /etc/fstab"
 sudo sh -c "echo 'UUID=c34b5d87-a4bf-428d-8738-7c759534da1a  /data              btrfs    defaults,noatime        0 0' >> /etc/fstab"
+
+
+fix_disk_failure_2025_02_27(){
+    # 2025-02-27 -
+    # Found a disk failure. sde is reporting end-to-end errors.
+    # Also: btrfs is reporting issues
+    #sudo btrfs device stats /dev/sde1
+    #[/dev/sde1].write_io_errs    15215348
+    #[/dev/sde1].read_io_errs     202792
+    #[/dev/sde1].flush_io_errs    223392
+    #[/dev/sde1].corruption_errs  10
+    #[/dev/sde1].generation_errs  0
+
+    # References:
+    # https://wiki.tnonline.net/w/Btrfs/Replacing_a_disk
+
+    sudo btrfs device scan
+    sudo btrfs filesystem show
+
+    sudo btrfs check --readonly /dev/sda1
+    __result__="
+    Opening filesystem to check...
+    warning, device 4 is missing
+    Checking filesystem on /dev/sda1
+    UUID: c34b5d87-a4bf-428d-8738-7c759534da1a
+    [1/7] checking root items
+    [2/7] checking extents
+    "
+    __note__="
+    NOTE: This seemed to crash the terminal, probably due to OOM.
+    "
+
+
+    # Mount the array in a degraded state
+    sudo mount -o degraded,ro /dev/sda /data
+    # The above did not seem to work. I got errors.
+    __result__="
+    mount: /data: wrong fs type, bad option, bad superblock on /dev/sda, missing codepage or helper program, or other error.
+    "
+    __note__="
+    I physically removed sde and tried several things
+    "
+
+    # The superblocks seemed to have been damaged, but this did seem to work!
+    sudo mount -o degraded,ro,usebackuproot /dev/sda1 /data
+
+    # BACK UP STUFF
+
+    # Now unmount, and mount in degraded rw mode
+    sudo umount /data
+    sudo mount -o degraded,rw,usebackuproot /dev/sda1 /data
+
+    # We need to mount the new disk **before** removing the old bad device from
+    # the array. This will allow btrfs to maintain RAID-10 redundancy
+    NEW_DISK=/dev/sde
+    NEW_PART=/dev/sde1
+    sudo parted "$NEW_DISK" mktable gpt
+    sudo parted "$NEW_DISK" mkpart primary btrfs 0% 100%
+    sudo btrfs device add "$NEW_PART" /data
+
+    # Rebalance the array
+    sudo btrfs balance start -dconvert=raid10 -mconvert=raid10 /data
+
+    # Monitor the rebalance process
+    sudo btrfs device stats /data
+    sudo dmesg -w
+    sudo btrfs filesystem show
+    sudo btrfs balance status /data
+    sudo iotop -o
+    sudo iostat -x 1
+
+    sudo "$(which tmux_multi_monitor.sh)" \
+        "dmesg -w" \
+        "watch btrfs balance status /data" \
+        "watch btrfs filesystem show" \
+        "iostat sda sdb sdc sdd sde -x 1" \
+        "watch btrfs filesystem df /data -g"
+
+    # Now with the bad disk removed, tell btrfs to remove it
+    sudo btrfs device delete missing /data
+
+    # Verify device removal
+    sudo btrfs filesystem show
+
+
+}
+
+
+replace_disk_2025_03_02(){
+    __doc__="
+    Now that the system is back up, we are going to replace one of the good
+    10TB disks with a 16TB disk to match the other 16TB disk used to replace
+    the old /dev/sde. (side note: still not sure how the order of sda/b/c gets
+    chosen). To do this, I've removed the data disk from the drive,
+    disconnected the drive we are going to remove, and added the new drive. So
+    the rest of this should be a software exercise.
+    "
+
+    # Mount in degraded rw mode (this is taking an unusually long time, but it
+    # worked) It also looks like I should check the superblock once I rebuild
+    # again
+    sudo mount -o degraded,rw,usebackuproot /dev/sda1 /data
+
+    # Format and add the new disk to the array.
+    NEW_DISK=/dev/sdc
+    NEW_PART=/dev/sdc1
+    sudo parted "$NEW_DISK" mktable gpt
+    sudo parted "$NEW_DISK" mkpart primary btrfs 0% 100%
+    sudo btrfs device add "$NEW_PART" /data
+
+    # Rebalance the array
+    sudo btrfs balance start -dconvert=raid10 -mconvert=raid10 /data
+}
