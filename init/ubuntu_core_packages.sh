@@ -2993,6 +2993,9 @@ ollama_via_docker(){
 
 
 disk_usage_checker(){
+    __doc__="
+    A nice disk usage analyzer TUI
+    "
     # https://www.reddit.com/r/linux/comments/mk9wuq/cli_replacement_for_baobab_disk_usage_analyzer/
     # https://dev.yorhel.nl/ncdu
     sudo apt install ncdu
