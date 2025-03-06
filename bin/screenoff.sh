@@ -4,8 +4,7 @@ Turn off the screen.
 
 References:
     https://superuser.com/questions/374637/how-to-turn-off-screen-with-shortcut-in-linux
-
-SeeAlso:
+    https://askubuntu.com/a/1523161/426149
     https://github.com/hopeseekr/BashScripts/blob/trunk/turn-off-monitors
 "
 #########################################################################
@@ -98,7 +97,9 @@ function wait_until_mouse_or_keyboard_event()
 }
 ### END framework/wait_until_mouse_or_keyboard_event.sh
 
-if [ "$XDG_SESSION_TYPE" == "wayland" ]; then
+if [ "$XDG_SESSION_TYPE" == "tty" ]; then
+    busctl --user set-property org.gnome.Mutter.DisplayConfig /org/gnome/Mutter/DisplayConfig org.gnome.Mutter.DisplayConfig PowerSaveMode i 1
+elif [ "$XDG_SESSION_TYPE" == "wayland" ]; then
     turn-off-screen-in-wayland
 else
     # sleep to prevent the key-up from entering this command causes the screen
