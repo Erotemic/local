@@ -1,3 +1,4 @@
+#!/bin/bash
 __doc__="
 This script documents how I setup a RAID on my machine toothbrush.
 
@@ -618,4 +619,31 @@ readd_flash1(){
 
         ln -s "/media/$USER/flash1" "$HOME/flash1"
     fi
+}
+
+
+####
+
+hotswap-drive(){
+    __doc__="
+    References:
+        https://chatgpt.com/c/67c8e6fa-2314-8002-85f8-b957171833fd
+    "
+    zpool status
+    BAD_DEVICE=wwn-0x5000c5009399acab
+    POOL_NAME=data
+    # Was bay 3, need a good way to lookup
+    sudo zpool offline "$POOL_NAME" "$BAD_DEVICE"
+
+    # TODO: need to wipe filesystem off of old device if it exists.
+    # I did this manually, oops.
+
+    NEW_DEVICE=/dev/disk/by-id/wwn-0x5000c500b5f9d184
+    echo zpool replace "$POOL_NAME" "$BAD_DEVICE" "$NEW_DEVICE"
+
+    watch zpool status
+
+    zpool iostat -v 5
+
+
 }
