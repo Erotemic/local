@@ -1,4 +1,4 @@
-# import textwrap
+import textwrap
 c = get_config()  # NOQA
 c.InteractiveShellApp.exec_lines = []
 # if six.PY2:
@@ -36,20 +36,25 @@ c.InteractiveShellApp.exec_lines.append('%autoreload 2')
 #         ultratb.VerboseTB._tb_highlight = "bg:ansired"
 #     except Exception:
 #         print("Error patching background color for tracebacks, they'll be the ugly default instead")
-#     try:
-#         import numpy as np
-#     except ImportError:
-#         ...
-#     try:
-#         import ubelt as ub
-#     except ImportError:
-#         ...
-#     try:
-#         import xdev
-#         import xdev as xd
-#     except ImportError:
-#         ...
 #     ''').strip())
+
+
+c.InteractiveShellApp.exec_lines.append(textwrap.dedent(
+    '''
+    try:
+        import numpy as np
+    except ImportError:
+        ...
+    try:
+        import ubelt as ub
+    except ImportError:
+        ...
+    try:
+        import xdev
+        import xdev as xd
+    except ImportError:
+        ...
+    ''').strip())
 
 
 # c.InteractiveShellApp.exec_lines.append('import xdev')
