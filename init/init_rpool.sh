@@ -95,7 +95,7 @@ upgrade_rocketpool_cli()
         # https://github.com/0xfornax
         gpg --import ./fornax-signing-key.asc
         # Optional
-        python3 ~/local/scripts/xgpg.py edit_trust 6EE3177694F55603F0DD24EAEBE71B95855BCBD5 ultimate
+        python3 ~/local/scripts/xgpg.py edit_trust 6D3E960BD402C64642A1EC84651023D62E70B5DD ultimate
     fi
 
     gpg --verify rocketpool.sig rocketpool

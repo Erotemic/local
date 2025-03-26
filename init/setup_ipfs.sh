@@ -640,6 +640,8 @@ install_ipfs_service(){
         Environment=\"IPFS_PATH=$IPFS_PATH\"
         User=$USER
         ExecStart=${IPFS_EXE} daemon
+        Restart=on-failure
+        RestartSec=5s
         [Install]
         WantedBy=multiuser.target
         "
@@ -650,6 +652,17 @@ install_ipfs_service(){
     #sudo systemctl daemon-reload
     sudo systemctl start ipfs
     sudo systemctl status ipfs
+}
+
+make_swapfile(){
+    # On a rasbperry pi, a swapfile might be helpful
+    sudo fallocate -l 8G /swapfile
+    sudo chmod 600 /swapfile
+    sudo mkswap /swapfile
+    sudo swapon /swapfile
+
+    # Make permanent
+    echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 }
 
 
