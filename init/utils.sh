@@ -936,6 +936,10 @@ bash_array_repr(){
     Example:
         ARR=(1 "2 3" 4)
         bash_array_repr "${ARR[@]}"
+
+    Dependency Free Alternative:
+        echo "${ARR[@]}"
+    ...
     '
     _handle_help "$@" || return 0
 

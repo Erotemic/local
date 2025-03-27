@@ -1296,7 +1296,7 @@ ollama-web(){
     docker pull ghcr.io/open-webui/open-webui:main
     "
     # man I just need to use docker-compose x.x
-    ~/local/services/ollama-web/start.sh
+    ~/local/services/ollama-web/start.sh "${@}"
 
     #CONTAINER_NAME=ollama
     #SERVER_URL=http://0.0.0.0:14771
