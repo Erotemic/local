@@ -12,7 +12,10 @@ services:
       resources:
         reservations:
           devices:
-            - capabilities: [gpu]
+            - driver: nvidia
+              capabilities: ["gpu"]
+              count: all
+
     restart: unless-stopped
 
   open-webui:
