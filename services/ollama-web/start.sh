@@ -43,7 +43,62 @@ start_main(){
         do
             echo "    http://${ip_address}:${OPENWEBUI_PORT}"
         done
+
+        # Wait for the container to start
+        CONTAINER_NAME=open-webui
+        TIMEOUT=300  # 5 minutes timeout in seconds
+        START_TIME=$(date +%s)
+        ELAPSED_TIME=0
+
+        echo "Waiting for container '$CONTAINER_NAME' to be fully started (including health checks)..."
+
+        while [ $ELAPSED_TIME -lt $TIMEOUT ]; do
+            # Get container status and health status
+            STATUS=$(docker inspect -f '{{.State.Status}}' "$CONTAINER_NAME" 2>/dev/null)
+            HEALTH=$(docker inspect -f '{{.State.Health.Status}}' "$CONTAINER_NAME" 2>/dev/null)
+
+            if [ $? -ne 0 ]; then
+                echo "Error: Container '$CONTAINER_NAME' does not exist."
+                return 1
+            fi
+            case $STATUS in
+                "running")
+                    if [ -z "$HEALTH" ]; then
+                        # Container has no health check configured
+                        echo "Container '$CONTAINER_NAME' is running (no health check configured)."
+                        return 0
+                    elif [ "$HEALTH" = "healthy" ]; then
+                        echo "Container '$CONTAINER_NAME' is running and healthy."
+                        return 0
+                    elif [ "$HEALTH" = "unhealthy" ]; then
+                        echo "Error: Container '$CONTAINER_NAME' is running but unhealthy."
+                        return 1
+                    else
+                        echo "Container '$CONTAINER_NAME' is running but health status: $HEALTH"
+                    fi
+                    ;;
+                "exited" | "dead")
+                    # Get the exit code and error message if available
+                    EXIT_CODE=$(docker inspect -f '{{.State.ExitCode}}' "$CONTAINER_NAME")
+                    ERROR_MSG=$(docker inspect -f '{{.State.Error}}' "$CONTAINER_NAME")
+
+                    echo "Error: Container '$CONTAINER_NAME' has failed with exit code $EXIT_CODE."
+                    if [ -n "$ERROR_MSG" ]; then
+                        echo "Error message: $ERROR_MSG"
+                    fi
+                    return 1
+                    ;;
+                *)
+                    echo "Container '$CONTAINER_NAME' is in '$STATUS' state. Waiting..."
+                    ;;
+            esac
+            sleep 1
+            CURRENT_TIME=$(date +%s)
+            ELAPSED_TIME=$((CURRENT_TIME - START_TIME))
+        done
+
     fi
+
 }
 
 run_command(){
