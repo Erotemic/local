@@ -482,7 +482,7 @@ if exists("g:loaded_vimtk")
     "call vimtk#quickopen('E', '~/code/geowatch/dev/experiments/crall/expt_drop4_sc_2022-08-19.sh')
 
     call vimtk#quickopen('wm', '~/code/geowatch/geowatch/tasks/fusion/methods/channelwise_transformer.py')
-    call vimtk#quickopen('wd', '~/code/geowatch/geowatch/tasks/fusion/datamodules/kwcoco_dataset.py')
+    call vimtk#quickopen('wd', '~/code/kwcoco_dataloader/kwcoco_dataloader/tasks/fusion/datamodules/kwcoco_dataset.py')
     call vimtk#quickopen('wu', '~/code/geowatch/geowatch/utils/__init__.py')
     call vimtk#quickopen('W', '~/code/geowatch/aws/README.rst')
 
