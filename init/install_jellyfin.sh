@@ -180,9 +180,15 @@ setup_jelly(){
 }
 
 from_docker(){
+    __doc__="
+    References:
+        https://jellyfin.org/docs/general/administration/migrate
+        https://jellyfin.org/docs/general/administration/configuration/
+    "
     docker pull jellyfin/jellyfin
 
     #JELLYIN_CONFIG_DPATH=/path/to/config
+    #JELLYFIN_DATA_DIR=/fds
     #JELLYIN_CACHE_DPATH=/path/to/cache
     #JELLYIN_MEDIA_DPATH=/path/to/media
 

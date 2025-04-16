@@ -1,13 +1,18 @@
 #!/usr/bin/env bash
 source "$HOME"/local/init/utils.sh
 
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
+	# Running as a script
+	set -eo pipefail
+fi
+
 ensure_config_symlinks()
 {
-    __heredoc__='''
+    _doc__='
     CommandLine:
-        source ~/local/init/ensure_symlinks.sh && ensure_config_symlinks
-        source ~/local/init/ensure_symlinks.sh && ensure_config_symlinks --nosudo
-    '''
+        ~/local/init/ensure_symlinks.sh
+        ~/local/init/ensure_symlinks.sh --nosudo
+    '
 
     HAVE_SUDO=${HAVE_SUDO:=$(have_sudo)}
     echo "HAVE_SUDO = $HAVE_SUDO"
@@ -15,7 +20,7 @@ ensure_config_symlinks()
 
     if [ "$(which symlinks)" == "" ] && [ "$NOSUDO" != "--nosudo" ]; then
         # Program to remove dead symlinks
-        if [ "$HAVE_SUDO" == "True" ]; then 
+        if [ "$HAVE_SUDO" == "True" ]; then
             sudo apt-get install symlinks -y
         fi
         if [ "$(which symlinks)" == "" ]; then
@@ -87,7 +92,7 @@ symlink_inside_hidden_homedir(){
     into the corersponding hidden directory (e.g. ~/.<name>) in your home
     folder.
 
-    This is used to link FILES between directories 
+    This is used to link FILES between directories
 
         homelinks/config/* -> ~/.config/*
         homelinks/foobar/* -> ~/.foobar/*
@@ -113,14 +118,14 @@ symlink_inside_hidden_homedir(){
     #echo "* cleanup"
     #symlinks -d "$RELHOME"/."$BASEDIR"
     echo "* symlink"
-    for p in $PNAMES; do 
+    for p in $PNAMES; do
         SOURCE=$HOMELINKS_DPATH/$BASEDIR/$p
         TARGET=$RELHOME/.$BASEDIR/$p
         unlink_or_backup "$TARGET"
         ln -vs "$SOURCE" "$TARGET";
     done
     echo "* Convert to relative symlinks"
-    for p in $PNAMES; do 
+    for p in $PNAMES; do
         TARGET=$RELHOME/.$BASEDIR/$p
         symlinks -c "$TARGET"
     done
@@ -160,3 +165,21 @@ symlink_root_hidden_files(){
     #================
 }
 
+# bpkg convention
+# https://github.com/bpkg/bpkg
+if [[ ${BASH_SOURCE[0]} != "$0" ]]; then
+    # We are sourcing the library
+    #echo "Sourcing prepare_system as a library and environment"
+    :  # noop
+else
+    for var in "$@"
+    do
+        if [[ "$var" == "--help" ]]; then
+            echo "No help docs yet"
+            echo "...exiting"
+            exit 1
+        fi
+    done
+    ensure_config_symlinks "${@}"
+    exit $?
+fi
