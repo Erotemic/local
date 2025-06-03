@@ -439,3 +439,116 @@ debug_broken_ethernet(){
 
 
 }
+
+
+retroarch_for_pi(){
+    # export DEBIAN_FRONTEND=noninteractive
+    sudo add-apt-repository ppa:libretro/stable -y
+    sudo apt-get update && sudo apt-get install retroarch
+    sudo apt-get install libretro-snes9x libretro-genesisplusgx libretro-mupen64plus
+    sudo apt-get install retroarch libretro-snes9x libretro-mupen64plus libretro-genesisplusgx libretro-bsnes-mercury-performance libretro-core-info libretro-gambatte
+
+
+    # x86 only :(
+    # curl https://buildbot.libretro.com/nightly/linux/x86_64/RetroArch_Qt.7z -o RetroArch_Qt.7z
+    # 7z x RetroArch_Qt.7z
+
+    mkdir -p "$HOME"/code
+    git clone https://github.com/libretro/RetroArch.git "$HOME"/code/retroarch
+
+    # Depending on your configuration you may need to uncomment the deb-src
+    # repositories in /etc/apt/sources.list,
+    # /etc/apt/sources.list.d/libretro-ubuntu-testing-$version.list and then
+    # run apt-get update before running apt-get build-dep
+
+    sudo sed -i '/^#\s*deb-src /s/^#\s*//' /etc/apt/sources.list
+
+    sudo apt-get install git build-essential cmake
+    sudo apt-get update
+
+    sudo apt-get build-dep retroarch
+
+    #sudo apt-get install libopenvg-dev
+    sudo apt install libgl1-mesa-dev
+    sudo apt-get -y install build-essential libxkbcommon-dev zlib1g-dev libfreetype6-dev libegl1-mesa-dev libgles2-mesa-dev libgbm-dev libavcodec-dev libsdl2-dev libsdl-image1.2-dev libxml2-dev yasm
+    sudo apt-get install libraspberrypi-dev
+
+    cd ~/code/retroarch
+    # ./configure
+    ./configure --disable-videocore
+    make clean
+    make -j3
+
+    ls ~/.config/retroarch/cores
+
+    sed -i 's/^menu_show_core_updater = "false"/menu_show_core_updater = "true"/' ~/.config/retroarch/retroarch.cfg
+
+
+    # References:
+    # https://forums.raspberrypi.com/viewtopic.php?t=334692
+    # https://docs.libretro.com/development/retroarch/compilation/ubuntu/
+    # https://buildbot.libretro.com/
+    #
+    #
+    curl https://le.builds.lakka.tv/RPi4.aarch64/Lakka-RPi4.aarch64-5.0.img.gz -O Lakka-RPi4.aarch64-5.0.img.gz
+
+    # Desktop Icon
+    #
+    mkdir -p ~/.local/share/icons/
+    curl https://avatars.githubusercontent.com/u/1812827 -o ~/.local/share/icons/retroarch.png
+
+    echo "
+[Desktop Entry]
+Name=RetroArch
+Comment=Libretro Frontend for Emulators
+Exec=~/code/retroarch/retroarch
+Icon=retroarch
+Terminal=false
+Type=Application
+Categories=Game;Emulator;
+StartupWMClass=retroarch
+" > ~/.local/share/applications/retroarch.desktop
+    chmod +x ~/.local/share/applications/retroarch.desktop
+    gio set ~/.local/share/applications/retroarch.desktop "metadata::trusted" true
+    update-desktop-database ~/.local/share/applications
+    gnome-shell --replace & disown
+
+
+
+
+    # Superbuild stuff
+    apt-get install ccache
+    export PATH=/usr/lib/ccache/bin/:$PATH
+    git clone https://github.com/libretro/libretro-super.git ~/code/libretro-super
+    cd ~/code/libretro-super
+    ./libretro-fetch.sh snes9x
+    ./libretro-fetch.sh genesis_plus_gx
+    ./libretro-fetch.sh nestopia
+
+    # Mario 64 Decomp
+    cd ~/code
+    sudo apt install python3-pip
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+
+    git clone https://github.com/Erotemic/sm64-random-assets.git
+
+    ~/.local/bin/uv venv .venv --seed
+    source .venv/bin/activate
+    python -m pip install uv
+    python -m uv pip install -e .[headless]
+    ./build
+
+
+    #### Fallback
+    sudo apt install fceux snes9x gambatte
+
+    # Maybe use?
+    # https://emulationstation.org/gettingstarted.html#install_rpi_standalone
+
+
+    # Need to convert v64 to z64 format?
+    sudo apt install n64tools
+
+
+
+}

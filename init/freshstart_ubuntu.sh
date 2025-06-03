@@ -1232,3 +1232,17 @@ setup_mime_gnome_open_defaults(){
     xdg-mime default org.gnome.FileRoller.desktop application/x-tar
 
 }
+
+install_wlprop(){
+    __doc__="
+    Like xprop for wayland (find info about windows)
+    https://gist.github.com/crispyricepc/f313386043395ff06570e02af2d9a8e0
+    "
+
+    URL="https://gist.github.com/crispyricepc/f313386043395ff06570e02af2d9a8e0/raw/8b06f025a0f34685f5ffc2000fd19a64754c9b29/wlprop.sh"
+    EXPECTED_HASH="d9f93047db8596197d35e3634f229c54e299d3bb7b1b659c322e87f3e9f5ef65"
+    DST=~/.local/bin/wlprop
+    curl_verify_hash "$URL" "$DST" "$EXPECTED_HASH" sha256sum "-L"
+    chmod +x ~/.local/bin/wlprop
+
+}

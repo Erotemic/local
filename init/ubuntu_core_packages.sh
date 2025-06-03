@@ -2873,6 +2873,9 @@ install_neovim(){
     curl -fLo "$HOME"/.local/opt/neovim/share/nvim/runtime/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
     #mkdir "$HOME"/.config/nvim
+
+    # Try neovim qt?
+    apt install neovim-qt
 }
 
 

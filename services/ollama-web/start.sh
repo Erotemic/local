@@ -28,7 +28,7 @@ start_main(){
     fi
     echo "ARGS: " "${ARGS[@]}"
 
-    docker-compose --file "$SERVICE_DPATH"/docker-compose.yml "${ARGS[@]}"
+    docker compose --file "$SERVICE_DPATH"/docker-compose.yml "${ARGS[@]}"
 
     # Show address
     if [[ "${ARGS[0]}" == "up" ]]; then
@@ -104,7 +104,7 @@ start_main(){
 run_command(){
     SERVICE_DPATH="$(dirname "${BASH_SOURCE[0]}")"
     echo "Service directory: $SERVICE_DPATH"
-    docker-compose --file "$SERVICE_DPATH"/docker-compose.yml "${@}"
+    docker compose --file "$SERVICE_DPATH"/docker-compose.yml "${@}"
 }
 
 

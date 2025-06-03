@@ -927,3 +927,14 @@ bootstrap_dependencies(){
     # See: ~/local/tools/pyenv_ext/bootstrap_dependencies.sh
     echo 'local/tools/pyenv_ext/bootstrap_dependencies.sh'
 }
+
+
+
+install_python_from_uv(){
+    # Test to try working with uv as the main tool
+    # https://docs.astral.sh/uv/getting-started/installation/#github-releases
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    uv python install 3.12
+    uv venv
+    source .venv/bin/activate
+}

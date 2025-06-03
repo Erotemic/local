@@ -949,6 +949,7 @@ install_client_only(){
 
 
 install-ipfs-update(){
+    # DEPRECATED, DO NOT USE
     # https://github.com/ipfs/ipfs-update
     # https://docs.ipfs.tech/how-to/ipfs-updater/
     curl -LJO https://dist.ipfs.tech/ipfs-update/v1.9.0/ipfs-update_v1.9.0_linux-arm.tar.gz
@@ -1156,9 +1157,17 @@ check_pin_random_data(){
 
 
     NEW_CID=QmYxGEEr5K6SbT7hV9d4DJCGFhjJt1d2rSPrdQWB4Fjp9B
+    QmNj2MbeL183GtPoGkFv569vMY8nupUVGEVvvvqhjoAATG
 
     NEW_CID=QmaRssZfmkya5LX53hoyxHgk4RzTvo9grUCcR412xCva4B
+
+    # ipfs machine
+    PEER_ID=12D3KooWPyQK2JEXnqK1QxiV9Y7bG3UsUQC5iQvDxn8bV1uqvsbi
+
     PEER_ID=12D3KooWMJxwdSsxYwyb6KCqHNpBcE2oM9HWz6yNkRHiavgQLsbr
+
+    # jojo
+    PEER_ID=12D3KooWCFcfiBevjQD42aRAELMUZXAGScRiN2NcAthokF4dMnVU
     CHECK_URL="https://ipfs-check.on.fleek.co/?cid=${NEW_CID}&multiaddr=%2Fp2p%2F${PEER_ID}"
     echo "CHECK_URL = $CHECK_URL"
 
@@ -1283,4 +1292,11 @@ pin_named_content(){
 
     # List named pins
     ipfs pin ls --type="recursive" --names
+}
+
+
+todo_notes_about_jojo_setup(){
+    # Add details on how to fix the jojo network issues
+    echo "https://chatgpt.com/c/680924fa-4034-8002-a53b-145e2f6e4613"
+
 }
