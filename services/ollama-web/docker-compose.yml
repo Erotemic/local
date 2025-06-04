@@ -17,6 +17,8 @@ services:
               count: all
 
     restart: unless-stopped
+    environment:
+      - OLLAMA_LOG_LEVEL=debug
 
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
