@@ -2703,10 +2703,19 @@ install_vscode(){
     sudo apt-get install cppcheck
     sudo apt-get install clang
 
-    sudo /bin/python3 -m pip install flawfinder
+    #sudo /bin/python3 -m pip install flawfinder
+    #sudo pip install flawfinder
 
-    sudo pip install flawfinder
+    # Install code-server
+    curl -fsSL https://code-server.dev/install.sh | sh
+    sudo systemctl enable --now code-server@$USER
+    #
 
+    # Run code locally and connect to the server over ssh
+    code --remote ssh-remote+remote-name
+
+    # Install the LLM extension
+    code --remote ssh-remote+remote-name --install-extension Continue.continue
 }
 
 
