@@ -404,15 +404,6 @@ pathvar_remove()
 }
 
 
-
-remove_ld_library_path_entry()
-{
-    # http://stackoverflow.com/questions/370047/what-is-the-most-elegant-way-to-remove-a-path-from-the-path-variable-in-bash
-    # shellcheck disable=SC2155
-    export LD_LIBRARY_PATH=$(pathvar_remove LD_LIBRARY_PATH "$1")
-}
-
-
 remove_ld_library_path_entry()
 {
     # http://stackoverflow.com/questions/370047/what-is-the-most-elegant-way-to-remove-a-path-from-the-path-variable-in-bash
