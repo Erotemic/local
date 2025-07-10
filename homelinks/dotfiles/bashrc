@@ -104,6 +104,8 @@ fi
 if [ -d "$HOME/.elan/bin" ]; then
     #source "$HOME"/.elan/env
     export PATH="$HOME/.elan/bin:$PATH"
+    # Store lake build artifacts in a single place
+    export LAKE_HOME=$HOME/.lake
 fi
 
 

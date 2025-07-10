@@ -475,11 +475,97 @@ deactivate_venv()
     #remove_cpath_entry ~/venv3/include
 }
 
+__list_venvs_fd() {
+    # Maybe a faster way to list the envs?
+    # TODO: consolidate with __list_static_python_venvs and __list_dynamic_python_envs
+    echo "Available environments (via fd):"
+    echo
+
+    echo "[conda]"
+    if [ -d "$_CONDA_ROOT/envs" ]; then
+        fd -u --type d --max-depth 2 bin "$_CONDA_ROOT/envs" \
+            | while read -r bin_dir; do
+                if [ -f "$bin_dir/activate" ]; then
+                    echo "  $(basename "$(dirname "$bin_dir")")"
+                fi
+            done
+        echo
+    fi
+
+    echo "[virtualenvs in \$HOME]"
+    fd -u --type d --max-depth 2 bin "$HOME" \
+        | while read -r bin_dir; do
+            if [ -f "$bin_dir/activate" ] && [[ "$bin_dir" == *venv* ]]; then
+                echo "  $(basename "$(dirname "$bin_dir")")"
+            fi
+        done
+    echo
+
+    if command -v pyenv >/dev/null 2>&1; then
+        echo "[pyenv]"
+        pyenv_root=$(pyenv root)
+        fd -u --type f --max-depth 1 "activate$" "$pyenv_root"/versions/*/envs/*/bin 2>/dev/null \
+            | sed -E "s|.*/envs/||" | sed -E 's|/bin/activate$||' | sort -u \
+            | sed 's|^|  |'
+        echo
+    fi
+
+    echo "[local virtualenvs in $PWD]"
+    fd -u --type f --max-depth 1 "activate$" "$PWD"/*/bin 2>/dev/null \
+        | sed -E "s|$PWD/||" | sed -E 's|/bin/activate$||' | sort -u \
+        | sed 's|^|  |'
+}
+
+
+__list_venvs_find() {
+    # TODO: consolidate with __list_static_python_venvs and __list_dynamic_python_envs
+    echo "Available environments:"
+    echo
+
+    if [ -d "$_CONDA_ROOT/envs" ]; then
+        echo "[conda]"
+        find "$_CONDA_ROOT/envs" -mindepth 1 -maxdepth 1 -type d -printf "  %f\n"
+        echo
+    fi
+
+    echo "[virtualenvs in \$HOME]"
+    find "$HOME" -mindepth 1 -maxdepth 1 -type d -name "*venv*" -printf "  %f\n"
+    echo
+
+    if command -v pyenv >/dev/null 2>&1; then
+        echo "[pyenv]"
+        # TODO?
+        #find "$(pyenv root)"/versions/*/envs -mindepth 3 -maxdepth 3 -type f -path "*/bin/activate"  -exec echo {} \; | sed "s|.*/envs/||" | sed "s|/bin/activate||"
+        find "$(pyenv root)/versions" -type f -path "*/envs/*/bin/activate" \
+            -exec dirname {} \; | sed 's|.*/envs/|  |'  | sed "s|/bin||"
+        echo
+    fi
+
+    echo "[local virtualenvs in $PWD]"
+    find "$PWD" -type f -path "*/bin/activate" \
+        -exec dirname {} \; | sed "s|$PWD/|  |" | sed "s|/bin||"
+    echo
+}
+
+
+list_venvs(){
+    if command -v fd >/dev/null 2>&1; then
+        __list_venvs_fd
+    else
+        __list_venvs_find
+    fi
+}
+
 workon_py()
 {
     __doc__="
     Switch virtual environments
     "
+    if [[ "$1" == "list" ]]; then
+        list_venvs
+        return 0
+    fi
+
     local NEW_VENV=$1
     #echo "workon_py: NEW_VENV = $NEW_VENV"
 
@@ -605,7 +691,8 @@ function with_shopt_option() {
     eval "$original_value"
 }
 
-refresh_workon_autocomplete(){
+
+__list_static_python_venvs(){
     local KNOWN_CONDA_ENVS
     local KNOWN_VIRTUAL_ENVS
     local KNOWN_PYENV_ENVS
@@ -619,22 +706,57 @@ refresh_workon_autocomplete(){
     KNOWN_VIRTUAL_ENVS="$(/bin/ls -1 "$HOME" | grep venv | sort)"
 
     if [[ "$(which pyenv)" ]]; then
-        PYENV_VERSION_DPATH=$(pyenv root)/versions
-
-        ls_array VENV_DPATH_ARR "$PYENV_VERSION_DPATH/*/envs/*"
-        if [ "${#VENV_DPATH_ARR[@]}" -gt 0 ]; then
-            KNOWN_PYENV_ENVS=$(find "${VENV_DPATH_ARR[@]}" -maxdepth 0 -type d -printf "%f\n")
-        fi
+        #PYENV_VERSION_DPATH=$(pyenv root)/versions
+        KNOWN_PYENV_ENVS=$(find "$(pyenv root)"/versions/*/envs -mindepth 3 -maxdepth 3 -type f -path "*/bin/activate"  -exec echo {} \; | sed "s|.*/envs/||" | sed "s|/bin/activate||")
+        #ls_array VENV_DPATH_ARR "$PYENV_VERSION_DPATH/*/envs/*"
+        #if [ "${#VENV_DPATH_ARR[@]}" -gt 0 ]; then
+        #    KNOWN_PYENV_ENVS=$(find "${VENV_DPATH_ARR[@]}" -maxdepth 0 -type d -printf "%f\n")
+        #fi
     fi
     # Remove newlines
-    KNOWN_ENVS=$(echo "$KNOWN_CONDA_ENVS $KNOWN_VIRTUAL_ENVS $KNOWN_PYENV_ENVS" | tr '\n' ' ')
+    echo "$KNOWN_CONDA_ENVS $KNOWN_VIRTUAL_ENVS $KNOWN_PYENV_ENVS" | tr '\n' ' '
+}
+
+__list_dynamic_python_envs(){
+    # Local project virtualenvs (search from cwd)
+    find "$PWD" -mindepth 3 -maxdepth 3 -type f -path "*/bin/activate"  -exec echo {} \; | sed "s|$PWD/||" | sed "s|/bin/activate||"
+}
+
+
+refresh_static_workon_autocomplete(){
+    local KNOWN_ENVS
+    KNOWN_ENVS=$(__list_static_python_venvs)
     complete -W "$KNOWN_ENVS" "workon_py"
     complete -W "$KNOWN_ENVS" "we"
 }
 
+
+_dynamic_workon_autocomplete() {
+    # Function that will run every time we press "tab" to autocomplete on workon_py
+    local curr_arg
+    local all_envs
+
+    curr_arg="${COMP_WORDS[COMP_CWORD]}"
+
+    # Virtualenvs in $HOME that match pattern
+    static_virtualenvs=$(__list_static_python_venvs)
+
+    # Local project virtualenvs (search from cwd)
+    local_envs=$(__list_dynamic_python_envs)
+
+    # Combine and deduplicate
+    all_envs=$(echo -e "$static_virtualenvs\n$local_envs" | sort -u)
+
+    # COMPREPLY=($(compgen -W "$all_envs" -- "$curr_arg"))
+    mapfile -t COMPREPLY < <(compgen -W "$all_envs" -- "$curr_arg")
+}
+
 execute_pyenv_ext_complete_script(){
     complete -W "PATH LD_LIBRARY_PATH CPATH CMAKE_PREFIX_PATH" "pathvar_remove"
-    refresh_workon_autocomplete
+
+    complete -F _dynamic_workon_autocomplete "workon_py"
+    complete -F _dynamic_workon_autocomplete "we"
+    #refresh_static_workon_autocomplete
 }
 
 rebuild_python(){
