@@ -22,40 +22,94 @@ alias watch='watch -n .5'
 alias df='df -x"squashfs" -x"tmpfs"'
 
 #alias cgrep='grep -I --exclude-dir "*build*" --exclude-dir .git -ER'
-alias cgrep='grep \
-    --binary-files=without-match \
-    --extended-regexp \
-    --dereference-recursive \
-    --exclude-dir "build" \
-    --exclude-dir "cmake-build" \
-    --exclude-dir "build-*" \
-    --exclude-dir "build_*" \
-    --exclude-dir "node_modules" \
-    --exclude-dir "static" \
-    --exclude-dir ".mypy_cache" \
-    --exclude-dir .git \
-    --exclude-dir .pytest_cache \
-    --exclude-dir htmlcov \
-    --exclude-dir "volumes" \
-    --exclude-dir "*.egg-info" \
-    --exclude "searchindex.js" \
-    --exclude "*.dot*" \
-    --exclude "profile_output.*" \
-    --exclude "*.pipe*" \
-    --exclude "*.zip*" \
-    --exclude "*.pkl*" \
-    --exclude "*.pyc*" \
-    --exclude "*.so*" \
-    --exclude "*.o*" \
-    --exclude "*.coverage*" \
-    --exclude "*.ipynb*" \
-    --exclude "tags"'
-    #
-    #--exclude "*.rst*" \
-    #--exclude "*.js" \
-    #--exclude "*.html*" \
-    #--exclude "*.css*" \
-    #
+#alias cgrep='grep \
+#    --binary-files=without-match \
+#    --extended-regexp \
+#    --dereference-recursive \
+#    --exclude-dir "build" \
+#    --exclude-dir "cmake-build" \
+#    --exclude-dir "build-*" \
+#    --exclude-dir "build_*" \
+#    --exclude-dir "node_modules" \
+#    --exclude-dir "static" \
+#    --exclude-dir ".mypy_cache" \
+#    --exclude-dir .git \
+#    --exclude-dir .pytest_cache \
+#    --exclude-dir htmlcov \
+#    --exclude-dir "volumes" \
+#    --exclude-dir "helm-env" \
+#    --exclude-dir "*.egg-info" \
+#    --exclude "searchindex.js" \
+#    --exclude "*.dot*" \
+#    --exclude "profile_output.*" \
+#    --exclude "*.pipe*" \
+#    --exclude "*.zip*" \
+#    --exclude "*.pkl*" \
+#    --exclude "*.pyc*" \
+#    --exclude "*.so*" \
+#    --exclude "*.o*" \
+#    --exclude "*.coverage*" \
+#    --exclude "*.ipynb*" \
+#    --exclude "tags"'
+#    #
+#    #--exclude "*.rst*" \
+#    #--exclude "*.js" \
+#    #--exclude "*.html*" \
+#    #--exclude "*.css*" \
+
+cgrep() {
+    __doc__='
+    Extension of the original cgrep alias that handles a .cgrep-ignore file.
+    '
+    # Base grep command and options
+    local cmd=(grep \
+        --color=auto
+        --binary-files=without-match \
+        --extended-regexp \
+        --dereference-recursive \
+        --exclude-dir "build" \
+        --exclude-dir "cmake-build" \
+        --exclude-dir "build-*" \
+        --exclude-dir "build_*" \
+        --exclude-dir "node_modules" \
+        --exclude-dir "static" \
+        --exclude-dir ".mypy_cache" \
+        --exclude-dir ".git" \
+        --exclude-dir ".pytest_cache" \
+        --exclude-dir "htmlcov" \
+        --exclude-dir "volumes" \
+        --exclude-dir "helm-env" \
+        --exclude-dir "*.egg-info" \
+        --exclude "searchindex.js" \
+        --exclude "*.dot*" \
+        --exclude "profile_output.*" \
+        --exclude "*.pipe*" \
+        --exclude "*.zip*" \
+        --exclude "*.pkl*" \
+        --exclude "*.pyc*" \
+        --exclude "*.so*" \
+        --exclude "*.o*" \
+        --exclude "*.coverage*" \
+        --exclude "*.ipynb*" \
+        --exclude "tags")
+
+    # If a .cgrep-ignore file exists, read and add those patterns
+    if [[ -f .cgrep-ignore ]]; then
+        while IFS= read -r line; do
+            # Skip empty lines and comments
+            [[ -z "$line" || "$line" =~ ^# ]] && continue
+            echo "line = $line"
+            if [[ "$line" == */ ]]; then
+                cmd+=(--exclude-dir "${line%/}")
+            else
+                cmd+=(--exclude "$line")
+            fi
+        done < .cgrep-ignore
+    fi
+
+    # Pass remaining arguments to grep
+    "${cmd[@]}" "$@"
+}
 
 alias cgrep2='grep \
     --binary-files=without-match \

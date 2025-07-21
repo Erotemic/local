@@ -3220,3 +3220,28 @@ monitor_for_disk_overuse(){
 
 
 }
+
+
+fix_snap_hardware_observe_issue(){
+    __doc__="
+    Was getting an apparmor denited message in my dmesg log and ChatGPT
+    suggested that a snap package was trying to use my GPU but was not allowed.
+
+
+    It suggested this fix and sait it grants the Snap snapd-desktop-integration
+    permission to access detailed hardware info.
+
+    It said:
+
+        snapd-desktop-integration tried to create a symlink to /dev/char/195:1 — that’s a GPU device node (/dev/nvidia1).
+        The profile doesn't allow access to that character device.
+        This usually happens when Snap apps try to access the GPU, but don’t have the correct interfaces (like hardware-observe, graphics-core22, etc.).
+
+
+    "
+    # Command to check what is already connected to be able to observe hardware
+    snap interface hardware-observe
+
+    sudo snap connect snapd-desktop-integration:hardware-observe
+
+}

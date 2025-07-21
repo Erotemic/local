@@ -1,0 +1,24 @@
+// Place your key bindings in this file to override the defaults
+[
+
+  {
+    "key": "ctrl+shift+c",
+    "command": "editor.action.clipboardCopyAction",
+    "when": "editorTextFocus && !terminalFocus"
+  },
+  {
+    "key": "ctrl+shift+c",
+    "command": "workbench.action.terminal.copySelection",
+    "when": "terminalFocus"
+  },
+  {
+    "key": "alt+a",
+    "command": "workbench.action.terminal.runSelectedText",
+    "when": "terminalProcessSupported"
+  },
+  {
+      "key": "ctrl+shift+c",
+      "command": "-workbench.action.terminal.openNativeConsole",
+      "when": "!terminalFocus"
+  }
+]

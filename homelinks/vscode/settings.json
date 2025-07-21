@@ -1,0 +1,120 @@
+{
+  "workbench.colorTheme": "Visual Studio Dark",
+  "continue.telemetryEnabled": false,
+  "vim.leader": ",",
+  "vim.normalModeKeyBindingsNonRecursive": [
+    {
+      "before": [
+        ";"
+      ],
+      "after": [
+        ":"
+      ]
+    },
+    {
+      "before": [
+        ":"
+      ],
+      "after": [
+        ";"
+      ]
+    },
+    {
+      "before": [
+        "<leader>",
+        "s",
+        "s"
+      ],
+      "commands": [
+        {
+          "command": "editor.action.startFindReplaceAction"
+        },
+      ]
+    },
+    {
+      "before": [
+        "<leader>",
+        "p",
+        "v"
+      ],
+      "commands": [
+        "vscodetk.insertPrintVarRepr"
+      ]
+    },
+    {
+      "before": [
+        "<leader>",
+        "p",
+        "s"
+      ],
+      "commands": [
+        "vscodetk.insertPrintVarUrepr"
+      ]
+    }
+  ],
+  "vim.visualModeKeyBindingsNonRecursive": [
+    {
+      "before": [
+        ";"
+      ],
+      "after": [
+        ":"
+      ]
+    },
+    {
+      "before": [
+        ":"
+      ],
+      "after": [
+        ";"
+      ]
+    }
+  ],
+  "vim.operatorPendingModeKeyBindingsNonRecursive": [
+    {
+      "before": [
+        ";"
+      ],
+      "after": [
+        ":"
+      ]
+    },
+    {
+      "before": [
+        ":"
+      ],
+      "after": [
+        ";"
+      ]
+    }
+  ],
+  "vim.insertModeKeyBindingsNonRecursive": [
+    {
+      "before": [
+        ";"
+      ],
+      "after": [
+        ":"
+      ]
+    },
+    {
+      "before": [
+        ":"
+      ],
+      "after": [
+        ";"
+      ]
+    }
+  ],
+  "vim.useSystemClipboard": true,
+  // Enable standard copy/paste keys
+  "vim.handleKeys": {
+    "<C-c>": false,
+    "<C-v>": false,
+    "<C-x>": false
+  },
+  // Optional: enable mouse selection (this is default)
+  "editor.selectionClipboard": true,
+  // Optional: allow arrow key movement in selection (default behavior)
+  "editor.accessibilitySupport": "off"
+}

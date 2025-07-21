@@ -62,12 +62,21 @@ ensure_config_symlinks()
     # Extras
     echo "* --- START EXTRAS ---*"
 
+    # Specific symlinks
     mkdir -p ~/local/vim/vimfiles/files/info
     safe_symlink ~/local/scripts ~/scripts
     safe_symlink ~/local/vim/vimfiles ~/.vim
     safe_symlink ~/local/vim/portable_vimrc ~/.vimrc
     safe_symlink ~/local/homelinks/ipython ~/.ipython
     #safe_symlink ~/code/vimtk ~/local/vim/vimfiles/bundle/vimtk
+
+    mkdir -p ~/.config/Code/User
+    mkdir -p ~/.local/share/code-server/User
+    safe_symlink ~/local/homelinks/vscode/settings.json ~/.config/Code/User/settings.json
+    safe_symlink ~/local/homelinks/vscode/settings.json ~/.local/share/code-server/User/settings.json
+
+    safe_symlink ~/local/homelinks/vscode/keybindings.json ~/.config/Code/User/keybindings.json
+    safe_symlink ~/local/homelinks/vscode/keybindings.json ~/.local/share/code-server/User/keybindings.json
 
 
     #### DO EXTRA SYMLINK FIXES
