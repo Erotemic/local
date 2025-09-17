@@ -3220,6 +3220,7 @@ monitor_for_disk_overuse(){
 
 
 }
+<<<<<<< Updated upstream
 
 
 fix_snap_hardware_observe_issue(){
@@ -3245,3 +3246,27 @@ fix_snap_hardware_observe_issue(){
     sudo snap connect snapd-desktop-integration:hardware-observe
 
 }
+||||||| constructed merge base
+=======
+
+ensure_rust(){
+    # Ensure rust
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    reset_my_env && source ~/.bashrc
+
+}
+
+install_mergeraf(){
+    __doc__="
+    https://mergiraf.org/usage.html#registration-as-a-git-merge-driver
+    "
+    ensure_rust
+    cargo install --locked mergiraf
+
+    git config --global merge.mergiraf.name mergiraf
+    git config --global merge.mergiraf.driver 'mergiraf merge --git %O %A %B -s %S -x %X -y %Y -p %P -l %L'
+
+    #git config --global merge.conflictStyle "merge"  # default
+    git config --global merge.conflictStyle diff3
+}
+>>>>>>> Stashed changes
