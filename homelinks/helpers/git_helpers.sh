@@ -293,3 +293,11 @@ git-rebase-resign(){
     "
     git rebase --exec 'git commit --amend --no-edit -n -S' "$@"
 }
+
+
+git-explode-perfile-diff(){
+    COMMIT_ID=$1
+    for f in $(git show --name-only --pretty="" "$COMMIT_ID"); do
+        git show "$COMMIT_ID" -- "$f" > "${f//\//_}.patch"
+    done
+}

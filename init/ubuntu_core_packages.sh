@@ -841,13 +841,13 @@ encryprtion()
     trupaxgui
 
     # https://coderslagoon.com/home.php
-    cryptkeeper()
-    {
-        sudo apt install cryptkeeper
-        #http://superuser.com/questions/179150/reading-an-encfs-volume-from-windows
-        #http://alternativeto.net/software/aescrypt/
-        #http://www.getsafe.org/about#linuxversion
-    }
+    #cryptkeeper()
+    #{
+    #    sudo apt install cryptkeeper
+    #    #http://superuser.com/questions/179150/reading-an-encfs-volume-from-windows
+    #    #http://alternativeto.net/software/aescrypt/
+    #    #http://www.getsafe.org/about#linuxversion
+    #}
 
     # Try OTFE
     sudo apt install cryptmount
@@ -2708,7 +2708,7 @@ install_vscode(){
 
     # Install code-server
     curl -fsSL https://code-server.dev/install.sh | sh
-    sudo systemctl enable --now code-server@$USER
+    sudo systemctl enable --now code-server@"$USER"
     #
 
     # Run code locally and connect to the server over ssh
@@ -3204,7 +3204,7 @@ delete_lots_of_files(){
     fd --type f . | xargs -P 5 -I{} sh -c 'rm "{}" && echo "Deleted: {}"'
 
     # Dynamic rate limit (not sure if this actually works)
-    fd .tif | pv -l -s $(fd .tif | wc -l) | xargs -P 4 -I{} sh -c 'rm "{}" && echo "Deleted: {}"'
+    fd .tif | pv -l -s "$(fd .tif | wc -l)" | xargs -P 4 -I{} sh -c 'rm "{}" && echo "Deleted: {}"'
 
 }
 

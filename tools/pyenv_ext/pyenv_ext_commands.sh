@@ -52,6 +52,7 @@ Example Usage:
     pyenv_create_virtualenv 3.10.4 off
     pyenv_create_virtualenv 3.12 full
     pyenv_create_virtualenv 3.13.2 full
+    pyenv_create_virtualenv 3.14.0rc2 off
 
     pyenv_create_virtualenv 3.11.9 off
     pyenv_create_virtualenv 3.11 most neovim

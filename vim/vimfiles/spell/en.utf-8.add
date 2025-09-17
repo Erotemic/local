@@ -526,3 +526,7 @@ datasheet
 heatmaps
 pixelwise
 binarization
+composable
+configs
+argparse
+vendored

@@ -331,7 +331,7 @@ docker_execinto(){
 clean_latex()
 {
     rm -- *.aux
-    rm -- *.bbl
+    #rm -- *.bbl
     rm --  *.brf
     rm --  *.log
     rm --  *.bak

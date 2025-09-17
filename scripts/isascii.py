@@ -68,6 +68,7 @@ UTF_REPLACEMENT_MAP = {
     '\u00A9': '(C)',   # COPYRIGHT SIGN
     '\u200B': '',      # ZERO WIDTH SPACE (remove)
     '\uFEFF': '',      # ZERO WIDTH NO-BREAK SPACE (BOM)
+    '→': '->',
     # Add more mappings as needed
 }
 
@@ -110,6 +111,10 @@ def main():
         else:
             parser.error('No input data provided. Provide as argument or pipe via stdin.')
 
+    if maybe_path(args.data):
+        import ubelt as ub
+        args.data = ub.Path(args.data).read_text()
+
     result = analyze_ascii(args.data, fix=args.fix)
 
     if result['is_ascii']:
@@ -126,6 +131,16 @@ def main():
             print('')
         print('✗ UNSAFE: data contains non-ASCII characters. Use --fix to output replacements')
         return 1
+
+
+def maybe_path(data):
+    import os
+    if isinstance(data, str) and len(data) < 300:
+        if os.path.exists(data):
+            return True
+    return False
+
+    ...
 
 
 if __name__ == '__main__':

@@ -444,6 +444,7 @@ install_ipfs(){
         https://dist.ipfs.tech/#kubo
         https://dist.ipfs.io/kubo/
         https://dist.ipfs.tech/kubo/v0.29.0/
+        https://dist.ipfs.tech/kubo/v0.36.0/
     "
 
     # IPFS itself
@@ -455,9 +456,11 @@ install_ipfs(){
 
     ARCH="$(dpkg --print-architecture)"
     echo "ARCH = $ARCH"
-    IPFS_VERSION="v0.29.0"
-    IPFS_KEY=kubo_${IPFS_VERSION}_linux-${ARCH}
-    URL="https://dist.ipfs.tech/kubo/${IPFS_VERSION}/${IPFS_KEY}.tar.gz"
+    #IPFS_VERSION="v0.29.0"
+    IPFS_VERSION="v0.36.0"
+    #IPFS_KEY=kubo_${IPFS_VERSION}_linux-${ARCH}
+    IPFS_KEY=kubo_${IPFS_VERSION}_linux-${ARCH}.tar.gz
+    URL="https://dist.ipfs.tech/kubo/${IPFS_VERSION}/${IPFS_KEY}"
     #IPFS_KEY=go-ipfs_${IPFS_VERSION}_linux-${ARCH}
     #URL="https://dist.ipfs.io/go-ipfs/${IPFS_VERSION}/${IPFS_KEY}.tar.gz"
     #declare -A IPFS_KNOWN_HASHES=(
@@ -480,6 +483,9 @@ install_ipfs(){
         ["kubo_v0.29.0_linux-amd64-sha512"]="2df5191393e0dee5e7a6f301d56a3f9d19041dd4076bb78483af042fed3b107a08968c6853b5b84f3699139b1527556f9c812e6924ea079e8be5909dc77fe65b"
         ["kubo_v0.29.0_linux-arm64-sha512"]="40703f884caa717c24d95867facb23d485ca5d7f41a93c60e33c5adbdb67375159b5e3aa76daaebb61b7d0b10498154f6b23acc2f260a34e036f852df7e588d7"
 
+        ["kubo_v0.36.0_linux-arm64.tar.gz.sha512"]="9579aed503c71da98d98a3212ea3216ca07cab36368e0ae88372c2a6f240322d26a2ac88784fc6ee7801b87b50f884673e2868df94aa5c9a5bcb6b9569378bc0"
+        ["kubo_v0.36.0_linux-amd64.tar.gz.sha512"]="bde93def3fbae2b86115efca8cbf82ecbe9fc11fcad6c24c204c37e717017ff143cc52987a0f57006561dc9c3fae3cc08e2898fb0bd55a5b70b75e61280df7f5"
+
     )
     #DST=$(basename "$URL")
     #EXPECTED_SHA512="$EXPECTED_HASH"
@@ -489,7 +495,7 @@ install_ipfs(){
     #else
     #    echo "ERROR checksum is NOT the same"
     #fi
-    EXPECTED_HASH="${IPFS_KNOWN_HASHES[${IPFS_KEY}-sha512]}"
+    EXPECTED_HASH="${IPFS_KNOWN_HASHES[${IPFS_KEY}.sha512]}"
     BASENAME=$(basename "$URL")
     curl_verify_hash "$URL" "$BASENAME" "$EXPECTED_HASH" sha512sum
 
@@ -609,6 +615,35 @@ initialize_ipfs(){
 }
 
 
+write_local_ipfs_config_jojo(){
+    # setup environs for specific machines
+    #
+    source ~/local/init/utils.sh
+    if [[ "$HOSTNAME" == "jojo" ]]; then
+        _WRITE_TEXT='
+        export INSTALL_PREFIX=$HOME/.local
+        export IPFS_PATH=/flash/ipfs
+        export IPFS_EXE=$INSTALL_PREFIX/bin/ipfs
+        '
+    elif [[ "$HOSTNAME" == "ipfs" ]]; then
+        _WRITE_TEXT='
+        export INSTALL_PREFIX=/usr/bin/local
+        export IPFS_PATH=/data/ipfs
+        export IPFS_EXE=$INSTALL_PREFIX/bin/ipfs
+        '
+    else
+        _WRITE_TEXT='
+        export INSTALL_PREFIX=$HOME/.local
+        export IPFS_PATH=/data/ipfs
+        export IPFS_EXE=$INSTALL_PREFIX/bin/ipfs
+        '
+    fi
+    _WRITE_PATH="$HOME/ipfs_environs"
+    echo "$_WRITE_TEXT"
+
+    writeto "$_WRITE_PATH" "$_WRITE_TEXT"
+}
+
 install_ipfs_service(){
     __doc__="
     Installing a service to run the IPFS daemon requires sudo
@@ -624,6 +659,8 @@ install_ipfs_service(){
     SERVICE_FPATH=$SERVICE_DPATH/ipfs.service
     IPFS_EXE=$(which ipfs)
 
+    source ~/ipfs_environs
+
     # TODO: This will depend on how you initialized IPFS
     #IPFS_PATH=/data/ipfs
     #IPFS_PATH=$HOME/.ipfs
@@ -632,16 +669,26 @@ install_ipfs_service(){
     echo "SERVICE_FPATH = $SERVICE_FPATH"
     echo "IPFS_PATH = $IPFS_PATH"
 
+    sudo systemctl stop ipfs
+    sudo systemctl disable ipfs
+
     sudo_writeto $SERVICE_FPATH "
         [Unit]
         Description=IPFS daemon
         After=network.target
+        Wants=network-online.target
+
         [Service]
-        Environment=\"IPFS_PATH=$IPFS_PATH\"
+        Type=simple
         User=$USER
+        Group=$USER
+        Environment=\"IPFS_PATH=$IPFS_PATH\"
+
         ExecStart=${IPFS_EXE} daemon
-        Restart=on-failure
+
+        Restart=always
         RestartSec=5s
+
         [Install]
         WantedBy=multiuser.target
         "
@@ -649,10 +696,83 @@ install_ipfs_service(){
     # Note: can add "--mount" to ExecStart if you
     # Want to mount ipfs via fuse
     #
-    #sudo systemctl daemon-reload
+    sudo systemctl daemon-reload
+    sudo systemctl enable ipfs
     sudo systemctl start ipfs
     sudo systemctl status ipfs
 }
+
+
+install_ipfs_watchdog() {
+# 0) Vars
+SERVICE_NAME=ipfs
+SYSTEM_UNIT="${SERVICE_NAME}.service"
+HC_BASE="${SERVICE_NAME}-healthcheck"
+HC_SCRIPT="/usr/local/sbin/${HC_BASE}.sh"
+HC_SERVICE="/etc/systemd/system/${HC_BASE}.service"
+HC_TIMER="/etc/systemd/system/${HC_BASE}.timer"
+
+# 1) Get the IPFS service user
+IPFS_USER="$(systemctl show "$SYSTEM_UNIT" -p User --value)"
+echo "IPFS user: $IPFS_USER"
+
+# 2) Stop/disable any old/broken units
+sudo systemctl disable --now "${HC_BASE}.timer" 2>/dev/null || true
+sudo systemctl stop "${HC_BASE}.service" 2>/dev/null || true
+
+# 3) Install the healthcheck script
+sudo install -m 0755 -o root -g root /dev/stdin "$HC_SCRIPT" <<EOF
+#!/usr/bin/env bash
+set -euo pipefail
+SYSTEM_UNIT="$SYSTEM_UNIT"
+IPFS_USER="$IPFS_USER"
+if su - "\$IPFS_USER" -c 'ipfs id >/dev/null 2>&1'; then
+  exit 0
+fi
+echo "[ipfs-watchdog] health check failed for \$SYSTEM_UNIT; attempting restart..."
+/bin/systemctl restart "\$SYSTEM_UNIT" || true
+EOF
+
+# 4) Write the service (simple ExecStart, no tricky quoting)
+sudo tee "$HC_SERVICE" >/dev/null <<EOF
+[Unit]
+Description=Health check for $SYSTEM_UNIT
+Requires=$SYSTEM_UNIT
+After=$SYSTEM_UNIT
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=$HC_SCRIPT
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# 5) Write the timer (5 minutes; change if you want 12h etc.)
+sudo tee "$HC_TIMER" >/dev/null <<EOF
+[Unit]
+Description=Run $SERVICE_NAME IPFS health check every 12 hours
+
+[Timer]
+OnBootSec=2m
+OnUnitActiveSec=720m
+Unit=$(basename "$HC_SERVICE")
+
+[Install]
+WantedBy=timers.target
+EOF
+
+# 6) Reload and enable
+sudo systemctl daemon-reload
+sudo systemctl enable --now "$(basename "$HC_TIMER")"
+
+# 7) Verify
+systemctl status "$(basename "$HC_TIMER")" --no-pager
+systemctl cat "$(basename "$HC_SERVICE")"
+
+}
+
 
 make_swapfile(){
     # On a rasbperry pi, a swapfile might be helpful

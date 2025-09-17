@@ -938,6 +938,7 @@ bash_array_repr(){
         bash_array_repr "${ARR[@]}"
 
     Dependency Free Alternative:
+        # note, you dont get preserved quotes here
         echo "${ARR[@]}"
     ...
     '
