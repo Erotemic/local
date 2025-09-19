@@ -1,4 +1,44 @@
 services:
+  postgres:
+    image: postgres:16
+    container_name: openwebui-postgres
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
+    volumes:
+      - openwebui_pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U openwebui -d openwebui"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:latest
+    container_name: open-webui
+    ports:
+      - "${OPENWEBUI_PORT:-14771}:8080"
+    environment:
+      - WEBUI_AUTH=False
+      #- OLLAMA_BASE_URL=http://host.docker.internal:11434
+      # Talk to the service name directly
+      - OLLAMA_BASE_URL=http://ollama:11434
+      #- DATABASE_URL=postgresql+psycopg2://openwebui:change_me@postgres:5432/openwebui
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    volumes:
+      - /data/service/docker/open-webui:/app/backend/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+    restart: unless-stopped
+
   ollama:
     image: ollama/ollama:latest
     container_name: ollama
@@ -14,29 +54,17 @@ services:
               capabilities: ["gpu"]
               count: all
 
+    healthcheck:
+      test: ["CMD", "bash", "-lc", "curl -sf http://localhost:11434/api/tags >/dev/null"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
     restart: unless-stopped
     environment:
       - OLLAMA_LOG_LEVEL=debug
       - OLLAMA_KEEP_ALIVE=99999h
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
-
-  open-webui:
-    image: ghcr.io/open-webui/open-webui:latest
-    container_name: open-webui
-    ports:
-      - "${OPENWEBUI_PORT:-14771}:8080"
-    environment:
-      - WEBUI_AUTH=False
-      #- OLLAMA_BASE_URL=http://host.docker.internal:11434
-      # Talk to the service name directly
-      - OLLAMA_BASE_URL=http://ollama:11434
-    volumes:
-      - /data/service/docker/open-webui:/app/backend/data
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    depends_on:
-      - ollama
-    restart: unless-stopped
 
 volumes:
   ollama_models:
@@ -50,4 +78,10 @@ volumes:
     driver_opts:
       type: none
       device: /data/service/docker/open-webui
+      o: bind
+  openwebui_pgdata:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/service/docker/open-webui-postgres
       o: bind
