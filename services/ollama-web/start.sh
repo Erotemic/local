@@ -111,9 +111,9 @@ start_main(){
 make_secret() {
   # Prefer openssl; fallback to /dev/urandom
   if command -v openssl >/dev/null 2>&1; then
-    openssl rand -base64 32 | tr -d '\n'
+    openssl rand -base64 32 | tr -d '\n' | base32 | head -c 64
   else
-    head -c 32 /dev/urandom | base64 | tr -d '\n'
+    head -c 32 /dev/urandom | base64 | tr -d '\n' | base32 | head -c 64
   fi
 }
 
