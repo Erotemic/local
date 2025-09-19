@@ -1,6 +1,6 @@
 services:
   ollama:
-    image: ollama/ollama
+    image: ollama/ollama:latest
     container_name: ollama
     ports:
       - "11434:11434"
@@ -21,7 +21,7 @@ services:
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
 
   open-webui:
-    image: ghcr.io/open-webui/open-webui:main
+    image: ghcr.io/open-webui/open-webui:latest
     container_name: open-webui
     ports:
       - "${OPENWEBUI_PORT:-14771}:8080"
