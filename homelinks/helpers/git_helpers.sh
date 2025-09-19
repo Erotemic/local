@@ -256,6 +256,10 @@ git-diff-branch(){
 
 git-branch-cat(){
     __doc__="
+    Args:
+        FPATH: name of file
+        BRANCH_NAME: name of branch or identifier.
+
     source ~/local/homelinks/helpers/alias_helpers.sh
     git-branch-cat detector.py dev/flow28
     git-branch-cat predict.py dev/flow28

@@ -17,6 +17,7 @@ services:
     restart: unless-stopped
     environment:
       - OLLAMA_LOG_LEVEL=debug
+      - OLLAMA_KEEP_ALIVE=99999h
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
 
   open-webui:
@@ -26,8 +27,9 @@ services:
       - "${OPENWEBUI_PORT:-14771}:8080"
     environment:
       - WEBUI_AUTH=False
-      - OLLAMA_BASE_URL=http://host.docker.internal:11434
-      - OLLAMA_KEEP_ALIVE=1
+      #- OLLAMA_BASE_URL=http://host.docker.internal:11434
+      # Talk to the service name directly
+      - OLLAMA_BASE_URL=http://ollama:11434
     volumes:
       - /data/service/docker/open-webui:/app/backend/data
     extra_hosts:
