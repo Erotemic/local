@@ -54,12 +54,11 @@ services:
               capabilities: ["gpu"]
               count: all
 
-    healthcheck:
-      test: ["CMD", "bash", "-lc", "curl -sf http://localhost:11434/api/tags >/dev/null"]
-      interval: 15s
-      timeout: 5s
-      retries: 10
-
+    #healthcheck:
+    #  test: ["CMD", "bash", "-lc", "curl -sf http://localhost:11434/api/tags >/dev/null"]
+    #  interval: 15s
+    #  timeout: 5s
+    #  retries: 10
     restart: unless-stopped
     environment:
       - OLLAMA_LOG_LEVEL=debug

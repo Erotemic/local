@@ -1,26 +1,28 @@
 #!/usr/bin/env bash
 __doc__="
-Turn off the screen.
+Turn Monitors Off via the Command Line (CLI)
+
+Does exactly what it says. It will turn off all of your monitors
+until the mouse is moved or a key is pressed.
+
+Modified from HopeSeekr's BashScripts Collection in [3]_.
+
+Original Author:
+    Copyright © 2020-2024 Theodore R. Smith <theodore@phpexperts.pro>
+    GPG Fingerprint: 4BF8 2613 1C34 87AC D28F  2AD8 EB24 A91D D612 5690
+
+    License: Creative Commons Attribution v4.0 International
 
 References:
-    https://superuser.com/questions/374637/how-to-turn-off-screen-with-shortcut-in-linux
-    https://askubuntu.com/a/1523161/426149
-    https://github.com/hopeseekr/BashScripts/blob/trunk/turn-off-monitors
+    .. [1] https://superuser.com/questions/374637/how-to-turn-off-screen-with-shortcut-in-linux
+    .. [2] https://askubuntu.com/a/1523161/426149
+    .. [3] https://github.com/hopeseekr/BashScripts/blob/trunk/turn-off-monitors
 "
-#########################################################################
-# Turn Monitors Off via the Command Line (CLI)                          #
-#                                                                       #
-#   Does exactly what it says. It will turn off all of your monitors    #
-#   until the mouse is moved or a key is pressed.                       #
-#                                                                       #
-# Part of HopeSeekr's BashScripts Collection                            #
-# https://github.com/hopeseekr/BashScripts/                             #
-#                                                                       #
-# Copyright © 2020-2024 Theodore R. Smith <theodore@phpexperts.pro>     #
-# GPG Fingerprint: 4BF8 2613 1C34 87AC D28F  2AD8 EB24 A91D D612 5690   #
-#                                                                       #
-# License: Creative Commons Attribution v4.0 International              #
-#########################################################################
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
+	# Running as a script
+	set -eo pipefail
+fi
+
 
 function turn-off-screen-in-wayland()
 {
@@ -97,13 +99,24 @@ function wait_until_mouse_or_keyboard_event()
 }
 ### END framework/wait_until_mouse_or_keyboard_event.sh
 
-if [ "$XDG_SESSION_TYPE" == "tty" ]; then
-    busctl --user set-property org.gnome.Mutter.DisplayConfig /org/gnome/Mutter/DisplayConfig org.gnome.Mutter.DisplayConfig PowerSaveMode i 1
-elif [ "$XDG_SESSION_TYPE" == "wayland" ]; then
-    turn-off-screen-in-wayland
+screenoff_main(){
+    if [ "$XDG_SESSION_TYPE" == "tty" ]; then
+        busctl --user set-property org.gnome.Mutter.DisplayConfig /org/gnome/Mutter/DisplayConfig org.gnome.Mutter.DisplayConfig PowerSaveMode i 1
+    elif [ "$XDG_SESSION_TYPE" == "wayland" ]; then
+        turn-off-screen-in-wayland
+    else
+        # sleep to prevent the key-up from entering this command causes the screen
+        # to turn back on. It would be nice to have a more robust way of
+        # accomplishing this.
+        sleep 0.5; xset dpms force off
+    fi
+}
+
+
+if [[ ${BASH_SOURCE[0]} != "$0" ]]; then
+    # We are sourcing the library
+    echo "Sourcing screenoff as a library and environment"
 else
-    # sleep to prevent the key-up from entering this command causes the screen
-    # to turn back on. It would be nice to have a more robust way of
-    # accomplishing this.
-    sleep 0.5; xset dpms force off
+    screenoff_main
+    exit $?
 fi

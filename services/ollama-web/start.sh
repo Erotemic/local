@@ -169,6 +169,9 @@ else
 fi
 
 reset_postgress_db(){
-    sudo ls /data/service/docker/open-webui-postgres
+    sudo ls     /data/service/docker/open-webui-postgres
     sudo rm -rf /data/service/docker/open-webui-postgres/*
+    sudo ls     /data/service/docker/open-webui-postgres
+    sudo rm -rf /data/service/docker/open-webui-postgres
+    sudo mkdir -p /data/service/docker/open-webui-postgres
 }
