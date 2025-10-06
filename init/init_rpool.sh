@@ -75,8 +75,8 @@ upgrade_rocketpool_cli()
     mkdir -p "$PREFIX/bin"
     #wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/rocketpool-cli-linux-"${ARCH}" -O ./rocketpool
     #wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/rocketpool-cli-linux-"${ARCH}".sig -O ./rocketpool.sig
-    curl -L https://github.com/rocket-pool/smartnode-install/releases/latest/download/rocketpool-cli-linux-"${ARCH}" -o ./rocketpool
-    curl -L https://github.com/rocket-pool/smartnode-install/releases/latest/download/rocketpool-cli-linux-"${ARCH}".sig -o ./rocketpool.sig
+    curl -L https://github.com/rocket-pool/smartnode/releases/latest/download/rocketpool-cli-linux-"${ARCH}" -o ./rocketpool
+    curl -L https://github.com/rocket-pool/smartnode/releases/latest/download/rocketpool-cli-linux-"${ARCH}".sig -o ./rocketpool.sig
 
     #if ! test -f ./smartnode-signing-key-v3.asc; then
     #    wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/smartnode-signing-key-v3.asc -O ./smartnode-signing-key-v3.asc

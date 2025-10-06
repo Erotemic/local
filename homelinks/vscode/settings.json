@@ -116,5 +116,6 @@
   // Optional: enable mouse selection (this is default)
   "editor.selectionClipboard": true,
   // Optional: allow arrow key movement in selection (default behavior)
-  "editor.accessibilitySupport": "off"
+  "editor.accessibilitySupport": "off",
+  "python.defaultInterpreterPath": "/home/joncrall/.pyenv/versions/3.13.2/envs/pyenv3.13.2"
 }

@@ -432,6 +432,26 @@ install_go(){
     ln -sfv "$INSTALL_PREFIX/go/go-${GO_VERSION}/bin/gofmt" "$INSTALL_PREFIX/bin/gofmt"
 }
 
+lookup_new_hash(){
+    __doc__="
+    Helper to build known hash table faster
+
+    VERISON=v0.38.0
+
+    lookup_new_hash v0.38.0
+    "
+    VERISON=$1
+    PLATFORMS=(
+        linux-arm64
+        linux-amd64
+    )
+    for PLATFORM in "${PLATFORMS[@]}"; do
+        KEY=kubo_${VERISON}_${PLATFORM}.tar.gz.sha512
+        HASH_VALUE=$(curl -L "https://dist.ipfs.tech/kubo/${VERISON}/$KEY" 2>/dev/null |  awk '{print $1}')
+        echo "[\"${KEY}\"]=\"$HASH_VALUE\""
+    done
+}
+
 
 install_ipfs(){
     __doc__="
@@ -444,7 +464,7 @@ install_ipfs(){
         https://dist.ipfs.tech/#kubo
         https://dist.ipfs.io/kubo/
         https://dist.ipfs.tech/kubo/v0.29.0/
-        https://dist.ipfs.tech/kubo/v0.36.0/
+        https://dist.ipfs.tech/kubo/v0.38.0/
     "
 
     # IPFS itself
@@ -457,7 +477,7 @@ install_ipfs(){
     ARCH="$(dpkg --print-architecture)"
     echo "ARCH = $ARCH"
     #IPFS_VERSION="v0.29.0"
-    IPFS_VERSION="v0.36.0"
+    IPFS_VERSION="v0.38.0"
     #IPFS_KEY=kubo_${IPFS_VERSION}_linux-${ARCH}
     IPFS_KEY=kubo_${IPFS_VERSION}_linux-${ARCH}.tar.gz
     URL="https://dist.ipfs.tech/kubo/${IPFS_VERSION}/${IPFS_KEY}"
@@ -469,6 +489,7 @@ install_ipfs(){
     #    ["go-ipfs_v0.13.0_linux-arm64-sha512"]="90c695eedd7e797b9200c91698ef1a6577057fa1774b8afaa4dcf8e6c9580baa323acef25cc25b70e0591954e049f5cd7ddc0ad12274f882fe3e431bb6360c0b"
     #    ["go-ipfs_v0.13.0_linux-amd64-sha512"]="40c3f69af9e7a72fa9836ba87cd471c82194bd64cf4a9cedfd730ab457b7f2a4ede861a2cfcb936e232e690fd26ef398d88e3ca55e1ec57795bf0bb8aae62a78"
     #)
+
     declare -A IPFS_KNOWN_HASHES=(
         ["kubo_v0.14.0_linux-amd64-sha512"]="d841cc5c727c41ba40a815bc1a63e2bc2b9e1ce591e5cd9815707bfcd4400f2d3700dbc18dfaa8460748279a89d2cc6086b1dedc2ab37d4d7dc4ab8f1c50e723"
         ["kubo_v0.14.0_linux-arm64-sha512"]="aba56721621e4f4b42350bfe43fa50e2166e8841e65da948b24eb243d962effa4a6b8b8a55dac35fc34961b65d739d3ac0550654819e59804a66d211f95f822c"
@@ -485,7 +506,10 @@ install_ipfs(){
 
         ["kubo_v0.36.0_linux-arm64.tar.gz.sha512"]="9579aed503c71da98d98a3212ea3216ca07cab36368e0ae88372c2a6f240322d26a2ac88784fc6ee7801b87b50f884673e2868df94aa5c9a5bcb6b9569378bc0"
         ["kubo_v0.36.0_linux-amd64.tar.gz.sha512"]="bde93def3fbae2b86115efca8cbf82ecbe9fc11fcad6c24c204c37e717017ff143cc52987a0f57006561dc9c3fae3cc08e2898fb0bd55a5b70b75e61280df7f5"
-
+        ["kubo_v0.37.0_linux-arm64.tar.gz.sha512"]="6c59d4565de41ebbc69ecc8e2d8fa87c49d47f05073a9cf6ba9cae0958aaa53c7bc9f7d3c58bd221e96013f5f0c0ecca99d1f7a03f90acb61a277c7d39a0f076"
+        ["kubo_v0.37.0_linux-amd64.tar.gz.sha512"]="b9243e8be52377fc934aedc66161bd51e7c49d1d52678b127b910e5654fa453983a070918e345d8e57e509f1f8c82574f59148d145d23b35d04bb20fed20f5b6"
+        ["kubo_v0.38.0_linux-arm64.tar.gz.sha512"]="69ac33a8b967537c6820594fd65999331f210f4895e87fb9e684637b7d0c457fe1b9ebddce650685594a0a478a432ef0ac422d9b6b908cc960f83318b1d58bb4"
+        ["kubo_v0.38.0_linux-amd64.tar.gz.sha512"]="6bb1d18cdf46451b7e5de77e61010ab23754b8d3e4adb4743ae900c75e700f146d8b8adf2b14cb43fe9bf3a7ae1482ce565df533e80a91ed510d6040e63caf91"
     )
     #DST=$(basename "$URL")
     #EXPECTED_SHA512="$EXPECTED_HASH"
@@ -497,6 +521,9 @@ install_ipfs(){
     #fi
     EXPECTED_HASH="${IPFS_KNOWN_HASHES[${IPFS_KEY}.sha512]}"
     BASENAME=$(basename "$URL")
+    echo "EXPECTED_HASH = $EXPECTED_HASH"
+    echo "BASENAME = $BASENAME"
+    echo "URL = $URL"
     curl_verify_hash "$URL" "$BASENAME" "$EXPECTED_HASH" sha512sum
 
     echo "BASENAME = $BASENAME"
@@ -504,12 +531,17 @@ install_ipfs(){
     tar -xvzf "$BASENAME"
 
     # TODO: stop and start the IPFS service before upgrade
-    #sudo systemctl stop ipfs
+    sudo systemctl stop ipfs
     #sudo systemctl stop ipfs-cluster
     cp kubo/ipfs "$INSTALL_PREFIX/bin"
     #sudo systemctl start ipfs-cluster
     ipfs --version
-    #sudo systemctl start ipfs
+
+    # Might need to start the daemon manually once to do any upgrades
+    # (ensure the IPFS_PATH is set correctly)
+    ipfs daemon
+
+    sudo systemctl start ipfs
 }
 
 
@@ -1140,6 +1172,19 @@ ipfs_howto(){
     ipfs pin rm bafybeif2yoidrnrzbpofcdlvl33em5e6eoslk4ryb7pe6ployl7najdi7q
 }
 
+update_routing_strategy(){
+
+    # Check if accelerated dht is on
+    ipfs config --json Routing.AcceleratedDHTClient
+    ipfs config --json Provide.DHT.SweepEnabled  || echo "not set"
+
+    ## With 0.38.0 we can use the Sweeping DHT Provider
+    ipfs config --json Provide.DHT.SweepEnabled true
+    ipfs config --json Routing.AcceleratedDHTClient false
+    sudo systemctl restart ipfs
+
+}
+
 
 check_ipfs_status(){
     __doc__="
@@ -1150,6 +1195,7 @@ check_ipfs_status(){
 
     # Check if accelerated dht is on
     ipfs config --json Routing.AcceleratedDHTClient
+    ipfs config --json Provide.DHT.SweepEnabled  || echo "not set"
 
     # Do we want to turn it on?
     # https://github.com/ipfs/kubo/issues/9990
@@ -1185,27 +1231,9 @@ check_ipfs_status(){
 
     # Check if the DHT has been initially populated
     ipfs stats dht
-}
 
-force_announce_all_pins(){
-    __doc__="
-    Simple script that forces announcement of all pins.
-    "
-
-    # Read all stdout lines into a bash array
-    readarray -t LINES < <(ipfs pin ls --type="recursive")
-
-    # Loop over the lines, and accumulate only the CIDS into a new bash array
-    CIDS=()
-    for line in "${LINES[@]}"; do
-        CID=$(echo "$line" | cut -d' ' -f 1)
-        CIDS+=("$CID")
-    done
-    # Print out the CIDS to be announced
-    echo "${CIDS[@]}"
-
-    # Announce all CIDS
-    ipfs routing provide --verbose "${CIDS[@]}"
+    # Check repo stats
+    ipfs repo stat
 }
 
 setup_firewall(){
@@ -1222,6 +1250,24 @@ setup_firewall(){
     sudo ufw allow in 4001/tcp comment 'Public IPFS libp2p TCP swarm port'
     sudo ufw allow from 127.0.0.1 to 127.0.0.1 port 5001 proto tcp comment 'Private IPFS API'
     sudo ufw allow from 127.0.0.1 to 127.0.0.1 port 8080 proto tcp comment 'Protected IPFS Gateway + read only API subset'
+
+
+    # optional: Allow local network access to the API and gateway
+    # Get the first IP address from hostname -I
+    # Assume /24 subnet (adjust if needed)
+    LOCAL_IP=$(hostname -I | awk '{print $1}')
+    ADDRESS=$(echo "$LOCAL_IP" | cut -d. -f1-3).0/24
+    echo "ADDRESS = $ADDRESS"
+    sudo ufw allow from "$ADDRESS" to any port 5001 proto tcp comment 'Allow local network to access IPFS API'
+    sudo ufw allow from "$ADDRESS" to any port 8080 proto tcp comment 'Allow local network to access IPFS Gateway'
+
+    # Also would need to modify ipfs config to allow external machines to see the address
+    ipfs config Addresses.API --json '"/ip4/0.0.0.0/tcp/5001"'
+    ipfs config Addresses.Gateway --json '"/ip4/0.0.0.0/tcp/8080"'
+
+    # Change back to local only if needed
+    ipfs config Addresses.API --json '"/ip4/127.0.0.1/tcp/5001"'
+    ipfs config Addresses.Gateway --json '"/ip4/127.0.0.1/tcp/8080"'
 
     # Enable firewall if needed
     sudo ufw enable
@@ -1300,6 +1346,10 @@ check_pin_random_data(){
     # http://ipfs.io/ipfs/QmaRssZfmkya5LX53hoyxHgk4RzTvo9grUCcR412xCva4B
     # https://ipfs-check.on.fleek.co/
     # https://pl-diagnose.on.fleek.co/#/diagnose/access-content?
+
+    # If you have explicit port forwarding setup, you can try to reduce noise
+    # in advertised addresses by disabling the nat port map.
+    ipfs config --json 'Swarm.DisableNatPortMap' true
 }
 
 
@@ -1342,6 +1392,16 @@ check_external_availability(){
     # Check if port 4001 is open on the WAN
     WAN_IP_ADDRESS=$(curl ifconfig.me)
     echo "WAN_IP_ADDRESS = $WAN_IP_ADDRESS"
+
+    # Check if the node is listening on the right port
+    ss -tulpn | grep 4001
+
+    # try to connect out to a well-known bootstrap node and then see if it sees us.
+    PEER_ID=$(ipfs config --json Identity.PeerID)
+    echo "PEER_ID=$PEER_ID"
+    ipfs swarm connect /dnsaddr/bootstrap.libp2p.io
+    echo "Are we seen?"
+    ipfs swarm peers | grep "$PEER_ID"
 }
 
 peer_stuff(){
@@ -1419,4 +1479,30 @@ todo_notes_about_jojo_setup(){
     # Add details on how to fix the jojo network issues
     echo "https://chatgpt.com/c/680924fa-4034-8002-a53b-145e2f6e4613"
 
+}
+
+explicitly_provide_pinned_content(){
+    mapfile -t CIDS < <(ipfs pin ls --type=recursive --names | awk '{print $1}')
+    printf '%s\n' "${CIDS[@]}" | xargs -n1 -P"$(nproc || echo 4)" -I{} sh -c 'echo "Providing {}"; ipfs routing provide "{}"'
+}
+
+force_announce_all_pins(){
+    __doc__="
+    Simple script that forces announcement of all pins.
+    "
+
+    # Read all stdout lines into a bash array
+    readarray -t LINES < <(ipfs pin ls --type="recursive")
+
+    # Loop over the lines, and accumulate only the CIDS into a new bash array
+    CIDS=()
+    for line in "${LINES[@]}"; do
+        CID=$(echo "$line" | cut -d' ' -f 1)
+        CIDS+=("$CID")
+    done
+    # Print out the CIDS to be announced
+    echo "${CIDS[@]}"
+
+    # Announce all CIDS
+    ipfs routing provide --verbose "${CIDS[@]}"
 }

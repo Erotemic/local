@@ -1048,7 +1048,40 @@ install_python_from_uv(){
     # Test to try working with uv as the main tool
     # https://docs.astral.sh/uv/getting-started/installation/#github-releases
     curl -LsSf https://astral.sh/uv/install.sh | sh
-    uv python install 3.12
-    uv venv
-    source .venv/bin/activate
+    #mkdir -p "$UV_ENV_DPATH"
+    #uv python install 3.13
+    #uv venv --pyhthon=3.13 --seed --no-project $
+    #source .venv/bin/activate
+
+    UV_ENV_DPATH=$HOME/.local/uv/envs
+    CHOSEN_PYTHON_VERSION=3.13.2
+    VENV_NAME=uvpy$CHOSEN_PYTHON_VERSION
+    VENV_PATH=$UV_ENV_DPATH/$VENV_NAME
+    mkdir -p "$VENV_PATH"
+    uv venv --python=$CHOSEN_PYTHON_VERSION --seed --no-project "$VENV_PATH"
+    source "$VENV_PATH/bin/activate"
+
+}
+
+
+ensure_local_venv(){
+    # Name of the venv directory
+    VENV_DIR=".venv"
+
+    # Check if the venv already exists
+    if [ ! -d "$VENV_DIR" ]; then
+        echo "No virtual environment found. Creating one in $PWD/$VENV_DIR ..."
+        uv venv "$VENV_DIR" || { echo "Failed to create venv with uv"; return 1; }
+    fi
+
+    # Activate the environment
+    # shellcheck disable=SC1091
+    if [ -f "$VENV_DIR/bin/activate" ]; then
+        # Use '.' instead of 'source' for portability
+        . "$VENV_DIR/bin/activate"
+        echo "Activated virtual environment: $VENV_DIR"
+    else
+        echo "Error: Could not find activate script in $VENV_DIR/bin/activate"
+        return 1
+    fi
 }

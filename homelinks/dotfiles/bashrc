@@ -382,8 +382,13 @@ if [[ "$_AUTOSTART_VENV" == "1" ]]; then
         PYTHON_VERSION_PRIORITY=( "3.13.2" "3.11.9" "3.11.2" "3.10.10" "3.10.5" "3.9.9" )
         #PYTHON_VERSION_PRIORITY=( "3.10.5" )
         _found_env=0
+        UV_ENV_DPATH=$HOME/.local/uv/envs
         for CHOSEN_PYTHON_VERSION in "${PYTHON_VERSION_PRIORITY[@]}"; do
-            if [ -d "$PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION" ]; then
+            if [ -d "$UV_ENV_DPATH/uvpy$CHOSEN_PYTHON_VERSION" ]; then
+                _found_env=1
+                source "$UV_ENV_DPATH/uvpy$CHOSEN_PYTHON_VERSION/bin/activate" 
+                break
+            elif [ -d "$PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION" ]; then
                 _found_env=1
                 pyenv shell "$CHOSEN_PYTHON_VERSION"
                 source "$PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION/bin/activate" 
@@ -578,3 +583,7 @@ if [[ "$HOSTNAME" == "toothbrush" ]]; then
     export IPFS_PATH=/data/ipfs
 fi
 
+export PATH="$HOME/.dotnet:$PATH"
+export PATH="$ANDROID_SDK_ROOT/platform-tools:$PATH"
+export PATH="$ANDROID_SDK_ROOT/platform-tools:$PATH"
+export PATH="$ANDROID_SDK_ROOT/platform-tools:$PATH"
