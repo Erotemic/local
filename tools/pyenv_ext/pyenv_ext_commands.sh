@@ -697,6 +697,15 @@ __list_static_python_venvs(){
     # shellcheck disable=SC2155
     KNOWN_VIRTUAL_ENVS="$(/bin/ls -1 "$HOME" | grep venv | sort)"
 
+    # UV environments
+    local UV_ENV_DPATH="$HOME/.local/uv/envs"
+    if [ -d "$UV_ENV_DPATH" ]; then
+        # List environment names based on directory structure
+        KNOWN_UV_ENVS="$(find "$UV_ENV_DPATH" -mindepth 1 -maxdepth 1 -type d -printf "%f\n" | sort)"
+    else
+        KNOWN_UV_ENVS=""
+    fi
+
     if [[ "$(which pyenv)" ]]; then
         #PYENV_VERSION_DPATH=$(pyenv root)/versions
         KNOWN_PYENV_ENVS=$(find "$(pyenv root)"/versions/*/envs -mindepth 3 -maxdepth 3 -type f -path "*/bin/activate"  -exec echo {} \; | sed "s|.*/envs/||" | sed "s|/bin/activate||")
@@ -706,7 +715,7 @@ __list_static_python_venvs(){
         #fi
     fi
     # Remove newlines
-    echo "$KNOWN_CONDA_ENVS $KNOWN_VIRTUAL_ENVS $KNOWN_PYENV_ENVS" | tr '\n' ' '
+    echo "$KNOWN_CONDA_ENVS $KNOWN_VIRTUAL_ENVS $KNOWN_UV_ENVS $KNOWN_PYENV_ENVS" | tr '\n' ' '
 }
 
 __list_dynamic_python_envs(){
@@ -1045,6 +1054,9 @@ bootstrap_dependencies(){
 
 
 install_python_from_uv(){
+    # List available python versions
+    # uv python list
+
     # Test to try working with uv as the main tool
     # https://docs.astral.sh/uv/getting-started/installation/#github-releases
     curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -1054,7 +1066,7 @@ install_python_from_uv(){
     #source .venv/bin/activate
 
     UV_ENV_DPATH=$HOME/.local/uv/envs
-    CHOSEN_PYTHON_VERSION=3.13.2
+    CHOSEN_PYTHON_VERSION=3.14.0
     VENV_NAME=uvpy$CHOSEN_PYTHON_VERSION
     VENV_PATH=$UV_ENV_DPATH/$VENV_NAME
     mkdir -p "$VENV_PATH"
