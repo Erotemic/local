@@ -504,12 +504,13 @@ complete -o default -F _pip_completion pip
 #if type mount-remotes.sh >/dev/null; then
 #    mount-remotes.sh --exec-bash-completion
 #fi
-complete -W "$(awk '/^Host / {print $2}' ~/.ssh/config)" mount-remotes.sh
-
 alias vnc-over-ssh=vnc_over_ssh.sh
-complete -W "$(awk '/^Host / {print $2}' ~/.ssh/config)" vnc_over_ssh.sh
-complete -W "$(awk '/^Host / {print $2}' ~/.ssh/config)" vnc-over-ssh
-complete -W "$(awk '/^Host / {print $2}' ~/.ssh/config)" git-sync
+if test -f ~/.ssh/config; then
+    complete -W "$(awk '/^Host / {print $2}' ~/.ssh/config)" mount-remotes.sh
+    complete -W "$(awk '/^Host / {print $2}' ~/.ssh/config)" vnc_over_ssh.sh
+    complete -W "$(awk '/^Host / {print $2}' ~/.ssh/config)" vnc-over-ssh
+    complete -W "$(awk '/^Host / {print $2}' ~/.ssh/config)" git-sync
+fi
 
 
 # pip bash completion end
