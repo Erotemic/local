@@ -380,9 +380,40 @@ if [[ "$_AUTOSTART_VENV" == "1" ]]; then
     if [ "$DID_MY_BASHRC_INIT" == "" ]; then
         # For some reason VIRTUAL_ENV is initialized as "", so unset it
         unset VIRTUAL_ENV
-        #PYTHON_VERSION_PRIORITY=( "3.12.3" "3.11.2" "3.10.10" "3.10.5" "3.9.9" )
-        PYTHON_VERSION_PRIORITY=( "3.13.2" "3.11.9" "3.11.2" "3.10.10" "3.10.5" "3.9.9" )
-        #PYTHON_VERSION_PRIORITY=( "3.10.5" )
+
+        read_lines_into_array() {
+            __doc__='
+            Reads a newline-separated file into a Bash array
+            Usage: read_lines_into_array path/to/file
+
+            Example:
+                FPATH=/tmp/tmpfile
+                printf "v1.2\nv22 22\n3" > $FPATH
+                read_lines_into_array "$FPATH" OUTVAR
+                bash_array_repr "${OUTVAR[@]}"
+            '
+            local file_path="$1"
+            local -n arr_ref="$2"  # Use nameref so we can assign to the caller's array
+
+            if [[ ! -f "$file_path" ]]; then
+                echo "Error: file not found: $file_path" >&2
+                return 1
+            fi
+
+            # Read file line-by-line into array
+            mapfile -t arr_ref < "$file_path"
+            export arr_ref
+        }
+
+        PTYHON_VERSION_PRIORITY_FPATH=$HOME/.local/python_version_priority
+        if test -f "$PTYHON_VERSION_PRIORITY_FPATH" ; then
+            read_lines_into_array "$PTYHON_VERSION_PRIORITY_FPATH" PYTHON_VERSION_PRIORITY
+        else
+            #PYTHON_VERSION_PRIORITY=( "3.12.3" "3.11.2" "3.10.10" "3.10.5" "3.9.9" )
+            PYTHON_VERSION_PRIORITY=( "3.13.2" "3.11.9" "3.11.2" "3.10.10" "3.10.5" "3.9.9" )
+            #PYTHON_VERSION_PRIORITY=( "3.10.5" )
+        fi
+       
         _found_env=0
         for CHOSEN_PYTHON_VERSION in "${PYTHON_VERSION_PRIORITY[@]}"; do
             if [ -d "$UV_ENV_DPATH/uvpy$CHOSEN_PYTHON_VERSION" ]; then
