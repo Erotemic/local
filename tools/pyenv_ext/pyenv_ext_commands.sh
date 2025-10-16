@@ -706,7 +706,8 @@ __list_static_python_venvs(){
         KNOWN_UV_ENVS=""
     fi
 
-    if [[ "$(which pyenv)" ]]; then
+    #if [[ "$(which pyenv)" ]]; then
+    if command -v pyenv >/dev/null 2>&1; then
         #PYENV_VERSION_DPATH=$(pyenv root)/versions
         KNOWN_PYENV_ENVS=$(find "$(pyenv root)"/versions/*/envs -mindepth 3 -maxdepth 3 -type f -path "*/bin/activate"  -exec echo {} \; | sed "s|.*/envs/||" | sed "s|/bin/activate||")
         #ls_array VENV_DPATH_ARR "$PYENV_VERSION_DPATH/*/envs/*"
@@ -1066,7 +1067,7 @@ install_python_from_uv(){
     #source .venv/bin/activate
 
     UV_ENV_DPATH=$HOME/.local/uv/envs
-    CHOSEN_PYTHON_VERSION=3.14.0
+    CHOSEN_PYTHON_VERSION=3.13.2
     VENV_NAME=uvpy$CHOSEN_PYTHON_VERSION
     VENV_PATH=$UV_ENV_DPATH/$VENV_NAME
     mkdir -p "$VENV_PATH"

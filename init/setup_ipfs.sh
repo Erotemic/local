@@ -1428,6 +1428,9 @@ cid_info(){
 
     # Number of total unique nodes in the tree
     ipfs refs --unique --recursive bafybeiedwp2zvmdyb2c2axrcl455xfbv2mgdbhgkc3dile4dftiimwth2y | wc
+
+    # Get the number of nodes in the CID as wel as other info
+    ipfs dag stat bafybeiapgrjibq7ldtuyukiskn7fi6fedjy5cntjq5rouqnlqkb5dq6224
 }
 
 
@@ -1478,6 +1481,34 @@ pin_named_content(){
 todo_notes_about_jojo_setup(){
     # Add details on how to fix the jojo network issues
     echo "https://chatgpt.com/c/680924fa-4034-8002-a53b-145e2f6e4613"
+
+
+    #### So jojo has a slow boot time. We can debug this via:
+    systemd-analyze
+    systemd-analyze blame
+
+    __output__='
+    2min 699ms ipfs-healthcheck.service
+     2min 23ms systemd-networkd-wait-online.service
+       28.371s snapd.seeded.service
+       28.283s snapd.service
+       27.434s snap.lxd.activate.service
+        8.512s hciuart.service
+   '
+
+   # delay until after network-online.target:
+   sudo systemctl edit ipfs-healthcheck.service
+   #
+   #
+   __manual__='
+   Add in
+
+    [Unit]
+    After=network-online.target
+
+   '
+   #
+
 
 }
 
