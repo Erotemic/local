@@ -581,7 +581,11 @@ workon_py()
     # Try to find the environment the user requested
     #VENV_NAME_CAND1=pyenv$NEW_VENV
     #PYENV_ACTIVATE_CAND1=$(pyenv root)/versions/$NEW_VENV/envs/$VENV_NAME_CAND1/bin/activate
-    PYENV_ACTIVATE_CAND1=$(echo "$(pyenv root)"/versions/*/envs/"$NEW_VENV"/bin/activate)
+    if command -v pyenv >/dev/null 2>&1; then
+        PYENV_ACTIVATE_CAND1=$(echo "$(pyenv root)"/versions/*/envs/"$NEW_VENV"/bin/activate)
+    else
+        PYENV_ACTIVATE_CAND1=""
+    fi
 
     if [ -f "$PYENV_ACTIVATE_CAND1" ]; then
         deactivate_venv
