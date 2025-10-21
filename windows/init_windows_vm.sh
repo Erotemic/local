@@ -152,7 +152,8 @@ powercfg /hibernate off
 
 # 4. Activate the high-performance plan
 powercfg -setactive SCHEME_MIN
-#
+
+reg add "HKLM\SYSTEM\CurrentControlSet\Control\Power" /v PlatformAoAcOverride /t REG_DWORD /d 0 /f
 
 
 Step "1) Prep: let this session run scripts and use winget non-interactively"
