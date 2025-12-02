@@ -57,7 +57,7 @@ upgrade_rocketpool_cli()
     __doc__="
     Download the latest smartnode
 
-    https://github.com/rocket-pool/smartnode-install/releases
+    https://github.com/rocket-pool/smartnode/releases
 
     "
 

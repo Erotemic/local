@@ -1,0 +1,54 @@
+version: "3.9"
+
+services:
+  comfyui:
+    container_name: comfyui
+    image: yanwk/comfyui-boot:cu128-slim
+    restart: unless-stopped
+
+    ipc: host
+    security_opt:
+      - seccomp=unconfined
+
+    # GPU config:
+    # If you're using modern Docker with --gpus all via nvidia-container-toolkit,
+    # this deploy block is typically enough. If not, see the commented lines below.
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: ["gpu"]
+
+    # For non-swarm / older setups, you may prefer:
+    # runtime: nvidia
+    # gpus: all
+
+    environment:
+      # Listen on all interfaces so you can reverse-proxy if you like
+      CLI_ARGS: "--listen 0.0.0.0"
+      # Explicit HF cache location in the container
+      HF_HOME: /root/.cache/huggingface
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
+
+    ports:
+      - "8188:8188"
+
+    volumes:
+      # Core ComfyUI home (config, db, etc.)
+      - /data/service/comfyui/storage:/root
+
+      # Models and caches
+      - /data/service/comfyui/storage-models/models:/root/ComfyUI/models
+      - /data/service/comfyui/storage-models/hf-hub:/root/.cache/huggingface/hub
+      - /data/service/comfyui/storage-models/torch-hub:/root/.cache/torch/hub
+
+      # User I/O and workflows
+      - /data/service/comfyui/storage-user/input:/root/ComfyUI/input
+      - /data/service/comfyui/storage-user/output:/root/ComfyUI/output
+      - /data/service/comfyui/storage-user/workflows:/root/ComfyUI/user/default/workflows
+
+      # Custom nodes (ComfyUI-Diffusers etc.)
+      - /data/service/comfyui/custom_nodes:/root/ComfyUI/custom_nodes

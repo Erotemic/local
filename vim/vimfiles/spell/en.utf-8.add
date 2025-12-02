@@ -530,3 +530,4 @@ composable
 configs
 argparse
 vendored
+blit

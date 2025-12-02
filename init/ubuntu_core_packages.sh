@@ -493,6 +493,9 @@ install_latex()
     #iconv -f ISO-8859-1 -t UTF-8//TRANSLIT algorithm2e.sty.backup -o ~/latex/crall-iccv-2017/algorithm3e.sty
     #file ~/latex/crall-iccv-2017/algorithm3e.sty
 
+    sudo apt install texlive-bibtex-extra texlive-latex-extra biber
+
+
 }
 
 
@@ -3220,8 +3223,6 @@ monitor_for_disk_overuse(){
 
 
 }
-<<<<<<< Updated upstream
-
 
 fix_snap_hardware_observe_issue(){
     __doc__="
@@ -3246,8 +3247,6 @@ fix_snap_hardware_observe_issue(){
     sudo snap connect snapd-desktop-integration:hardware-observe
 
 }
-||||||| constructed merge base
-=======
 
 ensure_rust(){
     # Ensure rust
@@ -3269,4 +3268,8 @@ install_mergeraf(){
     #git config --global merge.conflictStyle "merge"  # default
     git config --global merge.conflictStyle diff3
 }
->>>>>>> Stashed changes
+
+install_ai_commit(){
+    curl -sL https://raw.githubusercontent.com/renatogalera/ai-commit/main/scripts/install_ai_commit.sh | INSTALL_DIR=$HOME/.local/bin bash
+
+}
