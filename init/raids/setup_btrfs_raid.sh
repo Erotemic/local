@@ -155,6 +155,7 @@ fix_disk_failure_2025_02_27(){
 
     # Mount the array in a degraded state
     sudo mount -o degraded,ro /dev/sda /data
+    sudo mount -o degraded,ro /dev/sda /data
     # The above did not seem to work. I got errors.
     __result__="
     mount: /data: wrong fs type, bad option, bad superblock on /dev/sda, missing codepage or helper program, or other error.
@@ -232,4 +233,27 @@ replace_disk_2025_03_02(){
 
     # Rebalance the array
     sudo btrfs balance start -dconvert=raid10 -mconvert=raid10 /data
+
+    # Now with the bad disk removed, tell btrfs to remove it
+    sudo btrfs device delete missing /data
+
+    # Verify device removal
+    sudo btrfs filesystem show
+
+    sudo umount /data
+    sudo mount /dev/sda1 /data
+    # Still getting some dmesg errors:
+    # [ 1038.770874] BTRFS info (device sda1): bdev /dev/sde1 errs: wr 0, rd 0, flush 0, corrupt 5, gen 0
+
+    # Tried these, but did not seem to help
+    sudo btrfs balance start -mconvert=raid10,soft -dconvert=raid10,soft /data
+    sudo btrfs rescue zero-log /dev/sda1
+
+    # Did a check, but it takes forever, so I stopped it.
+    # sudo btrfs check /dev/sda1
+
+    # Starting a background scrub, maybe that will fix the 5 corruptions.
+    sudo btrfs scrub start -B /data
+    sudo watch btrfs scrub status /data
+
 }

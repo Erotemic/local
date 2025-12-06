@@ -71,7 +71,12 @@ if [ "$HAVE_SUDO" == "True" ]; then
     __notes__='
     To setup ssh, get the service working with basic password auth, so you can
     login with password auth as a one-time thing to send over your ssh public
-    key:
+    key.
+
+    Note: the ``-o PubkeyAuthentication=no`` is important to login to the
+    machine for the first time.
+
+    ..code:: bash
 
         REMOTE_USER=$USER
         REMOTE_HOST=<IP-OR-DNS-NAME>
