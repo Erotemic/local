@@ -60,9 +60,6 @@ apt_ensure(){
     Args:
         *ARGS : one or more requested packages
 
-    Environment:
-        UPDATE : if this is populated also runs and apt update
-
     Example:
         apt_ensure git curl htop
     "
