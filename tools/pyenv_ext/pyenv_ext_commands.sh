@@ -1080,7 +1080,7 @@ install_python_from_uv(){
     #source .venv/bin/activate
 
     UV_ENV_DPATH=$HOME/.local/uv/envs
-    CHOSEN_PYTHON_VERSION=3.14.0
+    CHOSEN_PYTHON_VERSION=3.13.2
     VENV_NAME=uvpy$CHOSEN_PYTHON_VERSION
     VENV_PATH=$UV_ENV_DPATH/$VENV_NAME
     mkdir -p "$VENV_PATH"
