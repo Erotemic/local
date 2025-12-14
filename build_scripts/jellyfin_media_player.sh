@@ -17,7 +17,8 @@ REPO_DIR="$SRC_PARENT/$REPO_NAME"
 INSTALL_PREFIX="$HOME/.local/opt/jellyfin-media-player"
 
 # Path to the installed binary
-JF_BIN="$INSTALL_PREFIX/bin/jellyfinmediaplayer"
+JF_BIN="$INSTALL_PREFIX/bin/jellyfin-desktop"
+
 
 # Icon source (inside the repo) and destination
 ICON_SRC_PNG="$REPO_DIR/resources/images/icon.png"
@@ -127,12 +128,13 @@ build_and_install_jmp() {
   local build_dir="$REPO_DIR/build"
   mkdir -p "$build_dir"
 
-  cmake \
-    -S "$REPO_DIR" \
-    -B "$build_dir" \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX="$INSTALL_PREFIX" \
-    -G Ninja
+cmake \
+  -S "$REPO_DIR" \
+  -B "$build_dir" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX="$INSTALL_PREFIX" \
+  -DUSE_STATIC_MPVQT=ON \
+  -G Ninja
 
   ninja -C "$build_dir"
   ninja -C "$build_dir" install
