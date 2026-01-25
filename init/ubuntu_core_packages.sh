@@ -3273,3 +3273,43 @@ install_ai_commit(){
     curl -sL https://raw.githubusercontent.com/renatogalera/ai-commit/main/scripts/install_ai_commit.sh | INSTALL_DIR=$HOME/.local/bin bash
 
 }
+
+install_heic_img_support(){
+    # Get iphone images working on ubuntu
+    sudo apt update
+    sudo apt install heif-gdk-pixbuf heif-thumbnailer libheif-examples
+    sudo apt install imagemagick libheif-dev
+
+    # required for the newer iphones in 2025
+    sudo add-apt-repository ppa:strukturag/libheif
+    sudo apt update
+    sudo apt upgrade
+
+    heif-convert --no-metadata foo.HEIC foo.jpg
+}
+
+install_fclones(){
+    # https://github.com/pkolaczk/fclones
+    cargo install fclones
+
+    # Usage:
+    # Build cache and only look at 100MB files or bigger
+    fclones group --cache --min 100MB . > dupes.txt
+
+    # No cache
+    fclones group --min 100MB . > dupes.txt
+
+    # Find everything
+    fclones group . > dupes.txt
+
+
+
+    # Only go 1 directory deep
+    fclones group --depth 1 . > dupes.txt
+
+    # Remove only dups that match a pattern (has parenthesis)
+    # Do dry run first
+    fclones remove --dry-run --path '**/*\(*\)*' <dupes.txt   # remove only files in the /trash folder
+    fclones remove --path '**/*\(*\)*' <dupes.txt   # remove only files in the /trash folder
+
+}

@@ -578,7 +578,7 @@ workon_py()
 
     local UV_ENV_DPATH="$HOME/.local/uv/envs"
     local UVENV_ACTIVATE_CAND=$UV_ENV_DPATH/$NEW_VENV/bin/activate
-    echo "UVENV_ACTIVATE_CAND = $UVENV_ACTIVATE_CAND"
+    #echo "UVENV_ACTIVATE_CAND = $UVENV_ACTIVATE_CAND"
 
     #echo "WEVN2: NEW_VENV = $NEW_VENV"
     #echo "TRY NEW VENV"
@@ -1080,7 +1080,7 @@ install_python_from_uv(){
     #source .venv/bin/activate
 
     UV_ENV_DPATH=$HOME/.local/uv/envs
-    CHOSEN_PYTHON_VERSION=3.13.2
+    CHOSEN_PYTHON_VERSION=3.14.0
     VENV_NAME=uvpy$CHOSEN_PYTHON_VERSION
     VENV_PATH=$UV_ENV_DPATH/$VENV_NAME
     mkdir -p "$VENV_PATH"

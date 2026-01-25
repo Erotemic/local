@@ -127,7 +127,11 @@ class FindRemoteDirectoryCLI(scfg.DataConfig):
         else:
             print('Found local path to:')
             for cand in final_shortlist:
-                rich.print(f'[link={cand}]{cand}[/link]')
+                cand_esc = escape(str(cand))
+                try:
+                    rich.print(f'[link={cand_esc}]{cand_esc}[/link]')
+                except Exception:
+                    print(cand)
 
         found_fallbacks = []
         for path in fallback_shortlist:
@@ -137,7 +141,11 @@ class FindRemoteDirectoryCLI(scfg.DataConfig):
         if found_fallbacks:
             print('Found fallback paths:')
             for cand in found_fallbacks:
-                rich.print(f'[link={cand}]{cand}[/link]')
+                cand_esc = escape(str(cand))
+                try:
+                    rich.print(f'[link={cand_esc}]{cand_esc}[/link]')
+                except Exception:
+                    print(cand)
 
 
 def find_remote_mounts():

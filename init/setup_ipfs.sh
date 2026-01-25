@@ -477,7 +477,7 @@ install_ipfs(){
     ARCH="$(dpkg --print-architecture)"
     echo "ARCH = $ARCH"
     #IPFS_VERSION="v0.29.0"
-    IPFS_VERSION="v0.38.0"
+    IPFS_VERSION="v0.39.0"
     #IPFS_KEY=kubo_${IPFS_VERSION}_linux-${ARCH}
     IPFS_KEY=kubo_${IPFS_VERSION}_linux-${ARCH}.tar.gz
     URL="https://dist.ipfs.tech/kubo/${IPFS_VERSION}/${IPFS_KEY}"
@@ -510,6 +510,9 @@ install_ipfs(){
         ["kubo_v0.37.0_linux-amd64.tar.gz.sha512"]="b9243e8be52377fc934aedc66161bd51e7c49d1d52678b127b910e5654fa453983a070918e345d8e57e509f1f8c82574f59148d145d23b35d04bb20fed20f5b6"
         ["kubo_v0.38.0_linux-arm64.tar.gz.sha512"]="69ac33a8b967537c6820594fd65999331f210f4895e87fb9e684637b7d0c457fe1b9ebddce650685594a0a478a432ef0ac422d9b6b908cc960f83318b1d58bb4"
         ["kubo_v0.38.0_linux-amd64.tar.gz.sha512"]="6bb1d18cdf46451b7e5de77e61010ab23754b8d3e4adb4743ae900c75e700f146d8b8adf2b14cb43fe9bf3a7ae1482ce565df533e80a91ed510d6040e63caf91"
+
+        ["kubo_v0.39.0_linux-arm64.tar.gz.sha512"]="b4f61e3bea7a310e3089eb42da83c92290478d326b56a4c0369913430b1e9e836be55f3f92ba673544af1b8a7904f7a76791cd7f79ec2b9b5fb9e1f671c01f4d"
+        ["kubo_v0.39.0_linux-amd64.tar.gz.sha512"]="b23d2a7a3a0a4ee43028866a5259ba4521aa424a6c33b95e4d4e00ac3fa3829d9a49ed70fec6700d514238cc8e2befcb10ab99130ecbf1ff3743edb52a860cc8"
     )
     #DST=$(basename "$URL")
     #EXPECTED_SHA512="$EXPECTED_HASH"
@@ -1536,4 +1539,18 @@ force_announce_all_pins(){
 
     # Announce all CIDS
     ipfs routing provide --verbose "${CIDS[@]}"
+}
+
+
+migrate_ipfs_backends(){
+    export OLD_IPFS_PATH=/data/ipfs
+    export NEW_IPFS_PATH=/data/ipfs.pebble
+
+    IPFS_PATH="$OLD_IPFS_PATH" ipfs pin ls --type=recursive -q > "$NEW_IPFS_PATH/ipfs-pins.txt"
+    wc -l "$NEW_IPFS_PATH/ipfs-pins.txt"
+
+    sudo systemctl stop ipfs  # if you run it as a service
+
+    sudo cp -a "$IPFS_PATH" "${IPFS_PATH}.backup"
+
 }

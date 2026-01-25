@@ -207,7 +207,6 @@ from_docker(){
          --volume ${JELLYIN_CONFIG_DPATH}:/config \
          --volume ${JELLYIN_CACHE_DPATH}:/cache \
          --mount type=bind,source=${JELLYIN_MEDIA_DPATH},target=/media \
-         --restart=unless-stopped \
          jellyfin/jellyfin
          #--user uid:gid \
 
