@@ -98,7 +98,7 @@ if [ "$HAVE_SUDO" == "True" ]; then
     apt_ensure openssh-server openssh-client sshfs net-tools
     apt_ensure gcc g++ gfortran build-essential
     apt_ensure git curl jq expect htop tmux tree p7zip-full gpg pgpgpg lm-sensors btop
-    apt_ensure rsync symlinks fd-find
+    apt_ensure rsync symlinks fd-find ripgrep
     # apt_ensure valgrind codespell
     # apt_ensure astyle synaptic
 
