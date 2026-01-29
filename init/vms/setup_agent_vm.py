@@ -14,10 +14,12 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import logging
 import ipaddress
 import os
 import re
 import shutil
+import textwrap
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -27,7 +29,16 @@ from typing import Dict, List, Optional, Tuple
 
 # ----------------------------- Utilities -----------------------------
 
+LOGGER = logging.getLogger("setup_agent_vm")
+
+
+def setup_logging(verbose: bool = False) -> None:
+    level = logging.DEBUG if verbose else logging.INFO
+    logging.basicConfig(level=level, format="%(levelname)s: %(message)s")
+
+
 def run_capture(cmd: List[str], check: bool = False) -> Tuple[int, str, str]:
+    LOGGER.debug("run_capture: %s", " ".join(cmd))
     p = subprocess.run(cmd, text=True, capture_output=True)
     if check and p.returncode != 0:
         raise RuntimeError(f"Command failed: {cmd}\nstdout:\n{p.stdout}\nstderr:\n{p.stderr}")
@@ -83,6 +94,7 @@ def parse_ipv4_routes() -> List[ipaddress.IPv4Network]:
     """
     if which("ip") is None:
         return []
+    LOGGER.info("Inspecting IPv4 routes via: ip -4 route show")
     code, out, _ = run_capture(["ip", "-4", "route", "show"], check=False)
     if code != 0:
         return []
@@ -137,6 +149,7 @@ def best_default_ssh_identity() -> Optional[Path]:
     """
     if which("ssh") is None:
         return None
+    LOGGER.info("Determining default SSH identity via: ssh -G unknown@doesnt.exist")
     code, out, _ = run_capture(["ssh", "-G", "unknown@doesnt.exist"], check=False)
     if code != 0 and not out:
         return None
@@ -186,6 +199,8 @@ class Plan:
 
 
 def build_plan(outdir: Path) -> Plan:
+    LOGGER.info("Building plan in %s", outdir)
+    LOGGER.info("Reading /etc/os-release")
     osr = read_os_release()
     notes: List[str] = []
 
@@ -195,11 +210,15 @@ def build_plan(outdir: Path) -> Plan:
     if osr and not is_debian_like(osr):
         notes.append("Host does not look Debian/Ubuntu-like. Plan will generate scripts, but host deps step is Debian-focused.")
 
+    LOGGER.info("Detecting firewall backend")
     firewall_backend = guess_firewall_backend()
+    LOGGER.info("Firewall backend: %s", firewall_backend)
     if firewall_backend == "unknown":
         notes.append("Could not detect nftables or firewalld. Isolation rules may be skipped until you install nftables or enable firewalld.")
 
     routes = parse_ipv4_routes()
+    LOGGER.info("Found %d IPv4 route prefixes", len(routes))
+    LOGGER.info("Selecting a free /24 subnet that doesn't overlap existing routes")
     free = pick_free_subnet(routes)
     if free is None:
         notes.append("Could not auto-pick a free /24 from candidate pools. You will need to set NET_SUBNET_CIDR manually in .env.")
@@ -207,6 +226,7 @@ def build_plan(outdir: Path) -> Plan:
         gw, dhcp_start, dhcp_end = "", "", ""
     else:
         net_cidr = str(free)
+        LOGGER.info("Auto-selected subnet: %s", net_cidr)
         gw, dhcp_start, dhcp_end = cidr_to_gateway_and_dhcp(free)
 
     identity = best_default_ssh_identity()
@@ -228,7 +248,7 @@ def build_plan(outdir: Path) -> Plan:
         "VM_DISK_GB": "60",
 
         # Network settings
-        "NET_NAME": "agentvm-net",
+        "NET_NAME": "aivm-net",
         "NET_SUBNET_CIDR": net_cidr,
         "NET_GATEWAY_IP": gw,
         "DHCP_START": dhcp_start,
@@ -431,6 +451,17 @@ require_cmd python3
 
 NET_BRIDGE="virbr-${NET_NAME}"
 
+# Linux interface names must be <= 15 chars.
+# Safety: enforce interface name length
+if [[ "${#NET_BRIDGE}" -gt 15 ]]; then
+  die "NET_BRIDGE='$NET_BRIDGE' is too long (${#NET_BRIDGE} > 15). Use a shorter value (<=15 chars)."
+fi
+
+# Safety: detect interface name collisions
+if ip link show "$NET_BRIDGE" >/dev/null 2>&1; then
+  die "Bridge interface '$NET_BRIDGE' already exists. Choose a different NET_BRIDGE/NET_NAME."
+fi
+
 info "Defining libvirt NAT network '$NET_NAME' on $NET_SUBNET_CIDR (bridge=$NET_BRIDGE)"
 
 # Detect overlap as a safety check (even if planner picked it)
@@ -593,7 +624,35 @@ require_cmd virsh
 
 # Ensure dirs (need root for /var/lib)
 run "${SUDO} mkdir -p '$IMG_DIR' '$CI_DIR' '$BASE_DIR'"
-run "${SUDO} chmod 700 '$BASE_DIR' '$CI_DIR' || true"
+
+# Ensure the hypervisor (qemu) can traverse/read the image + seed ISO.
+# On Debian/Ubuntu qemu commonly runs as user 'libvirt-qemu'.
+ensure_qemu_access() {
+  local qemu_user="libvirt-qemu"
+  local qemu_grp=""
+
+  if id "$qemu_user" >/dev/null 2>&1; then
+    qemu_grp="$(id -gn "$qemu_user")"
+  else
+    qemu_grp="kvm"
+    getent group "$qemu_grp" >/dev/null 2>&1 || qemu_grp="libvirt-qemu"
+  fi
+
+  # Parent must be searchable (x) so qemu can traverse into child dirs.
+  run "${SUDO} chown -R root:${qemu_grp} '$BASE_DIR'"
+  run "${SUDO} chmod 0751 '$BASE_DIR'"
+
+  # Child dirs should be group-traversable/readable.
+  run "${SUDO} chown -R root:${qemu_grp} '$IMG_DIR' '$CI_DIR'"
+  run "${SUDO} chmod 0750 '$IMG_DIR' '$CI_DIR'"
+
+  # Make existing artifacts group-readable.
+  run "${SUDO} find '$IMG_DIR' -maxdepth 1 -type f -name '*.qcow2' -exec chmod 0640 {} + 2>/dev/null || true"
+  run "${SUDO} find '$CI_DIR' -maxdepth 1 -type f -name '*-seed.iso' -exec chmod 0640 {} + 2>/dev/null || true"
+}
+
+# Apply directory permissions early (so virt-install won't warn about search perms)
+ensure_qemu_access
 
 BASE_IMG="${IMG_DIR}/noble-base.img"
 VM_DISK="${IMG_DIR}/${VM_NAME}.qcow2"
@@ -679,6 +738,9 @@ EOF'"
 
 run "${SUDO} cloud-localds -v '$SEED_ISO' '$USER_DATA' '$META_DATA'"
 
+# Re-apply access now that artifacts exist
+ensure_qemu_access
+
 # VM exists?
 if virsh dominfo "$VM_NAME" >/dev/null 2>&1; then
   if [[ "${RECREATE:-0}" == "1" ]]; then
@@ -715,21 +777,61 @@ if [[ "${DRY_RUN:-0}" == "1" ]]; then
 fi
 
 info "Waiting for VM IP..."
+
+# Prefer DHCP leases (works without qemu-guest-agent)
+if ! ${SUDO} virsh domstate "$VM_NAME" 2>/dev/null | grep -qi running; then
+  warn "VM is not running; starting it."
+  run "${SUDO} virsh start '$VM_NAME'"
+fi
+
+sudo virsh list --all | grep agentvm-2404
+sudo virsh domiflist agentvm-2404
+
+#MAC=$(sudo virsh domiflist agentvm-2404 | awk 'tolower($0) ~ /network/ && $0 !~ /^(interface|---)/ {print $NF; exit}')
+
+echo "VM_NAME=$VM_NAME"
+
+# Prefer dumpxml to get MAC reliably (domifaddr often needs guest agent)
+#MAC="$(${SUDO} virsh dumpxml '$VM_NAME' 2>/dev/null | awk -F"'" '/<mac address=/{print $2; exit}' || true)"
+MAC=$(${SUDO} virsh domiflist $VM_NAME | awk 'tolower($0) ~ /network/ && $0 !~ /^(interface|---)/ {print $NF; exit}')
+
+echo "MAC=$MAC"
+
+if [[ -z "$MAC" ]]; then
+  warn "Could not determine VM MAC via virsh dumpxml; showing domiflist for debugging:"
+  ${SUDO} virsh domiflist "$VM_NAME" 2>/dev/null || true
+fi
+
 IP=""
-for _ in $(seq 1 60); do
-  IP="$(${SUDO} virsh domifaddr '$VM_NAME' 2>/dev/null | awk '/ipv4/ {print $4}' | head -n1 | cut -d/ -f1 || true)"
+for _ in $(seq 1 180); do  # ~6 minutes
+  if [[ -n "$MAC" ]]; then
+    IP="$(${SUDO} virsh net-dhcp-leases $NET_NAME 2>/dev/null | \
+      awk -v mac="$MAC" 'BEGIN{IGNORECASE=1} tolower($3)==tolower(mac) {print $5; exit}' | \
+      cut -d/ -f1 || true)"
+  fi
+
+  # Fallback: domifaddr (often empty unless qemu-guest-agent is installed)
+  if [[ -z "$IP" ]]; then
+    IP="$(${SUDO} virsh domifaddr $VM_NAME 2>/dev/null | \
+      awk '/ipv4/ {print $4; exit}' | cut -d/ -f1 || true)"
+  fi
+
   if [[ -n "$IP" ]]; then
     info "VM IP: $IP"
     run "${SUDO} bash -lc 'echo \"$IP\" > \"${BASE_DIR}/${VM_NAME}.ip\"'"
     exit 0
   fi
+
   sleep 2
 done
 
 warn "Timed out discovering VM IP."
-warn "Try: ${SUDO} virsh net-dhcp-leases $NET_NAME"
+warn "Try:"
+warn "  ${SUDO} virsh net-dhcp-leases $NET_NAME"
+warn "  ${SUDO} virsh console $VM_NAME"
 exit 2
 """
+
 
 PRINT_SH = r"""#!/usr/bin/env bash
 set -euo pipefail
@@ -869,6 +971,178 @@ SCRIPTS = {
     "90_destroy.sh": DESTROY_SH,
 }
 
+
+SCRIPT_DOCS: Dict[str, str] = {
+    "00_common.sh": textwrap.dedent(
+        """
+        Common helpers used by all scripts.
+
+        This script is sourced by every other step script. It loads the plan
+        .env file, defines consistent logging helpers, and provides safe shell
+        utilities used throughout the workflow (including DRY_RUN support and
+        apt_ensure() for Debian/Ubuntu).
+        """).strip(),
+
+    "10_host_deps.sh": textwrap.dedent("""
+        Ensure host dependencies are installed (Debian/Ubuntu).
+
+        Uses apt_ensure() to only install packages that are missing, so running this script
+        on a machine that already has the dependencies does not require sudo and does not
+        modify the system. When installs are needed, it will use sudo, optionally run
+        apt-get update (if UPDATE=1), and then enable/start libvirtd.
+    """).strip(),
+
+    "20_network.sh": textwrap.dedent(
+        """
+        Create a dedicated libvirt NAT network for the agent VM.
+
+        Defines and starts a libvirt NAT network using NET_SUBNET_CIDR and a
+        dedicated bridge virbr-<NET_NAME>. This avoids conflicts with existing
+        host network customization such as bridges, VPN routes, Docker
+        networks, or non-default libvirt networks.
+
+        Safety behavior: refuses to proceed if a libvirt network with the same
+        name already exists unless RECREATE=1, so users do not accidentally
+        overwrite an existing network.
+        """).strip(),
+
+    "30_firewall.sh": textwrap.dedent(
+        """
+        Apply isolation firewall rules scoped to the sandbox bridge.
+
+        The goal is to let the VM reach the internet for apt/git/pip while
+        preventing it from reaching your host and local networks. Rules are
+        interface-scoped to the sandbox bridge virbr-<NET_NAME> to reduce risk
+        of interfering with other host networking setups.
+
+        Behavior: allows DHCP and DNS to the libvirt gateway, blocks other
+        gateway access, and blocks RFC1918/local ranges (10/8, 172.16/12,
+        192.168/16, etc.). Supports nftables or firewalld based on
+        FIREWALL_BACKEND.
+        """).strip(),
+
+    "40_vm.sh": textwrap.dedent(
+        """
+        Provision the Ubuntu 24.04 agent VM via cloud-init.
+
+        Downloads the Ubuntu 24.04 (Noble) cloud image if it is not already
+        present, creates a qcow2 overlay disk, generates a cloud-init seed that
+        creates VM_USER and installs baseline tooling (ssh, git, python, etc.),
+        then defines/starts the VM.
+
+        After boot, the script waits for the VM to receive a DHCP lease and
+        records the discovered IP in BASE_DIR/<VM_NAME>.ip for later steps and
+        for VS Code Remote-SSH.
+
+        * **Paths used by this step**
+
+          * `BASE_DIR`: Top-level working directory for the agent VM plan on
+                        the host. Used for small state files and as a
+                        common parent for other directories (e.g.
+                        stores `BASE_DIR/<VM_NAME>.ip`).
+          * `IMG_DIR`: Directory that holds VM disk assets, including the
+                       cached Ubuntu cloud base image (e.g.
+                       `noble-base.img`) and the per-VM qcow2 overlay
+                       disk (e.g. `<VM_NAME>.qcow2`).
+
+          * `CI_DIR`: Directory that holds cloud-init artifacts for the VM,
+                      including `user-data`, `meta-data`, and the
+                      generated seed ISO (e.g. `<VM_NAME>-seed.iso`)
+                      that `virt-install` attaches as a virtual
+                      CD-ROM on first boot.
+
+        Here are bullet points you can drop into that `40_vm.sh` doc to make
+        the major steps + tools explicit (and to set expectations about caching
+        + permissions):
+
+        * **Create/verify working directories** (`mkdir`, `chmod`, `chown`)
+
+          * Ensures `BASE_DIR`, `IMG_DIR`, and `CI_DIR` exist.
+          * Sets permissions so the hypervisor process (`libvirt-qemu`) can read/traverse the image and seed ISO.
+
+        * **Fetch the Ubuntu 24.04 cloud image (cached)** (`curl`)
+
+          * Downloads `UBUNTU_IMG_URL` into `BASE_IMG_PATH` (or `IMG_DIR/noble-base.img`) only if missing (unless a redownload flag is enabled).
+
+        * **Create the VM disk as an overlay** (`qemu-img`)
+
+          * Builds a qcow2 overlay backed by the base image so rebuilds are fast and storage-efficient.
+
+        * **Generate cloud-init configuration** (`cloud-localds`)
+
+          * Writes `user-data` and `meta-data`, including:
+
+            * `VM_USER` with your SSH public key
+            * SSH hardening (disable passwords/root login)
+            * baseline packages (ssh, git, python, build tools, etc.)
+          * Produces a seed ISO used on first boot.
+
+        * **Define and boot the VM** (`virt-install`, `libvirt`)
+
+          * Creates the VM with virtio devices and attaches:
+
+            * overlay qcow2 disk
+            * cloud-init seed ISO (cdrom)
+            * libvirt network `NET_NAME` (NAT sandbox network)
+
+        * **Discover the VM IP address** (`virsh domifaddr`, optionally `virsh net-dhcp-leases`)
+
+          * Polls until the VM receives a DHCP lease and writes the IP to `BASE_DIR/<VM_NAME>.ip`.
+        """).strip(),
+
+    "50_print.sh": textwrap.dedent("""
+        Print connection and rollback instructions.
+
+        Shows how to connect via SSH (including the IdentityFile selected in the plan),
+        provides a ready-to-copy ~/.ssh/config stanza for VS Code Remote-SSH, and prints
+        rollback commands to remove the VM, network, and firewall rules.
+    """).strip(),
+
+    "90_destroy.sh": textwrap.dedent("""
+        Best-effort cleanup of the agent VM environment.
+
+        Destroys and undefines the VM, removes the libvirt NAT network, removes isolation
+        rules (nftables table), and deletes local plan artifacts such as the overlay disk
+        and cloud-init seed ISO.
+
+        Note: if FIREWALL_BACKEND=firewalld, direct rule cleanup is intentionally not
+        automated here to avoid accidentally removing unrelated rules. The script prints
+        guidance for manual removal.
+    """).strip(),
+}
+
+
+def inject_doc(script_name: str, content: str) -> str:
+    """Inject __doc__ + --help handler into bash scripts for readability."""
+    doc = SCRIPT_DOCS.get(script_name, "").strip()
+    if not doc:
+        return content
+
+    # You requested: do not use single quote characters in docs.
+    if "'" in doc:
+        raise ValueError(
+            f"SCRIPT_DOCS[{script_name!r}] contains a single quote character. "
+            "Please remove/replace it (e.g. use backticks or double quotes)."
+        )
+
+    lines = content.splitlines()
+    if not lines or not lines[0].startswith("#!"):
+        return content
+
+    # Ensure the doc is nicely indented and wrapped (optional but recommended).
+    # If you prefer manual line breaks, omit textwrap.fill.
+    wrapped = doc
+
+    inject = [
+        "__doc__='",
+        wrapped,
+        "'",
+        'if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then echo "$__doc__"; exit 0; fi',
+        "",
+    ]
+    return "\n".join([lines[0], *inject, *lines[1:]]) + "\n"
+
+
 # ----------------------------- Plan writing -----------------------------
 
 
@@ -879,7 +1153,7 @@ def write_plan_files(plan: Plan) -> None:
     write_text(plan.outdir / ".env", env_file_contents(plan.env), 0o600)
 
     for name, content in SCRIPTS.items():
-        write_text(plan.outdir / "scripts" / name, content, 0o755)
+        write_text(plan.outdir / "scripts" / name, inject_doc(name, content), 0o755)
 
     write_text(plan.outdir / "README.md", README_MD, 0o644)
 
@@ -887,23 +1161,25 @@ def write_plan_files(plan: Plan) -> None:
 def print_plan_summary(plan: Plan) -> None:
     print("\nPlan summary")
     print("------------")
-    for k in ["VM_NAME", "VM_USER", "VM_CPUS", "VM_RAM_MB", "VM_DISK_GB"]:
-        print(f"{k:16} {plan.env.get(k, '')}")
-        print()
-    for k in ["NET_NAME", "NET_SUBNET_CIDR", "NET_GATEWAY_IP", "DHCP_START", "DHCP_END"]:
-        print(f"{k:16} {plan.env.get(k, '')}")
-        print()
-    for k in ["SSH_IDENTITY_FILE", "SSH_PUBKEY_PATH", "FIREWALL_BACKEND"]:
-        print(f"{k:16} {plan.env.get(k, '')}")
-        print()
-        print(f"Output dir       {plan.outdir}")
-        print()
+
+    def group(title: str, keys: List[str]) -> None:
+        print(f"\n{title}")
+        print("-" * len(title))
+        for k in keys:
+            print(f"{k:16} {plan.env.get(k, '')}")
+
+    group("VM", ["VM_NAME", "VM_USER", "VM_CPUS", "VM_RAM_MB", "VM_DISK_GB"])
+    group("Network", ["NET_NAME", "NET_SUBNET_CIDR", "NET_GATEWAY_IP", "DHCP_START", "DHCP_END"])
+    group("Access", ["SSH_IDENTITY_FILE", "SSH_PUBKEY_PATH", "FIREWALL_BACKEND"])
+
+    print(f"\nOutput dir       {plan.outdir}")
+
     if plan.notes:
-        print("Notes")
+        print("\nNotes")
         print("-----")
-    for n in plan.notes:
-        print(f"- {n}")
-        print()
+        for n in plan.notes:
+            print(f"- {n}")
+
 
 # ----------------------------- Apply driver -----------------------------
 
@@ -911,7 +1187,7 @@ def print_plan_summary(plan: Plan) -> None:
 def interactive_confirm(prompt: str, yes: bool) -> None:
     if yes:
         print(f"{prompt} [auto-yes]")
-    return
+        return
     ans = input(f"{prompt} [y/N] ").strip().lower()
     if ans not in ("y", "yes"):
         raise SystemExit("Stopped by user.")
@@ -942,6 +1218,7 @@ def apply_plan(outdir: Path, interactive: bool, yes: bool) -> None:
         script_path = scripts_dir / s
         # Run as current user; scripts will use sudo only when needed.
         # This keeps initial apply accessible but still safe.
+        LOGGER.info("Running %s", script_path)
         p = subprocess.run(["bash", str(script_path)], cwd=str(outdir))
         if p.returncode != 0:
             raise SystemExit(f"Failed at scripts/{s} (exit {p.returncode}). See output above.")
@@ -959,6 +1236,7 @@ def clean_plan(outdir: Path) -> None:
 
 def main(argv: List[str]) -> int:
     ap = argparse.ArgumentParser()
+    ap.add_argument("--verbose", action="store_true", help="Enable debug logging")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     ap_plan = sub.add_parser("plan", help="Write .env + scripts to disk")
@@ -974,13 +1252,28 @@ def main(argv: List[str]) -> int:
 
     args = ap.parse_args(argv)
 
+    setup_logging(args.verbose)
+
     outdir = Path(args.outdir).resolve()
 
     if args.cmd == "plan":
         plan = build_plan(outdir)
         write_plan_files(plan)
         print_plan_summary(plan)
+        # print(README_MD)
+        print(textwrap.dedent(
+            f'''
+            If .env is setup correctly you can inspect and run the following
+            commands to understand the process.
+
+            bash {outdir}/scripts/10_host_deps.sh
+            bash {outdir}/scripts/20_network.sh
+            bash {outdir}/scripts/30_firewall.sh
+            bash {outdir}/scripts/40_vm.sh
+            bash {outdir}/scripts/50_print.sh
+            '''))
         print(f"Plan written to: {outdir}")
+        print("To run everything use:")
         print(f"Next: python3 setup_agent_vm.py apply --outdir {outdir} --interactive")
         return 0
 
@@ -996,55 +1289,3 @@ def main(argv: List[str]) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main(sys.argv[1:]))
-
-
-"""
----
-
-## How to use
-
-1) Save that as `setup_agent_vm.py` and run:
-
-```bash
-python3 setup_agent_vm.py plan
-````
-
-2. Review and edit:
-
-```bash
-sed -n '1,200p' agentvm_plan/.env
-ls -la agentvm_plan/scripts
-```
-
-3. Apply carefully:
-
-```bash
-python3 setup_agent_vm.py apply --interactive
-```
-
-Or unattended:
-
-```bash
-python3 setup_agent_vm.py apply --yes
-```
-
----
-
-## Why this is safer / easier to audit
-
-* **No sudo needed for plan** (just writes files and detects context).
-* Install/download steps are **explicit scripts** you can read before running.
-* `apt_ensure` avoids `sudo apt install` if everything is already installed.
-* Isolation rules are scoped to the **sandbox bridge only**.
-
----
-
-## Small but important follow-ups I’d recommend (optional)
-
-* Add a `plan --refresh` mode that re-evaluates routes/firewall and updates `.env` without rewriting custom edits.
-* Add a `--dry-run` apply option that exports `DRY_RUN=1` when running scripts (so you can rehearse what apply would do).
-
-If you want, I can fold both of those in next.
-
-
-"""
