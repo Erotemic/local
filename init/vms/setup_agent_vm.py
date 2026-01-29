@@ -576,19 +576,24 @@ if [[ "$FIREWALL_BACKEND" == "firewalld" ]]; then
 
 elif [[ "$FIREWALL_BACKEND" == "nft" ]]; then
   require_cmd nft
+  set +o braceexpand
 
-  run "${SUDO} nft list table inet agentvm_sandbox >/dev/null 2>&1 || nft add table inet agentvm_sandbox"
-  run "${SUDO} bash -lc 'if nft list chain inet agentvm_sandbox forward >/dev/null 2>&1; then nft flush chain inet agentvm_sandbox forward; else nft add chain inet agentvm_sandbox forward \"{ type filter hook forward priority 0; policy accept; }\"; fi'"
+  # Create table if missing (must be root)
+  if ! ${SUDO} nft list table inet agentvm_sandbox >/dev/null 2>&1; then
+    run "${SUDO} nft add table inet agentvm_sandbox"
+  fi
 
-  # Allow DHCP + DNS to gateway
-  run "${SUDO} nft add rule inet agentvm_sandbox forward iifname \"$NET_BRIDGE\" ip protocol udp udp dport {67,68} accept"
+  if ${SUDO} nft list chain inet agentvm_sandbox forward >/dev/null 2>&1; then
+    run "${SUDO} nft flush chain inet agentvm_sandbox forward"
+  else
+    run "${SUDO} nft add chain inet agentvm_sandbox forward { type filter hook forward priority 0; policy accept; }"
+  fi
+
+  run "${SUDO} nft add rule inet agentvm_sandbox forward iifname \"$NET_BRIDGE\" udp dport {67,68} accept"
   run "${SUDO} nft add rule inet agentvm_sandbox forward iifname \"$NET_BRIDGE\" ip daddr $NET_GATEWAY_IP udp dport 53 accept"
   run "${SUDO} nft add rule inet agentvm_sandbox forward iifname \"$NET_BRIDGE\" ip daddr $NET_GATEWAY_IP tcp dport 53 accept"
-  # Block other gateway access
   run "${SUDO} nft add rule inet agentvm_sandbox forward iifname \"$NET_BRIDGE\" ip daddr $NET_GATEWAY_IP drop"
-  # Block private/local ranges
   run "${SUDO} nft add rule inet agentvm_sandbox forward iifname \"$NET_BRIDGE\" ip daddr {10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,169.254.0.0/16,127.0.0.0/8} drop"
-  # Best-effort IPv6 local blocks
   run "${SUDO} nft add rule inet agentvm_sandbox forward iifname \"$NET_BRIDGE\" ip6 daddr {fd00::/8,fe80::/10,::1/128} drop 2>/dev/null || true"
 
   info "nftables isolation rules applied (scoped to iifname=$NET_BRIDGE)."
@@ -838,6 +843,8 @@ set -euo pipefail
 # shellcheck disable=SC1091
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/00_common.sh"
 
+_handle_help "$@" && exit 0
+
 IP_FILE="${BASE_DIR}/${VM_NAME}.ip"
 IP="<unknown>"
 if [[ -f "$IP_FILE" ]]; then
@@ -866,6 +873,26 @@ Host ${VM_NAME}
   IdentitiesOnly yes
 
 (Remote-SSH will install the VS Code server automatically on first connect.)
+
+Status commands:
+  VM state:
+    ${SUDO} virsh domstate "$VM_NAME"
+  VM interfaces:
+    ${SUDO} virsh domiflist "$VM_NAME"
+  VM addresses (may require qemu-guest-agent):
+    ${SUDO} virsh domifaddr "$VM_NAME"
+
+  Network state:
+    ${SUDO} virsh net-info "$NET_NAME"
+  DHCP leases:
+    ${SUDO} virsh net-dhcp-leases "$NET_NAME"
+
+  Firewall (nftables):
+    ${SUDO} nft list table inet agentvm_sandbox || true
+    ${SUDO} nft list ruleset | sed -n '/table inet agentvm_sandbox/,/}/p' || true
+
+  Firewall (firewalld direct rules):
+    ${SUDO} firewall-cmd --direct --get-all-rules | grep "virbr-$NET_NAME" || true
 
 Rollback:
   ${SUDO} virsh destroy '$VM_NAME' || true
