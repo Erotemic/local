@@ -236,6 +236,7 @@ alias work='cd ~/work'
 alias vid='cd ~/data/dvc-repos/viame_dvc'
 
 alias wa='cd $HOME/code/geowatch'
+alias ai='cd $HOME/code/aiq-magnet'
 alias wsd='cd $HOME/code/watch-smartflow-dags/'
 alias wa2='cd $HOME/code/watch2'
 

@@ -57,3 +57,4 @@ fi
 #    fi
 
 export PATH="$HOME/.elan/bin:$PATH"
+. "/home/joncrall/.deno/env"

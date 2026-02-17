@@ -467,7 +467,7 @@ if exists("g:loaded_vimtk")
     call vimtk#quickopen('kp', '~/code/kwplot/kwplot/__init__.py')
     call vimtk#quickopen('gw', '~/code/git_well/git_well/__init__.py')
 
-    call vimtk#quickopen('a', '~/code/geowatch/geowatch/__init__.py')
+    call vimtk#quickopen('a', '~/code/aiq-magnet/magnet/__init__.py')
     call vimtk#quickopen('f', '~/code/geowatch/geowatch/tasks/fusion/fit_lightning.py')
     call vimtk#quickopen('o', '~/code/geowatch/geowatch/mlops/schedule_evaluation.py')
     call vimtk#quickopen('wo', '~/code/geowatch/geowatch/mlops/aggregate.py')

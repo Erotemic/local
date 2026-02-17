@@ -222,5 +222,6 @@
     "markdown": false,
     "scminput": false,
     "python": false
-  }
+  },
+  "redhat.telemetry.enabled": false
 }

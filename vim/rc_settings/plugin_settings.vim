@@ -154,6 +154,7 @@ shellcheck_arg_list = [
 shellcheck_args = ' '.join(shellcheck_arg_list)
 
 flake8_errors = [
+    'E704',  # multiple statements on one line
     'E123',  # closing braket indentation
     'E126',  # continuation line hanging-indent
     'E127',  # continuation line over-indented for visual indent

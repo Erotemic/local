@@ -22,31 +22,31 @@ Prereq ISOs (Windows 11 + VirtIO drivers):
        https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/latest-virtio/
 
 Suggested ISO placement:
-  Create /opt/vm/isos and move ISOs from ~/Downloads:
-    sudo mkdir -p /opt/vm/isos
-    sudo mv ~/Downloads/Win11_25H2_English_x64.iso /opt/vm/isos/Win11_25H2_English_x64.iso
-    sudo mv ~/Downloads/virtio-win-0.1.285.iso /opt/vm/isos/virtio-win-0.1.285.iso
-    ls -lh /opt/vm/isos
+  Create /data/service/vms/isos and move ISOs from ~/Downloads:
+    sudo mkdir -p /data/service/vms/isos
+    sudo mv ~/Downloads/Win11_25H2_English_x64.iso /data/service/vms/isos/Win11_25H2_English_x64.iso
+    sudo mv ~/Downloads/virtio-win-0.1.285.iso /data/service/vms/isos/virtio-win-0.1.285.iso
+    ls -lh /data/service/vms/isos
 
 Usage:
   # Run everything (deps + checks + create VM)
-  WIN_ISO=/opt/vm/isos/Win11_25H2_English_x64.iso \
-  VIRTIO_ISO=/opt/vm/isos/virtio-win-0.1.285.iso \
+  WIN_ISO=/data/service/vms/isos/Win11_25H2_English_x64.iso \
+  VIRTIO_ISO=/data/service/vms/isos/virtio-win-0.1.285.iso \
   ./setup_windows_vm.sh all
 
 Override config with env vars:
   VM_NAME=win11 \
   VM_DISK_GB=200 \
-  WIN_ISO=/opt/vm/isos/Win11_25H2_English_x64.iso \
-  VIRTIO_ISO=/opt/vm/isos/virtio-win-0.1.285.iso \
+  WIN_ISO=/data/service/vms/isos/Win11_25H2_English_x64.iso \
+  VIRTIO_ISO=/data/service/vms/isos/virtio-win-0.1.285.iso \
   ./setup_windows_vm.sh
 
 Modes:
 
-  export VM_NAME=win11
+  export VM_NAME=win11-fresh
   export VM_DISK_GB=200
-  export WIN_ISO=/opt/vm/isos/Win11_25H2_English_x64.iso
-  export VIRTIO_ISO=/opt/vm/isos/virtio-win-0.1.285.iso
+  export WIN_ISO=/data/service/vms/isos/Win11_25H2_English_x64.iso
+  export VIRTIO_ISO=/data/service/vms/isos/virtio-win-0.1.285.iso
 
   ./setup_windows_vm.sh prereq     # install deps + start services + group membership
   ./setup_windows_vm.sh check      # validate config and environment (no changes)
@@ -130,7 +130,7 @@ VM_VCPUS="${VM_VCPUS:-4}"
 VM_DISK_GB="${VM_DISK_GB:-200}"
 
 # Storage
-STORAGE_DIR="${STORAGE_DIR:-/opt/vm/libvirt/images}"
+STORAGE_DIR="${STORAGE_DIR:-/data/service/vms/libvirt/images}"
 DISK_PATH="${DISK_PATH:-${STORAGE_DIR}/${VM_NAME}.qcow2}"
 DISK_FORMAT="${DISK_FORMAT:-qcow2}"
 

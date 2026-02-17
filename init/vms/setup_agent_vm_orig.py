@@ -19,26 +19,19 @@ import ipaddress
 import os
 import re
 import shutil
-import textwrap
 import subprocess
 import sys
+import textwrap
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
+LOGGER = logging.getLogger(__name__)
+
 
 # ----------------------------- Utilities -----------------------------
 
-LOGGER = logging.getLogger("setup_agent_vm")
-
-
-def setup_logging(verbose: bool = False) -> None:
-    level = logging.DEBUG if verbose else logging.INFO
-    logging.basicConfig(level=level, format="%(levelname)s: %(message)s")
-
-
 def run_capture(cmd: List[str], check: bool = False) -> Tuple[int, str, str]:
-    LOGGER.debug("run_capture: %s", " ".join(cmd))
     p = subprocess.run(cmd, text=True, capture_output=True)
     if check and p.returncode != 0:
         raise RuntimeError(f"Command failed: {cmd}\nstdout:\n{p.stdout}\nstderr:\n{p.stderr}")
@@ -94,7 +87,6 @@ def parse_ipv4_routes() -> List[ipaddress.IPv4Network]:
     """
     if which("ip") is None:
         return []
-    LOGGER.info("Inspecting IPv4 routes via: ip -4 route show")
     code, out, _ = run_capture(["ip", "-4", "route", "show"], check=False)
     if code != 0:
         return []
@@ -149,7 +141,6 @@ def best_default_ssh_identity() -> Optional[Path]:
     """
     if which("ssh") is None:
         return None
-    LOGGER.info("Determining default SSH identity via: ssh -G unknown@doesnt.exist")
     code, out, _ = run_capture(["ssh", "-G", "unknown@doesnt.exist"], check=False)
     if code != 0 and not out:
         return None
@@ -189,6 +180,81 @@ def write_text(path: Path, content: str, mode: int = 0o644) -> None:
     os.chmod(path, mode)
 
 
+
+
+def parse_env_file(path: Path) -> Dict[str, str]:
+    """Parse a simple KEY=VALUE .env file (comments and blank lines ignored)."""
+    env: Dict[str, str] = {}
+    if not path.exists():
+        return env
+    for raw in path.read_text().splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        if "=" not in line:
+            continue
+        k, v = line.split("=", 1)
+        k = k.strip()
+        v = v.strip()
+        if not k:
+            continue
+        if len(v) >= 2 and ((v[0] == '"' and v[-1] == '"') or (v[0] == "'" and v[-1] == "'")):
+            v = v[1:-1]
+        v = v.replace(r'\"', '"')
+        env[k] = v
+    return env
+
+
+def apply_overrides(base: Dict[str, str], overrides: Dict[str, str]) -> Dict[str, str]:
+    out = dict(base)
+    out.update(overrides)
+    return out
+
+
+def apply_kv_overrides(base: Dict[str, str], kvs: List[str]) -> Dict[str, str]:
+    out = dict(base)
+    for item in kvs:
+        if "=" not in item:
+            raise ValueError(f"--set expects KEY=VALUE, got: {item!r}")
+        k, v = item.split("=", 1)
+        out[k.strip()] = v
+    return out
+
+
+def fill_derived_env(env: Dict[str, str], notes: List[str]) -> Dict[str, str]:
+    """Fill derived values when upstream knobs are provided."""
+    out = dict(env)
+
+    ssh_id = out.get("SSH_IDENTITY_FILE", "").strip()
+    if ssh_id and not out.get("SSH_PUBKEY_PATH", "").strip():
+        out["SSH_PUBKEY_PATH"] = ssh_id + ".pub"
+
+    cidr_s = out.get("NET_SUBNET_CIDR", "").strip()
+    if cidr_s:
+        try:
+            net = ipaddress.ip_network(cidr_s, strict=False)
+            if isinstance(net, ipaddress.IPv4Network):
+                if net.prefixlen == 24:
+                    gw, dhcp_start, dhcp_end = cidr_to_gateway_and_dhcp(net)
+                    out.setdefault("NET_GATEWAY_IP", gw)
+                    out.setdefault("DHCP_START", dhcp_start)
+                    out.setdefault("DHCP_END", dhcp_end)
+                else:
+                    notes.append("NET_SUBNET_CIDR is not /24; planner only derives DHCP and gateway for /24.")
+        except Exception:
+            notes.append(f"Could not parse NET_SUBNET_CIDR={cidr_s!r}; leaving derived fields unchanged.")
+
+    net_name = out.get("NET_NAME", "").strip()
+    if net_name:
+        bridge = f"virbr-{net_name}"
+        if len(bridge) > 15:
+            notes.append(
+                f"NET_NAME={net_name!r} will create bridge {bridge!r} (len={len(bridge)}), "
+                "but Linux interface names must be <= 15. Shorten NET_NAME."
+            )
+
+    return out
+
 # ----------------------------- Plan Model -----------------------------
 
 @dataclass
@@ -199,8 +265,6 @@ class Plan:
 
 
 def build_plan(outdir: Path) -> Plan:
-    LOGGER.info("Building plan in %s", outdir)
-    LOGGER.info("Reading /etc/os-release")
     osr = read_os_release()
     notes: List[str] = []
 
@@ -210,15 +274,11 @@ def build_plan(outdir: Path) -> Plan:
     if osr and not is_debian_like(osr):
         notes.append("Host does not look Debian/Ubuntu-like. Plan will generate scripts, but host deps step is Debian-focused.")
 
-    LOGGER.info("Detecting firewall backend")
     firewall_backend = guess_firewall_backend()
-    LOGGER.info("Firewall backend: %s", firewall_backend)
     if firewall_backend == "unknown":
         notes.append("Could not detect nftables or firewalld. Isolation rules may be skipped until you install nftables or enable firewalld.")
 
     routes = parse_ipv4_routes()
-    LOGGER.info("Found %d IPv4 route prefixes", len(routes))
-    LOGGER.info("Selecting a free /24 subnet that doesn't overlap existing routes")
     free = pick_free_subnet(routes)
     if free is None:
         notes.append("Could not auto-pick a free /24 from candidate pools. You will need to set NET_SUBNET_CIDR manually in .env.")
@@ -226,7 +286,6 @@ def build_plan(outdir: Path) -> Plan:
         gw, dhcp_start, dhcp_end = "", "", ""
     else:
         net_cidr = str(free)
-        LOGGER.info("Auto-selected subnet: %s", net_cidr)
         gw, dhcp_start, dhcp_end = cidr_to_gateway_and_dhcp(free)
 
     identity = best_default_ssh_identity()
@@ -248,7 +307,7 @@ def build_plan(outdir: Path) -> Plan:
         "VM_DISK_GB": "60",
 
         # Network settings
-        "NET_NAME": "aivm-net",
+        "NET_NAME": "agentvm-net",
         "NET_SUBNET_CIDR": net_cidr,
         "NET_GATEWAY_IP": gw,
         "DHCP_START": dhcp_start,
@@ -256,6 +315,9 @@ def build_plan(outdir: Path) -> Plan:
 
         # Image settings
         "UBUNTU_IMG_URL": "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img",
+
+        "BASE_IMG_PATH": "/var/lib/libvirt/agentvm/images/noble-base.img",
+        "REDOWNLOAD_BASE_IMAGE": "0",
 
         # Paths (review before apply if you prefer different locations)
         "BASE_DIR": "/var/lib/libvirt/agentvm",
@@ -266,8 +328,24 @@ def build_plan(outdir: Path) -> Plan:
         "SSH_IDENTITY_FILE": ssh_identity,
         "SSH_PUBKEY_PATH": pub_guess,
 
+        # SSH password login (less secure; stored in plan .env)
+        "ALLOW_PASSWORD_LOGIN": "1",
+        "VM_PASSWORD": "agent",
+
+        # Optional host path sharing (intentional break in isolation model)
+        "ENABLE_SHARE_PATHS": "0",
+        "HOST_SHARE_SRC": "",
+        "HOST_SHARE_TAG": "hostcode",
+        "HOST_SHARE_MOUNT": "/mnt/hostcode",
+        "HOST_SHARE_MOUNT_OPTS": "nodev,nosuid,noexec",
+
+        # Optional provisioning inside the VM
+        "ENABLE_PROVISION": "0",
+
         # Firewall backend
         "FIREWALL_BACKEND": firewall_backend,
+
+        "ENABLE_FIREWALL": "1",
 
         # Behavior
         "UPDATE": "",  # set to "1" to run apt update before installs
@@ -434,6 +512,37 @@ run "${SUDO} systemctl enable --now nftables || true"
 info "Host deps complete."
 """
 
+DOWNLOAD_SH = r"""#!/usr/bin/env bash
+set -euo pipefail
+# shellcheck disable=SC1091
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/00_common.sh"
+
+require_cmd curl
+
+: "${UBUNTU_IMG_URL:?UBUNTU_IMG_URL missing}"
+: "${IMG_DIR:?IMG_DIR missing}"
+: "${BASE_IMG_PATH:?BASE_IMG_PATH missing}"
+
+run "${SUDO} mkdir -p '$IMG_DIR'"
+
+if [[ -f "$BASE_IMG_PATH" && "${REDOWNLOAD_BASE_IMAGE:-0}" != "1" ]]; then
+  info "Base image already cached: $BASE_IMG_PATH"
+  info "To force re-download: set REDOWNLOAD_BASE_IMAGE=1 in .env"
+  exit 0
+fi
+
+if [[ -f "$BASE_IMG_PATH" && "${REDOWNLOAD_BASE_IMAGE:-0}" == "1" ]]; then
+  warn "REDOWNLOAD_BASE_IMAGE=1; removing cached base image: $BASE_IMG_PATH"
+  run "${SUDO} rm -f '$BASE_IMG_PATH'"
+fi
+
+info "Downloading Ubuntu cloud image to: $BASE_IMG_PATH"
+run "${SUDO} curl -L --fail -o '$BASE_IMG_PATH' '$UBUNTU_IMG_URL'"
+
+info "Download complete."
+"""
+
+
 NETWORK_SH = r"""#!/usr/bin/env bash
 set -euo pipefail
 # shellcheck disable=SC1091
@@ -451,15 +560,9 @@ require_cmd python3
 
 NET_BRIDGE="virbr-${NET_NAME}"
 
-# Linux interface names must be <= 15 chars.
-# Safety: enforce interface name length
+# Linux interface names must be <= 15 chars (IFNAMSIZ=16 including NUL).
 if [[ "${#NET_BRIDGE}" -gt 15 ]]; then
-  die "NET_BRIDGE='$NET_BRIDGE' is too long (${#NET_BRIDGE} > 15). Use a shorter value (<=15 chars)."
-fi
-
-# Safety: detect interface name collisions
-if ip link show "$NET_BRIDGE" >/dev/null 2>&1; then
-  die "Bridge interface '$NET_BRIDGE' already exists. Choose a different NET_BRIDGE/NET_NAME."
+  die "Bridge interface name too long: NET_BRIDGE=${NET_BRIDGE} (len=${#NET_BRIDGE} > 15). Choose a shorter NET_NAME so virbr-${NET_NAME} is <= 15 chars."
 fi
 
 info "Defining libvirt NAT network '$NET_NAME' on $NET_SUBNET_CIDR (bridge=$NET_BRIDGE)"
@@ -476,7 +579,7 @@ for r in routes:
         try: nets.append(ipaddress.ip_network(tok, strict=False))
         except ValueError: pass
 for n in nets:
-    if target.overlaps(n) and str(n) != str(target):
+    if target.overlaps(n):
         print(f"ERROR: target {target} overlaps existing route {n}")
         sys.exit(2)
 sys.exit(0)
@@ -522,9 +625,17 @@ set -euo pipefail
 # shellcheck disable=SC1091
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/00_common.sh"
 
+# nft uses {...} set syntax; bash would expand it unless disabled
+set +o braceexpand
+
 : "${NET_NAME:?NET_NAME missing}"
 : "${NET_GATEWAY_IP:?NET_GATEWAY_IP missing}"
 : "${FIREWALL_BACKEND:?FIREWALL_BACKEND missing}"
+
+if [[ "${ENABLE_FIREWALL:-1}" != "1" ]]; then
+  warn "ENABLE_FIREWALL!=1; skipping firewall isolation rules."
+  exit 0
+fi
 
 NET_BRIDGE="virbr-${NET_NAME}"
 
@@ -576,25 +687,38 @@ if [[ "$FIREWALL_BACKEND" == "firewalld" ]]; then
 
 elif [[ "$FIREWALL_BACKEND" == "nft" ]]; then
   require_cmd nft
-  set +o braceexpand
 
-  # Create table if missing (must be root)
+  # Table exists?
   if ! ${SUDO} nft list table inet agentvm_sandbox >/dev/null 2>&1; then
-    run "${SUDO} nft add table inet agentvm_sandbox"
-  fi
+  run "${SUDO} nft add table inet agentvm_sandbox"
+fi
 
-  if ${SUDO} nft list chain inet agentvm_sandbox forward >/dev/null 2>&1; then
-    run "${SUDO} nft flush chain inet agentvm_sandbox forward"
-  else
-    run "${SUDO} nft add chain inet agentvm_sandbox forward { type filter hook forward priority 0; policy accept; }"
-  fi
+  # Chain exists? then flush
+  run "${SUDO} nft list chain inet agentvm_sandbox forward >/dev/null 2>&1 || \
+    nft add chain inet agentvm_sandbox forward '{ type filter hook forward priority 0; policy accept; }'"
+  run "${SUDO} nft flush chain inet agentvm_sandbox forward"
 
-  run "${SUDO} nft add rule inet agentvm_sandbox forward iifname \"$NET_BRIDGE\" udp dport {67,68} accept"
+  # Allow DHCP (client/server ports)
+  run "${SUDO} nft add rule inet agentvm_sandbox forward iifname \"$NET_BRIDGE\" udp dport 67-68 accept"
+
+  # Allow DNS to the libvirt gateway only
   run "${SUDO} nft add rule inet agentvm_sandbox forward iifname \"$NET_BRIDGE\" ip daddr $NET_GATEWAY_IP udp dport 53 accept"
   run "${SUDO} nft add rule inet agentvm_sandbox forward iifname \"$NET_BRIDGE\" ip daddr $NET_GATEWAY_IP tcp dport 53 accept"
+
+  # Block other gateway access
   run "${SUDO} nft add rule inet agentvm_sandbox forward iifname \"$NET_BRIDGE\" ip daddr $NET_GATEWAY_IP drop"
-  run "${SUDO} nft add rule inet agentvm_sandbox forward iifname \"$NET_BRIDGE\" ip daddr {10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,169.254.0.0/16,127.0.0.0/8} drop"
-  run "${SUDO} nft add rule inet agentvm_sandbox forward iifname \"$NET_BRIDGE\" ip6 daddr {fd00::/8,fe80::/10,::1/128} drop 2>/dev/null || true"
+
+  # Block RFC1918 + local ranges (no nft set braces; avoid bash eval brace-expansion)
+  run "${SUDO} nft add rule inet agentvm_sandbox forward iifname \"$NET_BRIDGE\" ip daddr 10.0.0.0/8 drop"
+  run "${SUDO} nft add rule inet agentvm_sandbox forward iifname \"$NET_BRIDGE\" ip daddr 172.16.0.0/12 drop"
+  run "${SUDO} nft add rule inet agentvm_sandbox forward iifname \"$NET_BRIDGE\" ip daddr 192.168.0.0/16 drop"
+  run "${SUDO} nft add rule inet agentvm_sandbox forward iifname \"$NET_BRIDGE\" ip daddr 169.254.0.0/16 drop"
+  run "${SUDO} nft add rule inet agentvm_sandbox forward iifname \"$NET_BRIDGE\" ip daddr 127.0.0.0/8 drop"
+
+  # Best-effort IPv6 local blocks (also no braces)
+  run "${SUDO} nft add rule inet agentvm_sandbox forward iifname \"$NET_BRIDGE\" ip6 daddr fd00::/8 drop 2>/dev/null || true"
+  run "${SUDO} nft add rule inet agentvm_sandbox forward iifname \"$NET_BRIDGE\" ip6 daddr fe80::/10 drop 2>/dev/null || true"
+  run "${SUDO} nft add rule inet agentvm_sandbox forward iifname \"$NET_BRIDGE\" ip6 daddr ::1/128 drop 2>/dev/null || true"
 
   info "nftables isolation rules applied (scoped to iifname=$NET_BRIDGE)."
 
@@ -604,12 +728,12 @@ else
 fi
 """
 
+
 VM_SH = r"""#!/usr/bin/env bash
 set -euo pipefail
 # shellcheck disable=SC1091
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/00_common.sh"
 
-require_cmd curl
 require_cmd qemu-img
 require_cmd cloud-localds
 require_cmd virt-install
@@ -621,17 +745,20 @@ require_cmd virsh
 : "${VM_RAM_MB:?VM_RAM_MB missing}"
 : "${VM_DISK_GB:?VM_DISK_GB missing}"
 : "${NET_NAME:?NET_NAME missing}"
-: "${UBUNTU_IMG_URL:?UBUNTU_IMG_URL missing}"
 : "${BASE_DIR:?BASE_DIR missing}"
 : "${IMG_DIR:?IMG_DIR missing}"
 : "${CI_DIR:?CI_DIR missing}"
+: "${BASE_IMG_PATH:?BASE_IMG_PATH missing}"
 : "${SSH_PUBKEY_PATH:?SSH_PUBKEY_PATH missing}"
+
+# Optional: allow password login (defaults are set by planner)
+: "${ALLOW_PASSWORD_LOGIN:=1}"
+: "${VM_PASSWORD:=agent}"
 
 # Ensure dirs (need root for /var/lib)
 run "${SUDO} mkdir -p '$IMG_DIR' '$CI_DIR' '$BASE_DIR'"
 
 # Ensure the hypervisor (qemu) can traverse/read the image + seed ISO.
-# On Debian/Ubuntu qemu commonly runs as user 'libvirt-qemu'.
 ensure_qemu_access() {
   local qemu_user="libvirt-qemu"
   local qemu_grp=""
@@ -656,10 +783,9 @@ ensure_qemu_access() {
   run "${SUDO} find '$CI_DIR' -maxdepth 1 -type f -name '*-seed.iso' -exec chmod 0640 {} + 2>/dev/null || true"
 }
 
-# Apply directory permissions early (so virt-install won't warn about search perms)
 ensure_qemu_access
 
-BASE_IMG="${IMG_DIR}/noble-base.img"
+BASE_IMG="${BASE_IMG_PATH}"
 VM_DISK="${IMG_DIR}/${VM_NAME}.qcow2"
 SEED_ISO="${CI_DIR}/${VM_NAME}-seed.iso"
 USER_DATA="${CI_DIR}/user-data"
@@ -670,12 +796,9 @@ if [[ ! -f "$SSH_PUBKEY_PATH" ]]; then
   die "Missing SSH public key at $SSH_PUBKEY_PATH. Ensure SSH_IDENTITY_FILE exists and SSH_PUBKEY_PATH is correct."
 fi
 
-# Download base image if needed
+# Base image should be present (download step caches it)
 if [[ ! -f "$BASE_IMG" ]]; then
-  info "Downloading Ubuntu cloud image..."
-  run "${SUDO} curl -L --fail -o '$BASE_IMG' '$UBUNTU_IMG_URL'"
-else
-  info "Cloud image already present: $BASE_IMG"
+  die "Missing base image at $BASE_IMG. Run: bash scripts/15_download_image.sh"
 fi
 
 # Create qcow2 overlay
@@ -692,6 +815,27 @@ if [[ ! -f "$VM_DISK" ]]; then
   run "${SUDO} qemu-img create -f qcow2 -F qcow2 -b '$BASE_IMG' '$VM_DISK' '${VM_DISK_GB}G'"
 fi
 
+# Password login toggles for cloud-init
+if [[ "${ALLOW_PASSWORD_LOGIN}" == "1" ]]; then
+  if [[ -z "${VM_PASSWORD}" ]]; then
+    die "ALLOW_PASSWORD_LOGIN=1 but VM_PASSWORD is empty"
+  fi
+  SSH_PWAUTH="true"
+  LOCK_PASSWD="false"
+  CHPASSWD_BLOCK="chpasswd:
+  list: |
+    ${VM_USER}:${VM_PASSWORD}
+  expire: False"
+  SSHD_PASS_AUTH="yes"
+  SSHD_KBD_AUTH="yes"
+else
+  SSH_PWAUTH="false"
+  LOCK_PASSWD="true"
+  CHPASSWD_BLOCK=""
+  SSHD_PASS_AUTH="no"
+  SSHD_KBD_AUTH="no"
+fi
+
 # Write cloud-init
 PUBKEY_CONTENT="$(cat "$SSH_PUBKEY_PATH")"
 run "${SUDO} bash -lc 'cat > \"$USER_DATA\" <<EOF
@@ -701,11 +845,14 @@ users:
     groups: [sudo]
     shell: /bin/bash
     sudo: [\"ALL=(ALL) NOPASSWD:ALL\"]
+    lock_passwd: ${LOCK_PASSWD}
     ssh_authorized_keys:
       - ${PUBKEY_CONTENT}
 
-ssh_pwauth: false
+ssh_pwauth: ${SSH_PWAUTH}
 disable_root: true
+
+${CHPASSWD_BLOCK}
 
 package_update: true
 package_upgrade: true
@@ -724,9 +871,9 @@ write_files:
   - path: /etc/ssh/sshd_config.d/99-agentvm-hardening.conf
     permissions: \"0644\"
     content: |
-      PasswordAuthentication no
+      PasswordAuthentication ${SSHD_PASS_AUTH}
       PermitRootLogin no
-      KbdInteractiveAuthentication no
+      KbdInteractiveAuthentication ${SSHD_KBD_AUTH}
       X11Forwarding no
       AllowTcpForwarding yes
       GatewayPorts no
@@ -743,7 +890,6 @@ EOF'"
 
 run "${SUDO} cloud-localds -v '$SEED_ISO' '$USER_DATA' '$META_DATA'"
 
-# Re-apply access now that artifacts exist
 ensure_qemu_access
 
 # VM exists?
@@ -784,41 +930,22 @@ fi
 info "Waiting for VM IP..."
 
 # Prefer DHCP leases (works without qemu-guest-agent)
-if ! ${SUDO} virsh domstate "$VM_NAME" 2>/dev/null | grep -qi running; then
-  warn "VM is not running; starting it."
-  run "${SUDO} virsh start '$VM_NAME'"
-fi
-
-sudo virsh list --all | grep agentvm-2404
-sudo virsh domiflist agentvm-2404
-
-#MAC=$(sudo virsh domiflist agentvm-2404 | awk 'tolower($0) ~ /network/ && $0 !~ /^(interface|---)/ {print $NF; exit}')
-
-echo "VM_NAME=$VM_NAME"
-
-# Prefer dumpxml to get MAC reliably (domifaddr often needs guest agent)
-#MAC="$(${SUDO} virsh dumpxml '$VM_NAME' 2>/dev/null | awk -F"'" '/<mac address=/{print $2; exit}' || true)"
-MAC=$(${SUDO} virsh domiflist $VM_NAME | awk 'tolower($0) ~ /network/ && $0 !~ /^(interface|---)/ {print $NF; exit}')
-
-echo "MAC=$MAC"
-
+MAC="$(${SUDO} virsh domiflist "$VM_NAME" 2>/dev/null | awk 'BEGIN{IGNORECASE=1} $0 ~ /network/ && $0 !~ /^(interface|---)/ {print $NF; exit}' || true)"
 if [[ -z "$MAC" ]]; then
-  warn "Could not determine VM MAC via virsh dumpxml; showing domiflist for debugging:"
-  ${SUDO} virsh domiflist "$VM_NAME" 2>/dev/null || true
+  warn "Could not determine VM MAC via virsh domiflist. Try: ${SUDO} virsh domiflist $VM_NAME"
 fi
 
 IP=""
 for _ in $(seq 1 180); do  # ~6 minutes
   if [[ -n "$MAC" ]]; then
-    IP="$(${SUDO} virsh net-dhcp-leases $NET_NAME 2>/dev/null | \
-      awk -v mac="$MAC" 'BEGIN{IGNORECASE=1} tolower($3)==tolower(mac) {print $5; exit}' | \
+    IP="$(${SUDO} virsh net-dhcp-leases "$NET_NAME" 2>/dev/null | \
+      awk -v mac="$MAC" 'BEGIN{IGNORECASE=1} $0 ~ mac {for (i=1; i<=NF; i++) if ($i ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+$/) {print $i; exit}}' | \
       cut -d/ -f1 || true)"
   fi
 
   # Fallback: domifaddr (often empty unless qemu-guest-agent is installed)
   if [[ -z "$IP" ]]; then
-    IP="$(${SUDO} virsh domifaddr $VM_NAME 2>/dev/null | \
-      awk '/ipv4/ {print $4; exit}' | cut -d/ -f1 || true)"
+    IP="$(${SUDO} virsh domifaddr "$VM_NAME" 2>/dev/null | awk '/ipv4/ {print $4; exit}' | cut -d/ -f1 || true)"
   fi
 
   if [[ -n "$IP" ]]; then
@@ -838,12 +965,161 @@ exit 2
 """
 
 
-PRINT_SH = r"""#!/usr/bin/env bash
+
+SHARE_PATHS_SH = r"""#!/usr/bin/env bash
 set -euo pipefail
 # shellcheck disable=SC1091
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/00_common.sh"
 
-_handle_help "$@" && exit 0
+require_cmd virsh
+require_cmd awk
+require_cmd sed
+require_cmd mktemp
+
+: "${VM_NAME:?VM_NAME missing}"
+: "${HOST_SHARE_SRC:?HOST_SHARE_SRC missing (set to a host directory to share)}"
+: "${HOST_SHARE_TAG:=hostcode}"
+: "${HOST_SHARE_MOUNT:=/mnt/hostcode}"
+: "${HOST_SHARE_MOUNT_OPTS:=nodev,nosuid,noexec}"
+
+if [[ ! -d "$HOST_SHARE_SRC" ]]; then
+  die "HOST_SHARE_SRC=$HOST_SHARE_SRC does not exist or is not a directory."
+fi
+if [[ "$HOST_SHARE_SRC" == *" "* ]]; then
+  die "HOST_SHARE_SRC contains spaces (not supported safely): $HOST_SHARE_SRC"
+fi
+if ! [[ "$HOST_SHARE_TAG" =~ ^[A-Za-z0-9_.-]+$ ]]; then
+  die "HOST_SHARE_TAG must match ^[A-Za-z0-9_.-]+$ (got: $HOST_SHARE_TAG)"
+fi
+
+STATE="$(${SUDO} virsh domstate "$VM_NAME" 2>/dev/null || true)"
+if echo "$STATE" | grep -qi running; then
+  warn "VM $VM_NAME is running. Persisting share requires redefining domain; reboot may be required."
+fi
+
+TMPDIR="$(mktemp -d)"
+XML_IN="$TMPDIR/domain.xml"
+XML_OUT="$TMPDIR/domain.out.xml"
+XML_FINAL="$TMPDIR/domain.final.xml"
+FS_XML="$TMPDIR/fs.xml"
+
+${SUDO} virsh dumpxml "$VM_NAME" > "$XML_IN"
+
+# Ensure memoryBacking is present for virtiofs (recommended/typically required)
+if ! grep -q "<memoryBacking" "$XML_IN"; then
+  awk '
+    /<\/domain>/ && !done {
+      print "  <memoryBacking>"
+      print "    <source type='''memfd'''/>"
+      print "    <access mode='''shared'''/>"
+      print "  </memoryBacking>"
+      done=1
+    }
+    { print }
+  ' "$XML_IN" > "$XML_OUT"
+else
+  cp "$XML_IN" "$XML_OUT"
+fi
+
+# Bail if target already exists
+if grep -q "<target dir='''${HOST_SHARE_TAG}'''" "$XML_OUT"; then
+  die "VM already has a filesystem share with tag/target ${HOST_SHARE_TAG}. Choose a different HOST_SHARE_TAG."
+fi
+
+cat > "$FS_XML" <<EOF
+  <filesystem type='mount' accessmode='passthrough'>
+    <driver type='virtiofs'/>
+    <source dir='${HOST_SHARE_SRC}'/>
+    <target dir='${HOST_SHARE_TAG}'/>
+  </filesystem>
+EOF
+
+# Inject filesystem device before </devices>
+awk -v insert_file="$FS_XML" '
+  BEGIN {
+    while ((getline line < insert_file) > 0) ins = ins line "\n"
+    close(insert_file)
+  }
+  /<\/devices>/ && !done {
+    printf "%s", ins
+    done=1
+  }
+  { print }
+' "$XML_OUT" > "$XML_FINAL"
+
+info "Updating VM definition for $VM_NAME (virtiofs share: $HOST_SHARE_SRC -> tag=$HOST_SHARE_TAG)"
+run "${SUDO} virsh define '$XML_FINAL'"
+
+cat <<EOF
+
+Host directory sharing enabled (virtiofs).
+
+Guest mount commands (run inside the VM):
+  sudo mkdir -p "$HOST_SHARE_MOUNT"
+  sudo mount -t virtiofs -o "$HOST_SHARE_MOUNT_OPTS" "$HOST_SHARE_TAG" "$HOST_SHARE_MOUNT"
+
+Optional: persist across reboots (inside VM):
+  echo "$HOST_SHARE_TAG  $HOST_SHARE_MOUNT  virtiofs  $HOST_SHARE_MOUNT_OPTS  0  0" | sudo tee -a /etc/fstab
+
+If the share does not appear immediately, reboot the VM:
+  ${SUDO} virsh reboot "$VM_NAME"
+(or shutdown/start if reboot does not work)
+
+EOF
+
+rm -rf "$TMPDIR"
+"""
+
+PROVISION_SH = r"""#!/usr/bin/env bash
+set -euo pipefail
+# shellcheck disable=SC1091
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/00_common.sh"
+
+require_cmd ssh
+require_cmd virsh
+require_cmd awk
+
+: "${VM_NAME:?VM_NAME missing}"
+: "${VM_USER:?VM_USER missing}"
+: "${NET_NAME:?NET_NAME missing}"
+: "${BASE_DIR:?BASE_DIR missing}"
+: "${SSH_IDENTITY_FILE:?SSH_IDENTITY_FILE missing}"
+
+IP_FILE="${BASE_DIR}/${VM_NAME}.ip"
+IP=""
+if [[ -f "$IP_FILE" ]]; then
+  IP="$(cat "$IP_FILE")"
+fi
+
+if [[ -z "$IP" ]]; then
+  warn "No IP file at $IP_FILE. Trying DHCP leases..."
+  MAC="$(${SUDO} virsh domiflist "$VM_NAME" 2>/dev/null | awk 'BEGIN{IGNORECASE=1} $0 ~ /network/ && $0 !~ /^(interface|---)/ {print $NF; exit}' || true)"
+  if [[ -n "$MAC" ]]; then
+    IP="$(${SUDO} virsh net-dhcp-leases "$NET_NAME" 2>/dev/null |       awk -v mac="$MAC" 'BEGIN{IGNORECASE=1} $0 ~ mac {for (i=1; i<=NF; i++) if ($i ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+$/) {print $i; exit}}' |       cut -d/ -f1 || true)"
+  fi
+fi
+
+if [[ -z "$IP" ]]; then
+  die "Unable to determine VM IP. Try: ${SUDO} virsh net-dhcp-leases $NET_NAME"
+fi
+
+SSH_OPTS="-o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=${BASE_DIR}/known_hosts -i ${SSH_IDENTITY_FILE}"
+
+info "Provisioning dev tools on ${VM_USER}@${IP} ..."
+
+run "ssh ${SSH_OPTS} ${VM_USER}@${IP} 'sudo apt-get update -y'"
+run "ssh ${SSH_OPTS} ${VM_USER}@${IP} 'sudo apt-get install -y docker.io docker-compose git jq ripgrep fd-find tmux htop unzip ca-certificates curl'"
+run "ssh ${SSH_OPTS} ${VM_USER}@${IP} 'sudo usermod -aG docker ${VM_USER} || true'"
+
+info "Provisioning complete."
+info "Note: docker group membership may require a new SSH session to take effect."
+"""
+
+
+PRINT_SH = r"""#!/usr/bin/env bash
+set -euo pipefail
+# shellcheck disable=SC1091
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/00_common.sh"
 
 IP_FILE="${BASE_DIR}/${VM_NAME}.ip"
 IP="<unknown>"
@@ -907,6 +1183,7 @@ Rollback:
 EOF
 """
 
+
 DESTROY_SH = r"""#!/usr/bin/env bash
 set -euo pipefail
 # shellcheck disable=SC1091
@@ -955,13 +1232,21 @@ Key knobs:
 - `NET_NAME`, `NET_SUBNET_CIDR` (must not overlap host routes)
 - `SSH_IDENTITY_FILE` + `SSH_PUBKEY_PATH` (cloud-init user key)
 - `FIREWALL_BACKEND` (nft or firewalld)
+- `ENABLE_FIREWALL` (set to 0 to skip the firewall isolation step)
+- `ALLOW_PASSWORD_LOGIN` and `VM_PASSWORD` (SSH password login; less secure)
+- `ENABLE_SHARE_PATHS` + `HOST_SHARE_SRC` (optional host directory sharing via virtiofs; breaks isolation)
+- `ENABLE_PROVISION` (optional: install Docker and dev tools inside the VM)
+- `BASE_IMG_PATH` (cached Ubuntu cloud base image path)
+- `REDOWNLOAD_BASE_IMAGE` (set to 1 to force a fresh download)
 
 ### 2) Apply step-by-step (recommended the first time)
 From this directory:
 
 ```bash
 bash scripts/10_host_deps.sh
+bash scripts/15_download_image.sh
 bash scripts/20_network.sh
+# Optional but recommended for isolation:
 bash scripts/30_firewall.sh
 bash scripts/40_vm.sh
 bash scripts/50_print.sh
@@ -982,193 +1267,154 @@ bash scripts/90_destroy.sh
 ## Security model
 
 * VM is a KVM guest with no host folder sharing configured.
-* Host firewall rules are scoped to the sandbox bridge (virbr-<NET_NAME>) to:
+* Optional host firewall rules are scoped to the sandbox bridge (virbr-<NET_NAME>) to:
 
   * allow DHCP/DNS to the libvirt gateway only
   * block VM -> RFC1918 / local ranges (prevents reaching your LAN / host-adjacent services)
+
 """
 
 SCRIPTS = {
     "00_common.sh": COMMON_SH,
     "10_host_deps.sh": HOST_DEPS_SH,
+    "15_download_image.sh": DOWNLOAD_SH,
     "20_network.sh": NETWORK_SH,
     "30_firewall.sh": FIREWALL_SH,
     "40_vm.sh": VM_SH,
+    "41_share_paths.sh": SHARE_PATHS_SH,
     "50_print.sh": PRINT_SH,
+    "60_provision.sh": PROVISION_SH,
     "90_destroy.sh": DESTROY_SH,
 }
 
-
 SCRIPT_DOCS: Dict[str, str] = {
-    "00_common.sh": textwrap.dedent(
-        """
+    "00_common.sh": textwrap.dedent("""
         Common helpers used by all scripts.
 
-        This script is sourced by every other step script. It loads the plan
-        .env file, defines consistent logging helpers, and provides safe shell
-        utilities used throughout the workflow (including DRY_RUN support and
-        apt_ensure() for Debian/Ubuntu).
-        """).strip(),
-
-    "10_host_deps.sh": textwrap.dedent("""
-        Ensure host dependencies are installed (Debian/Ubuntu).
-
-        Uses apt_ensure() to only install packages that are missing, so running this script
-        on a machine that already has the dependencies does not require sudo and does not
-        modify the system. When installs are needed, it will use sudo, optionally run
-        apt-get update (if UPDATE=1), and then enable/start libvirtd.
+        Loads the plan .env file, defines consistent logging helpers, and provides
+        safe shell utilities used throughout the workflow (including DRY_RUN support
+        and apt_ensure for Debian and Ubuntu).
     """).strip(),
 
-    "20_network.sh": textwrap.dedent(
-        """
+    "10_host_deps.sh": textwrap.dedent("""
+        Ensure host dependencies are installed (Debian and Ubuntu).
+
+        Uses apt_ensure to only install packages that are missing, so running this step
+        on a machine that already has dependencies does not require sudo and does not
+        modify the system. When installs are needed, it will use sudo, optionally run
+        apt-get update (if UPDATE=1), and then enable and start libvirtd.
+    """).strip(),
+
+    "15_download_image.sh": textwrap.dedent("""
+        Download and cache the Ubuntu 24.04 cloud image.
+
+        Fetches the Ubuntu cloud image from UBUNTU_IMG_URL into BASE_IMG_PATH. If the
+        file already exists, this step does nothing. Set REDOWNLOAD_BASE_IMAGE=1 to
+        force a fresh download.
+    """).strip(),
+
+    "20_network.sh": textwrap.dedent("""
         Create a dedicated libvirt NAT network for the agent VM.
 
-        Defines and starts a libvirt NAT network using NET_SUBNET_CIDR and a
-        dedicated bridge virbr-<NET_NAME>. This avoids conflicts with existing
-        host network customization such as bridges, VPN routes, Docker
-        networks, or non-default libvirt networks.
+        Defines and starts a libvirt NAT network using NET_SUBNET_CIDR and a dedicated
+        bridge virbr-<NET_NAME>. This avoids conflicts with existing host network
+        customization such as bridges, VPN routes, Docker networks, or non-default
+        libvirt networks.
 
-        Safety behavior: refuses to proceed if a libvirt network with the same
-        name already exists unless RECREATE=1, so users do not accidentally
-        overwrite an existing network.
-        """).strip(),
+        Safety behavior: refuses to proceed if a libvirt network with the same name
+        already exists unless RECREATE=1.
+    """).strip(),
 
-    "30_firewall.sh": textwrap.dedent(
-        """
-        Apply isolation firewall rules scoped to the sandbox bridge.
+    "30_firewall.sh": textwrap.dedent("""
+        Optional isolation firewall rules scoped to the sandbox bridge.
 
-        The goal is to let the VM reach the internet for apt/git/pip while
-        preventing it from reaching your host and local networks. Rules are
-        interface-scoped to the sandbox bridge virbr-<NET_NAME> to reduce risk
-        of interfering with other host networking setups.
+        The goal is to let the VM reach the internet for apt, git, and pip while
+        preventing it from reaching your host and local networks. Rules are scoped to
+        the sandbox bridge virbr-<NET_NAME> to reduce risk of interfering with other
+        host networking setups.
 
-        Behavior: allows DHCP and DNS to the libvirt gateway, blocks other
-        gateway access, and blocks RFC1918/local ranges (10/8, 172.16/12,
-        192.168/16, etc.). Supports nftables or firewalld based on
-        FIREWALL_BACKEND.
-        """).strip(),
+        Set ENABLE_FIREWALL=0 in .env to skip this step. Supports nftables or firewalld
+        based on FIREWALL_BACKEND.
+    """).strip(),
 
-    "40_vm.sh": textwrap.dedent(
-        """
+    "40_vm.sh": textwrap.dedent("""
         Provision the Ubuntu 24.04 agent VM via cloud-init.
 
-        Downloads the Ubuntu 24.04 (Noble) cloud image if it is not already
-        present, creates a qcow2 overlay disk, generates a cloud-init seed that
-        creates VM_USER and installs baseline tooling (ssh, git, python, etc.),
-        then defines/starts the VM.
+        Uses the cached Ubuntu 24.04 cloud image at BASE_IMG_PATH, creates a qcow2
+        overlay disk, generates a cloud-init seed that creates VM_USER and installs
+        baseline tooling (ssh, git, python, and build tools), then defines and starts
+        the VM.
 
-        After boot, the script waits for the VM to receive a DHCP lease and
-        records the discovered IP in BASE_DIR/<VM_NAME>.ip for later steps and
-        for VS Code Remote-SSH.
+        After boot, the script waits for the VM to receive a DHCP lease and records
+        the discovered IP in BASE_DIR/<VM_NAME>.ip for later steps and for VS Code
+        Remote-SSH.
 
-        * **Paths used by this step**
-
-          * `BASE_DIR`: Top-level working directory for the agent VM plan on
-                        the host. Used for small state files and as a
-                        common parent for other directories (e.g.
-                        stores `BASE_DIR/<VM_NAME>.ip`).
-          * `IMG_DIR`: Directory that holds VM disk assets, including the
-                       cached Ubuntu cloud base image (e.g.
-                       `noble-base.img`) and the per-VM qcow2 overlay
-                       disk (e.g. `<VM_NAME>.qcow2`).
-
-          * `CI_DIR`: Directory that holds cloud-init artifacts for the VM,
-                      including `user-data`, `meta-data`, and the
-                      generated seed ISO (e.g. `<VM_NAME>-seed.iso`)
-                      that `virt-install` attaches as a virtual
-                      CD-ROM on first boot.
-
-        Here are bullet points you can drop into that `40_vm.sh` doc to make
-        the major steps + tools explicit (and to set expectations about caching
-        + permissions):
-
-        * **Create/verify working directories** (`mkdir`, `chmod`, `chown`)
-
-          * Ensures `BASE_DIR`, `IMG_DIR`, and `CI_DIR` exist.
-          * Sets permissions so the hypervisor process (`libvirt-qemu`) can read/traverse the image and seed ISO.
-
-        * **Fetch the Ubuntu 24.04 cloud image (cached)** (`curl`)
-
-          * Downloads `UBUNTU_IMG_URL` into `BASE_IMG_PATH` (or `IMG_DIR/noble-base.img`) only if missing (unless a redownload flag is enabled).
-
-        * **Create the VM disk as an overlay** (`qemu-img`)
-
-          * Builds a qcow2 overlay backed by the base image so rebuilds are fast and storage-efficient.
-
-        * **Generate cloud-init configuration** (`cloud-localds`)
-
-          * Writes `user-data` and `meta-data`, including:
-
-            * `VM_USER` with your SSH public key
-            * SSH hardening (disable passwords/root login)
-            * baseline packages (ssh, git, python, build tools, etc.)
-          * Produces a seed ISO used on first boot.
-
-        * **Define and boot the VM** (`virt-install`, `libvirt`)
-
-          * Creates the VM with virtio devices and attaches:
-
-            * overlay qcow2 disk
-            * cloud-init seed ISO (cdrom)
-            * libvirt network `NET_NAME` (NAT sandbox network)
-
-        * **Discover the VM IP address** (`virsh domifaddr`, optionally `virsh net-dhcp-leases`)
-
-          * Polls until the VM receives a DHCP lease and writes the IP to `BASE_DIR/<VM_NAME>.ip`.
-        """).strip(),
+        Paths:
+          * BASE_DIR: top-level working directory for agent VM artifacts on the host
+          * IMG_DIR: VM disk assets, including the cached base image and qcow2 overlay
+          * CI_DIR: cloud-init artifacts and seed ISO for first boot
+    """).strip(),
 
     "50_print.sh": textwrap.dedent("""
         Print connection and rollback instructions.
 
-        Shows how to connect via SSH (including the IdentityFile selected in the plan),
-        provides a ready-to-copy ~/.ssh/config stanza for VS Code Remote-SSH, and prints
-        rollback commands to remove the VM, network, and firewall rules.
+        Shows how to connect via SSH, provides a ready-to-copy ssh config stanza for
+        VS Code Remote-SSH, and prints rollback commands to remove the VM, network,
+        and firewall rules.
     """).strip(),
 
-    "90_destroy.sh": textwrap.dedent("""
+
+    "41_share_paths.sh": textwrap.dedent("""
+        Share a host directory into the VM via virtiofs (optional).
+
+        This step modifies the VM definition to add a virtiofs filesystem device that exports
+        HOST_SHARE_SRC from the host into the guest under the tag HOST_SHARE_TAG. This is an
+        intentional break in the default isolation model: the VM can read and write everything
+        in the exported directory tree.
+
+        After running this step, reboot the VM if needed, then mount inside the VM with:
+          sudo mount -t virtiofs -o HOST_SHARE_MOUNT_OPTS HOST_SHARE_TAG HOST_SHARE_MOUNT
+    """).strip(),
+
+    "60_provision.sh": textwrap.dedent("""
+        Provision developer tools inside the VM (optional).
+
+        Uses SSH to connect to the VM and installs common developer tools and Docker using
+        Ubuntu packages. This is a convenience step after the VM is reachable.
+    """).strip(),
+"90_destroy.sh": textwrap.dedent("""
         Best-effort cleanup of the agent VM environment.
 
-        Destroys and undefines the VM, removes the libvirt NAT network, removes isolation
-        rules (nftables table), and deletes local plan artifacts such as the overlay disk
-        and cloud-init seed ISO.
-
-        Note: if FIREWALL_BACKEND=firewalld, direct rule cleanup is intentionally not
-        automated here to avoid accidentally removing unrelated rules. The script prints
-        guidance for manual removal.
+        Destroys and undefines the VM, removes the libvirt NAT network, removes nftables
+        isolation rules (when used), and deletes local plan artifacts.
     """).strip(),
 }
 
 
 def inject_doc(script_name: str, content: str) -> str:
-    """Inject __doc__ + --help handler into bash scripts for readability."""
+    """Inject __doc__ plus --help handler into bash scripts for readability."""
     doc = SCRIPT_DOCS.get(script_name, "").strip()
     if not doc:
         return content
 
-    # You requested: do not use single quote characters in docs.
     if "'" in doc:
         raise ValueError(
-            f"SCRIPT_DOCS[{script_name!r}] contains a single quote character. "
-            "Please remove/replace it (e.g. use backticks or double quotes)."
+            f"SCRIPT_DOCS contains a single quote character for {script_name}. "
+            "Please remove or replace it."
         )
 
     lines = content.splitlines()
     if not lines or not lines[0].startswith("#!"):
         return content
 
-    # Ensure the doc is nicely indented and wrapped (optional but recommended).
-    # If you prefer manual line breaks, omit textwrap.fill.
-    wrapped = doc
-
     inject = [
         "__doc__='",
-        wrapped,
+        doc,
         "'",
         'if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then echo "$__doc__"; exit 0; fi',
         "",
     ]
     return "\n".join([lines[0], *inject, *lines[1:]]) + "\n"
-
 
 # ----------------------------- Plan writing -----------------------------
 
@@ -1189,17 +1435,19 @@ def print_plan_summary(plan: Plan) -> None:
     print("\nPlan summary")
     print("------------")
 
-    def group(title: str, keys: List[str]) -> None:
+    def show(title: str, keys: List[str]) -> None:
         print(f"\n{title}")
         print("-" * len(title))
         for k in keys:
-            print(f"{k:16} {plan.env.get(k, '')}")
+            print(f"{k:18} {plan.env.get(k, '')}")
 
-    group("VM", ["VM_NAME", "VM_USER", "VM_CPUS", "VM_RAM_MB", "VM_DISK_GB"])
-    group("Network", ["NET_NAME", "NET_SUBNET_CIDR", "NET_GATEWAY_IP", "DHCP_START", "DHCP_END"])
-    group("Access", ["SSH_IDENTITY_FILE", "SSH_PUBKEY_PATH", "FIREWALL_BACKEND"])
+    show("VM", ["VM_NAME", "VM_USER", "VM_CPUS", "VM_RAM_MB", "VM_DISK_GB"])
+    show("Network", ["NET_NAME", "NET_SUBNET_CIDR", "NET_GATEWAY_IP", "DHCP_START", "DHCP_END"])
+    show("Image", ["UBUNTU_IMG_URL", "BASE_IMG_PATH", "REDOWNLOAD_BASE_IMAGE"])
+    show("Access", ["SSH_IDENTITY_FILE", "SSH_PUBKEY_PATH"])
+    show("Firewall", ["FIREWALL_BACKEND", "ENABLE_FIREWALL"])
 
-    print(f"\nOutput dir       {plan.outdir}")
+    print(f"\nOutput dir        {plan.outdir}")
 
     if plan.notes:
         print("\nNotes")
@@ -1207,48 +1455,71 @@ def print_plan_summary(plan: Plan) -> None:
         for n in plan.notes:
             print(f"- {n}")
 
-
 # ----------------------------- Apply driver -----------------------------
 
 
 def interactive_confirm(prompt: str, yes: bool) -> None:
     if yes:
         print(f"{prompt} [auto-yes]")
-        return
+    return
     ans = input(f"{prompt} [y/N] ").strip().lower()
     if ans not in ("y", "yes"):
         raise SystemExit("Stopped by user.")
 
 
-def apply_plan(outdir: Path, interactive: bool, yes: bool) -> None:
+def apply_plan(outdir: Path, interactive: bool, yes: bool, no_firewall: bool) -> None:
     scripts_dir = outdir / "scripts"
     env_path = outdir / ".env"
     if not scripts_dir.exists() or not env_path.exists():
-        raise SystemExit(f"Missing plan files in {outdir}. Run: python3 setup_agent_vm.py plan --outdir {outdir}")
+        raise SystemExit(f"Missing plan at: {outdir}. Run: python3 setup_agent_vm.py plan --outdir {outdir}")
 
-    scripts_in_order = [
+    # Respect optional steps based on .env and flags
+    env_vars = parse_env_file(env_path)
+    enable_firewall = str(env_vars.get("ENABLE_FIREWALL", "1")).strip() == "1"
+    if no_firewall:
+        enable_firewall = False
+
+    scripts_in_order: List[str] = [
         "10_host_deps.sh",
+        "15_download_image.sh",
         "20_network.sh",
-        "30_firewall.sh",
-        "40_vm.sh",
-        "50_print.sh",
     ]
+    if enable_firewall:
+        scripts_in_order.append("30_firewall.sh")
+    else:
+        print("Skipping firewall step (ENABLE_FIREWALL=0 or --no-firewall).")
+    scripts_in_order.append("40_vm.sh")
 
-    print(f"Applying plan in {outdir}")
-    print("Scripts:")
-    for s in scripts_in_order:
-        print(f" - scripts/{s}")
+    enable_share = str(env_vars.get("ENABLE_SHARE_PATHS", "0")).strip() == "1"
+    if enable_share:
+        scripts_in_order.append("41_share_paths.sh")
+    else:
+        print("Skipping share paths step (ENABLE_SHARE_PATHS=0).")
 
-    for s in scripts_in_order:
-        if interactive:
-            interactive_confirm(f"Run scripts/{s}?", yes=yes)
-        script_path = scripts_dir / s
-        # Run as current user; scripts will use sudo only when needed.
-        # This keeps initial apply accessible but still safe.
-        LOGGER.info("Running %s", script_path)
+    scripts_in_order.append("50_print.sh")
+
+    enable_provision = str(env_vars.get("ENABLE_PROVISION", "0")).strip() == "1"
+    if enable_provision:
+        scripts_in_order.append("60_provision.sh")
+    else:
+        print("Skipping provision step (ENABLE_PROVISION=0).")
+
+
+    # Optional interactive checkpoint
+    if interactive and not yes:
+        print("\nScripts to run in order:")
+        for sname in scripts_in_order:
+            print(f"  - {sname}")
+        ans = input("\nProceed? [y/N] ").strip().lower()
+        if ans not in {"y", "yes"}:
+            raise SystemExit(1)
+
+    for script_name in scripts_in_order:
+        script_path = scripts_dir / script_name
+        print(f"\n=== Running {script_name} ===")
         p = subprocess.run(["bash", str(script_path)], cwd=str(outdir))
         if p.returncode != 0:
-            raise SystemExit(f"Failed at scripts/{s} (exit {p.returncode}). See output above.")
+            raise SystemExit(p.returncode)
 
 
 def clean_plan(outdir: Path) -> None:
@@ -1263,49 +1534,89 @@ def clean_plan(outdir: Path) -> None:
 
 def main(argv: List[str]) -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--verbose", action="store_true", help="Enable debug logging")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     ap_plan = sub.add_parser("plan", help="Write .env + scripts to disk")
     ap_plan.add_argument("--outdir", default="agentvm_plan", help="Output directory")
+    ap_plan.add_argument("--env-in", default=None, help="Optional .env file to use as defaults/overrides when writing the plan")
+    ap_plan.add_argument("--set", action="append", default=[], help="Override a single env var (KEY=VALUE). Can be used multiple times.")
 
     ap_apply = sub.add_parser("apply", help="Execute generated scripts (they will sudo as needed)")
     ap_apply.add_argument("--outdir", default="agentvm_plan", help="Plan directory")
     ap_apply.add_argument("--interactive", action="store_true", help="Prompt before each script")
     ap_apply.add_argument("--yes", action="store_true", help="Assume yes to prompts")
+    ap_apply.add_argument("--no-firewall", action="store_true", help="Skip the firewall step (equivalent to ENABLE_FIREWALL=0)")
 
     ap_clean = sub.add_parser("clean", help="Remove plan directory")
     ap_clean.add_argument("--outdir", default="agentvm_plan", help="Plan directory")
 
     args = ap.parse_args(argv)
 
-    setup_logging(args.verbose)
-
     outdir = Path(args.outdir).resolve()
 
     if args.cmd == "plan":
         plan = build_plan(outdir)
+
+        # Apply overrides from existing .env files
+        override_paths: List[Path] = []
+
+        local_env = Path(__file__).resolve().parent / ".env"
+        if local_env.exists():
+            LOGGER.info("Loading overrides from local .env: %s", local_env)
+            override_paths.append(local_env)
+
+        if args.env_in:
+            p = Path(args.env_in).expanduser().resolve()
+            if not p.exists():
+                raise SystemExit(f"--env-in file does not exist: {p}")
+            LOGGER.info("Loading overrides from --env-in: %s", p)
+            override_paths.append(p)
+
+        existing_plan_env = outdir / ".env"
+        if existing_plan_env.exists():
+            LOGGER.info("Loading overrides from existing plan .env: %s", existing_plan_env)
+            override_paths.append(existing_plan_env)
+
+        for p in override_paths:
+            plan.env = apply_overrides(plan.env, parse_env_file(p))
+
+        if args.set:
+            LOGGER.info("Applying %d --set overrides", len(args.set))
+            plan.env = apply_kv_overrides(plan.env, args.set)
+
+        plan.env = fill_derived_env(plan.env, plan.notes)
+
         write_plan_files(plan)
         print_plan_summary(plan)
-        # print(README_MD)
+
+        print("\nREADME.md")
+        print("---------")
+        print((outdir / "README.md").read_text())
+
+        print(f"Plan written to: {outdir}")
         print(textwrap.dedent(
             f'''
             If .env is setup correctly you can inspect and run the following
             commands to understand the process.
 
             bash {outdir}/scripts/10_host_deps.sh
+            bash {outdir}/scripts/15_download_image.sh
             bash {outdir}/scripts/20_network.sh
+            # Optional but recommended for isolation:
             bash {outdir}/scripts/30_firewall.sh
             bash {outdir}/scripts/40_vm.sh
+            # Optional: share a host directory into the VM (breaks default isolation model)
+            bash {outdir}/scripts/41_share_paths.sh
             bash {outdir}/scripts/50_print.sh
+            # Optional: install docker and developer tools inside the VM
+            bash {outdir}/scripts/60_provision.sh
             '''))
-        print(f"Plan written to: {outdir}")
         print("To run everything use:")
         print(f"Next: python3 setup_agent_vm.py apply --outdir {outdir} --interactive")
         return 0
 
     if args.cmd == "apply":
-        apply_plan(outdir, interactive=args.interactive, yes=args.yes)
+        apply_plan(outdir, interactive=args.interactive, yes=args.yes, no_firewall=args.no_firewall)
         return 0
 
     if args.cmd == "clean":

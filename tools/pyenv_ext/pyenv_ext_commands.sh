@@ -1080,7 +1080,7 @@ install_python_from_uv(){
     #source .venv/bin/activate
 
     UV_ENV_DPATH=$HOME/.local/uv/envs
-    CHOSEN_PYTHON_VERSION=3.14.0
+    CHOSEN_PYTHON_VERSION=3.14.3
     VENV_NAME=uvpy$CHOSEN_PYTHON_VERSION
     VENV_PATH=$UV_ENV_DPATH/$VENV_NAME
     mkdir -p "$VENV_PATH"
@@ -1097,7 +1097,7 @@ ensure_local_venv(){
     # Check if the venv already exists
     if [ ! -d "$VENV_DIR" ]; then
         echo "No virtual environment found. Creating one in $PWD/$VENV_DIR ..."
-        uv venv "$VENV_DIR" || { echo "Failed to create venv with uv"; return 1; }
+        uv venv "$VENV_DIR" --seed || { echo "Failed to create venv with uv"; return 1; }
     fi
 
     # Activate the environment
