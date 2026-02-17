@@ -618,11 +618,3 @@ fi
 
 export PATH="$HOME/.dotnet:$PATH"
 export PATH="$ANDROID_SDK_ROOT/platform-tools:$PATH"
-export PATH="$ANDROID_SDK_ROOT/platform-tools:$PATH"
-export PATH="$ANDROID_SDK_ROOT/platform-tools:$PATH"
-export PATH="$ANDROID_SDK_ROOT/platform-tools:$PATH"
-export PATH="$ANDROID_SDK_ROOT/platform-tools:$PATH"
-export PATH="$ANDROID_SDK_ROOT/platform-tools:$PATH"
-export PATH="$ANDROID_SDK_ROOT/platform-tools:$PATH"
-export PATH="$ANDROID_SDK_ROOT/platform-tools:$PATH"
-. "/home/joncrall/.deno/env"
