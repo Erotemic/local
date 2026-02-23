@@ -616,5 +616,9 @@ if [[ "$HOSTNAME" == "toothbrush" ]]; then
     export IPFS_PATH=/data/ipfs
 fi
 
+if [ -f "$HOME/.deno/env" ]; then
+    . "$HOME/.deno/env"
+fi
+
 export PATH="$HOME/.dotnet:$PATH"
 export PATH="$ANDROID_SDK_ROOT/platform-tools:$PATH"

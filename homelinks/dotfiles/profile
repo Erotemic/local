@@ -57,4 +57,7 @@ fi
 #    fi
 
 export PATH="$HOME/.elan/bin:$PATH"
-. "/home/joncrall/.deno/env"
+
+if [ -f "$HOME/.deno/env" ]; then
+    . "$HOME/.deno/env"
+fi
