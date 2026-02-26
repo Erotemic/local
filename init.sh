@@ -17,6 +17,7 @@ CommandLine:
     # Customize settings (if unset they will choose sensible defaults)
     export HAVE_SUDO=False
     export IS_HEADLESS=True
+    export SETUP_PYTHON=True
     export WITH_SSH_KEYS=False
     source ~/local/init.sh
 
@@ -41,7 +42,9 @@ source "$HOME/local/init/utils.sh"
 HAVE_SUDO=${HAVE_SUDO:=$(have_sudo)}
 IS_HEADLESS=${IS_HEADLESS:=$(is_headless)}
 WITH_SSH_KEYS=${WITH_SSH_KEYS:="False"}
-SETUP_PYTHON=${SETUP_PYTHON:="False"}
+SETUP_PYTHON=${SETUP_PYTHON:="True"}
+
+SETUP_PYENV_PYTHON=${SETUP_PYENV_PYTHON:="False"}
 
 echo "IS_HEADLESS = $IS_HEADLESS"
 echo "HAVE_SUDO = $HAVE_SUDO"
@@ -302,7 +305,43 @@ if [ "$HAVE_SUDO" == "True" ]; then
     fi
 fi
 
+
 if [[ "$SETUP_PYTHON" == "True" ]]; then
+
+    # Test to try working with uv as the main tool
+    # https://docs.astral.sh/uv/getting-started/installation/#github-releases
+    UV_ENV_DPATH="${UV_ENV_DPATH:-$HOME/.local/uv/envs}"
+    CHOSEN_PYTHON_VERSION="${CHOSEN_PYTHON_VERSION:-3.13.2}"
+    VENV_NAME="uvpy${CHOSEN_PYTHON_VERSION}"
+    VENV_PATH="${UV_ENV_DPATH}/${VENV_NAME}"
+
+    # 1) Ensure uv is installed (do nothing if already present)
+    if ! command -v uv >/dev/null 2>&1; then
+      curl -LsSf https://astral.sh/uv/install.sh | sh
+      # ensure this shell can see it (common location for the install script)
+      export PATH="$HOME/.local/bin:$PATH"
+    fi
+
+    # 2) Ensure env parent dir exists
+    mkdir -p "$UV_ENV_DPATH"
+
+    # 3) Create venv only if it doesn't already look usable
+    # (cheap “probably good” checks: activate script + python executable)
+    if [[ ! -f "$VENV_PATH/bin/activate" || ! -x "$VENV_PATH/bin/python" ]]; then
+      rm -rf "$VENV_PATH"  # clean partial/corrupt venv if present
+      uv venv --python="$CHOSEN_PYTHON_VERSION" --seed --no-project "$VENV_PATH"
+    fi
+
+    # 4) Activate (safe to re-run; just (re)sets env vars)
+    # shellcheck disable=SC1090
+    source "$VENV_PATH/bin/activate"
+
+else
+    echo "Skipping Python setup"
+fi
+
+# OLD PYTHON SETUP
+if [[ "$SETUP_PYENV_PYTHON" == "True" ]]; then
 
     # If we need to use conda, do this instead
     # TODO: Dont use conda anymore, use pyenv or something else instead
@@ -343,7 +382,7 @@ if [[ "$SETUP_PYTHON" == "True" ]]; then
     build_vim_for_pyenv
     '
 else
-    echo "Skipping Python setup"
+    echo "Skipping pyenv Python setup"
 fi
 
 # Unset the python alias we set earlier because now we should be in a conda env

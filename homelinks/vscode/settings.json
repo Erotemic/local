@@ -118,6 +118,8 @@
   // Optional: allow arrow key movement in selection (default behavior)
   "editor.accessibilitySupport": "off",
   "python.defaultInterpreterPath": "/home/joncrall/.pyenv/versions/3.13.2/envs/pyenv3.13.2",
+  "python.analysis.inlayHints.functionReturnTypes": false,
+  "python.analysis.inlayHints.variableTypes": false,
   "chat.tools.terminal.autoApprove": {
     "cd": true,
     "echo": true,
@@ -223,5 +225,7 @@
     "scminput": false,
     "python": false
   },
-  "redhat.telemetry.enabled": false
+  "redhat.telemetry.enabled": false,
+  "ty.inlayHints.variableTypes": false,
+  "lean4.alwaysAskBeforeInstallingLeanVersions": false
 }
