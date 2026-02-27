@@ -11,6 +11,7 @@ CommandLine:
     git clone https://github.com/Erotemic/local.git
 
     bash ~/local/init.sh
+    source ~/.bashrc
 
     or
 
