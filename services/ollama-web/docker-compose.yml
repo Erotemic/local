@@ -17,7 +17,7 @@ services:
       retries: 5
 
   open-webui:
-    image: ghcr.io/open-webui/open-webui:latest
+    image: ghcr.io/open-webui/open-webui:main
     container_name: open-webui
     ports:
       - "${OPENWEBUI_PORT:-14771}:8080"

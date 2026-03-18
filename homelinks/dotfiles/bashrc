@@ -576,6 +576,7 @@ Per CLI enable
 eval "$(register-python-argcomplete geowatch)"
 eval "$(register-python-argcomplete kwcoco)"
 eval "$(register-python-argcomplete git-well)"
+eval "$(register-python-argcomplete aivm)"
 '
 
 

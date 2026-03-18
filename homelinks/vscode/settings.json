@@ -117,7 +117,7 @@
   "editor.selectionClipboard": true,
   // Optional: allow arrow key movement in selection (default behavior)
   "editor.accessibilitySupport": "off",
-  "python.defaultInterpreterPath": "/home/joncrall/.pyenv/versions/3.13.2/envs/pyenv3.13.2",
+  "python.defaultInterpreterPath": "/home/joncrall/.local/uv/envs/uvpy3.13.2",
   "python.analysis.inlayHints.functionReturnTypes": false,
   "python.analysis.inlayHints.variableTypes": false,
   "chat.tools.terminal.autoApprove": {
@@ -227,5 +227,8 @@
   },
   "redhat.telemetry.enabled": false,
   "ty.inlayHints.variableTypes": false,
-  "lean4.alwaysAskBeforeInstallingLeanVersions": false
+  "lean4.alwaysAskBeforeInstallingLeanVersions": false,
+  "ty.inlayHints.callArgumentNames": false,
+  "chat.viewSessions.orientation": "stacked",
+  "chat.agent.maxRequests": 250
 }
