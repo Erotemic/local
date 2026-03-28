@@ -8,8 +8,23 @@ from typing import Any
 
 from .benchmark import run_benchmark
 from .docker_utils import compose_down, compose_up, wait_for_http_ok
+from .env_utils import parse_env_file
 from .planner import build_plan
 from .renderer import render_files
+
+
+GENERATED_ENV_PATH = Path(__file__).resolve().parent.parent / "generated" / ".env"
+
+
+def _lookup_secret(name: str, default: str = "") -> str:
+    value = os.environ.get(name)
+    if value:
+        return value
+    if GENERATED_ENV_PATH.exists():
+        file_values = parse_env_file(GENERATED_ENV_PATH)
+        if file_values.get(name):
+            return file_values[name]
+    return default
 
 
 PROFILE_CANDIDATES = {
@@ -63,7 +78,7 @@ def tune_deployment(
         "api_key_env",
         config.get("serving_defaults", {}).get("api_key_env", "VLLM_API_KEY"),
     )
-    api_key = os.environ.get(api_key_env, "change_me")
+    api_key = _lookup_secret(api_key_env)
     host = benchmark_cfg.get("host", "127.0.0.1")
 
     trials = []

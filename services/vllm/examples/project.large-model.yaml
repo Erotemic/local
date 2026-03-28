@@ -39,7 +39,7 @@ hardware:
 deployments:
   - name: qwen-32b
     enabled: true
-    model: Qwen/Qwen2.5-32B-Instruct
+    model: Qwen/Qwen3.5-27B
     served_model_name: qwen2.5-32b
     api_port: 18000
     estimate:

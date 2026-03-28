@@ -56,11 +56,7 @@ The project is designed to be conservative by default and then become fast throu
    python manage.py render
    ```
 
-5. Fill in secrets in `generated/.env`:
-
-   - `POSTGRES_PASSWORD`
-   - `VLLM_API_KEY`
-   - `HF_TOKEN` if you need private or gated models
+5. Review `generated/.env`. Missing secrets are auto-generated on first render and then preserved on later renders. `HF_TOKEN` is optional and only needed for private or gated models.
 
 6. Start the stack:
 
@@ -116,7 +112,7 @@ python manage.py up
 - shared HF cache in `/data/service/docker/hf-cache`
 - Open WebUI enabled
 - Postgres enabled
-- one starter deployment using `Qwen/Qwen2.5-7B-Instruct`
+- one starter deployment using an auto-selected public `Qwen3.5` model
 - automatic GPU placement
 - automatic TP/DP planning
 

@@ -5,15 +5,35 @@ from typing import Any
 
 import yaml
 
-from .hardware import GPUInfo, detect_gpus
+from .hardware import GPUInfo, detect_gpus, median_gpu_memory_gib
 
 
 DEFAULT_CONFIG_PATH = Path("project.yaml")
 
 
+def _pick_default_qwen35_model(gpus: list[GPUInfo]) -> tuple[str, str]:
+    if not gpus:
+        return ("Qwen/Qwen3.5-2B", "qwen3.5-2b")
+
+    per_gpu_gib = median_gpu_memory_gib(gpus)
+    total_gib = sum(g.memory_total_gib for g in gpus)
+    gpu_count = len(gpus)
+
+    if gpu_count >= 4 and per_gpu_gib >= 80 and total_gib >= 300:
+        return ("Qwen/Qwen3.5-27B", "qwen3.5-27b")
+    if per_gpu_gib >= 40:
+        return ("Qwen/Qwen3.5-9B", "qwen3.5-9b")
+    if per_gpu_gib >= 16:
+        return ("Qwen/Qwen3.5-4B", "qwen3.5-4b")
+    if per_gpu_gib >= 8:
+        return ("Qwen/Qwen3.5-2B", "qwen3.5-2b")
+    return ("Qwen/Qwen3.5-0.8B", "qwen3.5-0.8b")
+
+
 def default_config(gpus: list[GPUInfo] | None = None) -> dict[str, Any]:
     gpus = list(gpus or detect_gpus())
     inventory = [g.to_dict() for g in gpus]
+    default_model, default_served_name = _pick_default_qwen35_model(gpus)
     return {
         "version": 1,
         "project_name": "vllm-stack",
@@ -63,8 +83,8 @@ def default_config(gpus: list[GPUInfo] | None = None) -> dict[str, Any]:
             {
                 "name": "default-chat",
                 "enabled": True,
-                "model": "Qwen/Qwen2.5-7B-Instruct",
-                "served_model_name": "qwen2.5-7b",
+                "model": default_model,
+                "served_model_name": default_served_name,
                 "api_port": 18000,
                 "estimate": {
                     "parameters_b": "auto",

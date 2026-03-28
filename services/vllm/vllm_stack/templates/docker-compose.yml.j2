@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_DB: {{ plan.postgres.db | tojson }}
       POSTGRES_USER: {{ plan.postgres.user | tojson }}
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_PASSWORD: {{ ("${" ~ plan.postgres.password_env ~ "}") | tojson }}
       TZ: {{ plan.runtime.timezone | default("UTC") | tojson }}
     volumes:
       - {{ plan.paths.postgres_data_dir }}:/var/lib/postgresql/data
@@ -68,9 +68,9 @@ services:
       ENABLE_PERSISTENT_CONFIG: {{ ("True" if plan.open_webui.enable_persistent_config else "False") | tojson }}
       ENABLE_OPENAI_API: "True"
       OPENAI_API_BASE_URLS: {{ (plan.openai_base_urls | join(';')) | tojson }}
-      OPENAI_API_KEY: "${VLLM_API_KEY}"
+      OPENAI_API_KEY: {{ ("${" ~ plan.serving_api_key_env ~ "}") | tojson }}
 {% if plan.postgres.enabled %}
-      DATABASE_URL: {{ ("postgresql://" ~ plan.postgres.user ~ ":${POSTGRES_PASSWORD}@postgres:5432/" ~ plan.postgres.db) | tojson }}
+      DATABASE_URL: {{ ("postgresql://" ~ plan.postgres.user ~ ":${" ~ plan.postgres.password_env ~ "}@postgres:5432/" ~ plan.postgres.db) | tojson }}
 {% endif %}
     volumes:
       - {{ plan.paths.openwebui_data_dir }}:/app/backend/data

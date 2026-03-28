@@ -70,15 +70,20 @@ def median_gpu_memory_gib(gpus: Iterable[GPUInfo]) -> float:
 
 
 def infer_parameter_count_b(model_name: str) -> float | None:
-    """Best-effort extraction of a parameter count from names like 7B, 32B, 70B, 405B."""
+    """Best-effort extraction of a parameter count from names like 7B, 32B, 70B, 405B.
+
+    For MoE-style names such as ``35B-A3B`` or ``397B-A17B``, use the largest
+    parameter count token because the total footprint is what matters for sizing.
+    """
     pattern = re.compile(r"(?<!\d)(\d+(?:\.\d+)?)\s*[Bb](?![a-zA-Z])")
     matches = pattern.findall(model_name)
     if not matches:
         return None
     try:
-        return float(matches[-1])
+        values = [float(m) for m in matches]
     except ValueError:
         return None
+    return max(values)
 
 
 def estimate_weight_footprint_gb(parameters_b: float, bytes_per_param: float = 2.0) -> float:
