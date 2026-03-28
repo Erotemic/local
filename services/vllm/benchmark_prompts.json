@@ -1,0 +1,14 @@
+[
+  {
+    "name": "chat-short",
+    "prompt": "Explain in plain language how tensor parallelism differs from data parallelism for LLM inference."
+  },
+  {
+    "name": "coding-medium",
+    "prompt": "Write a Python function that groups GPU inventory entries by model name and memory size, then returns the largest homogeneous pool. Include type hints and a short docstring."
+  },
+  {
+    "name": "rag-style",
+    "prompt": "Summarize the tradeoffs between smaller context windows with lower latency and larger context windows with higher memory pressure in a local inference server."
+  }
+]

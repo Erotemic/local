@@ -182,6 +182,9 @@ if [ "$_GITUSER" == "" ]; then
     git config --global merge.conflictstyle merge
     git config --global core.autocrlf false
 
+    # HOLY COW! Where were you all my life?
+    git config --global url."git@github.com:Erotemic/".insteadOf https://github.com/Erotemic/
+
     mkdir -p ~/tmp
     mkdir -p ~/code
 fi
@@ -204,19 +207,47 @@ if [ ! -d ~/.vim/autoload/plug.vim ]; then
     curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 fi
 
-install_chrome()
-{
-    # Google PPA
-    # https://askubuntu.com/questions/79280/how-to-install-chrome-browser-properly-via-command-line
-    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-    sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
-    sudo apt update
-    # Google Chrome
-    sudo apt install -y google-chrome-stable
+#install_chrome()
+#{
+#    # Google PPA
+#    # https://askubuntu.com/questions/79280/how-to-install-chrome-browser-properly-via-command-line
+#    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+#    sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+#    sudo apt update
+#    # Google Chrome
+#    sudo apt install -y google-chrome-stable
 
 
-    # for extensions.gnome.org integration
-    sudo apt install chrome-gnome-shell
+#    # for extensions.gnome.org integration
+#    sudo apt install chrome-gnome-shell
+#}
+
+install_chrome() {
+    keyring=/etc/apt/keyrings/google-linux.gpg
+    sources=/etc/apt/sources.list.d/google-chrome.sources
+
+    UPDATE=1 apt_ensure ca-certificates curl gnupg
+
+    sudo install -d -m 0755 /etc/apt/keyrings
+
+    curl -fsSL https://dl.google.com/linux/linux_signing_key.pub \
+        | sudo gpg --dearmor -o "$keyring"
+
+    sudo chmod a+r "$keyring"
+
+    # Clean up the old one-line repo file if it exists
+    sudo rm -f /etc/apt/sources.list.d/google-chrome.list
+
+    sudo_writeto "$sources" "
+        Types: deb
+        URIs: https://dl.google.com/linux/chrome/deb/
+        Suites: stable
+        Components: main
+        Architectures: amd64
+        Signed-By: $keyring
+    "
+
+    UPDATE=1 apt_ensure google-chrome-stable gnome-browser-connector
 }
 
 

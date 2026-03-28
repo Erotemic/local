@@ -1,0 +1,95 @@
+version: 1
+project_name: vllm-stack
+paths:
+  hf_cache_dir: /data/service/docker/hf-cache
+  openwebui_data_dir: /data/service/docker/open-webui
+  postgres_data_dir: /data/service/docker/open-webui-postgres
+runtime:
+  compose_cmd: docker compose
+  timezone: America/New_York
+open_webui:
+  enabled: true
+  port: 14771
+  webui_auth: true
+  enable_persistent_config: false
+postgres:
+  enabled: true
+  db: openwebui
+  user: openwebui
+  password_env: POSTGRES_PASSWORD
+serving_defaults:
+  image: vllm/vllm-openai:latest
+  container_port: 8000
+  api_key_env: VLLM_API_KEY
+  dtype: auto
+  distributed_executor_backend: mp
+  gpu_memory_utilization: 0.92
+  max_model_len: auto
+  max_num_batched_tokens: 8192
+  max_num_seqs: 16
+  enable_prefix_caching: true
+  performance_mode: balanced
+  trust_remote_code: false
+  enforce_eager: false
+  extra_args: []
+hardware:
+  auto_detect: true
+  reserved_gpu_indices: []
+  inventory: []
+deployments:
+  - name: qwen-32b
+    enabled: true
+    model: Qwen/Qwen2.5-32B-Instruct
+    served_model_name: qwen2.5-32b
+    api_port: 18000
+    estimate:
+      parameters_b: auto
+      bytes_per_param: 2.0
+      kv_headroom_fraction: 0.78
+    topology:
+      tp: auto
+      dp: auto
+      gpu_count: auto
+    placement:
+      gpu_indices: auto
+    tuning:
+      gpu_memory_utilization: null
+      max_model_len: auto
+      max_num_batched_tokens: 16384
+      max_num_seqs: 24
+      performance_mode: balanced
+      enable_prefix_caching: true
+      extra_args: []
+  - name: deepseek-r1-70b
+    enabled: false
+    model: deepseek-ai/DeepSeek-R1-Distill-Llama-70B
+    served_model_name: deepseek-r1-70b
+    api_port: 18010
+    estimate:
+      parameters_b: auto
+      bytes_per_param: 2.0
+      kv_headroom_fraction: 0.78
+    topology:
+      tp: auto
+      dp: auto
+      gpu_count: auto
+    placement:
+      gpu_indices: auto
+    tuning:
+      gpu_memory_utilization: null
+      max_model_len: 32768
+      max_num_batched_tokens: 8192
+      max_num_seqs: 8
+      performance_mode: balanced
+      enable_prefix_caching: true
+      extra_args: []
+benchmark:
+  host: 127.0.0.1
+  api_key_env: VLLM_API_KEY
+  timeout_s: 300
+  concurrency_levels: [1, 4, 8]
+  requests_per_level: 4
+  prompt_tokens: 256
+  completion_tokens: 256
+  prompts_file: benchmark_prompts.json
+  stream: true

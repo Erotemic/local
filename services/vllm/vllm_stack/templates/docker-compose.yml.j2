@@ -1,0 +1,86 @@
+services:
+{% if plan.postgres.enabled %}
+  postgres:
+    image: postgres:16
+    container_name: {{ plan.project_name }}-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: {{ plan.postgres.db | tojson }}
+      POSTGRES_USER: {{ plan.postgres.user | tojson }}
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      TZ: {{ plan.runtime.timezone | default("UTC") | tojson }}
+    volumes:
+      - {{ plan.paths.postgres_data_dir }}:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U {{ plan.postgres.user }} -d {{ plan.postgres.db }}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+{% endif %}
+{% for dep in plan.deployments %}
+  {{ dep.service_name }}:
+    image: {{ dep.image }}
+    container_name: {{ dep.service_name }}
+    restart: unless-stopped
+    ipc: host
+    shm_size: 16g
+    ports:
+      - "{{ dep.host_port }}:{{ dep.container_port }}"
+    environment:
+{% for key, value in dep.environment.items() %}
+      {{ key }}: {{ value | tojson }}
+{% endfor %}
+      HF_TOKEN: "${HF_TOKEN}"
+    volumes:
+      - {{ plan.paths.hf_cache_dir }}:/root/.cache/huggingface
+    command:
+{% for item in dep.args %}
+      - {{ item | tojson }}
+{% endfor %}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:{{ dep.container_port }}/health').read()"]
+      interval: 20s
+      timeout: 10s
+      retries: 60
+      start_period: 30s
+    labels:
+{% for key, value in dep.labels.items() %}
+      {{ key }}: {{ value | tojson }}
+{% endfor %}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: [{% for idx in dep.gpu_indices %}"{{ idx }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+              capabilities: [gpu]
+
+{% endfor %}
+{% if plan.open_webui.enabled %}
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: {{ plan.project_name }}-open-webui
+    restart: unless-stopped
+    ports:
+      - "{{ plan.open_webui.port }}:8080"
+    environment:
+      WEBUI_AUTH: {{ ("True" if plan.open_webui.webui_auth else "False") | tojson }}
+      ENABLE_PERSISTENT_CONFIG: {{ ("True" if plan.open_webui.enable_persistent_config else "False") | tojson }}
+      ENABLE_OPENAI_API: "True"
+      OPENAI_API_BASE_URLS: {{ (plan.openai_base_urls | join(';')) | tojson }}
+      OPENAI_API_KEY: "${VLLM_API_KEY}"
+{% if plan.postgres.enabled %}
+      DATABASE_URL: {{ ("postgresql://" ~ plan.postgres.user ~ ":${POSTGRES_PASSWORD}@postgres:5432/" ~ plan.postgres.db) | tojson }}
+{% endif %}
+    volumes:
+      - {{ plan.paths.openwebui_data_dir }}:/app/backend/data
+    depends_on:
+{% if plan.postgres.enabled %}
+      postgres:
+        condition: service_healthy
+{% endif %}
+{% for dep in plan.deployments %}
+      {{ dep.service_name }}:
+        condition: service_healthy
+{% endfor %}
+{% endif %}
