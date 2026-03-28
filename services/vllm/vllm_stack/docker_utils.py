@@ -9,12 +9,18 @@ from typing import Iterable
 import requests
 
 
+class DockerCommandError(RuntimeError):
+    pass
+
+
 def split_compose_cmd(value: str) -> list[str]:
     return shlex.split(value)
 
 
 def run(cmd: list[str], cwd: str | Path | None = None) -> None:
-    subprocess.run(cmd, cwd=cwd, check=True)
+    proc = subprocess.run(cmd, cwd=cwd, text=True)
+    if proc.returncode != 0:
+        raise DockerCommandError(f"Command failed with exit code {proc.returncode}: {' '.join(cmd)}")
 
 
 def compose_base_cmd(compose_cmd: str, compose_file: str | Path, env_file: str | Path | None = None) -> list[str]:
@@ -47,7 +53,7 @@ def wait_for_http_ok(url: str, timeout_s: int = 600, interval_s: float = 2.0) ->
             response = requests.get(url, timeout=10)
             if response.status_code == 200:
                 return
-        except Exception as ex:  # pragma: no cover - network path
+        except Exception as ex:
             last_error = ex
         time.sleep(interval_s)
     raise TimeoutError(f"Timed out waiting for {url}. Last error: {last_error}")

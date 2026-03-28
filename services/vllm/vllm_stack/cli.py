@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 from pathlib import Path
 from typing import Any
 
@@ -19,18 +18,6 @@ from .tuning import tune_deployment
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 TEMPLATE_DIR = PROJECT_ROOT / "vllm_stack" / "templates"
 GENERATED_DIR = PROJECT_ROOT / "generated"
-
-
-def _lookup_secret(name: str, default: str = "") -> str:
-    value = os.environ.get(name)
-    if value:
-        return value
-    env_path = GENERATED_DIR / ".env"
-    if env_path.exists():
-        file_values = parse_env_file(env_path)
-        if file_values.get(name):
-            return file_values[name]
-    return default
 
 
 def _config_path(args: argparse.Namespace) -> Path:
@@ -113,7 +100,8 @@ def cmd_benchmark(args: argparse.Namespace) -> int:
     benchmark_cfg = config.get("benchmark", {})
     host = benchmark_cfg.get("host", "127.0.0.1")
     api_key_env = benchmark_cfg.get("api_key_env", config.get("serving_defaults", {}).get("api_key_env", "VLLM_API_KEY"))
-    api_key = _lookup_secret(api_key_env)
+    env_values = parse_env_file(GENERATED_DIR / ".env")
+    api_key = env_values.get(api_key_env, "change_me")
     base_url = f"http://{host}:{dep_plan['host_port']}/v1"
     wait_for_http_ok(f"http://{host}:{dep_plan['host_port']}/health", timeout_s=benchmark_cfg.get("timeout_s", 300))
     result = run_benchmark(
@@ -144,6 +132,7 @@ def cmd_tune(args: argparse.Namespace) -> int:
         objective=args.objective,
         tuning_profile=args.profile,
         apply=args.apply,
+        output_dir=GENERATED_DIR,
     )
     if args.apply:
         save_config(config, config_path)

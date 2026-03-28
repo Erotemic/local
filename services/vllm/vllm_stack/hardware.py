@@ -69,21 +69,36 @@ def median_gpu_memory_gib(gpus: Iterable[GPUInfo]) -> float:
     return (values[mid - 1] + values[mid]) / 2.0
 
 
-def infer_parameter_count_b(model_name: str) -> float | None:
-    """Best-effort extraction of a parameter count from names like 7B, 32B, 70B, 405B.
+def max_gpu_memory_gib(gpus: Iterable[GPUInfo]) -> float:
+    values = [g.memory_total_gib for g in gpus]
+    return max(values) if values else 0.0
 
-    For MoE-style names such as ``35B-A3B`` or ``397B-A17B``, use the largest
-    parameter count token because the total footprint is what matters for sizing.
+
+def sum_gpu_memory_gib(gpus: Iterable[GPUInfo]) -> float:
+    return sum(g.memory_total_gib for g in gpus)
+
+
+def infer_parameter_count_b(model_name: str) -> float | None:
+    """Extract the largest N.B token from a model name.
+
+    This intentionally handles names like Qwen3.5-35B-A3B by returning 35,
+    not 3, and names like Qwen3.5-122B-A10B by returning 122.
     """
-    pattern = re.compile(r"(?<!\d)(\d+(?:\.\d+)?)\s*[Bb](?![a-zA-Z])")
+    pattern = re.compile(r"(?<![A-Za-z])(\d+(?:\.\d+)?)\s*[Bb](?![A-Za-z])")
     matches = pattern.findall(model_name)
     if not matches:
         return None
-    try:
-        values = [float(m) for m in matches]
-    except ValueError:
-        return None
-    return max(values)
+    values: list[float] = []
+    for match in matches:
+        try:
+            values.append(float(match))
+        except ValueError:
+            continue
+    return max(values) if values else None
+
+
+def looks_like_moe_model(model_name: str) -> bool:
+    return bool(re.search(r"-A\d+(?:\.\d+)?B\b", model_name))
 
 
 def estimate_weight_footprint_gb(parameters_b: float, bytes_per_param: float = 2.0) -> float:

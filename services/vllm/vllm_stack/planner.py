@@ -7,6 +7,7 @@ from .hardware import (
     GPUInfo,
     estimate_min_tp,
     infer_parameter_count_b,
+    looks_like_moe_model,
     median_gpu_memory_gib,
     pick_homogeneous_pool,
 )
@@ -22,6 +23,7 @@ class DeploymentPlan:
     tp: int
     dp: int
     gpu_indices: list[int]
+    gpu_uuids: list[str]
     total_gpu_count: int
     container_port: int
     image: str
@@ -40,6 +42,7 @@ class DeploymentPlan:
             "tp": self.tp,
             "dp": self.dp,
             "gpu_indices": self.gpu_indices,
+            "gpu_uuids": self.gpu_uuids,
             "total_gpu_count": self.total_gpu_count,
             "container_port": self.container_port,
             "image": self.image,
@@ -76,7 +79,7 @@ def _as_gpu_info_list(config: dict[str, Any]) -> list[GPUInfo]:
     return result
 
 
-def _first_enabled_deployments(config: dict[str, Any]) -> list[dict[str, Any]]:
+def _enabled_deployments(config: dict[str, Any]) -> list[dict[str, Any]]:
     return [d for d in config.get("deployments", []) if d.get("enabled", True)]
 
 
@@ -89,7 +92,6 @@ def _resolve_parameters_b(deployment: dict[str, Any]) -> float | None:
 
 
 def _resolve_gpu_count(
-    config: dict[str, Any],
     deployment: dict[str, Any],
     remaining_gpus: list[GPUInfo],
     enabled_count: int,
@@ -109,7 +111,7 @@ def _resolve_gpu_count(
         return max(min_tp, int(explicit_dp) * min_tp)
 
     if enabled_count <= 1:
-        return max(min_tp, (len(remaining_gpus) // min_tp) * min_tp or min_tp)
+        return max(min_tp, len(remaining_gpus))
     return min_tp
 
 
@@ -130,6 +132,13 @@ def _resolve_gpu_pool(
     return pick_homogeneous_pool(remaining_gpus, gpu_count)
 
 
+def _resolve_enable_expert_parallel(model: str, serving_defaults: dict[str, Any], tuning: dict[str, Any], tp: int) -> bool:
+    value = tuning.get("enable_expert_parallel", serving_defaults.get("enable_expert_parallel", "auto"))
+    if value == "auto":
+        return tp > 1 and looks_like_moe_model(model)
+    return bool(value)
+
+
 def build_plan(config: dict[str, Any]) -> dict[str, Any]:
     gpus = _as_gpu_info_list(config)
     reserved = set(int(x) for x in config.get("hardware", {}).get("reserved_gpu_indices", []))
@@ -139,7 +148,12 @@ def build_plan(config: dict[str, Any]) -> dict[str, Any]:
     container_port = int(serving_defaults.get("container_port", 8000))
     image = str(serving_defaults.get("image", "vllm/vllm-openai:latest"))
     api_key_env = str(serving_defaults.get("api_key_env", "VLLM_API_KEY"))
-    enabled = _first_enabled_deployments(config)
+    enabled = _enabled_deployments(config)
+
+    if enabled and not available:
+        raise PlanningError(
+            "No GPUs detected or all GPUs were reserved. Run on a GPU host or set hardware.inventory in project.yaml."
+        )
 
     deployments: list[DeploymentPlan] = []
     free_pool = list(available)
@@ -166,7 +180,7 @@ def build_plan(config: dict[str, Any]) -> dict[str, Any]:
         else:
             tp = max(1, int(tp_value))
 
-        gpu_count = _resolve_gpu_count(config, dep, free_pool, len(enabled), tp)
+        gpu_count = _resolve_gpu_count(dep, free_pool, len(enabled), tp)
         if gpu_count < tp:
             gpu_count = tp
         if gpu_count > len(free_pool):
@@ -214,7 +228,7 @@ def build_plan(config: dict[str, Any]) -> dict[str, Any]:
         gpu_memory_utilization = tuning.get("gpu_memory_utilization")
         if gpu_memory_utilization is None:
             gpu_memory_utilization = serving_defaults.get("gpu_memory_utilization", 0.9)
-        max_model_len = tuning.get("max_model_len", serving_defaults.get("max_model_len", "auto"))
+        max_model_len = tuning.get("max_model_len", serving_defaults.get("max_model_len", 32768))
         max_num_batched_tokens = tuning.get(
             "max_num_batched_tokens",
             serving_defaults.get("max_num_batched_tokens", 8192),
@@ -225,6 +239,9 @@ def build_plan(config: dict[str, Any]) -> dict[str, Any]:
         if max_num_seqs is None:
             max_num_seqs = serving_defaults.get("max_num_seqs", 16)
         performance_mode = tuning.get("performance_mode") or serving_defaults.get("performance_mode", "balanced")
+        optimization_level = tuning.get("optimization_level")
+        if optimization_level is None:
+            optimization_level = serving_defaults.get("optimization_level", 2)
         enable_prefix_caching = tuning.get(
             "enable_prefix_caching",
             serving_defaults.get("enable_prefix_caching", True),
@@ -233,6 +250,7 @@ def build_plan(config: dict[str, Any]) -> dict[str, Any]:
         enforce_eager = bool(serving_defaults.get("enforce_eager", False))
         dtype = serving_defaults.get("dtype", "auto")
         dist_backend = serving_defaults.get("distributed_executor_backend", "mp")
+        enable_expert_parallel = _resolve_enable_expert_parallel(str(dep["model"]), serving_defaults, tuning, tp)
 
         args = [
             "--host", "0.0.0.0",
@@ -242,12 +260,14 @@ def build_plan(config: dict[str, Any]) -> dict[str, Any]:
             "--dtype", str(dtype),
             "--tensor-parallel-size", str(tp),
             "--data-parallel-size", str(dp),
+            "--data-parallel-backend", "mp",
             "--distributed-executor-backend", str(dist_backend),
             "--gpu-memory-utilization", str(gpu_memory_utilization),
             "--max-model-len", str(max_model_len),
             "--max-num-batched-tokens", str(max_num_batched_tokens),
             "--max-num-seqs", str(max_num_seqs),
             "--performance-mode", str(performance_mode),
+            "--optimization-level", str(optimization_level),
             "--api-key", f"${{{api_key_env}}}",
             "--disable-access-log-for-endpoints", "/health,/metrics,/ping",
         ]
@@ -259,6 +279,8 @@ def build_plan(config: dict[str, Any]) -> dict[str, Any]:
             args.append("--trust-remote-code")
         if enforce_eager:
             args.append("--enforce-eager")
+        if enable_expert_parallel:
+            args.append("--enable-expert-parallel")
         args.extend(str(x) for x in serving_defaults.get("extra_args", []))
         args.extend(str(x) for x in tuning.get("extra_args", []))
 
@@ -267,10 +289,11 @@ def build_plan(config: dict[str, Any]) -> dict[str, Any]:
             service_name=_sanitize_service_name(str(dep["name"])),
             model=str(dep["model"]),
             served_model_name=str(dep.get("served_model_name", dep["model"])),
-            host_port=int(dep.get("api_port", 18000)),
-            tp=int(tp),
-            dp=int(dp),
+            host_port=int(dep.get("api_port", container_port)),
+            tp=tp,
+            dp=dp,
             gpu_indices=sorted(int(g.index) for g in pool),
+            gpu_uuids=[g.uuid for g in sorted(pool, key=lambda x: x.index)],
             total_gpu_count=len(pool),
             container_port=container_port,
             image=image,
@@ -280,25 +303,24 @@ def build_plan(config: dict[str, Any]) -> dict[str, Any]:
                 "HF_HOME": "/root/.cache/huggingface",
                 "HF_HUB_CACHE": "/root/.cache/huggingface/hub",
                 "TZ": str(config.get("runtime", {}).get("timezone", "UTC")),
-                "NVIDIA_DRIVER_CAPABILITIES": "compute,utility",
             },
             labels={
-                "project": str(config.get("project_name", "vllm-stack")),
-                "deployment": str(dep["name"]),
+                "vllm-stack.deployment": str(dep["name"]),
+                "vllm-stack.model": str(dep["model"]),
+                "vllm-stack.tp": str(tp),
+                "vllm-stack.dp": str(dp),
             },
         )
         deployments.append(plan)
 
-    openai_urls = [f"http://{d.service_name}:{d.container_port}/v1" for d in deployments]
+    openai_base_urls = [f"http://{dep.service_name}:{dep.container_port}/v1" for dep in deployments]
     return {
         "project_name": config.get("project_name", "vllm-stack"),
-        "deployments": [d.to_dict() for d in deployments],
-        "openai_base_urls": openai_urls,
-        "serving_api_key_env": api_key_env,
         "paths": config.get("paths", {}),
         "runtime": config.get("runtime", {}),
         "open_webui": config.get("open_webui", {}),
         "postgres": config.get("postgres", {}),
-        "remaining_gpu_indices": [g.index for g in free_pool],
-        "detected_gpu_indices": [g.index for g in available],
+        "serving_defaults": serving_defaults,
+        "deployments": [dep.to_dict() for dep in deployments],
+        "openai_base_urls": openai_base_urls,
     }

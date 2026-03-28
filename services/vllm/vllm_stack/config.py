@@ -5,42 +5,57 @@ from typing import Any
 
 import yaml
 
-from .hardware import GPUInfo, detect_gpus, median_gpu_memory_gib
+from .hardware import GPUInfo, detect_gpus, max_gpu_memory_gib, sum_gpu_memory_gib
 
 
 DEFAULT_CONFIG_PATH = Path("project.yaml")
 
 
-def _pick_default_qwen35_model(gpus: list[GPUInfo]) -> tuple[str, str]:
-    if not gpus:
-        return ("Qwen/Qwen3.5-2B", "qwen3.5-2b")
+def _default_storage_root() -> Path:
+    preferred = Path("/data/service/docker/vllm-stack")
+    if preferred.parent.exists():
+        return preferred
+    return Path.cwd() / "state"
 
-    per_gpu_gib = median_gpu_memory_gib(gpus)
-    total_gib = sum(g.memory_total_gib for g in gpus)
+
+def _derive_served_model_name(model: str) -> str:
+    tail = model.split("/")[-1]
+    return tail.lower().replace("/", "-")
+
+
+def choose_default_qwen35_model(gpus: list[GPUInfo]) -> str:
     gpu_count = len(gpus)
+    per_gpu = max_gpu_memory_gib(gpus)
+    total = sum_gpu_memory_gib(gpus)
 
-    if gpu_count >= 4 and per_gpu_gib >= 80 and total_gib >= 300:
-        return ("Qwen/Qwen3.5-27B", "qwen3.5-27b")
-    if per_gpu_gib >= 40:
-        return ("Qwen/Qwen3.5-9B", "qwen3.5-9b")
-    if per_gpu_gib >= 16:
-        return ("Qwen/Qwen3.5-4B", "qwen3.5-4b")
-    if per_gpu_gib >= 8:
-        return ("Qwen/Qwen3.5-2B", "qwen3.5-2b")
-    return ("Qwen/Qwen3.5-0.8B", "qwen3.5-0.8b")
+    # Conservative, public Qwen3.5 defaults.
+    if gpu_count >= 2 and total >= 160 and per_gpu >= 40:
+        return "Qwen/Qwen3.5-35B-A3B"
+    if gpu_count >= 2 and total >= 96 and per_gpu >= 40:
+        return "Qwen/Qwen3.5-27B"
+    if per_gpu >= 18:
+        return "Qwen/Qwen3.5-9B"
+    if per_gpu >= 10:
+        return "Qwen/Qwen3.5-4B"
+    if per_gpu >= 6:
+        return "Qwen/Qwen3.5-2B"
+    return "Qwen/Qwen3.5-0.8B"
 
 
 def default_config(gpus: list[GPUInfo] | None = None) -> dict[str, Any]:
     gpus = list(gpus or detect_gpus())
     inventory = [g.to_dict() for g in gpus]
-    default_model, default_served_name = _pick_default_qwen35_model(gpus)
+    storage_root = _default_storage_root()
+    default_model = choose_default_qwen35_model(gpus)
+    served_name = _derive_served_model_name(default_model)
     return {
         "version": 1,
         "project_name": "vllm-stack",
         "paths": {
-            "hf_cache_dir": "/data/service/docker/hf-cache",
-            "openwebui_data_dir": "/data/service/docker/open-webui",
-            "postgres_data_dir": "/data/service/docker/open-webui-postgres",
+            "storage_root": str(storage_root),
+            "hf_cache_dir": str(storage_root / "hf-cache"),
+            "openwebui_data_dir": str(storage_root / "open-webui"),
+            "postgres_data_dir": str(storage_root / "postgres"),
         },
         "runtime": {
             "compose_cmd": "docker compose",
@@ -65,13 +80,15 @@ def default_config(gpus: list[GPUInfo] | None = None) -> dict[str, Any]:
             "dtype": "auto",
             "distributed_executor_backend": "mp",
             "gpu_memory_utilization": 0.90,
-            "max_model_len": "auto",
+            "max_model_len": 32768,
             "max_num_batched_tokens": 8192,
             "max_num_seqs": 16,
             "enable_prefix_caching": True,
             "performance_mode": "balanced",
+            "optimization_level": 2,
             "trust_remote_code": False,
             "enforce_eager": False,
+            "enable_expert_parallel": "auto",
             "extra_args": [],
         },
         "hardware": {
@@ -84,7 +101,7 @@ def default_config(gpus: list[GPUInfo] | None = None) -> dict[str, Any]:
                 "name": "default-chat",
                 "enabled": True,
                 "model": default_model,
-                "served_model_name": default_served_name,
+                "served_model_name": served_name,
                 "api_port": 18000,
                 "estimate": {
                     "parameters_b": "auto",
@@ -101,11 +118,13 @@ def default_config(gpus: list[GPUInfo] | None = None) -> dict[str, Any]:
                 },
                 "tuning": {
                     "gpu_memory_utilization": None,
-                    "max_model_len": "auto",
+                    "max_model_len": 32768,
                     "max_num_batched_tokens": None,
                     "max_num_seqs": None,
                     "performance_mode": None,
+                    "optimization_level": None,
                     "enable_prefix_caching": True,
+                    "enable_expert_parallel": "auto",
                     "extra_args": [],
                 },
             }

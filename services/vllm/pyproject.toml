@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vllm-stack-autoconfig"
-version = "0.1.0"
+version = "0.2.0"
 description = "Autoconfiguration, benchmark tuning, and docker compose generation for a local vLLM stack"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -19,6 +19,10 @@ vllm-stack-manage = "vllm_stack.cli:main"
 
 [tool.setuptools]
 include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["vllm_stack*"]
+exclude = ["generated*", "examples*", "state*"]
 
 [tool.setuptools.package-data]
 vllm_stack = ["templates/*.j2"]

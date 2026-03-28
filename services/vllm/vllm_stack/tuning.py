@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import copy
-import os
 import tempfile
 from pathlib import Path
 from typing import Any
@@ -13,34 +12,20 @@ from .planner import build_plan
 from .renderer import render_files
 
 
-GENERATED_ENV_PATH = Path(__file__).resolve().parent.parent / "generated" / ".env"
-
-
-def _lookup_secret(name: str, default: str = "") -> str:
-    value = os.environ.get(name)
-    if value:
-        return value
-    if GENERATED_ENV_PATH.exists():
-        file_values = parse_env_file(GENERATED_ENV_PATH)
-        if file_values.get(name):
-            return file_values[name]
-    return default
-
-
 PROFILE_CANDIDATES = {
     "safe": [
-        {"performance_mode": "interactivity", "gpu_memory_utilization": 0.88, "max_num_batched_tokens": 4096, "max_num_seqs": 8},
-        {"performance_mode": "balanced", "gpu_memory_utilization": 0.90, "max_num_batched_tokens": 8192, "max_num_seqs": 16},
+        {"performance_mode": "interactivity", "optimization_level": 1, "gpu_memory_utilization": 0.88, "max_num_batched_tokens": 4096, "max_num_seqs": 8},
+        {"performance_mode": "balanced", "optimization_level": 2, "gpu_memory_utilization": 0.90, "max_num_batched_tokens": 8192, "max_num_seqs": 16},
     ],
     "balanced": [
-        {"performance_mode": "interactivity", "gpu_memory_utilization": 0.90, "max_num_batched_tokens": 4096, "max_num_seqs": 8},
-        {"performance_mode": "balanced", "gpu_memory_utilization": 0.92, "max_num_batched_tokens": 8192, "max_num_seqs": 16},
-        {"performance_mode": "throughput", "gpu_memory_utilization": 0.94, "max_num_batched_tokens": 16384, "max_num_seqs": 32},
+        {"performance_mode": "interactivity", "optimization_level": 1, "gpu_memory_utilization": 0.90, "max_num_batched_tokens": 4096, "max_num_seqs": 8},
+        {"performance_mode": "balanced", "optimization_level": 2, "gpu_memory_utilization": 0.92, "max_num_batched_tokens": 8192, "max_num_seqs": 16},
+        {"performance_mode": "throughput", "optimization_level": 2, "gpu_memory_utilization": 0.94, "max_num_batched_tokens": 16384, "max_num_seqs": 32},
     ],
     "aggressive": [
-        {"performance_mode": "balanced", "gpu_memory_utilization": 0.94, "max_num_batched_tokens": 16384, "max_num_seqs": 32},
-        {"performance_mode": "throughput", "gpu_memory_utilization": 0.95, "max_num_batched_tokens": 24576, "max_num_seqs": 48},
-        {"performance_mode": "throughput", "gpu_memory_utilization": 0.96, "max_num_batched_tokens": 32768, "max_num_seqs": 64},
+        {"performance_mode": "balanced", "optimization_level": 2, "gpu_memory_utilization": 0.94, "max_num_batched_tokens": 16384, "max_num_seqs": 32},
+        {"performance_mode": "throughput", "optimization_level": 3, "gpu_memory_utilization": 0.95, "max_num_batched_tokens": 24576, "max_num_seqs": 48},
+        {"performance_mode": "throughput", "optimization_level": 3, "gpu_memory_utilization": 0.96, "max_num_batched_tokens": 32768, "max_num_seqs": 64},
     ],
 }
 
@@ -70,6 +55,7 @@ def tune_deployment(
     objective: str,
     tuning_profile: str,
     apply: bool,
+    output_dir: str | Path,
 ) -> dict[str, Any]:
     target = _select_target(config, deployment_name)
     benchmark_cfg = config.get("benchmark", {})
@@ -78,12 +64,14 @@ def tune_deployment(
         "api_key_env",
         config.get("serving_defaults", {}).get("api_key_env", "VLLM_API_KEY"),
     )
-    api_key = _lookup_secret(api_key_env)
     host = benchmark_cfg.get("host", "127.0.0.1")
 
     trials = []
     best: dict[str, Any] | None = None
     best_score: float | None = None
+
+    base_env = parse_env_file(Path(output_dir) / ".env")
+    api_key = base_env.get(api_key_env, "change_me")
 
     with tempfile.TemporaryDirectory(prefix="vllm-stack-tune-") as temp_dir_str:
         temp_dir = Path(temp_dir_str)
@@ -104,6 +92,8 @@ def tune_deployment(
             compose_up(compose_cmd, rendered["compose"], rendered["env"])
             try:
                 wait_for_http_ok(f"http://{host}:{dep_plan['host_port']}/health", timeout_s=1800)
+                trial_env = parse_env_file(rendered["env"])
+                api_key = trial_env.get(api_key_env, api_key)
                 result = run_benchmark(
                     base_url=base_url,
                     api_key=api_key,

@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-python manage.py init --force
 python manage.py render
 python manage.py up
 python manage.py benchmark --deployment default-chat

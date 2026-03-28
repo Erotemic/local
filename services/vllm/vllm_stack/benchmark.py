@@ -118,9 +118,7 @@ def _stream_request(
     ttft = None
     usage = {}
     for raw_line in response.iter_lines(decode_unicode=True):
-        if not raw_line:
-            continue
-        if not raw_line.startswith("data: "):
+        if not raw_line or not raw_line.startswith("data: "):
             continue
         body = raw_line[6:].strip()
         if body == "[DONE]":
