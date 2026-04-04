@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from .benchmark import run_benchmark
-from .config import DEFAULT_CONFIG_PATH, default_config, load_config, merge_inventory_if_needed, save_config
+from .config import DEFAULT_CONFIG_PATH, default_config, load_config, save_config
 from .docker_utils import compose_down, compose_up, wait_for_http_ok
 from .env_utils import parse_env_file
 from .hardware import detect_gpus
@@ -26,7 +26,7 @@ def _config_path(args: argparse.Namespace) -> Path:
 
 def _load_and_refresh(path: Path) -> dict[str, Any]:
     config = load_config(path)
-    return merge_inventory_if_needed(config)
+    return config
 
 
 def cmd_init(args: argparse.Namespace) -> int:

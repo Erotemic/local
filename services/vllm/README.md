@@ -24,7 +24,11 @@ A self-contained starter project for standing up a local multi-GPU **vLLM + Open
 python -m venv .venv
 source .venv/bin/activate
 pip install -e .
+
 python manage.py init
+
+# You can edit the generated project.yaml file to modify high level settings at this point.
+
 python manage.py render
 ```
 
@@ -117,3 +121,62 @@ python manage.py tune --deployment default-chat --objective balanced --apply
 - `ENABLE_PERSISTENT_CONFIG=False` is used by default so env configuration stays authoritative.
 - The benchmark harness calls the OpenAI-compatible `/chat/completions` API exposed by vLLM.
 - The tuning loop focuses on supported vLLM knobs that materially affect memory pressure and latency/throughput tradeoffs.
+
+
+### Reconfiguration
+
+
+You should be able to change your config if you need to:
+
+
+```bash
+cd /home/joncrall/local/services/vllm
+
+# 1) edit the source config
+$EDITOR project.yaml
+
+# 2) regenerate the derived files
+python manage.py render
+
+# 3) stop old containers using the old config
+python manage.py down
+
+# 4) start fresh with the new config
+python manage.py up
+```
+
+
+#### Check vllm container
+
+```bash
+
+source generated/.env
+docker exec -it llm-default-chat curl \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $VLLM_API_KEY" \
+   0.0.0.0:8000/v1/models
+
+curl \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $VLLM_API_KEY" \
+  http://127.0.0.1:18000/v1/models
+
+curl \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $VLLM_API_KEY" \
+  http://127.0.0.1:18000/v1/health
+
+
+curl -sS \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $VLLM_API_KEY" \
+  http://127.0.0.1:18000/v1/chat/completions \
+  -d '{
+    "model": "qwen3.5-9b",
+    "messages": [
+      {"role": "user", "content": "Say hello briefly."}
+    ],
+    "max_tokens": 32
+  }' | jq
+
+```

@@ -92,7 +92,6 @@ def default_config(gpus: list[GPUInfo] | None = None) -> dict[str, Any]:
             "extra_args": [],
         },
         "hardware": {
-            "auto_detect": True,
             "reserved_gpu_indices": [],
             "inventory": inventory,
         },
@@ -152,10 +151,3 @@ def load_config(path: str | Path = DEFAULT_CONFIG_PATH) -> dict[str, Any]:
 def save_config(config: dict[str, Any], path: str | Path = DEFAULT_CONFIG_PATH) -> None:
     with Path(path).open("w", encoding="utf-8") as file:
         yaml.safe_dump(config, file, sort_keys=False, default_flow_style=False)
-
-
-def merge_inventory_if_needed(config: dict[str, Any]) -> dict[str, Any]:
-    hardware = config.setdefault("hardware", {})
-    if hardware.get("auto_detect", True):
-        hardware["inventory"] = [g.to_dict() for g in detect_gpus()]
-    return config

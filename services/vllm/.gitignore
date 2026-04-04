@@ -4,3 +4,5 @@ __pycache__/
 generated/
 state/
 *.egg-info/
+project.yaml
+.env

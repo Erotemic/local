@@ -38,7 +38,7 @@ services:
       - {{ item | tojson }}
 {% endfor %}
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:{{ dep.container_port }}/health').read()"]
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:{{ dep.container_port }}/health').read()"]
       interval: 20s
       timeout: 10s
       retries: 60

@@ -237,6 +237,7 @@ alias vid='cd ~/data/dvc-repos/viame_dvc'
 
 alias wa='cd $HOME/code/geowatch'
 alias ai='cd $HOME/code/aiq-magnet'
+alias ha='cd $HOME/code/helm_audit'
 alias wsd='cd $HOME/code/watch-smartflow-dags/'
 alias wa2='cd $HOME/code/watch2'
 
@@ -1419,4 +1420,22 @@ ollama-web(){
     #    done
     #    echo "note: may take a second to fully spin up"
     #fi
+}
+
+tmux-dump-pane(){
+    # 1. Generate the ISO 8601 timestamp
+    timestamp=$(date +%Y-%m-%dT%H-%M-%S)
+
+    # 2. Get the session, window, and pane metadata (sanitized for filenames)
+    # #{session_name}, #{window_name}, and #{pane_title} are common tokens.
+    # We use 'tr' to replace spaces/slashes with underscores for safe filenames.
+    metadata=$(tmux display-message -p "#{session_name}_#{window_name}_#{pane_title}" | tr ' /' '__')
+
+    # 3. Define the final filename
+    filename="${metadata}_${timestamp}.log"
+
+    # 4. Capture the entire pane scrollback (-S -) and save to the file
+    tmux capture-pane -pS - > "$filename"
+
+    echo "Pane dumped to: $filename"
 }
