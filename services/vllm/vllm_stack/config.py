@@ -95,12 +95,21 @@ def default_config(gpus: list[GPUInfo] | None = None) -> dict[str, Any]:
             "reserved_gpu_indices": [],
             "inventory": inventory,
         },
+        "models": {
+            "default_qwen": {
+                "source": default_model,
+                "served_model_name": served_name,
+                "dtype": "auto",
+                "max_model_len": 32768,
+                "trust_remote_code": False,
+                "extra_args": [],
+            },
+        },
         "deployments": [
             {
                 "name": "default-chat",
                 "enabled": True,
-                "model": default_model,
-                "served_model_name": served_name,
+                "model_ref": "default_qwen",
                 "api_port": 18000,
                 "estimate": {
                     "parameters_b": "auto",
@@ -117,7 +126,7 @@ def default_config(gpus: list[GPUInfo] | None = None) -> dict[str, Any]:
                 },
                 "tuning": {
                     "gpu_memory_utilization": None,
-                    "max_model_len": 32768,
+                    "max_model_len": None,
                     "max_num_batched_tokens": None,
                     "max_num_seqs": None,
                     "performance_mode": None,
