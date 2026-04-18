@@ -3312,3 +3312,9 @@ install_fclones(){
     fclones remove --path '**/*\(*\)*' <dupes.txt   # remove only files in the /trash folder
 
 }
+
+
+install_vocalinux(){
+    #  https://vocalinux.com/#install
+    curl -fsSL raw.githubusercontent.com/jatinkrmalik/vocalinux/main/install.sh -o /tmp/vl.sh && bash /tmp/vl.sh
+}

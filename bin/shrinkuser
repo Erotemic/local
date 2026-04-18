@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+shrinkuser() {
+    local path="$1"
+    local home_symbol="${2:-~}"
+
+    if [[ "$path" == "$HOME" ]]; then
+        printf '%s\n' "$home_symbol"
+    elif [[ "$path" == "$HOME/"* ]]; then
+        printf '%s/%s\n' "$home_symbol" "${path#"$HOME"/}"
+    else
+        printf '%s\n' "$path"
+    fi
+}
+
+main() {
+    local path=""
+    local home_symbol="${2:-~}"
+
+    if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+        cat <<'EOF'
+Usage:
+  shrinkuser PATH [HOME_SYMBOL]
+  command | shrinkuser [HOME_SYMBOL]
+
+Examples:
+  shrinkuser "$HOME/code/project"
+  shrinkuser "$HOME/code/project" '$HOME'
+  pwd | shrinkuser
+  pwd | shrinkuser '$HOME'
+EOF
+        exit 0
+    fi
+
+    if [[ $# -ge 1 ]]; then
+        path="$1"
+        [[ $# -ge 2 ]] && home_symbol="$2"
+    else
+        IFS= read -r path || {
+            echo "Usage: shrinkuser PATH [HOME_SYMBOL]" >&2
+            exit 1
+        }
+    fi
+
+    shrinkuser "$path" "$home_symbol"
+}
+
+main "$@"
