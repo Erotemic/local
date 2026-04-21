@@ -58,7 +58,7 @@ vnoremap ge :call vimtk#format_paragraph()<CR>
 vnoremap fe :call vimtk#format_paragraph()<CR>
 vnoremap fp :call vimtk#format_paragraph()<CR>
 noremap <leader>ge :call vimtk#format_paragraph()<CR>
-noremap <c-g> :call vimtk#format_paragraph('{"max_width": 110}')<CR>
+noremap <c-g> :call vimtk#format_paragraph('{"max_width": 80}')<CR>
 noremap <c-f> :call vimtk#format_paragraph('{"max_width": 80, "myprefix": False, "sentence_break": False}')<CR>
 
 " Quick reference jumping
