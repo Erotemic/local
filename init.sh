@@ -186,6 +186,7 @@ if [ "$_GITUSER" == "" ]; then
     git config --global url."git@github.com:Erotemic/".insteadOf https://github.com/Erotemic/
     git config --global url."git@github.com:AIQ-Kitware/".insteadOf https://github.com/AIQ-Kitware/
     git config --global url."git@github.com:Kitware/".insteadOf https://github.com/Kitware/
+    git config --global url."git@gitlab.kitware.com:computer-vision".insteadOf https://gitlab.kitware.com/computer-vision
 
     mkdir -p ~/tmp
     mkdir -p ~/code

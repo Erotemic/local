@@ -893,7 +893,7 @@ build_vim_for_pyenv(){
         EXEC_PREFIX=$VIRTUAL_ENV
         CONFIG_DIR=$("$(pyenv prefix)"/bin/python-config --configdir)
         #CONFIG_DIR=$($VIRTUAL_ENV/bin/python-config --configdir)
-        PYTHON_CMD=$(which python)
+        PYTHON_CMD=$(which python3)
     else
         # Seems like this doesnt always work
         PREFIX=$(pyenv prefix)
@@ -945,6 +945,182 @@ build_vim_for_pyenv(){
     #else
     #    pip install ubelt pyperclip shellcheck-py six xinspect psutil pyflakes
     #fi
+}
+
+
+
+build_vim_for_uv(){
+    __doc__="
+    Helper to install vim/gvim compiled against a specific uv-managed Python
+    virtual environment.
+
+    Example:
+        source ~/local/tools/pyenv_ext/pyenv_ext_commands.sh
+        build_vim_for_uv
+    "
+    BUILD_VIM_UV_OK=1
+
+    BUILD_VIM_UV_PYTHON_CMD="$HOME/.local/uv/envs/uvpy3.13.13/bin/python"
+    BUILD_VIM_UV_REF="${VIM_REF:-master}"
+
+    if [[ ! -x "$BUILD_VIM_UV_PYTHON_CMD" ]]; then
+        echo "bad BUILD_VIM_UV_PYTHON_CMD=$BUILD_VIM_UV_PYTHON_CMD"
+        BUILD_VIM_UV_OK=0
+    fi
+
+    if [[ "$BUILD_VIM_UV_OK" == "1" ]]; then
+        BUILD_VIM_UV_VENV_PREFIX="$("$BUILD_VIM_UV_PYTHON_CMD" -c 'import sys; print(sys.prefix)')"
+        BUILD_VIM_UV_BASE_PREFIX="$("$BUILD_VIM_UV_PYTHON_CMD" -c 'import sys; print(getattr(sys, "base_prefix", sys.prefix))')"
+        BUILD_VIM_UV_INCLUDEPY="$("$BUILD_VIM_UV_PYTHON_CMD" -c 'import sysconfig; print(sysconfig.get_config_var("INCLUDEPY") or "")')"
+        BUILD_VIM_UV_CONFIG_DIR="$("$BUILD_VIM_UV_PYTHON_CMD" -c 'import sysconfig; print(sysconfig.get_config_var("LIBPL") or "")')"
+        BUILD_VIM_UV_PYTHON_LIBDIR="$("$BUILD_VIM_UV_PYTHON_CMD" -c 'import sysconfig; print(sysconfig.get_config_var("LIBDIR") or "")')"
+        BUILD_VIM_UV_LDLIBRARY="$("$BUILD_VIM_UV_PYTHON_CMD" -c 'import sysconfig; print(sysconfig.get_config_var("LDLIBRARY") or "")')"
+        BUILD_VIM_UV_LIBPYTHON="$BUILD_VIM_UV_PYTHON_LIBDIR/$BUILD_VIM_UV_LDLIBRARY"
+
+        echo "BUILD_VIM_UV_PYTHON_CMD=$BUILD_VIM_UV_PYTHON_CMD"
+        echo "BUILD_VIM_UV_REF=$BUILD_VIM_UV_REF"
+        echo "BUILD_VIM_UV_VENV_PREFIX=$BUILD_VIM_UV_VENV_PREFIX"
+        echo "BUILD_VIM_UV_BASE_PREFIX=$BUILD_VIM_UV_BASE_PREFIX"
+        echo "BUILD_VIM_UV_INCLUDEPY=$BUILD_VIM_UV_INCLUDEPY"
+        echo "BUILD_VIM_UV_CONFIG_DIR=$BUILD_VIM_UV_CONFIG_DIR"
+        echo "BUILD_VIM_UV_PYTHON_LIBDIR=$BUILD_VIM_UV_PYTHON_LIBDIR"
+        echo "BUILD_VIM_UV_LDLIBRARY=$BUILD_VIM_UV_LDLIBRARY"
+        echo "BUILD_VIM_UV_LIBPYTHON=$BUILD_VIM_UV_LIBPYTHON"
+
+        if [[ "$BUILD_VIM_UV_VENV_PREFIX" != "$HOME"/.local/uv/envs/* ]]; then
+            echo "Refusing suspicious BUILD_VIM_UV_VENV_PREFIX=$BUILD_VIM_UV_VENV_PREFIX"
+            BUILD_VIM_UV_OK=0
+        fi
+
+        if [[ ! -f "$BUILD_VIM_UV_INCLUDEPY/Python.h" ]]; then
+            echo "missing Python.h: $BUILD_VIM_UV_INCLUDEPY/Python.h"
+            BUILD_VIM_UV_OK=0
+        fi
+
+        if [[ ! -d "$BUILD_VIM_UV_CONFIG_DIR" ]]; then
+            echo "missing BUILD_VIM_UV_CONFIG_DIR: $BUILD_VIM_UV_CONFIG_DIR"
+            BUILD_VIM_UV_OK=0
+        fi
+
+        if [[ ! -f "$BUILD_VIM_UV_LIBPYTHON" ]]; then
+            echo "missing libpython: $BUILD_VIM_UV_LIBPYTHON"
+            BUILD_VIM_UV_OK=0
+        fi
+    fi
+
+    if [[ "$BUILD_VIM_UV_OK" == "1" ]]; then
+        if [[ ! -d "$HOME/code/vim" ]]; then
+            git clone https://github.com/vim/vim.git "$HOME/code/vim"
+        else
+            git -C "$HOME/code/vim" fetch --tags --prune
+        fi
+    fi
+
+    if [[ "$BUILD_VIM_UV_OK" == "1" ]]; then
+        source "$HOME/local/init/utils.sh"
+        apt_ensure build-essential libncurses-dev gnome-devel libgtk-3-dev libxt-dev
+    fi
+
+    if [[ "$BUILD_VIM_UV_OK" == "1" ]]; then
+        cd "$HOME/code/vim"
+
+        git checkout "$BUILD_VIM_UV_REF"
+
+        if [[ "$BUILD_VIM_UV_REF" == "master" ]]; then
+            git pull --ff-only
+        fi
+
+        make distclean || true
+
+        unset PYTHONHOME
+        unset PYTHONPATH
+        unset VIRTUAL_ENV
+
+        export CPPFLAGS="-I$BUILD_VIM_UV_INCLUDEPY"
+        export LDFLAGS="-rdynamic -L$BUILD_VIM_UV_PYTHON_LIBDIR -Wl,-rpath,$BUILD_VIM_UV_PYTHON_LIBDIR"
+
+        ./configure \
+            "--prefix=$BUILD_VIM_UV_VENV_PREFIX" \
+            "--exec-prefix=$BUILD_VIM_UV_VENV_PREFIX" \
+            --enable-pythoninterp=no \
+            --enable-python3interp=dynamic \
+            "--with-python3-command=$BUILD_VIM_UV_PYTHON_CMD" \
+            "--with-python3-config-dir=$BUILD_VIM_UV_CONFIG_DIR" \
+            --enable-gui=gtk3
+
+        if [[ "$?" != "0" ]]; then
+            echo "configure failed"
+            BUILD_VIM_UV_OK=0
+        fi
+    fi
+
+    if [[ "$BUILD_VIM_UV_OK" == "1" ]]; then
+        perl -0pi -e "s/\\s*-DPYTHON3_HOME='L\\\"[^\\\"]*\\\"'//g; s|-DDYNAMIC_PYTHON3_DLL=\\\\\\\"[^\\\"]*\\\\\\\"|-DDYNAMIC_PYTHON3_DLL=\\\\\\\"$BUILD_VIM_UV_LIBPYTHON\\\\\\\"|g" src/auto/config.mk
+
+        echo "--patched python config--"
+        grep 'PYTHON3\|prefix\|DYNAMIC\|STABLE' src/auto/config.mk
+
+        rm -f src/objects/if_python3.o src/vim
+
+        make -j"$(nproc)"
+
+        if [[ "$?" != "0" ]]; then
+            echo "make failed"
+            BUILD_VIM_UV_OK=0
+        fi
+    fi
+
+    if [[ "$BUILD_VIM_UV_OK" == "1" ]]; then
+        make install
+
+        if [[ "$?" != "0" ]]; then
+            echo "make install failed"
+            BUILD_VIM_UV_OK=0
+        fi
+    fi
+
+    if [[ "$BUILD_VIM_UV_OK" == "1" ]]; then
+        uv pip install --python "$BUILD_VIM_UV_PYTHON_CMD" \
+            ubelt pyperclip shellcheck-py six xinspect psutil pyflakes packaging
+
+        echo "--vim version check--"
+        "$BUILD_VIM_UV_VENV_PREFIX/bin/vim" --version | grep python3
+
+        echo "--vim python file check--"
+        rm -f /tmp/vim-python-check.txt /tmp/vim-python-redir.txt /tmp/vim-python-stdout.txt /tmp/vim-python-stderr.txt
+
+        unset PYTHONHOME
+        unset PYTHONPATH
+        unset VIRTUAL_ENV
+
+        "$BUILD_VIM_UV_VENV_PREFIX/bin/vim" -Nu NONE -n -es \
+            +'redir! > /tmp/vim-python-redir.txt' \
+            +'silent echo "has_python3=" . has("python3")' \
+            +'silent echo "has_python3_dynamic=" . has("python3_dynamic")' \
+            +'silent echo "v_python3_version=" . v:python3_version' \
+            +'py3 import sys, pathlib, ubelt; pathlib.Path("/tmp/vim-python-check.txt").write_text("executable=" + sys.executable + "\nprefix=" + sys.prefix + "\nbase_prefix=" + sys.base_prefix + "\nubelt=" + ubelt.__file__ + "\n")' \
+            +'redir END' \
+            +qall \
+            > /tmp/vim-python-stdout.txt \
+            2> /tmp/vim-python-stderr.txt
+
+        echo "--stderr--"
+        cat /tmp/vim-python-stderr.txt
+
+        echo "--redir--"
+        cat /tmp/vim-python-redir.txt
+
+        echo "--python check--"
+        cat /tmp/vim-python-check.txt
+
+        echo "--gvim version check--"
+        "$BUILD_VIM_UV_VENV_PREFIX/bin/gvim" --version | grep python3
+
+        echo "Built Vim/GVim into: $BUILD_VIM_UV_VENV_PREFIX/bin"
+        echo "Run:"
+        echo "    export PATH=\"$BUILD_VIM_UV_VENV_PREFIX/bin:\$PATH\""
+        echo "    hash -r"
+    fi
 }
 
 
@@ -1070,6 +1246,7 @@ bootstrap_dependencies(){
 install_python_from_uv(){
     # List available python versions
     # uv python list
+    # uv python list --all-versions
 
     # Test to try working with uv as the main tool
     # https://docs.astral.sh/uv/getting-started/installation/#github-releases
@@ -1081,7 +1258,8 @@ install_python_from_uv(){
 
     UV_ENV_DPATH=$HOME/.local/uv/envs
     #CHOSEN_PYTHON_VERSION=3.14.3
-    CHOSEN_PYTHON_VERSION=3.13.2
+    #CHOSEN_PYTHON_VERSION=3.13.13
+    CHOSEN_PYTHON_VERSION=3.12.13
     VENV_NAME=uvpy$CHOSEN_PYTHON_VERSION
     VENV_PATH=$UV_ENV_DPATH/$VENV_NAME
     mkdir -p "$VENV_PATH"

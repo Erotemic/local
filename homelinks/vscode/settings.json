@@ -253,5 +253,10 @@
   "roo-cline.deniedCommands": [],
   "claudeCode.selectedModel": "opus",
   "claudeCode.allowDangerouslySkipPermissions": true,
-  "claudeCode.preferredLocation": "panel"
+  "claudeCode.preferredLocation": "panel",
+  "terminal.integrated.commandsToSkipShell": [
+    "kilo-code.new.agentManagerOpen",
+    "kilo-code.new.agentManager.showTerminal"
+  ],
+  "kilo-code.new.language": "en"
 }

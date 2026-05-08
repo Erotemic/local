@@ -246,19 +246,20 @@ fi
 #source $HOME/local/tools/pyenv_ext/pyenv_ext_commands.sh
 # Add the pyenv command to our environment if it exists
 export UV_ENV_DPATH=$HOME/.local/uv/envs
-export PYENV_ROOT="$HOME/.pyenv"
 
-if [ -d "$PYENV_ROOT" ]; then
-    export PATH="$PYENV_ROOT/bin:$PATH"
-    eval "$("$PYENV_ROOT"/bin/pyenv init -)"
-    #eval "$("$PYENV_ROOT"/bin/pyenv init --path)"
-    #eval "$(pyenv init --path)"
-    #eval "$(pyenv init -)"
-    source "$PYENV_ROOT/completions/pyenv.bash"
-    export PYENV_PREFIX
-    PYENV_PREFIX=$(pyenv prefix)
-    #echo "PYENV_PREFIX = $PYENV_PREFIX"
-fi
+#export PYENV_ROOT="$HOME/.pyenv"
+#if [ -d "$PYENV_ROOT" ]; then
+#    export PATH="$PYENV_ROOT/bin:$PATH"
+#    eval "$("$PYENV_ROOT"/bin/pyenv init -)"
+#    #eval "$("$PYENV_ROOT"/bin/pyenv init --path)"
+#    #eval "$(pyenv init --path)"
+#    #eval "$(pyenv init -)"
+#    source "$PYENV_ROOT/completions/pyenv.bash"
+#    export PYENV_PREFIX
+#    PYENV_PREFIX=$(pyenv prefix)
+#    #echo "PYENV_PREFIX = $PYENV_PREFIX"
+#fi
+
 if [ "$BENCH_BASHRC" ] ; then
     trace_tick "[BenchBashRC]: $(date "+%H:%M:%S:%N") - PostPyenv"
 fi
@@ -372,7 +373,7 @@ fi
 
 
 # HACK FOR ME
-_CONDA_ROOT="$HOME/.local/conda/""$PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION"
+#_CONDA_ROOT="$HOME/.local/conda/""$PYENV_ROOT/versions/$CHOSEN_PYTHON_VERSION/envs/pyenv$CHOSEN_PYTHON_VERSION"
 
 _AUTOSTART_VENV=1
 if [[ "$_AUTOSTART_VENV" == "1" ]]; then
@@ -410,7 +411,7 @@ if [[ "$_AUTOSTART_VENV" == "1" ]]; then
             read_lines_into_array "$PTYHON_VERSION_PRIORITY_FPATH" PYTHON_VERSION_PRIORITY
         else
             #PYTHON_VERSION_PRIORITY=( "3.12.3" "3.11.2" "3.10.10" "3.10.5" "3.9.9" )
-            PYTHON_VERSION_PRIORITY=( "3.13.2" "3.11.9" "3.11.2" "3.10.10" "3.10.5" "3.9.9" )
+            PYTHON_VERSION_PRIORITY=( "3.13.13" "3.13.2" "3.11.9" "3.11.2" "3.10.10" "3.10.5" "3.9.9" )
             #PYTHON_VERSION_PRIORITY=( "3.10.5" )
         fi
        

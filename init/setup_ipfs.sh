@@ -33,10 +33,23 @@ export PATH=$INSTALL_PREFIX/bin:$PATH
 #export IPFS_CLUSTER_PATH=$HOME/.ipfs-cluster
 
 
+# FIXME: Figure this out on a per-machine basis
 # NOTE: its very important that this enviornment variable be the same between
 # local ipfs pin commands and the systemctl service running your ipfs daemon
 export IPFS_PATH=/data/ipfs
 export IPFS_CLUSTER_PATH=/data/ipfs-cluster
+# Prefer flash storage when present; otherwise default to /data.
+if test -d /flash/ipfs; then
+    export IPFS_PATH=/flash/ipfs
+else
+    export IPFS_PATH=/data/ipfs
+fi
+
+if test -d /flash/ipfs-cluster; then
+    export IPFS_CLUSTER_PATH=/flash/ipfs-cluster
+else
+    export IPFS_CLUSTER_PATH=/data/ipfs-cluster
+fi
 #export IPFS_PATH=/flash/ipfs
 #export IPFS_CLUSTER_PATH=/flash/ipfs-cluster
 
@@ -477,7 +490,7 @@ install_ipfs(){
     ARCH="$(dpkg --print-architecture)"
     echo "ARCH = $ARCH"
     #IPFS_VERSION="v0.29.0"
-    IPFS_VERSION="v0.39.0"
+    IPFS_VERSION="v0.41.0"
     #IPFS_KEY=kubo_${IPFS_VERSION}_linux-${ARCH}
     IPFS_KEY=kubo_${IPFS_VERSION}_linux-${ARCH}.tar.gz
     URL="https://dist.ipfs.tech/kubo/${IPFS_VERSION}/${IPFS_KEY}"
@@ -513,6 +526,10 @@ install_ipfs(){
 
         ["kubo_v0.39.0_linux-arm64.tar.gz.sha512"]="b4f61e3bea7a310e3089eb42da83c92290478d326b56a4c0369913430b1e9e836be55f3f92ba673544af1b8a7904f7a76791cd7f79ec2b9b5fb9e1f671c01f4d"
         ["kubo_v0.39.0_linux-amd64.tar.gz.sha512"]="b23d2a7a3a0a4ee43028866a5259ba4521aa424a6c33b95e4d4e00ac3fa3829d9a49ed70fec6700d514238cc8e2befcb10ab99130ecbf1ff3743edb52a860cc8"
+
+        ["kubo_v0.41.0_linux-amd64.tar.gz.sha512"]="5c0f3dba6d29d30e3f3cfdbf7f7b05c228167d21211207b9c17a106f5c846d33895cd42a618eed989073b48af4a870df7f1f6c86a052796b02ea79767b66e4ef"
+        ["kubo_v0.41.0_linux-arm64.tar.gz.sha512"]="443a205d97dad590a6828e6ce994421b4fd6fa55feb9173c79b7b533b9d2c39646f0bfe2b9bcc3c6e25fe7876eae335586fddcfeefd48b2beb48c522d9713032"
+        ["kubo_v0.41.0_linux-riscv64.tar.gz.sha512"]="c850346ac0fdc18a3aa9f1b6baf70d0a45ef13f2693e65027c5a6a1346a555238e344e4ba7de0455721ca9ec49cd26b84cf9234166a9efdc2996c8323e6a1c71"
     )
     #DST=$(basename "$URL")
     #EXPECTED_SHA512="$EXPECTED_HASH"
