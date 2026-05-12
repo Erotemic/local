@@ -57,7 +57,7 @@ alias df='df -x"squashfs" -x"tmpfs"'
 #    #--exclude "*.html*" \
 #    #--exclude "*.css*" \
 
-cgrep() {
+cgrep(){
     __doc__='
     Extension of the original cgrep alias that handles a .cgrep-ignore file.
     '
