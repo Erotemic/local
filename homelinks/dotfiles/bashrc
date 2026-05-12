@@ -624,15 +624,14 @@ fi
 
 export PATH="$HOME/.dotnet:$PATH"
 export PATH="$ANDROID_SDK_ROOT/platform-tools:$PATH"
-
 # >>> ambition android env >>>
 export ANDROID_SDK_ROOT="$HOME/Android/Sdk"
 export ANDROID_HOME="$ANDROID_SDK_ROOT"
 export ANDROID_NDK_ROOT="$ANDROID_SDK_ROOT/ndk/27.2.12479018"
 export ANDROID_NDK_HOME="$ANDROID_NDK_ROOT"
-export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/emulator:$PATH"
+export GRADLE_HOME="$HOME/.local/share/gradle/gradle-8.9"
+export PATH="$GRADLE_HOME/bin:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/emulator:$PATH"
 # <<< ambition android env <<<
-
 # >>> ambition gradle env >>>
 export GRADLE_HOME="$HOME/.local/share/gradle/gradle-8.9"
 export PATH="$GRADLE_HOME/bin:$PATH"
