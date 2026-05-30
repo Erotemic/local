@@ -1,5 +1,5 @@
 {
-  "workbench.colorTheme": "Visual Studio Dark",
+  "workbench.colorTheme": "Yarn Spinner Dark",
   "continue.telemetryEnabled": false,
   "vim.leader": ",",
   "vim.normalModeKeyBindingsNonRecursive": [
@@ -223,7 +223,8 @@
     "plaintext": false,
     "markdown": false,
     "scminput": false,
-    "python": false
+    "python": false,
+    "yarnspinner": false
   },
   "redhat.telemetry.enabled": false,
   "ty.inlayHints.variableTypes": false,
@@ -258,5 +259,8 @@
     "kilo-code.new.agentManagerOpen",
     "kilo-code.new.agentManager.showTerminal"
   ],
-  "kilo-code.new.language": "en"
+  "kilo-code.new.language": "en",
+"claudeCode.initialPermissionMode": "bypassPermissions",
+"chat.remoteAgentHosts": [],
+"workbench.iconTheme": "yarnspinner-icons"
 }

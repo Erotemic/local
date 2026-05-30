@@ -1,16 +1,39 @@
 services:
+  image-workflow-api:
+    container_name: image-workflow-api
+    build:
+      context: ./image-workflow-api
+    image: local/image-workflow-api:dev
+    # This is a local image, not something to pull from Docker Hub.
+    # Use: docker compose build image-workflow-api
+    pull_policy: never
+    restart: unless-stopped
+    environment:
+      COMFYUI_URL: ${COMFYUI_URL:-http://comfyui:8188}
+      COMFYUI_INPUT_DIR: ${COMFYUI_INPUT_DIR:-/comfy-input}
+      COMFYUI_OUTPUT_DIR: ${COMFYUI_OUTPUT_DIR:-/comfy-output}
+      WORKFLOW_DIR: ${WORKFLOW_DIR:-/workflows}
+      API_HOST: ${API_HOST:-0.0.0.0}
+      API_PORT: ${API_PORT:-8190}
+      REQUEST_TIMEOUT: ${REQUEST_TIMEOUT:-30}
+    ports:
+      - "${IMAGE_WORKFLOW_API_PORT:-8190}:8190"
+    volumes:
+      - ${COMFYUI_INPUT_HOST_DIR:-/data/service/comfyui/storage-user/input}:/comfy-input
+      - ${COMFYUI_OUTPUT_HOST_DIR:-/data/service/comfyui/storage-user/output}:/comfy-output
+      - ${COMFYUI_WORKFLOW_HOST_DIR:-/data/service/comfyui/storage-user/workflows}:/workflows
+    depends_on:
+      - comfyui
+
   comfyui:
     container_name: comfyui
-    image: yanwk/comfyui-boot:cu128-slim
+    image: ${COMFYUI_DOCKER_IMAGE:-ghcr.io/lecode-official/comfyui-docker:latest}
     restart: unless-stopped
 
     ipc: host
     security_opt:
       - seccomp=unconfined
 
-    # GPU config:
-    # If you're using modern Docker with --gpus all via nvidia-container-toolkit,
-    # this deploy block is typically enough. If not, see the commented lines below.
     deploy:
       resources:
         reservations:
@@ -19,34 +42,26 @@ services:
               count: all
               capabilities: ["gpu"]
 
-    # For non-swarm / older setups, you may prefer:
-    # runtime: nvidia
-    # gpus: all
-
     environment:
-      # Listen on all interfaces so you can reverse-proxy if you like
-      CLI_ARGS: "--listen 0.0.0.0"
-      # Explicit HF cache location in the container
-      HF_HOME: /root/.cache/huggingface
-      NVIDIA_VISIBLE_DEVICES: all
+      # lecode-official/comfyui-docker creates a matching user and runs
+      # ComfyUI as that user, so output/model/custom-node files are not
+      # owned by root on the host.
+      USER_ID: "${USER_ID:-1000}"
+      GROUP_ID: "${GROUP_ID:-1000}"
+      NVIDIA_VISIBLE_DEVICES: ${NVIDIA_VISIBLE_DEVICES:-all}
       NVIDIA_DRIVER_CAPABILITIES: compute,utility
+      HF_HOME: /home/comfyui-user/.cache/huggingface
+      TORCH_HOME: /home/comfyui-user/.cache/torch
 
     ports:
-      - "8188:8188"
+      - "${COMFYUI_PORT:-8188}:8188"
 
     volumes:
-      # Core ComfyUI home (config, db, etc.)
-      - /data/service/comfyui/storage:/root
-
-      # Models and caches
-      - /data/service/comfyui/storage-models/models:/root/ComfyUI/models
-      - /data/service/comfyui/storage-models/hf-hub:/root/.cache/huggingface/hub
-      - /data/service/comfyui/storage-models/torch-hub:/root/.cache/torch/hub
-
-      # User I/O and workflows
-      - /data/service/comfyui/storage-user/input:/root/ComfyUI/input
-      - /data/service/comfyui/storage-user/output:/root/ComfyUI/output
-      - /data/service/comfyui/storage-user/workflows:/root/ComfyUI/user/default/workflows
-
-      # Custom nodes (ComfyUI-Diffusers etc.)
-      - /data/service/comfyui/custom_nodes:/root/ComfyUI/custom_nodes
+      # lecode image ComfyUI root is /opt/comfyui, not /root/ComfyUI.
+      - ${MODELS_ROOT:-/data/service/comfyui/storage-models/models}:/opt/comfyui/models:rw
+      - ${COMFYUI_INPUT_HOST_DIR:-/data/service/comfyui/storage-user/input}:/opt/comfyui/input:rw
+      - ${COMFYUI_OUTPUT_HOST_DIR:-/data/service/comfyui/storage-user/output}:/opt/comfyui/output:rw
+      - ${COMFYUI_WORKFLOW_HOST_DIR:-/data/service/comfyui/storage-user/workflows}:/opt/comfyui/user/default/workflows:rw
+      - ${COMFYUI_CUSTOM_NODES_HOST_DIR:-/data/service/comfyui/custom_nodes}:/opt/comfyui/custom_nodes:rw
+      - ${HF_HUB_CACHE_HOST_DIR:-/data/service/comfyui/storage-models/hf-hub}:/home/comfyui-user/.cache/huggingface/hub:rw
+      - ${TORCH_HUB_CACHE_HOST_DIR:-/data/service/comfyui/storage-models/torch-hub}:/home/comfyui-user/.cache/torch/hub:rw
