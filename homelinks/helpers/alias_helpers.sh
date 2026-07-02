@@ -217,7 +217,7 @@ print_pysite(){
 
 alias pysite='cd $(print_pysite)'
 
-alias us='cd $CODE_DIR/ustd'
+#alias us='cd $CODE_DIR/ustd'
 alias ub='cd $CODE_DIR/ubelt'
 alias xo='cd $CODE_DIR/xdoctest'
 alias xc='cd $CODE_DIR/xcookie'
@@ -239,8 +239,8 @@ alias vid='cd ~/data/dvc-repos/viame_dvc'
 
 alias wa='cd $HOME/code/geowatch'
 alias ai='cd $HOME/code/aiq-magnet'
-alias ha='cd $HOME/code/helm_audit'
-alias vl='cd $HOME/code/helm_audit/submodules/vllm_service'
+alias ha='cd $HOME/code/eval_audit'
+alias vl='cd $HOME/code/eval_audit/submodules/infer_stack'
 alias wsd='cd $HOME/code/watch-smartflow-dags/'
 alias wa2='cd $HOME/code/watch2'
 

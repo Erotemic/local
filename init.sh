@@ -346,7 +346,11 @@ if [[ "$SETUP_PYTHON" == "True" ]]; then
     # Test to try working with uv as the main tool
     # https://docs.astral.sh/uv/getting-started/installation/#github-releases
     UV_ENV_DPATH="${UV_ENV_DPATH:-$HOME/.local/uv/envs}"
-    CHOSEN_PYTHON_VERSION="${CHOSEN_PYTHON_VERSION:-3.13.2}"
+    #CHOSEN_PYTHON_VERSION="${CHOSEN_PYTHON_VERSION:-3.13.2}"
+
+    # FORCE THE VERSION ON INIT
+    CHOSEN_PYTHON_VERSION="3.13.13"
+
     VENV_NAME="uvpy${CHOSEN_PYTHON_VERSION}"
     VENV_PATH="${UV_ENV_DPATH}/${VENV_NAME}"
 

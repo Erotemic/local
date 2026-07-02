@@ -40,19 +40,19 @@ mkdir -p \
   "${DATA_ROOT}/custom_nodes"
 
 ########################################
-# Step 2: Pull Docker images
+# Step 2: Build Docker images
 ########################################
 
-log "Pulling Docker image(s)..."
+log "Building Docker image(s), including the local ComfyUI Ideogram 4 update layer..."
 cd "${SCRIPT_DIR}"
-${COMPOSE} pull
+${COMPOSE} build --pull comfyui image-workflow-api
 
 ########################################
 # Step 3: Start the stack (ComfyUI)
 ########################################
 
 log "Bringing up ComfyUI stack..."
-${COMPOSE} up -d
+${COMPOSE} up -d --force-recreate
 
 log "Waiting a few seconds for container to initialize..."
 sleep 5
@@ -65,7 +65,7 @@ log "Cleaning up any previous ComfyUI-Diffusers install (conflicts with diffuser
 
 ${COMPOSE} exec comfyui bash -lc '
   set -euo pipefail
-  cd /root/ComfyUI/custom_nodes
+  cd /opt/comfyui/custom_nodes
 
   # Remove problematic ComfyUI-Diffusers if it exists
   if [ -d "ComfyUI-Diffusers" ]; then
@@ -91,7 +91,7 @@ ${COMPOSE} exec comfyui bash -lc '
 # Step 5: Install latest diffusers + deps (for Z-Image)
 ########################################
 
-log "Installing / updating diffusers & related libraries (inside container)..."
+log "Installing / updating diffusers & related libraries (inside container, for existing Z-Image workflows)..."
 
 ${COMPOSE} exec comfyui bash -lc '
   set -euo pipefail
@@ -106,7 +106,7 @@ ${COMPOSE} exec comfyui bash -lc '
 # Done
 ########################################
 
-cat <<EOF
+cat <<EOF2
 
 [setup] All done.
 
@@ -118,23 +118,23 @@ ComfyUI is running as a service.
   - Outputs:      ${DATA_ROOT}/storage-user/output
   - Custom nodes: ${DATA_ROOT}/custom_nodes
 
-We switched to "Diffusers-in-ComfyUI" to avoid the StreamDiffusion/diffusers
-conflict you just hit.
+The ComfyUI service now builds a local image from:
 
-Next steps:
-  1) Re-open the ComfyUI web UI.
-  2) Look for nodes under "Diffusers-in-Comfy" – they use Hugging Face
-     Diffusers pipelines internally.
-  3) Create a workflow for "Tongyi-MAI/Z-Image-Turbo" using those nodes
-     (txt2img pipeline) with:
-       - steps:           9
-       - guidance_scale:  0.0
-       - size:            1024 x 1024
+  - Base image:   \${BASE_COMFYUI_IMAGE:-ghcr.io/lecode-official/comfyui-docker:latest}
+  - ComfyUI ref:  \${COMFYUI_REF:-v0.24.0}
+  - Local image:  \${COMFYUI_IMAGE:-local/comfyui-ideogram4:v0.24.0}
+
+Ideogram 4 next steps:
+  1) Run ./download_models.sh if you have not downloaded the Ideogram 4 models.
+  2) Re-open the ComfyUI web UI.
+  3) Search the Template Library for "Ideogram v4: Text to Image".
+  4) If that template still reports missing core nodes, set COMFYUI_REF=main in .env,
+     then run ./scripts/update_images.sh.
 
 You can manage the service later from ${SCRIPT_DIR} with:
-  - Start: ${COMPOSE} up -d
-  - Stop:  ${COMPOSE} down
-  - Shell: ${COMPOSE} exec comfyui bash
+  - Start/update: ./scripts/update_images.sh
+  - Stop:         ${COMPOSE} down
+  - Shell:        ${COMPOSE} exec comfyui bash
+  - Check:        ./scripts/check_ideogram4.sh
 
-EOF
-
+EOF2

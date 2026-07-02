@@ -1,5 +1,4 @@
 {
-  "workbench.colorTheme": "Yarn Spinner Dark",
   "continue.telemetryEnabled": false,
   "vim.leader": ",",
   "vim.normalModeKeyBindingsNonRecursive": [
@@ -262,5 +261,6 @@
   "kilo-code.new.language": "en",
 "claudeCode.initialPermissionMode": "bypassPermissions",
 "chat.remoteAgentHosts": [],
-"workbench.iconTheme": "yarnspinner-icons"
+"workbench.iconTheme": "yarnspinner-icons",
+"editor.fontLigatures": false
 }

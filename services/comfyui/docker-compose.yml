@@ -27,7 +27,14 @@ services:
 
   comfyui:
     container_name: comfyui
-    image: ${COMFYUI_DOCKER_IMAGE:-ghcr.io/lecode-official/comfyui-docker:latest}
+    build:
+      context: ./comfyui-image
+      args:
+        BASE_COMFYUI_IMAGE: ${BASE_COMFYUI_IMAGE:-ghcr.io/lecode-official/comfyui-docker:latest}
+        COMFYUI_REF: ${COMFYUI_REF:-v0.24.0}
+        COMFYUI_MANAGER_REF: ${COMFYUI_MANAGER_REF:-}
+    image: ${COMFYUI_IMAGE:-local/comfyui-ideogram4:v0.24.0}
+    pull_policy: never
     restart: unless-stopped
 
     ipc: host
