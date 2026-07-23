@@ -71,37 +71,59 @@ upgrade_rocketpool_cli()
     ARCH="${ARCH_LUT[${ARCH}]}"
     echo "ARCH = $ARCH"
 
-    PREFIX=$HOME/.local
-    mkdir -p "$PREFIX/bin"
-    #wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/rocketpool-cli-linux-"${ARCH}" -O ./rocketpool
-    #wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/rocketpool-cli-linux-"${ARCH}".sig -O ./rocketpool.sig
-    curl -L https://github.com/rocket-pool/smartnode/releases/latest/download/rocketpool-cli-linux-"${ARCH}" -o ./rocketpool
-    curl -L https://github.com/rocket-pool/smartnode/releases/latest/download/rocketpool-cli-linux-"${ARCH}".sig -o ./rocketpool.sig
-
-    #if ! test -f ./smartnode-signing-key-v3.asc; then
-    #    wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/smartnode-signing-key-v3.asc -O ./smartnode-signing-key-v3.asc
-    #    # Sign key belongs to:
-    #    # https://github.com/jclapis
-    #    gpg --import ./smartnode-signing-key-v3.asc
-    #    # Optional
-    #    python3 ~/local/scripts/xgpg.py edit_trust D17FBE7E12E2C9DC21CE2BC3E00CDCDC74B1E3F5 ultimate
-    #fi
-
-    # New sign key (2024-01-10)
-    if ! test -f ./fornax-signing-key.asc; then
-        wget https://github.com/rocket-pool/smartnode-install/releases/latest/download/fornax-signing-key.asc -O ./fornax-signing-key.asc
-        # Sign key belongs to:
-        # dante@rocketpool.net
-        # https://github.com/0xfornax
-        gpg --import ./fornax-signing-key.asc
-        # Optional
-        python3 ~/local/scripts/xgpg.py edit_trust 6D3E960BD402C64642A1EC84651023D62E70B5DD ultimate
+    if test -z "$ARCH"; then
+        echo "ERROR: Unsupported architecture: $(uname -m)"
+        false
     fi
 
-    gpg --verify rocketpool.sig rocketpool
+    PREFIX=$HOME/.local
+    mkdir -p "$PREFIX/bin"
+
+    ## --- Download Latest
+
+    VERSION="latest"
+    VERSION="v1.20.5"
+    BASE_URL="https://github.com/rocket-pool/smartnode/releases/download/${VERSION}"
+
+    curl -fL "${BASE_URL}/rocketpool-cli-linux-${ARCH}" -o ./rocketpool
+    curl -fL "${BASE_URL}/rocketpool-cli-linux-${ARCH}.sig" -o ./rocketpool.sig
+
+    ## --- Check GPG Keys
+
+    # New sign key (2024-01-10)
+    # Sign key belongs to:
+    # dante@rocketpool.net
+    # https://github.com/0xfornax
+    curl -fL "${BASE_URL}/fornax-signing-key.asc" -o ./fornax-signing-key.asc
+
+    # Verify in an isolated GPG home, without importing into your real keyring
+    # and without assigning ultimate trust.
+    EXPECTED_FPR="6D3E960BD402C64642A1EC84651023D62E70B5DD"
+
+    GPG_TMPDIR="$(mktemp -d ./rocketpool-gpg.XXXXXX)"
+    chmod 700 "$GPG_TMPDIR"
+    echo "GPG_TMPDIR = $GPG_TMPDIR"
+
+    gpg --homedir "$GPG_TMPDIR" --import ./fornax-signing-key.asc
+
+    ACTUAL_FPR="$(
+        gpg --homedir "$GPG_TMPDIR" --with-colons --fingerprint "$EXPECTED_FPR" |
+        awk -F: '/^fpr:/ {print $10; exit}'
+    )"
+    echo "EXPECTED_FPR = $EXPECTED_FPR"
+    echo "ACTUAL_FPR   = $ACTUAL_FPR"
+
+    if ! test "$ACTUAL_FPR" = "$EXPECTED_FPR"; then
+        echo "ERROR: signing key fingerprint mismatch"
+        false
+    fi
+
+    gpg --homedir "$GPG_TMPDIR" --verify rocketpool.sig rocketpool
+
 
     # Check current version:
     rocketpool --version
+    command -v rocketpool
 
     # Check the version of the new file
     chmod +x ./rocketpool
@@ -114,7 +136,9 @@ upgrade_rocketpool_cli()
     # Move the new cli into place
     mv ./rocketpool "$PREFIX/bin/rocketpool"
     chmod +x "$HOME"/.local/bin/rocketpool
+    hash -r
     rocketpool --version
+    command -v rocketpool
 
     #### TO UPGRADE FROM EXISTING INSTALL
     # https://docs.rocketpool.net/guides/node/updates.html#updating-the-smartnode-stack
@@ -123,9 +147,8 @@ upgrade_rocketpool_cli()
     # Check the changes that were made
     rocketpool service config
 
-    # Typically let reconfigure restart the service
-    # You might need to try several times is docker wants to be weird
-    #rocketpool service start
+    # Explicitly start unless service config definitely restarted it.
+    rocketpool service start
 
     ## Check status:
     rocketpool service status
