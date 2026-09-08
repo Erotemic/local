@@ -1442,3 +1442,10 @@ tmux-dump-pane(){
 
     echo "Pane dumped to: $filename"
 }
+
+
+nvidia-smi-short(){
+    __doc__='Better for pasting into agent sessions'
+    nvidia-smi --query-gpu=timestamp,name,pci.bus_id,driver_version,pstate,pcie.link.gen.max,pcie.link.gen.current,temperature.gpu,temperature.memory,utilization.gpu,utilization.memory,memory.total,memory.free,memory.used,power.draw,power.limit,clocks.gr,clocks.mem,fan.speed --format=csv
+}
+

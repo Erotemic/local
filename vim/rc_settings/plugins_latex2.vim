@@ -26,7 +26,7 @@ let g:LatexBox_viewer = "okular --unique"
 "let g:LatexBox_latexmk_preview_continuously = 1
 let g:LatexBox_latexmk_preview_continuously = 0
 let g:LatexBox_quickfix=2
-"let g:LatexBox_build_dir="auxdir"
+let g:LatexBox_build_dir="build"
 
  
 function! SyncTexForward()

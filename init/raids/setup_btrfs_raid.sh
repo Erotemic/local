@@ -257,3 +257,147 @@ replace_disk_2025_03_02(){
     sudo watch btrfs scrub status /data
 
 }
+
+
+replace_disk_2026_08_06(){
+    __doc__="
+    Sad, lost a disk, not the greatest time for it. to have happened.
+
+    Lost one disk from the four-device Btrfs RAID-10 array. The missing disk
+    was device ID 5. The three surviving members were healthy enough to mount
+    degraded, and the replacement was a 16TB Toshiba MG08ACA16TE
+
+    Unlike the 2025 recovery, Btrfs could directly replace the missing device.
+    This avoids adding a fifth device, rebalancing the entire filesystem, and
+    then deleting the missing member.
+    "
+
+    # The /data mount failed during boot, so stop anything that might write to
+    # the ordinary /data directory on the root filesystem.
+    sudo systemctl stop docker.service docker.socket
+    virsh shutdown haos
+    virsh list
+    sudo fuser -vm /data
+
+    # Files written while /data was not mounted are disposable. Move them out
+    # of the way so they do not remain hidden beneath the Btrfs mount.
+    findmnt -T /data
+    sudo mv /data /data.discard-after-recovery-20260806
+    sudo mkdir /data
+
+    # Discover the surviving filesystem members.
+    sudo btrfs device scan
+    sudo btrfs filesystem show
+
+    __note__="
+    Filesystem UUID: c34b5d87-a4bf-428d-8738-7c759534da1a
+
+    Surviving devices:
+        devid 1: /dev/sda1
+        devid 2: /dev/sdb1
+        devid 6: /dev/sdc1
+
+    Missing device:
+        devid 5
+    "
+
+    # Check for disk errors or timeouts. None were found.
+    sudo journalctl -k -b --no-pager |
+        grep -Ei 'btrfs|ata[0-9]|sd[a-e]|I/O error|timeout|reset|failed' |
+        tail -n 200
+
+    # Investigation found stale Btrfs signatures from an old, essentially
+    # empty filesystem on the whole /dev/sda and /dev/sdb disks. The live
+    # filesystem is on /dev/sda1 and /dev/sdb1.
+    sudo wipefs -n /dev/sda /dev/sdb /dev/sda1 /dev/sdb1
+    sudo lsblk -b -o NAME,PATH,TYPE,SIZE,START,FSTYPE,UUID \
+        /dev/sda /dev/sdb
+    sudo btrfs inspect-internal dump-super -f /dev/sda | head -n 40
+    sudo btrfs inspect-internal dump-super -f /dev/sdb | head -n 40
+
+    __note__="
+    Stale whole-disk Btrfs UUID:
+        aa6c6d39-92e2-422f-a7be-c39c0a81900f
+
+    The stale primary superblocks are at offset 0x10040, before the partitions
+    begin at byte 1048576. Do not use wipefs -a because that would also erase
+    the GPT partition tables. Leave the stale signatures alone until recovery
+    is complete.
+    "
+
+    # Mount the array degraded and writable so Btrfs can replace the missing
+    # member.
+    sudo mount -t btrfs -o degraded,noatime \
+        UUID=c34b5d87-a4bf-428d-8738-7c759534da1a /data
+
+    findmnt /data
+    sudo btrfs filesystem show /data
+    sudo btrfs filesystem usage /data
+    sudo btrfs replace status /data
+
+    # Permanently identify the replacement disk by model and serial rather
+    # than relying on its current /dev/sde name.
+    NEW_DISK=/dev/disk/by-id/ata-TOSHIBA_MG08ACA16TE_81G0A0TKFVGG
+    NEW_PART="${NEW_DISK}-part1"
+
+    readlink -f "$NEW_DISK"
+    sudo smartctl -a "$NEW_DISK"
+    sudo wipefs -n "$NEW_DISK"
+
+    # Create one GPT partition spanning the replacement disk.
+    sudo parted --script \
+        "$NEW_DISK" \
+        mklabel gpt \
+        mkpart primary 1MiB 100%
+
+    # Wait for udev to create the partition and persistent by-id link.
+    sudo udevadm settle
+
+    # Verify identity, partition layout, blank state, and exact size match.
+    readlink -f "$NEW_PART"
+    sudo lsblk -b -o NAME,PATH,SIZE,TYPE,FSTYPE,UUID,MODEL,SERIAL \
+        "$NEW_DISK"
+    sudo wipefs -n "$NEW_DISK" "$NEW_PART"
+    sudo blockdev --getsize64 "$NEW_PART"
+    sudo blockdev --getsize64 /dev/sdc1
+
+    __result__="
+    The replacement partition and /dev/sdc1 were both:
+        16000898564096 bytes
+
+    The replacement partition had no filesystem signature.
+    "
+
+    # Directly reconstruct missing device ID 5 on the new partition.
+    sudo btrfs replace start \
+        5 \
+        "$NEW_PART" \
+        /data
+
+    # Check reconstruction progress. Ctrl-C only stops the monitor, not the
+    # replacement operation.
+    sudo btrfs replace status /data
+    sudo btrfs replace status -1 /data
+
+    # Do not reboot, suspend, balance, scrub, restart Docker, or start haos
+    # until replacement has completed.
+
+    # After replacement completes, verify the repaired filesystem:
+    # sudo btrfs replace status -1 /data
+    # sudo btrfs filesystem show /data
+    # sudo btrfs filesystem usage /data
+    # sudo btrfs device stats /data
+    # findmnt /data
+
+    # Remount in non degraded mode
+    cd /
+    sudo umount /data
+    sudo mount /data
+
+
+    # Later, clean up the disposable root-filesystem data and the stale
+    # whole-disk Btrfs signatures after separately verifying both targets.
+    # sudo rm -rf /data.discard-after-recovery-20260806
+    # sudo wipefs --backup --offset 0x10040 /dev/sda
+    # sudo wipefs --backup --offset 0x10040 /dev/sdb
+}
