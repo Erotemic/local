@@ -281,7 +281,7 @@ source ~/local/vim/rc_settings/remap_funcs.vim
 source ~/local/vim/rc_settings/remap_settings.vim
 source ~/local/vim/rc_settings/autocommand_settings.vim
 source ~/local/vim/rc_settings/plugins_latex.vim
-source ~/local/vim/rc_settings/plugins_latex2.vim
+"source ~/local/vim/rc_settings/plugins_latex2.vim
 
 
 "call VimTK_default_remap()
