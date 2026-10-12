@@ -21,7 +21,7 @@ import subprocess
 import sys
 from typing import Any
 
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 SECTIONS = ("disks", "md", "btrfs", "zfs", "ecc", "thermal", "logs")
 STATUS_RANK = {"INFO": 0, "OK": 0, "UNKNOWN": 1, "WARN": 2, "FAIL": 3}
 
@@ -243,6 +243,47 @@ def smart_assessment(data: dict[str, Any], code: int | None) -> tuple[str, str, 
     return level, "; ".join(notes), metrics
 
 
+
+def smartctl_messages(data: Any) -> list[str]:
+    """Read diagnostic messages, never the echoed `smartctl.argv` JSON field."""
+    if not isinstance(data, dict):
+        return []
+    controller = data.get("smartctl")
+    if not isinstance(controller, dict):
+        return []
+    messages = controller.get("messages")
+    if not isinstance(messages, list):
+        return []
+    return [item["string"] for item in messages
+            if isinstance(item, dict) and isinstance(item.get("string"), str)]
+
+
+def smart_power_skip(data: Any) -> str | None:
+    """Confirm standby from smartctl diagnostics, not its echoed CLI flags."""
+    for message in smartctl_messages(data):
+        match = re.search(r"\bDevice is in (STANDBY|SLEEP) mode\b", message, re.I)
+        if match:
+            return match.group(1).upper()
+    return None
+
+
+def smart_access_denied(data: Any, result: Result) -> bool:
+    details = " ".join(smartctl_messages(data) + [result.stderr, result.error])
+    return bool(re.search(r"permission denied|operation not permitted|access denied", details, re.I))
+
+
+def smart_probe_detail(data: Any, result: Result) -> str:
+    """The actionable reason a probe failed, with JSON-only errors included."""
+    if result.error:
+        return result.error
+    messages = smartctl_messages(data)
+    if messages:
+        return messages[0][:170]
+    if result.stderr.strip():
+        return result.stderr.strip().replace("\n", " ")[:170]
+    return f"smartctl exit {result.code}; no usable health data"
+
+
 def discover_disks(timeout: float) -> tuple[list[dict[str, Any]], str | None]:
     result = command(["lsblk", "-d", "-J", "-b", "-o",
                       "NAME,PATH,TYPE,TRAN,ROTA,SIZE,MODEL,SERIAL"], timeout)
@@ -311,48 +352,60 @@ def disks_check(report: Report, args: argparse.Namespace) -> None:
 
         def probe(dtype: str | None) -> Result:
             cmd = ["smartctl", "-j", "-a"]
-            if not args.wake_drives:
-                cmd += ["-n", "standby"]
+            # No spindle exists in an SSD/NVMe drive. The low-power check is
+            # only useful for rotating disks (and unknown rotation status).
+            # Override the default code 2 (also device-open failure) with 3.
+            if not args.wake_drives and kind != "SSD/nonrotating":
+                cmd += ["-n", "standby,3"]
             if dtype:
                 cmd += ["-d", dtype]
             return command(cmd + [dev], args.timeout)
 
         result = probe(typ)
         data = parse_json_result(result)
-        if (not isinstance(data, dict) or not any(k in data for k in
-                ("smart_status", "ata_smart_attributes", "nvme_smart_health_information_log"))):
-            # Most plain SATA USB bridges work with SAT passthrough.
-            if transport == "usb" and typ is None and result.code is not None:
+        skipped = smart_power_skip(data)
+        has_health = isinstance(data, dict) and any(k in data for k in
+                ("smart_status", "ata_smart_attributes", "nvme_smart_health_information_log"))
+        if not has_health:
+            # Some USB bridges need SAT passthrough. Do not re-probe a
+            # sleeping disk or a device already known to deny access.
+            if (transport == "usb" and typ is None and result.code is not None
+                    and not skipped and not smart_access_denied(data, result)):
                 retry = probe("sat")
                 retry_data = parse_json_result(retry)
-                if isinstance(retry_data, dict) and any(k in retry_data for k in
-                        ("smart_status", "ata_smart_attributes", "nvme_smart_health_information_log")):
+                retry_has_health = isinstance(retry_data, dict) and any(k in retry_data for k in
+                        ("smart_status", "ata_smart_attributes", "nvme_smart_health_information_log"))
+                if retry_has_health:
                     result, data = retry, retry_data
                     typ = "sat"
+                    skipped = None
+                elif smart_power_skip(retry_data):
+                    result, data = retry, retry_data
+                    skipped = smart_power_skip(data)
 
+        metrics: dict[str, Any] = {
+            "model": disk.get("model"), "serial": disk.get("serial"),
+            "size_bytes": disk.get("size"), "transport": transport,
+            "smart_device_type": typ, "smartctl_exit": result.code,
+        }
+        if skipped and not args.wake_drives:
+            report.add("disks", "UNKNOWN", label,
+                       f"{identity}; device is in {skipped} mode; SMART skipped to avoid spin-up",
+                       metrics)
+            continue
+        if not has_health and smart_access_denied(data, result):
+            report.add("disks", "UNKNOWN", label,
+                       f"{identity}; SMART permission denied (rerun with sudo)", metrics)
+            continue
         if not isinstance(data, dict):
             report.add("disks", "UNKNOWN", label,
-                       f"{identity}; SMART unavailable: {diagnostic(result)}",
-                       {"model": disk.get("model"), "serial": disk.get("serial")})
+                       f"{identity}; SMART unavailable: {diagnostic(result)}", metrics)
             continue
-        level, message, metrics = smart_assessment(data, result.code)
+        level, message, health_metrics = smart_assessment(data, result.code)
+        metrics.update(health_metrics)
         if level == "UNKNOWN":
-            mode = str(data.get("power_mode") or "")
-            if not args.wake_drives and ("standby" in mode.lower() or
-                                         "standby" in result.stdout.lower() or
-                                         "standby" in result.stderr.lower()):
-                message = "drive in standby; SMART skipped to avoid spin-up"
-            elif result.error:
-                message = f"SMART unavailable: {result.error}"
-            else:
-                controller_info = data.get("smartctl")
-                failures = (controller_info.get("messages", [])
-                            if isinstance(controller_info, dict) else [])
-                if failures and isinstance(failures[0], dict):
-                    message += "; " + str(failures[0].get("string", ""))[:130]
-        metrics.update({"model": disk.get("model"), "serial": disk.get("serial"),
-                        "size_bytes": disk.get("size"), "transport": transport,
-                        "smart_device_type": typ, "smartctl_exit": result.code})
+            detail = smart_probe_detail(data, result)
+            message += f"; {detail}" if detail else ""
         report.add("disks", level, label, f"{identity}; {message}", metrics)
 
 
@@ -586,8 +639,8 @@ def ecc_check(report: Report, args: argparse.Namespace) -> None:
             issues.append(("FAIL", f"uncorrected ECC errors={uncorrected}"))
         if corrected is not None and corrected > 0:
             issues.append(("WARN", f"corrected ECC errors={corrected}"))
-        if corrected is None and uncorrected is None:
-            issues.append(("UNKNOWN", "ECC counters unreadable"))
+        if corrected is None or uncorrected is None:
+            issues.append(("UNKNOWN", "some ECC counters unreadable"))
         report.add("ecc", summary_status(issues), ctrl.name,
                    "; ".join(message for _, message in issues) or "reported ECC counters zero",
                    {"corrected": corrected, "uncorrected": uncorrected})
@@ -642,8 +695,13 @@ def thermal_check(report: Report, args: argparse.Namespace) -> None:
 
 # Require an error/hang event, not a generic keyword such as 'warning' or 'error'.
 LOG_PATTERNS: tuple[tuple[str, str, re.Pattern[str]], ...] = (
-    ("Machine check / uncorrected ECC", "FAIL", re.compile(
-        r"\b(?:Machine Check Exception|mce:.*\[Hardware Error\]|EDAC[^\n]*(?:uncorrected error|\bUE\s*:\s*[1-9]))", re.I)),
+    ("Uncorrected machine check / ECC", "FAIL", re.compile(
+        r"(?:\bMachine Check Exception\b|\b(?:mce:|EDAC)[^\n]*\b(?:uncorrected|uncorrectable|fatal error)\b|"
+        r"\bEDAC[^\n]*\bUE\s*:\s*[1-9]\d*)", re.I)),
+    ("Corrected ECC events", "WARN", re.compile(
+        r"\bEDAC[^\n]*\b(?:corrected error|CE\s*:\s*[1-9])", re.I)),
+    ("Machine check (severity not established)", "WARN", re.compile(
+        r"(?:\bmce:.*\[Hardware Error\]|\bMachine check events logged\b)", re.I)),
     ("Filesystem corruption", "FAIL", re.compile(
         r"\b(?:BTRFS (?:error|critical)|EXT4-fs error|XFS[^\n]*corruption|ZFS[^\n]*permanent error)\b", re.I)),
     ("Block I/O failures", "WARN", re.compile(
@@ -658,8 +716,6 @@ LOG_PATTERNS: tuple[tuple[str, str, re.Pattern[str]], ...] = (
         r"(?:NVRM:\s*Xid|amdgpu[^\n]*(?:GPU reset|ring [^\n]*timeout))", re.I)),
     ("Network adapter hangs", "WARN", re.compile(
         r"(?:Detected Hardware Unit Hang|reset adapter unexpectedly)", re.I)),
-    ("Corrected ECC events", "WARN", re.compile(
-        r"\bEDAC[^\n]*\b(?:corrected error|CE:\s*[1-9])", re.I)),
 )
 
 
