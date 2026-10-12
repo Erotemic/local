@@ -53,8 +53,8 @@
 "   <localleader>ll -> LaTeXBox :Latexmk
 "   <localleader>lv -> LaTeXBox :LatexView
 "
-" latexmk controls compilation.  The matching output-directory policy should
-" live in ~/.latexmkrc:
+" latexmk controls compilation. 
+" IMPORTANT: The matching output-directory policy should live in ~/.latexmkrc
 "
 "   $out_dir = 'build';
 "

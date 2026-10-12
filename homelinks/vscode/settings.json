@@ -262,5 +262,6 @@
 "claudeCode.initialPermissionMode": "bypassPermissions",
 "chat.remoteAgentHosts": [],
 "workbench.iconTheme": "yarnspinner-icons",
-"editor.fontLigatures": false
+"editor.fontLigatures": false,
+"pi-vscode.path": "/home/agent/.local/bin/pi"
 }
